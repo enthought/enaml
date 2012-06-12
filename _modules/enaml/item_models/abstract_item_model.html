@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.item_models.abstract_item_model &mdash; enaml 0.2beta-1 documentation</title>
+    <title>enaml.item_models.abstract_item_model &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.item_models.abstract_item_model</a></li>
@@ -1425,12 +1425,12 @@
 <span class="c">#------------------------------------------------------------------------------</span>
 <span class="c"># AbstractTableModel</span>
 <span class="c">#------------------------------------------------------------------------------</span></div></div>
-<div class="viewcode-block" id="AbstractTableModel"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractTableModel">[docs]</a><span class="k">class</span> <span class="nc">AbstractTableModel</span><span class="p">(</span><span class="n">AbstractItemModel</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">AbstractTableModel</span><span class="p">(</span><span class="n">AbstractItemModel</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; An AbstractItemModel subclass that implements the methods </span>
 <span class="sd">    necessary to restrict the model to a 2-dimensional table of data.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="AbstractTableModel.index"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractTableModel.index">[docs]</a>    <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Abstract method implementation that will create a valid</span>
 <span class="sd">        model index for the given row and column if they are valid.</span>
 <span class="sd">        Otherwise, returns an invalid index.</span>
@@ -1438,15 +1438,15 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_index</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_index</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="AbstractTableModel.parent"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractTableModel.parent">[docs]</a>    <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Abstract method implementation that always returns None, </span>
 <span class="sd">        forcing the model to be flat.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">None</span>
-</div>
-<div class="viewcode-block" id="AbstractTableModel.has_children"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractTableModel.has_children">[docs]</a>    <span class="k">def</span> <span class="nf">has_children</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">has_children</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Overridden parent class method which restrics the model to</span>
 <span class="sd">        2-dimensions.</span>
 
@@ -1458,13 +1458,13 @@
 
 <span class="c">#------------------------------------------------------------------------------</span>
 <span class="c"># AbstractListModel</span>
-<span class="c">#------------------------------------------------------------------------------</span></div></div>
-<div class="viewcode-block" id="AbstractListModel"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractListModel">[docs]</a><span class="k">class</span> <span class="nc">AbstractListModel</span><span class="p">(</span><span class="n">AbstractItemModel</span><span class="p">):</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="k">class</span> <span class="nc">AbstractListModel</span><span class="p">(</span><span class="n">AbstractItemModel</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; An AbstractItemModel subclass that implements the methods </span>
 <span class="sd">    necessary to restrict the model to a 1-dimensional list of data.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="AbstractListModel.index"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractListModel.index">[docs]</a>    <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Abstract method implementation that will create a valid</span>
 <span class="sd">        model index for the given row and column if they are valid.</span>
 <span class="sd">        Otherwise, returns an invalid index.</span>
@@ -1472,15 +1472,15 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_index</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_index</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="AbstractListModel.parent"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractListModel.parent">[docs]</a>    <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Abstract method implementation that always returns an</span>
 <span class="sd">        invalid index, forcing the model to be flat.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">None</span>
-</div>
-<div class="viewcode-block" id="AbstractListModel.column_count"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractListModel.column_count">[docs]</a>    <span class="k">def</span> <span class="nf">column_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">column_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Overridden parent class method which restricts the model</span>
 <span class="sd">        to a single column.</span>
 
@@ -1488,8 +1488,8 @@
         <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="mi">0</span>
         <span class="k">return</span> <span class="mi">1</span>
-</div>
-<div class="viewcode-block" id="AbstractListModel.has_children"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractListModel.has_children">[docs]</a>    <span class="k">def</span> <span class="nf">has_children</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">has_children</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Overridden parent class method which restrics the model</span>
 <span class="sd">        to 1-dimension.</span>
 
@@ -1497,7 +1497,7 @@
         <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">False</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_count</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span>
-</pre></div></div></div>
+</pre></div>
 
           </div>
         </div>
@@ -1516,7 +1516,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.item_models.abstract_item_model</a></li>
@@ -1526,7 +1526,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

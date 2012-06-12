@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.components.group_box &mdash; enaml 0.2beta-1 documentation</title>
+    <title>enaml.components.group_box &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.components.group_box</a></li>
@@ -92,43 +92,43 @@
 <span class="kn">from</span> <span class="nn">..layout.geometry</span> <span class="kn">import</span> <span class="n">Box</span>
 
 
-<div class="viewcode-block" id="AbstractTkGroupBox"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.group_box.AbstractTkGroupBox">[docs]</a><span class="k">class</span> <span class="nc">AbstractTkGroupBox</span><span class="p">(</span><span class="n">AbstractTkContainer</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">AbstractTkGroupBox</span><span class="p">(</span><span class="n">AbstractTkContainer</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; The abstract toolkit GroupBox interface.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkGroupBox.shell_title_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.group_box.AbstractTkGroupBox.shell_title_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_title_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_title_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Update the title of the group box with the new value from the</span>
 <span class="sd">        shell object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkGroupBox.shell_flat_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.group_box.AbstractTkGroupBox.shell_flat_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_flat_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flat</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_flat_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flat</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Update the flat flag of the group box with the new value from </span>
 <span class="sd">        the shell object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkGroupBox.shell_title_align_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.group_box.AbstractTkGroupBox.shell_title_align_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_title_align_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">align</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_title_align_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">align</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Update the title alignment to the new value from the shell </span>
 <span class="sd">        object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkGroupBox.get_contents_margins"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.group_box.AbstractTkGroupBox.get_contents_margins">[docs]</a>    <span class="k">def</span> <span class="nf">get_contents_margins</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_contents_margins</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Return the Box object of margin values for the widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Box</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
-</div></div>
-<div class="viewcode-block" id="GroupBox"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.group_box.GroupBox">[docs]</a><span class="k">class</span> <span class="nc">GroupBox</span><span class="p">(</span><span class="n">Container</span><span class="p">):</span>
+
+<div class="viewcode-block" id="GroupBox"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.group_box.GroupBox.html#enaml.components.group_box.GroupBox">[docs]</a><span class="k">class</span> <span class="nc">GroupBox</span><span class="p">(</span><span class="n">Container</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; The GroupBox container, which introduces a group of widgets with </span>
 <span class="sd">    a title and usually has a border.</span>
 
@@ -147,7 +147,7 @@
     <span class="c">#: Overridden parent class trait</span>
     <span class="n">abstract_obj</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="n">AbstractTkGroupBox</span><span class="p">)</span>
 
-<div class="viewcode-block" id="GroupBox.padding_constraints"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.group_box.GroupBox.padding_constraints">[docs]</a>    <span class="k">def</span> <span class="nf">padding_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="GroupBox.padding_constraints"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.group_box.GroupBox.html#enaml.components.group_box.GroupBox.padding_constraints">[docs]</a>    <span class="k">def</span> <span class="nf">padding_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Overriden padding constraints method to add the contents </span>
 <span class="sd">        margins of the underlying group box to the specified user </span>
 <span class="sd">        padding.</span>
@@ -187,7 +187,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.components.group_box</a></li>
@@ -197,7 +197,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

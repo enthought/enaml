@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.backends.wx.wx_radio_button &mdash; enaml 0.2beta-1 documentation</title>
+    <title>enaml.backends.wx.wx_radio_button &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../../index.html" />
     <link rel="up" title="Module code" href="../../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.backends.wx.wx_radio_button</a></li>
@@ -105,7 +105,7 @@
 <span class="n">wxRadioSetUnchecked</span><span class="p">,</span> <span class="n">EVT_RADIO_SET_UNCHECKED</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">lib</span><span class="o">.</span><span class="n">newevent</span><span class="o">.</span><span class="n">NewEvent</span><span class="p">()</span>
 
 
-<div class="viewcode-block" id="CustomRadioButton"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_radio_button.CustomRadioButton">[docs]</a><span class="k">class</span> <span class="nc">CustomRadioButton</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">RadioButton</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">CustomRadioButton</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">RadioButton</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A custom stubclass of wx.RadioButton.</span>
 
 <span class="sd">    The wx.RadioButton doesn&#39;t emit toggled events when it unchecks</span>
@@ -118,7 +118,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_parents</span> <span class="o">=</span> <span class="n">WeakKeyDictionary</span><span class="p">()</span>
 
-<div class="viewcode-block" id="CustomRadioButton.__init__"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_radio_button.CustomRadioButton.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">CustomRadioButton</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="c"># This class works by maintaining a WeakKeyDictionary where</span>
         <span class="c"># the keys are the parent widgets of the radio buttons and </span>
@@ -133,8 +133,8 @@
             <span class="n">children</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parents</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="p">[])</span>
             <span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_last</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetValue</span><span class="p">()</span>
-</div>
-<div class="viewcode-block" id="CustomRadioButton.CheckToggledOff"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_radio_button.CustomRadioButton.CheckToggledOff">[docs]</a>    <span class="k">def</span> <span class="nf">CheckToggledOff</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">CheckToggledOff</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Checks the state of the radio button to see if it has been</span>
 <span class="sd">        toggled from on to off. If it has, it will emit a toggle off</span>
 <span class="sd">        event.</span>
@@ -146,8 +146,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_last</span> <span class="o">=</span> <span class="n">curr</span>
             <span class="n">off_evt</span> <span class="o">=</span> <span class="n">wxRadioToggleOff</span><span class="p">()</span>
             <span class="n">wx</span><span class="o">.</span><span class="n">PostEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">off_evt</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="CustomRadioButton.CheckSiblings"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_radio_button.CustomRadioButton.CheckSiblings">[docs]</a>    <span class="k">def</span> <span class="nf">CheckSiblings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">CheckSiblings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Iterates over the siblings of this radio button, giving </span>
 <span class="sd">        each a chance to respond to a possible toggle off.</span>
 
@@ -158,8 +158,8 @@
             <span class="k">if</span> <span class="n">parent</span> <span class="ow">in</span> <span class="n">parents</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">parents</span><span class="p">[</span><span class="n">parent</span><span class="p">]:</span>
                     <span class="n">child</span><span class="o">.</span><span class="n">CheckToggledOff</span><span class="p">()</span>
-</div>
-<div class="viewcode-block" id="CustomRadioButton.OnToggled"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_radio_button.CustomRadioButton.OnToggled">[docs]</a>    <span class="k">def</span> <span class="nf">OnToggled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">OnToggled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Handles the standard toggle event and emits a toggle on</span>
 <span class="sd">        event. After emitting that event, it will cycle through the </span>
 <span class="sd">        list of its siblings and give them a change to emit a toggle</span>
@@ -170,8 +170,8 @@
         <span class="n">on_evt</span> <span class="o">=</span> <span class="n">wxRadioToggleOn</span><span class="p">()</span>
         <span class="n">wx</span><span class="o">.</span><span class="n">PostEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">on_evt</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">CheckSiblings</span><span class="p">()</span>
-</div>
-<div class="viewcode-block" id="CustomRadioButton.SetValue"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_radio_button.CustomRadioButton.SetValue">[docs]</a>    <span class="k">def</span> <span class="nf">SetValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">SetValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Overrides the default SetValue method to emit proper events.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -186,8 +186,8 @@
                 <span class="n">on_evt</span> <span class="o">=</span> <span class="n">wxRadioSetChecked</span><span class="p">()</span>
                 <span class="n">wx</span><span class="o">.</span><span class="n">PostEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">on_evt</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">CheckSiblings</span><span class="p">()</span>
-        </div>
-<div class="viewcode-block" id="CustomRadioButton.Destroy"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_radio_button.CustomRadioButton.Destroy">[docs]</a>    <span class="k">def</span> <span class="nf">Destroy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        
+    <span class="k">def</span> <span class="nf">Destroy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Overridden destroy method to remove the radio button from</span>
 <span class="sd">        the list of siblings before it&#39;s destroyed.</span>
 
@@ -203,8 +203,8 @@
                     <span class="k">pass</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">CustomRadioButton</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">Destroy</span><span class="p">()</span>
 
-</div></div>
-<div class="viewcode-block" id="WXRadioButton"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_radio_button.WXRadioButton">[docs]</a><span class="k">class</span> <span class="nc">WXRadioButton</span><span class="p">(</span><span class="n">WXToggleControl</span><span class="p">,</span> <span class="n">AbstractTkRadioButton</span><span class="p">):</span>
+
+<div class="viewcode-block" id="WXRadioButton"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.radio_button.RadioButton.html#enaml.backends.wx.wx_radio_button.WXRadioButton">[docs]</a><span class="k">class</span> <span class="nc">WXRadioButton</span><span class="p">(</span><span class="n">WXToggleControl</span><span class="p">,</span> <span class="n">AbstractTkRadioButton</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A wxPython implementation of RadioButton.</span>
 
 <span class="sd">    WXRadioButton uses a custom wx.RadioButton control. Radio buttons</span>
@@ -215,13 +215,13 @@
     <span class="c">#---------------------------------------------------------------------------</span>
     <span class="c"># Implementation</span>
     <span class="c">#---------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="WXRadioButton.create"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_radio_button.WXRadioButton.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+<div class="viewcode-block" id="WXRadioButton.create"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.radio_button.RadioButton.html#enaml.backends.wx.wx_radio_button.WXRadioButton.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Creates the underlying custom wx.RadioButton control.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">CustomRadioButton</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXRadioButton.bind"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_radio_button.WXRadioButton.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WXRadioButton.bind"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.radio_button.RadioButton.html#enaml.backends.wx.wx_radio_button.WXRadioButton.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Binds the event handlers of the control.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -233,7 +233,7 @@
         <span class="n">widget</span><span class="o">.</span><span class="n">Bind</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">EVT_LEFT_DOWN</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_pressed</span><span class="p">)</span>
         <span class="n">widget</span><span class="o">.</span><span class="n">Bind</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">EVT_LEAVE_WINDOW</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_released</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXRadioButton.on_simple_toggle"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_radio_button.WXRadioButton.on_simple_toggle">[docs]</a>    <span class="k">def</span> <span class="nf">on_simple_toggle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+<div class="viewcode-block" id="WXRadioButton.on_simple_toggle"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.radio_button.RadioButton.html#enaml.backends.wx.wx_radio_button.WXRadioButton.on_simple_toggle">[docs]</a>    <span class="k">def</span> <span class="nf">on_simple_toggle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; An event handler for toggle events that have nothing to do</span>
 <span class="sd">        with mouse interaction by the user and therefore the events</span>
 <span class="sd">        emited by _on_toggled would be inappropriate.</span>
@@ -262,7 +262,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.backends.wx.wx_radio_button</a></li>
@@ -272,7 +272,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

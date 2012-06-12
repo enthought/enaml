@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.tests.components.label &mdash; enaml 0.2beta-1 documentation</title>
+    <title>enaml.tests.components.label &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../../index.html" />
     <link rel="up" title="Module code" href="../../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.tests.components.label</a></li>
@@ -85,7 +85,7 @@
 <span class="kn">from</span> <span class="nn">.enaml_test_case</span> <span class="kn">import</span> <span class="n">EnamlTestCase</span><span class="p">,</span> <span class="n">required_method</span>
 
 
-<div class="viewcode-block" id="TestLabel"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.label.TestLabel">[docs]</a><span class="k">class</span> <span class="nc">TestLabel</span><span class="p">(</span><span class="n">EnamlTestCase</span><span class="p">):</span>
+<div class="viewcode-block" id="TestLabel"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.label.TestLabel.html#enaml.tests.components.label.TestLabel">[docs]</a><span class="k">class</span> <span class="nc">TestLabel</span><span class="p">(</span><span class="n">EnamlTestCase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Logic for testing labels.</span>
 
 <span class="sd">    Tooklit testcases need to provide the following methods</span>
@@ -97,7 +97,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="TestLabel.setUp"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.label.TestLabel.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestLabel.setUp"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.label.TestLabel.html#enaml.tests.components.label.TestLabel.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Set up label tests.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -113,13 +113,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">component</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">component_by_name</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="p">,</span> <span class="s">&#39;label&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">component</span><span class="o">.</span><span class="n">toolkit_widget</span>
 </div>
-<div class="viewcode-block" id="TestLabel.test_initial_text"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.label.TestLabel.test_initial_text">[docs]</a>    <span class="k">def</span> <span class="nf">test_initial_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestLabel.test_initial_text"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.label.TestLabel.html#enaml.tests.components.label.TestLabel.test_initial_text">[docs]</a>    <span class="k">def</span> <span class="nf">test_initial_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Test the initial text of a label.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEnamlInSync</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">component</span><span class="p">,</span> <span class="s">&#39;text&#39;</span><span class="p">,</span> <span class="s">&#39;foo&#39;</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="TestLabel.test_text_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.label.TestLabel.test_text_changed">[docs]</a>    <span class="k">def</span> <span class="nf">test_text_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestLabel.test_text_changed"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.label.TestLabel.html#enaml.tests.components.label.TestLabel.test_text_changed">[docs]</a>    <span class="k">def</span> <span class="nf">test_text_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Change the text of the label.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -131,12 +131,12 @@
     <span class="c"># Abstract methods</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
     <span class="nd">@required_method</span>
-<div class="viewcode-block" id="TestLabel.get_text"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.label.TestLabel.get_text">[docs]</a>    <span class="k">def</span> <span class="nf">get_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the label text from the tookit widget</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
-</pre></div></div></div>
+</pre></div></div>
 
           </div>
         </div>
@@ -155,7 +155,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.tests.components.label</a></li>
@@ -165,7 +165,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

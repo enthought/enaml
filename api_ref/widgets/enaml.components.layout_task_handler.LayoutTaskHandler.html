@@ -1,0 +1,251 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>LayoutTaskHandler &mdash; enaml 0.2alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.2alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../index.html" />
+    <link rel="up" title="Widgets" href="../enaml.widgets.html" />
+    <link rel="next" title="Control" href="enaml.components.control.Control.html" />
+    <link rel="prev" title="ConstraintsWidget" href="enaml.components.constraints_widget.ConstraintsWidget.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.components.control.Control.html" title="Control"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="enaml.components.constraints_widget.ConstraintsWidget.html" title="ConstraintsWidget"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" accesskey="U">Widgets</a> &raquo;</li>
+  
+    <li><a href="#">LayoutTaskHandler</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">LayoutTaskHandler</a><ul>
+<li><a class="reference internal" href="#backends">Backends</a><ul>
+<li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/api_ref/widgets/enaml.components.layout_task_handler.LayoutTaskHandler.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="layouttaskhandler">
+<h1>LayoutTaskHandler<a class="headerlink" href="#layouttaskhandler" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="enaml.components.layout_task_handler.LayoutTaskHandler">
+<em class="property">class </em><tt class="descclassname">enaml.components.layout_task_handler.</tt><tt class="descname">LayoutTaskHandler</tt><a class="reference internal" href="../../_modules/enaml/components/layout_task_handler.html#LayoutTaskHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.layout_task_handler.LayoutTaskHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">traits.has_traits.HasStrictTraits</span></tt></p>
+<p>A mixin class that provides a basic implementation of layout
+task processing. Subclasses that use the mixin must at least be
+subclasses of BaseComponet and should, in addition, provide a
+freeze() method which returns a context manager, inside which the
+queues will be emptied and the layout handlers called.</p>
+<p>Only classes which actually implement some form of layout handling 
+should inherit this class. Otherwise, layout requests will not
+properly propagate up the widget hierarchy.</p>
+<p>This class should be inherited before the other superclasses of
+the parent class, or the layout handlers will not be properly
+overridden.</p>
+<dl class="method">
+<dt id="enaml.components.layout_task_handler.LayoutTaskHandler.relayout">
+<tt class="descname">relayout</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/components/layout_task_handler.html#LayoutTaskHandler.relayout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.layout_task_handler.LayoutTaskHandler.relayout" title="Permalink to this definition">¶</a></dt>
+<dd><p>A reimplemented parent class method which triggers an update
+of the constraints and a new layout computation. This is called 
+whenever the layout children of the component should have their 
+layout relationships recomputed. The constraints update and 
+relayout occur immediately and are completed before the method 
+returns. If the component is not fully initialized, this is a 
+no-op.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.components.layout_task_handler.LayoutTaskHandler.refresh">
+<tt class="descname">refresh</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/components/layout_task_handler.html#LayoutTaskHandler.refresh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.layout_task_handler.LayoutTaskHandler.refresh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reimplemented parent class method which triggers a refresh
+of the layout children. The refresh occurs immediately and is 
+completed before the method returns. If the component is not 
+fully initialized, this is a no-op.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.components.layout_task_handler.LayoutTaskHandler.request_relayout">
+<tt class="descname">request_relayout</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/components/layout_task_handler.html#LayoutTaskHandler.request_relayout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.layout_task_handler.LayoutTaskHandler.request_relayout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reimplemented parent class method which triggers an update
+of the constraints and a layout refresh at some point in the 
+future. Mutliple calls to this method will be collapsed into
+a single effective relayout.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.components.layout_task_handler.LayoutTaskHandler.request_refresh">
+<tt class="descname">request_refresh</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/components/layout_task_handler.html#LayoutTaskHandler.request_refresh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.layout_task_handler.LayoutTaskHandler.request_refresh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reimplemented parent class method which triggers a refresh
+of the children at some point in the future. Mutliple calls to 
+this method will be collapsed into a single effective refresh.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.components.layout_task_handler.LayoutTaskHandler.request_relayout_task">
+<tt class="descname">request_relayout_task</tt><big>(</big><em>callback</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../_modules/enaml/components/layout_task_handler.html#LayoutTaskHandler.request_relayout_task"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.layout_task_handler.LayoutTaskHandler.request_relayout_task" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reimplemented parent class method which requests a relayout
+after adding the callback to an internal queue. The queue will
+be emptied from within a freeze context the next time a relayout
+occurs.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.components.layout_task_handler.LayoutTaskHandler.request_refresh_task">
+<tt class="descname">request_refresh_task</tt><big>(</big><em>callback</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../_modules/enaml/components/layout_task_handler.html#LayoutTaskHandler.request_refresh_task"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.layout_task_handler.LayoutTaskHandler.request_refresh_task" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reimplemented parent class method which requests a relayout
+after adding the callback to an internal queue. The queue will
+be emptied from within a freeze context the next time a relayout
+occurs.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.components.layout_task_handler.LayoutTaskHandler.do_relayout">
+<tt class="descname">do_relayout</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/components/layout_task_handler.html#LayoutTaskHandler.do_relayout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.layout_task_handler.LayoutTaskHandler.do_relayout" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method that should be implemented by subclasses to actually
+perform the relayout. By default, this method does nothing.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.components.layout_task_handler.LayoutTaskHandler.do_refresh">
+<tt class="descname">do_refresh</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/components/layout_task_handler.html#LayoutTaskHandler.do_refresh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.layout_task_handler.LayoutTaskHandler.do_refresh" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method that should be implemented by subclasses to actually
+perform the refresh. By default, this method does nothing.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.layout_task_handler.LayoutTaskHandler.__implements__">
+<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.components.layout_task_handler.LayoutTaskHandler.__implements__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="backends">
+<h2>Backends<a class="headerlink" href="#backends" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="qt">
+<h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="wx">
+<h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.components.control.Control.html" title="Control"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="enaml.components.constraints_widget.ConstraintsWidget.html" title="ConstraintsWidget"
+             >previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" >Widgets</a> &raquo;</li>
+  
+    <li><a href="#">LayoutTaskHandler</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Jun 12, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

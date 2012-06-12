@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.backends.wx.wx_table_view &mdash; enaml 0.2beta-1 documentation</title>
+    <title>enaml.backends.wx.wx_table_view &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../../index.html" />
     <link rel="up" title="Module code" href="../../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.backends.wx.wx_table_view</a></li>
@@ -94,15 +94,15 @@
 <span class="n">GridCellAttr</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">GridCellAttr</span>
 
 
-<div class="viewcode-block" id="wx_color_from_color"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_table_view.wx_color_from_color">[docs]</a><span class="k">def</span> <span class="nf">wx_color_from_color</span><span class="p">(</span><span class="n">color</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">wx_color_from_color</span><span class="p">(</span><span class="n">color</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">wx</span><span class="o">.</span><span class="n">Color</span><span class="p">(</span><span class="o">*</span><span class="n">color</span><span class="p">)</span>
 
 
 <span class="c"># XXX we need to add more handler support for the different modes of</span>
-<span class="c"># resetting the grid.</span></div>
-<div class="viewcode-block" id="AbstractItemModelTable"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_table_view.AbstractItemModelTable">[docs]</a><span class="k">class</span> <span class="nc">AbstractItemModelTable</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">PyGridTableBase</span><span class="p">):</span>
+<span class="c"># resetting the grid.</span>
+<span class="k">class</span> <span class="nc">AbstractItemModelTable</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">PyGridTableBase</span><span class="p">):</span>
 
-<div class="viewcode-block" id="AbstractItemModelTable.__init__"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_table_view.AbstractItemModelTable.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_model</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_model</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">AbstractItemModelTable</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item_model</span><span class="p">,</span> <span class="n">AbstractItemModel</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;Model must be an instance of AbstractItemModel.&#39;</span><span class="p">)</span>
@@ -120,7 +120,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_item_model</span><span class="o">.</span><span class="n">model_reset</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_end_model_reset</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_item_model</span><span class="o">.</span><span class="n">data_changed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_changed</span><span class="p">)</span>
-</div>
+
     <span class="k">def</span> <span class="nf">_end_model_reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">grid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetView</span><span class="p">()</span>
         <span class="n">grid</span><span class="o">.</span><span class="n">SetTable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
@@ -133,17 +133,17 @@
         <span class="n">grid</span><span class="o">.</span><span class="n">ProcessTableMessage</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="n">grid</span><span class="o">.</span><span class="n">Refresh</span><span class="p">()</span>
 
-<div class="viewcode-block" id="AbstractItemModelTable.GetNumberRows"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_table_view.AbstractItemModelTable.GetNumberRows">[docs]</a>    <span class="k">def</span> <span class="nf">GetNumberRows</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">GetNumberRows</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_row_count</span><span class="p">()</span>
-</div>
-<div class="viewcode-block" id="AbstractItemModelTable.GetNumberCols"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_table_view.AbstractItemModelTable.GetNumberCols">[docs]</a>    <span class="k">def</span> <span class="nf">GetNumberCols</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">GetNumberCols</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_col_count</span><span class="p">()</span>
-</div>
-<div class="viewcode-block" id="AbstractItemModelTable.GetValue"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_table_view.AbstractItemModelTable.GetValue">[docs]</a>    <span class="k">def</span> <span class="nf">GetValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">GetValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">):</span>
         <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_index</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_data</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="AbstractItemModelTable.GetAttr"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_table_view.AbstractItemModelTable.GetAttr">[docs]</a>    <span class="k">def</span> <span class="nf">GetAttr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">ignored</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">GetAttr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">ignored</span><span class="p">):</span>
         <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_index</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
 
         <span class="n">attr</span> <span class="o">=</span> <span class="n">GridCellAttr</span><span class="p">()</span>
@@ -157,22 +157,22 @@
             <span class="n">attr</span><span class="o">.</span><span class="n">SetTextColour</span><span class="p">(</span><span class="n">wx_color_from_color</span><span class="p">(</span><span class="n">brush</span><span class="o">.</span><span class="n">color</span><span class="p">))</span>
             
         <span class="k">return</span> <span class="n">attr</span>
-</div>
-<div class="viewcode-block" id="AbstractItemModelTable.SetValue"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_table_view.AbstractItemModelTable.SetValue">[docs]</a>    <span class="k">def</span> <span class="nf">SetValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">SetValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
         <span class="n">item_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_item_model</span>
         <span class="n">index</span> <span class="o">=</span> <span class="n">item_model</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
         <span class="n">flags</span> <span class="o">=</span> <span class="n">item_model</span><span class="o">.</span><span class="n">flags</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">flags</span> <span class="o">&amp;</span> <span class="n">ITEM_IS_EDITABLE</span><span class="p">:</span>
             <span class="n">item_model</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="AbstractItemModelTable.GetRowLabelValue"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_table_view.AbstractItemModelTable.GetRowLabelValue">[docs]</a>    <span class="k">def</span> <span class="nf">GetRowLabelValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">GetRowLabelValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vert_header_data</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="AbstractItemModelTable.GetColLabelValue"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_table_view.AbstractItemModelTable.GetColLabelValue">[docs]</a>    <span class="k">def</span> <span class="nf">GetColLabelValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">GetColLabelValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_horiz_header_data</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
 
-</div></div>
-<div class="viewcode-block" id="WXTableView"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_table_view.WXTableView">[docs]</a><span class="k">class</span> <span class="nc">WXTableView</span><span class="p">(</span><span class="n">WXControl</span><span class="p">,</span> <span class="n">AbstractTkTableView</span><span class="p">):</span>
+
+<div class="viewcode-block" id="WXTableView"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.table_view.TableView.html#enaml.backends.wx.wx_table_view.WXTableView">[docs]</a><span class="k">class</span> <span class="nc">WXTableView</span><span class="p">(</span><span class="n">WXControl</span><span class="p">,</span> <span class="n">AbstractTkTableView</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A wxPython implementation of TableView.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -182,14 +182,14 @@
     <span class="c">#---------------------------------------------------------------------------</span>
     <span class="c"># ITableViewImpl interface</span>
     <span class="c">#---------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="WXTableView.create"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_table_view.WXTableView.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+<div class="viewcode-block" id="WXTableView.create"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.table_view.TableView.html#enaml.backends.wx.wx_table_view.WXTableView.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Create the underlying wx.grid.Grid control.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">style</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">WANTS_CHARS</span> <span class="o">|</span> <span class="n">wx</span><span class="o">.</span><span class="n">FULL_REPAINT_ON_RESIZE</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">Grid</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">style</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXTableView.initialize"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_table_view.WXTableView.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WXTableView.initialize"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.table_view.TableView.html#enaml.backends.wx.wx_table_view.WXTableView.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Intialize the widget with the attributes of this instance.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -197,7 +197,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">set_table_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">item_model</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetDoubleBuffered</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXTableView.bind"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_table_view.WXTableView.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WXTableView.bind"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.table_view.TableView.html#enaml.backends.wx.wx_table_view.WXTableView.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Bind the event handlers for the table view.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -209,41 +209,41 @@
     <span class="c">#---------------------------------------------------------------------------</span>
     <span class="c"># implementation</span>
     <span class="c">#---------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="WXTableView.shell_item_model_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_table_view.WXTableView.shell_item_model_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_item_model_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_model</span><span class="p">):</span>
+<div class="viewcode-block" id="WXTableView.shell_item_model_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.table_view.TableView.html#enaml.backends.wx.wx_table_view.WXTableView.shell_item_model_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_item_model_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_model</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;item_model&#39; attribute.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_table_model</span><span class="p">(</span><span class="n">item_model</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXTableView.shell_vertical_header_visible_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_table_view.WXTableView.shell_vertical_header_visible_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_vertical_header_visible_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">):</span>
+<div class="viewcode-block" id="WXTableView.shell_vertical_header_visible_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.table_view.TableView.html#enaml.backends.wx.wx_table_view.WXTableView.shell_vertical_header_visible_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_vertical_header_visible_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;vertical_header_visible&#39; </span>
 <span class="sd">        attribute of the shell object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
 </div>
-<div class="viewcode-block" id="WXTableView.shell_horizontal_header_visible_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_table_view.WXTableView.shell_horizontal_header_visible_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_horizontal_header_visible_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">):</span>
+<div class="viewcode-block" id="WXTableView.shell_horizontal_header_visible_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.table_view.TableView.html#enaml.backends.wx.wx_table_view.WXTableView.shell_horizontal_header_visible_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_horizontal_header_visible_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;horizontal_header_visible&#39;</span>
 <span class="sd">        attribute of the shell object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
         </div>
-<div class="viewcode-block" id="WXTableView.on_select_cell"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_table_view.WXTableView.on_select_cell">[docs]</a>    <span class="k">def</span> <span class="nf">on_select_cell</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+<div class="viewcode-block" id="WXTableView.on_select_cell"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.table_view.TableView.html#enaml.backends.wx.wx_table_view.WXTableView.on_select_cell">[docs]</a>    <span class="k">def</span> <span class="nf">on_select_cell</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The event handler for the cell selection event.  Not meant</span>
 <span class="sd">        for public consumption.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">event</span><span class="o">.</span><span class="n">Skip</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="WXTableView.on_left_dclick"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_table_view.WXTableView.on_left_dclick">[docs]</a>    <span class="k">def</span> <span class="nf">on_left_dclick</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+<div class="viewcode-block" id="WXTableView.on_left_dclick"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.table_view.TableView.html#enaml.backends.wx.wx_table_view.WXTableView.on_left_dclick">[docs]</a>    <span class="k">def</span> <span class="nf">on_left_dclick</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The event handler for the double-click event.  Not meant</span>
 <span class="sd">        for public consumption.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">event</span><span class="o">.</span><span class="n">Skip</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="WXTableView.set_table_model"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_table_view.WXTableView.set_table_model">[docs]</a>    <span class="k">def</span> <span class="nf">set_table_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+<div class="viewcode-block" id="WXTableView.set_table_model"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.table_view.TableView.html#enaml.backends.wx.wx_table_view.WXTableView.set_table_model">[docs]</a>    <span class="k">def</span> <span class="nf">set_table_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Set the table view&#39;s model.  Not meant for public</span>
 <span class="sd">        consumption.</span>
 
@@ -256,7 +256,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Overrides</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="WXTableView.size_hint"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_table_view.WXTableView.size_hint">[docs]</a>    <span class="k">def</span> <span class="nf">size_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WXTableView.size_hint"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.table_view.TableView.html#enaml.backends.wx.wx_table_view.WXTableView.size_hint">[docs]</a>    <span class="k">def</span> <span class="nf">size_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; A reimplemented parent class method which computes the size </span>
 <span class="sd">        hint for the table view.</span>
 
@@ -287,7 +287,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.backends.wx.wx_table_view</a></li>
@@ -297,7 +297,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

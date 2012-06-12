@@ -1,0 +1,288 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>EnableCanvas &mdash; enaml 0.2alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.2alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../index.html" />
+    <link rel="up" title="Widgets" href="../enaml.widgets.html" />
+    <link rel="next" title="Window" href="enaml.components.window.Window.html" />
+    <link rel="prev" title="TraitsUIItem" href="enaml.components.traitsui_item.TraitsUIItem.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.components.window.Window.html" title="Window"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="enaml.components.traitsui_item.TraitsUIItem.html" title="TraitsUIItem"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" accesskey="U">Widgets</a> &raquo;</li>
+  
+    <li><a href="#">EnableCanvas</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">EnableCanvas</a><ul>
+<li><a class="reference internal" href="#backends">Backends</a><ul>
+<li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/api_ref/widgets/enaml.components.enable_canvas.EnableCanvas.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="enablecanvas">
+<h1>EnableCanvas<a class="headerlink" href="#enablecanvas" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="enaml.components.enable_canvas.EnableCanvas">
+<em class="property">class </em><tt class="descclassname">enaml.components.enable_canvas.</tt><tt class="descname">EnableCanvas</tt><a class="reference internal" href="../../_modules/enaml/components/enable_canvas.html#EnableCanvas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.enable_canvas.EnableCanvas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.components.control.Control.html#enaml.components.control.Control" title="enaml.components.control.Control"><tt class="xref py py-class docutils literal"><span class="pre">enaml.components.control.Control</span></tt></a></p>
+<p>An Enable canvas widget that will draw any Enable Component
+object.</p>
+<dl class="attribute">
+<dt id="enaml.components.enable_canvas.EnableCanvas.component">
+<tt class="descname">component</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.enable_canvas.EnableCanvas.component" title="Permalink to this definition">¶</a></dt>
+<dd><p>The enable.component.Component instance to draw.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.enable_canvas.EnableCanvas.hug_width">
+<tt class="descname">hug_width</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.enable_canvas.EnableCanvas.hug_width" title="Permalink to this definition">¶</a></dt>
+<dd><p>An EnableCanvas ignores its hug_width by default, so that it
+expands freely in width.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.enable_canvas.EnableCanvas.hug_height">
+<tt class="descname">hug_height</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.enable_canvas.EnableCanvas.hug_height" title="Permalink to this definition">¶</a></dt>
+<dd><p>An Enable Canvas ignore its hug_height by default, so that it
+expands freely in height.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.enable_canvas.EnableCanvas.abstract_obj">
+<tt class="descname">abstract_obj</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.enable_canvas.EnableCanvas.abstract_obj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden parent class trait</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.enable_canvas.EnableCanvas.__implements__">
+<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.components.enable_canvas.EnableCanvas.__implements__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="backends">
+<h2>Backends<a class="headerlink" href="#backends" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="qt">
+<h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-4f4ac2517b6cb5a0835d0ae76ac0a7f2da34a0b9.png" alt="Inheritance diagram of enaml.backends.qt.qt_enable_canvas.QtEnableCanvas" usemap="#inheritance2563413867" class="inheritance"/>
+<map id="inheritance2563413867" name="inheritance2563413867">
+<area shape="rect" id="node7" href="enaml.components.constraints_widget.ConstraintsWidget.html#enaml.backends.qt.qt_constraints_widget.QtConstraintsWidget" title="QtConstraintsWidget" alt="" coords="454,33,540,49"/>
+<area shape="rect" id="node13" href="enaml.components.widget_component.WidgetComponent.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent" title="QtWidgetComponent" alt="" coords="325,33,412,49"/>
+<area shape="rect" id="node16" href="enaml.components.base_widget_component.BaseWidgetComponent.html#enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent" title="QtBaseWidgetComponent" alt="" coords="171,33,275,49"/>
+<area shape="rect" id="node6" href="enaml.components.control.Control.html#enaml.backends.qt.qt_control.QtControl" title="QtControl" alt="" coords="594,33,641,49"/>
+<area shape="rect" id="node20" href="#enaml.backends.qt.qt_enable_canvas.QtEnableCanvas" title="QtEnableCanvas" alt="" coords="695,18,765,34"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.backends.qt.qt_enable_canvas.QtEnableCanvas">
+<em class="property">class </em><tt class="descclassname">enaml.backends.qt.qt_enable_canvas.</tt><tt class="descname">QtEnableCanvas</tt><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_enable_canvas.html#QtEnableCanvas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_enable_canvas.QtEnableCanvas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.components.control.Control.html#enaml.backends.qt.qt_control.QtControl" title="enaml.backends.qt.qt_control.QtControl"><tt class="xref py py-class docutils literal"><span class="pre">enaml.backends.qt.qt_control.QtControl</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.components.enable_canvas.AbstractTkEnableCanvas</span></tt></p>
+<p>A Qt implementation of EnableCanvas</p>
+<dl class="attribute">
+<dt id="enaml.backends.qt.qt_enable_canvas.QtEnableCanvas.window">
+<tt class="descname">window</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.backends.qt.qt_enable_canvas.QtEnableCanvas.window" title="Permalink to this definition">¶</a></dt>
+<dd><p>The EnableWindow that is created to hold the component</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_enable_canvas.QtEnableCanvas.create">
+<tt class="descname">create</tt><big>(</big><em>parent</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_enable_canvas.html#QtEnableCanvas.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_enable_canvas.QtEnableCanvas.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an EnableWindow instance to hold the component and
+uses that instance control as the toolkit widget. This assumes
+that enable picks the appropriate toolkit backend.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_enable_canvas.QtEnableCanvas.shell_component_changed">
+<tt class="descname">shell_component_changed</tt><big>(</big><em>component</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_enable_canvas.html#QtEnableCanvas.shell_component_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_enable_canvas.QtEnableCanvas.shell_component_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;component&#8217; attribute on the 
+shell object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_enable_canvas.QtEnableCanvas.size_hint">
+<tt class="descname">size_hint</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_enable_canvas.html#QtEnableCanvas.size_hint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_enable_canvas.QtEnableCanvas.size_hint" title="Permalink to this definition">¶</a></dt>
+<dd><p>A reimplemented parent class method to retrieve the 
+size hint as the preferred size from the enable component.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="wx">
+<h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-ab1b5cf25bc4cf91c6b2432ecb415b76c07a48c5.png" alt="Inheritance diagram of enaml.backends.wx.wx_enable_canvas.WXEnableCanvas" usemap="#inheritance4240796c1d" class="inheritance"/>
+<map id="inheritance4240796c1d" name="inheritance4240796c1d">
+<area shape="rect" id="node1" href="enaml.components.constraints_widget.ConstraintsWidget.html#enaml.backends.wx.wx_constraints_widget.WXConstraintsWidget" title="WXConstraintsWidget" alt="" coords="451,3,539,19"/>
+<area shape="rect" id="node17" href="enaml.components.control.Control.html#enaml.backends.wx.wx_control.WXControl" title="WXControl" alt="" coords="591,3,641,19"/>
+<area shape="rect" id="node2" href="enaml.components.widget_component.WidgetComponent.html#enaml.backends.wx.wx_widget_component.WXWidgetComponent" title="WXWidgetComponent" alt="" coords="321,3,410,19"/>
+<area shape="rect" id="node8" href="enaml.components.base_widget_component.BaseWidgetComponent.html#enaml.backends.wx.wx_base_widget_component.WXBaseWidgetComponent" title="WXBaseWidgetComponent" alt="" coords="169,3,274,19"/>
+<area shape="rect" id="node20" href="#enaml.backends.wx.wx_enable_canvas.WXEnableCanvas" title="WXEnableCanvas" alt="" coords="693,18,765,34"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.backends.wx.wx_enable_canvas.WXEnableCanvas">
+<em class="property">class </em><tt class="descclassname">enaml.backends.wx.wx_enable_canvas.</tt><tt class="descname">WXEnableCanvas</tt><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_enable_canvas.html#WXEnableCanvas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_enable_canvas.WXEnableCanvas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.components.control.Control.html#enaml.backends.wx.wx_control.WXControl" title="enaml.backends.wx.wx_control.WXControl"><tt class="xref py py-class docutils literal"><span class="pre">enaml.backends.wx.wx_control.WXControl</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.components.enable_canvas.AbstractTkEnableCanvas</span></tt></p>
+<p>A wxPython implementation of EnableCanvas</p>
+<dl class="attribute">
+<dt id="enaml.backends.wx.wx_enable_canvas.WXEnableCanvas.window">
+<tt class="descname">window</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.backends.wx.wx_enable_canvas.WXEnableCanvas.window" title="Permalink to this definition">¶</a></dt>
+<dd><p>The EnableWindow that is created to hold the component</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_enable_canvas.WXEnableCanvas.create">
+<tt class="descname">create</tt><big>(</big><em>parent</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_enable_canvas.html#WXEnableCanvas.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_enable_canvas.WXEnableCanvas.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an EnableWindow instance to hold the component and
+uses that instance control as the toolkit widget. This assumes
+that enable picks the appropriate toolkit backend.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_enable_canvas.WXEnableCanvas.shell_component_changed">
+<tt class="descname">shell_component_changed</tt><big>(</big><em>component</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_enable_canvas.html#WXEnableCanvas.shell_component_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_enable_canvas.WXEnableCanvas.shell_component_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;component&#8217; attribute on the 
+shell object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_enable_canvas.WXEnableCanvas.size_hint">
+<tt class="descname">size_hint</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_enable_canvas.html#WXEnableCanvas.size_hint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_enable_canvas.WXEnableCanvas.size_hint" title="Permalink to this definition">¶</a></dt>
+<dd><p>A reimplemented parent class method to retrieve the 
+size hint as the preferred size from the enable component.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.components.window.Window.html" title="Window"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="enaml.components.traitsui_item.TraitsUIItem.html" title="TraitsUIItem"
+             >previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" >Widgets</a> &raquo;</li>
+  
+    <li><a href="#">EnableCanvas</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Jun 12, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

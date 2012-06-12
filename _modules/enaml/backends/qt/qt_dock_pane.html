@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.backends.qt.qt_dock_pane &mdash; enaml 0.2beta-1 documentation</title>
+    <title>enaml.backends.qt.qt_dock_pane &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../../index.html" />
     <link rel="up" title="Module code" href="../../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.backends.qt.qt_dock_pane</a></li>
@@ -96,32 +96,32 @@
 <span class="p">)</span>
 
 
-<div class="viewcode-block" id="QtDockWidget"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_dock_pane.QtDockWidget">[docs]</a><span class="k">class</span> <span class="nc">QtDockWidget</span><span class="p">(</span><span class="n">QDockWidget</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">QtDockWidget</span><span class="p">(</span><span class="n">QDockWidget</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A QDockWidget subclass which converts a close event into a </span>
 <span class="sd">    closed signal.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">closed</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">()</span>
 
-<div class="viewcode-block" id="QtDockWidget.closeEvent"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_dock_pane.QtDockWidget.closeEvent">[docs]</a>    <span class="k">def</span> <span class="nf">closeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">closeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">QtDockWidget</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">closeEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">closed</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
 
-</div></div>
-<div class="viewcode-block" id="QtDockPane"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_dock_pane.QtDockPane">[docs]</a><span class="k">class</span> <span class="nc">QtDockPane</span><span class="p">(</span><span class="n">QtWidgetComponent</span><span class="p">,</span> <span class="n">AbstractTkDockPane</span><span class="p">):</span>
+
+<div class="viewcode-block" id="QtDockPane"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.dock_pane.DockPane.html#enaml.backends.qt.qt_dock_pane.QtDockPane">[docs]</a><span class="k">class</span> <span class="nc">QtDockPane</span><span class="p">(</span><span class="n">QtWidgetComponent</span><span class="p">,</span> <span class="n">AbstractTkDockPane</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A Qt4 implementation of DockPane.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Setup Methods</span>
     <span class="c">#--------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="QtDockPane.create"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_dock_pane.QtDockPane.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+<div class="viewcode-block" id="QtDockPane.create"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.dock_pane.DockPane.html#enaml.backends.qt.qt_dock_pane.QtDockPane.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Creates the underlying QDockWidget instance.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">QtDockWidget</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtDockPane.initialize"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_dock_pane.QtDockPane.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtDockPane.initialize"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.dock_pane.DockPane.html#enaml.backends.qt.qt_dock_pane.QtDockPane.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Initializes the attributes of the QDockWidget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -136,7 +136,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">set_allowed_dock_areas</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">allowed_dock_areas</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_dock_widget</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">dock_widget</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtDockPane.bind"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_dock_pane.QtDockPane.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtDockPane.bind"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.dock_pane.DockPane.html#enaml.backends.qt.qt_dock_pane.QtDockPane.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Binds the signal handlers for the QDockWidget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -149,53 +149,53 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Shell Object Change Handlers</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="QtDockPane.shell_title_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_dock_pane.QtDockPane.shell_title_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_title_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
+<div class="viewcode-block" id="QtDockPane.shell_title_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.dock_pane.DockPane.html#enaml.backends.qt.qt_dock_pane.QtDockPane.shell_title_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_title_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Updates the title bar text in the dock pane.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
             </div>
-<div class="viewcode-block" id="QtDockPane.shell_closable_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_dock_pane.QtDockPane.shell_closable_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_closable_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">closable</span><span class="p">):</span>
+<div class="viewcode-block" id="QtDockPane.shell_closable_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.dock_pane.DockPane.html#enaml.backends.qt.qt_dock_pane.QtDockPane.shell_closable_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_closable_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">closable</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Updates whether or not the dock pane should have a close</span>
 <span class="sd">        button in the title bar.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_closable</span><span class="p">(</span><span class="n">closable</span><span class="p">)</span>
             </div>
-<div class="viewcode-block" id="QtDockPane.shell_movable_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_dock_pane.QtDockPane.shell_movable_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_movable_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">movable</span><span class="p">):</span>
+<div class="viewcode-block" id="QtDockPane.shell_movable_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.dock_pane.DockPane.html#enaml.backends.qt.qt_dock_pane.QtDockPane.shell_movable_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_movable_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">movable</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Updates whether or not the dock pane should be movable from</span>
 <span class="sd">        its current position.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_movable</span><span class="p">(</span><span class="n">movable</span><span class="p">)</span>
             </div>
-<div class="viewcode-block" id="QtDockPane.shell_floatable_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_dock_pane.QtDockPane.shell_floatable_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_floatable_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">floatable</span><span class="p">):</span>
+<div class="viewcode-block" id="QtDockPane.shell_floatable_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.dock_pane.DockPane.html#enaml.backends.qt.qt_dock_pane.QtDockPane.shell_floatable_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_floatable_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">floatable</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Updates whether or not the dock pane is allowed to be </span>
 <span class="sd">        undocked an floated over the main window.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_floatable</span><span class="p">(</span><span class="n">floatable</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtDockPane.shell_floating_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_dock_pane.QtDockPane.shell_floating_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_floating_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">floating</span><span class="p">):</span>
+<div class="viewcode-block" id="QtDockPane.shell_floating_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.dock_pane.DockPane.html#enaml.backends.qt.qt_dock_pane.QtDockPane.shell_floating_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_floating_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">floating</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Updates whether or no the dock pane is floating over</span>
 <span class="sd">        the main window instead of docked in its area.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_floating</span><span class="p">(</span><span class="n">floating</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtDockPane.shell_title_bar_orientation_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_dock_pane.QtDockPane.shell_title_bar_orientation_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_title_bar_orientation_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orientation</span><span class="p">):</span>
+<div class="viewcode-block" id="QtDockPane.shell_title_bar_orientation_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.dock_pane.DockPane.html#enaml.backends.qt.qt_dock_pane.QtDockPane.shell_title_bar_orientation_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_title_bar_orientation_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orientation</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Updates the orientation of the title bar.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_title_bar_orientation</span><span class="p">(</span><span class="n">orientation</span><span class="p">)</span>
         </div>
-<div class="viewcode-block" id="QtDockPane.shell_allowed_dock_areas_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_dock_pane.QtDockPane.shell_allowed_dock_areas_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_allowed_dock_areas_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">allowed_areas</span><span class="p">):</span>
+<div class="viewcode-block" id="QtDockPane.shell_allowed_dock_areas_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.dock_pane.DockPane.html#enaml.backends.qt.qt_dock_pane.QtDockPane.shell_allowed_dock_areas_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_allowed_dock_areas_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">allowed_areas</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Updates the allowable docking areas for the dock pane.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_allowed_dock_areas</span><span class="p">(</span><span class="n">allowed_areas</span><span class="p">)</span>
             </div>
-<div class="viewcode-block" id="QtDockPane.shell_dock_widget_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_dock_pane.QtDockPane.shell_dock_widget_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_dock_widget_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dock_widget</span><span class="p">):</span>
+<div class="viewcode-block" id="QtDockPane.shell_dock_widget_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.dock_pane.DockPane.html#enaml.backends.qt.qt_dock_pane.QtDockPane.shell_dock_widget_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_dock_widget_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dock_widget</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Updates the widget being managed by the dock pane.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -204,7 +204,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Signal Handlers</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="QtDockPane.on_dock_location_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_dock_pane.QtDockPane.on_dock_location_changed">[docs]</a>    <span class="k">def</span> <span class="nf">on_dock_location_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_qarea</span><span class="p">):</span>
+<div class="viewcode-block" id="QtDockPane.on_dock_location_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.dock_pane.DockPane.html#enaml.backends.qt.qt_dock_pane.QtDockPane.on_dock_location_changed">[docs]</a>    <span class="k">def</span> <span class="nf">on_dock_location_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_qarea</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The signal handler for the &#39;dockLocationChanged&#39; signal. It</span>
 <span class="sd">        updates the &#39;dock_area&#39; attribute on the shell object and fires</span>
 <span class="sd">        off the &#39;moved&#39; event.</span>
@@ -216,7 +216,7 @@
         <span class="n">shell</span><span class="o">.</span><span class="n">dock_area</span> <span class="o">=</span> <span class="n">new_area</span>
         <span class="n">shell</span><span class="o">.</span><span class="n">moved</span><span class="p">((</span><span class="n">old_area</span><span class="p">,</span> <span class="n">new_area</span><span class="p">))</span>
 </div>
-<div class="viewcode-block" id="QtDockPane.on_top_level_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_dock_pane.QtDockPane.on_top_level_changed">[docs]</a>    <span class="k">def</span> <span class="nf">on_top_level_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">floating</span><span class="p">):</span>
+<div class="viewcode-block" id="QtDockPane.on_top_level_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.dock_pane.DockPane.html#enaml.backends.qt.qt_dock_pane.QtDockPane.on_top_level_changed">[docs]</a>    <span class="k">def</span> <span class="nf">on_top_level_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">floating</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The signal handler for the &#39;topLevelChanged&#39; signal. It </span>
 <span class="sd">        fires of the &#39;moved&#39; event and the appropriate &#39;docked&#39; or</span>
 <span class="sd">        &#39;undocked&#39; event on the shell object.</span>
@@ -229,7 +229,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">shell</span><span class="o">.</span><span class="n">docked</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="QtDockPane.on_close"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_dock_pane.QtDockPane.on_close">[docs]</a>    <span class="k">def</span> <span class="nf">on_close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtDockPane.on_close"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.dock_pane.DockPane.html#enaml.backends.qt.qt_dock_pane.QtDockPane.on_close">[docs]</a>    <span class="k">def</span> <span class="nf">on_close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The signal handler for the &#39;closed&#39; signal. It sets the</span>
 <span class="sd">        visibility of the shell component to False.</span>
 
@@ -239,34 +239,34 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Widget Update Methods</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="QtDockPane.set_title"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_dock_pane.QtDockPane.set_title">[docs]</a>    <span class="k">def</span> <span class="nf">set_title</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
+<div class="viewcode-block" id="QtDockPane.set_title"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.dock_pane.DockPane.html#enaml.backends.qt.qt_dock_pane.QtDockPane.set_title">[docs]</a>    <span class="k">def</span> <span class="nf">set_title</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the title bar text of the dock widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtDockPane.set_closable"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_dock_pane.QtDockPane.set_closable">[docs]</a>    <span class="k">def</span> <span class="nf">set_closable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">closable</span><span class="p">):</span>
+<div class="viewcode-block" id="QtDockPane.set_closable"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.dock_pane.DockPane.html#enaml.backends.qt.qt_dock_pane.QtDockPane.set_closable">[docs]</a>    <span class="k">def</span> <span class="nf">set_closable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">closable</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the closable flag of the title bar.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">flag</span> <span class="o">=</span> <span class="n">QDockWidget</span><span class="o">.</span><span class="n">DockWidgetClosable</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_feature_flag</span><span class="p">(</span><span class="n">flag</span><span class="p">,</span> <span class="n">closable</span><span class="p">)</span>
     </div>
-<div class="viewcode-block" id="QtDockPane.set_movable"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_dock_pane.QtDockPane.set_movable">[docs]</a>    <span class="k">def</span> <span class="nf">set_movable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">movable</span><span class="p">):</span>
+<div class="viewcode-block" id="QtDockPane.set_movable"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.dock_pane.DockPane.html#enaml.backends.qt.qt_dock_pane.QtDockPane.set_movable">[docs]</a>    <span class="k">def</span> <span class="nf">set_movable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">movable</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the movable flag of the title bar.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">flag</span> <span class="o">=</span> <span class="n">QDockWidget</span><span class="o">.</span><span class="n">DockWidgetMovable</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_feature_flag</span><span class="p">(</span><span class="n">flag</span><span class="p">,</span> <span class="n">movable</span><span class="p">)</span>
     </div>
-<div class="viewcode-block" id="QtDockPane.set_floatable"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_dock_pane.QtDockPane.set_floatable">[docs]</a>    <span class="k">def</span> <span class="nf">set_floatable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">floatable</span><span class="p">):</span>
+<div class="viewcode-block" id="QtDockPane.set_floatable"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.dock_pane.DockPane.html#enaml.backends.qt.qt_dock_pane.QtDockPane.set_floatable">[docs]</a>    <span class="k">def</span> <span class="nf">set_floatable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">floatable</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the floatable flag of the title bar.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">flag</span> <span class="o">=</span> <span class="n">QDockWidget</span><span class="o">.</span><span class="n">DockWidgetFloatable</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_feature_flag</span><span class="p">(</span><span class="n">flag</span><span class="p">,</span> <span class="n">floatable</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtDockPane.set_floating"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_dock_pane.QtDockPane.set_floating">[docs]</a>    <span class="k">def</span> <span class="nf">set_floating</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">floating</span><span class="p">):</span>
+<div class="viewcode-block" id="QtDockPane.set_floating"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.dock_pane.DockPane.html#enaml.backends.qt.qt_dock_pane.QtDockPane.set_floating">[docs]</a>    <span class="k">def</span> <span class="nf">set_floating</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">floating</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the whether or not the dock widget is floating.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -274,14 +274,14 @@
         <span class="k">if</span> <span class="n">widget</span><span class="o">.</span><span class="n">isFloating</span><span class="p">()</span> <span class="o">!=</span> <span class="n">floating</span><span class="p">:</span>
             <span class="n">widget</span><span class="o">.</span><span class="n">setFloating</span><span class="p">(</span><span class="n">floating</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtDockPane.set_title_bar_orientation"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_dock_pane.QtDockPane.set_title_bar_orientation">[docs]</a>    <span class="k">def</span> <span class="nf">set_title_bar_orientation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orientation</span><span class="p">):</span>
+<div class="viewcode-block" id="QtDockPane.set_title_bar_orientation"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.dock_pane.DockPane.html#enaml.backends.qt.qt_dock_pane.QtDockPane.set_title_bar_orientation">[docs]</a>    <span class="k">def</span> <span class="nf">set_title_bar_orientation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orientation</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the orientation flag of the title bar.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">flag</span> <span class="o">=</span> <span class="n">QDockWidget</span><span class="o">.</span><span class="n">DockWidgetVerticalTitleBar</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_feature_flag</span><span class="p">(</span><span class="n">flag</span><span class="p">,</span> <span class="n">orientation</span> <span class="o">==</span> <span class="s">&#39;vertical&#39;</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtDockPane.set_allowed_dock_areas"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_dock_pane.QtDockPane.set_allowed_dock_areas">[docs]</a>    <span class="k">def</span> <span class="nf">set_allowed_dock_areas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">allowed_areas</span><span class="p">):</span>
+<div class="viewcode-block" id="QtDockPane.set_allowed_dock_areas"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.dock_pane.DockPane.html#enaml.backends.qt.qt_dock_pane.QtDockPane.set_allowed_dock_areas">[docs]</a>    <span class="k">def</span> <span class="nf">set_allowed_dock_areas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">allowed_areas</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the flags for the allowed docking areas.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -290,7 +290,7 @@
             <span class="n">flags</span> <span class="o">|=</span> <span class="n">DOCK_AREA_MAP</span><span class="p">[</span><span class="n">area</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setAllowedAreas</span><span class="p">(</span><span class="n">flags</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtDockPane.set_dock_widget"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_dock_pane.QtDockPane.set_dock_widget">[docs]</a>    <span class="k">def</span> <span class="nf">set_dock_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dock_widget</span><span class="p">):</span>
+<div class="viewcode-block" id="QtDockPane.set_dock_widget"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.dock_pane.DockPane.html#enaml.backends.qt.qt_dock_pane.QtDockPane.set_dock_widget">[docs]</a>    <span class="k">def</span> <span class="nf">set_dock_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dock_widget</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the widget being managed by the dock widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -338,7 +338,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.backends.qt.qt_dock_pane</a></li>
@@ -348,7 +348,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

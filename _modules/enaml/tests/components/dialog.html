@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.tests.components.dialog &mdash; enaml 0.2beta-1 documentation</title>
+    <title>enaml.tests.components.dialog &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../../index.html" />
     <link rel="up" title="Module code" href="../../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.tests.components.dialog</a></li>
@@ -86,18 +86,18 @@
 <span class="kn">from</span> <span class="nn">.window</span> <span class="kn">import</span> <span class="n">TestWindow</span>
 
 
-<div class="viewcode-block" id="skip_test"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.dialog.skip_test">[docs]</a><span class="k">def</span> <span class="nf">skip_test</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">skip_test</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">closure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">skipTest</span><span class="p">(</span><span class="s">&#39;Skipped&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">closure</span>
 
-</div>
-<div class="viewcode-block" id="TestDialog"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.dialog.TestDialog">[docs]</a><span class="k">class</span> <span class="nc">TestDialog</span><span class="p">(</span><span class="n">TestWindow</span><span class="p">):</span>
+
+<div class="viewcode-block" id="TestDialog"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.dialog.TestDialog.html#enaml.tests.components.dialog.TestDialog">[docs]</a><span class="k">class</span> <span class="nc">TestDialog</span><span class="p">(</span><span class="n">TestWindow</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Logic for testing Dialogs.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="TestDialog.setUp"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.dialog.TestDialog.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestDialog.setUp"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.dialog.TestDialog.html#enaml.tests.components.dialog.TestDialog.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Set up Dialog tests.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -117,13 +117,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">event_log</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">component</span><span class="o">.</span><span class="n">on_trait_change</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_append_event_handler</span><span class="p">,</span> <span class="s">&#39;anytrait&#39;</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="TestDialog.test_initial_active"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.dialog.TestDialog.test_initial_active">[docs]</a>    <span class="k">def</span> <span class="nf">test_initial_active</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestDialog.test_initial_active"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.dialog.TestDialog.html#enaml.tests.components.dialog.TestDialog.test_initial_active">[docs]</a>    <span class="k">def</span> <span class="nf">test_initial_active</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Test the initial value of the active flag on the Dialog.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEquals</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">component</span><span class="o">.</span><span class="n">active</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
     </div>
-<div class="viewcode-block" id="TestDialog.test_result_value"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.dialog.TestDialog.test_result_value">[docs]</a>    <span class="k">def</span> <span class="nf">test_result_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestDialog.test_result_value"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.dialog.TestDialog.html#enaml.tests.components.dialog.TestDialog.test_result_value">[docs]</a>    <span class="k">def</span> <span class="nf">test_result_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Test the modification of the result value.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -133,7 +133,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">component</span><span class="o">.</span><span class="n">reject</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEquals</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">component</span><span class="o">.</span><span class="n">result</span><span class="p">,</span> <span class="s">&#39;rejected&#39;</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="TestDialog.test_show_close"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.dialog.TestDialog.test_show_close">[docs]</a>    <span class="k">def</span> <span class="nf">test_show_close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestDialog.test_show_close"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.dialog.TestDialog.html#enaml.tests.components.dialog.TestDialog.test_show_close">[docs]</a>    <span class="k">def</span> <span class="nf">test_show_close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Test the behavior when showing and closing the dialog.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -171,12 +171,12 @@
         <span class="p">]))</span>
 </div>
     <span class="nd">@required_method</span>
-<div class="viewcode-block" id="TestDialog.disable_showing"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.dialog.TestDialog.disable_showing">[docs]</a>    <span class="k">def</span> <span class="nf">disable_showing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">disable_showing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Disable the actual display of the dialog window.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
-</div>
+
     <span class="k">def</span> <span class="nf">_append_event_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">object</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Append the trait change notification to the event log.</span>
 
@@ -206,7 +206,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.tests.components.dialog</a></li>
@@ -216,7 +216,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

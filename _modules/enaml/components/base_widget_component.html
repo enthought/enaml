@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.components.base_widget_component &mdash; enaml 0.2beta-1 documentation</title>
+    <title>enaml.components.base_widget_component &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.components.base_widget_component</a></li>
@@ -89,7 +89,7 @@
 <span class="kn">from</span> <span class="nn">..core.base_component</span> <span class="kn">import</span> <span class="n">BaseComponent</span>
 
 
-<div class="viewcode-block" id="AbstractTkBaseWidgetComponent"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.base_widget_component.AbstractTkBaseWidgetComponent">[docs]</a><span class="k">class</span> <span class="nc">AbstractTkBaseWidgetComponent</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">AbstractTkBaseWidgetComponent</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; The abstract toolkit BaseWidgetComponent interface.</span>
 
 <span class="sd">    A toolkit component is responsible for handling changes on a shell </span>
@@ -100,15 +100,15 @@
     <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">ABCMeta</span>
     
     <span class="nd">@abstractproperty</span>
-<div class="viewcode-block" id="AbstractTkBaseWidgetComponent.toolkit_widget"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.base_widget_component.AbstractTkBaseWidgetComponent.toolkit_widget">[docs]</a>    <span class="k">def</span> <span class="nf">toolkit_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">toolkit_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; An abstract property that should return the gui toolkit </span>
 <span class="sd">        widget being managed by the object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractproperty</span>
-<div class="viewcode-block" id="AbstractTkBaseWidgetComponent.shell_obj"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.base_widget_component.AbstractTkBaseWidgetComponent.shell_obj">[docs]</a>    <span class="k">def</span> <span class="nf">shell_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; An abstract property that should *get* and *set* a reference</span>
 <span class="sd">        to the shell object (an instance of Component). </span>
 
@@ -117,9 +117,9 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkBaseWidgetComponent.create"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.base_widget_component.AbstractTkBaseWidgetComponent.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Create the underlying implementation object. </span>
 
 <span class="sd">        This method is called after the reference to the shell object</span>
@@ -135,9 +135,9 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-    </div>
+    
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkBaseWidgetComponent.initialize"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.base_widget_component.AbstractTkBaseWidgetComponent.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Initialize the implementation object.</span>
 
 <span class="sd">        This method is called after &#39;create&#39; in depth-first order. This</span>
@@ -152,9 +152,9 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkBaseWidgetComponent.bind"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.base_widget_component.AbstractTkBaseWidgetComponent.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Called after &#39;initialize&#39; in order to bind event handlers.</span>
 
 <span class="sd">        At the time this method is called, the entire tree of ui</span>
@@ -170,9 +170,9 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkBaseWidgetComponent.destroy"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.base_widget_component.AbstractTkBaseWidgetComponent.destroy">[docs]</a>    <span class="k">def</span> <span class="nf">destroy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">destroy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Called when the underlying widget should be destroyed.</span>
 
 <span class="sd">        This method is called before the child shell object is removed</span>
@@ -186,8 +186,8 @@
 
 <span class="c">#------------------------------------------------------------------------------</span>
 <span class="c"># BaseWidgetComponent</span>
-<span class="c">#------------------------------------------------------------------------------</span></div></div>
-<div class="viewcode-block" id="BaseWidgetComponent"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.base_widget_component.BaseWidgetComponent">[docs]</a><span class="k">class</span> <span class="nc">BaseWidgetComponent</span><span class="p">(</span><span class="n">BaseComponent</span><span class="p">):</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="BaseWidgetComponent"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.base_widget_component.BaseWidgetComponent.html#enaml.components.base_widget_component.BaseWidgetComponent">[docs]</a><span class="k">class</span> <span class="nc">BaseWidgetComponent</span><span class="p">(</span><span class="n">BaseComponent</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A BaseComponent subclass which adds support for a gui toolkit </span>
 <span class="sd">    specific backend object. This class represents the most basic </span>
 <span class="sd">    component in Enaml that drives a gui toolkit object. The gui toolkit </span>
@@ -253,7 +253,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Teardown Methods</span>
     <span class="c">#--------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="BaseWidgetComponent.destroy"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.base_widget_component.BaseWidgetComponent.destroy">[docs]</a>    <span class="k">def</span> <span class="nf">destroy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseWidgetComponent.destroy"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.base_widget_component.BaseWidgetComponent.html#enaml.components.base_widget_component.BaseWidgetComponent.destroy">[docs]</a>    <span class="k">def</span> <span class="nf">destroy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Overridden parent class destruction method method that adds </span>
 <span class="sd">        additional logic to destroy the underlying toolkit widget. </span>
 
@@ -293,7 +293,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.components.base_widget_component</a></li>
@@ -303,7 +303,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

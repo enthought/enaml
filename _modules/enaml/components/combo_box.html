@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.components.combo_box &mdash; enaml 0.2beta-1 documentation</title>
+    <title>enaml.components.combo_box &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.components.combo_box</a></li>
@@ -91,28 +91,28 @@
 <span class="kn">from</span> <span class="nn">..core.trait_types</span> <span class="kn">import</span> <span class="n">EnamlEvent</span>
 
 
-<div class="viewcode-block" id="AbstractTkComboBox"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.combo_box.AbstractTkComboBox">[docs]</a><span class="k">class</span> <span class="nc">AbstractTkComboBox</span><span class="p">(</span><span class="n">AbstractTkControl</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">AbstractTkComboBox</span><span class="p">(</span><span class="n">AbstractTkControl</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; The abstract toolkit ComboBox interface.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkComboBox.shell_labels_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.combo_box.AbstractTkComboBox.shell_labels_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_labels_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_labels_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;labels&#39; attribute on the shell</span>
 <span class="sd">        object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkComboBox.shell_index_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.combo_box.AbstractTkComboBox.shell_index_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_index_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_index_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;index&#39; attribute on the shell</span>
 <span class="sd">        object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
-</div></div>
-<div class="viewcode-block" id="ComboBox"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.combo_box.ComboBox">[docs]</a><span class="k">class</span> <span class="nc">ComboBox</span><span class="p">(</span><span class="n">Control</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ComboBox"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.combo_box.ComboBox.html#enaml.components.combo_box.ComboBox">[docs]</a><span class="k">class</span> <span class="nc">ComboBox</span><span class="p">(</span><span class="n">Control</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A drop-down list from which one item can be selected at a time.</span>
 
 <span class="sd">    Use a combo box to select a single item from a collection of items.</span>
@@ -244,7 +244,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.components.combo_box</a></li>
@@ -254,7 +254,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

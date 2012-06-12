@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>More on Enaml Widgets &mdash; enaml 0.2beta-1 documentation</title>
+    <title>More on Enaml Widgets &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../index.html" />
     <link rel="up" title="Enaml Tutorials" href="tutorials_home.html" />
     <link rel="next" title="Examples Gallery" href="example.html" />
     <link rel="prev" title="More on Enaml Widgets" href="tut_more_widgets.html" /> 
@@ -51,7 +51,7 @@
         <li class="right" >
           <a href="tut_more_widgets.html" title="More on Enaml Widgets"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
           <li><a href="tutorials_home.html" accesskey="U">Enaml Tutorials</a> &raquo;</li>
   
@@ -146,8 +146,8 @@ enamldef EmployerForm(Form):
 Previously all of our <tt class="docutils literal"><span class="pre">enamldef</span></tt> operations had used <tt class="docutils literal"><span class="pre">MainWindow</span></tt> as the
 widget that was being extended, but here we are using <tt class="docutils literal"><span class="pre">Form</span></tt>.  Any widget can
 be used as the basis for another in an <tt class="docutils literal"><span class="pre">enamldef</span></tt> command, so you can create
-your own custom, re-usable <tt class="docutils literal"><span class="pre">Label``s,</span> <span class="pre">``Field``s,</span> <span class="pre">``PushButton``s,</span> <span class="pre">etc.</span> <span class="pre">using</span>
-<span class="pre">``enamldef</span></tt>.</p>
+your own custom, re-usable versions of <tt class="docutils literal"><span class="pre">Label</span></tt>, <tt class="docutils literal"><span class="pre">Field</span></tt>, <tt class="docutils literal"><span class="pre">PushButton</span></tt>,
+etc. using <tt class="docutils literal"><span class="pre">enamldef</span></tt>.</p>
 <p>Having defined the two forms, there is a third definition in the .enaml file:</p>
 <div class="highlight-python"><pre>enamldef EmployeeView(MainWindow):
     id: main
@@ -326,8 +326,7 @@ Form widget to see the basics of how to do this.</p>
 <h2>Other Things to Note<a class="headerlink" href="#other-things-to-note" title="Permalink to this headline">¶</a></h2>
 <p>In this example you also see a number of different widget types that we have not
 seen before:</p>
-<blockquote>
-<div><dl class="docutils">
+<dl class="docutils">
 <dt>DateEdit:</dt>
 <dd>This is a field type designed for editing Python <tt class="docutils literal"><span class="pre">datetime.date</span></tt>
 objects.</dd>
@@ -338,7 +337,6 @@ objects.</dd>
 False, but instead it looks like a push button.  The button highlights
 when it is True.</dd>
 </dl>
-</div></blockquote>
 <p>Additionally, the Password field shows how to set a field to hide the text
 being entered, as you would normally want for a password entry field.</p>
 </div>
@@ -368,7 +366,7 @@ being entered, as you would normally want for a password entry field.</p>
         <li class="right" >
           <a href="tut_more_widgets.html" title="More on Enaml Widgets"
              >previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
           <li><a href="tutorials_home.html" >Enaml Tutorials</a> &raquo;</li>
   
@@ -379,7 +377,7 @@ being entered, as you would normally want for a password entry field.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

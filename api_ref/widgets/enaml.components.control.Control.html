@@ -1,0 +1,235 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Control &mdash; enaml 0.2alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.2alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../index.html" />
+    <link rel="up" title="Widgets" href="../enaml.widgets.html" />
+    <link rel="next" title="ToggleControl" href="enaml.components.toggle_control.ToggleControl.html" />
+    <link rel="prev" title="LayoutTaskHandler" href="enaml.components.layout_task_handler.LayoutTaskHandler.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.components.toggle_control.ToggleControl.html" title="ToggleControl"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="enaml.components.layout_task_handler.LayoutTaskHandler.html" title="LayoutTaskHandler"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" accesskey="U">Widgets</a> &raquo;</li>
+  
+    <li><a href="#">Control</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Control</a><ul>
+<li><a class="reference internal" href="#backends">Backends</a><ul>
+<li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/api_ref/widgets/enaml.components.control.Control.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="control">
+<h1>Control<a class="headerlink" href="#control" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="enaml.components.control.Control">
+<em class="property">class </em><tt class="descclassname">enaml.components.control.</tt><tt class="descname">Control</tt><a class="reference internal" href="../../_modules/enaml/components/control.html#Control"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.control.Control" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.components.constraints_widget.ConstraintsWidget.html#enaml.components.constraints_widget.ConstraintsWidget" title="enaml.components.constraints_widget.ConstraintsWidget"><tt class="xref py py-class docutils literal"><span class="pre">enaml.components.constraints_widget.ConstraintsWidget</span></tt></a></p>
+<p>The base class of all leaf widgets in Enaml.</p>
+<dl class="attribute">
+<dt id="enaml.components.control.Control.error">
+<tt class="descname">error</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.control.Control.error" title="Permalink to this definition">¶</a></dt>
+<dd><p>A boolean which indicates whether an exception was raised through
+user interaction or setting a value trait on the Control.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.control.Control.exception">
+<tt class="descname">exception</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.control.Control.exception" title="Permalink to this definition">¶</a></dt>
+<dd><p>The exception object that was raised to create the error state.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.control.Control.abstract_obj">
+<tt class="descname">abstract_obj</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.control.Control.abstract_obj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden parent class trait</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.components.control.Control.capture_exceptions">
+<tt class="descname">capture_exceptions</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/components/control.html#Control.capture_exceptions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.control.Control.capture_exceptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a ShellExceptionContext that will capture error state 
+automatically.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.components.control.Control.capture_notification_exceptions">
+<tt class="descname">capture_notification_exceptions</tt><big>(</big><em>handler=None</em>, <em>reraise_exceptions=True</em>, <em>main=False</em>, <em>locked=False</em><big>)</big><a class="reference internal" href="../../_modules/enaml/components/control.html#Control.capture_notification_exceptions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.control.Control.capture_notification_exceptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a ShellNotificationContext that will set error state 
+automatically, including TraitErrors in listeners.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.control.Control.__implements__">
+<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.components.control.Control.__implements__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="backends">
+<h2>Backends<a class="headerlink" href="#backends" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="qt">
+<h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-81d32b44efe7d31b3b44722ed5f2d1e260f6cc17.png" alt="Inheritance diagram of enaml.backends.qt.qt_control.QtControl" usemap="#inheritance8442d7e32a" class="inheritance"/>
+<map id="inheritance8442d7e32a" name="inheritance8442d7e32a">
+<area shape="rect" id="node7" href="enaml.components.constraints_widget.ConstraintsWidget.html#enaml.backends.qt.qt_constraints_widget.QtConstraintsWidget" title="QtConstraintsWidget" alt="" coords="564,41,672,61"/>
+<area shape="rect" id="node11" href="enaml.components.widget_component.WidgetComponent.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent" title="QtWidgetComponent" alt="" coords="404,41,512,61"/>
+<area shape="rect" id="node14" href="enaml.components.base_widget_component.BaseWidgetComponent.html#enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent" title="QtBaseWidgetComponent" alt="" coords="213,41,342,61"/>
+<area shape="rect" id="node6" href="#enaml.backends.qt.qt_control.QtControl" title="QtControl" alt="" coords="705,22,764,43"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.backends.qt.qt_control.QtControl">
+<em class="property">class </em><tt class="descclassname">enaml.backends.qt.qt_control.</tt><tt class="descname">QtControl</tt><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_control.html#QtControl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_control.QtControl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.components.constraints_widget.ConstraintsWidget.html#enaml.backends.qt.qt_constraints_widget.QtConstraintsWidget" title="enaml.backends.qt.qt_constraints_widget.QtConstraintsWidget"><tt class="xref py py-class docutils literal"><span class="pre">enaml.backends.qt.qt_constraints_widget.QtConstraintsWidget</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.components.control.AbstractTkControl</span></tt></p>
+<p>A Qt4 implementation of Control.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="wx">
+<h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-bb8552855882ab43ac6b55605a820eb68e827660.png" alt="Inheritance diagram of enaml.backends.wx.wx_control.WXControl" usemap="#inheritance559cb18b37" class="inheritance"/>
+<map id="inheritance559cb18b37" name="inheritance559cb18b37">
+<area shape="rect" id="node1" href="enaml.components.constraints_widget.ConstraintsWidget.html#enaml.backends.wx.wx_constraints_widget.WXConstraintsWidget" title="WXConstraintsWidget" alt="" coords="559,4,669,24"/>
+<area shape="rect" id="node14" href="#enaml.backends.wx.wx_control.WXControl" title="WXControl" alt="" coords="702,22,764,42"/>
+<area shape="rect" id="node2" href="enaml.components.widget_component.WidgetComponent.html#enaml.backends.wx.wx_widget_component.WXWidgetComponent" title="WXWidgetComponent" alt="" coords="398,4,509,24"/>
+<area shape="rect" id="node8" href="enaml.components.base_widget_component.BaseWidgetComponent.html#enaml.backends.wx.wx_base_widget_component.WXBaseWidgetComponent" title="WXBaseWidgetComponent" alt="" coords="210,4,340,24"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.backends.wx.wx_control.WXControl">
+<em class="property">class </em><tt class="descclassname">enaml.backends.wx.wx_control.</tt><tt class="descname">WXControl</tt><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_control.html#WXControl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_control.WXControl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.components.constraints_widget.ConstraintsWidget.html#enaml.backends.wx.wx_constraints_widget.WXConstraintsWidget" title="enaml.backends.wx.wx_constraints_widget.WXConstraintsWidget"><tt class="xref py py-class docutils literal"><span class="pre">enaml.backends.wx.wx_constraints_widget.WXConstraintsWidget</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.components.control.AbstractTkControl</span></tt></p>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.components.toggle_control.ToggleControl.html" title="ToggleControl"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="enaml.components.layout_task_handler.LayoutTaskHandler.html" title="LayoutTaskHandler"
+             >previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" >Widgets</a> &raquo;</li>
+  
+    <li><a href="#">Control</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Jun 12, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

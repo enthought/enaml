@@ -1,0 +1,264 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>MenuBar &mdash; enaml 0.2alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.2alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../index.html" />
+    <link rel="up" title="Widgets" href="../enaml.widgets.html" />
+    <link rel="next" title="Menu" href="enaml.components.menu.Menu.html" />
+    <link rel="prev" title="TreeView" href="enaml.components.tree_view.TreeView.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.components.menu.Menu.html" title="Menu"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="enaml.components.tree_view.TreeView.html" title="TreeView"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" accesskey="U">Widgets</a> &raquo;</li>
+  
+    <li><a href="#">MenuBar</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">MenuBar</a><ul>
+<li><a class="reference internal" href="#backends">Backends</a><ul>
+<li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/api_ref/widgets/enaml.components.menu_bar.MenuBar.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="menubar">
+<h1>MenuBar<a class="headerlink" href="#menubar" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="enaml.components.menu_bar.MenuBar">
+<em class="property">class </em><tt class="descclassname">enaml.components.menu_bar.</tt><tt class="descname">MenuBar</tt><a class="reference internal" href="../../_modules/enaml/components/menu_bar.html#MenuBar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.menu_bar.MenuBar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.components.layout_task_handler.LayoutTaskHandler.html#enaml.components.layout_task_handler.LayoutTaskHandler" title="enaml.components.layout_task_handler.LayoutTaskHandler"><tt class="xref py py-class docutils literal"><span class="pre">enaml.components.layout_task_handler.LayoutTaskHandler</span></tt></a>, <a class="reference internal" href="enaml.components.widget_component.WidgetComponent.html#enaml.components.widget_component.WidgetComponent" title="enaml.components.widget_component.WidgetComponent"><tt class="xref py py-class docutils literal"><span class="pre">enaml.components.widget_component.WidgetComponent</span></tt></a></p>
+<p>A declarative Enaml Component which represents a menu bar in
+a main window.</p>
+<dl class="attribute">
+<dt id="enaml.components.menu_bar.MenuBar.menus">
+<tt class="descname">menus</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.menu_bar.MenuBar.menus" title="Permalink to this definition">¶</a></dt>
+<dd><p>A read-only cached property which holds the list of children
+which are instances of Menu.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.menu_bar.MenuBar.abstract_obj">
+<tt class="descname">abstract_obj</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.menu_bar.MenuBar.abstract_obj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden parent class trait</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.menu_bar.MenuBar.__implements__">
+<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.components.menu_bar.MenuBar.__implements__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="backends">
+<h2>Backends<a class="headerlink" href="#backends" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="qt">
+<h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-1582b3a47f8fee774652bf6e9017218d8165e5e6.png" alt="Inheritance diagram of enaml.backends.qt.qt_menu_bar.QtMenuBar" usemap="#inheritancef503f8f6bc" class="inheritance"/>
+<map id="inheritancef503f8f6bc" name="inheritancef503f8f6bc">
+<area shape="rect" id="node11" href="#enaml.backends.qt.qt_menu_bar.QtMenuBar" title="QtMenuBar" alt="" coords="680,29,763,55"/>
+<area shape="rect" id="node6" href="enaml.components.widget_component.WidgetComponent.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent" title="QtWidgetComponent" alt="" coords="496,52,636,79"/>
+<area shape="rect" id="node7" href="enaml.components.base_widget_component.BaseWidgetComponent.html#enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent" title="QtBaseWidgetComponent" alt="" coords="275,52,441,79"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.backends.qt.qt_menu_bar.QtMenuBar">
+<em class="property">class </em><tt class="descclassname">enaml.backends.qt.qt_menu_bar.</tt><tt class="descname">QtMenuBar</tt><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_menu_bar.html#QtMenuBar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_menu_bar.QtMenuBar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.components.widget_component.WidgetComponent.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent" title="enaml.backends.qt.qt_widget_component.QtWidgetComponent"><tt class="xref py py-class docutils literal"><span class="pre">enaml.backends.qt.qt_widget_component.QtWidgetComponent</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.components.menu_bar.AbstractTkMenuBar</span></tt></p>
+<p>A Qt4 implementation of a MenuBar.</p>
+<dl class="method">
+<dt id="enaml.backends.qt.qt_menu_bar.QtMenuBar.create">
+<tt class="descname">create</tt><big>(</big><em>parent</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_menu_bar.html#QtMenuBar.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_menu_bar.QtMenuBar.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the underlying QMenuBar.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_menu_bar.QtMenuBar.initialize">
+<tt class="descname">initialize</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_menu_bar.html#QtMenuBar.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_menu_bar.QtMenuBar.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes the QMenuBar.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_menu_bar.QtMenuBar.shell_menus_changed">
+<tt class="descname">shell_menus_changed</tt><big>(</big><em>menus</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_menu_bar.html#QtMenuBar.shell_menus_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_menu_bar.QtMenuBar.shell_menus_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the menu bar with the new list of menu objects.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_menu_bar.QtMenuBar.update_menus">
+<tt class="descname">update_menus</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_menu_bar.html#QtMenuBar.update_menus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_menu_bar.QtMenuBar.update_menus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the menu bar with the child menu objects.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="wx">
+<h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-cc8bcc9e641dfeb4f52e1a8326847c790d8a17e3.png" alt="Inheritance diagram of enaml.backends.wx.wx_menu_bar.WXMenuBar" usemap="#inheritance195d78469c" class="inheritance"/>
+<map id="inheritance195d78469c" name="inheritance195d78469c">
+<area shape="rect" id="node11" href="#enaml.backends.wx.wx_menu_bar.WXMenuBar" title="WXMenuBar" alt="" coords="677,28,763,54"/>
+<area shape="rect" id="node4" href="enaml.components.widget_component.WidgetComponent.html#enaml.backends.wx.wx_widget_component.WXWidgetComponent" title="WXWidgetComponent" alt="" coords="491,52,633,78"/>
+<area shape="rect" id="node5" href="enaml.components.base_widget_component.BaseWidgetComponent.html#enaml.backends.wx.wx_base_widget_component.WXBaseWidgetComponent" title="WXBaseWidgetComponent" alt="" coords="269,52,437,78"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.backends.wx.wx_menu_bar.WXMenuBar">
+<em class="property">class </em><tt class="descclassname">enaml.backends.wx.wx_menu_bar.</tt><tt class="descname">WXMenuBar</tt><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_menu_bar.html#WXMenuBar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_menu_bar.WXMenuBar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.components.widget_component.WidgetComponent.html#enaml.backends.wx.wx_widget_component.WXWidgetComponent" title="enaml.backends.wx.wx_widget_component.WXWidgetComponent"><tt class="xref py py-class docutils literal"><span class="pre">enaml.backends.wx.wx_widget_component.WXWidgetComponent</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.components.menu_bar.AbstractTkMenuBar</span></tt></p>
+<p>A Wx implementation of a MenuBar.</p>
+<dl class="method">
+<dt id="enaml.backends.wx.wx_menu_bar.WXMenuBar.create">
+<tt class="descname">create</tt><big>(</big><em>parent</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_menu_bar.html#WXMenuBar.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_menu_bar.WXMenuBar.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the underlying wxMenuBar.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_menu_bar.WXMenuBar.initialize">
+<tt class="descname">initialize</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_menu_bar.html#WXMenuBar.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_menu_bar.WXMenuBar.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes the wxMenuBar.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_menu_bar.WXMenuBar.shell_menus_changed">
+<tt class="descname">shell_menus_changed</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_menu_bar.html#WXMenuBar.shell_menus_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_menu_bar.WXMenuBar.shell_menus_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;menus&#8217; attribute on the shell
+object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_menu_bar.WXMenuBar.update_menus">
+<tt class="descname">update_menus</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_menu_bar.html#WXMenuBar.update_menus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_menu_bar.WXMenuBar.update_menus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the menu bar with the child menu objects.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.components.menu.Menu.html" title="Menu"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="enaml.components.tree_view.TreeView.html" title="TreeView"
+             >previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" >Widgets</a> &raquo;</li>
+  
+    <li><a href="#">MenuBar</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Jun 12, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

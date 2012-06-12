@@ -1,0 +1,338 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>TestSlider &mdash; enaml 0.2alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.2alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../index.html" />
+    <link rel="up" title="Component Testing" href="../components.html" />
+    <link rel="next" title="TestSpinBox" href="enaml.tests.components.spin_box.TestSpinBox.html" />
+    <link rel="prev" title="TestRowSelectionModel" href="enaml.tests.components.selection_models.TestRowSelectionModel.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.tests.components.spin_box.TestSpinBox.html" title="TestSpinBox"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="enaml.tests.components.selection_models.TestRowSelectionModel.html" title="TestRowSelectionModel"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Developer&#8217;s Guide</a> &raquo;</li>
+          <li><a href="../../enaml.tests.html" >Enaml Testing</a> &raquo;</li>
+          <li><a href="../components.html" accesskey="U">Component Testing</a> &raquo;</li>
+  
+    <li><a href="#">TestSlider</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../_sources/developer_guide/tests/widgets/enaml.tests.components.slider.TestSlider.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="testslider">
+<h1>TestSlider<a class="headerlink" href="#testslider" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="enaml.tests.components.slider.TestSlider">
+<em class="property">class </em><tt class="descclassname">enaml.tests.components.slider.</tt><tt class="descname">TestSlider</tt><big>(</big><em>methodName='runTest'</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/slider.html#TestSlider"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.slider.TestSlider" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../components.html#enaml.tests.components.enaml_test_case.EnamlTestCase" title="enaml.tests.components.enaml_test_case.EnamlTestCase"><tt class="xref py py-class docutils literal"><span class="pre">enaml.tests.components.enaml_test_case.EnamlTestCase</span></tt></a></p>
+<p>Logic for testing sliders.</p>
+<p>Tooklit testcases need to provide the following methods</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="57%" />
+<col width="43%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Methods</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><tt class="xref py py-meth docutils literal"><span class="pre">get_value(self,</span> <span class="pre">widget)</span></tt></td>
+<td>Get the Slider&#8217;s value.</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-meth docutils literal"><span class="pre">get_tick_interval(self,</span> <span class="pre">widget)</span></tt></td>
+<td>Get the Slider&#8217;s tick_interval value.</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-meth docutils literal"><span class="pre">get_tick_position(self,</span> <span class="pre">widget)</span></tt></td>
+<td>Get the Slider&#8217;s tick position style.</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-meth docutils literal"><span class="pre">get_orientation(self,</span> <span class="pre">widget)</span></tt></td>
+<td>Get the Slider&#8217;s orientation.</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-meth docutils literal"><span class="pre">get_single_step(self,</span> <span class="pre">widget)</span></tt></td>
+<td>Get the Slider&#8217;s single step value.</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-meth docutils literal"><span class="pre">get_page_step(self,</span> <span class="pre">widget)</span></tt></td>
+<td>Get the Slider&#8217;s page step value.</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-meth docutils literal"><span class="pre">get_tracking(self,</span> <span class="pre">widget)</span></tt></td>
+<td>Get the Slider&#8217;s tracking status.</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-meth docutils literal"><span class="pre">send_event(self,</span> <span class="pre">widget,</span> <span class="pre">event)</span></tt></td>
+<td>Send an event to the Slider programmatically.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="enaml.tests.components.slider.TestSlider.setUp">
+<tt class="descname">setUp</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/slider.html#TestSlider.setUp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.slider.TestSlider.setUp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set up before the spin box tests.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.components.slider.TestSlider.test_initial_attributes">
+<tt class="descname">test_initial_attributes</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/slider.html#TestSlider.test_initial_attributes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.slider.TestSlider.test_initial_attributes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compare the Enaml Slider&#8217;s attributes with its toolkit widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.components.slider.TestSlider.test_tracking_attribute">
+<tt class="descname">test_tracking_attribute</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/slider.html#TestSlider.test_tracking_attribute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.slider.TestSlider.test_tracking_attribute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test accesing tracking attribute.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.components.slider.TestSlider.test_change_maximum">
+<tt class="descname">test_change_maximum</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/slider.html#TestSlider.test_change_maximum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.slider.TestSlider.test_change_maximum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test changing the maximum range of the slider.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.components.slider.TestSlider.test_change_minimum">
+<tt class="descname">test_change_minimum</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/slider.html#TestSlider.test_change_minimum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.slider.TestSlider.test_change_minimum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test changing the minimum range of the slider.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.components.slider.TestSlider.test_change_maximum_invalid">
+<tt class="descname">test_change_maximum_invalid</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/slider.html#TestSlider.test_change_maximum_invalid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.slider.TestSlider.test_change_maximum_invalid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test attempting to set an invalid value to the maximum range
+of the slider.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.components.slider.TestSlider.test_change_minimum_invalid">
+<tt class="descname">test_change_minimum_invalid</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/slider.html#TestSlider.test_change_minimum_invalid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.slider.TestSlider.test_change_minimum_invalid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test attempting to set an invalid value to the minimum range
+of the slider.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.components.slider.TestSlider.test_change_maximum_and_value">
+<tt class="descname">test_change_maximum_and_value</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/slider.html#TestSlider.test_change_maximum_and_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.slider.TestSlider.test_change_maximum_and_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test setting maximum while the value is out of range.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.components.slider.TestSlider.test_change_minimum_and_value">
+<tt class="descname">test_change_minimum_and_value</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/slider.html#TestSlider.test_change_minimum_and_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.slider.TestSlider.test_change_minimum_and_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test setting minimum while the value is out of range.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.components.slider.TestSlider.test_value_change">
+<tt class="descname">test_value_change</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/slider.html#TestSlider.test_value_change"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.slider.TestSlider.test_value_change" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test changing the value programmaticaly.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.components.slider.TestSlider.test_invalid_value_change">
+<tt class="descname">test_invalid_value_change</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/slider.html#TestSlider.test_invalid_value_change"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.slider.TestSlider.test_invalid_value_change" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test changing the position with the an invalid value</p>
+<p>when invalid, check that it has not changed the values and the
+errors are updated.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.components.slider.TestSlider.test_orientation_setting">
+<tt class="descname">test_orientation_setting</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/slider.html#TestSlider.test_orientation_setting"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.slider.TestSlider.test_orientation_setting" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test changing the widget orientation</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.components.slider.TestSlider.test_tick_position_setting">
+<tt class="descname">test_tick_position_setting</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/slider.html#TestSlider.test_tick_position_setting"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.slider.TestSlider.test_tick_position_setting" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test changing the widget tickposition</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.components.slider.TestSlider.test_incompatible_tick_position">
+<tt class="descname">test_incompatible_tick_position</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/slider.html#TestSlider.test_incompatible_tick_position"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.slider.TestSlider.test_incompatible_tick_position" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that changing tick position is addapted if the orientation
+is not compatible.</p>
+<p>This is in sync with how the QSlider behaves.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.components.slider.TestSlider.test_changing_orientaion_tick_policy">
+<tt class="descname">test_changing_orientaion_tick_policy</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/slider.html#TestSlider.test_changing_orientaion_tick_policy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.slider.TestSlider.test_changing_orientaion_tick_policy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that the ticks follow the orientation changes</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.components.slider.TestSlider.test_pressing_the_thumb">
+<tt class="descname">test_pressing_the_thumb</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/slider.html#TestSlider.test_pressing_the_thumb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.slider.TestSlider.test_pressing_the_thumb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test firing events when the thumb is pressed down.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.components.slider.TestSlider.test_releasing_the_thumb">
+<tt class="descname">test_releasing_the_thumb</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/slider.html#TestSlider.test_releasing_the_thumb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.slider.TestSlider.test_releasing_the_thumb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test firing events when the thumb is released.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.components.slider.TestSlider.test_moving_the_thumb_programmaticaly">
+<tt class="descname">test_moving_the_thumb_programmaticaly</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/slider.html#TestSlider.test_moving_the_thumb_programmaticaly"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.slider.TestSlider.test_moving_the_thumb_programmaticaly" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test firing events when the thumb is moved (programmatically).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.components.slider.TestSlider.test_move_to_home">
+<tt class="descname">test_move_to_home</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/slider.html#TestSlider.test_move_to_home"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.slider.TestSlider.test_move_to_home" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test firing events and value when the thumb is moved to home.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.components.slider.TestSlider.test_move_to_end">
+<tt class="descname">test_move_to_end</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/slider.html#TestSlider.test_move_to_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.slider.TestSlider.test_move_to_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test firing events and value when the thumb is moved to end.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.components.slider.TestSlider.test_move_down_by_one_step">
+<tt class="descname">test_move_down_by_one_step</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/slider.html#TestSlider.test_move_down_by_one_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.slider.TestSlider.test_move_down_by_one_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test firing events and value when the thumb is moved by one
+step down.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.components.slider.TestSlider.test_move_up_by_one_step">
+<tt class="descname">test_move_up_by_one_step</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/slider.html#TestSlider.test_move_up_by_one_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.slider.TestSlider.test_move_up_by_one_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test firing events and value when the thumb is moved by one
+step up.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.components.slider.TestSlider.test_move_down_by_one_page">
+<tt class="descname">test_move_down_by_one_page</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/slider.html#TestSlider.test_move_down_by_one_page"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.slider.TestSlider.test_move_down_by_one_page" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test firing events and value when the thumb is moved by one
+page down.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.components.slider.TestSlider.test_move_up_by_one_page">
+<tt class="descname">test_move_up_by_one_page</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/slider.html#TestSlider.test_move_up_by_one_page"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.slider.TestSlider.test_move_up_by_one_page" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test firing events and value when the thumb is moved by one
+page up.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.tests.components.spin_box.TestSpinBox.html" title="TestSpinBox"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="enaml.tests.components.selection_models.TestRowSelectionModel.html" title="TestRowSelectionModel"
+             >previous</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Developer&#8217;s Guide</a> &raquo;</li>
+          <li><a href="../../enaml.tests.html" >Enaml Testing</a> &raquo;</li>
+          <li><a href="../components.html" >Component Testing</a> &raquo;</li>
+  
+    <li><a href="#">TestSlider</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Jun 12, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

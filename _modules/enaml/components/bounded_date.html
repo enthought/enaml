@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.components.bounded_date &mdash; enaml 0.2beta-1 documentation</title>
+    <title>enaml.components.bounded_date &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.components.bounded_date</a></li>
@@ -92,36 +92,36 @@
 <span class="kn">from</span> <span class="nn">..core.trait_types</span> <span class="kn">import</span> <span class="n">Bounded</span>
 
 
-<div class="viewcode-block" id="AbstractTkBoundedDate"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.bounded_date.AbstractTkBoundedDate">[docs]</a><span class="k">class</span> <span class="nc">AbstractTkBoundedDate</span><span class="p">(</span><span class="n">AbstractTkControl</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">AbstractTkBoundedDate</span><span class="p">(</span><span class="n">AbstractTkControl</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; The abstract toolkit BoundedDate interface.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkBoundedDate.shell_date_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.bounded_date.AbstractTkBoundedDate.shell_date_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_date_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_date_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;date&#39; attribute on the shell</span>
 <span class="sd">        object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkBoundedDate.shell_min_date_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.bounded_date.AbstractTkBoundedDate.shell_min_date_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_min_date_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_date</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_min_date_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_date</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;min_date&#39; attribute on the shell</span>
 <span class="sd">        object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkBoundedDate.shell_max_date_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.bounded_date.AbstractTkBoundedDate.shell_max_date_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_max_date_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_date</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_max_date_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_date</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;max_date&#39; attribute on the shell</span>
 <span class="sd">        object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
-</div></div>
-<div class="viewcode-block" id="BoundedDate"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.bounded_date.BoundedDate">[docs]</a><span class="k">class</span> <span class="nc">BoundedDate</span><span class="p">(</span><span class="n">Control</span><span class="p">):</span>
+
+<div class="viewcode-block" id="BoundedDate"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.bounded_date.BoundedDate.html#enaml.components.bounded_date.BoundedDate">[docs]</a><span class="k">class</span> <span class="nc">BoundedDate</span><span class="p">(</span><span class="n">Control</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A base class for use with widgets that edit a Python </span>
 <span class="sd">    datetime.date object bounded between minimum and maximum </span>
 <span class="sd">    values. This class is not meant to be used directly.</span>
@@ -220,7 +220,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.components.bounded_date</a></li>
@@ -230,7 +230,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

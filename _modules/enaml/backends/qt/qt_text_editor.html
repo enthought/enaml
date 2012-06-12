@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.backends.qt.qt_text_editor &mdash; enaml 0.2beta-1 documentation</title>
+    <title>enaml.backends.qt.qt_text_editor &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../../index.html" />
     <link rel="up" title="Module code" href="../../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.backends.qt.qt_text_editor</a></li>
@@ -89,32 +89,32 @@
 <span class="kn">from</span> <span class="nn">...guard</span> <span class="kn">import</span> <span class="n">guard</span>
 
 
-<div class="viewcode-block" id="QtEnamlPlainTextEdit"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_text_editor.QtEnamlPlainTextEdit">[docs]</a><span class="k">class</span> <span class="nc">QtEnamlPlainTextEdit</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QPlainTextEdit</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">QtEnamlPlainTextEdit</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QPlainTextEdit</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A QLineEdit subclass which converts a lost focus event into</span>
 <span class="sd">    a lost focus signal.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">lostFocus</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">()</span>
 
-<div class="viewcode-block" id="QtEnamlPlainTextEdit.focusOutEvent"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_text_editor.QtEnamlPlainTextEdit.focusOutEvent">[docs]</a>    <span class="k">def</span> <span class="nf">focusOutEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">focusOutEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lostFocus</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">QtEnamlPlainTextEdit</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">focusOutEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
 
-</div></div>
-<div class="viewcode-block" id="QtTextEditor"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_text_editor.QtTextEditor">[docs]</a><span class="k">class</span> <span class="nc">QtTextEditor</span><span class="p">(</span><span class="n">QtControl</span><span class="p">,</span> <span class="n">AbstractTkTextEditor</span><span class="p">):</span>
+
+<div class="viewcode-block" id="QtTextEditor"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.text_editor.TextEditor.html#enaml.backends.qt.qt_text_editor.QtTextEditor">[docs]</a><span class="k">class</span> <span class="nc">QtTextEditor</span><span class="p">(</span><span class="n">QtControl</span><span class="p">,</span> <span class="n">AbstractTkTextEditor</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A Qt4 implementation of a TextEditor.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># SetupMethods</span>
     <span class="c">#--------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="QtTextEditor.create"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_text_editor.QtTextEditor.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+<div class="viewcode-block" id="QtTextEditor.create"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.text_editor.TextEditor.html#enaml.backends.qt.qt_text_editor.QtTextEditor.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Creates the underlying QTextEditor.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">QtEnamlPlainTextEdit</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtTextEditor.initialize"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_text_editor.QtTextEditor.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtTextEditor.initialize"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.text_editor.TextEditor.html#enaml.backends.qt.qt_text_editor.QtTextEditor.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Initializes the attributes of the Qt widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -127,7 +127,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">set_wrap_lines</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">wrap_lines</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_overwrite</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">overwrite</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtTextEditor.bind"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_text_editor.QtTextEditor.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtTextEditor.bind"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.text_editor.TextEditor.html#enaml.backends.qt.qt_text_editor.QtTextEditor.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Binds the event handlers for the QLineEdit.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -141,14 +141,14 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Implementation</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="QtTextEditor.shell_read_only_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_text_editor.QtTextEditor.shell_read_only_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_read_only_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">read_only</span><span class="p">):</span>
+<div class="viewcode-block" id="QtTextEditor.shell_read_only_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.text_editor.TextEditor.html#enaml.backends.qt.qt_text_editor.QtTextEditor.shell_read_only_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_read_only_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">read_only</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;read_only&#39; attribute on the</span>
 <span class="sd">        parent.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_read_only</span><span class="p">(</span><span class="n">read_only</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtTextEditor.shell_cursor_position_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_text_editor.QtTextEditor.shell_cursor_position_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_cursor_position_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cursor_position</span><span class="p">):</span>
+<div class="viewcode-block" id="QtTextEditor.shell_cursor_position_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.text_editor.TextEditor.html#enaml.backends.qt.qt_text_editor.QtTextEditor.shell_cursor_position_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_cursor_position_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cursor_position</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;cursor_position&#39; attribute on </span>
 <span class="sd">        the parent.</span>
 
@@ -156,7 +156,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">guard</span><span class="o">.</span><span class="n">guarded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;setting_cursor&#39;</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">set_cursor_position</span><span class="p">(</span><span class="n">cursor_position</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtTextEditor.shell_anchor_position_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_text_editor.QtTextEditor.shell_anchor_position_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_anchor_position_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">anchor_position</span><span class="p">):</span>
+<div class="viewcode-block" id="QtTextEditor.shell_anchor_position_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.text_editor.TextEditor.html#enaml.backends.qt.qt_text_editor.QtTextEditor.shell_anchor_position_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_anchor_position_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">anchor_position</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;anchor_position&#39; attribute on </span>
 <span class="sd">        the parent.</span>
 
@@ -164,21 +164,21 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">guard</span><span class="o">.</span><span class="n">guarded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;setting_cursor&#39;</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">set_anchor_position</span><span class="p">(</span><span class="n">anchor_position</span><span class="p">)</span>
     </div>
-<div class="viewcode-block" id="QtTextEditor.shell_overwrite_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_text_editor.QtTextEditor.shell_overwrite_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_overwrite_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">):</span>
+<div class="viewcode-block" id="QtTextEditor.shell_overwrite_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.text_editor.TextEditor.html#enaml.backends.qt.qt_text_editor.QtTextEditor.shell_overwrite_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_overwrite_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;overwrite&#39; attribute on the </span>
 <span class="sd">        parent.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_overwrite</span><span class="p">(</span><span class="n">overwrite</span><span class="p">)</span>
     </div>
-<div class="viewcode-block" id="QtTextEditor.shell_wrap_lines_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_text_editor.QtTextEditor.shell_wrap_lines_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_wrap_lines_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrap_lines</span><span class="p">):</span>
+<div class="viewcode-block" id="QtTextEditor.shell_wrap_lines_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.text_editor.TextEditor.html#enaml.backends.qt.qt_text_editor.QtTextEditor.shell_wrap_lines_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_wrap_lines_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrap_lines</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;wrap_lines&#39; attribute on the </span>
 <span class="sd">        parent.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_wrap_lines</span><span class="p">(</span><span class="n">wrap_lines</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtTextEditor.set_selection"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_text_editor.QtTextEditor.set_selection">[docs]</a>    <span class="k">def</span> <span class="nf">set_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
+<div class="viewcode-block" id="QtTextEditor.set_selection"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.text_editor.TextEditor.html#enaml.backends.qt.qt_text_editor.QtTextEditor.set_selection">[docs]</a>    <span class="k">def</span> <span class="nf">set_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the selection in the widget between the start and </span>
 <span class="sd">        end positions, inclusive.</span>
 
@@ -189,7 +189,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setTextCursor</span><span class="p">(</span><span class="n">cursor</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_shell_selection</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="QtTextEditor.select_all"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_text_editor.QtTextEditor.select_all">[docs]</a>    <span class="k">def</span> <span class="nf">select_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtTextEditor.select_all"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.text_editor.TextEditor.html#enaml.backends.qt.qt_text_editor.QtTextEditor.select_all">[docs]</a>    <span class="k">def</span> <span class="nf">select_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Select all the text in the line edit.</span>
 
 <span class="sd">        If there is no text in the line edit, the selection will be</span>
@@ -199,7 +199,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">selectAll</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_shell_selection</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="QtTextEditor.deselect"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_text_editor.QtTextEditor.deselect">[docs]</a>    <span class="k">def</span> <span class="nf">deselect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtTextEditor.deselect"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.text_editor.TextEditor.html#enaml.backends.qt.qt_text_editor.QtTextEditor.deselect">[docs]</a>    <span class="k">def</span> <span class="nf">deselect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Deselect any selected text.</span>
 
 <span class="sd">        Sets a selection with start == stop to deselect the current</span>
@@ -210,14 +210,14 @@
         <span class="n">cursor</span><span class="o">.</span><span class="n">clearSelection</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_shell_selection</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="QtTextEditor.clear"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_text_editor.QtTextEditor.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtTextEditor.clear"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.text_editor.TextEditor.html#enaml.backends.qt.qt_text_editor.QtTextEditor.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Clear the line edit of all text.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_shell_selection</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="QtTextEditor.backspace"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_text_editor.QtTextEditor.backspace">[docs]</a>    <span class="k">def</span> <span class="nf">backspace</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtTextEditor.backspace"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.text_editor.TextEditor.html#enaml.backends.qt.qt_text_editor.QtTextEditor.backspace">[docs]</a>    <span class="k">def</span> <span class="nf">backspace</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Simple backspace functionality.</span>
 
 <span class="sd">        If no text is selected, deletes the character to the left of </span>
@@ -228,7 +228,7 @@
         <span class="n">cursor</span><span class="o">.</span><span class="n">deletePreviousChar</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_shell_selection</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="QtTextEditor.delete"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_text_editor.QtTextEditor.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtTextEditor.delete"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.text_editor.TextEditor.html#enaml.backends.qt.qt_text_editor.QtTextEditor.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Simple delete functionality.</span>
 
 <span class="sd">        If no text is selected, deletes the character to the right of </span>
@@ -239,7 +239,7 @@
         <span class="n">cursor</span><span class="o">.</span><span class="n">deleteChar</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_shell_selection</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="QtTextEditor.end"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_text_editor.QtTextEditor.end">[docs]</a>    <span class="k">def</span> <span class="nf">end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mark</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="QtTextEditor.end"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.text_editor.TextEditor.html#enaml.backends.qt.qt_text_editor.QtTextEditor.end">[docs]</a>    <span class="k">def</span> <span class="nf">end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mark</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Moves the cursor to the end of the line.</span>
 
 <span class="sd">        Arguments</span>
@@ -259,7 +259,7 @@
             <span class="n">cursor</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">cursor</span><span class="o">.</span><span class="n">End</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_shell_selection</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="QtTextEditor.home"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_text_editor.QtTextEditor.home">[docs]</a>    <span class="k">def</span> <span class="nf">home</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mark</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="QtTextEditor.home"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.text_editor.TextEditor.html#enaml.backends.qt.qt_text_editor.QtTextEditor.home">[docs]</a>    <span class="k">def</span> <span class="nf">home</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mark</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Moves the cursor to the beginning of the line.</span>
 
 <span class="sd">        Arguments</span>
@@ -279,7 +279,7 @@
             <span class="n">cursor</span><span class="o">.</span><span class="n">movePosition</span><span class="p">(</span><span class="n">cursor</span><span class="o">.</span><span class="n">Start</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_shell_selection</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="QtTextEditor.cut"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_text_editor.QtTextEditor.cut">[docs]</a>    <span class="k">def</span> <span class="nf">cut</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtTextEditor.cut"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.text_editor.TextEditor.html#enaml.backends.qt.qt_text_editor.QtTextEditor.cut">[docs]</a>    <span class="k">def</span> <span class="nf">cut</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Cuts the selected text from the line edit.</span>
 
 <span class="sd">        Copies the selected text to the clipboard then deletes the </span>
@@ -289,14 +289,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">cut</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_shell_selection</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="QtTextEditor.copy"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_text_editor.QtTextEditor.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtTextEditor.copy"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.text_editor.TextEditor.html#enaml.backends.qt.qt_text_editor.QtTextEditor.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Copies the selected text to the clipboard.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_shell_selection</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="QtTextEditor.paste"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_text_editor.QtTextEditor.paste">[docs]</a>    <span class="k">def</span> <span class="nf">paste</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtTextEditor.paste"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.text_editor.TextEditor.html#enaml.backends.qt.qt_text_editor.QtTextEditor.paste">[docs]</a>    <span class="k">def</span> <span class="nf">paste</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Paste the contents of the clipboard into the line edit.</span>
 
 <span class="sd">        Inserts the contents of the clipboard into the line edit at the </span>
@@ -306,7 +306,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">paste</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_shell_selection</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="QtTextEditor.insert"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_text_editor.QtTextEditor.insert">[docs]</a>    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+<div class="viewcode-block" id="QtTextEditor.insert"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.text_editor.TextEditor.html#enaml.backends.qt.qt_text_editor.QtTextEditor.insert">[docs]</a>    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Insert the text into the line edit.</span>
 
 <span class="sd">        Inserts the given text at the current cursor position, replacing</span>
@@ -321,21 +321,21 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">insertPlainText</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_shell_selection</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="QtTextEditor.undo"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_text_editor.QtTextEditor.undo">[docs]</a>    <span class="k">def</span> <span class="nf">undo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtTextEditor.undo"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.text_editor.TextEditor.html#enaml.backends.qt.qt_text_editor.QtTextEditor.undo">[docs]</a>    <span class="k">def</span> <span class="nf">undo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Undoes the last operation.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">undo</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_shell_selection</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="QtTextEditor.redo"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_text_editor.QtTextEditor.redo">[docs]</a>    <span class="k">def</span> <span class="nf">redo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtTextEditor.redo"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.text_editor.TextEditor.html#enaml.backends.qt.qt_text_editor.QtTextEditor.redo">[docs]</a>    <span class="k">def</span> <span class="nf">redo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Redoes the last operation</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">redo</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_shell_selection</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="QtTextEditor.find"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_text_editor.QtTextEditor.find">[docs]</a>    <span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">backwards</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">case_sensitive</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">whole_words</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="QtTextEditor.find"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.text_editor.TextEditor.html#enaml.backends.qt.qt_text_editor.QtTextEditor.find">[docs]</a>    <span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">backwards</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">case_sensitive</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">whole_words</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Finds the text in the editor and sets the cursor to that </span>
 <span class="sd">        position.</span>
 
@@ -370,7 +370,7 @@
             <span class="n">options</span> <span class="o">|=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextDocument</span><span class="o">.</span><span class="n">FindWholeWords</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtTextEditor.on_text_updated"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_text_editor.QtTextEditor.on_text_updated">[docs]</a>    <span class="k">def</span> <span class="nf">on_text_updated</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtTextEditor.on_text_updated"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.text_editor.TextEditor.html#enaml.backends.qt.qt_text_editor.QtTextEditor.on_text_updated">[docs]</a>    <span class="k">def</span> <span class="nf">on_text_updated</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The event handler for the text update event.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -380,25 +380,25 @@
         <span class="n">shell</span><span class="o">.</span><span class="n">text_edited</span><span class="p">()</span>
         <span class="n">shell</span><span class="o">.</span><span class="n">text_changed</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="QtTextEditor.on_selection"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_text_editor.QtTextEditor.on_selection">[docs]</a>    <span class="k">def</span> <span class="nf">on_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtTextEditor.on_selection"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.text_editor.TextEditor.html#enaml.backends.qt.qt_text_editor.QtTextEditor.on_selection">[docs]</a>    <span class="k">def</span> <span class="nf">on_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The event handler for a selection (really a left up) event.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_shell_selection</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="QtTextEditor.on_cursor"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_text_editor.QtTextEditor.on_cursor">[docs]</a>    <span class="k">def</span> <span class="nf">on_cursor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtTextEditor.on_cursor"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.text_editor.TextEditor.html#enaml.backends.qt.qt_text_editor.QtTextEditor.on_cursor">[docs]</a>    <span class="k">def</span> <span class="nf">on_cursor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The event handler for a cursor move.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_shell_selection</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="QtTextEditor.on_lost_focus"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_text_editor.QtTextEditor.on_lost_focus">[docs]</a>    <span class="k">def</span> <span class="nf">on_lost_focus</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtTextEditor.on_lost_focus"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.text_editor.TextEditor.html#enaml.backends.qt.qt_text_editor.QtTextEditor.on_lost_focus">[docs]</a>    <span class="k">def</span> <span class="nf">on_lost_focus</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The event handler for focus lost event.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">lost_focus</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="QtTextEditor.update_shell_selection"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_text_editor.QtTextEditor.update_shell_selection">[docs]</a>    <span class="k">def</span> <span class="nf">update_shell_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtTextEditor.update_shell_selection"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.text_editor.TextEditor.html#enaml.backends.qt.qt_text_editor.QtTextEditor.update_shell_selection">[docs]</a>    <span class="k">def</span> <span class="nf">update_shell_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Updates the selection and cursor position of the parent to </span>
 <span class="sd">        reflect the current state of the widget.</span>
 
@@ -414,14 +414,14 @@
             <span class="n">shell</span><span class="o">.</span><span class="n">_cursor_column</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">positionInBlock</span><span class="p">()</span>
             <span class="n">shell</span><span class="o">.</span><span class="n">_cursor_line</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">blockNumber</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="QtTextEditor.get_text"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_text_editor.QtTextEditor.get_text">[docs]</a>    <span class="k">def</span> <span class="nf">get_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtTextEditor.get_text"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.text_editor.TextEditor.html#enaml.backends.qt.qt_text_editor.QtTextEditor.get_text">[docs]</a>    <span class="k">def</span> <span class="nf">get_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the text currently in the widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">toPlainText</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">text</span>
 </div>
-<div class="viewcode-block" id="QtTextEditor.set_text"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_text_editor.QtTextEditor.set_text">[docs]</a>    <span class="k">def</span> <span class="nf">set_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+<div class="viewcode-block" id="QtTextEditor.set_text"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.text_editor.TextEditor.html#enaml.backends.qt.qt_text_editor.QtTextEditor.set_text">[docs]</a>    <span class="k">def</span> <span class="nf">set_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Changes the text in the widget without emitted a text </span>
 <span class="sd">        updated event. This should be called when the text is changed</span>
 <span class="sd">        programmatically.</span>
@@ -429,27 +429,27 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setPlainText</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
     </div>
-<div class="viewcode-block" id="QtTextEditor.set_read_only"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_text_editor.QtTextEditor.set_read_only">[docs]</a>    <span class="k">def</span> <span class="nf">set_read_only</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">read_only</span><span class="p">):</span>
+<div class="viewcode-block" id="QtTextEditor.set_read_only"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.text_editor.TextEditor.html#enaml.backends.qt.qt_text_editor.QtTextEditor.set_read_only">[docs]</a>    <span class="k">def</span> <span class="nf">set_read_only</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">read_only</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets read only state of the widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setReadOnly</span><span class="p">(</span><span class="n">read_only</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtTextEditor.set_cursor_position"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_text_editor.QtTextEditor.set_cursor_position">[docs]</a>    <span class="k">def</span> <span class="nf">set_cursor_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cursor_position</span><span class="p">):</span>
+<div class="viewcode-block" id="QtTextEditor.set_cursor_position"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.text_editor.TextEditor.html#enaml.backends.qt.qt_text_editor.QtTextEditor.set_cursor_position">[docs]</a>    <span class="k">def</span> <span class="nf">set_cursor_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cursor_position</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the cursor position of the widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">textCursor</span><span class="p">()</span>
         <span class="n">cursor</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">cursor_position</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtTextEditor.set_anchor_position"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_text_editor.QtTextEditor.set_anchor_position">[docs]</a>    <span class="k">def</span> <span class="nf">set_anchor_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">anchor_position</span><span class="p">):</span>
+<div class="viewcode-block" id="QtTextEditor.set_anchor_position"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.text_editor.TextEditor.html#enaml.backends.qt.qt_text_editor.QtTextEditor.set_anchor_position">[docs]</a>    <span class="k">def</span> <span class="nf">set_anchor_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">anchor_position</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the cursor position of the widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">textCursor</span><span class="p">()</span>
         <span class="n">cursor</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">anchor_position</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtTextEditor.set_wrap_lines"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_text_editor.QtTextEditor.set_wrap_lines">[docs]</a>    <span class="k">def</span> <span class="nf">set_wrap_lines</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrap_lines</span><span class="p">):</span>
+<div class="viewcode-block" id="QtTextEditor.set_wrap_lines"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.text_editor.TextEditor.html#enaml.backends.qt.qt_text_editor.QtTextEditor.set_wrap_lines">[docs]</a>    <span class="k">def</span> <span class="nf">set_wrap_lines</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrap_lines</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the line wrapping of the widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -458,7 +458,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setLineWrapMode</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QPlainTextEdit</span><span class="o">.</span><span class="n">NoWrap</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtTextEditor.set_overwrite"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_text_editor.QtTextEditor.set_overwrite">[docs]</a>    <span class="k">def</span> <span class="nf">set_overwrite</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">):</span>
+<div class="viewcode-block" id="QtTextEditor.set_overwrite"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.text_editor.TextEditor.html#enaml.backends.qt.qt_text_editor.QtTextEditor.set_overwrite">[docs]</a>    <span class="k">def</span> <span class="nf">set_overwrite</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the overwrite mode of the widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -482,7 +482,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.backends.qt.qt_text_editor</a></li>
@@ -492,7 +492,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

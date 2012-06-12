@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.backends.wx.wx_spin_box &mdash; enaml 0.2beta-1 documentation</title>
+    <title>enaml.backends.wx.wx_spin_box &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../../index.html" />
     <link rel="up" title="Module code" href="../../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.backends.wx.wx_spin_box</a></li>
@@ -94,7 +94,7 @@
 <span class="n">CustomSpinCtrlEvent</span><span class="p">,</span> <span class="n">EVT_CUSTOM_SPINCTRL</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">lib</span><span class="o">.</span><span class="n">newevent</span><span class="o">.</span><span class="n">NewEvent</span><span class="p">()</span>
 
 
-<div class="viewcode-block" id="CustomSpinCtrl"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.CustomSpinCtrl">[docs]</a><span class="k">class</span> <span class="nc">CustomSpinCtrl</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">SpinCtrl</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">CustomSpinCtrl</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">SpinCtrl</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A custom wx spin control that acts more like QSpinBox.</span>
 
 <span class="sd">    The standard wx.SpinCtrl doesn&#39;t support too many features, and</span>
@@ -126,7 +126,7 @@
     <span class="c">#: The internal storage for the validator</span>
     <span class="n">_validator</span> <span class="o">=</span> <span class="bp">None</span>
 
-<div class="viewcode-block" id="CustomSpinCtrl.__init__"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.CustomSpinCtrl.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">wrap</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">wrap</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; CustomSpinCtrl constructor.</span>
 
 <span class="sd">        Arguments</span>
@@ -188,15 +188,15 @@
 
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Event Handlers</span>
-    <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="CustomSpinCtrl.OnEnterPressed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.CustomSpinCtrl.OnEnterPressed">[docs]</a>    <span class="k">def</span> <span class="nf">OnEnterPressed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">OnEnterPressed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The event handler for an enter key press. It forces an </span>
 <span class="sd">        interpretation of the current text control value.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">InterpretText</span><span class="p">()</span>
-</div>
-<div class="viewcode-block" id="CustomSpinCtrl.OnKillFocus"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.CustomSpinCtrl.OnKillFocus">[docs]</a>    <span class="k">def</span> <span class="nf">OnKillFocus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">OnKillFocus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Handles evaluating the text in the control when the control </span>
 <span class="sd">        loses focus. </span>
 
@@ -209,8 +209,8 @@
         <span class="c"># doesn&#39;t work properly. The lambda avoids a DeadObjectError if </span>
         <span class="c"># the app is exited before the callback executes.</span>
         <span class="n">wx</span><span class="o">.</span><span class="n">CallAfter</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">InterpretText</span><span class="p">()</span> <span class="k">if</span> <span class="bp">self</span> <span class="k">else</span> <span class="bp">None</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="CustomSpinCtrl.OnText"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.CustomSpinCtrl.OnText">[docs]</a>    <span class="k">def</span> <span class="nf">OnText</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">OnText</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Handles the text event of the spin control to store away the</span>
 <span class="sd">        user typed text for later conversion.</span>
 
@@ -225,8 +225,8 @@
         <span class="c"># implement &#39;tracking&#39; without creating an entirely new custom</span>
         <span class="c"># control. So for now, the wx backend just lacks that feature.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_value_string</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">GetString</span><span class="p">()</span>
-</div>
-<div class="viewcode-block" id="CustomSpinCtrl.OnSpinUp"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.CustomSpinCtrl.OnSpinUp">[docs]</a>    <span class="k">def</span> <span class="nf">OnSpinUp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">OnSpinUp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The event handler for the spin up event. We veto the spin</span>
 <span class="sd">        event to prevent the control from changing it&#39;s internal value.</span>
 <span class="sd">        Instead, we maintain complete control of the value.</span>
@@ -236,8 +236,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_spin_state</span> <span class="o">=</span> <span class="s">&#39;up&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">OnSpinCtrl</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_spin_state</span> <span class="o">=</span> <span class="bp">None</span>
-</div>
-<div class="viewcode-block" id="CustomSpinCtrl.OnSpinDown"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.CustomSpinCtrl.OnSpinDown">[docs]</a>    <span class="k">def</span> <span class="nf">OnSpinDown</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">OnSpinDown</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The event handler for the spin down event. We veto the spin</span>
 <span class="sd">        event to prevent the control from changing it&#39;s internal value.</span>
 <span class="sd">        Instead, we maintain complete control of the value.</span>
@@ -247,8 +247,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_spin_state</span> <span class="o">=</span> <span class="s">&#39;down&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">OnSpinCtrl</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_spin_state</span> <span class="o">=</span> <span class="bp">None</span>
-</div>
-<div class="viewcode-block" id="CustomSpinCtrl.OnSpinCtrl"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.CustomSpinCtrl.OnSpinCtrl">[docs]</a>    <span class="k">def</span> <span class="nf">OnSpinCtrl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">OnSpinCtrl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Handles the spin control being changed by user interaction.</span>
 <span class="sd">        All of the manual stepping and wrapping logic is computed by</span>
 <span class="sd">        this method.</span>
@@ -290,20 +290,20 @@
 
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Getters/Setters </span>
-    <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="CustomSpinCtrl.GetLow"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.CustomSpinCtrl.GetLow">[docs]</a>    <span class="k">def</span> <span class="nf">GetLow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">GetLow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the minimum value of the control.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_low</span>
-</div>
-<div class="viewcode-block" id="CustomSpinCtrl.GetMin"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.CustomSpinCtrl.GetMin">[docs]</a>    <span class="k">def</span> <span class="nf">GetMin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">GetMin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Equivalent to GetLow().</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_low</span>
-</div>
-<div class="viewcode-block" id="CustomSpinCtrl.SetLow"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.CustomSpinCtrl.SetLow">[docs]</a>    <span class="k">def</span> <span class="nf">SetLow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">low</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">SetLow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">low</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the minimum value of the control and changes the</span>
 <span class="sd">        value to the min if the current value would be out of range.</span>
 
@@ -313,20 +313,20 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_low</span> <span class="o">=</span> <span class="n">low</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetValue</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">low</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="n">low</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="CustomSpinCtrl.GetHigh"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.CustomSpinCtrl.GetHigh">[docs]</a>    <span class="k">def</span> <span class="nf">GetHigh</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">GetHigh</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the maximum value of the control.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_high</span>
-</div>
-<div class="viewcode-block" id="CustomSpinCtrl.GetMax"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.CustomSpinCtrl.GetMax">[docs]</a>    <span class="k">def</span> <span class="nf">GetMax</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">GetMax</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Equivalent to GetHigh().</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_high</span>
-</div>
-<div class="viewcode-block" id="CustomSpinCtrl.SetHigh"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.CustomSpinCtrl.SetHigh">[docs]</a>    <span class="k">def</span> <span class="nf">SetHigh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">high</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">SetHigh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">high</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the maximum value of the control and changes the</span>
 <span class="sd">        value to the max if the current value would be out of range.</span>
 
@@ -336,58 +336,58 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_high</span> <span class="o">=</span> <span class="n">high</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetValue</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">high</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="n">high</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="CustomSpinCtrl.SetRange"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.CustomSpinCtrl.SetRange">[docs]</a>    <span class="k">def</span> <span class="nf">SetRange</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">SetRange</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the low and high values of the control.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">SetLow</span><span class="p">(</span><span class="n">low</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">SetHigh</span><span class="p">(</span><span class="n">high</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="CustomSpinCtrl.GetStep"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.CustomSpinCtrl.GetStep">[docs]</a>    <span class="k">def</span> <span class="nf">GetStep</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">GetStep</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the step size of the control.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_step</span>
-</div>
-<div class="viewcode-block" id="CustomSpinCtrl.SetStep"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.CustomSpinCtrl.SetStep">[docs]</a>    <span class="k">def</span> <span class="nf">SetStep</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">SetStep</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the step size of the control.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_step</span> <span class="o">=</span> <span class="n">step</span>
-</div>
-<div class="viewcode-block" id="CustomSpinCtrl.GetValidator"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.CustomSpinCtrl.GetValidator">[docs]</a>    <span class="k">def</span> <span class="nf">GetValidator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">GetValidator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the validator in use for the control.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_converter</span>
-    </div>
-<div class="viewcode-block" id="CustomSpinCtrl.SetValidator"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.CustomSpinCtrl.SetValidator">[docs]</a>    <span class="k">def</span> <span class="nf">SetValidator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validator</span><span class="p">):</span>
+    
+    <span class="k">def</span> <span class="nf">SetValidator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validator</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the validator in use for the control.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_validator</span> <span class="o">=</span> <span class="n">validator</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">InterpretText</span><span class="p">()</span>
-</div>
-<div class="viewcode-block" id="CustomSpinCtrl.GetWrap"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.CustomSpinCtrl.GetWrap">[docs]</a>    <span class="k">def</span> <span class="nf">GetWrap</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">GetWrap</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Gets the wrap flag of the control.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrap</span>
-</div>
-<div class="viewcode-block" id="CustomSpinCtrl.SetWrap"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.CustomSpinCtrl.SetWrap">[docs]</a>    <span class="k">def</span> <span class="nf">SetWrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrap</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">SetWrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrap</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the wrap flag of the control.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_wrap</span> <span class="o">=</span> <span class="n">wrap</span>
-</div>
-<div class="viewcode-block" id="CustomSpinCtrl.GetValue"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.CustomSpinCtrl.GetValue">[docs]</a>    <span class="k">def</span> <span class="nf">GetValue</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">GetValue</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the internal integer value of the control.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_internal_value</span>
-</div>
-<div class="viewcode-block" id="CustomSpinCtrl.SetValue"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.CustomSpinCtrl.SetValue">[docs]</a>    <span class="k">def</span> <span class="nf">SetValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">SetValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the value of the control to the given value, provided</span>
 <span class="sd">        that the value is within the range of the control. If the</span>
 <span class="sd">        given value is within range, and is different from the current</span>
@@ -410,8 +410,8 @@
 
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Support Methods </span>
-    <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="CustomSpinCtrl.InterpretText"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.CustomSpinCtrl.InterpretText">[docs]</a>    <span class="k">def</span> <span class="nf">InterpretText</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">InterpretText</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Interprets the user supplied text and updates the control. </span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -422,8 +422,8 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_internal_value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="CustomSpinCtrl.TextFromValue"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.CustomSpinCtrl.TextFromValue">[docs]</a>    <span class="k">def</span> <span class="nf">TextFromValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">TextFromValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Converts the given integer to a string for display using</span>
 <span class="sd">        the user supplied converter object. </span>
 
@@ -436,15 +436,15 @@
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
             <span class="n">text</span> <span class="o">=</span> <span class="nb">unicode</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">text</span>
-</div>
-<div class="viewcode-block" id="CustomSpinCtrl.ValueFromText"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.CustomSpinCtrl.ValueFromText">[docs]</a>    <span class="k">def</span> <span class="nf">ValueFromText</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">ValueFromText</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Converts the user typed string into an integer for the</span>
 <span class="sd">        control using the user supplied converter.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validator</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="CustomSpinCtrl.Validate"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.CustomSpinCtrl.Validate">[docs]</a>    <span class="k">def</span> <span class="nf">Validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">Validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Validates whether or not the given text can be converted</span>
 <span class="sd">        to a valid integer.</span>
 
@@ -462,21 +462,21 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Invalid validation result&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span>
 
-</div></div>
-<div class="viewcode-block" id="WXSpinBox"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.WXSpinBox">[docs]</a><span class="k">class</span> <span class="nc">WXSpinBox</span><span class="p">(</span><span class="n">WXControl</span><span class="p">,</span> <span class="n">AbstractTkSpinBox</span><span class="p">):</span>
+
+<div class="viewcode-block" id="WXSpinBox"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.spin_box.SpinBox.html#enaml.backends.wx.wx_spin_box.WXSpinBox">[docs]</a><span class="k">class</span> <span class="nc">WXSpinBox</span><span class="p">(</span><span class="n">WXControl</span><span class="p">,</span> <span class="n">AbstractTkSpinBox</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A wxPython implementation of SpinBox.</span>
 
 <span class="sd">    WXSpinBox uses a custom subclass of wx.SpinCtrl that behaves more</span>
 <span class="sd">    like Qt&#39;s QSpinBox.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="WXSpinBox.create"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.WXSpinBox.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSpinBox.create"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.spin_box.SpinBox.html#enaml.backends.wx.wx_spin_box.WXSpinBox.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Creates the underlying custom spin control.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">CustomSpinCtrl</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXSpinBox.initialize"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.WXSpinBox.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSpinBox.initialize"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.spin_box.SpinBox.html#enaml.backends.wx.wx_spin_box.WXSpinBox.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Intializes the widget with the attributes of this instance.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -492,7 +492,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">set_spin_wrap</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">wrap</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_spin_value</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXSpinBox.bind"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.WXSpinBox.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSpinBox.bind"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.spin_box.SpinBox.html#enaml.backends.wx.wx_spin_box.WXSpinBox.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Binds the event handlers for the spin control.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -502,43 +502,43 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Implementation</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="WXSpinBox.shell_value_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.WXSpinBox.shell_value_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_value_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSpinBox.shell_value_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.spin_box.SpinBox.html#enaml.backends.wx.wx_spin_box.WXSpinBox.shell_value_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_value_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;value&#39; attribute.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_spin_value</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXSpinBox.shell_low_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.WXSpinBox.shell_low_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_low_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">low</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSpinBox.shell_low_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.spin_box.SpinBox.html#enaml.backends.wx.wx_spin_box.WXSpinBox.shell_low_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_low_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">low</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;low&#39; attribute.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_spin_low</span><span class="p">(</span><span class="n">low</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXSpinBox.shell_high_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.WXSpinBox.shell_high_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_high_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">high</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSpinBox.shell_high_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.spin_box.SpinBox.html#enaml.backends.wx.wx_spin_box.WXSpinBox.shell_high_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_high_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">high</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;high&#39; attribute.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_spin_high</span><span class="p">(</span><span class="n">high</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXSpinBox.shell_step_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.WXSpinBox.shell_step_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_step_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSpinBox.shell_step_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.spin_box.SpinBox.html#enaml.backends.wx.wx_spin_box.WXSpinBox.shell_step_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_step_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;step&#39; attribute.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_spin_step</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXSpinBox.shell_validator_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.WXSpinBox.shell_validator_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_validator_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validator</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSpinBox.shell_validator_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.spin_box.SpinBox.html#enaml.backends.wx.wx_spin_box.WXSpinBox.shell_validator_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_validator_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validator</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;validator&#39; attribute.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_validator</span><span class="p">(</span><span class="n">validator</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXSpinBox.shell_wrap_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.WXSpinBox.shell_wrap_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_wrap_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrap</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSpinBox.shell_wrap_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.spin_box.SpinBox.html#enaml.backends.wx.wx_spin_box.WXSpinBox.shell_wrap_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_wrap_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrap</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;wrap&#39; attribute.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_spin_wrap</span><span class="p">(</span><span class="n">wrap</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXSpinBox.shell_tracking_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.WXSpinBox.shell_tracking_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_tracking_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tracking</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSpinBox.shell_tracking_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.spin_box.SpinBox.html#enaml.backends.wx.wx_spin_box.WXSpinBox.shell_tracking_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_tracking_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tracking</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;tracking&#39; attribute of the shell</span>
 <span class="sd">        object. The wx implementation does not support keyboard tracking.</span>
 
@@ -548,7 +548,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Event Handlers </span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="WXSpinBox.on_custom_spin_ctrl"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.WXSpinBox.on_custom_spin_ctrl">[docs]</a>    <span class="k">def</span> <span class="nf">on_custom_spin_ctrl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSpinBox.on_custom_spin_ctrl"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.spin_box.SpinBox.html#enaml.backends.wx.wx_spin_box.WXSpinBox.on_custom_spin_ctrl">[docs]</a>    <span class="k">def</span> <span class="nf">on_custom_spin_ctrl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The event handler for the widget&#39;s spin event.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -558,37 +558,37 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Widget Update Methods </span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="WXSpinBox.set_spin_value"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.WXSpinBox.set_spin_value">[docs]</a>    <span class="k">def</span> <span class="nf">set_spin_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSpinBox.set_spin_value"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.spin_box.SpinBox.html#enaml.backends.wx.wx_spin_box.WXSpinBox.set_spin_value">[docs]</a>    <span class="k">def</span> <span class="nf">set_spin_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Updates the widget with the given value.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXSpinBox.set_spin_low"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.WXSpinBox.set_spin_low">[docs]</a>    <span class="k">def</span> <span class="nf">set_spin_low</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">low</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSpinBox.set_spin_low"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.spin_box.SpinBox.html#enaml.backends.wx.wx_spin_box.WXSpinBox.set_spin_low">[docs]</a>    <span class="k">def</span> <span class="nf">set_spin_low</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">low</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Updates the low limit of the spin box.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetLow</span><span class="p">(</span><span class="n">low</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXSpinBox.set_spin_high"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.WXSpinBox.set_spin_high">[docs]</a>    <span class="k">def</span> <span class="nf">set_spin_high</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">high</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSpinBox.set_spin_high"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.spin_box.SpinBox.html#enaml.backends.wx.wx_spin_box.WXSpinBox.set_spin_high">[docs]</a>    <span class="k">def</span> <span class="nf">set_spin_high</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">high</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Updates the high limit of the spin box.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetHigh</span><span class="p">(</span><span class="n">high</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXSpinBox.set_spin_step"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.WXSpinBox.set_spin_step">[docs]</a>    <span class="k">def</span> <span class="nf">set_spin_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSpinBox.set_spin_step"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.spin_box.SpinBox.html#enaml.backends.wx.wx_spin_box.WXSpinBox.set_spin_step">[docs]</a>    <span class="k">def</span> <span class="nf">set_spin_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Updates the step of the spin box.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetStep</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXSpinBox.set_validator"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.WXSpinBox.set_validator">[docs]</a>    <span class="k">def</span> <span class="nf">set_validator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validator</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSpinBox.set_validator"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.spin_box.SpinBox.html#enaml.backends.wx.wx_spin_box.WXSpinBox.set_validator">[docs]</a>    <span class="k">def</span> <span class="nf">set_validator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validator</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the validator for the widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetValidator</span><span class="p">(</span><span class="n">validator</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXSpinBox.set_spin_wrap"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_spin_box.WXSpinBox.set_spin_wrap">[docs]</a>    <span class="k">def</span> <span class="nf">set_spin_wrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrap</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSpinBox.set_spin_wrap"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.spin_box.SpinBox.html#enaml.backends.wx.wx_spin_box.WXSpinBox.set_spin_wrap">[docs]</a>    <span class="k">def</span> <span class="nf">set_spin_wrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrap</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Updates the wrap value of the spin box.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -612,7 +612,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.backends.wx.wx_spin_box</a></li>
@@ -622,7 +622,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

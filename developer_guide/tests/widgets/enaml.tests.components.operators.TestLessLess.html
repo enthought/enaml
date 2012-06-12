@@ -1,0 +1,188 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>TestLessLess &mdash; enaml 0.2alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.2alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../index.html" />
+    <link rel="up" title="Component Testing" href="../components.html" />
+    <link rel="next" title="TestProgressBar" href="enaml.tests.components.progress_bar.TestProgressBar.html" />
+    <link rel="prev" title="TestLabel" href="enaml.tests.components.label.TestLabel.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.tests.components.progress_bar.TestProgressBar.html" title="TestProgressBar"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="enaml.tests.components.label.TestLabel.html" title="TestLabel"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Developer&#8217;s Guide</a> &raquo;</li>
+          <li><a href="../../enaml.tests.html" >Enaml Testing</a> &raquo;</li>
+          <li><a href="../components.html" accesskey="U">Component Testing</a> &raquo;</li>
+  
+    <li><a href="#">TestLessLess</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../_sources/developer_guide/tests/widgets/enaml.tests.components.operators.TestLessLess.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="testlessless">
+<h1>TestLessLess<a class="headerlink" href="#testlessless" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="enaml.tests.components.operators.TestLessLess">
+<em class="property">class </em><tt class="descclassname">enaml.tests.components.operators.</tt><tt class="descname">TestLessLess</tt><big>(</big><em>methodName='runTest'</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/operators.html#TestLessLess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.operators.TestLessLess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../components.html#enaml.tests.components.enaml_test_case.EnamlTestCase" title="enaml.tests.components.enaml_test_case.EnamlTestCase"><tt class="xref py py-class docutils literal"><span class="pre">enaml.tests.components.enaml_test_case.EnamlTestCase</span></tt></a></p>
+<p>Generic testcases for enaml the LessLess operator.</p>
+<p>These testcases test the basic functionality of widgets interacting
+with each other.</p>
+<p>To run these tests for a specific back-end it is required to have
+a functional implementation of the following wigdets:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Window</li>
+<li>CheckBox</li>
+<li>Label</li>
+</ul>
+</div></blockquote>
+<table border="1" class="docutils">
+<colgroup>
+<col width="45%" />
+<col width="55%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Methods</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><tt class="xref py py-meth docutils literal"><span class="pre">get_text(widget)</span></tt></td>
+<td>Returns the text from the tookit widget of a Label.</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-meth docutils literal"><span class="pre">get_checked(widget)</span></tt></td>
+<td>Return the checked status of a CheckBox.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="enaml.tests.components.operators.TestLessLess.test_lessless_init">
+<tt class="descname">test_lessless_init</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/operators.html#TestLessLess.test_lessless_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.operators.TestLessLess.test_lessless_init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the value after initialization</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.components.operators.TestLessLess.test_lessless_update">
+<tt class="descname">test_lessless_update</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/operators.html#TestLessLess.test_lessless_update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.operators.TestLessLess.test_lessless_update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the value after initialization</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.tests.components.progress_bar.TestProgressBar.html" title="TestProgressBar"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="enaml.tests.components.label.TestLabel.html" title="TestLabel"
+             >previous</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Developer&#8217;s Guide</a> &raquo;</li>
+          <li><a href="../../enaml.tests.html" >Enaml Testing</a> &raquo;</li>
+          <li><a href="../components.html" >Component Testing</a> &raquo;</li>
+  
+    <li><a href="#">TestLessLess</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Jun 12, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

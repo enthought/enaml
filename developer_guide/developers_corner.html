@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Developer’s corner &mdash; enaml 0.2beta-1 documentation</title>
+    <title>Developer’s corner &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,8 +27,9 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../index.html" />
     <link rel="up" title="Developer’s Guide" href="index.html" />
+    <link rel="next" title="Enaml Testing" href="enaml.tests.html" />
     <link rel="prev" title="Developer’s Guide" href="index.html" /> 
   </head>
   <body>
@@ -45,9 +46,12 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
+          <a href="enaml.tests.html" title="Enaml Testing"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
           <a href="index.html" title="Developer’s Guide"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Developer&#8217;s Guide</a> &raquo;</li>
   
     <li><a href="#">Developer&#8217;s corner</a></li>
@@ -71,7 +75,10 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#id1">Documentation</a><ul>
-<li><a class="reference internal" href="#id2">Sphinx Configuration</a></li>
+<li><a class="reference internal" href="#id2">Sphinx Configuration</a><ul>
+<li><a class="reference internal" href="#enamldoc">enamldoc</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#sphinx-source">Sphinx Source</a></li>
 </ul>
 </li>
@@ -129,7 +136,7 @@ the guidelines are only suggestions.</p>
 <h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="sphinx-configuration">
 <h3>Sphinx Configuration<a class="headerlink" href="#sphinx-configuration" title="Permalink to this headline">¶</a></h3>
-<p>A Sphinx extension, found in <tt class="xref py py-mod docutils literal"><span class="pre">enamldoc.sphinx_ext</span></tt> lets Sphinx
+<p>A Sphinx extension, found in <a class="reference internal" href="#module-enamldoc.sphinx_ext" title="enamldoc.sphinx_ext"><tt class="xref py py-mod docutils literal"><span class="pre">enamldoc.sphinx_ext</span></tt></a> lets Sphinx
 recognize and document Enaml objects.</p>
 <div class="section" id="sphinx-directives-and-roles">
 <h4>Sphinx Directives and Roles<a class="headerlink" href="#sphinx-directives-and-roles" title="Permalink to this headline">¶</a></h4>
@@ -167,7 +174,7 @@ state and error state.</p>
 <dl class="directive">
 <dt id="directive-enaml:enaml_defn">
 <tt class="descname">.. enaml:enaml_defn::</tt><a class="headerlink" href="#directive-enaml:enaml_defn" title="Permalink to this definition">¶</a></dt>
-<dd><p>For Enaml <strong>defn</strong> statements. Arguments display as with functions.</p>
+<dd><p>For Enaml <strong>enamldef</strong> statements. Arguments display as with functions.</p>
 </dd></dl>
 
 <dl class="directive">
@@ -184,14 +191,7 @@ the object to describe as though you were importing it.</p>
 special syntax is necessary.</p>
 </dd></dl>
 
-<dl class="role">
-<dt id="role-enaml_comp">
-<tt class="descname">:enaml_comp:</tt><a class="headerlink" href="#role-enaml_comp" title="Permalink to this definition">¶</a></dt>
-<dd><p>Use the <a class="reference internal" href="#role-enaml_comp" title="enaml_comp role"><tt class="xref rst rst-role docutils literal"><span class="pre">enaml_comp</span></tt></a> role to create a cross-reference to a
-previously described <tt class="docutils literal"><span class="pre">enaml_decl</span></tt> or <tt class="docutils literal"><span class="pre">enaml_defn</span></tt></p>
-</dd></dl>
-
-<p>Including the Sphinx extension <tt class="docutils literal"><span class="pre">refactordoc</span></tt> allows use of formatted
+<p>Including the Sphinx extension <tt class="docutils literal"><span class="pre">refactor_doc</span></tt> allows use of formatted
 docstrings as described below.</p>
 </div>
 </div>
@@ -202,6 +202,132 @@ docstrings as described below.</p>
 <h3>Sphinx Configuration<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
 <p>A Sphinx extension <tt class="docutils literal"><span class="pre">enamldoc</span></tt> lets Sphinx recognize and document Enaml
 objects.</p>
+<span class="target" id="module-enamldoc.sphinx_ext"></span><div class="section" id="enamldoc">
+<h4>enamldoc<a class="headerlink" href="#enamldoc" title="Permalink to this headline">¶</a></h4>
+<p>Automatically insert docstrings for enaml built-in and derived widgets and
+components, mirroring and borrowing heavily from the autodoc
+extension. Enaml widgets and components are Python objects that are
+imported in the enaml.imports() context</p>
+<dl class="class">
+<dt id="enamldoc.sphinx_ext.EnamlComponentDocumenter">
+<em class="property">class </em><tt class="descclassname">enamldoc.sphinx_ext.</tt><tt class="descname">EnamlComponentDocumenter</tt><big>(</big><em>directive</em>, <em>name</em>, <em>indent=u''</em><big>)</big><a class="reference internal" href="../_modules/enamldoc/sphinx_ext.html#EnamlComponentDocumenter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enamldoc.sphinx_ext.EnamlComponentDocumenter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">sphinx.ext.autodoc.ModuleLevelDocumenter</span></tt></p>
+<p>Enaml component documenter class</p>
+<p>The main purpose of this class is to be distinct from Python components and
+change the domain in the Documenter instance to &#8216;enaml&#8217;</p>
+<dl class="method">
+<dt id="enamldoc.sphinx_ext.EnamlComponentDocumenter.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>directive</em>, <em>name</em>, <em>indent=u''</em><big>)</big><a class="reference internal" href="../_modules/enamldoc/sphinx_ext.html#EnamlComponentDocumenter.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enamldoc.sphinx_ext.EnamlComponentDocumenter.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Need to override the parent __init__ so that we can set
+self.domain, which is an instance variable.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enamldoc.sphinx_ext.EnamlComponentDocumenter.check_module">
+<tt class="descname">check_module</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enamldoc/sphinx_ext.html#EnamlComponentDocumenter.check_module"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enamldoc.sphinx_ext.EnamlComponentDocumenter.check_module" title="Permalink to this definition">¶</a></dt>
+<dd><p>For Enaml objects, the module name returned by
+self.object.__module__ points to the enaml parsing compiler, rather
+than the logical module name stored in self.modname. Therefore, this
+check will verify that the module points to
+enaml.parsing.enaml_compiler.</p>
+<p>Note - after a fix to correct the .__module__ and .__file__ attributes,
+this method will not be necessary and will need to be deleted.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enamldoc.sphinx_ext.EnamlComponentDocumenter.format_signature">
+<tt class="descname">format_signature</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enamldoc/sphinx_ext.html#EnamlComponentDocumenter.format_signature"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enamldoc.sphinx_ext.EnamlComponentDocumenter.format_signature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Thin method for debugging signature formatting.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="enamldoc.sphinx_ext.EnamlDocstringSignatureMixin">
+<em class="property">class </em><tt class="descclassname">enamldoc.sphinx_ext.</tt><tt class="descname">EnamlDocstringSignatureMixin</tt><a class="reference internal" href="../_modules/enamldoc/sphinx_ext.html#EnamlDocstringSignatureMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enamldoc.sphinx_ext.EnamlDocstringSignatureMixin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">sphinx.ext.autodoc.DocstringSignatureMixin</span></tt></p>
+<p>Mixin for FunctionDocumenter and MethodDocumenter to provide the
+feature of reading the signature from the docstring.</p>
+<p>identical to the autodoc.DocstringSignatureMixin it subclasses and included
+here as an indicator of a possible future avenue for working with docstring
+signatures in enaml &#8211; possibly to replace refactordoc.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="enamldoc.sphinx_ext.EnamlDeclarationDocumenter">
+<em class="property">class </em><tt class="descclassname">enamldoc.sphinx_ext.</tt><tt class="descname">EnamlDeclarationDocumenter</tt><big>(</big><em>directive</em>, <em>name</em>, <em>indent=u''</em><big>)</big><a class="reference internal" href="../_modules/enamldoc/sphinx_ext.html#EnamlDeclarationDocumenter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enamldoc.sphinx_ext.EnamlDeclarationDocumenter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#enamldoc.sphinx_ext.EnamlDocstringSignatureMixin" title="enamldoc.sphinx_ext.EnamlDocstringSignatureMixin"><tt class="xref py py-class docutils literal"><span class="pre">enamldoc.sphinx_ext.EnamlDocstringSignatureMixin</span></tt></a>, <a class="reference internal" href="#enamldoc.sphinx_ext.EnamlComponentDocumenter" title="enamldoc.sphinx_ext.EnamlComponentDocumenter"><tt class="xref py py-class docutils literal"><span class="pre">enamldoc.sphinx_ext.EnamlComponentDocumenter</span></tt></a></p>
+<p>Specialized Documenter subclass for Enaml declarations.</p>
+<dl class="method">
+<dt id="enamldoc.sphinx_ext.EnamlDeclarationDocumenter.format_args">
+<tt class="descname">format_args</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enamldoc/sphinx_ext.html#EnamlDeclarationDocumenter.format_args"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enamldoc.sphinx_ext.EnamlDeclarationDocumenter.format_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Derivation is shown where normally arguments are shown in a
+function prototype.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="enamldoc.sphinx_ext.EnamlModuleDocumenter">
+<em class="property">class </em><tt class="descclassname">enamldoc.sphinx_ext.</tt><tt class="descname">EnamlModuleDocumenter</tt><big>(</big><em>directive</em>, <em>name</em>, <em>indent=u''</em><big>)</big><a class="reference internal" href="../_modules/enamldoc/sphinx_ext.html#EnamlModuleDocumenter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enamldoc.sphinx_ext.EnamlModuleDocumenter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">sphinx.ext.autodoc.ModuleDocumenter</span></tt></p>
+<p>Subclass of the module documenter for enaml autodocumenting.</p>
+<p>The main purpose of the subclass is to set the domain so that member
+directives are formed properly.</p>
+<dl class="method">
+<dt id="enamldoc.sphinx_ext.EnamlModuleDocumenter.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>directive</em>, <em>name</em>, <em>indent=u''</em><big>)</big><a class="reference internal" href="../_modules/enamldoc/sphinx_ext.html#EnamlModuleDocumenter.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enamldoc.sphinx_ext.EnamlModuleDocumenter.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Need to override the parent __init__ so that we can set
+self.domain, which is an instance variable.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enamldoc.sphinx_ext.EnamlModuleDocumenter.get_object_members">
+<tt class="descname">get_object_members</tt><big>(</big><em>want_all</em><big>)</big><a class="reference internal" href="../_modules/enamldoc/sphinx_ext.html#EnamlModuleDocumenter.get_object_members"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enamldoc.sphinx_ext.EnamlModuleDocumenter.get_object_members" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shim method for debugging</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="enamldoc.sphinx_ext.add_documenter">
+<tt class="descclassname">enamldoc.sphinx_ext.</tt><tt class="descname">add_documenter</tt><big>(</big><em>cls</em><big>)</big><a class="reference internal" href="../_modules/enamldoc/sphinx_ext.html#add_documenter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enamldoc.sphinx_ext.add_documenter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register a new Documenter.</p>
+<p>This autodoc function is overridden here solely for the sake of the proper
+error message.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="enamldoc.sphinx_ext.setup">
+<tt class="descclassname">enamldoc.sphinx_ext.</tt><tt class="descname">setup</tt><big>(</big><em>app</em><big>)</big><a class="reference internal" href="../_modules/enamldoc/sphinx_ext.html#setup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enamldoc.sphinx_ext.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>enamldoc extension setup function.</p>
+<p>The setup function is called by Sphinx when loading extensions.  app is the
+instance of the calling app, Sphinx in this case.</p>
+<p>enamldoc borrows heavily from autodoc, so additions to setup and
+configuration are minimal.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="enamldoc.sphinx_ext.testcls">
+<em class="property">class </em><tt class="descclassname">enamldoc.sphinx_ext.</tt><tt class="descname">testcls</tt><a class="reference internal" href="../_modules/enamldoc/sphinx_ext.html#testcls"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enamldoc.sphinx_ext.testcls" title="Permalink to this definition">¶</a></dt>
+<dd><p>test doc string</p>
+<dl class="method">
+<dt id="enamldoc.sphinx_ext.testcls.__setattr__">
+<tt class="descname">__setattr__</tt><big>(</big><em>x</em>, <em>y</em><big>)</big><a class="reference internal" href="../_modules/enamldoc/sphinx_ext.html#testcls.__setattr__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enamldoc.sphinx_ext.testcls.__setattr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attr setter.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<p class="graphviz">
+<img src="../_images/inheritance-2dc04f78abfd3a97a241716dc35da489a91369ee.png" alt="Inheritance diagram of enamldoc.sphinx_ext.EnamlComponentDocumenter, enamldoc.sphinx_ext.EnamlDeclarationDocumenter, enamldoc.sphinx_ext.EnamlDomain" usemap="#inheritancea3032556e8" class="inheritance"/>
+<map id="inheritancea3032556e8" name="inheritancea3032556e8">
+<area shape="rect" id="node5" href="#enamldoc.sphinx_ext.EnamlDeclarationDocumenter" title="enamldoc.sphinx_ext.EnamlDeclarationDocumenter" alt="" coords="572,316,765,332"/>
+<area shape="rect" id="node6" href="#enamldoc.sphinx_ext.EnamlDocstringSignatureMixin" title="enamldoc.sphinx_ext.EnamlDocstringSignatureMixin" alt="" coords="349,330,545,346"/>
+<area shape="rect" id="node8" href="#enamldoc.sphinx_ext.EnamlComponentDocumenter" title="enamldoc.sphinx_ext.EnamlComponentDocumenter" alt="" coords="350,302,544,318"/>
+</map>
+</p>
 <p>Including the Sphinx extension <tt class="docutils literal"><span class="pre">refactordoc</span></tt> allows use of formatted
 docstrings as described below.</p>
 </div>
@@ -361,63 +487,6 @@ the following headings for classes:</p>
 </pre></div>
 </div>
 <p>leads to this Sphinx output (using <tt class="docutils literal"><span class="pre">..autoclass::</span></tt>):</p>
-<dl class="class">
-<dt id="traits_class.Myclass">
-<em class="property">class </em><tt class="descclassname">traits_class.</tt><tt class="descname">Myclass</tt><a class="reference internal" href="../_modules/traits_class.html#Myclass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#traits_class.Myclass" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">traits.has_traits.HasTraits</span></tt></p>
-<p>This is a example class</p>
-<p>It is used to demonstrate the proposed guidelines for documenting traits
-based classes in an &#8220;sphinx-friendly&#8221; way.</p>
-<p>The traits are documented close to their definition by using a special
-comment <tt class="docutils literal"><span class="pre">#:</span></tt> prefix.</p>
-<dl class="attribute">
-<dt id="traits_class.Myclass.x">
-<tt class="descname">x</tt><em class="property"> = None</em><a class="headerlink" href="#traits_class.Myclass.x" title="Permalink to this definition">¶</a></dt>
-<dd><p>The x Float trait (default = 150.0)</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="traits_class.Myclass.y">
-<tt class="descname">y</tt><em class="property"> = None</em><a class="headerlink" href="#traits_class.Myclass.y" title="Permalink to this definition">¶</a></dt>
-<dd><p>The y Float trait (default = 0.0)</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="traits_class.Myclass.__implements__">
-<tt class="descname">__implements__</tt><a class="headerlink" href="#traits_class.Myclass.__implements__" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="traits_class.Otherclass">
-<em class="property">class </em><tt class="descclassname">traits_class.</tt><tt class="descname">Otherclass</tt><a class="reference internal" href="../_modules/traits_class.html#Otherclass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#traits_class.Otherclass" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">traits.has_traits.HasTraits</span></tt></p>
-<p>This is another example class using traits</p>
-<p>It is used to demonstrate the alternative method for documenting traits
-based classes in an &#8220;sphinx-friendly&#8221; way.</p>
-<p>The traits are documented at the start of the class definition.</p>
-<dl class="attribute">
-<dt id="traits_class.Otherclass.x">
-<tt class="descname">x</tt><em class="property"> = Float, default = 150.0</em><a class="headerlink" href="#traits_class.Otherclass.x" title="Permalink to this definition">¶</a></dt>
-<dd><p>The x Float trait</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="traits_class.Otherclass.y">
-<tt class="descname">y</tt><em class="property"> = Float, default = 150.0</em><a class="headerlink" href="#traits_class.Otherclass.y" title="Permalink to this definition">¶</a></dt>
-<dd><p>The y Float trait</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="traits_class.Otherclass.__implements__">
-<tt class="descname">__implements__</tt><a class="headerlink" href="#traits_class.Otherclass.__implements__" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
-</dd></dl>
-
-</dd></dl>
-
 </div>
 <div class="section" id="functions">
 <h4>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h4>
@@ -559,9 +628,12 @@ python sessions.</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
+          <a href="enaml.tests.html" title="Enaml Testing"
+             >next</a> |</li>
+        <li class="right" >
           <a href="index.html" title="Developer’s Guide"
              >previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="index.html" >Developer&#8217;s Guide</a> &raquo;</li>
   
     <li><a href="#">Developer&#8217;s corner</a></li>
@@ -571,7 +643,7 @@ python sessions.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

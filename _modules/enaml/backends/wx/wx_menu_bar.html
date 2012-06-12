@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.backends.wx.wx_menu_bar &mdash; enaml 0.2beta-1 documentation</title>
+    <title>enaml.backends.wx.wx_menu_bar &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../../index.html" />
     <link rel="up" title="Module code" href="../../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.backends.wx.wx_menu_bar</a></li>
@@ -92,12 +92,12 @@
 <span class="kn">from</span> <span class="nn">...components.menu_bar</span> <span class="kn">import</span> <span class="n">AbstractTkMenuBar</span>
 
 
-<div class="viewcode-block" id="wxEnamlMenuBar"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_menu_bar.wxEnamlMenuBar">[docs]</a><span class="k">class</span> <span class="nc">wxEnamlMenuBar</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">MenuBar</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">wxEnamlMenuBar</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">MenuBar</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A wx.MenuBar subclass which adapts the wx menu bar api to work </span>
 <span class="sd">    with the menu semantics of Enaml.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="wxEnamlMenuBar.__init__"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_menu_bar.wxEnamlMenuBar.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Initialize a wxEnamlMenuBar.</span>
 
 <span class="sd">        Parameters</span>
@@ -121,15 +121,15 @@
         <span class="nb">super</span><span class="p">(</span><span class="n">wxEnamlMenuBar</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_enabled</span> <span class="o">=</span> <span class="bp">True</span>
-</div>
-<div class="viewcode-block" id="wxEnamlMenuBar.GetParent"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_menu_bar.wxEnamlMenuBar.GetParent">[docs]</a>    <span class="k">def</span> <span class="nf">GetParent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">GetParent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the parent of this menu bar, which will be a wxFrame,</span>
 <span class="sd">        or None if the frame has already been garbage collected.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="p">()</span>
-</div>
-<div class="viewcode-block" id="wxEnamlMenuBar.Append"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_menu_bar.wxEnamlMenuBar.Append">[docs]</a>    <span class="k">def</span> <span class="nf">Append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">menu</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">Append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">menu</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Appends the given menu to the menu bar with the given title.</span>
 
 <span class="sd">        Parameters</span>
@@ -145,8 +145,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetMenuCount</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Insert</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">menu</span><span class="p">,</span> <span class="n">title</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="wxEnamlMenuBar.Insert"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_menu_bar.wxEnamlMenuBar.Insert">[docs]</a>    <span class="k">def</span> <span class="nf">Insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">menu</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">Insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">menu</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Appends the given menu to the menu bar with the given title.</span>
 
 <span class="sd">        Parameters</span>
@@ -186,24 +186,24 @@
         <span class="c"># of that is shared between here and the Menu object itself.</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">IsEnabled</span><span class="p">()</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">menu</span><span class="o">.</span><span class="n">IsEnabled</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">EnableTop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">GetMenuCount</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="wxEnamlMenuBar.RemoveAll"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_menu_bar.wxEnamlMenuBar.RemoveAll">[docs]</a>    <span class="k">def</span> <span class="nf">RemoveAll</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">RemoveAll</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Removes all the menus from the menu bar. The menus are not</span>
 <span class="sd">        destroyed.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetMenuCount</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">Remove</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        </div>
-<div class="viewcode-block" id="wxEnamlMenuBar.IsEnabled"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_menu_bar.wxEnamlMenuBar.IsEnabled">[docs]</a>    <span class="k">def</span> <span class="nf">IsEnabled</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        
+    <span class="k">def</span> <span class="nf">IsEnabled</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns whether or not the menu bar is enabled. Note that </span>
 <span class="sd">        this overrides a parent class method of the same name but with</span>
 <span class="sd">        a different call signature and different semantics.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_enabled</span>
-</div>
-<div class="viewcode-block" id="wxEnamlMenuBar.Enable"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_menu_bar.wxEnamlMenuBar.Enable">[docs]</a>    <span class="k">def</span> <span class="nf">Enable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enable</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">Enable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enable</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Enables or disables all of the underlying children. Note </span>
 <span class="sd">        that this overrides a parent class method of the same name </span>
 <span class="sd">        but with a different call signature and different semantics.</span>
@@ -221,8 +221,8 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">EnableTop</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_enabled</span> <span class="o">=</span> <span class="n">enable</span>
-</div>
-<div class="viewcode-block" id="wxEnamlMenuBar.Destroy"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_menu_bar.wxEnamlMenuBar.Destroy">[docs]</a>    <span class="k">def</span> <span class="nf">Destroy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">Destroy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; An overridden destructor method which removes itself from</span>
 <span class="sd">        the parent before invoking the actual destructor.</span>
 
@@ -234,12 +234,12 @@
                     <span class="n">parent</span><span class="o">.</span><span class="n">SetMenuBar</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span>
             <span class="nb">super</span><span class="p">(</span><span class="n">wxEnamlMenuBar</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">Destroy</span><span class="p">()</span>
 
-</div></div>
-<div class="viewcode-block" id="WXMenuBar"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_menu_bar.WXMenuBar">[docs]</a><span class="k">class</span> <span class="nc">WXMenuBar</span><span class="p">(</span><span class="n">WXWidgetComponent</span><span class="p">,</span> <span class="n">AbstractTkMenuBar</span><span class="p">):</span>
+
+<div class="viewcode-block" id="WXMenuBar"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.menu_bar.MenuBar.html#enaml.backends.wx.wx_menu_bar.WXMenuBar">[docs]</a><span class="k">class</span> <span class="nc">WXMenuBar</span><span class="p">(</span><span class="n">WXWidgetComponent</span><span class="p">,</span> <span class="n">AbstractTkMenuBar</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A Wx implementation of a MenuBar.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="WXMenuBar.create"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_menu_bar.WXMenuBar.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+<div class="viewcode-block" id="WXMenuBar.create"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.menu_bar.MenuBar.html#enaml.backends.wx.wx_menu_bar.WXMenuBar.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Creates the underlying wxMenuBar.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -250,7 +250,7 @@
         <span class="c"># initialization.</span>
         <span class="n">parent</span><span class="o">.</span><span class="n">SetMenuBar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXMenuBar.initialize"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_menu_bar.WXMenuBar.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WXMenuBar.initialize"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.menu_bar.MenuBar.html#enaml.backends.wx.wx_menu_bar.WXMenuBar.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Initializes the wxMenuBar.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -260,7 +260,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Change Handlers </span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="WXMenuBar.shell_menus_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_menu_bar.WXMenuBar.shell_menus_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_menus_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WXMenuBar.shell_menus_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.menu_bar.MenuBar.html#enaml.backends.wx.wx_menu_bar.WXMenuBar.shell_menus_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_menus_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;menus&#39; attribute on the shell</span>
 <span class="sd">        object.</span>
 
@@ -270,7 +270,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Widget Update Methods </span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="WXMenuBar.update_menus"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_menu_bar.WXMenuBar.update_menus">[docs]</a>    <span class="k">def</span> <span class="nf">update_menus</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WXMenuBar.update_menus"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.menu_bar.MenuBar.html#enaml.backends.wx.wx_menu_bar.WXMenuBar.update_menus">[docs]</a>    <span class="k">def</span> <span class="nf">update_menus</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Updates the menu bar with the child menu objects.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -313,7 +313,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.backends.wx.wx_menu_bar</a></li>
@@ -323,7 +323,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

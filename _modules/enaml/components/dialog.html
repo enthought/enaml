@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.components.dialog &mdash; enaml 0.2beta-1 documentation</title>
+    <title>enaml.components.dialog &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.components.dialog</a></li>
@@ -92,26 +92,26 @@
 <span class="kn">from</span> <span class="nn">..enums</span> <span class="kn">import</span> <span class="n">DialogResult</span><span class="p">,</span> <span class="n">Modality</span>
 
 
-<div class="viewcode-block" id="AbstractTkDialog"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.dialog.AbstractTkDialog">[docs]</a><span class="k">class</span> <span class="nc">AbstractTkDialog</span><span class="p">(</span><span class="n">AbstractTkWindow</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">AbstractTkDialog</span><span class="p">(</span><span class="n">AbstractTkWindow</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; The abstract toolkit interface for a Dialog.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkDialog.accept"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.dialog.AbstractTkDialog.accept">[docs]</a>    <span class="k">def</span> <span class="nf">accept</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">accept</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Close the dialog and set the result to `accepted`.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkDialog.reject"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.dialog.AbstractTkDialog.reject">[docs]</a>    <span class="k">def</span> <span class="nf">reject</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">reject</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Close the dialog and set the result to `rejected`.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
-</div></div>
-<div class="viewcode-block" id="Dialog"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.dialog.Dialog">[docs]</a><span class="k">class</span> <span class="nc">Dialog</span><span class="p">(</span><span class="n">Window</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Dialog"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.dialog.Dialog.html#enaml.components.dialog.Dialog">[docs]</a><span class="k">class</span> <span class="nc">Dialog</span><span class="p">(</span><span class="n">Window</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A Window subclass which adds modal style behavior.</span>
 
 <span class="sd">    The basic dialog has no buttons, but provides methods for the</span>
@@ -168,7 +168,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Abstract Method Implementations</span>
     <span class="c">#--------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="Dialog.show"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.dialog.Dialog.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Dialog.show"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.dialog.Dialog.html#enaml.components.dialog.Dialog.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Make the dialog visible on the screen. Overridden from the</span>
 <span class="sd">        parent class to properly handle Dialog semantics.</span>
 
@@ -201,7 +201,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Auxiliary Methods</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="Dialog.accept"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.dialog.Dialog.accept">[docs]</a>    <span class="k">def</span> <span class="nf">accept</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Dialog.accept"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.dialog.Dialog.html#enaml.components.dialog.Dialog.accept">[docs]</a>    <span class="k">def</span> <span class="nf">accept</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Close the dialog and set the result to `accepted`.</span>
 
 <span class="sd">        Call this method to trigger the same behavior as clicking on an</span>
@@ -210,7 +210,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="Dialog.reject"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.dialog.Dialog.reject">[docs]</a>    <span class="k">def</span> <span class="nf">reject</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Dialog.reject"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.dialog.Dialog.html#enaml.components.dialog.Dialog.reject">[docs]</a>    <span class="k">def</span> <span class="nf">reject</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Close the dialog and set the result to `rejected`.</span>
 
 <span class="sd">        Call this method to trigger the same behavior as clicking on a</span>
@@ -237,7 +237,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.components.dialog</a></li>
@@ -247,7 +247,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

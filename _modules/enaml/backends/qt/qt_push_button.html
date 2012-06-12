@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.backends.qt.qt_push_button &mdash; enaml 0.2beta-1 documentation</title>
+    <title>enaml.backends.qt.qt_push_button &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../../index.html" />
     <link rel="up" title="Module code" href="../../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.backends.qt.qt_push_button</a></li>
@@ -88,7 +88,7 @@
 <span class="kn">from</span> <span class="nn">...components.push_button</span> <span class="kn">import</span> <span class="n">AbstractTkPushButton</span>
 
 
-<div class="viewcode-block" id="QtPushButton"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_push_button.QtPushButton">[docs]</a><span class="k">class</span> <span class="nc">QtPushButton</span><span class="p">(</span><span class="n">QtControl</span><span class="p">,</span> <span class="n">AbstractTkPushButton</span><span class="p">):</span>
+<div class="viewcode-block" id="QtPushButton"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.push_button.PushButton.html#enaml.backends.qt.qt_push_button.QtPushButton">[docs]</a><span class="k">class</span> <span class="nc">QtPushButton</span><span class="p">(</span><span class="n">QtControl</span><span class="p">,</span> <span class="n">AbstractTkPushButton</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A Qt implementation of PushButton.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -96,13 +96,13 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Setup methods</span>
     <span class="c">#--------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="QtPushButton.create"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_push_button.QtPushButton.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+<div class="viewcode-block" id="QtPushButton.create"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.push_button.PushButton.html#enaml.backends.qt.qt_push_button.QtPushButton.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Creates the underlying QPushButton control.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtPushButton.initialize"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_push_button.QtPushButton.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtPushButton.initialize"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.push_button.PushButton.html#enaml.backends.qt.qt_push_button.QtPushButton.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Intializes the widget with the attributes of this instance.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -111,7 +111,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">set_icon</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">icon</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_icon_size</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">icon_size</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtPushButton.bind"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_push_button.QtPushButton.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtPushButton.bind"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.push_button.PushButton.html#enaml.backends.qt.qt_push_button.QtPushButton.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Connects the event handlers for the push button.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -124,7 +124,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Implementation</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="QtPushButton.shell_text_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_push_button.QtPushButton.shell_text_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_text_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+<div class="viewcode-block" id="QtPushButton.shell_text_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.push_button.PushButton.html#enaml.backends.qt.qt_push_button.QtPushButton.shell_text_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_text_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;text&#39; attribute.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -133,7 +133,7 @@
         <span class="c"># change and the layout system needs to be informed.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">size_hint_updated</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="QtPushButton.shell_icon_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_push_button.QtPushButton.shell_icon_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_icon_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">icon</span><span class="p">):</span>
+<div class="viewcode-block" id="QtPushButton.shell_icon_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.push_button.PushButton.html#enaml.backends.qt.qt_push_button.QtPushButton.shell_icon_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_icon_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">icon</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;icon&#39; attribute.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -142,7 +142,7 @@
         <span class="c"># changed and the layout system needs to be informed.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">size_hint_updated</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="QtPushButton.shell_icon_size_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_push_button.QtPushButton.shell_icon_size_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_icon_size_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">icon_size</span><span class="p">):</span>
+<div class="viewcode-block" id="QtPushButton.shell_icon_size_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.push_button.PushButton.html#enaml.backends.qt.qt_push_button.QtPushButton.shell_icon_size_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_icon_size_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">icon_size</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;icon_size&#39; attribute.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -151,7 +151,7 @@
         <span class="c"># changed and the layout system needs to be informed.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">size_hint_updated</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="QtPushButton.on_clicked"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_push_button.QtPushButton.on_clicked">[docs]</a>    <span class="k">def</span> <span class="nf">on_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtPushButton.on_clicked"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.push_button.PushButton.html#enaml.backends.qt.qt_push_button.QtPushButton.on_clicked">[docs]</a>    <span class="k">def</span> <span class="nf">on_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The event handler for the button&#39;s clicked event.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -159,7 +159,7 @@
         <span class="n">shell</span><span class="o">.</span><span class="n">_down</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="n">shell</span><span class="o">.</span><span class="n">clicked</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="QtPushButton.on_pressed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_push_button.QtPushButton.on_pressed">[docs]</a>    <span class="k">def</span> <span class="nf">on_pressed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtPushButton.on_pressed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.push_button.PushButton.html#enaml.backends.qt.qt_push_button.QtPushButton.on_pressed">[docs]</a>    <span class="k">def</span> <span class="nf">on_pressed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The event handlers for the button&#39;s pressed event.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -167,7 +167,7 @@
         <span class="n">shell</span><span class="o">.</span><span class="n">_down</span> <span class="o">=</span> <span class="bp">True</span>
         <span class="n">shell</span><span class="o">.</span><span class="n">pressed</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="QtPushButton.on_released"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_push_button.QtPushButton.on_released">[docs]</a>    <span class="k">def</span> <span class="nf">on_released</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtPushButton.on_released"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.push_button.PushButton.html#enaml.backends.qt.qt_push_button.QtPushButton.on_released">[docs]</a>    <span class="k">def</span> <span class="nf">on_released</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The event handler for the button&#39;s released event.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -176,13 +176,13 @@
             <span class="n">shell</span><span class="o">.</span><span class="n">_down</span> <span class="o">=</span> <span class="bp">False</span>
             <span class="n">shell</span><span class="o">.</span><span class="n">released</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="QtPushButton.set_text"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_push_button.QtPushButton.set_text">[docs]</a>    <span class="k">def</span> <span class="nf">set_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+<div class="viewcode-block" id="QtPushButton.set_text"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.push_button.PushButton.html#enaml.backends.qt.qt_push_button.QtPushButton.set_text">[docs]</a>    <span class="k">def</span> <span class="nf">set_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the text on the button control.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtPushButton.set_icon"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_push_button.QtPushButton.set_icon">[docs]</a>    <span class="k">def</span> <span class="nf">set_icon</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">icon</span><span class="p">):</span>
+<div class="viewcode-block" id="QtPushButton.set_icon"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.push_button.PushButton.html#enaml.backends.qt.qt_push_button.QtPushButton.set_icon">[docs]</a>    <span class="k">def</span> <span class="nf">set_icon</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">icon</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the icon on the button control.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -192,7 +192,7 @@
             <span class="n">qicon</span> <span class="o">=</span> <span class="n">icon</span><span class="o">.</span><span class="n">as_QIcon</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">qicon</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtPushButton.set_icon_size"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_push_button.QtPushButton.set_icon_size">[docs]</a>    <span class="k">def</span> <span class="nf">set_icon_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">icon_size</span><span class="p">):</span>
+<div class="viewcode-block" id="QtPushButton.set_icon_size"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.push_button.PushButton.html#enaml.backends.qt.qt_push_button.QtPushButton.set_icon_size">[docs]</a>    <span class="k">def</span> <span class="nf">set_icon_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">icon_size</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the icon size on the button control.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -218,7 +218,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.backends.qt.qt_push_button</a></li>
@@ -228,7 +228,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.components.spin_box &mdash; enaml 0.2beta-1 documentation</title>
+    <title>enaml.components.spin_box &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.components.spin_box</a></li>
@@ -91,40 +91,40 @@
 <span class="kn">from</span> <span class="nn">..validation</span> <span class="kn">import</span> <span class="n">AbstractValidator</span><span class="p">,</span> <span class="n">IntValidator</span>
 
 
-<div class="viewcode-block" id="AbstractTkSpinBox"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.spin_box.AbstractTkSpinBox">[docs]</a><span class="k">class</span> <span class="nc">AbstractTkSpinBox</span><span class="p">(</span><span class="n">AbstractTkControl</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">AbstractTkSpinBox</span><span class="p">(</span><span class="n">AbstractTkControl</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; The abstract toolkit interface for a spin box.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkSpinBox.shell_low_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.spin_box.AbstractTkSpinBox.shell_low_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_low_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">low</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
-    <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkSpinBox.shell_high_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.spin_box.AbstractTkSpinBox.shell_high_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_high_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">high</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
-    <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkSpinBox.shell_step_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.spin_box.AbstractTkSpinBox.shell_step_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_step_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
-    <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkSpinBox.shell_value_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.spin_box.AbstractTkSpinBox.shell_value_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_value_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
-    <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkSpinBox.shell_validator_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.spin_box.AbstractTkSpinBox.shell_validator_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_validator_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validator</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
-    <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkSpinBox.shell_wrap_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.spin_box.AbstractTkSpinBox.shell_wrap_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_wrap_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrap</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-    </div>
-    <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkSpinBox.shell_tracking_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.spin_box.AbstractTkSpinBox.shell_tracking_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_tracking_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tracking</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_low_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">low</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
-</div></div>
-<div class="viewcode-block" id="SpinBox"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.spin_box.SpinBox">[docs]</a><span class="k">class</span> <span class="nc">SpinBox</span><span class="p">(</span><span class="n">Control</span><span class="p">):</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">shell_high_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">high</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">shell_step_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">shell_value_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">shell_validator_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validator</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">shell_wrap_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrap</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+    
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">shell_tracking_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tracking</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+
+<div class="viewcode-block" id="SpinBox"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.spin_box.SpinBox.html#enaml.components.spin_box.SpinBox">[docs]</a><span class="k">class</span> <span class="nc">SpinBox</span><span class="p">(</span><span class="n">Control</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A spin box widget which manipulates integer values.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -185,7 +185,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.components.spin_box</a></li>
@@ -195,7 +195,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

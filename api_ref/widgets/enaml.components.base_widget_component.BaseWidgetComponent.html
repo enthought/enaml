@@ -1,0 +1,325 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>BaseWidgetComponent &mdash; enaml 0.2alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.2alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../index.html" />
+    <link rel="up" title="Widgets" href="../enaml.widgets.html" />
+    <link rel="next" title="WidgetComponent" href="enaml.components.widget_component.WidgetComponent.html" />
+    <link rel="prev" title="BaseComponent" href="enaml.core.base_component.BaseComponent.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.components.widget_component.WidgetComponent.html" title="WidgetComponent"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="enaml.core.base_component.BaseComponent.html" title="BaseComponent"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" accesskey="U">Widgets</a> &raquo;</li>
+  
+    <li><a href="#">BaseWidgetComponent</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">BaseWidgetComponent</a><ul>
+<li><a class="reference internal" href="#backends">Backends</a><ul>
+<li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/api_ref/widgets/enaml.components.base_widget_component.BaseWidgetComponent.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="basewidgetcomponent">
+<h1>BaseWidgetComponent<a class="headerlink" href="#basewidgetcomponent" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="enaml.components.base_widget_component.BaseWidgetComponent">
+<em class="property">class </em><tt class="descclassname">enaml.components.base_widget_component.</tt><tt class="descname">BaseWidgetComponent</tt><a class="reference internal" href="../../_modules/enaml/components/base_widget_component.html#BaseWidgetComponent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.base_widget_component.BaseWidgetComponent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.core.base_component.BaseComponent.html#enaml.core.base_component.BaseComponent" title="enaml.core.base_component.BaseComponent"><tt class="xref py py-class docutils literal"><span class="pre">enaml.core.base_component.BaseComponent</span></tt></a></p>
+<p>A BaseComponent subclass which adds support for a gui toolkit 
+specific backend object. This class represents the most basic 
+component in Enaml that drives a gui toolkit object. The gui toolkit 
+object at this level is not necessarily a widget which can paint on
+the screen.</p>
+<dl class="attribute">
+<dt id="enaml.components.base_widget_component.BaseWidgetComponent.toolkit_widget">
+<tt class="descname">toolkit_widget</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.base_widget_component.BaseWidgetComponent.toolkit_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>A read-only property that returns the toolkit specific widget
+being managed by the abstract widget.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.base_widget_component.BaseWidgetComponent.abstract_obj">
+<tt class="descname">abstract_obj</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.base_widget_component.BaseWidgetComponent.abstract_obj" title="Permalink to this definition">¶</a></dt>
+<dd><p>The toolkit specific object that implements the behavior of
+this component and manages the gui toolkit object. Subclasses
+should redefine this trait to specify the specialized type of
+abstract_obj that is accepted.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.components.base_widget_component.BaseWidgetComponent.destroy">
+<tt class="descname">destroy</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/components/base_widget_component.html#BaseWidgetComponent.destroy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.base_widget_component.BaseWidgetComponent.destroy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden parent class destruction method method that adds 
+additional logic to destroy the underlying toolkit widget.</p>
+<p>The destruction happens in dual pass top-down, then bottom-up.
+On the top-down pass, the traits listeners for the abstract obj
+are unhooked so that no events get fired during destruction. On
+the bottom up pass, the abstract obj is destroyed and its ref
+set to None.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.base_widget_component.BaseWidgetComponent.__implements__">
+<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.components.base_widget_component.BaseWidgetComponent.__implements__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="backends">
+<h2>Backends<a class="headerlink" href="#backends" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="qt">
+<h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-41aff31fc21a71d9317494396800b93fca7d471b.png" alt="Inheritance diagram of enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent" usemap="#inheritance70dc9548c9" class="inheritance"/>
+<map id="inheritance70dc9548c9" name="inheritance70dc9548c9">
+<area shape="rect" id="node1" href="#enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent" title="QtBaseWidgetComponent" alt="" coords="294,5,480,35"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent">
+<em class="property">class </em><tt class="descclassname">enaml.backends.qt.qt_base_widget_component.</tt><tt class="descname">QtBaseWidgetComponent</tt><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_base_widget_component.html#QtBaseWidgetComponent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">enaml.components.base_widget_component.AbstractTkBaseWidgetComponent</span></tt></p>
+<p>A Qt4 implementation of BaseWidgetComponent.</p>
+<dl class="attribute">
+<dt id="enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent.widget">
+<tt class="descname">widget</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent.widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Qt widget/object created by the component</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent.toolkit_widget">
+<tt class="descname">toolkit_widget</tt><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_base_widget_component.html#QtBaseWidgetComponent.toolkit_widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent.toolkit_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>A property that returns the toolkit specific widget for this
+component.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent.shell_obj">
+<tt class="descname">shell_obj</tt><a class="headerlink" href="#enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent.shell_obj" title="Permalink to this definition">¶</a></dt>
+<dd><p>A property which gets a sets a reference (stored weakly)
+to the shell object</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent.create">
+<tt class="descname">create</tt><big>(</big><em>parent</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_base_widget_component.html#QtBaseWidgetComponent.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the underlying Qt object. As necessary, subclasses
+should reimplement this method to create different types of
+widgets.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent.initialize">
+<tt class="descname">initialize</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_base_widget_component.html#QtBaseWidgetComponent.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes the attributes of the the Qt widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent.bind">
+<tt class="descname">bind</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_base_widget_component.html#QtBaseWidgetComponent.bind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent.bind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bind any event/signal handlers for the Qt Widget. By default,
+this is a no-op. Subclasses should reimplement this method as
+necessary to bind any widget event handlers or signals.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent.destroy">
+<tt class="descname">destroy</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_base_widget_component.html#QtBaseWidgetComponent.destroy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent.destroy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Destroys the underlying Qt widget.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="wx">
+<h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-a00c167e4407c25cc7c1ba010234ef46d787fe1a.png" alt="Inheritance diagram of enaml.backends.wx.wx_base_widget_component.WXBaseWidgetComponent" usemap="#inheritance94fbf5b75d" class="inheritance"/>
+<map id="inheritance94fbf5b75d" name="inheritance94fbf5b75d">
+<area shape="rect" id="node2" href="#enaml.backends.wx.wx_base_widget_component.WXBaseWidgetComponent" title="WXBaseWidgetComponent" alt="" coords="294,5,484,35"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.backends.wx.wx_base_widget_component.WXBaseWidgetComponent">
+<em class="property">class </em><tt class="descclassname">enaml.backends.wx.wx_base_widget_component.</tt><tt class="descname">WXBaseWidgetComponent</tt><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_base_widget_component.html#WXBaseWidgetComponent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_base_widget_component.WXBaseWidgetComponent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">enaml.components.base_widget_component.AbstractTkBaseWidgetComponent</span></tt></p>
+<p>A Wx implementation of BaseWidgetComponent.</p>
+<dl class="attribute">
+<dt id="enaml.backends.wx.wx_base_widget_component.WXBaseWidgetComponent.widget">
+<tt class="descname">widget</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.backends.wx.wx_base_widget_component.WXBaseWidgetComponent.widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Wx widget created by the component.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.backends.wx.wx_base_widget_component.WXBaseWidgetComponent.toolkit_widget">
+<tt class="descname">toolkit_widget</tt><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_base_widget_component.html#WXBaseWidgetComponent.toolkit_widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_base_widget_component.WXBaseWidgetComponent.toolkit_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>A property that returns the toolkit specific widget for this
+component.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.backends.wx.wx_base_widget_component.WXBaseWidgetComponent.shell_obj">
+<tt class="descname">shell_obj</tt><a class="headerlink" href="#enaml.backends.wx.wx_base_widget_component.WXBaseWidgetComponent.shell_obj" title="Permalink to this definition">¶</a></dt>
+<dd><p>A property which gets a sets a reference (stored weakly)
+to the shell object</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_base_widget_component.WXBaseWidgetComponent.create">
+<tt class="descname">create</tt><big>(</big><em>parent</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_base_widget_component.html#WXBaseWidgetComponent.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_base_widget_component.WXBaseWidgetComponent.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the underlying Wx object. As necessary, subclasses
+should reimplement this method to create different types of
+widgets.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_base_widget_component.WXBaseWidgetComponent.initialize">
+<tt class="descname">initialize</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_base_widget_component.html#WXBaseWidgetComponent.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_base_widget_component.WXBaseWidgetComponent.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes the attributes of the the Wx widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_base_widget_component.WXBaseWidgetComponent.bind">
+<tt class="descname">bind</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_base_widget_component.html#WXBaseWidgetComponent.bind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_base_widget_component.WXBaseWidgetComponent.bind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bind any event handlers for the Wx Widget. By default, this
+is a no-op. Subclasses should reimplement this method as needed
+to bind any widget event handlers or signals.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_base_widget_component.WXBaseWidgetComponent.destroy">
+<tt class="descname">destroy</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_base_widget_component.html#WXBaseWidgetComponent.destroy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_base_widget_component.WXBaseWidgetComponent.destroy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Destroy the underlying Wx widget.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.components.widget_component.WidgetComponent.html" title="WidgetComponent"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="enaml.core.base_component.BaseComponent.html" title="BaseComponent"
+             >previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" >Widgets</a> &raquo;</li>
+  
+    <li><a href="#">BaseWidgetComponent</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Jun 12, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

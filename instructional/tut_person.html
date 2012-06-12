@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>John Doe tutorial &mdash; enaml 0.2beta-1 documentation</title>
+    <title>John Doe tutorial &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../index.html" />
     <link rel="up" title="Enaml Tutorials" href="tutorials_home.html" />
     <link rel="next" title="More on Enaml Widgets" href="tut_more_widgets.html" />
     <link rel="prev" title="“Hello World” tutorial" href="tut_hello_world.html" /> 
@@ -51,7 +51,7 @@
         <li class="right" >
           <a href="tut_hello_world.html" title="“Hello World” tutorial"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
           <li><a href="tutorials_home.html" accesskey="U">Enaml Tutorials</a> &raquo;</li>
   
@@ -235,7 +235,7 @@ uses the <tt class="docutils literal"><span class="pre">PersonForm</span></tt> d
 <div class="section" id="built-in-components">
 <h2>Built-in Components<a class="headerlink" href="#built-in-components" title="Permalink to this headline">¶</a></h2>
 <p>Next, we add a series of labels and fields. <tt class="docutils literal"><span class="pre">Form</span></tt>, <tt class="docutils literal"><span class="pre">Label</span></tt> and <tt class="docutils literal"><span class="pre">Field</span></tt>
-are all from the library of Enaml built-in components.</p>
+are all from the library of Enaml <em class="xref std std-ref">built-in components.</em></p>
 <p><tt class="xref py py-class docutils literal"><span class="pre">Form</span></tt> is a built-in container that arranges
 alternating child components into two columns. This is typically done in the
 way seen here with alternating <tt class="docutils literal"><span class="pre">Label:</span></tt> and widget children. In a form with
@@ -279,8 +279,8 @@ simple. Note that we will pass a <tt class="docutils literal"><span class="pre">
 <div class="section" id="traits-object">
 <h3>Traits Object<a class="headerlink" href="#traits-object" title="Permalink to this headline">¶</a></h3>
 <p>Enaml is designed to work with <a class="reference external" href="http://code.enthought.com/projects/traits/">Traits objects</a>. The important thing to note is
-that the <tt class="docutils literal"><span class="pre">Person</span></tt> attribute names match the names of the <tt class="docutils literal"><span class="pre">PersonForm</span></tt>
-attributes from the .enaml file.</p>
+that the <tt class="docutils literal"><span class="pre">Person</span></tt> attribute names match the attribute names of the <tt class="docutils literal"><span class="pre">person</span></tt>
+object used by the <tt class="docutils literal"><span class="pre">PersonForm</span></tt> in the .enaml file.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Person</span><span class="p">(</span><span class="n">HasTraits</span><span class="p">):</span>
    <span class="sd">&quot;&quot;&quot; A simple class representing a person object.</span>
 
@@ -310,7 +310,7 @@ on Traits.</p>
 <div class="section" id="hooking-up-an-enaml-view-to-a-traits-object">
 <h2>Hooking up an Enaml View to a Traits Object<a class="headerlink" href="#hooking-up-an-enaml-view-to-a-traits-object" title="Permalink to this headline">¶</a></h2>
 <p>In the code block for launching the script from the command line, we create a
-Person object and pass it to <tt class="docutils literal"><span class="pre">PersonView</span></tt>.</p>
+Person object and pass it to <tt class="docutils literal"><span class="pre">PersonView</span></tt>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">enaml</span>
     <span class="k">with</span> <span class="n">enaml</span><span class="o">.</span><span class="n">imports</span><span class="p">():</span>
@@ -322,14 +322,14 @@ Person object and pass it to <tt class="docutils literal"><span class="pre">Pers
     <span class="n">view</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Running it from the command line, we see</p>
+<p>Running it from the command line, we see:</p>
 <div class="highlight-python"><pre>$ python person.py
 is 42 years old.</pre>
 </div>
 <img alt="../_images/john_doe.png" src="../_images/john_doe.png" />
 <p>Note that the age was assigned before the first and last names, so that those
 fields are empty when Person() prints to the command line. That&#8217;s not the case
-when we make a change in the GUI and see</p>
+when we make a change in the GUI and see:</p>
 <div class="highlight-python"><pre>John Doe Jr. is 22 years old.</pre>
 </div>
 <img alt="../_images/john_doe_jr.png" src="../_images/john_doe_jr.png" />
@@ -360,7 +360,7 @@ when we make a change in the GUI and see</p>
         <li class="right" >
           <a href="tut_hello_world.html" title="“Hello World” tutorial"
              >previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
           <li><a href="tutorials_home.html" >Enaml Tutorials</a> &raquo;</li>
   
@@ -371,7 +371,7 @@ when we make a change in the GUI and see</p>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

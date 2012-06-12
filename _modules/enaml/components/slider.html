@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.components.slider &mdash; enaml 0.2beta-1 documentation</title>
+    <title>enaml.components.slider &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.components.slider</a></li>
@@ -94,50 +94,50 @@
 <span class="kn">from</span> <span class="nn">..enums</span> <span class="kn">import</span> <span class="n">Orientation</span><span class="p">,</span> <span class="n">TickPosition</span><span class="p">,</span> <span class="n">PolicyEnum</span>
 
 
-<div class="viewcode-block" id="AbstractTkSlider"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.slider.AbstractTkSlider">[docs]</a><span class="k">class</span> <span class="nc">AbstractTkSlider</span><span class="p">(</span><span class="n">AbstractTkControl</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">AbstractTkSlider</span><span class="p">(</span><span class="n">AbstractTkControl</span><span class="p">):</span>
 
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkSlider.shell_value_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.slider.AbstractTkSlider.shell_value_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_value_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_value_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkSlider.shell_minimum_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.slider.AbstractTkSlider.shell_minimum_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_minimum_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minimum</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_minimum_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minimum</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkSlider.shell_maximum_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.slider.AbstractTkSlider.shell_maximum_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_maximum_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maximum</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_maximum_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maximum</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkSlider.shell_tracking_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.slider.AbstractTkSlider.shell_tracking_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_tracking_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tracking</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_tracking_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tracking</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkSlider.shell_single_step_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.slider.AbstractTkSlider.shell_single_step_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_single_step_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">single_step</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_single_step_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">single_step</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkSlider.shell_page_step_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.slider.AbstractTkSlider.shell_page_step_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_page_step_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">page_step</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_page_step_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">page_step</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkSlider.shell_tick_interval_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.slider.AbstractTkSlider.shell_tick_interval_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_tick_interval_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tick_interval</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_tick_interval_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tick_interval</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkSlider.shell_tick_position_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.slider.AbstractTkSlider.shell_tick_position_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_tick_position_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tick_position</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_tick_position_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tick_position</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkSlider.shell_orientation_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.slider.AbstractTkSlider.shell_orientation_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_orientation_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orientation</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_orientation_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orientation</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
 
-<span class="c">#: The maximum slider value</span></div></div>
+<span class="c">#: The maximum slider value</span>
 <span class="n">MAX_SLIDER_VALUE</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">16</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
 
 
-<div class="viewcode-block" id="Slider"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.slider.Slider">[docs]</a><span class="k">class</span> <span class="nc">Slider</span><span class="p">(</span><span class="n">Control</span><span class="p">):</span>
+<div class="viewcode-block" id="Slider"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.slider.Slider.html#enaml.components.slider.Slider">[docs]</a><span class="k">class</span> <span class="nc">Slider</span><span class="p">(</span><span class="n">Control</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A simple slider widget that can be used to select from a </span>
 <span class="sd">    range of values.</span>
 
@@ -359,7 +359,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.components.slider</a></li>
@@ -369,7 +369,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

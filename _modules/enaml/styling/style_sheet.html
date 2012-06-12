@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.styling.style_sheet &mdash; enaml 0.2beta-1 documentation</title>
+    <title>enaml.styling.style_sheet &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.styling.style_sheet</a></li>
@@ -124,10 +124,10 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;value&#39;</span><span class="p">,)</span>
 
-<div class="viewcode-block" id="BoxedValue.__init__"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.style_sheet.BoxedValue.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
 
-</div></div>
+</div>
 <div class="viewcode-block" id="StyleValue"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.style_sheet.StyleValue">[docs]</a><span class="k">class</span> <span class="nc">StyleValue</span><span class="p">(</span><span class="n">BoxedValue</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A BoxedValue subclass that is used by the style sheet when </span>
 <span class="sd">    returning style matches. This allows other application code to</span>
@@ -253,11 +253,11 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">node_type</span> <span class="o">=</span> <span class="n">Str</span>
 
-<div class="viewcode-block" id="TypeSelector.match"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.style_sheet.TypeSelector.match">[docs]</a>    <span class="k">def</span> <span class="nf">match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_data</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_data</span><span class="p">):</span>
         <span class="n">match</span> <span class="o">=</span> <span class="n">node_data</span><span class="o">.</span><span class="n">node_type</span><span class="p">()</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_type</span>
         <span class="k">return</span> <span class="n">match</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">)</span>
 
-</div></div>
+</div>
 <div class="viewcode-block" id="ClassSelector"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.style_sheet.ClassSelector">[docs]</a><span class="k">class</span> <span class="nc">ClassSelector</span><span class="p">(</span><span class="n">Selector</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A style selector which matches style classes.</span>
 
@@ -268,7 +268,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">node_classes</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ClassSelector.match"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.style_sheet.ClassSelector.match">[docs]</a>    <span class="k">def</span> <span class="nf">match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_data</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_data</span><span class="p">):</span>
         <span class="n">these_classes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_classes</span>
         <span class="n">specificity</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">node_class</span> <span class="ow">in</span> <span class="n">node_data</span><span class="o">.</span><span class="n">node_classes</span><span class="p">():</span>
@@ -277,7 +277,7 @@
         <span class="n">match</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">specificity</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">match</span><span class="p">,</span> <span class="p">(</span><span class="n">specificity</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">)</span>
 
-</div></div>
+</div>
 <div class="viewcode-block" id="QualSelector"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.style_sheet.QualSelector">[docs]</a><span class="k">class</span> <span class="nc">QualSelector</span><span class="p">(</span><span class="n">Selector</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A style selector which matches type qualified classes.</span>
 
@@ -290,7 +290,7 @@
 
     <span class="n">node_classes</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
 
-<div class="viewcode-block" id="QualSelector.match"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.style_sheet.QualSelector.match">[docs]</a>    <span class="k">def</span> <span class="nf">match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_data</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_data</span><span class="p">):</span>
         <span class="n">match</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="n">specificity</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">type_match</span> <span class="o">=</span> <span class="n">node_data</span><span class="o">.</span><span class="n">node_type</span><span class="p">()</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_type</span>
@@ -305,7 +305,7 @@
         <span class="n">match</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">specificity</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">match</span><span class="p">,</span> <span class="p">(</span><span class="n">specificity</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">)</span>
 
-</div></div>
+</div>
 <div class="viewcode-block" id="IDSelector"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.style_sheet.IDSelector">[docs]</a><span class="k">class</span> <span class="nc">IDSelector</span><span class="p">(</span><span class="n">Selector</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A style selector which matches element ids.</span>
 
@@ -316,11 +316,11 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">node_id</span> <span class="o">=</span> <span class="n">Str</span>
 
-<div class="viewcode-block" id="IDSelector.match"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.style_sheet.IDSelector.match">[docs]</a>    <span class="k">def</span> <span class="nf">match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_data</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_data</span><span class="p">):</span>
         <span class="n">match</span> <span class="o">=</span> <span class="n">node_data</span><span class="o">.</span><span class="n">node_id</span><span class="p">()</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_id</span>
         <span class="k">return</span> <span class="n">match</span><span class="p">,</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">)</span>
 
-</div></div>
+</div>
 <div class="viewcode-block" id="StyleSheet"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.style_sheet.StyleSheet">[docs]</a><span class="k">class</span> <span class="nc">StyleSheet</span><span class="p">(</span><span class="n">HasStrictTraits</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; An object representing a style sheet.</span>
 
@@ -561,7 +561,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.styling.style_sheet</a></li>
@@ -571,7 +571,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

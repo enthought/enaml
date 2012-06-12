@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.core.lexer &mdash; enaml 0.2beta-1 documentation</title>
+    <title>enaml.core.lexer &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.core.lexer</a></li>
@@ -102,14 +102,14 @@
 <span class="n">DECL</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">&#39;^[a-zA-Z_][a-zA-Z0-9_]*\s*\(\s*[a-zA-Z_][a-zA-Z0-9_]*\s*\)\s*:\s*$&#39;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="warn_old_decl_syntax"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.warn_old_decl_syntax">[docs]</a><span class="k">def</span> <span class="nf">warn_old_decl_syntax</span><span class="p">(</span><span class="n">lineno</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">warn_old_decl_syntax</span><span class="p">(</span><span class="n">lineno</span><span class="p">):</span>
     <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;Declaring a component without the keyword &#39;enamldef&#39; is &quot;</span>
            <span class="s">&quot;deprecated and will be removed in futures versions. The keyword &quot;</span>
            <span class="s">&quot;has been automatically added on line number </span><span class="si">%s</span><span class="s">&quot;</span><span class="p">)</span>
     <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span> <span class="o">%</span> <span class="n">lineno</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">)</span>
 
-</div>
-<div class="viewcode-block" id="warn_old_tag_syntax"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.warn_old_tag_syntax">[docs]</a><span class="k">def</span> <span class="nf">warn_old_tag_syntax</span><span class="p">(</span><span class="n">lineno</span><span class="p">):</span>
+
+<span class="k">def</span> <span class="nf">warn_old_tag_syntax</span><span class="p">(</span><span class="n">lineno</span><span class="p">):</span>
     <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;The ::python:: and ::end:: tags are deprecated and will be &quot;</span>
            <span class="s">&quot;removed in future versions. The tags are no longer required &quot;</span>
            <span class="s">&quot;and can simply be ommitted. Ignoring tag on line number </span><span class="si">%s</span><span class="s">&quot;</span><span class="p">)</span>
@@ -118,22 +118,22 @@
 
 <span class="c">#------------------------------------------------------------------------------</span>
 <span class="c"># Lexing Helpers</span>
-<span class="c">#------------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="ParsingError"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.ParsingError">[docs]</a><span class="k">class</span> <span class="nc">ParsingError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="k">class</span> <span class="nc">ParsingError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A helper class to bubble up exceptions out of the parsers</span>
 <span class="sd">    control to be re-raised at the parsing entry point. It avoids</span>
 <span class="sd">    problems with raise SyntaxErrors from within Ply parsing rules.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="ParsingError.__init__"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.ParsingError.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_class</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_class</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">exc_class</span> <span class="o">=</span> <span class="n">exc_class</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
-</div>
-<div class="viewcode-block" id="ParsingError.__call__"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.ParsingError.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">exc_class</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
 
-</div></div>
+
 <span class="k">def</span> <span class="nf">_parsing_error</span><span class="p">(</span><span class="n">klass</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Create and raise a parsing error for the syntax_error and</span>
 <span class="sd">    indentation_error functions below.</span>
@@ -158,7 +158,7 @@
     <span class="k">raise</span> <span class="n">ParsingError</span><span class="p">(</span><span class="n">klass</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">info</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="syntax_error"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.syntax_error">[docs]</a><span class="k">def</span> <span class="nf">syntax_error</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">syntax_error</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Raise a ParsingError which will be converted into an proper</span>
 <span class="sd">    SyntaxError during parsing.</span>
 
@@ -173,8 +173,8 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_parsing_error</span><span class="p">(</span><span class="ne">SyntaxError</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">token</span><span class="p">)</span>
 
-</div>
-<div class="viewcode-block" id="indentation_error"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.indentation_error">[docs]</a><span class="k">def</span> <span class="nf">indentation_error</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
+
+<span class="k">def</span> <span class="nf">indentation_error</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Raise a ParsingError which will be converted into an proper</span>
 <span class="sd">    IndentationError during parsing.</span>
 
@@ -192,8 +192,8 @@
 
 <span class="c">#------------------------------------------------------------------------------</span>
 <span class="c"># Enaml Lexer</span>
-<span class="c">#------------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="EnamlLexer"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer">[docs]</a><span class="k">class</span> <span class="nc">EnamlLexer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="EnamlLexer"><a class="viewcode-back" href="../../../api_ref/enaml.parsing.html#enaml.core.lexer.EnamlLexer">[docs]</a><span class="k">class</span> <span class="nc">EnamlLexer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
     <span class="n">operators</span> <span class="o">=</span> <span class="p">(</span>
         <span class="p">(</span><span class="s">r&#39;@&#39;</span><span class="p">,</span> <span class="s">&#39;AT&#39;</span><span class="p">),</span>
@@ -322,11 +322,11 @@
         <span class="n">tok_name</span> <span class="o">=</span> <span class="s">&#39;t_&#39;</span> <span class="o">+</span> <span class="n">tok_name</span>
         <span class="nb">locals</span><span class="p">()[</span><span class="n">tok_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">tok_pattern</span>
     
-<div class="viewcode-block" id="EnamlLexer.t_comment"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.t_comment">[docs]</a>    <span class="k">def</span> <span class="nf">t_comment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">t_comment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="s">r&#39;[ ]*\#[^\r\n]*&#39;</span>
         <span class="k">pass</span>
-   </div>
-<div class="viewcode-block" id="EnamlLexer.t_WS"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.t_WS">[docs]</a>    <span class="k">def</span> <span class="nf">t_WS</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+   
+    <span class="k">def</span> <span class="nf">t_WS</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="s">r&#39; [ \t\f]+ &#39;</span>
         <span class="n">value</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">value</span>
 
@@ -356,55 +356,55 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">at_line_start</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">paren_count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">t</span>
 
-    <span class="c"># string continuation - ignored beyond the tokenizer level</span></div>
-<div class="viewcode-block" id="EnamlLexer.t_escaped_newline"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.t_escaped_newline">[docs]</a>    <span class="k">def</span> <span class="nf">t_escaped_newline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+    <span class="c"># string continuation - ignored beyond the tokenizer level</span>
+    <span class="k">def</span> <span class="nf">t_escaped_newline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="s">r&quot;</span><span class="se">\\</span><span class="s">\n&quot;</span>
         <span class="n">t</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&quot;STRING_CONTINUE&quot;</span>
         <span class="c"># Raw strings don&#39;t escape the newline</span>
         <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_raw</span><span class="p">,</span> <span class="s">&quot;only occurs outside of quoted strings&quot;</span>
         <span class="n">t</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">lineno</span> <span class="o">+=</span> <span class="mi">1</span>
-</div>
-<div class="viewcode-block" id="EnamlLexer.t_newline"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.t_newline">[docs]</a>    <span class="k">def</span> <span class="nf">t_newline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">t_newline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="s">r&#39;\n+&#39;</span>
         <span class="n">t</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">lineno</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
         <span class="n">t</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&#39;NEWLINE&#39;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">paren_count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">t</span>
-    </div>
-<div class="viewcode-block" id="EnamlLexer.t_LPAR"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.t_LPAR">[docs]</a>    <span class="k">def</span> <span class="nf">t_LPAR</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+    
+    <span class="k">def</span> <span class="nf">t_LPAR</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="s">r&#39;\(&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">paren_count</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="n">t</span>
-</div>
-<div class="viewcode-block" id="EnamlLexer.t_RPAR"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.t_RPAR">[docs]</a>    <span class="k">def</span> <span class="nf">t_RPAR</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">t_RPAR</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="s">r&#39;\)&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">paren_count</span> <span class="o">-=</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="n">t</span>
-    </div>
-<div class="viewcode-block" id="EnamlLexer.t_LBRACE"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.t_LBRACE">[docs]</a>    <span class="k">def</span> <span class="nf">t_LBRACE</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+    
+    <span class="k">def</span> <span class="nf">t_LBRACE</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="s">r&#39;\{&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">paren_count</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="n">t</span>
-</div>
-<div class="viewcode-block" id="EnamlLexer.t_RBRACE"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.t_RBRACE">[docs]</a>    <span class="k">def</span> <span class="nf">t_RBRACE</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">t_RBRACE</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="s">r&#39;\}&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">paren_count</span> <span class="o">-=</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="n">t</span>
-    </div>
-<div class="viewcode-block" id="EnamlLexer.t_LSQB"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.t_LSQB">[docs]</a>    <span class="k">def</span> <span class="nf">t_LSQB</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+    
+    <span class="k">def</span> <span class="nf">t_LSQB</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="s">r&#39;\[&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">paren_count</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="n">t</span>
-</div>
-<div class="viewcode-block" id="EnamlLexer.t_RSQB"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.t_RSQB">[docs]</a>    <span class="k">def</span> <span class="nf">t_RSQB</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">t_RSQB</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="s">r&#39;\]&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">paren_count</span> <span class="o">-=</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="n">t</span>
 
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># State string escapes</span>
-    <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="EnamlLexer.t_SINGLEQ1_SINGLEQ2_TRIPLEQ1_TRIPLEQ2_escaped"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.t_SINGLEQ1_SINGLEQ2_TRIPLEQ1_TRIPLEQ2_escaped">[docs]</a>    <span class="k">def</span> <span class="nf">t_SINGLEQ1_SINGLEQ2_TRIPLEQ1_TRIPLEQ2_escaped</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">t_SINGLEQ1_SINGLEQ2_TRIPLEQ1_TRIPLEQ2_escaped</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="s">r&quot;</span><span class="se">\\</span><span class="s">(.|\n)&quot;</span>
         <span class="n">t</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&quot;STRING_CONTINUE&quot;</span>
         <span class="n">t</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">lineno</span> <span class="o">+=</span> <span class="n">t</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
@@ -412,8 +412,8 @@
 
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># TRIPLEQ1 strings</span>
-    <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="EnamlLexer.t_start_triple_quoted_q1_string"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.t_start_triple_quoted_q1_string">[docs]</a>    <span class="k">def</span> <span class="nf">t_start_triple_quoted_q1_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">t_start_triple_quoted_q1_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="s">r&quot;[uU]?[rR]?&#39;&#39;&#39;&quot;</span>
         <span class="n">t</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">push_state</span><span class="p">(</span><span class="s">&quot;TRIPLEQ1&quot;</span><span class="p">)</span>
         <span class="n">t</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&quot;STRING_START_TRIPLE&quot;</span>
@@ -421,35 +421,35 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">is_raw</span> <span class="o">=</span> <span class="bp">True</span>
         <span class="n">t</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;&#39;&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">t</span>
-    </div>
-<div class="viewcode-block" id="EnamlLexer.t_TRIPLEQ1_simple"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.t_TRIPLEQ1_simple">[docs]</a>    <span class="k">def</span> <span class="nf">t_TRIPLEQ1_simple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+    
+    <span class="k">def</span> <span class="nf">t_TRIPLEQ1_simple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="s">r&quot;[^&#39;</span><span class="se">\\</span><span class="s">]+&quot;</span>
         <span class="n">t</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&quot;STRING_CONTINUE&quot;</span>
         <span class="n">t</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">lineno</span> <span class="o">+=</span> <span class="n">t</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">t</span>
-</div>
-<div class="viewcode-block" id="EnamlLexer.t_TRIPLEQ1_q1_but_not_triple"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.t_TRIPLEQ1_q1_but_not_triple">[docs]</a>    <span class="k">def</span> <span class="nf">t_TRIPLEQ1_q1_but_not_triple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">t_TRIPLEQ1_q1_but_not_triple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="s">r&quot;&#39;(?!&#39;&#39;)&quot;</span>
         <span class="n">t</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&quot;STRING_CONTINUE&quot;</span>
         <span class="k">return</span> <span class="n">t</span>
-</div>
-<div class="viewcode-block" id="EnamlLexer.t_TRIPLEQ1_end"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.t_TRIPLEQ1_end">[docs]</a>    <span class="k">def</span> <span class="nf">t_TRIPLEQ1_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">t_TRIPLEQ1_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="s">r&quot;&#39;&#39;&#39;&quot;</span>
         <span class="n">t</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&quot;STRING_END&quot;</span>
         <span class="n">t</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">pop_state</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_raw</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="k">return</span> <span class="n">t</span>
     
-    <span class="c"># supress PLY warning</span></div>
+    <span class="c"># supress PLY warning</span>
     <span class="n">t_TRIPLEQ1_ignore</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
 
-<div class="viewcode-block" id="EnamlLexer.t_TRIPLEQ1_error"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.t_TRIPLEQ1_error">[docs]</a>    <span class="k">def</span> <span class="nf">t_TRIPLEQ1_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">t_TRIPLEQ1_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="n">syntax_error</span><span class="p">(</span><span class="s">&#39;invalid syntax&#39;</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
 
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># TRIPLEQ2 strings</span>
-    <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="EnamlLexer.t_start_triple_quoted_q2_string"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.t_start_triple_quoted_q2_string">[docs]</a>    <span class="k">def</span> <span class="nf">t_start_triple_quoted_q2_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">t_start_triple_quoted_q2_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="s">r&#39;[uU]?[rR]?&quot;&quot;&quot;&#39;</span>
         <span class="n">t</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">push_state</span><span class="p">(</span><span class="s">&quot;TRIPLEQ2&quot;</span><span class="p">)</span>
         <span class="n">t</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&quot;STRING_START_TRIPLE&quot;</span>
@@ -457,35 +457,35 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">is_raw</span> <span class="o">=</span> <span class="bp">True</span>
         <span class="n">t</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;&quot;&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">t</span>
-</div>
-<div class="viewcode-block" id="EnamlLexer.t_TRIPLEQ2_simple"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.t_TRIPLEQ2_simple">[docs]</a>    <span class="k">def</span> <span class="nf">t_TRIPLEQ2_simple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">t_TRIPLEQ2_simple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="s">r&#39;[^&quot;</span><span class="se">\\</span><span class="s">]+&#39;</span>
         <span class="n">t</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&quot;STRING_CONTINUE&quot;</span>
         <span class="n">t</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">lineno</span> <span class="o">+=</span> <span class="n">t</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">t</span>
-</div>
-<div class="viewcode-block" id="EnamlLexer.t_TRIPLEQ2_q2_but_not_triple"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.t_TRIPLEQ2_q2_but_not_triple">[docs]</a>    <span class="k">def</span> <span class="nf">t_TRIPLEQ2_q2_but_not_triple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">t_TRIPLEQ2_q2_but_not_triple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="s">r&#39;&quot;(?!&quot;&quot;)&#39;</span>
         <span class="n">t</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&quot;STRING_CONTINUE&quot;</span>
         <span class="k">return</span> <span class="n">t</span>
-</div>
-<div class="viewcode-block" id="EnamlLexer.t_TRIPLEQ2_end"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.t_TRIPLEQ2_end">[docs]</a>    <span class="k">def</span> <span class="nf">t_TRIPLEQ2_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">t_TRIPLEQ2_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="s">r&#39;&quot;&quot;&quot;&#39;</span>
         <span class="n">t</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&quot;STRING_END&quot;</span>
         <span class="n">t</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">pop_state</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_raw</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="k">return</span> <span class="n">t</span>
 
-    <span class="c"># supress PLY warning</span></div>
+    <span class="c"># supress PLY warning</span>
     <span class="n">t_TRIPLEQ2_ignore</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
 
-<div class="viewcode-block" id="EnamlLexer.t_TRIPLEQ2_error"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.t_TRIPLEQ2_error">[docs]</a>    <span class="k">def</span> <span class="nf">t_TRIPLEQ2_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">t_TRIPLEQ2_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="n">syntax_error</span><span class="p">(</span><span class="s">&#39;invalid syntax&#39;</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
 
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># SINGLEQ1 strings</span>
-    <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="EnamlLexer.t_start_single_quoted_q1_string"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.t_start_single_quoted_q1_string">[docs]</a>    <span class="k">def</span> <span class="nf">t_start_single_quoted_q1_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">t_start_single_quoted_q1_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="s">r&quot;[uU]?[rR]?&#39;&quot;</span>
         <span class="n">t</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">push_state</span><span class="p">(</span><span class="s">&quot;SINGLEQ1&quot;</span><span class="p">)</span>
         <span class="n">t</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&quot;STRING_START_SINGLE&quot;</span>
@@ -493,29 +493,29 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">is_raw</span> <span class="o">=</span> <span class="bp">True</span>
         <span class="n">t</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;&#39;&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">t</span>
-</div>
-<div class="viewcode-block" id="EnamlLexer.t_SINGLEQ1_simple"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.t_SINGLEQ1_simple">[docs]</a>    <span class="k">def</span> <span class="nf">t_SINGLEQ1_simple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">t_SINGLEQ1_simple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="s">r&quot;[^&#39;</span><span class="se">\\</span><span class="s">\n]+&quot;</span>
         <span class="n">t</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&quot;STRING_CONTINUE&quot;</span>
         <span class="k">return</span> <span class="n">t</span>
-</div>
-<div class="viewcode-block" id="EnamlLexer.t_SINGLEQ1_end"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.t_SINGLEQ1_end">[docs]</a>    <span class="k">def</span> <span class="nf">t_SINGLEQ1_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">t_SINGLEQ1_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="s">r&quot;&#39;&quot;</span>
         <span class="n">t</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&quot;STRING_END&quot;</span>
         <span class="n">t</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">pop_state</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_raw</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="k">return</span> <span class="n">t</span>
     
-    <span class="c"># supress PLY warning</span></div>
+    <span class="c"># supress PLY warning</span>
     <span class="n">t_SINGLEQ1_ignore</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
     
-<div class="viewcode-block" id="EnamlLexer.t_SINGLEQ1_error"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.t_SINGLEQ1_error">[docs]</a>    <span class="k">def</span> <span class="nf">t_SINGLEQ1_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">t_SINGLEQ1_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="n">syntax_error</span><span class="p">(</span><span class="s">&#39;EOL while scanning single quoted string.&#39;</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
 
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># SINGLEQ2 strings</span>
-    <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="EnamlLexer.t_start_single_quoted_q2_string"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.t_start_single_quoted_q2_string">[docs]</a>    <span class="k">def</span> <span class="nf">t_start_single_quoted_q2_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">t_start_single_quoted_q2_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="s">r&#39;[uU]?[rR]?&quot;&#39;</span>
         <span class="n">t</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">push_state</span><span class="p">(</span><span class="s">&quot;SINGLEQ2&quot;</span><span class="p">)</span>
         <span class="n">t</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&quot;STRING_START_SINGLE&quot;</span>
@@ -523,54 +523,54 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">is_raw</span> <span class="o">=</span> <span class="bp">True</span>
         <span class="n">t</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;&quot;&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">t</span>
-</div>
-<div class="viewcode-block" id="EnamlLexer.t_SINGLEQ2_simple"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.t_SINGLEQ2_simple">[docs]</a>    <span class="k">def</span> <span class="nf">t_SINGLEQ2_simple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">t_SINGLEQ2_simple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="s">r&#39;[^&quot;</span><span class="se">\\</span><span class="s">\n]+&#39;</span>
         <span class="n">t</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&quot;STRING_CONTINUE&quot;</span>
         <span class="k">return</span> <span class="n">t</span>
-</div>
-<div class="viewcode-block" id="EnamlLexer.t_SINGLEQ2_end"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.t_SINGLEQ2_end">[docs]</a>    <span class="k">def</span> <span class="nf">t_SINGLEQ2_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">t_SINGLEQ2_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="s">r&#39;&quot;&#39;</span>
         <span class="n">t</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&quot;STRING_END&quot;</span>
         <span class="n">t</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">pop_state</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_raw</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="k">return</span> <span class="n">t</span>
     
-    <span class="c"># supress PLY warning</span></div>
+    <span class="c"># supress PLY warning</span>
     <span class="n">t_SINGLEQ2_ignore</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
     
-<div class="viewcode-block" id="EnamlLexer.t_SINGLEQ2_error"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.t_SINGLEQ2_error">[docs]</a>    <span class="k">def</span> <span class="nf">t_SINGLEQ2_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">t_SINGLEQ2_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="n">syntax_error</span><span class="p">(</span><span class="s">&#39;EOL while scanning single quoted string.&#39;</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
     
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Raw Python</span>
     <span class="c">#--------------------------------------------------------------------------   </span>
-    <span class="c"># Deprecated Backwards Compatibility for :: python :: tags</span></div>
-<div class="viewcode-block" id="EnamlLexer.t_start_raw_python"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.t_start_raw_python">[docs]</a>    <span class="k">def</span> <span class="nf">t_start_raw_python</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+    <span class="c"># Deprecated Backwards Compatibility for :: python :: tags</span>
+    <span class="k">def</span> <span class="nf">t_start_raw_python</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="s">r&#39;::[\t\ ]*python[\t\ ]*::[\t\ ]*&#39;</span>
         <span class="n">warn_old_tag_syntax</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">lineno</span><span class="p">)</span>
 
-</div>
-<div class="viewcode-block" id="EnamlLexer.t_end_raw_python"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.t_end_raw_python">[docs]</a>    <span class="k">def</span> <span class="nf">t_end_raw_python</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">t_end_raw_python</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="s">r&#39;::[\t\ ]*end[\t\ ]*::[\t\ ]*&#39;</span>
         <span class="n">warn_old_tag_syntax</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">lineno</span><span class="p">)</span>
 
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Miscellaneous Token Rules</span>
     <span class="c">#--------------------------------------------------------------------------</span>
-    <span class="c"># This is placed after the string rules so r&quot;&quot; is not matched as a name.</span></div>
-<div class="viewcode-block" id="EnamlLexer.t_NAME"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.t_NAME">[docs]</a>    <span class="k">def</span> <span class="nf">t_NAME</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+    <span class="c"># This is placed after the string rules so r&quot;&quot; is not matched as a name.</span>
+    <span class="k">def</span> <span class="nf">t_NAME</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="s">r&#39;[a-zA-Z_][a-zA-Z0-9_]*&#39;</span>
         <span class="n">t</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reserved</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="s">&quot;NAME&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">t</span>
-</div>
-<div class="viewcode-block" id="EnamlLexer.t_error"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.t_error">[docs]</a>    <span class="k">def</span> <span class="nf">t_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">t_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="n">syntax_error</span><span class="p">(</span><span class="s">&#39;invalid syntax&#39;</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
         
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Normal Class Items</span>
-    <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="EnamlLexer.__init__"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s">&#39;Enaml&#39;</span><span class="p">):</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s">&#39;Enaml&#39;</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">lex</span><span class="p">(</span>
             <span class="n">module</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputdir</span><span class="o">=</span><span class="n">_lex_dir</span><span class="p">,</span> <span class="n">lextab</span><span class="o">=</span><span class="n">_lex_module</span><span class="p">,</span> <span class="n">optimize</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="p">)</span>
@@ -586,8 +586,8 @@
         <span class="c"># will be set on the error token. Since we need the filename in</span>
         <span class="c"># that function, we add it as an attribute on both lexers.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
-</div>
-<div class="viewcode-block" id="EnamlLexer.input"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.input">[docs]</a>    <span class="k">def</span> <span class="nf">input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">txt</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">txt</span><span class="p">):</span>
         <span class="c"># Support for deprecated component declaration without</span>
         <span class="c"># keyword. This automatically inserts the keyword before</span>
         <span class="c"># anything makes it to the parser.</span>
@@ -605,15 +605,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">paren_count</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_raw</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">at_line_start</span> <span class="o">=</span> <span class="bp">False</span>
-</div>
-<div class="viewcode-block" id="EnamlLexer.token"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.token">[docs]</a>    <span class="k">def</span> <span class="nf">token</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">token</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">tok</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_token</span><span class="p">()</span>
             <span class="k">return</span> <span class="n">tok</span>
         <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
             <span class="k">pass</span>
-   </div>
-<div class="viewcode-block" id="EnamlLexer.dedent"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.dedent">[docs]</a>    <span class="k">def</span> <span class="nf">dedent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lineno</span><span class="p">):</span>
+   
+    <span class="k">def</span> <span class="nf">dedent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lineno</span><span class="p">):</span>
         <span class="c"># Synthesize a DEDENT Token</span>
         <span class="n">tok</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">LexToken</span><span class="p">()</span>
         <span class="n">tok</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&#39;DEDENT&#39;</span>
@@ -622,8 +622,8 @@
         <span class="n">tok</span><span class="o">.</span><span class="n">lexpos</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="n">tok</span><span class="o">.</span><span class="n">lexer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span>
         <span class="k">return</span> <span class="n">tok</span>
-</div>
-<div class="viewcode-block" id="EnamlLexer.indent"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.indent">[docs]</a>    <span class="k">def</span> <span class="nf">indent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lineno</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">indent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lineno</span><span class="p">):</span>
         <span class="c"># Synthesize an INDENT Token.</span>
         <span class="n">tok</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">LexToken</span><span class="p">()</span>
         <span class="n">tok</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&#39;INDENT&#39;</span>
@@ -632,8 +632,8 @@
         <span class="n">tok</span><span class="o">.</span><span class="n">lexpos</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="n">tok</span><span class="o">.</span><span class="n">lexer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span>
         <span class="k">return</span> <span class="n">tok</span>
-</div>
-<div class="viewcode-block" id="EnamlLexer.newline"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.newline">[docs]</a>    <span class="k">def</span> <span class="nf">newline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lineno</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">newline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lineno</span><span class="p">):</span>
         <span class="n">tok</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">LexToken</span><span class="p">()</span>
         <span class="n">tok</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&#39;NEWLINE&#39;</span>
         <span class="n">tok</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
@@ -641,16 +641,16 @@
         <span class="n">tok</span><span class="o">.</span><span class="n">lexpos</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="n">tok</span><span class="o">.</span><span class="n">lexer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span>
         <span class="k">return</span> <span class="n">tok</span>
-</div>
-<div class="viewcode-block" id="EnamlLexer.make_token_stream"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.make_token_stream">[docs]</a>    <span class="k">def</span> <span class="nf">make_token_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">make_token_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">token_stream</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">token</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
         <span class="n">token_stream</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_strings</span><span class="p">(</span><span class="n">token_stream</span><span class="p">)</span>
         <span class="n">token_stream</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">annotate_indentation_state</span><span class="p">(</span><span class="n">token_stream</span><span class="p">)</span>
         <span class="n">token_stream</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">synthesize_indentation_tokens</span><span class="p">(</span><span class="n">token_stream</span><span class="p">)</span>
         <span class="n">token_stream</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_endmarker</span><span class="p">(</span><span class="n">token_stream</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">token_stream</span>
-</div>
-<div class="viewcode-block" id="EnamlLexer.create_strings"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.create_strings">[docs]</a>    <span class="k">def</span> <span class="nf">create_strings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token_stream</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">create_strings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token_stream</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">token_stream</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">tok</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;STRING_START_&quot;</span><span class="p">):</span>
                 <span class="k">yield</span> <span class="n">tok</span>
@@ -718,8 +718,8 @@
     <span class="c">#  1) &quot;if 1: go()&quot; - simple statements have a COLON but no need for an indent</span>
     <span class="c">#  2) &quot;if 1:\n  go()&quot; - complex statements have a COLON NEWLINE and must indent</span>
     <span class="c"># </span>
-    <span class="c"># We only care about whitespace at the start of a line</span></div>
-<div class="viewcode-block" id="EnamlLexer.annotate_indentation_state"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.annotate_indentation_state">[docs]</a>    <span class="k">def</span> <span class="nf">annotate_indentation_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token_stream</span><span class="p">):</span>
+    <span class="c"># We only care about whitespace at the start of a line</span>
+    <span class="k">def</span> <span class="nf">annotate_indentation_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token_stream</span><span class="p">):</span>
         <span class="n">NO_INDENT</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">MAY_INDENT</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="n">MUST_INDENT</span> <span class="o">=</span> <span class="mi">2</span>
@@ -763,8 +763,8 @@
 
             <span class="k">yield</span> <span class="n">token</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">at_line_start</span> <span class="o">=</span> <span class="n">at_line_start</span>
-</div>
-<div class="viewcode-block" id="EnamlLexer.synthesize_indentation_tokens"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.synthesize_indentation_tokens">[docs]</a>    <span class="k">def</span> <span class="nf">synthesize_indentation_tokens</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token_stream</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">synthesize_indentation_tokens</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token_stream</span><span class="p">):</span>
         <span class="c"># A stack of indentation levels; will never pop item 0</span>
         <span class="n">levels</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">depth</span> <span class="o">=</span> <span class="mi">0</span>
@@ -843,8 +843,8 @@
             <span class="k">assert</span> <span class="n">token</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
             <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">levels</span><span class="p">)):</span>
                 <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">dedent</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">lineno</span><span class="p">)</span>
-        </div>
-<div class="viewcode-block" id="EnamlLexer.add_endmarker"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer.add_endmarker">[docs]</a>    <span class="k">def</span> <span class="nf">add_endmarker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token_stream</span><span class="p">):</span>
+        
+    <span class="k">def</span> <span class="nf">add_endmarker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token_stream</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">token_stream</span><span class="p">:</span>
             <span class="k">yield</span> <span class="n">tok</span>
 
@@ -855,7 +855,7 @@
         <span class="n">end_marker</span><span class="o">.</span><span class="n">lexpos</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="n">end_marker</span><span class="o">.</span><span class="n">lexer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span>
         <span class="k">yield</span> <span class="n">end_marker</span>
-</pre></div></div></div>
+</pre></div></div>
 
           </div>
         </div>
@@ -874,7 +874,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.core.lexer</a></li>
@@ -884,7 +884,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

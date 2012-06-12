@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.core.base_component &mdash; enaml 0.2beta-1 documentation</title>
+    <title>enaml.core.base_component &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.core.base_component</a></li>
@@ -96,7 +96,7 @@
 <span class="p">)</span>
 
 
-<div class="viewcode-block" id="BaseComponent"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.base_component.BaseComponent">[docs]</a><span class="k">class</span> <span class="nc">BaseComponent</span><span class="p">(</span><span class="n">HasStrictTraits</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseComponent"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.core.base_component.BaseComponent.html#enaml.core.base_component.BaseComponent">[docs]</a><span class="k">class</span> <span class="nc">BaseComponent</span><span class="p">(</span><span class="n">HasStrictTraits</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; The most base class of the Enaml component hierarchy.</span>
 
 <span class="sd">    All declarative Enaml classes should inherit from this class. This </span>
@@ -173,7 +173,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Special Methods</span>
     <span class="c">#--------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="BaseComponent.__repr__"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.base_component.BaseComponent.__repr__">[docs]</a>    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseComponent.__repr__"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.core.base_component.BaseComponent.html#enaml.core.base_component.BaseComponent.__repr__">[docs]</a>    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; An overridden repr which returns the repr of the factory </span>
 <span class="sd">        from which this component is derived, provided that it is not </span>
 <span class="sd">        simply a root constructor. Otherwise, it defaults to the super</span>
@@ -211,7 +211,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Component Manipulation</span>
     <span class="c">#--------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="BaseComponent.get_actual"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.base_component.BaseComponent.get_actual">[docs]</a>    <span class="k">def</span> <span class="nf">get_actual</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseComponent.get_actual"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.core.base_component.BaseComponent.html#enaml.core.base_component.BaseComponent.get_actual">[docs]</a>    <span class="k">def</span> <span class="nf">get_actual</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the list of BaseComponent instances which should be</span>
 <span class="sd">        included as proper children of our parent. By default this </span>
 <span class="sd">        simply returns [self]. This method should be reimplemented by </span>
@@ -221,7 +221,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="p">]</span>
         </div>
-<div class="viewcode-block" id="BaseComponent.add_subcomponent"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.base_component.BaseComponent.add_subcomponent">[docs]</a>    <span class="k">def</span> <span class="nf">add_subcomponent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">component</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseComponent.add_subcomponent"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.core.base_component.BaseComponent.html#enaml.core.base_component.BaseComponent.add_subcomponent">[docs]</a>    <span class="k">def</span> <span class="nf">add_subcomponent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">component</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Adds the given component as a subcomponent of this object.</span>
 <span class="sd">        By default, the subcomponent is added to an internal list of </span>
 <span class="sd">        subcomponents. This method may be overridden by subclasses to </span>
@@ -234,7 +234,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Setup Methods </span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="BaseComponent.setup"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.base_component.BaseComponent.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseComponent.setup"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.core.base_component.BaseComponent.html#enaml.core.base_component.BaseComponent.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Run the setup process for the ui tree.</span>
 
 <span class="sd">        The setup process is fairly complex and involves multiple steps.</span>
@@ -366,7 +366,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Teardown Methods</span>
     <span class="c">#--------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="BaseComponent.destroy"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.base_component.BaseComponent.destroy">[docs]</a>    <span class="k">def</span> <span class="nf">destroy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseComponent.destroy"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.core.base_component.BaseComponent.html#enaml.core.base_component.BaseComponent.destroy">[docs]</a>    <span class="k">def</span> <span class="nf">destroy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Destroys the component by clearing the list of subcomponents</span>
 <span class="sd">        and calling &#39;destroy&#39; on all of the old subcomponents, then gets</span>
 <span class="sd">        rid of all references to the subcomponents and bound expressions.</span>
@@ -382,7 +382,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Layout Stubs</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="BaseComponent.relayout"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.base_component.BaseComponent.relayout">[docs]</a>    <span class="k">def</span> <span class="nf">relayout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseComponent.relayout"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.core.base_component.BaseComponent.html#enaml.core.base_component.BaseComponent.relayout">[docs]</a>    <span class="k">def</span> <span class="nf">relayout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; A method called when the layout of the component&#39;s children</span>
 <span class="sd">        should be refreshed. By default, this method proxies the call up</span>
 <span class="sd">        the hierarchy until an implementor is found. Any implementors </span>
@@ -394,7 +394,7 @@
         <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">parent</span><span class="o">.</span><span class="n">relayout</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="BaseComponent.request_relayout"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.base_component.BaseComponent.request_relayout">[docs]</a>    <span class="k">def</span> <span class="nf">request_relayout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseComponent.request_relayout"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.core.base_component.BaseComponent.html#enaml.core.base_component.BaseComponent.request_relayout">[docs]</a>    <span class="k">def</span> <span class="nf">request_relayout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; A method called when the layout of the component&#39;s children</span>
 <span class="sd">        should be refreshed at some point in the future. By default, this </span>
 <span class="sd">        method proxies the call up the hierarchy until an implementor is </span>
@@ -406,7 +406,7 @@
         <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">parent</span><span class="o">.</span><span class="n">request_relayout</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="BaseComponent.refresh"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.base_component.BaseComponent.refresh">[docs]</a>    <span class="k">def</span> <span class="nf">refresh</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseComponent.refresh"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.core.base_component.BaseComponent.html#enaml.core.base_component.BaseComponent.refresh">[docs]</a>    <span class="k">def</span> <span class="nf">refresh</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; A method called when the positioning of the component&#39;s </span>
 <span class="sd">        children should be refreshed. By default, this method proxies the </span>
 <span class="sd">        call up the hierarchy until an implementor is found. Implementors </span>
@@ -423,7 +423,7 @@
         <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">parent</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
         </div>
-<div class="viewcode-block" id="BaseComponent.request_refresh"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.base_component.BaseComponent.request_refresh">[docs]</a>    <span class="k">def</span> <span class="nf">request_refresh</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseComponent.request_refresh"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.core.base_component.BaseComponent.html#enaml.core.base_component.BaseComponent.request_refresh">[docs]</a>    <span class="k">def</span> <span class="nf">request_refresh</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; A method called when the positioning of the component&#39;s </span>
 <span class="sd">        children should be refreshed at some point in the future. By </span>
 <span class="sd">        default, this method proxies the call up the hierarchy until an </span>
@@ -441,7 +441,7 @@
         <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">parent</span><span class="o">.</span><span class="n">request_refresh</span><span class="p">()</span>
         </div>
-<div class="viewcode-block" id="BaseComponent.request_relayout_task"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.base_component.BaseComponent.request_relayout_task">[docs]</a>    <span class="k">def</span> <span class="nf">request_relayout_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseComponent.request_relayout_task"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.core.base_component.BaseComponent.html#enaml.core.base_component.BaseComponent.request_relayout_task">[docs]</a>    <span class="k">def</span> <span class="nf">request_relayout_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Schedule a callback to be executed, followed by a relayout. </span>
 <span class="sd">        By default, this method proxies the call up the hierarchy until </span>
 <span class="sd">        an implementor is found. Implementors should ensure that the</span>
@@ -455,7 +455,7 @@
         <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">parent</span><span class="o">.</span><span class="n">request_relayout_task</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         </div>
-<div class="viewcode-block" id="BaseComponent.request_refresh_task"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.base_component.BaseComponent.request_refresh_task">[docs]</a>    <span class="k">def</span> <span class="nf">request_refresh_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseComponent.request_refresh_task"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.core.base_component.BaseComponent.html#enaml.core.base_component.BaseComponent.request_refresh_task">[docs]</a>    <span class="k">def</span> <span class="nf">request_refresh_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Schedule a callback to be executed, followed by a rerfresh. </span>
 <span class="sd">        By default, this method proxies the call up the hierarchy until </span>
 <span class="sd">        an implementor is found. Implementors should ensure that the</span>
@@ -472,7 +472,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Bound Attribute Handling</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="BaseComponent.add_attribute"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.base_component.BaseComponent.add_attribute">[docs]</a>    <span class="k">def</span> <span class="nf">add_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">attr_type</span><span class="o">=</span><span class="nb">object</span><span class="p">,</span> <span class="n">is_event</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseComponent.add_attribute"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.core.base_component.BaseComponent.html#enaml.core.base_component.BaseComponent.add_attribute">[docs]</a>    <span class="k">def</span> <span class="nf">add_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">attr_type</span><span class="o">=</span><span class="nb">object</span><span class="p">,</span> <span class="n">is_event</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Adds an attribute to the base component with the given name</span>
 <span class="sd">        and ensures that values assigned to this attribute are of a</span>
 <span class="sd">        given type.</span>
@@ -528,7 +528,7 @@
                    <span class="s">&quot;declaration on </span><span class="si">%s</span><span class="s">&quot;</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span> <span class="o">%</span> <span class="p">(</span><span class="n">attr_type</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="p">))</span>
 </div>
-<div class="viewcode-block" id="BaseComponent.bind_expression"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.base_component.BaseComponent.bind_expression">[docs]</a>    <span class="k">def</span> <span class="nf">bind_expression</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">expression</span><span class="p">,</span> <span class="n">notify_only</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseComponent.bind_expression"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.core.base_component.BaseComponent.html#enaml.core.base_component.BaseComponent.bind_expression">[docs]</a>    <span class="k">def</span> <span class="nf">bind_expression</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">expression</span><span class="p">,</span> <span class="n">notify_only</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Binds the given expression to the attribute &#39;name&#39;.</span>
 <span class="sd">         </span>
 <span class="sd">        If the attribute does not exist, an exception is raised. A </span>
@@ -624,7 +624,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Auxiliary Methods </span>
     <span class="c">#--------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="BaseComponent.when"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.base_component.BaseComponent.when">[docs]</a>    <span class="k">def</span> <span class="nf">when</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">switch</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseComponent.when"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.core.base_component.BaseComponent.html#enaml.core.base_component.BaseComponent.when">[docs]</a>    <span class="k">def</span> <span class="nf">when</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">switch</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; A method which returns itself or None based on the truth of</span>
 <span class="sd">        the argument.</span>
 
@@ -647,7 +647,7 @@
         <span class="k">if</span> <span class="n">switch</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span>
     </div>
-<div class="viewcode-block" id="BaseComponent.traverse"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.base_component.BaseComponent.traverse">[docs]</a>    <span class="k">def</span> <span class="nf">traverse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">depth_first</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseComponent.traverse"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.core.base_component.BaseComponent.html#enaml.core.base_component.BaseComponent.traverse">[docs]</a>    <span class="k">def</span> <span class="nf">traverse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">depth_first</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Yields all of the nodes in the tree, from this node downward.</span>
 
 <span class="sd">        Parameters</span>
@@ -671,7 +671,7 @@
             <span class="k">yield</span> <span class="n">item</span>
             <span class="n">stack_extend</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">children</span><span class="p">)</span>
     </div>
-<div class="viewcode-block" id="BaseComponent.traverse_ancestors"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.base_component.BaseComponent.traverse_ancestors">[docs]</a>    <span class="k">def</span> <span class="nf">traverse_ancestors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseComponent.traverse_ancestors"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.core.base_component.BaseComponent.html#enaml.core.base_component.BaseComponent.traverse_ancestors">[docs]</a>    <span class="k">def</span> <span class="nf">traverse_ancestors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Yields all of the nodes in the tree, from the parent of this </span>
 <span class="sd">        node updward, stopping at the given root.</span>
 
@@ -687,7 +687,7 @@
             <span class="k">yield</span> <span class="n">parent</span>
             <span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">parent</span>
 </div>
-<div class="viewcode-block" id="BaseComponent.find_by_name"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.base_component.BaseComponent.find_by_name">[docs]</a>    <span class="k">def</span> <span class="nf">find_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseComponent.find_by_name"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.core.base_component.BaseComponent.html#enaml.core.base_component.BaseComponent.find_by_name">[docs]</a>    <span class="k">def</span> <span class="nf">find_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Locate and return a named item that exists in the subtree</span>
 <span class="sd">        which starts at this node.</span>
 
@@ -712,7 +712,7 @@
             <span class="k">if</span> <span class="n">cmpnt</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">cmpnt</span>
 </div>
-<div class="viewcode-block" id="BaseComponent.toplevel_component"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.base_component.BaseComponent.toplevel_component">[docs]</a>    <span class="k">def</span> <span class="nf">toplevel_component</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseComponent.toplevel_component"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.core.base_component.BaseComponent.html#enaml.core.base_component.BaseComponent.toplevel_component">[docs]</a>    <span class="k">def</span> <span class="nf">toplevel_component</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Walks up the tree of components starting at this node and</span>
 <span class="sd">        returns the toplevel node, which is the first node encountered</span>
 <span class="sd">        without a parent.</span>
@@ -742,7 +742,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.core.base_component</a></li>
@@ -752,7 +752,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

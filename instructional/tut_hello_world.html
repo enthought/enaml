@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>“Hello World” tutorial &mdash; enaml 0.2beta-1 documentation</title>
+    <title>“Hello World” tutorial &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../index.html" />
     <link rel="up" title="Enaml Tutorials" href="tutorials_home.html" />
     <link rel="next" title="John Doe tutorial" href="tut_person.html" />
     <link rel="prev" title="Enaml Tutorials" href="tutorials_home.html" /> 
@@ -51,7 +51,7 @@
         <li class="right" >
           <a href="tutorials_home.html" title="Enaml Tutorials"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
           <li><a href="tutorials_home.html" accesskey="U">Enaml Tutorials</a> &raquo;</li>
   
@@ -111,18 +111,6 @@ are described in a file with the &#8221;.enaml&#8221; extension. While the code 
 similarities to Python, Enaml is a separate language.</p>
 <p>Here is our minimalist .enaml file describing a message-displaying GUI
 (<a class="reference download internal" href="../_downloads/hello_world_view.enaml"><tt class="xref download docutils literal"><span class="pre">download</span> <span class="pre">here</span></tt></a>):</p>
-<div class="highlight-python"><pre>#------------------------------------------------------------------------------
-#  Copyright (c) 2012, Enthought, Inc.
-#  All rights reserved.
-#------------------------------------------------------------------------------
-enamldef Main(MainWindow):
-    attr message = "Hello, world!"
-    Container:
-        Label:
-            text = message
-            
-</pre>
-</div>
 <p>Use the special helper function <tt class="docutils literal"><span class="pre">enaml-run</span></tt> to run it from the command line
 with</p>
 <div class="highlight-python"><pre>$ enaml-run hello_world_view.enaml</pre>
@@ -180,7 +168,7 @@ the Enaml view.</p>
 </pre></div>
 </div>
 <p>Then, we instantiate the view, passing the message to be displayed:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">view</span> <span class="o">=</span> <span class="n">Main</span><span class="p">(</span><span class="s">&quot;Hello, world, from Python!&quot;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">view</span> <span class="o">=</span> <span class="n">Main</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s">&quot;Hello, world, from Python!&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The <tt class="docutils literal"><span class="pre">show()</span></tt> method on <tt class="docutils literal"><span class="pre">view</span></tt> displays the window and starts the application
@@ -216,7 +204,7 @@ mainloop:</p>
         <li class="right" >
           <a href="tutorials_home.html" title="Enaml Tutorials"
              >previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
           <li><a href="tutorials_home.html" >Enaml Tutorials</a> &raquo;</li>
   
@@ -227,7 +215,7 @@ mainloop:</p>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

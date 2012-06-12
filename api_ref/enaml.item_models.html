@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>item_models Package &mdash; enaml 0.2beta-1 documentation</title>
+    <title>item_models Package &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,10 +27,10 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../index.html" />
-    <link rel="up" title="enaml Package" href="enaml.html" />
-    <link rel="next" title="layout Package" href="enaml.layout.html" />
-    <link rel="prev" title="parse_tab Package" href="enaml.core.parse_tab.html" /> 
+    <link rel="top" title="enaml 0.2alpha documentation" href="../index.html" />
+    <link rel="up" title="Enaml API Reference" href="index.html" />
+    <link rel="next" title="util Package" href="enaml.util.html" />
+    <link rel="prev" title="Menu" href="widgets/enaml.components.menu.Menu.html" /> 
   </head>
   <body>
     <div class="related">
@@ -46,15 +46,13 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="enaml.layout.html" title="layout Package"
+          <a href="enaml.util.html" title="util Package"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="enaml.core.parse_tab.html" title="parse_tab Package"
+          <a href="widgets/enaml.components.menu.Menu.html" title="Menu"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
-          <li><a href="index.html" >Enaml API Reference</a> &raquo;</li>
-          <li><a href="modules.html" >enaml</a> &raquo;</li>
-          <li><a href="enaml.html" accesskey="U">enaml Package</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Enaml API Reference</a> &raquo;</li>
   
     <li><a href="#">item_models Package</a></li>
   
@@ -69,10 +67,7 @@
 <h3>Page Contents</h3>
 <ul>
 <li><a class="reference internal" href="#">item_models Package</a><ul>
-<li><a class="reference internal" href="#id1"><tt class="docutils literal"><span class="pre">item_models</span></tt> Package</a></li>
 <li><a class="reference internal" href="#abstract-item-model-module"><tt class="docutils literal"><span class="pre">abstract_item_model</span></tt> Module</a></li>
-<li><a class="reference internal" href="#module-enaml.item_models.model_index"><tt class="docutils literal"><span class="pre">model_index</span></tt> Module</a></li>
-<li><a class="reference internal" href="#module-enaml.item_models.standard_models"><tt class="docutils literal"><span class="pre">standard_models</span></tt> Module</a></li>
 </ul>
 </li>
 </ul>
@@ -105,12 +100,81 @@
             
   <div class="section" id="item-models-package">
 <h1>item_models Package<a class="headerlink" href="#item-models-package" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="id1">
-<h2><tt class="xref py py-mod docutils literal"><span class="pre">item_models</span></tt> Package<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
-<span class="target" id="module-enaml.item_models"></span></div>
 <div class="section" id="abstract-item-model-module">
 <h2><tt class="xref py py-mod docutils literal"><span class="pre">abstract_item_model</span></tt> Module<a class="headerlink" href="#abstract-item-model-module" title="Permalink to this headline">¶</a></h2>
-<span class="target" id="module-enaml.item_models.abstract_item_model"></span><dl class="class">
+<dl class="class">
+<dt id="enaml.item_models.abstract_item_model.ModelIndex">
+<em class="property">class </em><tt class="descclassname">enaml.item_models.abstract_item_model.</tt><tt class="descname">ModelIndex</tt><a class="headerlink" href="#enaml.item_models.abstract_item_model.ModelIndex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>ModelIndexes are used to navigate an AbstractItemModel.</p>
+<p>A ModelIndex is a lightweight object and should be created on the
+fly, rather than attempting some form of caching. The user will
+not normally need to create indexes manually. Instead, use the
+create_index method on an AbstractItemModel.</p>
+<dl class="attribute">
+<dt id="enaml.item_models.abstract_item_model.ModelIndex.__init__">
+<tt class="descname">__init__</tt><a class="headerlink" href="#enaml.item_models.abstract_item_model.ModelIndex.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct a model index.</p>
+<dl class="docutils">
+<dt>row <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd>The row index represented by this index</dd>
+<dt>column <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd>The column index represented by this index</dd>
+<dt>model <span class="classifier-delimiter">:</span> <span class="classifier">AbstractItemModel</span></dt>
+<dd>The model in which this index is active. This is typically
+supplied by the create_index method of the AbstractItemModel.</dd>
+<dt>context <span class="classifier-delimiter">:</span> <span class="classifier">object</span></dt>
+<dd>A user supplied object that aids in navigating the user&#8217;s
+model.</dd>
+</dl>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="enaml.item_models.abstract_item_model.ModelIndex.__new__">
+<em class="property">static </em><tt class="descname">__new__</tt><big>(</big><em>S</em>, <em>...</em><big>)</big> &rarr; a new object with type S, a subtype of T<a class="headerlink" href="#enaml.item_models.abstract_item_model.ModelIndex.__new__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.item_models.abstract_item_model.ModelIndex.__repr__">
+<tt class="descname">__repr__</tt><a class="headerlink" href="#enaml.item_models.abstract_item_model.ModelIndex.__repr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>x.__repr__() &lt;==&gt; repr(x)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.item_models.abstract_item_model.ModelIndex.__str__">
+<tt class="descname">__str__</tt><a class="headerlink" href="#enaml.item_models.abstract_item_model.ModelIndex.__str__" title="Permalink to this definition">¶</a></dt>
+<dd><p>x.__str__() &lt;==&gt; str(x)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.ModelIndex.child">
+<tt class="descname">child</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.item_models.abstract_item_model.ModelIndex.child" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the child ModelIndex of this index for the given
+row and column indexes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.ModelIndex.flags">
+<tt class="descname">flags</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.item_models.abstract_item_model.ModelIndex.flags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the flags for this index.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.ModelIndex.parent">
+<tt class="descname">parent</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.item_models.abstract_item_model.ModelIndex.parent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the parent ModelIndex of this index.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.ModelIndex.sibling">
+<tt class="descname">sibling</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.item_models.abstract_item_model.ModelIndex.sibling" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the sibling ModelIndex of this index for the given
+row and column indexes.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="enaml.item_models.abstract_item_model.AbstractItemModel">
 <em class="property">class </em><tt class="descclassname">enaml.item_models.abstract_item_model.</tt><tt class="descname">AbstractItemModel</tt><a class="reference internal" href="../_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
@@ -1284,607 +1348,10 @@ header section.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.__abstractmethods__">
-<tt class="descname">__abstractmethods__</tt><em class="property"> = frozenset(['row_count', 'data', 'parent', 'column_count', 'index'])</em><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.__abstractmethods__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.__dict__">
-<tt class="descname">__dict__</tt><em class="property"> = dict_proxy({'tool_tip': &lt;function tool_tip at 0x8b15cf0&gt;, 'rows_moved': &lt;enaml.core.signaling.Signal object at 0x8b18e30&gt;, '__dict__': &lt;attribute '__dict__' of 'AbstractItemModel' objects&gt;, 'rows_inserted': &lt;enaml.core.signaling.Signal object at 0x8b18df0&gt;, '_abc_negative_cache': &lt;_weakrefset.WeakSet object at 0x8b221d0&gt;, 'horizontal_header_whats_this': &lt;function horizontal_header_whats_this at 0x8b16330&gt;, 'vertical_header_decoration': &lt;function vertical_header_decoration at 0x8b161f0&gt;, 'begin_remove_rows': &lt;function begin_remove_rows at 0x8b15670&gt;, '_abc_negative_cache_version': 26, 'size_hint': &lt;function size_hint at 0x8b15ef0&gt;, 'vertical_header_background': &lt;function vertical_header_background at 0x8b164f0&gt;, 'model_reset': &lt;enaml.core.signaling.Signal object at 0x8b18f70&gt;, 'font': &lt;function font at 0x8b15db0&gt;, 'rows_about_to_be_removed': &lt;enaml.core.signaling.Signal object at 0x8b18db0&gt;, 'alignment': &lt;function alignment at 0x8b15df0&gt;, 'layout_about_to_be_changed': &lt;enaml.core.signaling.Signal object at 0x8b18eb0&gt;, 'horizontal_header_data_changed': &lt;enaml.core.signaling.Signal object at 0x8b18ff0&gt;, 'rows_removed': &lt;enaml.core.signaling.Signal object at 0x8b18e70&gt;, 'buddy': &lt;function buddy at 0x8b15970&gt;, 'rows_about_to_be_moved': &lt;enaml.core.signaling.Signal object at 0x8b18d70&gt;, 'columns_inserted': &lt;enaml.core.signaling.Signal object at 0x8b18c70&gt;, 'row_count': &lt;function row_count at 0x8b15b70&gt;, 'end_change_layout': &lt;function end_change_layout at 0x8b157b0&gt;, 'columns_removed': &lt;enaml.core.signaling.Signal object at 0x8b18cf0&gt;, '__doc__': ' An abstract model for supplying information to heierarchical\n    widgets.\n\n    ', 'vertical_header_data': &lt;function vertical_header_data at 0x8b16170&gt;, 'status_tip': &lt;function status_tip at 0x8b15d30&gt;, 'begin_insert_columns': &lt;function begin_insert_columns at 0x8b15430&gt;, 'layout_changed': &lt;enaml.core.signaling.Signal object at 0x8b18ef0&gt;, 'background': &lt;function background at 0x8b15e30&gt;, 'create_index': &lt;function create_index at 0x8b15ab0&gt;, 'columns_about_to_be_moved': &lt;enaml.core.signaling.Signal object at 0x8b18bf0&gt;, 'end_insert_rows': &lt;function end_insert_rows at 0x8b156b0&gt;, 'begin_remove_columns': &lt;function begin_remove_columns at 0x8b154b0&gt;, 'vertical_header_tool_tip': &lt;function vertical_header_tool_tip at 0x8b16270&gt;, 'horizontal_header_decoration': &lt;function horizontal_header_decoration at 0x8b161b0&gt;, 'set_check_state': &lt;function set_check_state at 0x8b160f0&gt;, 'model_about_to_be_reset': &lt;enaml.core.signaling.Signal object at 0x8b18f30&gt;, 'horizontal_header_background': &lt;function horizontal_header_background at 0x8b164b0&gt;, 'notify_data_changed': &lt;function notify_data_changed at 0x8b15870&gt;, 'end_move_rows': &lt;function end_move_rows at 0x8b156f0&gt;, 'begin_move_rows': &lt;function begin_move_rows at 0x8b15630&gt;, '_abc_registry': &lt;_weakrefset.WeakSet object at 0x8b22130&gt;, 'rows_about_to_be_inserted': &lt;enaml.core.signaling.Signal object at 0x8b18d30&gt;, 'columns_moved': &lt;enaml.core.signaling.Signal object at 0x8b18cb0&gt;, 'horizontal_header_data': &lt;function horizontal_header_data at 0x8b16130&gt;, '__module__': 'enaml.item_models.abstract_item_model', '__metaclass__': &lt;class 'abc.ABCMeta'&gt;, 'data_changed': &lt;enaml.core.signaling.Signal object at 0x8b18fb0&gt;, 'vertical_header_status_tip': &lt;function vertical_header_status_tip at 0x8b162f0&gt;, 'horizontal_header_foreground': &lt;function horizontal_header_foreground at 0x8b16530&gt;, 'end_reset_model': &lt;function end_reset_model at 0x8b15830&gt;, 'has_index': &lt;function has_index at 0x8b15a30&gt;, 'sibling': &lt;function sibling at 0x8b15930&gt;, 'decoration': &lt;function decoration at 0x8b15c70&gt;, 'vertical_header_size_hint': &lt;function vertical_header_size_hint at 0x8b165f0&gt;, 'vertical_header_alignment': &lt;function vertical_header_alignment at 0x8b16470&gt;, 'begin_insert_rows': &lt;function begin_insert_rows at 0x8b155f0&gt;, 'begin_move_columns': &lt;function begin_move_columns at 0x8b15470&gt;, '_abc_cache': &lt;_weakrefset.WeakSet object at 0x8b22190&gt;, 'index': &lt;function index at 0x8b15bb0&gt;, 'vertical_header_whats_this': &lt;function vertical_header_whats_this at 0x8b16370&gt;, '__weakref__': &lt;attribute '__weakref__' of 'AbstractItemModel' objects&gt;, 'fetch_more': &lt;function fetch_more at 0x8b159f0&gt;, '__abstractmethods__': frozenset(['row_count', 'data', 'parent', 'column_count', 'index']), 'horizontal_header_tool_tip': &lt;function horizontal_header_tool_tip at 0x8b16230&gt;, 'horizontal_header_font': &lt;function horizontal_header_font at 0x8b163b0&gt;, 'check_state': &lt;function check_state at 0x8b15eb0&gt;, 'horizontal_header_size_hint': &lt;function horizontal_header_size_hint at 0x8b165b0&gt;, 'vertical_header_foreground': &lt;function vertical_header_foreground at 0x8b16570&gt;, 'has_children': &lt;function has_children at 0x8b15a70&gt;, 'foreground': &lt;function foreground at 0x8b15e70&gt;, 'edit_data': &lt;function edit_data at 0x8b15cb0&gt;, 'notify_vertical_header_data_changed': &lt;function notify_vertical_header_data_changed at 0x8b158f0&gt;, 'parent': &lt;function parent at 0x8b15bf0&gt;, 'columns_about_to_be_removed': &lt;enaml.core.signaling.Signal object at 0x8b18c30&gt;, 'end_remove_columns': &lt;function end_remove_columns at 0x8b15570&gt;, 'end_move_columns': &lt;function end_move_columns at 0x8b15530&gt;, 'begin_change_layout': &lt;function begin_change_layout at 0x8b15770&gt;, 'set_data': &lt;function set_data at 0x8b15f30&gt;, 'notify_horizontal_header_data_changed': &lt;function notify_horizontal_header_data_changed at 0x8b158b0&gt;, 'data': &lt;function data at 0x8b15c30&gt;, 'column_count': &lt;function column_count at 0x8b15b30&gt;, 'vertical_header_font': &lt;function vertical_header_font at 0x8b163f0&gt;, 'vertical_header_data_changed': &lt;enaml.core.signaling.Signal object at 0x8b22050&gt;, 'whats_this': &lt;function whats_this at 0x8b15d70&gt;, 'end_insert_columns': &lt;function end_insert_columns at 0x8b154f0&gt;, 'horizontal_header_alignment': &lt;function horizontal_header_alignment at 0x8b16430&gt;, 'can_fetch_more': &lt;function can_fetch_more at 0x8b159b0&gt;, 'end_remove_rows': &lt;function end_remove_rows at 0x8b15730&gt;, 'columns_about_to_be_inserted': &lt;enaml.core.signaling.Signal object at 0x8b18b70&gt;, 'horizontal_header_status_tip': &lt;function horizontal_header_status_tip at 0x8b162b0&gt;, 'flags': &lt;function flags at 0x8b15af0&gt;, 'begin_reset_model': &lt;function begin_reset_model at 0x8b157f0&gt;})</em><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.__dict__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.__module__">
-<tt class="descname">__module__</tt><em class="property"> = 'enaml.item_models.abstract_item_model'</em><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.__module__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
 <dt id="enaml.item_models.abstract_item_model.AbstractItemModel.__weakref__">
 <tt class="descname">__weakref__</tt><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.__weakref__" title="Permalink to this definition">¶</a></dt>
 <dd><p>list of weak references to the object (if defined)</p>
 </dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="enaml.item_models.abstract_item_model.AbstractTableModel">
-<em class="property">class </em><tt class="descclassname">enaml.item_models.abstract_item_model.</tt><tt class="descname">AbstractTableModel</tt><a class="reference internal" href="../_modules/enaml/item_models/abstract_item_model.html#AbstractTableModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractTableModel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#enaml.item_models.abstract_item_model.AbstractItemModel" title="enaml.item_models.abstract_item_model.AbstractItemModel"><tt class="xref py py-class docutils literal"><span class="pre">enaml.item_models.abstract_item_model.AbstractItemModel</span></tt></a></p>
-<p>An AbstractItemModel subclass that implements the methods 
-necessary to restrict the model to a 2-dimensional table of data.</p>
-<dl class="method">
-<dt id="enaml.item_models.abstract_item_model.AbstractTableModel.index">
-<tt class="descname">index</tt><big>(</big><em>row</em>, <em>column</em>, <em>parent=None</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/abstract_item_model.html#AbstractTableModel.index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractTableModel.index" title="Permalink to this definition">¶</a></dt>
-<dd><p>Abstract method implementation that will create a valid
-model index for the given row and column if they are valid.
-Otherwise, returns an invalid index.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.item_models.abstract_item_model.AbstractTableModel.parent">
-<tt class="descname">parent</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/abstract_item_model.html#AbstractTableModel.parent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractTableModel.parent" title="Permalink to this definition">¶</a></dt>
-<dd><p>Abstract method implementation that always returns None, 
-forcing the model to be flat.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.item_models.abstract_item_model.AbstractTableModel.has_children">
-<tt class="descname">has_children</tt><big>(</big><em>parent</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/abstract_item_model.html#AbstractTableModel.has_children"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractTableModel.has_children" title="Permalink to this definition">¶</a></dt>
-<dd><p>Overridden parent class method which restrics the model to
-2-dimensions.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="enaml.item_models.abstract_item_model.AbstractTableModel.__abstractmethods__">
-<tt class="descname">__abstractmethods__</tt><em class="property"> = frozenset(['row_count', 'data', 'column_count'])</em><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractTableModel.__abstractmethods__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="enaml.item_models.abstract_item_model.AbstractTableModel.__module__">
-<tt class="descname">__module__</tt><em class="property"> = 'enaml.item_models.abstract_item_model'</em><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractTableModel.__module__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="enaml.item_models.abstract_item_model.AbstractListModel">
-<em class="property">class </em><tt class="descclassname">enaml.item_models.abstract_item_model.</tt><tt class="descname">AbstractListModel</tt><a class="reference internal" href="../_modules/enaml/item_models/abstract_item_model.html#AbstractListModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractListModel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#enaml.item_models.abstract_item_model.AbstractItemModel" title="enaml.item_models.abstract_item_model.AbstractItemModel"><tt class="xref py py-class docutils literal"><span class="pre">enaml.item_models.abstract_item_model.AbstractItemModel</span></tt></a></p>
-<p>An AbstractItemModel subclass that implements the methods 
-necessary to restrict the model to a 1-dimensional list of data.</p>
-<dl class="method">
-<dt id="enaml.item_models.abstract_item_model.AbstractListModel.index">
-<tt class="descname">index</tt><big>(</big><em>row</em>, <em>column</em>, <em>parent=None</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/abstract_item_model.html#AbstractListModel.index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractListModel.index" title="Permalink to this definition">¶</a></dt>
-<dd><p>Abstract method implementation that will create a valid
-model index for the given row and column if they are valid.
-Otherwise, returns an invalid index.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.item_models.abstract_item_model.AbstractListModel.parent">
-<tt class="descname">parent</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/abstract_item_model.html#AbstractListModel.parent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractListModel.parent" title="Permalink to this definition">¶</a></dt>
-<dd><p>Abstract method implementation that always returns an
-invalid index, forcing the model to be flat.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.item_models.abstract_item_model.AbstractListModel.column_count">
-<tt class="descname">column_count</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/abstract_item_model.html#AbstractListModel.column_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractListModel.column_count" title="Permalink to this definition">¶</a></dt>
-<dd><p>Overridden parent class method which restricts the model
-to a single column.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.item_models.abstract_item_model.AbstractListModel.has_children">
-<tt class="descname">has_children</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/abstract_item_model.html#AbstractListModel.has_children"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractListModel.has_children" title="Permalink to this definition">¶</a></dt>
-<dd><p>Overridden parent class method which restrics the model
-to 1-dimension.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="enaml.item_models.abstract_item_model.AbstractListModel.__abstractmethods__">
-<tt class="descname">__abstractmethods__</tt><em class="property"> = frozenset(['row_count', 'data'])</em><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractListModel.__abstractmethods__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="enaml.item_models.abstract_item_model.AbstractListModel.__module__">
-<tt class="descname">__module__</tt><em class="property"> = 'enaml.item_models.abstract_item_model'</em><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractListModel.__module__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="module-enaml.item_models.model_index">
-<span id="model-index-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">model_index</span></tt> Module<a class="headerlink" href="#module-enaml.item_models.model_index" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="module-enaml.item_models.standard_models">
-<span id="standard-models-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">standard_models</span></tt> Module<a class="headerlink" href="#module-enaml.item_models.standard_models" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="enaml.item_models.standard_models.ListModel">
-<em class="property">class </em><tt class="descclassname">enaml.item_models.standard_models.</tt><tt class="descname">ListModel</tt><big>(</big><em>data</em>, <em>editable=False</em>, <em>display_data_converter=&lt;type 'unicode'&gt;</em>, <em>edit_data_converter=None</em>, <em>background_brush_func=None</em>, <em>foreground_brush_func=None</em>, <em>font_func=None</em>, <em>vertical_headers=None</em>, <em>horizontal_headers=None</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/standard_models.html#ListModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.standard_models.ListModel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#enaml.item_models.abstract_item_model.AbstractListModel" title="enaml.item_models.abstract_item_model.AbstractListModel"><tt class="xref py py-class docutils literal"><span class="pre">enaml.item_models.abstract_item_model.AbstractListModel</span></tt></a></p>
-<p>A concrete implementation of AbstractListModel which is intended
-to be easy to use for data models which behave more-or-less like
-one dimensional sequences.</p>
-<p>The data object can be updated dynamically after instantiation by 
-using the &#8216;data_source&#8217; property.</p>
-<dl class="attribute">
-<dt id="enaml.item_models.standard_models.ListModel.base_flags">
-<tt class="descname">base_flags</tt><em class="property"> = 33</em><a class="headerlink" href="#enaml.item_models.standard_models.ListModel.base_flags" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="enaml.item_models.standard_models.ListModel.__init__">
-<tt class="descname">__init__</tt><big>(</big><em>data</em>, <em>editable=False</em>, <em>display_data_converter=&lt;type 'unicode'&gt;</em>, <em>edit_data_converter=None</em>, <em>background_brush_func=None</em>, <em>foreground_brush_func=None</em>, <em>font_func=None</em>, <em>vertical_headers=None</em>, <em>horizontal_headers=None</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/standard_models.html#ListModel.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.standard_models.ListModel.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize a ListModel.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>data</strong> (<em>1D sequence-like object</em>) &#8211; A sequence-like object that provides the data for the model.
-At a minimum it must support __getitem__ and __len__, and
-if editable, __setitem__.</li>
-<li><strong>editable</strong> (<em>bool, optional</em>) &#8211; A bool which indicates whether or not the model is editable.
-If True, editing a cell will be done with an editor that is
-appropriate for the type of data given in the model. The
-default is False.</li>
-<li><strong>display_data_converter</strong> (<em>callable, optional</em>) &#8211; An optional callable which should take a single argument: the
-value for the cell, and return a unicode value to use as the
-display value in the cell. The default value is the builtin
-unicode object.</li>
-<li><strong>edit_data_converter</strong> (<em>callable or None, optional</em>) &#8211; An optional callable which should take a single argument: the
-unicode value typed by the user, and return a value to set
-in the model. This converter is only used when the model is
-declared as editable. If this converter is not supplied and
-the model is editable, then the type of the converted value
-will be determined automatically based on the input type. If
-a converter is supplied, and it cannot convert the value, it
-should raise a ValueError and the change will be ignored. The
-default value is None.</li>
-<li><strong>background_brush_func</strong> (<em>callable or None, optional</em>) &#8211; If provided, it should be a callable which accepts two
-arguments: the data value and the row index, and returns
-a brush for the background of the cell. The default is
-None.</li>
-<li><strong>foreground_brush_func</strong> (<em>callable or None, optional</em>) &#8211; If provided, it should be a callable which accepts two
-arguments: the data value and the row index, and returns
-a brush for the foreground of the cell. The default is
-None.</li>
-<li><strong>font_func</strong> (<em>callable or None, optional</em>) &#8211; If provided, it should be a callable which accepts two
-arguments: the data value and the row index, and returns
-a font for the cell. The default is None.</li>
-<li><strong>vertical_headers</strong> (<em>sequence-like object or None</em>) &#8211; If provided, is should be a sequence like object which
-will be indexed with an integer index to retrieve a
-unicode string for the given row header.</li>
-<li><strong>horizontal_headers</strong> (<em>sequence-like object or None</em>) &#8211; If provided, is should be a sequence like object which
-will be indexed with an integer index to retrieve a
-unicode string for the given column header.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="enaml.item_models.standard_models.ListModel.data_source">
-<tt class="descname">data_source</tt><a class="headerlink" href="#enaml.item_models.standard_models.ListModel.data_source" title="Permalink to this definition">¶</a></dt>
-<dd><p>The property getter for the &#8216;data_source&#8217; property.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.item_models.standard_models.ListModel.flags">
-<tt class="descname">flags</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/standard_models.html#ListModel.flags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.standard_models.ListModel.flags" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the flags for the items in the model.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.item_models.standard_models.ListModel.data">
-<tt class="descname">data</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/standard_models.html#ListModel.data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.standard_models.ListModel.data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the data point from the data source converted to a 
-unicode for display.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.item_models.standard_models.ListModel.edit_data">
-<tt class="descname">edit_data</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/standard_models.html#ListModel.edit_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.standard_models.ListModel.edit_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the data value for editing. If an edit converter is
-provided, then the unicode form of the data is returned, 
-otherwise, the raw datapoint is returned.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.item_models.standard_models.ListModel.set_data">
-<tt class="descname">set_data</tt><big>(</big><em>index</em>, <em>value</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/standard_models.html#ListModel.set_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.standard_models.ListModel.set_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the data source with the converted value, emits the 
-proper changed notification and returns True.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.item_models.standard_models.ListModel.row_count">
-<tt class="descname">row_count</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/standard_models.html#ListModel.row_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.standard_models.ListModel.row_count" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the number of rows in the data source.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.item_models.standard_models.ListModel.background">
-<tt class="descname">background</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/standard_models.html#ListModel.background"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.standard_models.ListModel.background" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the brush for the background of the given index,
-or None.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.item_models.standard_models.ListModel.foreground">
-<tt class="descname">foreground</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/standard_models.html#ListModel.foreground"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.standard_models.ListModel.foreground" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the brush for the foreground of the given index,
-or None.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.item_models.standard_models.ListModel.font">
-<tt class="descname">font</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/standard_models.html#ListModel.font"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.standard_models.ListModel.font" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the font for the foreground of the given index,
-or None.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.item_models.standard_models.ListModel.vertical_header_data">
-<tt class="descname">vertical_header_data</tt><big>(</big><em>section</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/standard_models.html#ListModel.vertical_header_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.standard_models.ListModel.vertical_header_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the vertical header data for the given section.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.item_models.standard_models.ListModel.horizontal_header_data">
-<tt class="descname">horizontal_header_data</tt><big>(</big><em>section</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/standard_models.html#ListModel.horizontal_header_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.standard_models.ListModel.horizontal_header_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the horiztonal header data for the given section.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="enaml.item_models.standard_models.ListModel.__abstractmethods__">
-<tt class="descname">__abstractmethods__</tt><em class="property"> = frozenset([])</em><a class="headerlink" href="#enaml.item_models.standard_models.ListModel.__abstractmethods__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="enaml.item_models.standard_models.ListModel.__module__">
-<tt class="descname">__module__</tt><em class="property"> = 'enaml.item_models.standard_models'</em><a class="headerlink" href="#enaml.item_models.standard_models.ListModel.__module__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="enaml.item_models.standard_models.TableModel">
-<em class="property">class </em><tt class="descclassname">enaml.item_models.standard_models.</tt><tt class="descname">TableModel</tt><big>(</big><em>data</em>, <em>editable=False</em>, <em>display_data_converter=&lt;type 'unicode'&gt;</em>, <em>edit_data_converter=None</em>, <em>background_brush_func=None</em>, <em>foreground_brush_func=None</em>, <em>font_func=None</em>, <em>vertical_headers=None</em>, <em>horizontal_headers=None</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/standard_models.html#TableModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.standard_models.TableModel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#enaml.item_models.abstract_item_model.AbstractTableModel" title="enaml.item_models.abstract_item_model.AbstractTableModel"><tt class="xref py py-class docutils literal"><span class="pre">enaml.item_models.abstract_item_model.AbstractTableModel</span></tt></a></p>
-<p>A concrete implementation of AbstractTableModel which is intended
-to be easy to use for data models which behave like two dimensional
-arrays.</p>
-<p>The data object can be updated dynamically after instantiation by 
-using the &#8216;data_source&#8217; property.</p>
-<dl class="attribute">
-<dt id="enaml.item_models.standard_models.TableModel.base_flags">
-<tt class="descname">base_flags</tt><em class="property"> = 33</em><a class="headerlink" href="#enaml.item_models.standard_models.TableModel.base_flags" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="enaml.item_models.standard_models.TableModel.__init__">
-<tt class="descname">__init__</tt><big>(</big><em>data</em>, <em>editable=False</em>, <em>display_data_converter=&lt;type 'unicode'&gt;</em>, <em>edit_data_converter=None</em>, <em>background_brush_func=None</em>, <em>foreground_brush_func=None</em>, <em>font_func=None</em>, <em>vertical_headers=None</em>, <em>horizontal_headers=None</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/standard_models.html#TableModel.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.standard_models.TableModel.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize a TableModel.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>data</strong> (<em>2D array-like object</em>) &#8211; An array-like object that provides the data for the model.
-At a minimum it must support __getitem__ which can be
-indexed with a (row, col) tuple, and have a &#8216;shape&#8217; attribute
-which gives an (nrows, ncols) tuple. If the model is also
-editable, it should support __setitem__</li>
-<li><strong>editable</strong> (<em>bool, optional</em>) &#8211; A bool which indicates whether or not the model is editable.
-If True, editing a cell will be done with an editor that is
-appropriate for the type of data given in the model. The
-default is False.</li>
-<li><strong>display_converter</strong> (<em>callable, optional</em>) &#8211; An optional callable which should take a single argument: the
-value for the cell, and return a unicode value to use as the
-display value in the cell. The default value is the builtin
-unicode object.</li>
-<li><strong>edit_converter</strong> (<em>callable or None, optional</em>) &#8211; An optional callable which should take a single argument: the
-unicode value typed by the user, and return a value to set
-in the model. This converter is only used when the model is
-declared as editable. If this converter is not supplied and
-the model is editable, then the type of the converted value
-will be determined automatically based on the input type. If
-a converter is supplied, and it cannot convert the value, it
-should raise a ValueError and the change will be ignored. The
-default value is None.</li>
-<li><strong>background_brush_func</strong> (<em>callable or None, optional</em>) &#8211; If provided, it should be a callable which accepts three
-arguments: the data value, the row index and column index,
-and returns a brush for the background of the cell. The
-default is None.</li>
-<li><strong>foreground_brush_func</strong> (<em>callable or None, optional</em>) &#8211; If provided, it should be a callable which accepts three
-arguments: the data value, the row index and column index,
-and returns a brush for the foreground of the cell. The
-default is None.</li>
-<li><strong>font_func</strong> (<em>callable or None, optional</em>) &#8211; If provided, it should be a callable which accepts three
-arguments: the data value, the row index and column index,
-and returns a font for the cell. The default is None.</li>
-<li><strong>vertical_headers</strong> (<em>sequence-like object or None</em>) &#8211; If provided, is should be a sequence like object which
-will be indexed with an integer index to retrieve a
-unicode string for the given row header.</li>
-<li><strong>horizontal_headers</strong> (<em>sequence-like object or None</em>) &#8211; If provided, is should be a sequence like object which
-will be indexed with an integer index to retrieve a
-unicode string for the given column header.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="enaml.item_models.standard_models.TableModel.data_source">
-<tt class="descname">data_source</tt><a class="headerlink" href="#enaml.item_models.standard_models.TableModel.data_source" title="Permalink to this definition">¶</a></dt>
-<dd><p>The property getter for the &#8216;data_source&#8217; property.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.item_models.standard_models.TableModel.flags">
-<tt class="descname">flags</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/standard_models.html#TableModel.flags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.standard_models.TableModel.flags" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the flags for the items in the model.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.item_models.standard_models.TableModel.data">
-<tt class="descname">data</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/standard_models.html#TableModel.data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.standard_models.TableModel.data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the data point from the data source converted to a 
-unicode for display.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.item_models.standard_models.TableModel.edit_data">
-<tt class="descname">edit_data</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/standard_models.html#TableModel.edit_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.standard_models.TableModel.edit_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the data value for editing. If an edit converter is
-provided, then the unicode form of the data is returned, 
-otherwise, the raw datapoint is returned.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.item_models.standard_models.TableModel.set_data">
-<tt class="descname">set_data</tt><big>(</big><em>index</em>, <em>value</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/standard_models.html#TableModel.set_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.standard_models.TableModel.set_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the data source with the converted value, emits the 
-proper changed notification and returns True.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.item_models.standard_models.TableModel.row_count">
-<tt class="descname">row_count</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/standard_models.html#TableModel.row_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.standard_models.TableModel.row_count" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the number of rows in the data source.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.item_models.standard_models.TableModel.column_count">
-<tt class="descname">column_count</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/standard_models.html#TableModel.column_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.standard_models.TableModel.column_count" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the number of columns in the data source.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.item_models.standard_models.TableModel.background">
-<tt class="descname">background</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/standard_models.html#TableModel.background"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.standard_models.TableModel.background" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the brush for the background of the given index,
-or None.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.item_models.standard_models.TableModel.foreground">
-<tt class="descname">foreground</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/standard_models.html#TableModel.foreground"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.standard_models.TableModel.foreground" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the brush for the foreground of the given index,
-or None.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.item_models.standard_models.TableModel.font">
-<tt class="descname">font</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/standard_models.html#TableModel.font"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.standard_models.TableModel.font" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the font for the foreground of the given index,
-or None.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.item_models.standard_models.TableModel.vertical_header_data">
-<tt class="descname">vertical_header_data</tt><big>(</big><em>section</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/standard_models.html#TableModel.vertical_header_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.standard_models.TableModel.vertical_header_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the vertical header data for the given section.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.item_models.standard_models.TableModel.horizontal_header_data">
-<tt class="descname">horizontal_header_data</tt><big>(</big><em>section</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/standard_models.html#TableModel.horizontal_header_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.standard_models.TableModel.horizontal_header_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the horiztonal header data for the given section.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="enaml.item_models.standard_models.TableModel.__abstractmethods__">
-<tt class="descname">__abstractmethods__</tt><em class="property"> = frozenset([])</em><a class="headerlink" href="#enaml.item_models.standard_models.TableModel.__abstractmethods__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="enaml.item_models.standard_models.TableModel.__module__">
-<tt class="descname">__module__</tt><em class="property"> = 'enaml.item_models.standard_models'</em><a class="headerlink" href="#enaml.item_models.standard_models.TableModel.__module__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="enaml.item_models.standard_models.ObjectModel">
-<em class="property">class </em><tt class="descclassname">enaml.item_models.standard_models.</tt><tt class="descname">ObjectModel</tt><big>(</big><em>data</em>, <em>transpose=False</em>, <em>editable=False</em>, <em>display_data_converter=&lt;type 'unicode'&gt;</em>, <em>edit_data_converter=None</em>, <em>background_brush_func=None</em>, <em>foreground_brush_func=None</em>, <em>font_func=None</em>, <em>vertical_headers=None</em>, <em>horizontal_headers=None</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/standard_models.html#ObjectModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.standard_models.ObjectModel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#enaml.item_models.abstract_item_model.AbstractTableModel" title="enaml.item_models.abstract_item_model.AbstractTableModel"><tt class="xref py py-class docutils literal"><span class="pre">enaml.item_models.abstract_item_model.AbstractTableModel</span></tt></a></p>
-<p>A concrete implementation of AbstractTableModel which is intended
-to be easy to use for data models which display list of objects 
-where each object corresponds to a row in the table.</p>
-<p>The data object can be updated dynamically after instantiation by 
-using the &#8216;data_source&#8217; property.</p>
-<dl class="attribute">
-<dt id="enaml.item_models.standard_models.ObjectModel.base_flags">
-<tt class="descname">base_flags</tt><em class="property"> = 33</em><a class="headerlink" href="#enaml.item_models.standard_models.ObjectModel.base_flags" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="staticmethod">
-<dt id="enaml.item_models.standard_models.ObjectModel.format_header">
-<em class="property">static </em><tt class="descname">format_header</tt><big>(</big><em>header</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/standard_models.html#ObjectModel.format_header"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.standard_models.ObjectModel.format_header" title="Permalink to this definition">¶</a></dt>
-<dd><p>A simple formatter class which converts an attribute name
-in a form more-or-less suitable for a column header.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.item_models.standard_models.ObjectModel.__init__">
-<tt class="descname">__init__</tt><big>(</big><em>data</em>, <em>transpose=False</em>, <em>editable=False</em>, <em>display_data_converter=&lt;type 'unicode'&gt;</em>, <em>edit_data_converter=None</em>, <em>background_brush_func=None</em>, <em>foreground_brush_func=None</em>, <em>font_func=None</em>, <em>vertical_headers=None</em>, <em>horizontal_headers=None</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/standard_models.html#ObjectModel.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.standard_models.ObjectModel.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize an ObjectModel.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>data</strong> (<em>a 2-tuple of (object, column_attributes)</em>) &#8211; A tuple whose first element is a sequence-like object that
-provides the row objects for the model, and whose second
-element is a sequence-like object that provides the string
-names of the attributes of the objects which provide the
-data for the columns. At a minimum both elements must support
-__getitem__ and __len__.</li>
-<li><strong>transpose</strong> (<em>bool, optional</em>) &#8211; A boolean which indicates that the model should be transposed
-such that the objects represent columns and the attributes
-represent rows. The default is False.</li>
-<li><strong>editable</strong> (<em>bool, optional</em>) &#8211; A bool which indicates whether or not the model is editable.
-If True, editing a cell will be done with an editor that is
-appropriate for the type of data given in the model. The
-default is False.</li>
-<li><strong>display_converter</strong> (<em>callable, optional</em>) &#8211; An optional callable which should take a single argument: the
-value for the cell, and return a unicode value to use as the
-display value in the cell. The default value is the builtin
-unicode object.</li>
-<li><strong>edit_converter</strong> (<em>callable or None, optional</em>) &#8211; An optional callable which should take a single argument: the
-unicode value typed by the user, and return a value to set
-in the model. This converter is only used when the model is
-declared as editable. If this converter is not supplied and
-the model is editable, then the type of the converted value
-will be determined automatically based on the input type. If
-a converter is supplied, and it cannot convert the value, it
-should raise a ValueError and the change will be ignored. The
-default value is None.</li>
-<li><strong>background_brush_func</strong> (<em>callable or None, optional</em>) &#8211; If provided, it should be a callable which accepts three
-arguments: the data value, the row index and column index,
-and returns a brush for the background of the cell. The
-default is None.</li>
-<li><strong>foreground_brush_func</strong> (<em>callable or None, optional</em>) &#8211; If provided, it should be a callable which accepts three
-arguments: the data value, the row index and column index,
-and returns a brush for the foreground of the cell. The
-default is None.</li>
-<li><strong>font_func</strong> (<em>callable or None, optional</em>) &#8211; If provided, it should be a callable which accepts three
-arguments: the data value, the row index and column index,
-and returns a font for the cell. The default is None.</li>
-<li><strong>vertical_headers</strong> (<em>sequence-like object or None</em>) &#8211; If provided, is should be a sequence like object which
-will be indexed with an integer index to retrieve a
-unicode string for the given row header.</li>
-<li><strong>horizontal_headers</strong> (<em>sequence-like object or None</em>) &#8211; If provided, is should be a sequence like object which
-will be indexed with an integer index to retrieve a
-unicode string for the given column header.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="enaml.item_models.standard_models.ObjectModel.data_source">
-<tt class="descname">data_source</tt><a class="headerlink" href="#enaml.item_models.standard_models.ObjectModel.data_source" title="Permalink to this definition">¶</a></dt>
-<dd><p>The property getter for the &#8216;data_source&#8217; property.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="enaml.item_models.standard_models.ObjectModel.transpose">
-<tt class="descname">transpose</tt><a class="headerlink" href="#enaml.item_models.standard_models.ObjectModel.transpose" title="Permalink to this definition">¶</a></dt>
-<dd><p>The property getter for the &#8216;transpose&#8217; property.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.item_models.standard_models.ObjectModel.flags">
-<tt class="descname">flags</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/standard_models.html#ObjectModel.flags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.standard_models.ObjectModel.flags" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the flags for the items in the model.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.item_models.standard_models.ObjectModel.data">
-<tt class="descname">data</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/standard_models.html#ObjectModel.data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.standard_models.ObjectModel.data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the data point from the data source converted to a 
-unicode for display.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.item_models.standard_models.ObjectModel.edit_data">
-<tt class="descname">edit_data</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/standard_models.html#ObjectModel.edit_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.standard_models.ObjectModel.edit_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the data value for editing. If an edit converter is
-provided, then the unicode form of the data is returned, 
-otherwise, the raw datapoint is returned.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.item_models.standard_models.ObjectModel.set_data">
-<tt class="descname">set_data</tt><big>(</big><em>index</em>, <em>value</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/standard_models.html#ObjectModel.set_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.standard_models.ObjectModel.set_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the data source with the converted value, emits the 
-proper changed notification and returns True.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.item_models.standard_models.ObjectModel.row_count">
-<tt class="descname">row_count</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/standard_models.html#ObjectModel.row_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.standard_models.ObjectModel.row_count" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the number of rows in the data source.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.item_models.standard_models.ObjectModel.column_count">
-<tt class="descname">column_count</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/standard_models.html#ObjectModel.column_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.standard_models.ObjectModel.column_count" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the number of columns in the data source.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.item_models.standard_models.ObjectModel.background">
-<tt class="descname">background</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/standard_models.html#ObjectModel.background"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.standard_models.ObjectModel.background" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the brush for the background of the given index,
-or None.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.item_models.standard_models.ObjectModel.foreground">
-<tt class="descname">foreground</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/standard_models.html#ObjectModel.foreground"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.standard_models.ObjectModel.foreground" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the brush for the foreground of the given index,
-or None.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.item_models.standard_models.ObjectModel.font">
-<tt class="descname">font</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/standard_models.html#ObjectModel.font"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.standard_models.ObjectModel.font" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the font for the foreground of the given index,
-or None.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.item_models.standard_models.ObjectModel.vertical_header_data">
-<tt class="descname">vertical_header_data</tt><big>(</big><em>section</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/standard_models.html#ObjectModel.vertical_header_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.standard_models.ObjectModel.vertical_header_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the vertical header data for the given section.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.item_models.standard_models.ObjectModel.horizontal_header_data">
-<tt class="descname">horizontal_header_data</tt><big>(</big><em>section</em><big>)</big><a class="reference internal" href="../_modules/enaml/item_models/standard_models.html#ObjectModel.horizontal_header_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.standard_models.ObjectModel.horizontal_header_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the horiztonal header data for the given section.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="enaml.item_models.standard_models.ObjectModel.__abstractmethods__">
-<tt class="descname">__abstractmethods__</tt><em class="property"> = frozenset([])</em><a class="headerlink" href="#enaml.item_models.standard_models.ObjectModel.__abstractmethods__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="enaml.item_models.standard_models.ObjectModel.__module__">
-<tt class="descname">__module__</tt><em class="property"> = 'enaml.item_models.standard_models'</em><a class="headerlink" href="#enaml.item_models.standard_models.ObjectModel.__module__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 </dd></dl>
 
@@ -1910,15 +1377,13 @@ or None.</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="enaml.layout.html" title="layout Package"
+          <a href="enaml.util.html" title="util Package"
              >next</a> |</li>
         <li class="right" >
-          <a href="enaml.core.parse_tab.html" title="parse_tab Package"
+          <a href="widgets/enaml.components.menu.Menu.html" title="Menu"
              >previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml API Reference</a> &raquo;</li>
-          <li><a href="modules.html" >enaml</a> &raquo;</li>
-          <li><a href="enaml.html" >enaml Package</a> &raquo;</li>
   
     <li><a href="#">item_models Package</a></li>
   
@@ -1927,7 +1392,7 @@ or None.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

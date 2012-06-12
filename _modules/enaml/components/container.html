@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.components.container &mdash; enaml 0.2beta-1 documentation</title>
+    <title>enaml.components.container &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.components.container</a></li>
@@ -97,14 +97,14 @@
 <span class="kn">from</span> <span class="nn">..layout.geometry</span> <span class="kn">import</span> <span class="n">Size</span><span class="p">,</span> <span class="n">Box</span>
     
 
-<div class="viewcode-block" id="AbstractTkContainer"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.container.AbstractTkContainer">[docs]</a><span class="k">class</span> <span class="nc">AbstractTkContainer</span><span class="p">(</span><span class="n">AbstractTkConstraintsWidget</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">AbstractTkContainer</span><span class="p">(</span><span class="n">AbstractTkConstraintsWidget</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; The abstract toolkit Container interface.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span>
 
-</div>
-<div class="viewcode-block" id="Container"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.container.Container">[docs]</a><span class="k">class</span> <span class="nc">Container</span><span class="p">(</span><span class="n">LayoutTaskHandler</span><span class="p">,</span> <span class="n">PaddingConstraints</span><span class="p">,</span> <span class="n">ConstraintsWidget</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Container"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.container.Container.html#enaml.components.container.Container">[docs]</a><span class="k">class</span> <span class="nc">Container</span><span class="p">(</span><span class="n">LayoutTaskHandler</span><span class="p">,</span> <span class="n">PaddingConstraints</span><span class="p">,</span> <span class="n">ConstraintsWidget</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A Component subclass that provides functionality for laying out </span>
 <span class="sd">    constrainable children according to their system of constraints.</span>
 
@@ -209,7 +209,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Layout Handling</span>
     <span class="c">#--------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="Container.initialize_layout"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.container.Container.initialize_layout">[docs]</a>    <span class="k">def</span> <span class="nf">initialize_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Container.initialize_layout"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.container.Container.html#enaml.components.container.Container.initialize_layout">[docs]</a>    <span class="k">def</span> <span class="nf">initialize_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; A reimplemented parent class method that initializes the </span>
 <span class="sd">        layout manager for the first time, and binds the relevant</span>
 <span class="sd">        layout change handlers.</span>
@@ -226,7 +226,7 @@
             <span class="c"># will be recomputed by the next consumer that needs it.</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">size_hint_updated</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="Container.relayout"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.container.Container.relayout">[docs]</a>    <span class="k">def</span> <span class="nf">relayout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Container.relayout"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.container.Container.html#enaml.components.container.Container.relayout">[docs]</a>    <span class="k">def</span> <span class="nf">relayout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; A reimplemented parent class method which forwards the call</span>
 <span class="sd">        to the layout owner if necessary.</span>
 
@@ -236,7 +236,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_layout_owner</span><span class="o">.</span><span class="n">relayout</span><span class="p">()</span>
             </div>
-<div class="viewcode-block" id="Container.refresh"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.container.Container.refresh">[docs]</a>    <span class="k">def</span> <span class="nf">refresh</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Container.refresh"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.container.Container.html#enaml.components.container.Container.refresh">[docs]</a>    <span class="k">def</span> <span class="nf">refresh</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; A reimplemented parent class method which forwards the call</span>
 <span class="sd">        to the layout owner if necessary.</span>
 
@@ -246,7 +246,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_layout_owner</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="Container.request_relayout"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.container.Container.request_relayout">[docs]</a>    <span class="k">def</span> <span class="nf">request_relayout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Container.request_relayout"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.container.Container.html#enaml.components.container.Container.request_relayout">[docs]</a>    <span class="k">def</span> <span class="nf">request_relayout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; A reimplemented parent class method which forwards the call</span>
 <span class="sd">        to the layout owner if necessary.</span>
 
@@ -256,7 +256,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_layout_owner</span><span class="o">.</span><span class="n">request_relayout</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="Container.request_refresh"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.container.Container.request_refresh">[docs]</a>    <span class="k">def</span> <span class="nf">request_refresh</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Container.request_refresh"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.container.Container.html#enaml.components.container.Container.request_refresh">[docs]</a>    <span class="k">def</span> <span class="nf">request_refresh</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; A reimplemented parent class method which forwards the call</span>
 <span class="sd">        to the layout owner if necessary.</span>
 
@@ -266,7 +266,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_layout_owner</span><span class="o">.</span><span class="n">request_refresh</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="Container.request_relayout_task"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.container.Container.request_relayout_task">[docs]</a>    <span class="k">def</span> <span class="nf">request_relayout_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Container.request_relayout_task"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.container.Container.html#enaml.components.container.Container.request_relayout_task">[docs]</a>    <span class="k">def</span> <span class="nf">request_relayout_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; A reimplemented parent class method which forwards the call</span>
 <span class="sd">        to the layout owner if necessary.</span>
 
@@ -277,7 +277,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_layout_owner</span><span class="o">.</span><span class="n">request_relayout_task</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             </div>
-<div class="viewcode-block" id="Container.request_refresh_task"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.container.Container.request_refresh_task">[docs]</a>    <span class="k">def</span> <span class="nf">request_refresh_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Container.request_refresh_task"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.container.Container.html#enaml.components.container.Container.request_refresh_task">[docs]</a>    <span class="k">def</span> <span class="nf">request_refresh_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; A reimplemented parent class method which forwards the call</span>
 <span class="sd">        to the layout owner if necessary.</span>
 
@@ -288,7 +288,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_layout_owner</span><span class="o">.</span><span class="n">request_refresh_task</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         </div>
-<div class="viewcode-block" id="Container.do_relayout"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.container.Container.do_relayout">[docs]</a>    <span class="k">def</span> <span class="nf">do_relayout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Container.do_relayout"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.container.Container.html#enaml.components.container.Container.do_relayout">[docs]</a>    <span class="k">def</span> <span class="nf">do_relayout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; A reimplemented LayoutTaskHandler handler method which will</span>
 <span class="sd">        actually perform the layout.</span>
 
@@ -313,7 +313,7 @@
         <span class="c"># eleminate flicker during the resize.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">size_hint_updated</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="Container.do_refresh"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.container.Container.do_refresh">[docs]</a>    <span class="k">def</span> <span class="nf">do_refresh</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Container.do_refresh"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.container.Container.html#enaml.components.container.Container.do_refresh">[docs]</a>    <span class="k">def</span> <span class="nf">do_refresh</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; A reimplemented LayoutTaskHandler handler method which will</span>
 <span class="sd">        actually perform the refresh.</span>
 
@@ -327,7 +327,7 @@
         <span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">layout_manager</span><span class="o">.</span><span class="n">layout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">apply_layout</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="Container.apply_layout"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.container.Container.apply_layout">[docs]</a>    <span class="k">def</span> <span class="nf">apply_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Container.apply_layout"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.container.Container.html#enaml.components.container.Container.apply_layout">[docs]</a>    <span class="k">def</span> <span class="nf">apply_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The callback invoked by the layout manager when there are</span>
 <span class="sd">        new layout values available. This traverses the constraints </span>
 <span class="sd">        children for which this container has layout ownership and </span>
@@ -348,7 +348,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Constraints Computation</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="Container.compute_constraints"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.container.Container.compute_constraints">[docs]</a>    <span class="k">def</span> <span class="nf">compute_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Container.compute_constraints"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.container.Container.html#enaml.components.container.Container.compute_constraints">[docs]</a>    <span class="k">def</span> <span class="nf">compute_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Descends the tree for all containers and children for which</span>
 <span class="sd">        this container can manage layout, and aggregates all of their</span>
 <span class="sd">        constraints into a single list.</span>
@@ -398,7 +398,7 @@
                     
         <span class="k">return</span> <span class="n">cns</span>
 </div>
-<div class="viewcode-block" id="Container.default_user_constraints"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.container.Container.default_user_constraints">[docs]</a>    <span class="k">def</span> <span class="nf">default_user_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Container.default_user_constraints"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.container.Container.html#enaml.components.container.Container.default_user_constraints">[docs]</a>    <span class="k">def</span> <span class="nf">default_user_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Constraints to use if the constraints trait is an empty list.</span>
 <span class="sd">        The default container behavior is to put the layout children into</span>
 <span class="sd">        a vertical box layout.</span>
@@ -410,7 +410,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Overrides</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="Container.size_hint"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.container.Container.size_hint">[docs]</a>    <span class="k">def</span> <span class="nf">size_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Container.size_hint"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.container.Container.html#enaml.components.container.Container.size_hint">[docs]</a>    <span class="k">def</span> <span class="nf">size_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Overridden parent class method to return the size hint of </span>
 <span class="sd">        the container from the layout manager. If the container does not</span>
 <span class="sd">        own its layout, or if the layout has not been initialized, then</span>
@@ -431,7 +431,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Auxiliary Methods</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="Container.transfer_layout_ownership"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.container.Container.transfer_layout_ownership">[docs]</a>    <span class="k">def</span> <span class="nf">transfer_layout_ownership</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">owner</span><span class="p">):</span>
+<div class="viewcode-block" id="Container.transfer_layout_ownership"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.container.Container.html#enaml.components.container.Container.transfer_layout_ownership">[docs]</a>    <span class="k">def</span> <span class="nf">transfer_layout_ownership</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">owner</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; A method which can be called by other components in the</span>
 <span class="sd">        hierarchy to gain ownership responsibility for the layout </span>
 <span class="sd">        of the children of this container. By default, the transfer</span>
@@ -456,7 +456,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_layout_owner</span> <span class="o">=</span> <span class="n">owner</span>
         <span class="k">return</span> <span class="bp">True</span>
     </div>
-<div class="viewcode-block" id="Container.compute_min_size"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.container.Container.compute_min_size">[docs]</a>    <span class="k">def</span> <span class="nf">compute_min_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Container.compute_min_size"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.container.Container.html#enaml.components.container.Container.compute_min_size">[docs]</a>    <span class="k">def</span> <span class="nf">compute_min_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Calculates the minimum size of the container which would </span>
 <span class="sd">        allow all constraints to be satisfied. If this container does</span>
 <span class="sd">        not own its layout, or if the layout has not been initialized,</span>
@@ -472,7 +472,7 @@
             <span class="n">res</span> <span class="o">=</span> <span class="n">Size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span>
 </div>
-<div class="viewcode-block" id="Container.compute_max_size"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.container.Container.compute_max_size">[docs]</a>    <span class="k">def</span> <span class="nf">compute_max_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Container.compute_max_size"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.container.Container.html#enaml.components.container.Container.compute_max_size">[docs]</a>    <span class="k">def</span> <span class="nf">compute_max_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Calculates the maximum size of the container which would </span>
 <span class="sd">        allow all constraints to be satisfied. If this container does</span>
 <span class="sd">        not own its layout, or if the layout has not been initialized</span>
@@ -506,7 +506,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.components.container</a></li>
@@ -516,7 +516,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

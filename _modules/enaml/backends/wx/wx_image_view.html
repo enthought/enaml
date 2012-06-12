@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.backends.wx.wx_image_view &mdash; enaml 0.2beta-1 documentation</title>
+    <title>enaml.backends.wx.wx_image_view &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../../index.html" />
     <link rel="up" title="Module code" href="../../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.backends.wx.wx_image_view</a></li>
@@ -89,7 +89,7 @@
 <span class="kn">from</span> <span class="nn">...components.image_view</span> <span class="kn">import</span> <span class="n">AbstractTkImageView</span>
 
 
-<div class="viewcode-block" id="wxBitmapWidget"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_image_view.wxBitmapWidget">[docs]</a><span class="k">class</span> <span class="nc">wxBitmapWidget</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">Panel</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">wxBitmapWidget</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">Panel</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A wx.Panel subclass which paints a provided wx.Bitmap. </span>
 
 <span class="sd">    This differs from wx.StaticBitmap in that it provides the option to</span>
@@ -98,7 +98,7 @@
 <span class="sd">    resize, with a high quality pass performed once resizing as finished.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="wxBitmapWidget.__init__"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_image_view.wxBitmapWidget.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Initialize a wxBitmapWidget.</span>
 
 <span class="sd">        Parameters</span>
@@ -116,8 +116,8 @@
 
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Private API</span>
-    <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="wxBitmapWidget.OnPaint"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_image_view.wxBitmapWidget.OnPaint">[docs]</a>    <span class="k">def</span> <span class="nf">OnPaint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">OnPaint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The paint event handler for the widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -135,8 +135,8 @@
                     <span class="n">img</span><span class="o">.</span><span class="n">Rescale</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">quality</span><span class="p">)</span>
                     <span class="n">bmp</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">BitmapFromImage</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
             <span class="n">dc</span><span class="o">.</span><span class="n">DrawBitmap</span><span class="p">(</span><span class="n">bmp</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="wxBitmapWidget.OnResize"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_image_view.wxBitmapWidget.OnResize">[docs]</a>    <span class="k">def</span> <span class="nf">OnResize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">OnResize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The resize event handler for the widget.</span>
 
 <span class="sd">        This method is only bound and called when content scaling is</span>
@@ -146,8 +146,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_resizing</span> <span class="o">=</span> <span class="bp">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_resize_timer</span><span class="o">.</span><span class="n">Start</span><span class="p">(</span><span class="mi">60</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="wxBitmapWidget.OnResizeEnd"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_image_view.wxBitmapWidget.OnResizeEnd">[docs]</a>    <span class="k">def</span> <span class="nf">OnResizeEnd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">OnResizeEnd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The repaint timer event handler.</span>
 
 <span class="sd">        This method is only bound and called when content scaling is</span>
@@ -160,8 +160,8 @@
 
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Public API</span>
-    <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="wxBitmapWidget.GetBitmap"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_image_view.wxBitmapWidget.GetBitmap">[docs]</a>    <span class="k">def</span> <span class="nf">GetBitmap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bitmap</span><span class="p">):</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">GetBitmap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bitmap</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the underlying wx.Bitmap used to paint the control.</span>
 
 <span class="sd">        Returns</span>
@@ -172,8 +172,8 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bitmap</span>
-</div>
-<div class="viewcode-block" id="wxBitmapWidget.SetBitmap"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_image_view.wxBitmapWidget.SetBitmap">[docs]</a>    <span class="k">def</span> <span class="nf">SetBitmap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bitmap</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">SetBitmap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bitmap</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Set the underlying wx.Bitmap and refresh the widget.</span>
 
 <span class="sd">        Parameters</span>
@@ -184,8 +184,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_bitmap</span> <span class="o">=</span> <span class="n">bitmap</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Refresh</span><span class="p">()</span>
-</div>
-<div class="viewcode-block" id="wxBitmapWidget.GetScaledContents"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_image_view.wxBitmapWidget.GetScaledContents">[docs]</a>    <span class="k">def</span> <span class="nf">GetScaledContents</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">GetScaledContents</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Whether or not the bitmap is scaled to fit the bounds.</span>
 
 <span class="sd">        Returns</span>
@@ -196,8 +196,8 @@
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scaled_contents</span>
-    </div>
-<div class="viewcode-block" id="wxBitmapWidget.SetScaledContents"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_image_view.wxBitmapWidget.SetScaledContents">[docs]</a>    <span class="k">def</span> <span class="nf">SetScaledContents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scaled</span><span class="p">):</span>
+    
+    <span class="k">def</span> <span class="nf">SetScaledContents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scaled</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Set whether or not the bitmap should be scaled to fit the</span>
 <span class="sd">        bounds of the widget.</span>
 
@@ -221,24 +221,24 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">Unbind</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">EVT_TIMER</span><span class="p">,</span> <span class="n">handler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">OnResizeEnd</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">Unbind</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">EVT_SIZE</span><span class="p">,</span> <span class="n">handler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">OnResize</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Refresh</span><span class="p">()</span>
-</div>
-<div class="viewcode-block" id="wxBitmapWidget.GetBestSize"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_image_view.wxBitmapWidget.GetBestSize">[docs]</a>    <span class="k">def</span> <span class="nf">GetBestSize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">GetBestSize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Overridden method to return the size of the bitmap as the </span>
 <span class="sd">        best size for the widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">bmp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bitmap</span>
         <span class="k">return</span> <span class="n">wx</span><span class="o">.</span><span class="n">Size</span><span class="p">(</span><span class="n">bmp</span><span class="o">.</span><span class="n">GetWidth</span><span class="p">(),</span> <span class="n">bmp</span><span class="o">.</span><span class="n">GetHeight</span><span class="p">())</span>
-</div>
-<div class="viewcode-block" id="wxBitmapWidget.GetBestSizeTuple"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_image_view.wxBitmapWidget.GetBestSizeTuple">[docs]</a>    <span class="k">def</span> <span class="nf">GetBestSizeTuple</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">GetBestSizeTuple</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Overridden method to return the size of the bitmap as the </span>
 <span class="sd">        best size for the widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetBestSize</span><span class="p">()</span><span class="o">.</span><span class="n">asTuple</span><span class="p">()</span>
 
-</div></div>
-<div class="viewcode-block" id="WXImageView"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_image_view.WXImageView">[docs]</a><span class="k">class</span> <span class="nc">WXImageView</span><span class="p">(</span><span class="n">WXControl</span><span class="p">,</span> <span class="n">AbstractTkImageView</span><span class="p">):</span>
+
+<div class="viewcode-block" id="WXImageView"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.image_view.ImageView.html#enaml.backends.wx.wx_image_view.WXImageView">[docs]</a><span class="k">class</span> <span class="nc">WXImageView</span><span class="p">(</span><span class="n">WXControl</span><span class="p">,</span> <span class="n">AbstractTkImageView</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A Wx implementation of ImageView.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -250,13 +250,13 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Setup methods</span>
     <span class="c">#--------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="WXImageView.create"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_image_view.WXImageView.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+<div class="viewcode-block" id="WXImageView.create"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.image_view.ImageView.html#enaml.backends.wx.wx_image_view.WXImageView.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Creates the underlying wxBitmapWidget control.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">wxBitmapWidget</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXImageView.initialize"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_image_view.WXImageView.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WXImageView.initialize"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.image_view.ImageView.html#enaml.backends.wx.wx_image_view.WXImageView.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Initializes the attributes on the underlying control.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -268,14 +268,14 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Implementation</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="WXImageView.shell_image_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_image_view.WXImageView.shell_image_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_image_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">):</span>
+<div class="viewcode-block" id="WXImageView.shell_image_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.image_view.ImageView.html#enaml.backends.wx.wx_image_view.WXImageView.shell_image_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_image_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;image&#39; attribute on the shell </span>
 <span class="sd">        component.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_image</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
     </div>
-<div class="viewcode-block" id="WXImageView.shell_scale_to_fit_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_image_view.WXImageView.shell_scale_to_fit_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_scale_to_fit_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scale_to_fit</span><span class="p">):</span>
+<div class="viewcode-block" id="WXImageView.shell_scale_to_fit_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.image_view.ImageView.html#enaml.backends.wx.wx_image_view.WXImageView.shell_scale_to_fit_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_scale_to_fit_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scale_to_fit</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;scale_to_fit&#39; attribute on the </span>
 <span class="sd">        shell component.</span>
 
@@ -285,7 +285,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Widget Update Methods</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="WXImageView.set_image"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_image_view.WXImageView.set_image">[docs]</a>    <span class="k">def</span> <span class="nf">set_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">):</span>
+<div class="viewcode-block" id="WXImageView.set_image"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.image_view.ImageView.html#enaml.backends.wx.wx_image_view.WXImageView.set_image">[docs]</a>    <span class="k">def</span> <span class="nf">set_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the image on the underlying wxBitmapWidget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -303,7 +303,7 @@
         <span class="k">if</span> <span class="n">cached</span> <span class="o">!=</span> <span class="n">hint</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">size_hint_updated</span><span class="p">()</span>
     </div>
-<div class="viewcode-block" id="WXImageView.set_scale_to_fit"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_image_view.WXImageView.set_scale_to_fit">[docs]</a>    <span class="k">def</span> <span class="nf">set_scale_to_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scale_to_fit</span><span class="p">):</span>        
+<div class="viewcode-block" id="WXImageView.set_scale_to_fit"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.image_view.ImageView.html#enaml.backends.wx.wx_image_view.WXImageView.set_scale_to_fit">[docs]</a>    <span class="k">def</span> <span class="nf">set_scale_to_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scale_to_fit</span><span class="p">):</span>        
         <span class="sd">&quot;&quot;&quot; Sets whether or not the image scales with the underlying </span>
 <span class="sd">        control.</span>
 
@@ -336,7 +336,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.backends.wx.wx_image_view</a></li>
@@ -346,7 +346,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

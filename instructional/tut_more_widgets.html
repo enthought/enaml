@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>More on Enaml Widgets &mdash; enaml 0.2beta-1 documentation</title>
+    <title>More on Enaml Widgets &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../index.html" />
     <link rel="up" title="Enaml Tutorials" href="tutorials_home.html" />
     <link rel="next" title="More on Enaml Widgets" href="tut_even_more_widgets.html" />
     <link rel="prev" title="John Doe tutorial" href="tut_person.html" /> 
@@ -51,7 +51,7 @@
         <li class="right" >
           <a href="tut_person.html" title="John Doe tutorial"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
           <li><a href="tutorials_home.html" accesskey="U">Enaml Tutorials</a> &raquo;</li>
   
@@ -187,7 +187,9 @@ enamldef Main(MainWindow):
 has an attribute <tt class="docutils literal"><span class="pre">model</span></tt> which must be an instance of <tt class="docutils literal"><span class="pre">ProgressModel</span></tt>,
 and by default it is initialized to an instance of the class.  The window
 has a <tt class="docutils literal"><span class="pre">Container</span></tt> which itself contains three widgets: a <tt class="docutils literal"><span class="pre">ProgressBar</span></tt>, a
-<tt class="docutils literal"><span class="pre">Label</span></tt>, and a <tt class="docutils literal"><span class="pre">PushButton</span></tt>.</p>
+<tt class="docutils literal"><span class="pre">Label</span></tt>, and a <tt class="docutils literal"><span class="pre">PushButton</span></tt>. (In the <a class="reference internal" href="../tech_ref/index.html#tech-ref"><em>Enaml Technical Reference</em></a> you can find a list and
+descriptions of widgets and components from the <em class="xref std std-ref">built-ins</em>
+and <a class="reference internal" href="../api_ref/std_library_ref.html#std-library-ref"><em>standard library</em></a>.)</p>
 <p>The result when you run it looks like:</p>
 <img alt="../_images/progress_bar.png" src="../_images/progress_bar.png" />
 <dl class="docutils">
@@ -338,7 +340,7 @@ which are solved by the <a class="reference external" href="https://github.entho
 linear constraint solver.</p>
 <p>We can add additional constraints via inequalities directly, if we want.  For
 example, if we would like to make sure that the progress bar is at least 500
-pixels wide, we could add that an inequality to the constraints:</p>
+pixels wide, we could add that inequality to the constraints:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">constraints</span> <span class="o">=</span> <span class="p">[</span>
     <span class="n">vbox</span><span class="p">(</span><span class="n">progress</span><span class="p">,</span>
         <span class="n">hbox</span><span class="p">(</span><span class="n">spacer</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">spacer</span><span class="p">),</span>
@@ -405,7 +407,7 @@ contents region: <tt class="docutils literal"><span class="pre">padding_top</spa
         <li class="right" >
           <a href="tut_person.html" title="John Doe tutorial"
              >previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
           <li><a href="tutorials_home.html" >Enaml Tutorials</a> &raquo;</li>
   
@@ -416,7 +418,7 @@ contents region: <tt class="docutils literal"><span class="pre">padding_top</spa
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

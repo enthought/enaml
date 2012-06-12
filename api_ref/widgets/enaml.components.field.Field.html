@@ -1,0 +1,1052 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Field &mdash; enaml 0.2alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.2alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../index.html" />
+    <link rel="up" title="Widgets" href="../enaml.widgets.html" />
+    <link rel="next" title="Image" href="enaml.components.image.Image.html" />
+    <link rel="prev" title="RadioButton" href="enaml.components.radio_button.RadioButton.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.components.image.Image.html" title="Image"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="enaml.components.radio_button.RadioButton.html" title="RadioButton"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" accesskey="U">Widgets</a> &raquo;</li>
+  
+    <li><a href="#">Field</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Field</a><ul>
+<li><a class="reference internal" href="#backends">Backends</a><ul>
+<li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/api_ref/widgets/enaml.components.field.Field.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="field">
+<h1>Field<a class="headerlink" href="#field" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="enaml.components.field.Field">
+<em class="property">class </em><tt class="descclassname">enaml.components.field.</tt><tt class="descname">Field</tt><a class="reference internal" href="../../_modules/enaml/components/field.html#Field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.field.Field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.components.control.Control.html#enaml.components.control.Control" title="enaml.components.control.Control"><tt class="xref py py-class docutils literal"><span class="pre">enaml.components.control.Control</span></tt></a></p>
+<p>A single-line editable text widget.</p>
+<p>Among many other attributes, a Field accepts a validator object
+which allows any arbitrary python object to be displayed and edited
+by the Field.</p>
+<dl class="attribute">
+<dt id="enaml.components.field.Field.value">
+<tt class="descname">value</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.field.Field.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Python value to display in the field. The default value
+is an empty string.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.field.Field.validator">
+<tt class="descname">validator</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.field.Field.validator" title="Permalink to this definition">¶</a></dt>
+<dd><p>A validator which manages validation/conversion to and from the
+widget&#8217;s unicode text and the value attribute.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.field.Field.max_length">
+<tt class="descname">max_length</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.field.Field.max_length" title="Permalink to this definition">¶</a></dt>
+<dd><p>The maximum length of the field in characters. The default value
+is Zero and indicates there is no maximum length.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.field.Field.read_only">
+<tt class="descname">read_only</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.field.Field.read_only" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether or not the field is read only. Defaults to False.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.field.Field.cursor_position">
+<tt class="descname">cursor_position</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.field.Field.cursor_position" title="Permalink to this definition">¶</a></dt>
+<dd><p>The position of the cursor in the field. Defaults to Zero.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.field.Field.placeholder_text">
+<tt class="descname">placeholder_text</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.field.Field.placeholder_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>The grayed-out text to display if &#8216;value&#8217; is empty and the
+widget doesn&#8217;t have focus. Defaults to the empty string.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.field.Field.password_mode">
+<tt class="descname">password_mode</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.field.Field.password_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>How to obscure password text in the field.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.field.Field.modified">
+<tt class="descname">modified</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.field.Field.modified" title="Permalink to this definition">¶</a></dt>
+<dd><p>A boolean which is set to True if the user has changed the text
+from the ui, False otherwise. This is reset to False if the
+value is updated programmatically. This should be considered
+read-only and any assignment by the user will be ignored.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.field.Field.selected_text">
+<tt class="descname">selected_text</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.field.Field.selected_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>A unicode attribute that is updated with the text selected in the
+field. This should be considered read-only and any assignment by
+the user will be ignored. Use the various selection methods to
+programmatically change the selection.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.field.Field.acceptable">
+<tt class="descname">acceptable</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.field.Field.acceptable" title="Permalink to this definition">¶</a></dt>
+<dd><p>A boolean indicating whether or not the text typed by the user
+is acceptable for conversion as indicated by the validator. Note
+that this is distinctly different from the &#8216;error&#8217; attribute which
+indicates an error occured while converting acceptable text to the
+Python value. This should be considered read-only and assignment
+by the user will be ignored.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.field.Field.submit_mode">
+<tt class="descname">submit_mode</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.field.Field.submit_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of strings which indicates when the text the in the field
+should be converted to a Python object representation and stored
+in the &#8216;value&#8217; attribute. The default mode triggers submissions
+on lost focus events and return pressed events. Allowable modes
+are &#8216;always&#8217;, &#8216;lost_focus&#8217;, and &#8216;return_pressed&#8217;. A submission
+can also be manually triggered by calling the &#8216;submit()&#8217; method.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.field.Field.text_edited">
+<tt class="descname">text_edited</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.field.Field.text_edited" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fired when the text is changed by the user explicitly through
+the ui but not programmatically. The event object will contain
+the text.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.field.Field.return_pressed">
+<tt class="descname">return_pressed</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.field.Field.return_pressed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fired when the return/enter key is pressed in the field, provided
+that the text in the field validates as ACCEPTABLE.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.field.Field.lost_focus">
+<tt class="descname">lost_focus</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.field.Field.lost_focus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fired when the widget has lost input focus.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.field.Field.hug_width">
+<tt class="descname">hug_width</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.field.Field.hug_width" title="Permalink to this definition">¶</a></dt>
+<dd><p>How strongly a component hugs it&#8217;s contents&#8217; width. Fields ignore
+the width hug by default, so they expand freely in width.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.field.Field.abstract_obj">
+<tt class="descname">abstract_obj</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.field.Field.abstract_obj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden parent class trait</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.components.field.Field.get_text">
+<tt class="descname">get_text</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/components/field.html#Field.get_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.field.Field.get_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the current text as a unicode string.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.components.field.Field.set_text">
+<tt class="descname">set_text</tt><big>(</big><em>text</em><big>)</big><a class="reference internal" href="../../_modules/enaml/components/field.html#Field.set_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.field.Field.set_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the current text without an event notification.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.components.field.Field.set_selection">
+<tt class="descname">set_selection</tt><big>(</big><em>start</em>, <em>end</em><big>)</big><a class="reference internal" href="../../_modules/enaml/components/field.html#Field.set_selection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.field.Field.set_selection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the selection to the bounds of start and end.</p>
+<p>If the indices are invalid, no selection will be made, and any
+current selection will be cleared.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>start</strong> (<em>Int</em>) &#8211; The start selection index, zero based.</li>
+<li><strong>end</strong> (<em>Int</em>) &#8211; The end selection index, zero based.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.components.field.Field.select_all">
+<tt class="descname">select_all</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/components/field.html#Field.select_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.field.Field.select_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select all the text in the field.</p>
+<p>If there is no text in the field, the selection will be empty.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.components.field.Field.deselect">
+<tt class="descname">deselect</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/components/field.html#Field.deselect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.field.Field.deselect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deselect any selected text.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.components.field.Field.clear">
+<tt class="descname">clear</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/components/field.html#Field.clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.field.Field.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clear the field of all text.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.components.field.Field.backspace">
+<tt class="descname">backspace</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/components/field.html#Field.backspace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.field.Field.backspace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple backspace functionality.</p>
+<p>If no text is selected, deletes the character to the left of 
+the cursor. Otherwise, it deletes the selected text.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.components.field.Field.delete">
+<tt class="descname">delete</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/components/field.html#Field.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.field.Field.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple delete functionality.</p>
+<p>If no text is selected, deletes the character to the right of
+the cursor. Otherwise, it deletes the selected text.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.components.field.Field.end">
+<tt class="descname">end</tt><big>(</big><em>mark=False</em><big>)</big><a class="reference internal" href="../../_modules/enaml/components/field.html#Field.end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.field.Field.end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Moves the cursor to the end of the line.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mark</strong> (<em>bool, optional</em>) &#8211; If True, select the text from the current position to the
+end of the field. Defaults to False.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.components.field.Field.home">
+<tt class="descname">home</tt><big>(</big><em>mark=False</em><big>)</big><a class="reference internal" href="../../_modules/enaml/components/field.html#Field.home"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.field.Field.home" title="Permalink to this definition">¶</a></dt>
+<dd><p>Moves the cursor to the beginning of the line.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mark</strong> (<em>bool, optional</em>) &#8211; If True, select the text from the current position to the
+beginning of the field. Defaults to False.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.components.field.Field.cut">
+<tt class="descname">cut</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/components/field.html#Field.cut"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.field.Field.cut" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cuts the selected text from the field.</p>
+<p>Copies the selected text to the clipthen deletes the selected
+text from the field.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.components.field.Field.copy">
+<tt class="descname">copy</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/components/field.html#Field.copy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.field.Field.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copies the selected text to the clipboard.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.components.field.Field.paste">
+<tt class="descname">paste</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/components/field.html#Field.paste"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.field.Field.paste" title="Permalink to this definition">¶</a></dt>
+<dd><p>Paste the contents of the clipboard into the field.</p>
+<p>Inserts the contents of the clipboard into the field at the 
+current cursor position, replacing any selected text.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.components.field.Field.insert">
+<tt class="descname">insert</tt><big>(</big><em>text</em><big>)</big><a class="reference internal" href="../../_modules/enaml/components/field.html#Field.insert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.field.Field.insert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert the text into the field.</p>
+<p>Inserts the given text into the field at the current cursor 
+position, replacing any selected text.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>text</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The text to insert into the field.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.components.field.Field.undo">
+<tt class="descname">undo</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/components/field.html#Field.undo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.field.Field.undo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Undoes the last operation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.components.field.Field.redo">
+<tt class="descname">redo</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/components/field.html#Field.redo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.field.Field.redo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Redoes the last operation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.components.field.Field.submit">
+<tt class="descname">submit</tt><big>(</big><em>format=True</em><big>)</big><a class="reference internal" href="../../_modules/enaml/components/field.html#Field.submit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.field.Field.submit" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method which is called to perform the submission.</p>
+<p>A submit involves converting the current text in the field into a 
+Python value using the current validator, and storing that value
+in the &#8216;value&#8217; attribute. If an error occurs during conversion,
+then the &#8216;invalid&#8217;, &#8216;error&#8217; and &#8216;exception&#8217; attributes on the 
+field will be set appropriately.</p>
+<p>If the current text does not validate as ACCEPTABLE then the
+&#8216;value&#8217; attribute will not be changed. In such case if &#8216;format&#8217;
+is True, then the existing value will be formatted and the 
+display text updated.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>format</strong> (<em>bool, optional</em>) &#8211; Whether or not to re-format the text after conversion and
+submission. A False value is useful for submitting the value
+without causing the text in the field to be updated. The
+default is True.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (bool) &#8211; True if the submission is successful, or False if the text is not valid or the conversion from text to value fails.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.field.Field.__implements__">
+<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.components.field.Field.__implements__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="backends">
+<h2>Backends<a class="headerlink" href="#backends" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="qt">
+<h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-a41b1f77d6871fee140aaefec6bac6fd89df5147.png" alt="Inheritance diagram of enaml.backends.qt.qt_field.QtField" usemap="#inheritanceb84e0b5f79" class="inheritance"/>
+<map id="inheritanceb84e0b5f79" name="inheritanceb84e0b5f79">
+<area shape="rect" id="node7" href="enaml.components.constraints_widget.ConstraintsWidget.html#enaml.backends.qt.qt_constraints_widget.QtConstraintsWidget" title="QtConstraintsWidget" alt="" coords="494,36,588,54"/>
+<area shape="rect" id="node13" href="enaml.components.widget_component.WidgetComponent.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent" title="QtWidgetComponent" alt="" coords="353,36,449,54"/>
+<area shape="rect" id="node16" href="enaml.components.base_widget_component.BaseWidgetComponent.html#enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent" title="QtBaseWidgetComponent" alt="" coords="187,36,299,54"/>
+<area shape="rect" id="node6" href="enaml.components.control.Control.html#enaml.backends.qt.qt_control.QtControl" title="QtControl" alt="" coords="629,36,680,54"/>
+<area shape="rect" id="node20" href="#enaml.backends.qt.qt_field.QtField" title="QtField" alt="" coords="721,19,765,37"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.backends.qt.qt_field.QtField">
+<em class="property">class </em><tt class="descclassname">enaml.backends.qt.qt_field.</tt><tt class="descname">QtField</tt><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_field.html#QtField"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_field.QtField" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.components.control.Control.html#enaml.backends.qt.qt_control.QtControl" title="enaml.backends.qt.qt_control.QtControl"><tt class="xref py py-class docutils literal"><span class="pre">enaml.backends.qt.qt_control.QtControl</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.components.field.AbstractTkField</span></tt></p>
+<p>A Qt implementation of a Field which uses a QLineEdit to provide
+a single line of editable text.</p>
+<dl class="method">
+<dt id="enaml.backends.qt.qt_field.QtField.create">
+<tt class="descname">create</tt><big>(</big><em>parent</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_field.html#QtField.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_field.QtField.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the underlying QLineEdit.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_field.QtField.initialize">
+<tt class="descname">initialize</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_field.html#QtField.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_field.QtField.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes the attributes of the Qt widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_field.QtField.bind">
+<tt class="descname">bind</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_field.html#QtField.bind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_field.QtField.bind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Binds the event handlers for the QLineEdit.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_field.QtField.shell_validator_changed">
+<tt class="descname">shell_validator_changed</tt><big>(</big><em>validator</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_field.html#QtField.shell_validator_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_field.QtField.shell_validator_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;validator&#8217; attribute on the 
+shell object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_field.QtField.shell_max_length_changed">
+<tt class="descname">shell_max_length_changed</tt><big>(</big><em>max_length</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_field.html#QtField.shell_max_length_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_field.QtField.shell_max_length_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;max_length&#8217; attribute on the 
+shell object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_field.QtField.shell_read_only_changed">
+<tt class="descname">shell_read_only_changed</tt><big>(</big><em>read_only</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_field.html#QtField.shell_read_only_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_field.QtField.shell_read_only_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;read_only&#8217; attribute on the
+shell object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_field.QtField.shell_cursor_position_changed">
+<tt class="descname">shell_cursor_position_changed</tt><big>(</big><em>cursor_position</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_field.html#QtField.shell_cursor_position_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_field.QtField.shell_cursor_position_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;cursor_position&#8217; attribute on 
+the shell object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_field.QtField.shell_placeholder_text_changed">
+<tt class="descname">shell_placeholder_text_changed</tt><big>(</big><em>placeholder_text</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_field.html#QtField.shell_placeholder_text_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_field.QtField.shell_placeholder_text_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;placeholder_text&#8217; attribute on
+the shell object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_field.QtField.shell_password_mode_changed">
+<tt class="descname">shell_password_mode_changed</tt><big>(</big><em>mode</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_field.html#QtField.shell_password_mode_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_field.QtField.shell_password_mode_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;password_mode&#8217; attribute on the 
+shell object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_field.QtField.set_selection">
+<tt class="descname">set_selection</tt><big>(</big><em>start</em>, <em>end</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_field.html#QtField.set_selection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_field.QtField.set_selection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the selection to the bounds of start and end.</p>
+<p>If the indices are invalid, no selection will be made, and any
+current selection will be cleared.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>start</strong> (<em>Int</em>) &#8211; The start selection index, zero based.</li>
+<li><strong>end</strong> (<em>Int</em>) &#8211; The end selection index, zero based.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_field.QtField.select_all">
+<tt class="descname">select_all</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_field.html#QtField.select_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_field.QtField.select_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select all the text in the field.</p>
+<p>If there is no text in the field, the selection will be empty.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_field.QtField.deselect">
+<tt class="descname">deselect</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_field.html#QtField.deselect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_field.QtField.deselect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deselect any selected text.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_field.QtField.clear">
+<tt class="descname">clear</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_field.html#QtField.clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_field.QtField.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clear the field of all text.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_field.QtField.backspace">
+<tt class="descname">backspace</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_field.html#QtField.backspace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_field.QtField.backspace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple backspace functionality.</p>
+<p>If no text is selected, deletes the character to the left of 
+the cursor. Otherwise, it deletes the selected text.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_field.QtField.delete">
+<tt class="descname">delete</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_field.html#QtField.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_field.QtField.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple delete functionality.</p>
+<p>If no text is selected, deletes the character to the right of 
+the cursor. Otherwise, it deletes the selected text.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_field.QtField.end">
+<tt class="descname">end</tt><big>(</big><em>mark=False</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_field.html#QtField.end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_field.QtField.end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Moves the cursor to the end of the line.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mark</strong> (<em>bool, optional</em>) &#8211; If True, select the text from the current position to the
+end of the field. Defaults to False.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_field.QtField.home">
+<tt class="descname">home</tt><big>(</big><em>mark=False</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_field.html#QtField.home"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_field.QtField.home" title="Permalink to this definition">¶</a></dt>
+<dd><p>Moves the cursor to the beginning of the line.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mark</strong> (<em>bool, optional</em>) &#8211; If True, select the text from the current position to the
+beginning of the field. Defaults to False.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_field.QtField.cut">
+<tt class="descname">cut</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_field.html#QtField.cut"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_field.QtField.cut" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cuts the selected text from the field.</p>
+<p>Copies the selected text to the clipboard then deletes the 
+selected text from the field.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_field.QtField.copy">
+<tt class="descname">copy</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_field.html#QtField.copy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_field.QtField.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copies the selected text to the clipboard.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_field.QtField.paste">
+<tt class="descname">paste</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_field.html#QtField.paste"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_field.QtField.paste" title="Permalink to this definition">¶</a></dt>
+<dd><p>Paste the contents of the clipboard into the field.</p>
+<p>Inserts the contents of the clipboard into the field at the 
+current cursor position, replacing any selected text.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_field.QtField.insert">
+<tt class="descname">insert</tt><big>(</big><em>text</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_field.html#QtField.insert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_field.QtField.insert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert the text into the field.</p>
+<p>Inserts the given text into the field at the current cursor 
+position, replacing any selected text.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>text</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The text to insert into the field.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_field.QtField.undo">
+<tt class="descname">undo</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_field.html#QtField.undo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_field.QtField.undo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Undoes the last operation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_field.QtField.redo">
+<tt class="descname">redo</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_field.html#QtField.redo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_field.QtField.redo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Redoes the last operation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_field.QtField.on_text_edited">
+<tt class="descname">on_text_edited</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_field.html#QtField.on_text_edited"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_field.QtField.on_text_edited" title="Permalink to this definition">¶</a></dt>
+<dd><p>The signal handler for the &#8216;textEdited&#8217; signal. This is
+called when the user edits the text via the ui.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_field.QtField.on_return_pressed">
+<tt class="descname">on_return_pressed</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_field.html#QtField.on_return_pressed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_field.QtField.on_return_pressed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The signal handler for the returnPressed signal.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_field.QtField.on_lost_focus">
+<tt class="descname">on_lost_focus</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_field.html#QtField.on_lost_focus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_field.QtField.on_lost_focus" title="Permalink to this definition">¶</a></dt>
+<dd><p>The signal handler for the lostFocus signal.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_field.QtField.on_selection_changed">
+<tt class="descname">on_selection_changed</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_field.html#QtField.on_selection_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_field.QtField.on_selection_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The signal handler for the selectionChanged signal.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_field.QtField.on_cursor_changed">
+<tt class="descname">on_cursor_changed</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_field.html#QtField.on_cursor_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_field.QtField.on_cursor_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The event handler for a cursor change event.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_field.QtField.get_text">
+<tt class="descname">get_text</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_field.html#QtField.get_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_field.QtField.get_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the current unicode text in the control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_field.QtField.set_text">
+<tt class="descname">set_text</tt><big>(</big><em>text</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_field.html#QtField.set_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_field.QtField.set_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the text control with the given unicode text.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_field.QtField.set_validator">
+<tt class="descname">set_validator</tt><big>(</big><em>validator</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_field.html#QtField.set_validator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_field.QtField.set_validator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wraps the given Enaml validator in a custom QValidator 
+instance and applies it to the underlying control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_field.QtField.set_max_length">
+<tt class="descname">set_max_length</tt><big>(</big><em>max_length</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_field.html#QtField.set_max_length"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_field.QtField.set_max_length" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the max length of the control to max_length. If the max 
+length is &lt;= 0 or &gt; 32767 then the control will be set to hold 
+32kb of text.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_field.QtField.set_read_only">
+<tt class="descname">set_read_only</tt><big>(</big><em>read_only</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_field.html#QtField.set_read_only"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_field.QtField.set_read_only" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets read only state of the widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_field.QtField.set_placeholder_text">
+<tt class="descname">set_placeholder_text</tt><big>(</big><em>placeholder_text</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_field.html#QtField.set_placeholder_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_field.QtField.set_placeholder_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the placeholder text in the widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_field.QtField.set_cursor_position">
+<tt class="descname">set_cursor_position</tt><big>(</big><em>cursor_position</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_field.html#QtField.set_cursor_position"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_field.QtField.set_cursor_position" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the cursor position of the widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_field.QtField.set_password_mode">
+<tt class="descname">set_password_mode</tt><big>(</big><em>password_mode</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_field.html#QtField.set_password_mode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_field.QtField.set_password_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the password mode of the wiget.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="wx">
+<h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-e42ba91b561734f123ba767bdfdb1a661958f4f1.png" alt="Inheritance diagram of enaml.backends.wx.wx_field.WXField" usemap="#inheritance6ddca1ca17" class="inheritance"/>
+<map id="inheritance6ddca1ca17" name="inheritance6ddca1ca17">
+<area shape="rect" id="node1" href="enaml.components.constraints_widget.ConstraintsWidget.html#enaml.backends.wx.wx_constraints_widget.WXConstraintsWidget" title="WXConstraintsWidget" alt="" coords="492,3,589,21"/>
+<area shape="rect" id="node18" href="enaml.components.control.Control.html#enaml.backends.wx.wx_control.WXControl" title="WXControl" alt="" coords="628,3,682,21"/>
+<area shape="rect" id="node2" href="enaml.components.widget_component.WidgetComponent.html#enaml.backends.wx.wx_widget_component.WXWidgetComponent" title="WXWidgetComponent" alt="" coords="351,3,448,21"/>
+<area shape="rect" id="node8" href="enaml.components.base_widget_component.BaseWidgetComponent.html#enaml.backends.wx.wx_base_widget_component.WXBaseWidgetComponent" title="WXBaseWidgetComponent" alt="" coords="184,3,300,21"/>
+<area shape="rect" id="node17" href="#enaml.backends.wx.wx_field.WXField" title="WXField" alt="" coords="721,19,765,37"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.backends.wx.wx_field.WXField">
+<em class="property">class </em><tt class="descclassname">enaml.backends.wx.wx_field.</tt><tt class="descname">WXField</tt><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_field.html#WXField"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_field.WXField" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.components.control.Control.html#enaml.backends.wx.wx_control.WXControl" title="enaml.backends.wx.wx_control.WXControl"><tt class="xref py py-class docutils literal"><span class="pre">enaml.backends.wx.wx_control.WXControl</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.components.field.AbstractTkField</span></tt></p>
+<p>A wxPython implementation of a LineEdit.</p>
+<p>The LineEdit uses a custom wx.TextCtrl and provides a single line of
+editable text.</p>
+<dl class="method">
+<dt id="enaml.backends.wx.wx_field.WXField.create">
+<tt class="descname">create</tt><big>(</big><em>parent</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_field.html#WXField.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_field.WXField.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the underlying wxLineEdit.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_field.WXField.initialize">
+<tt class="descname">initialize</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_field.html#WXField.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_field.WXField.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes the attributes of the wxLineEdit.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_field.WXField.bind">
+<tt class="descname">bind</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_field.html#WXField.bind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_field.WXField.bind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Binds the event handlers for the wx.TextCtrl.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_field.WXField.shell_validator_changed">
+<tt class="descname">shell_validator_changed</tt><big>(</big><em>validator</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_field.html#WXField.shell_validator_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_field.WXField.shell_validator_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;validator&#8217; attribute on the 
+shell object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_field.WXField.shell_max_length_changed">
+<tt class="descname">shell_max_length_changed</tt><big>(</big><em>max_length</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_field.html#WXField.shell_max_length_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_field.WXField.shell_max_length_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;max_length&#8217; attribute on the
+shell.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_field.WXField.shell_read_only_changed">
+<tt class="descname">shell_read_only_changed</tt><big>(</big><em>read_only</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_field.html#WXField.shell_read_only_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_field.WXField.shell_read_only_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;read_only&#8217; attribute on the
+shell.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_field.WXField.shell_cursor_position_changed">
+<tt class="descname">shell_cursor_position_changed</tt><big>(</big><em>cursor_position</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_field.html#WXField.shell_cursor_position_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_field.WXField.shell_cursor_position_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;cursor_position&#8217; attribute on
+the shell.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_field.WXField.shell_placeholder_text_changed">
+<tt class="descname">shell_placeholder_text_changed</tt><big>(</big><em>placeholder_text</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_field.html#WXField.shell_placeholder_text_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_field.WXField.shell_placeholder_text_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;placeholder_text&#8217; attribute on
+the shell.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_field.WXField.shell_password_mode_changed">
+<tt class="descname">shell_password_mode_changed</tt><big>(</big><em>mode</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_field.html#WXField.shell_password_mode_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_field.WXField.shell_password_mode_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;password_mode&#8217; attribute on the
+shell object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_field.WXField.set_selection">
+<tt class="descname">set_selection</tt><big>(</big><em>start</em>, <em>end</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_field.html#WXField.set_selection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_field.WXField.set_selection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the selection in the widget between the start and
+end positions, inclusive.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_field.WXField.select_all">
+<tt class="descname">select_all</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_field.html#WXField.select_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_field.WXField.select_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select all the text in the line edit.</p>
+<p>If there is no text in the line edit, the selection will be
+empty.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_field.WXField.deselect">
+<tt class="descname">deselect</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_field.html#WXField.deselect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_field.WXField.deselect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deselect any selected text.</p>
+<p>Sets a selection with start == stop to deselect the current
+selection. The cursor is placed at the beginning of selection.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_field.WXField.clear">
+<tt class="descname">clear</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_field.html#WXField.clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_field.WXField.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clear the line edit of all text.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_field.WXField.backspace">
+<tt class="descname">backspace</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_field.html#WXField.backspace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_field.WXField.backspace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple backspace functionality.</p>
+<p>If no text is selected, deletes the character to the left
+of the cursor. Otherwise, it deletes the selected text.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_field.WXField.delete">
+<tt class="descname">delete</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_field.html#WXField.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_field.WXField.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple delete functionality.</p>
+<p>If no text is selected, deletes the character to the right
+of the cursor. Otherwise, it deletes the selected text.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_field.WXField.end">
+<tt class="descname">end</tt><big>(</big><em>mark=False</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_field.html#WXField.end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_field.WXField.end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Moves the cursor to the end of the line.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mark</strong> (<em>bool, optional</em>) &#8211; If True, select the text from the current position to the end of
+the line edit. Defaults to False.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_field.WXField.home">
+<tt class="descname">home</tt><big>(</big><em>mark=False</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_field.html#WXField.home"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_field.WXField.home" title="Permalink to this definition">¶</a></dt>
+<dd><p>Moves the cursor to the beginning of the line.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mark</strong> (<em>bool, optional</em>) &#8211; If True, select the text from the current position to
+the beginning of the line edit. Defaults to False.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_field.WXField.cut">
+<tt class="descname">cut</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_field.html#WXField.cut"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_field.WXField.cut" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cuts the selected text from the line edit.</p>
+<p>Copies the selected text to the clipboard then deletes the selected
+text from the line edit.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_field.WXField.copy">
+<tt class="descname">copy</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_field.html#WXField.copy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_field.WXField.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copies the selected text to the clipboard.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_field.WXField.paste">
+<tt class="descname">paste</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_field.html#WXField.paste"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_field.WXField.paste" title="Permalink to this definition">¶</a></dt>
+<dd><p>Paste the contents of the clipboard into the line edit.</p>
+<p>Inserts the contents of the clipboard into the line edit at
+the current cursor position, replacing any selected text.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_field.WXField.insert">
+<tt class="descname">insert</tt><big>(</big><em>text</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_field.html#WXField.insert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_field.WXField.insert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert the text into the line edit.</p>
+<p>Inserts the given text at the current cursor position,
+replacing any selected text.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>text</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The text to insert into the line edit.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_field.WXField.undo">
+<tt class="descname">undo</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_field.html#WXField.undo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_field.WXField.undo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Undoes the last operation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_field.WXField.redo">
+<tt class="descname">redo</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_field.html#WXField.redo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_field.WXField.redo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Redoes the last operation</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_field.WXField.on_text_edited">
+<tt class="descname">on_text_edited</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_field.html#WXField.on_text_edited"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_field.WXField.on_text_edited" title="Permalink to this definition">¶</a></dt>
+<dd><p>The event handler for when the user edits the text through 
+the ui.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_field.WXField.on_return_pressed">
+<tt class="descname">on_return_pressed</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_field.html#WXField.on_return_pressed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_field.WXField.on_return_pressed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The event handler for the return pressed event.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_field.WXField.on_lost_focus">
+<tt class="descname">on_lost_focus</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_field.html#WXField.on_lost_focus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_field.WXField.on_lost_focus" title="Permalink to this definition">¶</a></dt>
+<dd><p>The signal handler for the lost focus event.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_field.WXField.on_selection_changed">
+<tt class="descname">on_selection_changed</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_field.html#WXField.on_selection_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_field.WXField.on_selection_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The event handler for a selection event.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_field.WXField.get_text">
+<tt class="descname">get_text</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_field.html#WXField.get_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_field.WXField.get_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the current unicode text in the control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_field.WXField.set_text">
+<tt class="descname">set_text</tt><big>(</big><em>text</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_field.html#WXField.set_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_field.WXField.set_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the text control with the given unicode text.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_field.WXField.set_validator">
+<tt class="descname">set_validator</tt><big>(</big><em>validator</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_field.html#WXField.set_validator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_field.WXField.set_validator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wraps the given Enaml validator in a custom wx.PyValidator 
+instance and applies it to the underlying control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_field.WXField.set_max_length">
+<tt class="descname">set_max_length</tt><big>(</big><em>max_length</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_field.html#WXField.set_max_length"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_field.WXField.set_max_length" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the max length of the control to max_length. If the max 
+length is &lt;= 0 or &gt; 32767 then the control will be set to hold 
+32kb of text.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_field.WXField.set_read_only">
+<tt class="descname">set_read_only</tt><big>(</big><em>read_only</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_field.html#WXField.set_read_only"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_field.WXField.set_read_only" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the read only state of the widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_field.WXField.set_placeholder_text">
+<tt class="descname">set_placeholder_text</tt><big>(</big><em>placeholder_text</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_field.html#WXField.set_placeholder_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_field.WXField.set_placeholder_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the placeholder text in the widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_field.WXField.set_cursor_position">
+<tt class="descname">set_cursor_position</tt><big>(</big><em>cursor_position</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_field.html#WXField.set_cursor_position"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_field.WXField.set_cursor_position" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the cursor position of the widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_field.WXField.set_password_mode">
+<tt class="descname">set_password_mode</tt><big>(</big><em>password_mode</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_field.html#WXField.set_password_mode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_field.WXField.set_password_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the password mode of the wiget. Currently WXField only
+supports <cite>password</cite> and normal`.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_field.WXField.size_hint">
+<tt class="descname">size_hint</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_field.html#WXField.size_hint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_field.WXField.size_hint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden size_hint method to add 44 pixels in width to 
+the field. This makes Wx consistent with Qt.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.components.image.Image.html" title="Image"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="enaml.components.radio_button.RadioButton.html" title="RadioButton"
+             >previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" >Widgets</a> &raquo;</li>
+  
+    <li><a href="#">Field</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Jun 12, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Chaco Lotka-Volterra Population Model Plot Example &mdash; enaml 0.2beta-1 documentation</title>
+    <title>Chaco Lotka-Volterra Population Model Plot Example &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../index.html" />
     <link rel="up" title="Examples Gallery" href="example.html" />
     <link rel="next" title="Help and Troubleshooting" href="faq.html" />
     <link rel="prev" title="Chaco Sine Plot Example" href="ex_sine_plot.html" /> 
@@ -51,7 +51,7 @@
         <li class="right" >
           <a href="ex_sine_plot.html" title="Chaco Sine Plot Example"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
           <li><a href="example.html" accesskey="U">Examples Gallery</a> &raquo;</li>
   
@@ -93,197 +93,8 @@
             
   <div class="section" id="chaco-lotka-volterra-population-model-plot-example">
 <h1>Chaco Lotka-Volterra Population Model Plot Example<a class="headerlink" href="#chaco-lotka-volterra-population-model-plot-example" title="Permalink to this headline">¶</a></h1>
-<p><a class="reference download internal" href="../_downloads/lotka_volterra_ui.enaml"><tt class="xref download docutils literal"><span class="pre">lotka_volterra_ui.enaml</span></tt></a></p>
-<p><a class="reference download internal" href="../_downloads/lotka_volterra.py"><tt class="xref download docutils literal"><span class="pre">lotka_volterra.py</span></tt></a></p>
-<div class="highlight-python"><pre>#------------------------------------------------------------------------------
-#  Copyright (c) 2011, Enthought, Inc.
-#  All rights reserved.
-#------------------------------------------------------------------------------
-""" UI for lotka_volterra.py
-
-Run lotka_volterra.py to view this demo.
-
-"""
-from range import FloatRange, get_sliders
-
-
-def pop_bounds(data_low, data_high, margin, tight_bounds):
-    """ Return "nice" boundaries for the given population data range.
-
-    In this case, our lower bound is always 0. We round the high boundary 
-    up to a nice multiple of 20.
-
-    """
-    q, r = divmod(data_high, 20.0)
-    if r:
-        q += 1
-    high = q * 20.0
-    return (0.0, high)
-
-
-enamldef Main(MainWindow):
-    attr model
-    title = "Lotka-Volterra Model"
-    Container:
-        constraints = [
-            hbox(plot, vbox(form, spacer)),
-            align('left', *get_sliders(self)),
-            align('right', *get_sliders(self)),
-            plot.width &gt;= 500,
-            plot.height &gt;= 500,
-        ]
-        SimplePlot:
-            id: plot
-            data &lt;&lt; dict(t=model.t, prey=model.prey, predator=model.predator)
-            commands = [
-                plot.plot(('t', 'prey'), type='line', name='Prey', color='black'),
-                plot.plot(('t', 'predator'), type='line', name='Predator', color='red'),
-                plot.yrange(bounds_func=pop_bounds),
-            ]
-            legend = True
-            xtitle = 'Time'
-            ytitle = 'Population'
-            padding_right = 10
-            padding_top = 10
-            plot_bgcolor &lt;&lt; color_selector.value
-        Form:
-            id: form
-            Label:
-                text = "Background Color:"
-            ComboBox:
-                id: color_selector
-                items = ['white', 'coral', 'lightblue', 'wheat']
-                value = items[0]
-            Label:
-                text = "Initial Prey:"
-            FloatRange:
-                minimum = 0.0
-                maximum = 10.0
-                value := model.prey0
-            Label:
-                text = "Initial Predators:"
-            FloatRange:
-                minimum = 0.0
-                maximum = 10.0
-                value := model.predator0
-            Label:
-                text = "Prey Growth:"
-            FloatRange:
-                minimum = 0.0
-                maximum = 2.0
-                value := model.prey_growth
-            Label:
-                text = "Predation Rate:"
-            FloatRange:
-                minimum = 0.0
-                maximum = 2.0
-                value := model.predation_rate
-            Label:
-                text = "Predator Death:"
-            FloatRange:
-                minimum = 0.0
-                maximum = 2.0
-                value := model.predator_death
-            Label:
-                text = "Predator Growth:"
-            FloatRange:
-                minimum = 0.0
-                maximum = 2.0
-                value := model.predator_growth
-
-</pre>
-</div>
-<div class="highlight-python"><div class="highlight"><pre><span class="c">#------------------------------------------------------------------------------</span>
-<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
-<span class="c">#  All rights reserved.</span>
-<span class="c">#------------------------------------------------------------------------------</span>
-<span class="sd">&quot;&quot;&quot; A Lotka-Volterra model. </span>
-
-<span class="sd">This example plots a non-trivial system and allows the user to explore the</span>
-<span class="sd">parameter space using sliders. The system is a first order Lotka-Volterra </span>
-<span class="sd">model, also known as a predator-prey model::</span>
-
-<span class="sd">    http://en.wikipedia.org/wiki/Lotka%E2%80%93Volterra_equation</span>
-
-<span class="sd">As in the sine plot example, the plot is on the left while the parameter </span>
-<span class="sd">sliders and the color controls are on the right. The plot will update as </span>
-<span class="sd">the slider values change.</span>
-
-<span class="sd">This is the main driver for the example. The Enaml UI is defined in </span>
-<span class="sd">lotka_volterra_ui.enaml</span>
-
-<span class="sd">This demo requires numpy and Chaco.</span>
-
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-
-<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">Array</span><span class="p">,</span> <span class="n">HasTraits</span><span class="p">,</span> <span class="n">Float</span><span class="p">,</span> <span class="n">on_trait_change</span>
-
-<span class="kn">import</span> <span class="nn">enaml</span>
-
-
-<span class="k">class</span> <span class="nc">LotkaVolterra</span><span class="p">(</span><span class="n">HasTraits</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; A simple Lotka-Volterra model.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">dt</span> <span class="o">=</span> <span class="n">Float</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="mi">128</span><span class="p">)</span>
-    <span class="n">total_time</span> <span class="o">=</span> <span class="n">Float</span><span class="p">(</span><span class="mf">20.0</span><span class="p">)</span>
-
-    <span class="n">prey0</span> <span class="o">=</span> <span class="n">Float</span><span class="p">(</span><span class="mf">5.0</span><span class="p">)</span>
-    <span class="n">predator0</span> <span class="o">=</span> <span class="n">Float</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
-    <span class="n">prey_growth</span> <span class="o">=</span> <span class="n">Float</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
-    <span class="n">predation_rate</span> <span class="o">=</span> <span class="n">Float</span><span class="p">(</span><span class="mf">0.2</span><span class="p">)</span>
-    <span class="n">predator_growth</span> <span class="o">=</span> <span class="n">Float</span><span class="p">(</span><span class="mf">0.04</span><span class="p">)</span>
-    <span class="n">predator_death</span> <span class="o">=</span> <span class="n">Float</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
-
-    <span class="n">t</span> <span class="o">=</span> <span class="n">Array</span><span class="p">()</span>
-    <span class="n">prey</span> <span class="o">=</span> <span class="n">Array</span><span class="p">()</span>
-    <span class="n">predator</span> <span class="o">=</span> <span class="n">Array</span><span class="p">()</span>
-
-    <span class="nd">@on_trait_change</span><span class="p">(</span><span class="s">&#39;dt,total_time,prey0,predator0,prey_growth,predation_rate,predator_growth,predator_death&#39;</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">integrate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Use a modifed Euler&#39;s method to integrate the ODE.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">nsteps</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_time</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">))</span>
-        <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">nsteps</span><span class="p">)</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prey0</span>
-        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predator0</span>
-        <span class="n">prey</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">nsteps</span><span class="p">)</span>
-        <span class="n">prey</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span>
-        <span class="n">predator</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">nsteps</span><span class="p">)</span>
-        <span class="n">predator</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">nsteps</span><span class="p">):</span>
-            <span class="n">x2</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prey_growth</span><span class="o">*</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">predation_rate</span><span class="o">*</span><span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="p">)</span>
-            <span class="n">y2</span> <span class="o">=</span> <span class="n">y</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">predator_death</span><span class="o">*</span><span class="n">y</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">predator_growth</span><span class="o">*</span><span class="n">x2</span><span class="o">*</span><span class="n">y</span><span class="p">)</span>
-            <span class="n">prey</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">x2</span>
-            <span class="n">predator</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">y2</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="n">x2</span>
-            <span class="n">y</span> <span class="o">=</span> <span class="n">y2</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">trait_set</span><span class="p">(</span>
-            <span class="n">t</span><span class="o">=</span><span class="n">t</span><span class="p">,</span>
-            <span class="n">prey</span><span class="o">=</span><span class="n">prey</span><span class="p">,</span>
-            <span class="n">predator</span><span class="o">=</span><span class="n">predator</span><span class="p">,</span>
-        <span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
-    <span class="kn">from</span> <span class="nn">simple_plot</span> <span class="kn">import</span> <span class="n">SimplePlot</span>
-    <span class="n">SimplePlot</span><span class="o">.</span><span class="n">activate</span><span class="p">()</span>
-
-    <span class="k">with</span> <span class="n">enaml</span><span class="o">.</span><span class="n">imports</span><span class="p">():</span>
-        <span class="kn">from</span> <span class="nn">lotka_volterra_ui</span> <span class="kn">import</span> <span class="n">Main</span>
-
-    <span class="n">model</span> <span class="o">=</span> <span class="n">LotkaVolterra</span><span class="p">()</span>
-    <span class="n">model</span><span class="o">.</span><span class="n">integrate</span><span class="p">()</span>
-    <span class="n">window</span> <span class="o">=</span> <span class="n">Main</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">)</span>
-    <span class="n">window</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-
-
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="n">main</span><span class="p">()</span>
-</pre></div>
-</div>
+<p><tt class="xref download docutils literal"><span class="pre">lotka_volterra_ui.enaml</span></tt></p>
+<p><tt class="xref download docutils literal"><span class="pre">lotka_volterra.py</span></tt></p>
 <div class="highlight-python"><pre>$ python lotka_volterra.py</pre>
 </div>
 <img alt="../_images/chaco_lotka_volterra.png" src="../_images/chaco_lotka_volterra.png" />
@@ -313,7 +124,7 @@ enamldef Main(MainWindow):
         <li class="right" >
           <a href="ex_sine_plot.html" title="Chaco Sine Plot Example"
              >previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
           <li><a href="example.html" >Examples Gallery</a> &raquo;</li>
   
@@ -324,7 +135,7 @@ enamldef Main(MainWindow):
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

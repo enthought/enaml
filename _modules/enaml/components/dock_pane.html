@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.components.dock_pane &mdash; enaml 0.2beta-1 documentation</title>
+    <title>enaml.components.dock_pane &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.components.dock_pane</a></li>
@@ -95,72 +95,72 @@
 <span class="kn">from</span> <span class="nn">..core.trait_types</span> <span class="kn">import</span> <span class="n">EnamlEvent</span>
 
 
-<div class="viewcode-block" id="AbstractTkDockPane"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.dock_pane.AbstractTkDockPane">[docs]</a><span class="k">class</span> <span class="nc">AbstractTkDockPane</span><span class="p">(</span><span class="n">AbstractTkWidgetComponent</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">AbstractTkDockPane</span><span class="p">(</span><span class="n">AbstractTkWidgetComponent</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; The abstract toolkit interface for a DockPane.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkDockPane.shell_title_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.dock_pane.AbstractTkDockPane.shell_title_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_title_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_title_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Updates the title bar text in the dock pane.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-    </div>
+    
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkDockPane.shell_closable_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.dock_pane.AbstractTkDockPane.shell_closable_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_closable_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">closable</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_closable_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">closable</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Updates whether or not the dock pane should have a close</span>
 <span class="sd">        button in the title bar.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-    </div>
+    
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkDockPane.shell_movable_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.dock_pane.AbstractTkDockPane.shell_movable_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_movable_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">movable</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_movable_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">movable</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Updates whether or not the dock pane should be movable from</span>
 <span class="sd">        its current position.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-    </div>
+    
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkDockPane.shell_floatable_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.dock_pane.AbstractTkDockPane.shell_floatable_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_floatable_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">floatable</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_floatable_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">floatable</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Updates whether or not the dock pane is allowed to be </span>
 <span class="sd">        undocked an floated over the main window.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-    </div>
+    
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkDockPane.shell_floating_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.dock_pane.AbstractTkDockPane.shell_floating_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_floating_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">floating</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_floating_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">floating</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Updates whether or no the dock pane is floating over</span>
 <span class="sd">        the main window instead of docked in its area.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkDockPane.shell_title_bar_orientation_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.dock_pane.AbstractTkDockPane.shell_title_bar_orientation_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_title_bar_orientation_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orientation</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_title_bar_orientation_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orientation</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Updates the orientation of the title bar.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkDockPane.shell_allowed_dock_areas_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.dock_pane.AbstractTkDockPane.shell_allowed_dock_areas_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_allowed_dock_areas_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">allowed_areas</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_allowed_dock_areas_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">allowed_areas</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Updates the allowable docking areas for the dock pane.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-    </div>
+    
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkDockPane.shell_dock_widget_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.dock_pane.AbstractTkDockPane.shell_dock_widget_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_dock_widget_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dock_widget</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_dock_widget_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dock_widget</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Updates the widget being managed by the dock pane.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
-</div></div>
-<div class="viewcode-block" id="DockPane"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.dock_pane.DockPane">[docs]</a><span class="k">class</span> <span class="nc">DockPane</span><span class="p">(</span><span class="n">LayoutTaskHandler</span><span class="p">,</span> <span class="n">WidgetComponent</span><span class="p">):</span>
+
+<div class="viewcode-block" id="DockPane"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.dock_pane.DockPane.html#enaml.components.dock_pane.DockPane">[docs]</a><span class="k">class</span> <span class="nc">DockPane</span><span class="p">(</span><span class="n">LayoutTaskHandler</span><span class="p">,</span> <span class="n">WidgetComponent</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A DockPane is a widget which holds a single child component and </span>
 <span class="sd">    can be provided to a DockManager in a MainWindow so that it may</span>
 <span class="sd">    be docked in the window&#39;s various docking areas.</span>
@@ -255,7 +255,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Layout Handling</span>
     <span class="c">#--------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="DockPane.do_relayout"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.dock_pane.DockPane.do_relayout">[docs]</a>    <span class="k">def</span> <span class="nf">do_relayout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DockPane.do_relayout"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.dock_pane.DockPane.html#enaml.components.dock_pane.DockPane.do_relayout">[docs]</a>    <span class="k">def</span> <span class="nf">do_relayout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; A reimplemented LayoutTaskHandler handler method which will</span>
 <span class="sd">        perform necessary update activity when a relayout it requested.</span>
 
@@ -296,7 +296,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.components.dock_pane</a></li>
@@ -306,7 +306,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

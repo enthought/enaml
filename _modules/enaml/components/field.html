@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.components.field &mdash; enaml 0.2beta-1 documentation</title>
+    <title>enaml.components.field &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.components.field</a></li>
@@ -95,7 +95,7 @@
 <span class="kn">from</span> <span class="nn">..validation</span> <span class="kn">import</span> <span class="n">AbstractValidator</span><span class="p">,</span> <span class="n">CoercingValidator</span>
 
 
-<div class="viewcode-block" id="AbstractTkField"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField">[docs]</a><span class="k">class</span> <span class="nc">AbstractTkField</span><span class="p">(</span><span class="n">AbstractTkControl</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">AbstractTkField</span><span class="p">(</span><span class="n">AbstractTkControl</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; The abstract toolkit interface for a Field.</span>
 
 <span class="sd">    Toolkit implementations of Field are slighly more complicated than</span>
@@ -174,69 +174,69 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkField.get_text"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.get_text">[docs]</a>    <span class="k">def</span> <span class="nf">get_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the current unicode text in the field.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-    </div>
+    
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkField.set_text"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.set_text">[docs]</a>    <span class="k">def</span> <span class="nf">set_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">set_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the current unicode text in the field.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-        </div>
+        
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkField.shell_validator_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.shell_validator_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_validator_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validator</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_validator_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validator</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;validator&#39; attribute on the </span>
 <span class="sd">        shell object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-    </div>
+    
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkField.shell_max_length_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.shell_max_length_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_max_length_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_length</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_max_length_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_length</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;max_length&#39; attribute on the </span>
 <span class="sd">        shell object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span> 
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkField.shell_read_only_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.shell_read_only_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_read_only_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">read_only</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_read_only_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">read_only</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;read_only&#39; attribute on the </span>
 <span class="sd">        shell object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkField.shell_cursor_position_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.shell_cursor_position_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_cursor_position_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cursor_position</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_cursor_position_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cursor_position</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;cursor_position&#39; attribute on </span>
 <span class="sd">        the shell object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkField.shell_placeholder_text_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.shell_placeholder_text_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_placeholder_text_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">placeholder_text</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_placeholder_text_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">placeholder_text</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;placeholder_text&#39; attribute on </span>
 <span class="sd">        the shell object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-    </div>
+    
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkField.shell_password_mode_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.shell_password_mode_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_password_mode_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_password_mode_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;password_mode&#39; attribute on the</span>
 <span class="sd">        shell object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkField.set_selection"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.set_selection">[docs]</a>    <span class="k">def</span> <span class="nf">set_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">set_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the selection to the bounds of start and end.</span>
 
 <span class="sd">        If the indices are invalid, no selection will be made, and any</span>
@@ -252,32 +252,32 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkField.select_all"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.select_all">[docs]</a>    <span class="k">def</span> <span class="nf">select_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">select_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Select all the text in the field.</span>
 
 <span class="sd">        If there is no text in the field, the selection will be empty.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkField.deselect"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.deselect">[docs]</a>    <span class="k">def</span> <span class="nf">deselect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">deselect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Deselect any selected text.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkField.clear"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Clear the field of all text.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkField.backspace"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.backspace">[docs]</a>    <span class="k">def</span> <span class="nf">backspace</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">backspace</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Simple backspace functionality.</span>
 
 <span class="sd">        If no text is selected, deletes the character to the left of </span>
@@ -285,9 +285,9 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkField.delete"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Simple delete functionality.</span>
 
 <span class="sd">        If no text is selected, deletes the character to the right of </span>
@@ -295,9 +295,9 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkField.end"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.end">[docs]</a>    <span class="k">def</span> <span class="nf">end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mark</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mark</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Moves the cursor to the end of the line.</span>
 
 <span class="sd">        Arguments</span>
@@ -308,9 +308,9 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkField.home"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.home">[docs]</a>    <span class="k">def</span> <span class="nf">home</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mark</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">home</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mark</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Moves the cursor to the beginning of the line.</span>
 
 <span class="sd">        Arguments</span>
@@ -321,9 +321,9 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkField.cut"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.cut">[docs]</a>    <span class="k">def</span> <span class="nf">cut</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">cut</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Cuts the selected text from the field.</span>
 
 <span class="sd">        Copies the selected text to the clipboard then deletes the </span>
@@ -331,16 +331,16 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkField.copy"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Copies the selected text to the clipboard.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkField.paste"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.paste">[docs]</a>    <span class="k">def</span> <span class="nf">paste</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">paste</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Paste the contents of the clipboard into the field.</span>
 
 <span class="sd">        Inserts the contents of the clipboard into the field at the </span>
@@ -348,9 +348,9 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkField.insert"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.insert">[docs]</a>    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Insert the text into the field.</span>
 
 <span class="sd">        Inserts the given text into the field at the current cursor </span>
@@ -363,23 +363,23 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkField.undo"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.undo">[docs]</a>    <span class="k">def</span> <span class="nf">undo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">undo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Undoes the last operation.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkField.redo"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.redo">[docs]</a>    <span class="k">def</span> <span class="nf">redo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">redo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Redoes the last operation.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
-</div></div>
-<div class="viewcode-block" id="Field"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.Field">[docs]</a><span class="k">class</span> <span class="nc">Field</span><span class="p">(</span><span class="n">Control</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Field"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.field.Field.html#enaml.components.field.Field">[docs]</a><span class="k">class</span> <span class="nc">Field</span><span class="p">(</span><span class="n">Control</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A single-line editable text widget.</span>
 
 <span class="sd">    Among many other attributes, a Field accepts a validator object</span>
@@ -465,19 +465,19 @@
     <span class="c">#: Overridden parent class trait</span>
     <span class="n">abstract_obj</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="n">AbstractTkField</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Field.get_text"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.Field.get_text">[docs]</a>    <span class="k">def</span> <span class="nf">get_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Field.get_text"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.field.Field.html#enaml.components.field.Field.get_text">[docs]</a>    <span class="k">def</span> <span class="nf">get_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the current text as a unicode string.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="Field.set_text"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.Field.set_text">[docs]</a>    <span class="k">def</span> <span class="nf">set_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+<div class="viewcode-block" id="Field.set_text"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.field.Field.html#enaml.components.field.Field.set_text">[docs]</a>    <span class="k">def</span> <span class="nf">set_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Set the current text without an event notification.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="Field.set_selection"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.Field.set_selection">[docs]</a>    <span class="k">def</span> <span class="nf">set_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
+<div class="viewcode-block" id="Field.set_selection"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.field.Field.html#enaml.components.field.Field.set_selection">[docs]</a>    <span class="k">def</span> <span class="nf">set_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the selection to the bounds of start and end.</span>
 
 <span class="sd">        If the indices are invalid, no selection will be made, and any</span>
@@ -494,7 +494,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">set_selection</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="Field.select_all"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.Field.select_all">[docs]</a>    <span class="k">def</span> <span class="nf">select_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Field.select_all"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.field.Field.html#enaml.components.field.Field.select_all">[docs]</a>    <span class="k">def</span> <span class="nf">select_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Select all the text in the field.</span>
 
 <span class="sd">        If there is no text in the field, the selection will be empty.</span>
@@ -502,19 +502,19 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">select_all</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="Field.deselect"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.Field.deselect">[docs]</a>    <span class="k">def</span> <span class="nf">deselect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Field.deselect"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.field.Field.html#enaml.components.field.Field.deselect">[docs]</a>    <span class="k">def</span> <span class="nf">deselect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Deselect any selected text.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">deselect</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="Field.clear"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.Field.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Field.clear"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.field.Field.html#enaml.components.field.Field.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Clear the field of all text.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="Field.backspace"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.Field.backspace">[docs]</a>    <span class="k">def</span> <span class="nf">backspace</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Field.backspace"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.field.Field.html#enaml.components.field.Field.backspace">[docs]</a>    <span class="k">def</span> <span class="nf">backspace</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Simple backspace functionality.</span>
 
 <span class="sd">        If no text is selected, deletes the character to the left of </span>
@@ -523,7 +523,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">backspace</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="Field.delete"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.Field.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Field.delete"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.field.Field.html#enaml.components.field.Field.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Simple delete functionality.</span>
 
 <span class="sd">        If no text is selected, deletes the character to the right of</span>
@@ -532,7 +532,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="Field.end"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.Field.end">[docs]</a>    <span class="k">def</span> <span class="nf">end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mark</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="Field.end"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.field.Field.html#enaml.components.field.Field.end">[docs]</a>    <span class="k">def</span> <span class="nf">end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mark</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Moves the cursor to the end of the line.</span>
 
 <span class="sd">        Arguments</span>
@@ -544,7 +544,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">end</span><span class="p">(</span><span class="n">mark</span><span class="o">=</span><span class="n">mark</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="Field.home"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.Field.home">[docs]</a>    <span class="k">def</span> <span class="nf">home</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mark</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="Field.home"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.field.Field.html#enaml.components.field.Field.home">[docs]</a>    <span class="k">def</span> <span class="nf">home</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mark</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Moves the cursor to the beginning of the line.</span>
 
 <span class="sd">        Arguments</span>
@@ -556,7 +556,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">home</span><span class="p">(</span><span class="n">mark</span><span class="o">=</span><span class="n">mark</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="Field.cut"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.Field.cut">[docs]</a>    <span class="k">def</span> <span class="nf">cut</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Field.cut"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.field.Field.html#enaml.components.field.Field.cut">[docs]</a>    <span class="k">def</span> <span class="nf">cut</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Cuts the selected text from the field.</span>
 
 <span class="sd">        Copies the selected text to the clipthen deletes the selected</span>
@@ -565,13 +565,13 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">cut</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="Field.copy"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.Field.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Field.copy"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.field.Field.html#enaml.components.field.Field.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Copies the selected text to the clipboard.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="Field.paste"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.Field.paste">[docs]</a>    <span class="k">def</span> <span class="nf">paste</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Field.paste"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.field.Field.html#enaml.components.field.Field.paste">[docs]</a>    <span class="k">def</span> <span class="nf">paste</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Paste the contents of the clipboard into the field.</span>
 
 <span class="sd">        Inserts the contents of the clipboard into the field at the </span>
@@ -580,7 +580,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">paste</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="Field.insert"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.Field.insert">[docs]</a>    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+<div class="viewcode-block" id="Field.insert"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.field.Field.html#enaml.components.field.Field.insert">[docs]</a>    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Insert the text into the field.</span>
 
 <span class="sd">        Inserts the given text into the field at the current cursor </span>
@@ -594,13 +594,13 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="Field.undo"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.Field.undo">[docs]</a>    <span class="k">def</span> <span class="nf">undo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Field.undo"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.field.Field.html#enaml.components.field.Field.undo">[docs]</a>    <span class="k">def</span> <span class="nf">undo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Undoes the last operation.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">undo</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="Field.redo"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.Field.redo">[docs]</a>    <span class="k">def</span> <span class="nf">redo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Field.redo"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.field.Field.html#enaml.components.field.Field.redo">[docs]</a>    <span class="k">def</span> <span class="nf">redo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Redoes the last operation.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -609,7 +609,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Submission Machinery</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="Field.submit"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.Field.submit">[docs]</a>    <span class="k">def</span> <span class="nf">submit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+<div class="viewcode-block" id="Field.submit"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.field.Field.html#enaml.components.field.Field.submit">[docs]</a>    <span class="k">def</span> <span class="nf">submit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; A method which is called to perform the submission. </span>
 
 <span class="sd">        A submit involves converting the current text in the field into a </span>
@@ -743,7 +743,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.components.field</a></li>
@@ -753,7 +753,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

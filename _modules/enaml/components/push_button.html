@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.components.push_button &mdash; enaml 0.2beta-1 documentation</title>
+    <title>enaml.components.push_button &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.components.push_button</a></li>
@@ -93,36 +93,36 @@
 <span class="kn">from</span> <span class="nn">..noncomponents.abstract_icon</span> <span class="kn">import</span> <span class="n">AbstractTkIcon</span>
 
 
-<div class="viewcode-block" id="AbstractTkPushButton"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.push_button.AbstractTkPushButton">[docs]</a><span class="k">class</span> <span class="nc">AbstractTkPushButton</span><span class="p">(</span><span class="n">AbstractTkControl</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">AbstractTkPushButton</span><span class="p">(</span><span class="n">AbstractTkControl</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; The abstract toolkit interface for a PushButton.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkPushButton.shell_text_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.push_button.AbstractTkPushButton.shell_text_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_text_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_text_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;text&#39; attribute on the shell </span>
 <span class="sd">        component.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkPushButton.shell_icon_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.push_button.AbstractTkPushButton.shell_icon_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_icon_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">icon</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_icon_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">icon</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;icon&#39; attribute on the shell</span>
 <span class="sd">        component.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkPushButton.shell_icon_size_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.push_button.AbstractTkPushButton.shell_icon_size_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_icon_size_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">icon_size</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_icon_size_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">icon_size</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;icon_size&#39; attribute on the shell</span>
 <span class="sd">        component.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
-</div></div>
-<div class="viewcode-block" id="PushButton"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.push_button.PushButton">[docs]</a><span class="k">class</span> <span class="nc">PushButton</span><span class="p">(</span><span class="n">Control</span><span class="p">):</span>
+
+<div class="viewcode-block" id="PushButton"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.push_button.PushButton.html#enaml.components.push_button.PushButton">[docs]</a><span class="k">class</span> <span class="nc">PushButton</span><span class="p">(</span><span class="n">Control</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A push button widget.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -183,7 +183,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.components.push_button</a></li>
@@ -193,7 +193,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

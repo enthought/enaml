@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.components.widget_component &mdash; enaml 0.2beta-1 documentation</title>
+    <title>enaml.components.widget_component &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.components.widget_component</a></li>
@@ -99,7 +99,7 @@
 <span class="c">#------------------------------------------------------------------------------</span>
 <span class="c"># Freeze Context</span>
 <span class="c">#------------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="FreezeContext"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.FreezeContext">[docs]</a><span class="k">class</span> <span class="nc">FreezeContext</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">FreezeContext</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A context manager which disables rendering updates of a component</span>
 <span class="sd">    on enter, and re-enables them on exit. It may safely nested.</span>
 
@@ -107,14 +107,14 @@
     <span class="n">_counts</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="FreezeContext.is_frozen"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.FreezeContext.is_frozen">[docs]</a>    <span class="k">def</span> <span class="nf">is_frozen</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">component</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">is_frozen</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">component</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns a boolean indicating whether or not the given </span>
 <span class="sd">        component is currently the subject of a freeze context.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">component</span> <span class="ow">in</span> <span class="n">cls</span><span class="o">.</span><span class="n">_counts</span>
-</div>
-<div class="viewcode-block" id="FreezeContext.__init__"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.FreezeContext.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">component</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">component</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Initialize a freeze context.</span>
 
 <span class="sd">        Parameters</span>
@@ -124,8 +124,8 @@
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">component</span> <span class="o">=</span> <span class="n">component</span>
-    </div>
-<div class="viewcode-block" id="FreezeContext.__enter__"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.FreezeContext.__enter__">[docs]</a>    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    
+    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Disables updates on the component the first time that any</span>
 <span class="sd">        freeze context on that component is entered.</span>
 
@@ -137,8 +137,8 @@
             <span class="n">cmpnt</span><span class="o">.</span><span class="n">disable_updates</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">counts</span><span class="p">[</span><span class="n">cmpnt</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-    </div>
-<div class="viewcode-block" id="FreezeContext.__exit__"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.FreezeContext.__exit__">[docs]</a>    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+    
+    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Enables updates on the component when the last freeze</span>
 <span class="sd">        context on that component is exited.</span>
 
@@ -153,8 +153,8 @@
 
 <span class="c">#------------------------------------------------------------------------------</span>
 <span class="c"># Abstract Toolkit Widget Component Interface</span>
-<span class="c">#------------------------------------------------------------------------------</span></div></div>
-<div class="viewcode-block" id="AbstractTkWidgetComponent"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.AbstractTkWidgetComponent">[docs]</a><span class="k">class</span> <span class="nc">AbstractTkWidgetComponent</span><span class="p">(</span><span class="n">AbstractTkBaseWidgetComponent</span><span class="p">):</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="k">class</span> <span class="nc">AbstractTkWidgetComponent</span><span class="p">(</span><span class="n">AbstractTkBaseWidgetComponent</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; The abstract toolkit WidgetComponent interface.</span>
 
 <span class="sd">    This abstract interface adds support for widgets that can paint on</span>
@@ -162,7 +162,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkWidgetComponent.disable_updates"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.AbstractTkWidgetComponent.disable_updates">[docs]</a>    <span class="k">def</span> <span class="nf">disable_updates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">disable_updates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Called when the widget should disable its rendering updates.</span>
 
 <span class="sd">        This is used before a large change occurs to a live ui so that</span>
@@ -171,9 +171,9 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkWidgetComponent.enable_updates"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.AbstractTkWidgetComponent.enable_updates">[docs]</a>    <span class="k">def</span> <span class="nf">enable_updates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">enable_updates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Called when the widget should enable rendering updates.</span>
 
 <span class="sd">        This is used in conjunction with &#39;disable_updates&#39; to allow</span>
@@ -182,25 +182,25 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkWidgetComponent.set_visible"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.AbstractTkWidgetComponent.set_visible">[docs]</a>    <span class="k">def</span> <span class="nf">set_visible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">set_visible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Set the visibility of the of the widget according to the</span>
 <span class="sd">        given boolean.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkWidgetComponent.size_hint"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.AbstractTkWidgetComponent.size_hint">[docs]</a>    <span class="k">def</span> <span class="nf">size_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">size_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the size hint Size tuple as given by the abstract </span>
 <span class="sd">        widget for its current state.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkWidgetComponent.layout_geometry"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.AbstractTkWidgetComponent.layout_geometry">[docs]</a>    <span class="k">def</span> <span class="nf">layout_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">layout_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the Rect tuple of layout geometry info as given by </span>
 <span class="sd">        the abstract object. It may be different from the value returned </span>
 <span class="sd">        by geometry() if the widget&#39;s effective layout rect is different </span>
@@ -208,124 +208,124 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkWidgetComponent.set_layout_geometry"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.AbstractTkWidgetComponent.set_layout_geometry">[docs]</a>    <span class="k">def</span> <span class="nf">set_layout_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rect</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">set_layout_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rect</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the layout geometry of the internal widget to the </span>
 <span class="sd">        given Rect.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkWidgetComponent.geometry"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.AbstractTkWidgetComponent.geometry">[docs]</a>    <span class="k">def</span> <span class="nf">geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the Rect geometry tuple as given by the abstract </span>
 <span class="sd">        widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-    </div>
+    
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkWidgetComponent.set_geometry"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.AbstractTkWidgetComponent.set_geometry">[docs]</a>    <span class="k">def</span> <span class="nf">set_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rect</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">set_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rect</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the geometry of the abstract widget with the given</span>
 <span class="sd">        Rect.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkWidgetComponent.min_size"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.AbstractTkWidgetComponent.min_size">[docs]</a>    <span class="k">def</span> <span class="nf">min_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">min_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the hard minimum Size of the widget, ignoring any </span>
 <span class="sd">        windowing decorations. A widget will not be able to be resized</span>
 <span class="sd">        smaller than this value</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkWidgetComponent.set_min_size"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.AbstractTkWidgetComponent.set_min_size">[docs]</a>    <span class="k">def</span> <span class="nf">set_min_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">set_min_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Set the hard minimum Size of the widget, ignoring any </span>
 <span class="sd">        windowing decorations. A window will not be able to be resized </span>
 <span class="sd">        smaller than this value.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkWidgetComponent.max_size"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.AbstractTkWidgetComponent.max_size">[docs]</a>    <span class="k">def</span> <span class="nf">max_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">max_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the hard maximum Size of the widget, ignoring any</span>
 <span class="sd">        windowing decorations. A widget will not be able to be resized</span>
 <span class="sd">        larger than this value</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkWidgetComponent.set_max_size"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.AbstractTkWidgetComponent.set_max_size">[docs]</a>    <span class="k">def</span> <span class="nf">set_max_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">set_max_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Set the hard maximum Size of the widget, ignoring any </span>
 <span class="sd">        windowing decorations. A widget will not be able to be resized </span>
 <span class="sd">        larger than this value.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkWidgetComponent.size"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.AbstractTkWidgetComponent.size">[docs]</a>    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the Size as given by the abstract widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-        </div>
+        
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkWidgetComponent.resize"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.AbstractTkWidgetComponent.resize">[docs]</a>    <span class="k">def</span> <span class="nf">resize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">resize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Resize the abstract widget as specified by the given Size.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkWidgetComponent.pos"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.AbstractTkWidgetComponent.pos">[docs]</a>    <span class="k">def</span> <span class="nf">pos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">pos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the Pos tuple as given by the abstract widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-    </div>
+    
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkWidgetComponent.move"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.AbstractTkWidgetComponent.move">[docs]</a>    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Moves the abstract widget to the given Pos position relative</span>
 <span class="sd">        to the its parent&#39;s origin</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkWidgetComponent.shell_enabled_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.AbstractTkWidgetComponent.shell_enabled_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_enabled_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enabled</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_enabled_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enabled</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;enabled&#39; attribute of the shell</span>
 <span class="sd">        object. Sets the widget enabled according to the given boolean.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkWidgetComponent.shell_bgcolor_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.AbstractTkWidgetComponent.shell_bgcolor_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_bgcolor_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_bgcolor_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;bgcolor&#39; attribute on the shell</span>
 <span class="sd">        object. Sets the background color of the internal widget to the </span>
 <span class="sd">        given color.</span>
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-    </div>
+    
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkWidgetComponent.shell_fgcolor_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.AbstractTkWidgetComponent.shell_fgcolor_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_fgcolor_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_fgcolor_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;fgcolor&#39; attribute on the shell</span>
 <span class="sd">        object. Sets the foreground color of the internal widget to the </span>
 <span class="sd">        given color. For some widgets this may do nothing.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-    </div>
+    
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkWidgetComponent.shell_font_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.AbstractTkWidgetComponent.shell_font_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_font_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">font</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_font_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">font</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;font&#39; attribute on the shell</span>
 <span class="sd">        object. Sets the font of the internal widget to the given font.</span>
 <span class="sd">        For some widgets this may do nothing.</span>
@@ -336,8 +336,8 @@
 
 <span class="c">#------------------------------------------------------------------------------</span>
 <span class="c"># Widget Component</span>
-<span class="c">#------------------------------------------------------------------------------</span></div></div>
-<div class="viewcode-block" id="WidgetComponent"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.WidgetComponent">[docs]</a><span class="k">class</span> <span class="nc">WidgetComponent</span><span class="p">(</span><span class="n">BaseWidgetComponent</span><span class="p">):</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="WidgetComponent"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.components.widget_component.WidgetComponent">[docs]</a><span class="k">class</span> <span class="nc">WidgetComponent</span><span class="p">(</span><span class="n">BaseWidgetComponent</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A BaseWidgetComponent subclass that adds support for a visual</span>
 <span class="sd">    toolkit widget information.</span>
 
@@ -418,14 +418,14 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Geometry Methods</span>
     <span class="c">#--------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="WidgetComponent.size_hint"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.WidgetComponent.size_hint">[docs]</a>    <span class="k">def</span> <span class="nf">size_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WidgetComponent.size_hint"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.components.widget_component.WidgetComponent.size_hint">[docs]</a>    <span class="k">def</span> <span class="nf">size_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the size hint Size tuple as given by the abstract </span>
 <span class="sd">        widget for its current state.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">size_hint</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="WidgetComponent.layout_geometry"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.WidgetComponent.layout_geometry">[docs]</a>    <span class="k">def</span> <span class="nf">layout_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WidgetComponent.layout_geometry"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.components.widget_component.WidgetComponent.layout_geometry">[docs]</a>    <span class="k">def</span> <span class="nf">layout_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the Rect tuple of layout geometry info as given by </span>
 <span class="sd">        the abstract object. It may be different from the value returned </span>
 <span class="sd">        by geometry() if the widget&#39;s effective layout rect is different </span>
@@ -434,28 +434,28 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">layout_geometry</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="WidgetComponent.set_layout_geometry"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.WidgetComponent.set_layout_geometry">[docs]</a>    <span class="k">def</span> <span class="nf">set_layout_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rect</span><span class="p">):</span>
+<div class="viewcode-block" id="WidgetComponent.set_layout_geometry"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.components.widget_component.WidgetComponent.set_layout_geometry">[docs]</a>    <span class="k">def</span> <span class="nf">set_layout_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rect</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the layout geometry of the internal widget to the </span>
 <span class="sd">        given Rect.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">set_layout_geometry</span><span class="p">(</span><span class="n">rect</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WidgetComponent.geometry"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.WidgetComponent.geometry">[docs]</a>    <span class="k">def</span> <span class="nf">geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WidgetComponent.geometry"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.components.widget_component.WidgetComponent.geometry">[docs]</a>    <span class="k">def</span> <span class="nf">geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the Rect geometry tuple as given by the abstract </span>
 <span class="sd">        widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">geometry</span><span class="p">()</span>
     </div>
-<div class="viewcode-block" id="WidgetComponent.set_geometry"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.WidgetComponent.set_geometry">[docs]</a>    <span class="k">def</span> <span class="nf">set_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rect</span><span class="p">):</span>
+<div class="viewcode-block" id="WidgetComponent.set_geometry"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.components.widget_component.WidgetComponent.set_geometry">[docs]</a>    <span class="k">def</span> <span class="nf">set_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rect</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the geometry of the abstract widget with the given</span>
 <span class="sd">        Rect.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">set_geometry</span><span class="p">(</span><span class="n">rect</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WidgetComponent.min_size"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.WidgetComponent.min_size">[docs]</a>    <span class="k">def</span> <span class="nf">min_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WidgetComponent.min_size"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.components.widget_component.WidgetComponent.min_size">[docs]</a>    <span class="k">def</span> <span class="nf">min_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the hard minimum Size of the widget, ignoring any </span>
 <span class="sd">        windowing decorations. A widget will not be able to be resized</span>
 <span class="sd">        smaller than this value</span>
@@ -463,7 +463,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">min_size</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="WidgetComponent.set_min_size"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.WidgetComponent.set_min_size">[docs]</a>    <span class="k">def</span> <span class="nf">set_min_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+<div class="viewcode-block" id="WidgetComponent.set_min_size"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.components.widget_component.WidgetComponent.set_min_size">[docs]</a>    <span class="k">def</span> <span class="nf">set_min_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Set the hard minimum Size of the widget, ignoring any </span>
 <span class="sd">        windowing decorations. A window will not be able to be resized </span>
 <span class="sd">        smaller than this value.</span>
@@ -471,7 +471,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">set_min_size</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WidgetComponent.max_size"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.WidgetComponent.max_size">[docs]</a>    <span class="k">def</span> <span class="nf">max_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WidgetComponent.max_size"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.components.widget_component.WidgetComponent.max_size">[docs]</a>    <span class="k">def</span> <span class="nf">max_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the hard maximum Size of the widget, ignoring any</span>
 <span class="sd">        windowing decorations. A widget will not be able to be resized</span>
 <span class="sd">        larger than this value</span>
@@ -479,7 +479,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">max_size</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="WidgetComponent.set_max_size"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.WidgetComponent.set_max_size">[docs]</a>    <span class="k">def</span> <span class="nf">set_max_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+<div class="viewcode-block" id="WidgetComponent.set_max_size"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.components.widget_component.WidgetComponent.set_max_size">[docs]</a>    <span class="k">def</span> <span class="nf">set_max_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Set the hard maximum Size of the widget, ignoring any </span>
 <span class="sd">        windowing decorations. A widget will not be able to be resized </span>
 <span class="sd">        larger than this value.</span>
@@ -487,25 +487,25 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">set_max_size</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WidgetComponent.size"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.WidgetComponent.size">[docs]</a>    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WidgetComponent.size"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.components.widget_component.WidgetComponent.size">[docs]</a>    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the Size as given by the abstract widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="WidgetComponent.resize"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.WidgetComponent.resize">[docs]</a>    <span class="k">def</span> <span class="nf">resize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+<div class="viewcode-block" id="WidgetComponent.resize"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.components.widget_component.WidgetComponent.resize">[docs]</a>    <span class="k">def</span> <span class="nf">resize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Resize the abstract widget as specified by the given Size.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WidgetComponent.pos"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.WidgetComponent.pos">[docs]</a>    <span class="k">def</span> <span class="nf">pos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WidgetComponent.pos"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.components.widget_component.WidgetComponent.pos">[docs]</a>    <span class="k">def</span> <span class="nf">pos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the Pos tuple as given by the abstract widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span>
     </div>
-<div class="viewcode-block" id="WidgetComponent.move"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.WidgetComponent.move">[docs]</a>    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">):</span>
+<div class="viewcode-block" id="WidgetComponent.move"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.components.widget_component.WidgetComponent.move">[docs]</a>    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Moves the abstract widget to the given Pos position relative</span>
 <span class="sd">        to the its parent&#39;s origin</span>
 
@@ -515,7 +515,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Auxiliary Methods </span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="WidgetComponent.set_visible"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.WidgetComponent.set_visible">[docs]</a>    <span class="k">def</span> <span class="nf">set_visible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">):</span>
+<div class="viewcode-block" id="WidgetComponent.set_visible"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.components.widget_component.WidgetComponent.set_visible">[docs]</a>    <span class="k">def</span> <span class="nf">set_visible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Set the visibility of the component according to the given</span>
 <span class="sd">        boolean. Subclasses that need more control over visibility</span>
 <span class="sd">        changes should reimplement this method.</span>
@@ -543,19 +543,19 @@
         <span class="k">elif</span> <span class="ow">not</span> <span class="n">visible</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="n">visible</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WidgetComponent.disable_updates"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.WidgetComponent.disable_updates">[docs]</a>    <span class="k">def</span> <span class="nf">disable_updates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WidgetComponent.disable_updates"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.components.widget_component.WidgetComponent.disable_updates">[docs]</a>    <span class="k">def</span> <span class="nf">disable_updates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Disables rendering updates for the underlying widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">disable_updates</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="WidgetComponent.enable_updates"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.WidgetComponent.enable_updates">[docs]</a>    <span class="k">def</span> <span class="nf">enable_updates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WidgetComponent.enable_updates"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.components.widget_component.WidgetComponent.enable_updates">[docs]</a>    <span class="k">def</span> <span class="nf">enable_updates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Enables rendering updates for the underlying widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">enable_updates</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="WidgetComponent.freeze"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.widget_component.WidgetComponent.freeze">[docs]</a>    <span class="k">def</span> <span class="nf">freeze</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WidgetComponent.freeze"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.components.widget_component.WidgetComponent.freeze">[docs]</a>    <span class="k">def</span> <span class="nf">freeze</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; A context manager which disables rendering updates on </span>
 <span class="sd">        enter and restores them on exit. The context can be safetly</span>
 <span class="sd">        nested.</span>
@@ -581,7 +581,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.components.widget_component</a></li>
@@ -591,7 +591,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

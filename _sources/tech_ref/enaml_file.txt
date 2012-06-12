@@ -18,18 +18,18 @@ We could then use this with a Traits model as follows:
     :language: python
 
 Looking at this example, you will see that an Enaml file consists of one or
-more ``defn`` blocks containing a widget tree that describes the layout of
+more ``enamldef`` blocks containing a widget tree that describes the layout of
 that part of the UI.  The widgets have attributes which are bound to expressions
 in various ways, allowing simple reactivity.  Widgets can be assigned names using
 the ``->`` operator and then their attributes are available to other parts of
 the UI.
 
 On the Python side, the Enaml code can be imported using a ``with`` statement
-to add the Enaml import hooks.  The ``defn`` blocks are then available as
+to add the Enaml import hooks.  The ``enamldef`` blocks are then available as
 module-level functions that can be called normally from Python code.  Building
-the UI is then a matter of calling an Enaml ``defn`` to build the view, and then
+the UI is then a matter of calling an Enaml ``enamldef`` to build the view, and then
 calling ``show()`` on the view to display it and start the application event loop.
-The parameters passed in to the Enaml ``defn`` block from the Python side can be
+The parameters passed in to the Enaml ``enamldef`` block from the Python side can be
 any Python or Enaml objects that would make sense to use within the Enaml code.
 For example, if you use an attribute of an object in the Enaml code, then passing
 an object without that attribute will raise an ``AttributeError`` just as if you
@@ -64,7 +64,8 @@ that the dimension be equal to the preferred value, while the ``resist_clip``
 attributes specify how strongly the widget resists compression by adding a constraint
 that specifies that the dimension be greater than or equal to the preferred value.
 
-XXX Example here
+.. todo:: 
+    Example here
 
 Containers can specify additional constraints that relate their child widgets.
 By default a container simply lays out its children as a vertical list and tries
@@ -82,7 +83,8 @@ by the components, which at least default to the box model's symbols: ``top``,
 widget exposes ``midline`` for aligning the fields of multiple forms along
 the same line.
 
-XXX Example here
+.. todo::
+     Example here
 
 However, this can get tedious, and so there are some helpers that are
 available to simply specifying layout.  These are:
@@ -111,7 +113,8 @@ available to simply specifying layout.  These are:
 By using appropriate combinations of these objects you can specify complex layouts
 quickly and clearly.
 
-XXX Example here
+.. todo::
+    Example here
 
 Binding Operators
 -----------------

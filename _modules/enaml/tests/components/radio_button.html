@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.tests.components.radio_button &mdash; enaml 0.2beta-1 documentation</title>
+    <title>enaml.tests.components.radio_button &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../../index.html" />
     <link rel="up" title="Module code" href="../../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.tests.components.radio_button</a></li>
@@ -85,7 +85,7 @@
 <span class="kn">from</span> <span class="nn">.enaml_test_case</span> <span class="kn">import</span> <span class="n">EnamlTestCase</span><span class="p">,</span> <span class="n">required_method</span>
 
 
-<div class="viewcode-block" id="TestRadioButton"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.radio_button.TestRadioButton">[docs]</a><span class="k">class</span> <span class="nc">TestRadioButton</span><span class="p">(</span><span class="n">EnamlTestCase</span><span class="p">):</span>
+<div class="viewcode-block" id="TestRadioButton"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.radio_button.TestRadioButton.html#enaml.tests.components.radio_button.TestRadioButton">[docs]</a><span class="k">class</span> <span class="nc">TestRadioButton</span><span class="p">(</span><span class="n">EnamlTestCase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Logic for testing radio buttons.</span>
 
 <span class="sd">    Tooklit testcases need to provide the following methods</span>
@@ -99,7 +99,7 @@
 <span class="sd">        Get the label of a button.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="TestRadioButton.setUp"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.radio_button.TestRadioButton.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestRadioButton.setUp"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.radio_button.TestRadioButton.html#enaml.tests.components.radio_button.TestRadioButton.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Finalise set up before the Radio button tests</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -126,7 +126,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">radio2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">component_by_name</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="p">,</span> <span class="s">&#39;radio2&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">radio2</span><span class="o">.</span><span class="n">toolkit_widget</span>
 </div>
-<div class="viewcode-block" id="TestRadioButton.test_initial_value"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.radio_button.TestRadioButton.test_initial_value">[docs]</a>    <span class="k">def</span> <span class="nf">test_initial_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestRadioButton.test_initial_value"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.radio_button.TestRadioButton.html#enaml.tests.components.radio_button.TestRadioButton.test_initial_value">[docs]</a>    <span class="k">def</span> <span class="nf">test_initial_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Test the initial checked state of the radio buttons.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -138,7 +138,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertFalse</span><span class="p">(</span><span class="n">widget2_value</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radio2</span><span class="o">.</span><span class="n">checked</span><span class="p">,</span> <span class="n">widget2_value</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="TestRadioButton.test_initial_labels"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.radio_button.TestRadioButton.test_initial_labels">[docs]</a>    <span class="k">def</span> <span class="nf">test_initial_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestRadioButton.test_initial_labels"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.radio_button.TestRadioButton.html#enaml.tests.components.radio_button.TestRadioButton.test_initial_labels">[docs]</a>    <span class="k">def</span> <span class="nf">test_initial_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Test that the toolkit widget&#39;s label reflects the Enaml text.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -150,7 +150,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">widget2_label</span><span class="p">,</span> <span class="s">&#39;Label 2&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radio2</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">widget2_label</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="TestRadioButton.test_change_label"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.radio_button.TestRadioButton.test_change_label">[docs]</a>    <span class="k">def</span> <span class="nf">test_change_label</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestRadioButton.test_change_label"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.radio_button.TestRadioButton.html#enaml.tests.components.radio_button.TestRadioButton.test_change_label">[docs]</a>    <span class="k">def</span> <span class="nf">test_change_label</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Change the label of a RadioButton at the Enaml level.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -161,7 +161,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">new_label</span><span class="p">,</span> <span class="n">widget2_text</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radio2</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">widget2_text</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="TestRadioButton.test_set_checked"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.radio_button.TestRadioButton.test_set_checked">[docs]</a>    <span class="k">def</span> <span class="nf">test_set_checked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestRadioButton.test_set_checked"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.radio_button.TestRadioButton.html#enaml.tests.components.radio_button.TestRadioButton.test_set_checked">[docs]</a>    <span class="k">def</span> <span class="nf">test_set_checked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Test setting the value of a radio button in a group.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -179,7 +179,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertFalse</span><span class="p">(</span><span class="n">widget2_value</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radio2</span><span class="o">.</span><span class="n">checked</span><span class="p">,</span> <span class="n">widget2_value</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="TestRadioButton.test_multiple_radio_buttons"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.radio_button.TestRadioButton.test_multiple_radio_buttons">[docs]</a>    <span class="k">def</span> <span class="nf">test_multiple_radio_buttons</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestRadioButton.test_multiple_radio_buttons"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.radio_button.TestRadioButton.html#enaml.tests.components.radio_button.TestRadioButton.test_multiple_radio_buttons">[docs]</a>    <span class="k">def</span> <span class="nf">test_multiple_radio_buttons</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Test selecting one of a set radiobuttons. &quot;&quot;&quot;</span>
 
         <span class="c"># select second</span>
@@ -201,19 +201,19 @@
     <span class="c"># absrtact methods</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
     <span class="nd">@required_method</span>
-<div class="viewcode-block" id="TestRadioButton.get_value"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.radio_button.TestRadioButton.get_value">[docs]</a>    <span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">button</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">button</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the checked state of a radio button.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
-</div>
+
     <span class="nd">@required_method</span>
-<div class="viewcode-block" id="TestRadioButton.get_text"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.radio_button.TestRadioButton.get_text">[docs]</a>    <span class="k">def</span> <span class="nf">get_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">button</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">button</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the label of a button.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
-</pre></div></div></div>
+</pre></div></div>
 
           </div>
         </div>
@@ -232,7 +232,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.tests.components.radio_button</a></li>
@@ -242,7 +242,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

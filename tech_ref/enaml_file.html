@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Writing .enaml Files &mdash; enaml 0.2beta-1 documentation</title>
+    <title>Writing .enaml Files &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../index.html" />
     <link rel="up" title="Enaml Technical Reference" href="index.html" />
     <link rel="next" title="Enaml Grammar Reference" href="grammar_ref.html" />
     <link rel="prev" title="Enaml Technical Reference" href="index.html" /> 
@@ -51,7 +51,7 @@
         <li class="right" >
           <a href="index.html" title="Enaml Technical Reference"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Enaml Technical Reference</a> &raquo;</li>
   
     <li><a href="#">Writing .enaml Files</a></li>
@@ -112,7 +112,7 @@ and dynamically binding and computing values based on user interaction.</p>
 <p>A simple example of an Enaml file might look something like this:</p>
 <div class="highlight-python"><pre>from enaml.converters import IntConverter
 
-defn PersonWindow(model):
+enamldef PersonWindow(model):
     Window -&gt; main_window:
         title &lt;&lt; model.name
         Form -&gt; person_form:
@@ -153,17 +153,17 @@ defn PersonWindow(model):
 </pre></div>
 </div>
 <p>Looking at this example, you will see that an Enaml file consists of one or
-more <tt class="docutils literal"><span class="pre">defn</span></tt> blocks containing a widget tree that describes the layout of
+more <tt class="docutils literal"><span class="pre">enamldef</span></tt> blocks containing a widget tree that describes the layout of
 that part of the UI.  The widgets have attributes which are bound to expressions
 in various ways, allowing simple reactivity.  Widgets can be assigned names using
 the <tt class="docutils literal"><span class="pre">-&gt;</span></tt> operator and then their attributes are available to other parts of
 the UI.</p>
 <p>On the Python side, the Enaml code can be imported using a <tt class="docutils literal"><span class="pre">with</span></tt> statement
-to add the Enaml import hooks.  The <tt class="docutils literal"><span class="pre">defn</span></tt> blocks are then available as
+to add the Enaml import hooks.  The <tt class="docutils literal"><span class="pre">enamldef</span></tt> blocks are then available as
 module-level functions that can be called normally from Python code.  Building
-the UI is then a matter of calling an Enaml <tt class="docutils literal"><span class="pre">defn</span></tt> to build the view, and then
+the UI is then a matter of calling an Enaml <tt class="docutils literal"><span class="pre">enamldef</span></tt> to build the view, and then
 calling <tt class="docutils literal"><span class="pre">show()</span></tt> on the view to display it and start the application event loop.
-The parameters passed in to the Enaml <tt class="docutils literal"><span class="pre">defn</span></tt> block from the Python side can be
+The parameters passed in to the Enaml <tt class="docutils literal"><span class="pre">enamldef</span></tt> block from the Python side can be
 any Python or Enaml objects that would make sense to use within the Enaml code.
 For example, if you use an attribute of an object in the Enaml code, then passing
 an object without that attribute will raise an <tt class="docutils literal"><span class="pre">AttributeError</span></tt> just as if you
@@ -193,7 +193,10 @@ resists expansion by adding a constraint of the appropriate weight that specifie
 that the dimension be equal to the preferred value, while the <tt class="docutils literal"><span class="pre">resist_clip</span></tt>
 attributes specify how strongly the widget resists compression by adding a constraint
 that specifies that the dimension be greater than or equal to the preferred value.</p>
-<p>XXX Example here</p>
+<div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">Example here</p>
+</div>
 <p>Containers can specify additional constraints that relate their child widgets.
 By default a container simply lays out its children as a vertical list and tries
 to expand them to use the full width and height that the container has available.
@@ -208,7 +211,10 @@ by the components, which at least default to the box model&#8217;s symbols: <tt 
 <tt class="docutils literal"><span class="pre">height</span></tt>.  Other components may expose other symbols: for example the Form
 widget exposes <tt class="docutils literal"><span class="pre">midline</span></tt> for aligning the fields of multiple forms along
 the same line.</p>
-<p>XXX Example here</p>
+<div class="admonition-todo admonition" id="index-1">
+<p class="first admonition-title">Todo</p>
+<p class="last">Example here</p>
+</div>
 <p>However, this can get tedious, and so there are some helpers that are
 available to simply specifying layout.  These are:</p>
 <blockquote>
@@ -235,7 +241,10 @@ against each other.</dd>
 </div></blockquote>
 <p>By using appropriate combinations of these objects you can specify complex layouts
 quickly and clearly.</p>
-<p>XXX Example here</p>
+<div class="admonition-todo admonition" id="index-2">
+<p class="first admonition-title">Todo</p>
+<p class="last">Example here</p>
+</div>
 </div>
 <div class="section" id="binding-operators">
 <h2>Binding Operators<a class="headerlink" href="#binding-operators" title="Permalink to this headline">¶</a></h2>
@@ -300,7 +309,7 @@ natural.</li>
         <li class="right" >
           <a href="index.html" title="Enaml Technical Reference"
              >previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Technical Reference</a> &raquo;</li>
   
     <li><a href="#">Writing .enaml Files</a></li>
@@ -310,7 +319,7 @@ natural.</li>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

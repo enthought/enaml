@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.tests.components.combo_box &mdash; enaml 0.2beta-1 documentation</title>
+    <title>enaml.tests.components.combo_box &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../../index.html" />
     <link rel="up" title="Module code" href="../../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.tests.components.combo_box</a></li>
@@ -85,7 +85,7 @@
 <span class="kn">from</span> <span class="nn">.enaml_test_case</span> <span class="kn">import</span> <span class="n">EnamlTestCase</span><span class="p">,</span> <span class="n">required_method</span>
 
 
-<div class="viewcode-block" id="TestComboBox"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.combo_box.TestComboBox">[docs]</a><span class="k">class</span> <span class="nc">TestComboBox</span><span class="p">(</span><span class="n">EnamlTestCase</span><span class="p">):</span>
+<div class="viewcode-block" id="TestComboBox"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.combo_box.TestComboBox.html#enaml.tests.components.combo_box.TestComboBox">[docs]</a><span class="k">class</span> <span class="nc">TestComboBox</span><span class="p">(</span><span class="n">EnamlTestCase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Logic for testing combo boxes.</span>
 
 <span class="sd">    Tooklit testcases need to provide the following methods</span>
@@ -103,7 +103,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="TestComboBox.setUp"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.combo_box.TestComboBox.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestComboBox.setUp"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.combo_box.TestComboBox.html#enaml.tests.components.combo_box.TestComboBox.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Setup before the combo box tests.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -124,7 +124,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">component</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">component_by_name</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="p">,</span> <span class="s">&#39;cmb&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">component</span><span class="o">.</span><span class="n">toolkit_widget</span>
 </div>
-<div class="viewcode-block" id="TestComboBox.test_initialization"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.combo_box.TestComboBox.test_initialization">[docs]</a>    <span class="k">def</span> <span class="nf">test_initialization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestComboBox.test_initialization"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.combo_box.TestComboBox.html#enaml.tests.components.combo_box.TestComboBox.test_initialization">[docs]</a>    <span class="k">def</span> <span class="nf">test_initialization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Test the initial state.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -134,7 +134,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">component</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">component</span><span class="o">.</span><span class="n">items</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">,</span> <span class="p">[])</span>
 </div>
-<div class="viewcode-block" id="TestComboBox.test_items"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.combo_box.TestComboBox.test_items">[docs]</a>    <span class="k">def</span> <span class="nf">test_items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestComboBox.test_items"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.combo_box.TestComboBox.html#enaml.tests.components.combo_box.TestComboBox.test_items">[docs]</a>    <span class="k">def</span> <span class="nf">test_items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Check that the Enaml combo box items match the toolkit widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -143,7 +143,7 @@
             <span class="n">widget_text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_item_text</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">widget_text</span><span class="p">,</span> <span class="n">component</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
 </div>
-<div class="viewcode-block" id="TestComboBox.test_to_string"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.combo_box.TestComboBox.test_to_string">[docs]</a>    <span class="k">def</span> <span class="nf">test_to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestComboBox.test_to_string"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.combo_box.TestComboBox.html#enaml.tests.components.combo_box.TestComboBox.test_to_string">[docs]</a>    <span class="k">def</span> <span class="nf">test_to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Update the ComboBox.to_string callable.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -151,14 +151,14 @@
         <span class="n">component</span><span class="o">.</span><span class="n">to_string</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;?&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">test_items</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="TestComboBox.test_selected_event"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.combo_box.TestComboBox.test_selected_event">[docs]</a>    <span class="k">def</span> <span class="nf">test_selected_event</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestComboBox.test_selected_event"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.combo_box.TestComboBox.html#enaml.tests.components.combo_box.TestComboBox.test_selected_event">[docs]</a>    <span class="k">def</span> <span class="nf">test_selected_event</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Fire an event for item selection.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">select_item</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">,</span> <span class="p">[(</span><span class="s">&#39;selected&#39;</span><span class="p">,</span> <span class="nb">oct</span><span class="p">)])</span>
 </div>
-<div class="viewcode-block" id="TestComboBox.test_change_selected_item"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.combo_box.TestComboBox.test_change_selected_item">[docs]</a>    <span class="k">def</span> <span class="nf">test_change_selected_item</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestComboBox.test_change_selected_item"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.combo_box.TestComboBox.html#enaml.tests.components.combo_box.TestComboBox.test_change_selected_item">[docs]</a>    <span class="k">def</span> <span class="nf">test_change_selected_item</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Update the visible item when a new one is selected internally.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -169,7 +169,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">component</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="nb">oct</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">,</span> <span class="p">[(</span><span class="s">&#39;selected&#39;</span><span class="p">,</span> <span class="nb">oct</span><span class="p">)])</span>
 </div>
-<div class="viewcode-block" id="TestComboBox.test_append_item"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.combo_box.TestComboBox.test_append_item">[docs]</a>    <span class="k">def</span> <span class="nf">test_append_item</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestComboBox.test_append_item"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.combo_box.TestComboBox.html#enaml.tests.components.combo_box.TestComboBox.test_append_item">[docs]</a>    <span class="k">def</span> <span class="nf">test_append_item</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Add an item on the Enaml side; see if the toolkit widget </span>
 <span class="sd">        updates.</span>
 
@@ -178,7 +178,7 @@
         <span class="n">component</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;hello&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">test_items</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="TestComboBox.test_remove_item"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.combo_box.TestComboBox.test_remove_item">[docs]</a>    <span class="k">def</span> <span class="nf">test_remove_item</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestComboBox.test_remove_item"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.combo_box.TestComboBox.html#enaml.tests.components.combo_box.TestComboBox.test_remove_item">[docs]</a>    <span class="k">def</span> <span class="nf">test_remove_item</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Remove an item on the Enaml side; see if the toolkit widget </span>
 <span class="sd">        updates.</span>
 
@@ -187,7 +187,7 @@
         <span class="n">component</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">test_items</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="TestComboBox.test_deselect"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.combo_box.TestComboBox.test_deselect">[docs]</a>    <span class="k">def</span> <span class="nf">test_deselect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestComboBox.test_deselect"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.combo_box.TestComboBox.html#enaml.tests.components.combo_box.TestComboBox.test_deselect">[docs]</a>    <span class="k">def</span> <span class="nf">test_deselect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Assert that an invalid value sets the index to -1.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -196,7 +196,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">component</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="nb">hex</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">component</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="TestComboBox.test_value_when_items_change"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.combo_box.TestComboBox.test_value_when_items_change">[docs]</a>    <span class="k">def</span> <span class="nf">test_value_when_items_change</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestComboBox.test_value_when_items_change"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.combo_box.TestComboBox.html#enaml.tests.components.combo_box.TestComboBox.test_value_when_items_change">[docs]</a>    <span class="k">def</span> <span class="nf">test_value_when_items_change</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Assert that the selection moves correctly when the items </span>
 <span class="sd">        change.</span>
 
@@ -209,7 +209,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">component</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">,</span> <span class="p">[])</span>
 </div>
-<div class="viewcode-block" id="TestComboBox.test_index_when_items_change"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.combo_box.TestComboBox.test_index_when_items_change">[docs]</a>    <span class="k">def</span> <span class="nf">test_index_when_items_change</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestComboBox.test_index_when_items_change"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.combo_box.TestComboBox.html#enaml.tests.components.combo_box.TestComboBox.test_index_when_items_change">[docs]</a>    <span class="k">def</span> <span class="nf">test_index_when_items_change</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Assert that the index is -1 when the value is removed from </span>
 <span class="sd">        the items list.</span>
 
@@ -224,26 +224,26 @@
     <span class="c"># Abstract methods</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
     <span class="nd">@required_method</span>
-<div class="viewcode-block" id="TestComboBox.get_selected_text"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.combo_box.TestComboBox.get_selected_text">[docs]</a>    <span class="k">def</span> <span class="nf">get_selected_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_selected_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the current selected text of a combo box.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
-</div>
+
     <span class="nd">@required_method</span>
-<div class="viewcode-block" id="TestComboBox.get_item_text"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.combo_box.TestComboBox.get_item_text">[docs]</a>    <span class="k">def</span> <span class="nf">get_item_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_item_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the text of a combo box item at a particular index.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
-</div>
+
     <span class="nd">@required_method</span>
-<div class="viewcode-block" id="TestComboBox.select_item"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.combo_box.TestComboBox.select_item">[docs]</a>    <span class="k">def</span> <span class="nf">select_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">select_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Fire an event to simulate the selection of an item.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
-</pre></div></div></div>
+</pre></div></div>
 
           </div>
         </div>
@@ -262,7 +262,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.tests.components.combo_box</a></li>
@@ -272,7 +272,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

@@ -1,0 +1,402 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>MainWindow &mdash; enaml 0.2alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.2alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../index.html" />
+    <link rel="up" title="Widgets" href="../enaml.widgets.html" />
+    <link rel="next" title="Dialog" href="enaml.components.dialog.Dialog.html" />
+    <link rel="prev" title="Window" href="enaml.components.window.Window.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.components.dialog.Dialog.html" title="Dialog"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="enaml.components.window.Window.html" title="Window"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" accesskey="U">Widgets</a> &raquo;</li>
+  
+    <li><a href="#">MainWindow</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">MainWindow</a><ul>
+<li><a class="reference internal" href="#backends">Backends</a><ul>
+<li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/api_ref/widgets/enaml.components.main_window.MainWindow.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="mainwindow">
+<h1>MainWindow<a class="headerlink" href="#mainwindow" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="enaml.components.main_window.MainWindow">
+<em class="property">class </em><tt class="descclassname">enaml.components.main_window.</tt><tt class="descname">MainWindow</tt><a class="reference internal" href="../../_modules/enaml/components/main_window.html#MainWindow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.main_window.MainWindow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.components.window.Window.html#enaml.components.window.Window" title="enaml.components.window.Window"><tt class="xref py py-class docutils literal"><span class="pre">enaml.components.window.Window</span></tt></a></p>
+<p>A top-level main window widget.</p>
+<p>MainWindow widgets are top-level widgets which provide various frame 
+decorations and other window related functionality. A window may 
+optionally contain a menubar, any number of toolbars, a status bar,
+and dock panes. A window can have at most one central widget child
+which will be expanded to fit the available space of the window.</p>
+<p>Sizing information relates to the size of the central widget rather
+than the overall size of the window. That is, specifying a minimum
+size for a MainWindow is akin to specifying a minimum size for the
+central widget. The space consumed by dock panes and menus is in
+addition to this space.</p>
+<dl class="attribute">
+<dt id="enaml.components.main_window.MainWindow.menu_bar">
+<tt class="descname">menu_bar</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.main_window.MainWindow.menu_bar" title="Permalink to this definition">¶</a></dt>
+<dd><p>The menu bar for the window. This widget is automatically setup
+and destroyed when assigned to this attribute. Instances should
+therefore not be reused, but created on-the-fly as needed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.main_window.MainWindow.dock_manager">
+<tt class="descname">dock_manager</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.main_window.MainWindow.dock_manager" title="Permalink to this definition">¶</a></dt>
+<dd><p>The dock manager used for this main window.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.main_window.MainWindow.closed">
+<tt class="descname">closed</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.main_window.MainWindow.closed" title="Permalink to this definition">¶</a></dt>
+<dd><p>An event which is fired when the window is closed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.main_window.MainWindow.abstract_obj">
+<tt class="descname">abstract_obj</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.main_window.MainWindow.abstract_obj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden parent class trait</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.components.main_window.MainWindow.resize_to_initial">
+<tt class="descname">resize_to_initial</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/components/main_window.html#MainWindow.resize_to_initial"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.main_window.MainWindow.resize_to_initial" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden parent class method which resizes the window to 
+the initial size according to the semantics required of a main
+window.</p>
+<p>If the value of the &#8216;initial_size&#8217; attribute is (-1, -1), then
+the initiali size of the window is determined by using the size
+hint of the central widget. Otherwise, the given &#8216;initial_size&#8217;
+is used.</p>
+<dl class="docutils">
+<dt>Note: If any dock panels or toolbars are in use, then this </dt>
+<dd>computed initial size will likely be smaller than the 
+allowable minimum size, and therefore the minimum size
+will end up being the initial size. This is usually 
+the desired behavior. If the off chance that it isn&#8217;t
+then manually specifying an initial size <em>and</em> a minimum
+size is sufficient to override the default behavior.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.components.main_window.MainWindow.update_minimum_size">
+<tt class="descname">update_minimum_size</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/components/main_window.html#MainWindow.update_minimum_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.main_window.MainWindow.update_minimum_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden parent class method which updates the minimum size
+according the semantics required for a main window.</p>
+<p>If the value of the &#8216;minimum_size&#8217; attribute is (-1, -1), then
+the minimum size of the window is indirectly using the minimum
+size of the central widget. That is, the minimum size of the 
+main window will be large enough to accomodate the minimum size
+of the central widget plus whatever dock panels, menu bars, and
+tool bars are in use. If the &#8216;minimum_size&#8217; attribute is set to
+something other than (-1, -1), then that value will be used as
+the minimum size for the <em>entire</em> window, without regard to any
+dock panels etc. that are in use. The default behavior is 
+usually what is desired in most applications.</p>
+<dl class="docutils">
+<dt>Note: The minimum size computation for a MainWindow does not</dt>
+<dd>make use of the &#8216;minimum_size_default&#8217; attribute.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.components.main_window.MainWindow.resize_to_minimum">
+<tt class="descname">resize_to_minimum</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/components/main_window.html#MainWindow.resize_to_minimum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.main_window.MainWindow.resize_to_minimum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden parent class method which resizes the window to
+the minimum size, respecting the semantics of a main window.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.components.main_window.MainWindow.update_maximum_size">
+<tt class="descname">update_maximum_size</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/components/main_window.html#MainWindow.update_maximum_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.main_window.MainWindow.update_maximum_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden parent class method which updates the maximum size
+according the semantics required for a main window.</p>
+<p>If the value of the &#8216;maximum_size&#8217; attribute is (-1, -1), then
+the maximum size of the window is limits allowed by most GUI 
+toolkits. That is, the maximum size of the central widget is 
+ignored, and it will be expanded to fit the available space in
+the window. This is distinctly different from the maximum size
+computation in a Window, where the maximum size of the central
+widget is respected. Respecting this max size in a MainWindow 
+is not supported since it would lead to unituitive interactions
+between the sizing of the central widget and any dock panels 
+that are in use.</p>
+<dl class="docutils">
+<dt>Note: The maximum size computation for a MainWindow does not</dt>
+<dd>make use of the &#8216;minimum_size_default&#8217; attribute.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.components.main_window.MainWindow.resize_to_maximum">
+<tt class="descname">resize_to_maximum</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/components/main_window.html#MainWindow.resize_to_maximum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.main_window.MainWindow.resize_to_maximum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden parent class method which resizes the window to
+the maximum size, respecting the semantics of a main window.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.main_window.MainWindow.__implements__">
+<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.components.main_window.MainWindow.__implements__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="backends">
+<h2>Backends<a class="headerlink" href="#backends" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="qt">
+<h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-c0fda796ae9acfb2394134ce019a89c0866757ec.png" alt="Inheritance diagram of enaml.backends.qt.qt_main_window.QtMainWindow" usemap="#inheritance668ae6234d" class="inheritance"/>
+<map id="inheritance668ae6234d" name="inheritance668ae6234d">
+<area shape="rect" id="node4" href="enaml.components.widget_component.WidgetComponent.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent" title="QtWidgetComponent" alt="" coords="385,4,494,24"/>
+<area shape="rect" id="node5" href="enaml.components.base_widget_component.BaseWidgetComponent.html#enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent" title="QtBaseWidgetComponent" alt="" coords="213,4,342,24"/>
+<area shape="rect" id="node9" href="enaml.components.window.Window.html#enaml.backends.qt.qt_window.QtWindow" title="QtWindow" alt="" coords="557,4,618,24"/>
+<area shape="rect" id="node14" href="#enaml.backends.qt.qt_main_window.QtMainWindow" title="QtMainWindow" alt="" coords="682,22,764,43"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.backends.qt.qt_main_window.QtMainWindow">
+<em class="property">class </em><tt class="descclassname">enaml.backends.qt.qt_main_window.</tt><tt class="descname">QtMainWindow</tt><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_main_window.html#QtMainWindow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_main_window.QtMainWindow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.components.window.Window.html#enaml.backends.qt.qt_window.QtWindow" title="enaml.backends.qt.qt_window.QtWindow"><tt class="xref py py-class docutils literal"><span class="pre">enaml.backends.qt.qt_window.QtWindow</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.components.main_window.AbstractTkMainWindow</span></tt></p>
+<p>A Qt implementation of a MainWindow.</p>
+<dl class="method">
+<dt id="enaml.backends.qt.qt_main_window.QtMainWindow.create">
+<tt class="descname">create</tt><big>(</big><em>parent</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_main_window.html#QtMainWindow.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_main_window.QtMainWindow.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the underlying QMainWindow object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_main_window.QtMainWindow.bind">
+<tt class="descname">bind</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_main_window.html#QtMainWindow.bind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_main_window.QtMainWindow.bind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bind the signal handlers for the QMainWindow.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_main_window.QtMainWindow.shell_menu_bar_changed">
+<tt class="descname">shell_menu_bar_changed</tt><big>(</big><em>menu_bar</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_main_window.html#QtMainWindow.shell_menu_bar_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_main_window.QtMainWindow.shell_menu_bar_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;menu_bar&#8217; attribute on the shell
+object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_main_window.QtMainWindow.set_menu_bar">
+<tt class="descname">set_menu_bar</tt><big>(</big><em>menu_bar</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_main_window.html#QtMainWindow.set_menu_bar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_main_window.QtMainWindow.set_menu_bar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the menu bar in the main window with the given Enaml
+MenuBar instance.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_main_window.QtMainWindow.set_central_widget">
+<tt class="descname">set_central_widget</tt><big>(</big><em>central_widget</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_main_window.html#QtMainWindow.set_central_widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_main_window.QtMainWindow.set_central_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Re-implemented parent class method to set the central widget
+on the underlying QMainWindow.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_main_window.QtMainWindow.set_visible">
+<tt class="descname">set_visible</tt><big>(</big><em>visible</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_main_window.html#QtMainWindow.set_visible"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_main_window.QtMainWindow.set_visible" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden from the parent class to raise the window to
+the front if it should be shown.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="wx">
+<h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-944b1926da2943e58ea530e2d0d19156619d505e.png" alt="Inheritance diagram of enaml.backends.wx.wx_main_window.WXMainWindow" usemap="#inheritance38a207c094" class="inheritance"/>
+<map id="inheritance38a207c094" name="inheritance38a207c094">
+<area shape="rect" id="node1" href="enaml.components.widget_component.WidgetComponent.html#enaml.backends.wx.wx_widget_component.WXWidgetComponent" title="WXWidgetComponent" alt="" coords="383,4,494,24"/>
+<area shape="rect" id="node9" href="enaml.components.window.Window.html#enaml.backends.wx.wx_window.WXWindow" title="WXWindow" alt="" coords="556,4,619,24"/>
+<area shape="rect" id="node2" href="enaml.components.base_widget_component.BaseWidgetComponent.html#enaml.backends.wx.wx_base_widget_component.WXBaseWidgetComponent" title="WXBaseWidgetComponent" alt="" coords="210,4,341,24"/>
+<area shape="rect" id="node13" href="#enaml.backends.wx.wx_main_window.WXMainWindow" title="WXMainWindow" alt="" coords="680,22,764,42"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.backends.wx.wx_main_window.WXMainWindow">
+<em class="property">class </em><tt class="descclassname">enaml.backends.wx.wx_main_window.</tt><tt class="descname">WXMainWindow</tt><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_main_window.html#WXMainWindow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_main_window.WXMainWindow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.components.window.Window.html#enaml.backends.wx.wx_window.WXWindow" title="enaml.backends.wx.wx_window.WXWindow"><tt class="xref py py-class docutils literal"><span class="pre">enaml.backends.wx.wx_window.WXWindow</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.components.main_window.AbstractTkMainWindow</span></tt></p>
+<p>A Wx implementation of a MainWindow.</p>
+<dl class="method">
+<dt id="enaml.backends.wx.wx_main_window.WXMainWindow.create">
+<tt class="descname">create</tt><big>(</big><em>parent</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_main_window.html#WXMainWindow.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_main_window.WXMainWindow.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the underlying wx.Frame with an appropriate main
+window sizer.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_main_window.WXMainWindow.initialize">
+<tt class="descname">initialize</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_main_window.html#WXMainWindow.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_main_window.WXMainWindow.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Intializes the attributes on the wx.Frame.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_main_window.WXMainWindow.bind">
+<tt class="descname">bind</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_main_window.html#WXMainWindow.bind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_main_window.WXMainWindow.bind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bind the signal handlers for the wx.Frame.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_main_window.WXMainWindow.shell_menu_bar_changed">
+<tt class="descname">shell_menu_bar_changed</tt><big>(</big><em>menu_bar</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_main_window.html#WXMainWindow.shell_menu_bar_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_main_window.WXMainWindow.shell_menu_bar_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the menu bar of the window with the new value from
+the shell object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_main_window.WXMainWindow.set_central_widget">
+<tt class="descname">set_central_widget</tt><big>(</big><em>central_widget</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_main_window.html#WXMainWindow.set_central_widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_main_window.WXMainWindow.set_central_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the central widget in the window with the given value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_main_window.WXMainWindow.set_menu_bar">
+<tt class="descname">set_menu_bar</tt><big>(</big><em>menu_bar</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_main_window.html#WXMainWindow.set_menu_bar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_main_window.WXMainWindow.set_menu_bar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the menu bar in the main window with the given Enaml
+MenuBar instance.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_main_window.WXMainWindow.set_visible">
+<tt class="descname">set_visible</tt><big>(</big><em>visible</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_main_window.html#WXMainWindow.set_visible"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_main_window.WXMainWindow.set_visible" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden from the parent class to raise the window to
+the front if it should be shown.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.components.dialog.Dialog.html" title="Dialog"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="enaml.components.window.Window.html" title="Window"
+             >previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" >Widgets</a> &raquo;</li>
+  
+    <li><a href="#">MainWindow</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Jun 12, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

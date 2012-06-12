@@ -1,0 +1,388 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Splitter &mdash; enaml 0.2alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.2alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../index.html" />
+    <link rel="up" title="Widgets" href="../enaml.widgets.html" />
+    <link rel="next" title="ScrollArea" href="enaml.components.scroll_area.ScrollArea.html" />
+    <link rel="prev" title="Tab" href="enaml.components.tab.Tab.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.components.scroll_area.ScrollArea.html" title="ScrollArea"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="enaml.components.tab.Tab.html" title="Tab"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" accesskey="U">Widgets</a> &raquo;</li>
+  
+    <li><a href="#">Splitter</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Splitter</a><ul>
+<li><a class="reference internal" href="#backends">Backends</a><ul>
+<li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/api_ref/widgets/enaml.components.splitter.Splitter.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="splitter">
+<h1>Splitter<a class="headerlink" href="#splitter" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="enaml.components.splitter.Splitter">
+<em class="property">class </em><tt class="descclassname">enaml.components.splitter.</tt><tt class="descname">Splitter</tt><a class="reference internal" href="../../_modules/enaml/components/splitter.html#Splitter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.splitter.Splitter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.components.layout_task_handler.LayoutTaskHandler.html#enaml.components.layout_task_handler.LayoutTaskHandler" title="enaml.components.layout_task_handler.LayoutTaskHandler"><tt class="xref py py-class docutils literal"><span class="pre">enaml.components.layout_task_handler.LayoutTaskHandler</span></tt></a>, <a class="reference internal" href="enaml.components.constraints_widget.ConstraintsWidget.html#enaml.components.constraints_widget.ConstraintsWidget" title="enaml.components.constraints_widget.ConstraintsWidget"><tt class="xref py py-class docutils literal"><span class="pre">enaml.components.constraints_widget.ConstraintsWidget</span></tt></a></p>
+<p>A LayoutComponent subclass that displays its children in separate
+resizable compartements that are connected with a resizing bar.</p>
+<dl class="attribute">
+<dt id="enaml.components.splitter.Splitter.splitter_children">
+<tt class="descname">splitter_children</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.splitter.Splitter.splitter_children" title="Permalink to this definition">¶</a></dt>
+<dd><p>The read-only list of widget children for the splitter.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.splitter.Splitter.orientation">
+<tt class="descname">orientation</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.splitter.Splitter.orientation" title="Permalink to this definition">¶</a></dt>
+<dd><p>The orientation of the Splitter. &#8216;horizontal&#8217; means the children
+are laid out left to right, &#8216;vertical&#8217; means top to bottom.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.splitter.Splitter.live_drag">
+<tt class="descname">live_drag</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.splitter.Splitter.live_drag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether the child widgets resize as a splitter is being dragged
+(True), or if a simple indicator is drawn until the drag handle
+is released (False). The default is True.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.splitter.Splitter.preferred_sizes">
+<tt class="descname">preferred_sizes</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.splitter.Splitter.preferred_sizes" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of preferred sizes for each compartment of the splitter, or
+None if there is no preference for the size.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.splitter.Splitter.hug_width">
+<tt class="descname">hug_width</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.splitter.Splitter.hug_width" title="Permalink to this definition">¶</a></dt>
+<dd><p>How strongly a component hugs it&#8217;s contents&#8217; width. A Splitter
+container ignores its width hug by default, so it expands freely
+in width.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.splitter.Splitter.hug_height">
+<tt class="descname">hug_height</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.splitter.Splitter.hug_height" title="Permalink to this definition">¶</a></dt>
+<dd><p>How strongly a component hugs it&#8217;s contents&#8217; height. A Splitter
+container ignores its height hug by default, so it expands freely
+in height.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.splitter.Splitter.abstract_obj">
+<tt class="descname">abstract_obj</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.splitter.Splitter.abstract_obj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden parent class trait</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.components.splitter.Splitter.do_relayout">
+<tt class="descname">do_relayout</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/components/splitter.html#Splitter.do_relayout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.splitter.Splitter.do_relayout" title="Permalink to this definition">¶</a></dt>
+<dd><p>A reimplemented LayoutTaskHandler handler method which will
+perform necessary update activity when a relayout it requested.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.components.splitter.Splitter.update_splitter_sizes">
+<tt class="descname">update_splitter_sizes</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/components/splitter.html#Splitter.update_splitter_sizes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.splitter.Splitter.update_splitter_sizes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the sizes of each of the splitters based on the size
+hints of the children and the orientation of the splitter. The
+minimum sizes of the children are also computed and applied.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.splitter.Splitter.__implements__">
+<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.components.splitter.Splitter.__implements__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="backends">
+<h2>Backends<a class="headerlink" href="#backends" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="qt">
+<h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-a182985c735b2804c81a00837bd2e91d1cfa24ea.png" alt="Inheritance diagram of enaml.backends.qt.qt_splitter.QtSplitter" usemap="#inheritance395eabb8c6" class="inheritance"/>
+<map id="inheritance395eabb8c6" name="inheritance395eabb8c6">
+<area shape="rect" id="node5" href="enaml.components.constraints_widget.ConstraintsWidget.html#enaml.backends.qt.qt_constraints_widget.QtConstraintsWidget" title="QtConstraintsWidget" alt="" coords="566,41,674,61"/>
+<area shape="rect" id="node11" href="enaml.components.widget_component.WidgetComponent.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent" title="QtWidgetComponent" alt="" coords="405,41,514,61"/>
+<area shape="rect" id="node4" href="#enaml.backends.qt.qt_splitter.QtSplitter" title="QtSplitter" alt="" coords="707,22,764,43"/>
+<area shape="rect" id="node14" href="enaml.components.base_widget_component.BaseWidgetComponent.html#enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent" title="QtBaseWidgetComponent" alt="" coords="214,41,343,61"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.backends.qt.qt_splitter.QtSplitter">
+<em class="property">class </em><tt class="descclassname">enaml.backends.qt.qt_splitter.</tt><tt class="descname">QtSplitter</tt><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_splitter.html#QtSplitter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_splitter.QtSplitter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.components.constraints_widget.ConstraintsWidget.html#enaml.backends.qt.qt_constraints_widget.QtConstraintsWidget" title="enaml.backends.qt.qt_constraints_widget.QtConstraintsWidget"><tt class="xref py py-class docutils literal"><span class="pre">enaml.backends.qt.qt_constraints_widget.QtConstraintsWidget</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.components.splitter.AbstractTkSplitter</span></tt></p>
+<p>A Qt implementation of a Splitter.</p>
+<dl class="method">
+<dt id="enaml.backends.qt.qt_splitter.QtSplitter.create">
+<tt class="descname">create</tt><big>(</big><em>parent</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_splitter.html#QtSplitter.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_splitter.QtSplitter.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the underlying QSplitter control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_splitter.QtSplitter.initialize">
+<tt class="descname">initialize</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_splitter.html#QtSplitter.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_splitter.QtSplitter.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Intializes the widget with the attributes of this instance.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_splitter.QtSplitter.shell_orientation_changed">
+<tt class="descname">shell_orientation_changed</tt><big>(</big><em>orientation</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_splitter.html#QtSplitter.shell_orientation_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_splitter.QtSplitter.shell_orientation_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the orientation of the widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_splitter.QtSplitter.shell_live_drag_changed">
+<tt class="descname">shell_live_drag_changed</tt><big>(</big><em>live_drag</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_splitter.html#QtSplitter.shell_live_drag_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_splitter.QtSplitter.shell_live_drag_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;live_drag&#8217; attribut of the shell
+object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_splitter.QtSplitter.shell_splitter_children_changed">
+<tt class="descname">shell_splitter_children_changed</tt><big>(</big><em>children</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_splitter.html#QtSplitter.shell_splitter_children_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_splitter.QtSplitter.shell_splitter_children_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;splitter_children&#8217; attribute of 
+the shell object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_splitter.QtSplitter.set_orientation">
+<tt class="descname">set_orientation</tt><big>(</big><em>orientation</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_splitter.html#QtSplitter.set_orientation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_splitter.QtSplitter.set_orientation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the orientation of the QSplitter.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_splitter.QtSplitter.set_live_drag">
+<tt class="descname">set_live_drag</tt><big>(</big><em>live_drag</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_splitter.html#QtSplitter.set_live_drag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_splitter.QtSplitter.set_live_drag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the dragging mode of the QSplitter.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_splitter.QtSplitter.update_children">
+<tt class="descname">update_children</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_splitter.html#QtSplitter.update_children"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_splitter.QtSplitter.update_children" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the QSplitter&#8217;s children with the current 
+children.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_splitter.QtSplitter.set_splitter_sizes">
+<tt class="descname">set_splitter_sizes</tt><big>(</big><em>sizes</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_splitter.html#QtSplitter.set_splitter_sizes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_splitter.QtSplitter.set_splitter_sizes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the initial sizes for the children.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="wx">
+<h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-c88c499a1822927210e632aba70c8ae2b5820d91.png" alt="Inheritance diagram of enaml.backends.wx.wx_splitter.WXSplitter" usemap="#inheritance2eedbd750c" class="inheritance"/>
+<map id="inheritance2eedbd750c" name="inheritance2eedbd750c">
+<area shape="rect" id="node1" href="enaml.components.constraints_widget.ConstraintsWidget.html#enaml.backends.wx.wx_constraints_widget.WXConstraintsWidget" title="WXConstraintsWidget" alt="" coords="560,4,671,24"/>
+<area shape="rect" id="node13" href="#enaml.backends.wx.wx_splitter.WXSplitter" title="WXSplitter" alt="" coords="704,22,764,42"/>
+<area shape="rect" id="node2" href="enaml.components.widget_component.WidgetComponent.html#enaml.backends.wx.wx_widget_component.WXWidgetComponent" title="WXWidgetComponent" alt="" coords="399,4,510,24"/>
+<area shape="rect" id="node8" href="enaml.components.base_widget_component.BaseWidgetComponent.html#enaml.backends.wx.wx_base_widget_component.WXBaseWidgetComponent" title="WXBaseWidgetComponent" alt="" coords="210,4,341,24"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.backends.wx.wx_splitter.WXSplitter">
+<em class="property">class </em><tt class="descclassname">enaml.backends.wx.wx_splitter.</tt><tt class="descname">WXSplitter</tt><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_splitter.html#WXSplitter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_splitter.WXSplitter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.components.constraints_widget.ConstraintsWidget.html#enaml.backends.wx.wx_constraints_widget.WXConstraintsWidget" title="enaml.backends.wx.wx_constraints_widget.WXConstraintsWidget"><tt class="xref py py-class docutils literal"><span class="pre">enaml.backends.wx.wx_constraints_widget.WXConstraintsWidget</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.components.splitter.AbstractTkSplitter</span></tt></p>
+<p>A Wx implementation of Splitter.</p>
+<dl class="method">
+<dt id="enaml.backends.wx.wx_splitter.WXSplitter.create">
+<tt class="descname">create</tt><big>(</big><em>parent</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_splitter.html#WXSplitter.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_splitter.WXSplitter.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the underlying QSplitter control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_splitter.WXSplitter.initialize">
+<tt class="descname">initialize</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_splitter.html#WXSplitter.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_splitter.WXSplitter.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Intializes the widget with the attributes of this instance.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_splitter.WXSplitter.shell_orientation_changed">
+<tt class="descname">shell_orientation_changed</tt><big>(</big><em>orientation</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_splitter.html#WXSplitter.shell_orientation_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_splitter.WXSplitter.shell_orientation_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the orientation of the widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_splitter.WXSplitter.shell_live_drag_changed">
+<tt class="descname">shell_live_drag_changed</tt><big>(</big><em>live_drag</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_splitter.html#WXSplitter.shell_live_drag_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_splitter.WXSplitter.shell_live_drag_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;live_drag&#8217; attribute of the
+shell object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_splitter.WXSplitter.shell_splitter_children_changed">
+<tt class="descname">shell_splitter_children_changed</tt><big>(</big><em>children</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_splitter.html#WXSplitter.shell_splitter_children_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_splitter.WXSplitter.shell_splitter_children_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;layout_children&#8217; attribute of 
+the shell object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_splitter.WXSplitter.set_orientation">
+<tt class="descname">set_orientation</tt><big>(</big><em>orientation</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_splitter.html#WXSplitter.set_orientation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_splitter.WXSplitter.set_orientation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the orientation of the splitter.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_splitter.WXSplitter.set_live_drag">
+<tt class="descname">set_live_drag</tt><big>(</big><em>live_drag</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_splitter.html#WXSplitter.set_live_drag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_splitter.WXSplitter.set_live_drag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the drag state of the splitter.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_splitter.WXSplitter.update_children">
+<tt class="descname">update_children</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_splitter.html#WXSplitter.update_children"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_splitter.WXSplitter.update_children" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the splitter&#8217;s children with the current children.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_splitter.WXSplitter.size_hint">
+<tt class="descname">size_hint</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_splitter.html#WXSplitter.size_hint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_splitter.WXSplitter.size_hint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a size hint for the widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_splitter.WXSplitter.set_splitter_sizes">
+<tt class="descname">set_splitter_sizes</tt><big>(</big><em>sizes</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_splitter.html#WXSplitter.set_splitter_sizes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_splitter.WXSplitter.set_splitter_sizes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the initial sizes for the children.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.components.scroll_area.ScrollArea.html" title="ScrollArea"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="enaml.components.tab.Tab.html" title="Tab"
+             >previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" >Widgets</a> &raquo;</li>
+  
+    <li><a href="#">Splitter</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Jun 12, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

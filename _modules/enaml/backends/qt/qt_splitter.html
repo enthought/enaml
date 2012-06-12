@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.backends.qt.qt_splitter &mdash; enaml 0.2beta-1 documentation</title>
+    <title>enaml.backends.qt.qt_splitter &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../../index.html" />
     <link rel="up" title="Module code" href="../../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.backends.qt.qt_splitter</a></li>
@@ -94,20 +94,20 @@
 <span class="p">}</span>
 
 
-<div class="viewcode-block" id="QtSplitter"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_splitter.QtSplitter">[docs]</a><span class="k">class</span> <span class="nc">QtSplitter</span><span class="p">(</span><span class="n">QtConstraintsWidget</span><span class="p">,</span> <span class="n">AbstractTkSplitter</span><span class="p">):</span>
+<div class="viewcode-block" id="QtSplitter"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.splitter.Splitter.html#enaml.backends.qt.qt_splitter.QtSplitter">[docs]</a><span class="k">class</span> <span class="nc">QtSplitter</span><span class="p">(</span><span class="n">QtConstraintsWidget</span><span class="p">,</span> <span class="n">AbstractTkSplitter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A Qt implementation of a Splitter.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Setup methods</span>
     <span class="c">#--------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="QtSplitter.create"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_splitter.QtSplitter.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+<div class="viewcode-block" id="QtSplitter.create"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.splitter.Splitter.html#enaml.backends.qt.qt_splitter.QtSplitter.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Creates the underlying QSplitter control.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QSplitter</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtSplitter.initialize"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_splitter.QtSplitter.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtSplitter.initialize"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.splitter.Splitter.html#enaml.backends.qt.qt_splitter.QtSplitter.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Intializes the widget with the attributes of this instance.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -120,20 +120,20 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Implementation</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="QtSplitter.shell_orientation_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_splitter.QtSplitter.shell_orientation_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_orientation_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orientation</span><span class="p">):</span>
+<div class="viewcode-block" id="QtSplitter.shell_orientation_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.splitter.Splitter.html#enaml.backends.qt.qt_splitter.QtSplitter.shell_orientation_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_orientation_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orientation</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Update the orientation of the widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_orientation</span><span class="p">(</span><span class="n">orientation</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtSplitter.shell_live_drag_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_splitter.QtSplitter.shell_live_drag_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_live_drag_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">live_drag</span><span class="p">):</span>
+<div class="viewcode-block" id="QtSplitter.shell_live_drag_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.splitter.Splitter.html#enaml.backends.qt.qt_splitter.QtSplitter.shell_live_drag_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_live_drag_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">live_drag</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;live_drag&#39; attribut of the shell</span>
 <span class="sd">        object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_live_drag</span><span class="p">(</span><span class="n">live_drag</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtSplitter.shell_splitter_children_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_splitter.QtSplitter.shell_splitter_children_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_splitter_children_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">children</span><span class="p">):</span>
+<div class="viewcode-block" id="QtSplitter.shell_splitter_children_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.splitter.Splitter.html#enaml.backends.qt.qt_splitter.QtSplitter.shell_splitter_children_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_splitter_children_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">children</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;splitter_children&#39; attribute of </span>
 <span class="sd">        the shell object.</span>
 
@@ -143,20 +143,20 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Widget Update Methods </span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="QtSplitter.set_orientation"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_splitter.QtSplitter.set_orientation">[docs]</a>    <span class="k">def</span> <span class="nf">set_orientation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orientation</span><span class="p">):</span>
+<div class="viewcode-block" id="QtSplitter.set_orientation"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.splitter.Splitter.html#enaml.backends.qt.qt_splitter.QtSplitter.set_orientation">[docs]</a>    <span class="k">def</span> <span class="nf">set_orientation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orientation</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Update the orientation of the QSplitter.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">q_orientation</span> <span class="o">=</span> <span class="n">_ORIENTATION_MAP</span><span class="p">[</span><span class="n">orientation</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setOrientation</span><span class="p">(</span><span class="n">q_orientation</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtSplitter.set_live_drag"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_splitter.QtSplitter.set_live_drag">[docs]</a>    <span class="k">def</span> <span class="nf">set_live_drag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">live_drag</span><span class="p">):</span>
+<div class="viewcode-block" id="QtSplitter.set_live_drag"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.splitter.Splitter.html#enaml.backends.qt.qt_splitter.QtSplitter.set_live_drag">[docs]</a>    <span class="k">def</span> <span class="nf">set_live_drag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">live_drag</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Update the dragging mode of the QSplitter.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setOpaqueResize</span><span class="p">(</span><span class="n">live_drag</span><span class="p">)</span>
         </div>
-<div class="viewcode-block" id="QtSplitter.update_children"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_splitter.QtSplitter.update_children">[docs]</a>    <span class="k">def</span> <span class="nf">update_children</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtSplitter.update_children"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.splitter.Splitter.html#enaml.backends.qt.qt_splitter.QtSplitter.update_children">[docs]</a>    <span class="k">def</span> <span class="nf">update_children</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Update the QSplitter&#39;s children with the current </span>
 <span class="sd">        children.</span>
 
@@ -174,7 +174,7 @@
         <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">shell</span><span class="o">.</span><span class="n">splitter_children</span><span class="p">:</span>
             <span class="n">widget</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">toolkit_widget</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtSplitter.set_splitter_sizes"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_splitter.QtSplitter.set_splitter_sizes">[docs]</a>    <span class="k">def</span> <span class="nf">set_splitter_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sizes</span><span class="p">):</span>
+<div class="viewcode-block" id="QtSplitter.set_splitter_sizes"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.splitter.Splitter.html#enaml.backends.qt.qt_splitter.QtSplitter.set_splitter_sizes">[docs]</a>    <span class="k">def</span> <span class="nf">set_splitter_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sizes</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Set the initial sizes for the children.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -198,7 +198,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.backends.qt.qt_splitter</a></li>
@@ -208,7 +208,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

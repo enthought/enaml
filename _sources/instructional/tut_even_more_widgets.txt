@@ -29,13 +29,13 @@ and one for an employer (abbreviated here for succinctness)::
             text = "First name:"
         Field:
             value := employee.first_name
-
+            
         # ... etc
-
+        
         ToggleButton:
             checked := show_employer
             text << ('Hide' if show_employer else 'Show') + ' Employer Details'
-
+    
     enamldef EmployerForm(Form):
         attr employer
         Label:
@@ -43,23 +43,23 @@ and one for an employer (abbreviated here for succinctness)::
         Field:
             value << employer.company_name
             enabled << en_cb.checked
-        # ... etc
+        # ... etc    
 
 This sort of |Enaml| code should be fairly familiar to you at this point
 (although there are some new things which we will highlight later).
 Previously all of our ``enamldef`` operations had used ``MainWindow`` as the
 widget that was being extended, but here we are using ``Form``.  Any widget can
 be used as the basis for another in an ``enamldef`` command, so you can create
-your own custom, re-usable ``Label``s, ``Field``s, ``PushButton``s, etc. using
-``enamldef``.
+your own custom, re-usable versions of ``Label``, ``Field``, ``PushButton``,
+etc. using ``enamldef``.
 
 Having defined the two forms, there is a third definition in the .enaml file::
 
     enamldef EmployeeView(MainWindow):
         id: main
         attr employee
-
-        title << "Employee Record for: %s, %s" % (employee.last_name,
+    
+        title << "Employee Record for: %s, %s" % (employee.last_name, 
                                                 employee.first_name)
         Container:
             constraints << [
@@ -74,8 +74,8 @@ Having defined the two forms, there is a third definition in the .enaml file::
                 EmployeeForm:
                     id: top_form
                     # We access the employee object through the identifier
-                    # 'main' here, because the EmployeeForm also has an
-                    # 'employee' attribute declared, and that would be
+                    # 'main' here, because the EmployeeForm also has an 
+                    # 'employee' attribute declared, and that would be 
                     # found first.
                     employee = main.employee
             GroupBox:
@@ -204,17 +204,17 @@ Other Things to Note
 In this example you also see a number of different widget types that we have not
 seen before:
 
-    DateEdit:
-        This is a field type designed for editing Python ``datetime.date``
-        objects.
+DateEdit:
+    This is a field type designed for editing Python ``datetime.date``
+    objects.
 
-    CheckBox:
-        This is a simple checkbox widget that can toggle a value True or False.
+CheckBox:
+    This is a simple checkbox widget that can toggle a value True or False.
 
-    ToggleButton:
-        This is a like the checkbox widget in that it toggles a value True or
-        False, but instead it looks like a push button.  The button highlights
-        when it is True.
+ToggleButton:
+    This is a like the checkbox widget in that it toggles a value True or
+    False, but instead it looks like a push button.  The button highlights
+    when it is True.
 
 Additionally, the Password field shows how to set a field to hide the text
 being entered, as you would normally want for a password entry field.

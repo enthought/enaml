@@ -1,0 +1,8 @@
+<map id="inheritancec19234db61" name="inheritancec19234db61">
+<area shape="rect" id="node1" href="enaml.components.abstract_item_view.AbstractItemView.html#enaml.backends.qt.qt_abstract_item_view.QtAbstractItemView" title="QtAbstractItemView" alt="" coords="612,3,687,17"/>
+<area shape="rect" id="node22" href="#enaml.backends.qt.qt_table_view.QtTableView" title="QtTableView" alt="" coords="714,16,765,31"/>
+<area shape="rect" id="node2" href="enaml.components.control.Control.html#enaml.backends.qt.qt_control.QtControl" title="QtControl" alt="" coords="527,3,569,17"/>
+<area shape="rect" id="node14" href="enaml.components.widget_component.WidgetComponent.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent" title="QtWidgetComponent" alt="" coords="292,3,370,17"/>
+<area shape="rect" id="node18" href="enaml.components.base_widget_component.BaseWidgetComponent.html#enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent" title="QtBaseWidgetComponent" alt="" coords="154,3,247,17"/>
+<area shape="rect" id="node11" href="enaml.components.constraints_widget.ConstraintsWidget.html#enaml.backends.qt.qt_constraints_widget.QtConstraintsWidget" title="QtConstraintsWidget" alt="" coords="408,3,486,17"/>
+</map>

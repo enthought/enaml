@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.backends.qt.qt_field &mdash; enaml 0.2beta-1 documentation</title>
+    <title>enaml.backends.qt.qt_field &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../../index.html" />
     <link rel="up" title="Module code" href="../../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.backends.qt.qt_field</a></li>
@@ -98,19 +98,19 @@
 <span class="p">}</span>
 
 
-<div class="viewcode-block" id="QtEnamlLineEdit"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_field.QtEnamlLineEdit">[docs]</a><span class="k">class</span> <span class="nc">QtEnamlLineEdit</span><span class="p">(</span><span class="n">QLineEdit</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">QtEnamlLineEdit</span><span class="p">(</span><span class="n">QLineEdit</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A QLineEdit subclass which converts a lost focus event into </span>
 <span class="sd">    a lost focus signal.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">lostFocus</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">()</span>
 
-<div class="viewcode-block" id="QtEnamlLineEdit.focusOutEvent"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_field.QtEnamlLineEdit.focusOutEvent">[docs]</a>    <span class="k">def</span> <span class="nf">focusOutEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">focusOutEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lostFocus</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">QtEnamlLineEdit</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">focusOutEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
 
-</div></div>
-<div class="viewcode-block" id="QtField"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_field.QtField">[docs]</a><span class="k">class</span> <span class="nc">QtField</span><span class="p">(</span><span class="n">QtControl</span><span class="p">,</span> <span class="n">AbstractTkField</span><span class="p">):</span>
+
+<div class="viewcode-block" id="QtField"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.field.Field.html#enaml.backends.qt.qt_field.QtField">[docs]</a><span class="k">class</span> <span class="nc">QtField</span><span class="p">(</span><span class="n">QtControl</span><span class="p">,</span> <span class="n">AbstractTkField</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A Qt implementation of a Field which uses a QLineEdit to provide</span>
 <span class="sd">    a single line of editable text.</span>
 
@@ -118,13 +118,13 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># SetupMethods</span>
     <span class="c">#--------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="QtField.create"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_field.QtField.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+<div class="viewcode-block" id="QtField.create"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.field.Field.html#enaml.backends.qt.qt_field.QtField.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Creates the underlying QLineEdit.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">QtEnamlLineEdit</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtField.initialize"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_field.QtField.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtField.initialize"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.field.Field.html#enaml.backends.qt.qt_field.QtField.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Initializes the attributes of the Qt widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -138,7 +138,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">set_password_mode</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">password_mode</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_max_length</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">max_length</span><span class="p">)</span>
         </div>
-<div class="viewcode-block" id="QtField.bind"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_field.QtField.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtField.bind"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.field.Field.html#enaml.backends.qt.qt_field.QtField.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Binds the event handlers for the QLineEdit.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -153,28 +153,28 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Shell Object Change Handlers</span>
     <span class="c">#-------------------------------------------------------------------------- </span></div>
-<div class="viewcode-block" id="QtField.shell_validator_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_field.QtField.shell_validator_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_validator_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validator</span><span class="p">):</span>
+<div class="viewcode-block" id="QtField.shell_validator_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.field.Field.html#enaml.backends.qt.qt_field.QtField.shell_validator_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_validator_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validator</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;validator&#39; attribute on the </span>
 <span class="sd">        shell object.</span>
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_validator</span><span class="p">(</span><span class="n">validator</span><span class="p">)</span>
            </div>
-<div class="viewcode-block" id="QtField.shell_max_length_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_field.QtField.shell_max_length_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_max_length_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_length</span><span class="p">):</span>
+<div class="viewcode-block" id="QtField.shell_max_length_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.field.Field.html#enaml.backends.qt.qt_field.QtField.shell_max_length_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_max_length_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_length</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;max_length&#39; attribute on the </span>
 <span class="sd">        shell object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_max_length</span><span class="p">(</span><span class="n">max_length</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtField.shell_read_only_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_field.QtField.shell_read_only_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_read_only_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">read_only</span><span class="p">):</span>
+<div class="viewcode-block" id="QtField.shell_read_only_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.field.Field.html#enaml.backends.qt.qt_field.QtField.shell_read_only_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_read_only_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">read_only</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;read_only&#39; attribute on the</span>
 <span class="sd">        shell object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_read_only</span><span class="p">(</span><span class="n">read_only</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtField.shell_cursor_position_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_field.QtField.shell_cursor_position_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_cursor_position_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cursor_position</span><span class="p">):</span>
+<div class="viewcode-block" id="QtField.shell_cursor_position_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.field.Field.html#enaml.backends.qt.qt_field.QtField.shell_cursor_position_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_cursor_position_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cursor_position</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;cursor_position&#39; attribute on </span>
 <span class="sd">        the shell object.</span>
 
@@ -182,14 +182,14 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">guard</span><span class="o">.</span><span class="n">guarded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;updating_cursor&#39;</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">set_cursor_position</span><span class="p">(</span><span class="n">cursor_position</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtField.shell_placeholder_text_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_field.QtField.shell_placeholder_text_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_placeholder_text_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">placeholder_text</span><span class="p">):</span>
+<div class="viewcode-block" id="QtField.shell_placeholder_text_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.field.Field.html#enaml.backends.qt.qt_field.QtField.shell_placeholder_text_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_placeholder_text_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">placeholder_text</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;placeholder_text&#39; attribute on</span>
 <span class="sd">        the shell object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_placeholder_text</span><span class="p">(</span><span class="n">placeholder_text</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtField.shell_password_mode_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_field.QtField.shell_password_mode_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_password_mode_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+<div class="viewcode-block" id="QtField.shell_password_mode_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.field.Field.html#enaml.backends.qt.qt_field.QtField.shell_password_mode_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_password_mode_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;password_mode&#39; attribute on the </span>
 <span class="sd">        shell object.</span>
 <span class="sd">        </span>
@@ -199,7 +199,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Manipulation Methods </span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="QtField.set_selection"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_field.QtField.set_selection">[docs]</a>    <span class="k">def</span> <span class="nf">set_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
+<div class="viewcode-block" id="QtField.set_selection"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.field.Field.html#enaml.backends.qt.qt_field.QtField.set_selection">[docs]</a>    <span class="k">def</span> <span class="nf">set_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the selection to the bounds of start and end.</span>
 
 <span class="sd">        If the indices are invalid, no selection will be made, and any</span>
@@ -216,7 +216,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setSelection</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtField.select_all"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_field.QtField.select_all">[docs]</a>    <span class="k">def</span> <span class="nf">select_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtField.select_all"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.field.Field.html#enaml.backends.qt.qt_field.QtField.select_all">[docs]</a>    <span class="k">def</span> <span class="nf">select_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Select all the text in the field.</span>
 
 <span class="sd">        If there is no text in the field, the selection will be empty.</span>
@@ -224,19 +224,19 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">selectAll</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="QtField.deselect"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_field.QtField.deselect">[docs]</a>    <span class="k">def</span> <span class="nf">deselect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtField.deselect"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.field.Field.html#enaml.backends.qt.qt_field.QtField.deselect">[docs]</a>    <span class="k">def</span> <span class="nf">deselect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Deselect any selected text.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">deselect</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="QtField.clear"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_field.QtField.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtField.clear"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.field.Field.html#enaml.backends.qt.qt_field.QtField.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Clear the field of all text.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="QtField.backspace"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_field.QtField.backspace">[docs]</a>    <span class="k">def</span> <span class="nf">backspace</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtField.backspace"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.field.Field.html#enaml.backends.qt.qt_field.QtField.backspace">[docs]</a>    <span class="k">def</span> <span class="nf">backspace</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Simple backspace functionality.</span>
 
 <span class="sd">        If no text is selected, deletes the character to the left of </span>
@@ -245,7 +245,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">backspace</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="QtField.delete"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_field.QtField.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtField.delete"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.field.Field.html#enaml.backends.qt.qt_field.QtField.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Simple delete functionality.</span>
 
 <span class="sd">        If no text is selected, deletes the character to the right of </span>
@@ -254,7 +254,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">del_</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="QtField.end"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_field.QtField.end">[docs]</a>    <span class="k">def</span> <span class="nf">end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mark</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="QtField.end"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.field.Field.html#enaml.backends.qt.qt_field.QtField.end">[docs]</a>    <span class="k">def</span> <span class="nf">end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mark</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Moves the cursor to the end of the line.</span>
 
 <span class="sd">        Arguments</span>
@@ -272,7 +272,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">widget</span><span class="o">.</span><span class="n">end</span><span class="p">(</span><span class="n">mark</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtField.home"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_field.QtField.home">[docs]</a>    <span class="k">def</span> <span class="nf">home</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mark</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="QtField.home"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.field.Field.html#enaml.backends.qt.qt_field.QtField.home">[docs]</a>    <span class="k">def</span> <span class="nf">home</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mark</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Moves the cursor to the beginning of the line.</span>
 
 <span class="sd">        Arguments</span>
@@ -290,7 +290,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">widget</span><span class="o">.</span><span class="n">home</span><span class="p">(</span><span class="n">mark</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtField.cut"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_field.QtField.cut">[docs]</a>    <span class="k">def</span> <span class="nf">cut</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtField.cut"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.field.Field.html#enaml.backends.qt.qt_field.QtField.cut">[docs]</a>    <span class="k">def</span> <span class="nf">cut</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Cuts the selected text from the field.</span>
 
 <span class="sd">        Copies the selected text to the clipboard then deletes the </span>
@@ -299,13 +299,13 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">cut</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="QtField.copy"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_field.QtField.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtField.copy"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.field.Field.html#enaml.backends.qt.qt_field.QtField.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Copies the selected text to the clipboard.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="QtField.paste"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_field.QtField.paste">[docs]</a>    <span class="k">def</span> <span class="nf">paste</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtField.paste"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.field.Field.html#enaml.backends.qt.qt_field.QtField.paste">[docs]</a>    <span class="k">def</span> <span class="nf">paste</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Paste the contents of the clipboard into the field.</span>
 
 <span class="sd">        Inserts the contents of the clipboard into the field at the </span>
@@ -314,7 +314,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">paste</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="QtField.insert"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_field.QtField.insert">[docs]</a>    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+<div class="viewcode-block" id="QtField.insert"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.field.Field.html#enaml.backends.qt.qt_field.QtField.insert">[docs]</a>    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Insert the text into the field.</span>
 
 <span class="sd">        Inserts the given text into the field at the current cursor </span>
@@ -328,13 +328,13 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtField.undo"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_field.QtField.undo">[docs]</a>    <span class="k">def</span> <span class="nf">undo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtField.undo"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.field.Field.html#enaml.backends.qt.qt_field.QtField.undo">[docs]</a>    <span class="k">def</span> <span class="nf">undo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Undoes the last operation.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">undo</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="QtField.redo"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_field.QtField.redo">[docs]</a>    <span class="k">def</span> <span class="nf">redo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtField.redo"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.field.Field.html#enaml.backends.qt.qt_field.QtField.redo">[docs]</a>    <span class="k">def</span> <span class="nf">redo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Redoes the last operation.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -343,33 +343,33 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Signal Handlers </span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="QtField.on_text_edited"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_field.QtField.on_text_edited">[docs]</a>    <span class="k">def</span> <span class="nf">on_text_edited</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtField.on_text_edited"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.field.Field.html#enaml.backends.qt.qt_field.QtField.on_text_edited">[docs]</a>    <span class="k">def</span> <span class="nf">on_text_edited</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The signal handler for the &#39;textEdited&#39; signal. This is</span>
 <span class="sd">        called when the user edits the text via the ui.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">_field_text_edited</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="QtField.on_return_pressed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_field.QtField.on_return_pressed">[docs]</a>    <span class="k">def</span> <span class="nf">on_return_pressed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtField.on_return_pressed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.field.Field.html#enaml.backends.qt.qt_field.QtField.on_return_pressed">[docs]</a>    <span class="k">def</span> <span class="nf">on_return_pressed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The signal handler for the returnPressed signal.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">_field_return_pressed</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="QtField.on_lost_focus"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_field.QtField.on_lost_focus">[docs]</a>    <span class="k">def</span> <span class="nf">on_lost_focus</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtField.on_lost_focus"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.field.Field.html#enaml.backends.qt.qt_field.QtField.on_lost_focus">[docs]</a>    <span class="k">def</span> <span class="nf">on_lost_focus</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The signal handler for the lostFocus signal.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">_field_lost_focus</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="QtField.on_selection_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_field.QtField.on_selection_changed">[docs]</a>    <span class="k">def</span> <span class="nf">on_selection_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtField.on_selection_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.field.Field.html#enaml.backends.qt.qt_field.QtField.on_selection_changed">[docs]</a>    <span class="k">def</span> <span class="nf">on_selection_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The signal handler for the selectionChanged signal.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="n">guard</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;updating_selection&#39;</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">selected_text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">selectedText</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="QtField.on_cursor_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_field.QtField.on_cursor_changed">[docs]</a>    <span class="k">def</span> <span class="nf">on_cursor_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtField.on_cursor_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.field.Field.html#enaml.backends.qt.qt_field.QtField.on_cursor_changed">[docs]</a>    <span class="k">def</span> <span class="nf">on_cursor_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The event handler for a cursor change event.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -379,19 +379,19 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Update methods </span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="QtField.get_text"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_field.QtField.get_text">[docs]</a>    <span class="k">def</span> <span class="nf">get_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtField.get_text"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.field.Field.html#enaml.backends.qt.qt_field.QtField.get_text">[docs]</a>    <span class="k">def</span> <span class="nf">get_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the current unicode text in the control.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
     </div>
-<div class="viewcode-block" id="QtField.set_text"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_field.QtField.set_text">[docs]</a>    <span class="k">def</span> <span class="nf">set_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+<div class="viewcode-block" id="QtField.set_text"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.field.Field.html#enaml.backends.qt.qt_field.QtField.set_text">[docs]</a>    <span class="k">def</span> <span class="nf">set_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Updates the text control with the given unicode text.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtField.set_validator"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_field.QtField.set_validator">[docs]</a>    <span class="k">def</span> <span class="nf">set_validator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validator</span><span class="p">):</span>
+<div class="viewcode-block" id="QtField.set_validator"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.field.Field.html#enaml.backends.qt.qt_field.QtField.set_validator">[docs]</a>    <span class="k">def</span> <span class="nf">set_validator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validator</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Wraps the given Enaml validator in a custom QValidator </span>
 <span class="sd">        instance and applies it to the underlying control.</span>
 
@@ -399,7 +399,7 @@
         <span class="n">qvalidator</span> <span class="o">=</span> <span class="n">QtEnamlValidator</span><span class="p">(</span><span class="n">validator</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">qvalidator</span><span class="p">)</span>
     </div>
-<div class="viewcode-block" id="QtField.set_max_length"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_field.QtField.set_max_length">[docs]</a>    <span class="k">def</span> <span class="nf">set_max_length</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_length</span><span class="p">):</span>
+<div class="viewcode-block" id="QtField.set_max_length"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.field.Field.html#enaml.backends.qt.qt_field.QtField.set_max_length">[docs]</a>    <span class="k">def</span> <span class="nf">set_max_length</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_length</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Set the max length of the control to max_length. If the max </span>
 <span class="sd">        length is &lt;= 0 or &gt; 32767 then the control will be set to hold </span>
 <span class="sd">        32kb of text.</span>
@@ -409,25 +409,25 @@
             <span class="n">max_length</span> <span class="o">=</span> <span class="mi">32767</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setMaxLength</span><span class="p">(</span><span class="n">max_length</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtField.set_read_only"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_field.QtField.set_read_only">[docs]</a>    <span class="k">def</span> <span class="nf">set_read_only</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">read_only</span><span class="p">):</span>
+<div class="viewcode-block" id="QtField.set_read_only"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.field.Field.html#enaml.backends.qt.qt_field.QtField.set_read_only">[docs]</a>    <span class="k">def</span> <span class="nf">set_read_only</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">read_only</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets read only state of the widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setReadOnly</span><span class="p">(</span><span class="n">read_only</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtField.set_placeholder_text"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_field.QtField.set_placeholder_text">[docs]</a>    <span class="k">def</span> <span class="nf">set_placeholder_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">placeholder_text</span><span class="p">):</span>
+<div class="viewcode-block" id="QtField.set_placeholder_text"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.field.Field.html#enaml.backends.qt.qt_field.QtField.set_placeholder_text">[docs]</a>    <span class="k">def</span> <span class="nf">set_placeholder_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">placeholder_text</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the placeholder text in the widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setPlaceholderText</span><span class="p">(</span><span class="n">placeholder_text</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtField.set_cursor_position"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_field.QtField.set_cursor_position">[docs]</a>    <span class="k">def</span> <span class="nf">set_cursor_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cursor_position</span><span class="p">):</span>
+<div class="viewcode-block" id="QtField.set_cursor_position"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.field.Field.html#enaml.backends.qt.qt_field.QtField.set_cursor_position">[docs]</a>    <span class="k">def</span> <span class="nf">set_cursor_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cursor_position</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the cursor position of the widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setCursorPosition</span><span class="p">(</span><span class="n">cursor_position</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtField.set_password_mode"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_field.QtField.set_password_mode">[docs]</a>    <span class="k">def</span> <span class="nf">set_password_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">password_mode</span><span class="p">):</span>
+<div class="viewcode-block" id="QtField.set_password_mode"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.field.Field.html#enaml.backends.qt.qt_field.QtField.set_password_mode">[docs]</a>    <span class="k">def</span> <span class="nf">set_password_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">password_mode</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the password mode of the wiget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -452,7 +452,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.backends.qt.qt_field</a></li>
@@ -462,7 +462,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

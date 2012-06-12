@@ -1,0 +1,267 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>TestDatetimeEdit &mdash; enaml 0.2alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.2alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../index.html" />
+    <link rel="up" title="Component Testing" href="../components.html" />
+    <link rel="next" title="TestDialog" href="enaml.tests.components.dialog.TestDialog.html" />
+    <link rel="prev" title="TestDateEdit" href="enaml.tests.components.date_edit.TestDateEdit.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.tests.components.dialog.TestDialog.html" title="TestDialog"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="enaml.tests.components.date_edit.TestDateEdit.html" title="TestDateEdit"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Developer&#8217;s Guide</a> &raquo;</li>
+          <li><a href="../../enaml.tests.html" >Enaml Testing</a> &raquo;</li>
+          <li><a href="../components.html" accesskey="U">Component Testing</a> &raquo;</li>
+  
+    <li><a href="#">TestDatetimeEdit</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../_sources/developer_guide/tests/widgets/enaml.tests.components.datetime_edit.TestDatetimeEdit.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="testdatetimeedit">
+<h1>TestDatetimeEdit<a class="headerlink" href="#testdatetimeedit" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="enaml.tests.components.datetime_edit.TestDatetimeEdit">
+<em class="property">class </em><tt class="descclassname">enaml.tests.components.datetime_edit.</tt><tt class="descname">TestDatetimeEdit</tt><big>(</big><em>methodName='runTest'</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/datetime_edit.html#TestDatetimeEdit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.datetime_edit.TestDatetimeEdit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../components.html#enaml.tests.components.enaml_test_case.EnamlTestCase" title="enaml.tests.components.enaml_test_case.EnamlTestCase"><tt class="xref py py-class docutils literal"><span class="pre">enaml.tests.components.enaml_test_case.EnamlTestCase</span></tt></a></p>
+<p>Logic for testing the date time edit components.</p>
+<p>Tooklit testcases need to provide the following functions</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="56%" />
+<col width="44%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Methods</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><tt class="xref py py-meth docutils literal"><span class="pre">get_datetime(self,</span> <span class="pre">widget)</span></tt></td>
+<td>Get the toolkits widget&#8217;s active datetime.</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-meth docutils literal"><span class="pre">get_min_datetime(self,</span> <span class="pre">widget)</span></tt></td>
+<td>Get the toolkits widget&#8217;s maximum datetime attribute.</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-meth docutils literal"><span class="pre">get_max_datetime(self,</span> <span class="pre">widget)</span></tt></td>
+<td>Get the toolkits widget&#8217;s minimum datetime attribute.</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-meth docutils literal"><span class="pre">change_datetime(self,</span> <span class="pre">widget,</span> <span class="pre">date)</span></tt></td>
+<td>Simulate a change datetime action at the toolkit widget.</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-meth docutils literal"><span class="pre">get_datetime_as_string(self,</span> <span class="pre">widget)</span></tt></td>
+<td>Get the toolkits widget&#8217;s active datetime as a string.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="enaml.tests.components.datetime_edit.TestDatetimeEdit.setUp">
+<tt class="descname">setUp</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/datetime_edit.html#TestDatetimeEdit.setUp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.datetime_edit.TestDatetimeEdit.setUp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set up for the TimeEdit testcases</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.components.datetime_edit.TestDatetimeEdit.test_initialization_values">
+<tt class="descname">test_initialization_values</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/datetime_edit.html#TestDatetimeEdit.test_initialization_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.datetime_edit.TestDatetimeEdit.test_initialization_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the initial attributes of the date edit component.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.components.datetime_edit.TestDatetimeEdit.test_change_max_datetime">
+<tt class="descname">test_change_max_datetime</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/datetime_edit.html#TestDatetimeEdit.test_change_max_datetime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.datetime_edit.TestDatetimeEdit.test_change_max_datetime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test changing the maximum datetime.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.components.datetime_edit.TestDatetimeEdit.test_change_min_datetime">
+<tt class="descname">test_change_min_datetime</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/datetime_edit.html#TestDatetimeEdit.test_change_min_datetime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.datetime_edit.TestDatetimeEdit.test_change_min_datetime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test changing the minimum datetime.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.components.datetime_edit.TestDatetimeEdit.test_change_maximum_and_datetime">
+<tt class="descname">test_change_maximum_and_datetime</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/datetime_edit.html#TestDatetimeEdit.test_change_maximum_and_datetime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.datetime_edit.TestDatetimeEdit.test_change_maximum_and_datetime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test setting maximum while the datetime is out of range.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.components.datetime_edit.TestDatetimeEdit.test_change_minimum_and_datetime">
+<tt class="descname">test_change_minimum_and_datetime</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/datetime_edit.html#TestDatetimeEdit.test_change_minimum_and_datetime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.datetime_edit.TestDatetimeEdit.test_change_minimum_and_datetime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test setting minimum while the datetime is out of range.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.components.datetime_edit.TestDatetimeEdit.test_change_datetime_in_enaml">
+<tt class="descname">test_change_datetime_in_enaml</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/datetime_edit.html#TestDatetimeEdit.test_change_datetime_in_enaml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.datetime_edit.TestDatetimeEdit.test_change_datetime_in_enaml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test changing the current datetime through the component.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.components.datetime_edit.TestDatetimeEdit.test_change_datetime_in_ui">
+<tt class="descname">test_change_datetime_in_ui</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/datetime_edit.html#TestDatetimeEdit.test_change_datetime_in_ui"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.datetime_edit.TestDatetimeEdit.test_change_datetime_in_ui" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test changing the current datetime thought the ui</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.components.datetime_edit.TestDatetimeEdit.test_invalid_min_datetime">
+<tt class="descname">test_invalid_min_datetime</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/datetime_edit.html#TestDatetimeEdit.test_invalid_min_datetime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.datetime_edit.TestDatetimeEdit.test_invalid_min_datetime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test changing to an invalid datetime below the min range.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.components.datetime_edit.TestDatetimeEdit.test_invalid_max_datetime">
+<tt class="descname">test_invalid_max_datetime</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/datetime_edit.html#TestDatetimeEdit.test_invalid_max_datetime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.datetime_edit.TestDatetimeEdit.test_invalid_max_datetime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test changing to an invalid datetime above the max range.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.components.datetime_edit.TestDatetimeEdit.test_set_format">
+<tt class="descname">test_set_format</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/datetime_edit.html#TestDatetimeEdit.test_set_format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.datetime_edit.TestDatetimeEdit.test_set_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test setting the output format</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.components.datetime_edit.TestDatetimeEdit.test_change_range_invalid">
+<tt class="descname">test_change_range_invalid</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/datetime_edit.html#TestDatetimeEdit.test_change_range_invalid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.datetime_edit.TestDatetimeEdit.test_change_range_invalid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test setting minimum &gt; maximum.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.components.datetime_edit.TestDatetimeEdit.test_initial_too_early">
+<tt class="descname">test_initial_too_early</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/datetime_edit.html#TestDatetimeEdit.test_initial_too_early"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.datetime_edit.TestDatetimeEdit.test_initial_too_early" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check initialization with an invalid early datetime is corrected.</p>
+<div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">avoid using the enaml source</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.components.datetime_edit.TestDatetimeEdit.test_initial_too_late">
+<tt class="descname">test_initial_too_late</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/components/datetime_edit.html#TestDatetimeEdit.test_initial_too_late"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.components.datetime_edit.TestDatetimeEdit.test_initial_too_late" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check initialization with an invalid late datetime is corrected.</p>
+<div class="admonition-todo admonition" id="index-1">
+<p class="first admonition-title">Todo</p>
+<p class="last">avoid using the enaml source</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.tests.components.dialog.TestDialog.html" title="TestDialog"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="enaml.tests.components.date_edit.TestDateEdit.html" title="TestDateEdit"
+             >previous</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Developer&#8217;s Guide</a> &raquo;</li>
+          <li><a href="../../enaml.tests.html" >Enaml Testing</a> &raquo;</li>
+          <li><a href="../components.html" >Component Testing</a> &raquo;</li>
+  
+    <li><a href="#">TestDatetimeEdit</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Jun 12, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

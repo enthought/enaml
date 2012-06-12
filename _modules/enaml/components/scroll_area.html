@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.components.scroll_area &mdash; enaml 0.2beta-1 documentation</title>
+    <title>enaml.components.scroll_area &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.components.scroll_area</a></li>
@@ -104,37 +104,37 @@
 <span class="n">ScrollbarPolicy</span> <span class="o">=</span> <span class="n">Enum</span><span class="p">(</span><span class="s">&#39;as_needed&#39;</span><span class="p">,</span> <span class="s">&#39;always_on&#39;</span><span class="p">,</span> <span class="s">&#39;always_off&#39;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="AbstractTkScrollArea"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.scroll_area.AbstractTkScrollArea">[docs]</a><span class="k">class</span> <span class="nc">AbstractTkScrollArea</span><span class="p">(</span><span class="n">AbstractTkConstraintsWidget</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">AbstractTkScrollArea</span><span class="p">(</span><span class="n">AbstractTkConstraintsWidget</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; The abstract toolkit ScrollArea interface. A toolkit scroll area </span>
 <span class="sd">    is responsible for handling changes on a shell ScrollArea and proxying </span>
 <span class="sd">    those changes to and from its internal toolkit widget.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkScrollArea.shell_horizontal_scrollbar_policy_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.scroll_area.AbstractTkScrollArea.shell_horizontal_scrollbar_policy_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_horizontal_scrollbar_policy_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">policy</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_horizontal_scrollbar_policy_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">policy</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkScrollArea.shell_vertical_scrollbar_policy_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.scroll_area.AbstractTkScrollArea.shell_vertical_scrollbar_policy_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_vertical_scrollbar_policy_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">policy</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_vertical_scrollbar_policy_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">policy</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkScrollArea.shell_scrolled_component_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.scroll_area.AbstractTkScrollArea.shell_scrolled_component_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_scrolled_component_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">component</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_scrolled_component_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">component</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkScrollArea.horizontal_scrollbar_thickness"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.scroll_area.AbstractTkScrollArea.horizontal_scrollbar_thickness">[docs]</a>    <span class="k">def</span> <span class="nf">horizontal_scrollbar_thickness</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">horizontal_scrollbar_thickness</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkScrollArea.vertical_scrollbar_thickness"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.scroll_area.AbstractTkScrollArea.vertical_scrollbar_thickness">[docs]</a>    <span class="k">def</span> <span class="nf">vertical_scrollbar_thickness</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">vertical_scrollbar_thickness</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkScrollArea.scroll_to_position"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.scroll_area.AbstractTkScrollArea.scroll_to_position">[docs]</a>    <span class="k">def</span> <span class="nf">scroll_to_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">margin</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">scroll_to_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">margin</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div></div>
-<div class="viewcode-block" id="ScrollArea"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.scroll_area.ScrollArea">[docs]</a><span class="k">class</span> <span class="nc">ScrollArea</span><span class="p">(</span><span class="n">LayoutTaskHandler</span><span class="p">,</span> <span class="n">ConstraintsWidget</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ScrollArea"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.scroll_area.ScrollArea.html#enaml.components.scroll_area.ScrollArea">[docs]</a><span class="k">class</span> <span class="nc">ScrollArea</span><span class="p">(</span><span class="n">LayoutTaskHandler</span><span class="p">,</span> <span class="n">ConstraintsWidget</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A LayoutComponent subclass that displays just a single child in</span>
 <span class="sd">    a scrollable area.</span>
 
@@ -171,7 +171,7 @@
     <span class="c">#: Overridden parent class trait</span>
     <span class="n">abstract_obj</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="n">AbstractTkScrollArea</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ScrollArea.scroll_to_position"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.scroll_area.ScrollArea.scroll_to_position">[docs]</a>    <span class="k">def</span> <span class="nf">scroll_to_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">margin</span><span class="p">):</span>
+<div class="viewcode-block" id="ScrollArea.scroll_to_position"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.scroll_area.ScrollArea.html#enaml.components.scroll_area.ScrollArea.scroll_to_position">[docs]</a>    <span class="k">def</span> <span class="nf">scroll_to_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">margin</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Scrolls the area such that position is visible with a</span>
 <span class="sd">        minimum of margin_size points surrounding position.</span>
 
@@ -233,7 +233,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Overrides</span>
     <span class="c">#--------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="ScrollArea.size_hint"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.scroll_area.ScrollArea.size_hint">[docs]</a>    <span class="k">def</span> <span class="nf">size_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ScrollArea.size_hint"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.scroll_area.ScrollArea.html#enaml.components.scroll_area.ScrollArea.size_hint">[docs]</a>    <span class="k">def</span> <span class="nf">size_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; A reimplemented parent class method which uses the given </span>
 <span class="sd">        preferred size when computing the size hint, but falls back</span>
 <span class="sd">        to the scrolled component&#39;s size hint if a preferred size is </span>
@@ -263,7 +263,7 @@
         
         <span class="k">return</span> <span class="n">Size</span><span class="p">(</span><span class="n">r_width</span><span class="p">,</span> <span class="n">r_height</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="ScrollArea.do_relayout"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.scroll_area.ScrollArea.do_relayout">[docs]</a>    <span class="k">def</span> <span class="nf">do_relayout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ScrollArea.do_relayout"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.scroll_area.ScrollArea.html#enaml.components.scroll_area.ScrollArea.do_relayout">[docs]</a>    <span class="k">def</span> <span class="nf">do_relayout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; A reimplemented LayoutTaskHandler handler method which will</span>
 <span class="sd">        perform necessary update activity when a relayout it requested.</span>
 
@@ -275,7 +275,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">update_min_scrolled_size</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">size_hint_updated</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="ScrollArea.update_min_scrolled_size"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.scroll_area.ScrollArea.update_min_scrolled_size">[docs]</a>    <span class="k">def</span> <span class="nf">update_min_scrolled_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ScrollArea.update_min_scrolled_size"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.scroll_area.ScrollArea.html#enaml.components.scroll_area.ScrollArea.update_min_scrolled_size">[docs]</a>    <span class="k">def</span> <span class="nf">update_min_scrolled_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Updates the minimum size of the scrolled component with its</span>
 <span class="sd">        computed minimum size, or its size hint.</span>
 
@@ -306,7 +306,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.components.scroll_area</a></li>
@@ -316,7 +316,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

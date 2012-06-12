@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.backends.wx.wx_splitter &mdash; enaml 0.2beta-1 documentation</title>
+    <title>enaml.backends.wx.wx_splitter &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../../index.html" />
     <link rel="up" title="Module code" href="../../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.backends.wx.wx_splitter</a></li>
@@ -96,7 +96,7 @@
 <span class="p">}</span>
 
 
-<div class="viewcode-block" id="CustomSplitter"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_splitter.CustomSplitter">[docs]</a><span class="k">class</span> <span class="nc">CustomSplitter</span><span class="p">(</span><span class="n">MultiSplitterWindow</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">CustomSplitter</span><span class="p">(</span><span class="n">MultiSplitterWindow</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A wx.lib.splitter.MultiSplitterWindow subclass that changes</span>
 <span class="sd">    the behavior of resizing neighbors to be consisten with Qt.</span>
 
@@ -120,21 +120,21 @@
         <span class="n">event</span><span class="o">.</span><span class="n">m_shiftDown</span> <span class="o">=</span> <span class="bp">True</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">CustomSplitter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">_OnMouse</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
 
-</div>
-<div class="viewcode-block" id="WXSplitter"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_splitter.WXSplitter">[docs]</a><span class="k">class</span> <span class="nc">WXSplitter</span><span class="p">(</span><span class="n">WXConstraintsWidget</span><span class="p">,</span> <span class="n">AbstractTkSplitter</span><span class="p">):</span>
+
+<div class="viewcode-block" id="WXSplitter"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.splitter.Splitter.html#enaml.backends.wx.wx_splitter.WXSplitter">[docs]</a><span class="k">class</span> <span class="nc">WXSplitter</span><span class="p">(</span><span class="n">WXConstraintsWidget</span><span class="p">,</span> <span class="n">AbstractTkSplitter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A Wx implementation of Splitter.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Setup methods</span>
     <span class="c">#--------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="WXSplitter.create"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_splitter.WXSplitter.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSplitter.create"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.splitter.Splitter.html#enaml.backends.wx.wx_splitter.WXSplitter.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Creates the underlying QSplitter control.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">CustomSplitter</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXSplitter.initialize"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_splitter.WXSplitter.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSplitter.initialize"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.splitter.Splitter.html#enaml.backends.wx.wx_splitter.WXSplitter.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Intializes the widget with the attributes of this instance.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -147,20 +147,20 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Implementation</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="WXSplitter.shell_orientation_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_splitter.WXSplitter.shell_orientation_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_orientation_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orientation</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSplitter.shell_orientation_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.splitter.Splitter.html#enaml.backends.wx.wx_splitter.WXSplitter.shell_orientation_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_orientation_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orientation</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Update the orientation of the widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_orientation</span><span class="p">(</span><span class="n">orientation</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXSplitter.shell_live_drag_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_splitter.WXSplitter.shell_live_drag_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_live_drag_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">live_drag</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSplitter.shell_live_drag_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.splitter.Splitter.html#enaml.backends.wx.wx_splitter.WXSplitter.shell_live_drag_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_live_drag_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">live_drag</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;live_drag&#39; attribute of the</span>
 <span class="sd">        shell object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_live_drag</span><span class="p">(</span><span class="n">live_drag</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXSplitter.shell_splitter_children_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_splitter.WXSplitter.shell_splitter_children_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_splitter_children_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">children</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSplitter.shell_splitter_children_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.splitter.Splitter.html#enaml.backends.wx.wx_splitter.WXSplitter.shell_splitter_children_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_splitter_children_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">children</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;layout_children&#39; attribute of </span>
 <span class="sd">        the shell object.</span>
 
@@ -170,14 +170,14 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Widget Update Methods </span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="WXSplitter.set_orientation"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_splitter.WXSplitter.set_orientation">[docs]</a>    <span class="k">def</span> <span class="nf">set_orientation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orientation</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSplitter.set_orientation"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.splitter.Splitter.html#enaml.backends.wx.wx_splitter.WXSplitter.set_orientation">[docs]</a>    <span class="k">def</span> <span class="nf">set_orientation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orientation</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Update the orientation of the splitter.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">wx_orientation</span> <span class="o">=</span> <span class="n">_ORIENTATION_MAP</span><span class="p">[</span><span class="n">orientation</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetOrientation</span><span class="p">(</span><span class="n">wx_orientation</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXSplitter.set_live_drag"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_splitter.WXSplitter.set_live_drag">[docs]</a>    <span class="k">def</span> <span class="nf">set_live_drag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">live_drag</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSplitter.set_live_drag"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.splitter.Splitter.html#enaml.backends.wx.wx_splitter.WXSplitter.set_live_drag">[docs]</a>    <span class="k">def</span> <span class="nf">set_live_drag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">live_drag</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Updates the drag state of the splitter.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -186,7 +186,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">WindowStyle</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">wx</span><span class="o">.</span><span class="n">SP_LIVE_UPDATE</span>
             </div>
-<div class="viewcode-block" id="WXSplitter.update_children"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_splitter.WXSplitter.update_children">[docs]</a>    <span class="k">def</span> <span class="nf">update_children</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSplitter.update_children"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.splitter.Splitter.html#enaml.backends.wx.wx_splitter.WXSplitter.update_children">[docs]</a>    <span class="k">def</span> <span class="nf">update_children</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Update the splitter&#39;s children with the current children.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -202,7 +202,7 @@
             <span class="n">child_widget</span><span class="o">.</span><span class="n">Reparent</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
             <span class="n">widget</span><span class="o">.</span><span class="n">AppendWindow</span><span class="p">(</span><span class="n">child_widget</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXSplitter.size_hint"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_splitter.WXSplitter.size_hint">[docs]</a>    <span class="k">def</span> <span class="nf">size_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSplitter.size_hint"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.splitter.Splitter.html#enaml.backends.wx.wx_splitter.WXSplitter.size_hint">[docs]</a>    <span class="k">def</span> <span class="nf">size_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Return a size hint for the widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -211,7 +211,7 @@
         <span class="c"># implementation in QSplitter::sizeHint</span>
         <span class="k">return</span> <span class="p">(</span><span class="mi">296</span><span class="p">,</span> <span class="mi">172</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXSplitter.set_splitter_sizes"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_splitter.WXSplitter.set_splitter_sizes">[docs]</a>    <span class="k">def</span> <span class="nf">set_splitter_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sizes</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSplitter.set_splitter_sizes"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.splitter.Splitter.html#enaml.backends.wx.wx_splitter.WXSplitter.set_splitter_sizes">[docs]</a>    <span class="k">def</span> <span class="nf">set_splitter_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sizes</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Set the initial sizes for the children.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -237,7 +237,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.backends.wx.wx_splitter</a></li>
@@ -247,7 +247,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

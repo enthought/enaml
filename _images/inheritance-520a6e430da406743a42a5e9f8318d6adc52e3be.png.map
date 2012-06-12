@@ -1,0 +1,8 @@
+<map id="inheritance939772bae0" name="inheritance939772bae0">
+<area shape="rect" id="node10" href="enaml.components.constraints_widget.ConstraintsWidget.html#enaml.backends.qt.qt_constraints_widget.QtConstraintsWidget" title="QtConstraintsWidget" alt="" coords="394,28,469,43"/>
+<area shape="rect" id="node16" href="enaml.components.widget_component.WidgetComponent.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent" title="QtWidgetComponent" alt="" coords="282,28,357,43"/>
+<area shape="rect" id="node13" href="enaml.components.toggle_control.ToggleControl.html#enaml.backends.qt.qt_toggle_control.QtToggleControl" title="QtToggleControl" alt="" coords="614,28,677,43"/>
+<area shape="rect" id="node9" href="enaml.components.control.Control.html#enaml.backends.qt.qt_control.QtControl" title="QtControl" alt="" coords="516,28,557,43"/>
+<area shape="rect" id="node19" href="enaml.components.base_widget_component.BaseWidgetComponent.html#enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent" title="QtBaseWidgetComponent" alt="" coords="149,28,239,43"/>
+<area shape="rect" id="node23" href="#enaml.backends.qt.qt_radio_button.QtRadioButton" title="QtRadioButton" alt="" coords="710,15,766,30"/>
+</map>

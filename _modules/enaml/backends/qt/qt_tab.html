@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.backends.qt.qt_tab &mdash; enaml 0.2beta-1 documentation</title>
+    <title>enaml.backends.qt.qt_tab &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../../index.html" />
     <link rel="up" title="Module code" href="../../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.backends.qt.qt_tab</a></li>
@@ -87,14 +87,14 @@
 <span class="kn">from</span> <span class="nn">...components.tab</span> <span class="kn">import</span> <span class="n">AbstractTkTab</span>
 
 
-<div class="viewcode-block" id="QtTab"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_tab.QtTab">[docs]</a><span class="k">class</span> <span class="nc">QtTab</span><span class="p">(</span><span class="n">QtContainer</span><span class="p">,</span> <span class="n">AbstractTkTab</span><span class="p">):</span>
+<div class="viewcode-block" id="QtTab"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.tab.Tab.html#enaml.backends.qt.qt_tab.QtTab">[docs]</a><span class="k">class</span> <span class="nc">QtTab</span><span class="p">(</span><span class="n">QtContainer</span><span class="p">,</span> <span class="n">AbstractTkTab</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A Qt implementation of the Tab component.</span>
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Setup Methods </span>
     <span class="c">#--------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="QtTab.initialize"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_tab.QtTab.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtTab.initialize"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.tab.Tab.html#enaml.backends.qt.qt_tab.QtTab.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Initialize the attributes of the tab.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -106,14 +106,14 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Implementation</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="QtTab.shell_title_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_tab.QtTab.shell_title_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_title_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
+<div class="viewcode-block" id="QtTab.shell_title_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.tab.Tab.html#enaml.backends.qt.qt_tab.QtTab.shell_title_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_title_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;title&#39; attribute on the shell </span>
 <span class="sd">        object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
     </div>
-<div class="viewcode-block" id="QtTab.shell_icon_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_tab.QtTab.shell_icon_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_icon_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">icon</span><span class="p">):</span>
+<div class="viewcode-block" id="QtTab.shell_icon_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.tab.Tab.html#enaml.backends.qt.qt_tab.QtTab.shell_icon_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_icon_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">icon</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;icon&#39; attribute on the shell</span>
 <span class="sd">        object.</span>
 
@@ -123,7 +123,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Widget Update Methods </span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="QtTab.set_title"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_tab.QtTab.set_title">[docs]</a>    <span class="k">def</span> <span class="nf">set_title</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
+<div class="viewcode-block" id="QtTab.set_title"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.tab.Tab.html#enaml.backends.qt.qt_tab.QtTab.set_title">[docs]</a>    <span class="k">def</span> <span class="nf">set_title</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the title of this tab in the parent tab widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -140,7 +140,7 @@
         <span class="k">if</span> <span class="n">idx</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
             <span class="n">tab_widget</span><span class="o">.</span><span class="n">setTabText</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">title</span><span class="p">)</span>
      </div>
-<div class="viewcode-block" id="QtTab.set_icon"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_tab.QtTab.set_icon">[docs]</a>    <span class="k">def</span> <span class="nf">set_icon</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">icon</span><span class="p">):</span>
+<div class="viewcode-block" id="QtTab.set_icon"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.tab.Tab.html#enaml.backends.qt.qt_tab.QtTab.set_icon">[docs]</a>    <span class="k">def</span> <span class="nf">set_icon</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">icon</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the icon of this tab in the parent tab widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -165,7 +165,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.backends.qt.qt_tab</a></li>
@@ -175,7 +175,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

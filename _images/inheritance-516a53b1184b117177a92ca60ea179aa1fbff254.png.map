@@ -1,0 +1,8 @@
+<map id="inheritance2ace534e1d" name="inheritance2ace534e1d">
+<area shape="rect" id="node17" href="enaml.components.constraints_widget.ConstraintsWidget.html#enaml.backends.qt.qt_constraints_widget.QtConstraintsWidget" title="QtConstraintsWidget" alt="" coords="401,29,478,43"/>
+<area shape="rect" id="node18" href="enaml.components.widget_component.WidgetComponent.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent" title="QtWidgetComponent" alt="" coords="287,29,364,43"/>
+<area shape="rect" id="node10" href="enaml.components.toggle_control.ToggleControl.html#enaml.backends.qt.qt_toggle_control.QtToggleControl" title="QtToggleControl" alt="" coords="622,29,685,43"/>
+<area shape="rect" id="node14" href="enaml.components.control.Control.html#enaml.backends.qt.qt_control.QtControl" title="QtControl" alt="" coords="525,29,567,43"/>
+<area shape="rect" id="node21" href="enaml.components.base_widget_component.BaseWidgetComponent.html#enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent" title="QtBaseWidgetComponent" alt="" coords="151,29,243,43"/>
+<area shape="rect" id="node9" href="#enaml.backends.qt.qt_check_box.QtCheckBox" title="QtCheckBox" alt="" coords="716,16,765,30"/>
+</map>

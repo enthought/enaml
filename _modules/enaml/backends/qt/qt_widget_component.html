@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.backends.qt.qt_widget_component &mdash; enaml 0.2beta-1 documentation</title>
+    <title>enaml.backends.qt.qt_widget_component &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../../index.html" />
     <link rel="up" title="Module code" href="../../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.backends.qt.qt_widget_component</a></li>
@@ -91,7 +91,7 @@
 <span class="kn">from</span> <span class="nn">...layout.geometry</span> <span class="kn">import</span> <span class="n">Rect</span><span class="p">,</span> <span class="n">Size</span><span class="p">,</span> <span class="n">Pos</span>
 
 
-<div class="viewcode-block" id="QtWidgetComponent"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent">[docs]</a><span class="k">class</span> <span class="nc">QtWidgetComponent</span><span class="p">(</span><span class="n">QtBaseWidgetComponent</span><span class="p">,</span> <span class="n">AbstractTkWidgetComponent</span><span class="p">):</span>
+<div class="viewcode-block" id="QtWidgetComponent"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent">[docs]</a><span class="k">class</span> <span class="nc">QtWidgetComponent</span><span class="p">(</span><span class="n">QtBaseWidgetComponent</span><span class="p">,</span> <span class="n">AbstractTkWidgetComponent</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A Qt4 implementation of WidgetComponent.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -113,7 +113,7 @@
             <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__widget_item</span> <span class="o">=</span> <span class="n">QWidgetItem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span>
 
-<div class="viewcode-block" id="QtWidgetComponent.create"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+<div class="viewcode-block" id="QtWidgetComponent.create"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Creates the underlying Qt widget. As necessary, subclasses</span>
 <span class="sd">        should reimplement this method to create different types of</span>
 <span class="sd">        widgets.</span>
@@ -121,7 +121,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">QFrame</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtWidgetComponent.initialize"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtWidgetComponent.initialize"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Initializes the attributes of the the Qt widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -135,7 +135,7 @@
         <span class="k">if</span> <span class="n">shell</span><span class="o">.</span><span class="n">font</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">set_font</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">font</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtWidgetComponent.enable_updates"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.enable_updates">[docs]</a>    <span class="k">def</span> <span class="nf">enable_updates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtWidgetComponent.enable_updates"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.enable_updates">[docs]</a>    <span class="k">def</span> <span class="nf">enable_updates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Enable rendering updates for the underlying Wx widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -147,7 +147,7 @@
                 <span class="n">child</span><span class="o">.</span><span class="n">enable_updates</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setUpdatesEnabled</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
     </div>
-<div class="viewcode-block" id="QtWidgetComponent.disable_updates"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.disable_updates">[docs]</a>    <span class="k">def</span> <span class="nf">disable_updates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtWidgetComponent.disable_updates"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.disable_updates">[docs]</a>    <span class="k">def</span> <span class="nf">disable_updates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Disable rendering updates for the underlying Qt widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -160,13 +160,13 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setUpdatesEnabled</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtWidgetComponent.set_visible"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.set_visible">[docs]</a>    <span class="k">def</span> <span class="nf">set_visible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">):</span>
+<div class="viewcode-block" id="QtWidgetComponent.set_visible"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.set_visible">[docs]</a>    <span class="k">def</span> <span class="nf">set_visible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Show or hide the widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="n">visible</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtWidgetComponent.size_hint"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.size_hint">[docs]</a>    <span class="k">def</span> <span class="nf">size_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtWidgetComponent.size_hint"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.size_hint">[docs]</a>    <span class="k">def</span> <span class="nf">size_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns a (width, height) tuple of integers which represent</span>
 <span class="sd">        the suggested size of the widget for its current state, ignoring</span>
 <span class="sd">        any windowing decorations. This value is used by the layout </span>
@@ -179,7 +179,7 @@
             <span class="n">size_hint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">sizeHint</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">Size</span><span class="p">(</span><span class="n">size_hint</span><span class="o">.</span><span class="n">width</span><span class="p">(),</span> <span class="n">size_hint</span><span class="o">.</span><span class="n">height</span><span class="p">())</span>
 </div>
-<div class="viewcode-block" id="QtWidgetComponent.layout_geometry"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.layout_geometry">[docs]</a>    <span class="k">def</span> <span class="nf">layout_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtWidgetComponent.layout_geometry"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.layout_geometry">[docs]</a>    <span class="k">def</span> <span class="nf">layout_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the (x, y, width, height) to of layout geometry</span>
 <span class="sd">        info for the internal toolkit widget. This should ignore any</span>
 <span class="sd">        windowing decorations, and may be different than the value</span>
@@ -193,7 +193,7 @@
             <span class="n">geo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">geometry</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">Rect</span><span class="p">(</span><span class="n">geo</span><span class="o">.</span><span class="n">x</span><span class="p">(),</span> <span class="n">geo</span><span class="o">.</span><span class="n">y</span><span class="p">(),</span> <span class="n">geo</span><span class="o">.</span><span class="n">width</span><span class="p">(),</span> <span class="n">geo</span><span class="o">.</span><span class="n">height</span><span class="p">())</span>
 </div>
-<div class="viewcode-block" id="QtWidgetComponent.set_layout_geometry"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.set_layout_geometry">[docs]</a>    <span class="k">def</span> <span class="nf">set_layout_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rect</span><span class="p">):</span>
+<div class="viewcode-block" id="QtWidgetComponent.set_layout_geometry"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.set_layout_geometry">[docs]</a>    <span class="k">def</span> <span class="nf">set_layout_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rect</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the layout geometry of the internal widget to the </span>
 <span class="sd">        given x, y, width, and height values. The parameters passed</span>
 <span class="sd">        are equivalent semantics to layout_geometry().</span>
@@ -205,7 +205,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">rect</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtWidgetComponent.geometry"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.geometry">[docs]</a>    <span class="k">def</span> <span class="nf">geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtWidgetComponent.geometry"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.geometry">[docs]</a>    <span class="k">def</span> <span class="nf">geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns an (x, y, width, height) tuple of geometry info</span>
 <span class="sd">        for the internal toolkit widget, ignoring any windowing</span>
 <span class="sd">        decorations.</span>
@@ -214,7 +214,7 @@
         <span class="n">geom</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">geometry</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">Rect</span><span class="p">(</span><span class="n">geom</span><span class="o">.</span><span class="n">x</span><span class="p">(),</span> <span class="n">geom</span><span class="o">.</span><span class="n">y</span><span class="p">(),</span> <span class="n">geom</span><span class="o">.</span><span class="n">width</span><span class="p">(),</span> <span class="n">geom</span><span class="o">.</span><span class="n">height</span><span class="p">())</span>
 </div>
-<div class="viewcode-block" id="QtWidgetComponent.set_geometry"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.set_geometry">[docs]</a>    <span class="k">def</span> <span class="nf">set_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rect</span><span class="p">):</span>
+<div class="viewcode-block" id="QtWidgetComponent.set_geometry"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.set_geometry">[docs]</a>    <span class="k">def</span> <span class="nf">set_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rect</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the geometry of the internal widget to the given</span>
 <span class="sd">        x, y, width, and height values, ignoring any windowing </span>
 <span class="sd">        decorations.</span>
@@ -222,7 +222,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="o">*</span><span class="n">rect</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtWidgetComponent.min_size"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.min_size">[docs]</a>    <span class="k">def</span> <span class="nf">min_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtWidgetComponent.min_size"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.min_size">[docs]</a>    <span class="k">def</span> <span class="nf">min_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the hard minimum (width, height) of the widget, </span>
 <span class="sd">        ignoring any windowing decorations. A widget will not be able</span>
 <span class="sd">        to be resized smaller than this value</span>
@@ -231,7 +231,7 @@
         <span class="n">min_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">minimumSize</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">Size</span><span class="p">(</span><span class="n">min_size</span><span class="o">.</span><span class="n">width</span><span class="p">(),</span> <span class="n">min_size</span><span class="o">.</span><span class="n">height</span><span class="p">())</span>
 </div>
-<div class="viewcode-block" id="QtWidgetComponent.set_min_size"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.set_min_size">[docs]</a>    <span class="k">def</span> <span class="nf">set_min_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+<div class="viewcode-block" id="QtWidgetComponent.set_min_size"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.set_min_size">[docs]</a>    <span class="k">def</span> <span class="nf">set_min_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Set the hard minimum width and height of the widget, ignoring</span>
 <span class="sd">        any windowing decorations. A widget will not be able to be resized </span>
 <span class="sd">        smaller than this value.</span>
@@ -239,7 +239,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setMinimumSize</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtWidgetComponent.max_size"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.max_size">[docs]</a>    <span class="k">def</span> <span class="nf">max_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtWidgetComponent.max_size"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.max_size">[docs]</a>    <span class="k">def</span> <span class="nf">max_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the hard maximum (width, height) of the widget, </span>
 <span class="sd">        ignoring any windowing decorations. A widget will not be able</span>
 <span class="sd">        to be resized larger than this value</span>
@@ -248,7 +248,7 @@
         <span class="n">max_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">maximumSize</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">Size</span><span class="p">(</span><span class="n">max_size</span><span class="o">.</span><span class="n">width</span><span class="p">(),</span> <span class="n">max_size</span><span class="o">.</span><span class="n">height</span><span class="p">())</span>
 </div>
-<div class="viewcode-block" id="QtWidgetComponent.set_max_size"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.set_max_size">[docs]</a>    <span class="k">def</span> <span class="nf">set_max_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+<div class="viewcode-block" id="QtWidgetComponent.set_max_size"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.set_max_size">[docs]</a>    <span class="k">def</span> <span class="nf">set_max_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Set the hard maximum width and height of the widget, ignoring</span>
 <span class="sd">        any windowing decorations. A widget will not be able to be resized </span>
 <span class="sd">        larger than this value.</span>
@@ -266,7 +266,7 @@
         <span class="n">max_height</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">max_height</span><span class="p">,</span> <span class="mi">16777215</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setMaximumSize</span><span class="p">(</span><span class="n">max_width</span><span class="p">,</span> <span class="n">max_height</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtWidgetComponent.size"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.size">[docs]</a>    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtWidgetComponent.size"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.size">[docs]</a>    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the size of the internal toolkit widget, ignoring any</span>
 <span class="sd">        windowing decorations, as a (width, height) tuple of integers.</span>
 
@@ -274,14 +274,14 @@
         <span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">Size</span><span class="p">(</span><span class="n">size</span><span class="o">.</span><span class="n">width</span><span class="p">(),</span> <span class="n">size</span><span class="o">.</span><span class="n">height</span><span class="p">())</span>
                 </div>
-<div class="viewcode-block" id="QtWidgetComponent.resize"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.resize">[docs]</a>    <span class="k">def</span> <span class="nf">resize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+<div class="viewcode-block" id="QtWidgetComponent.resize"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.resize">[docs]</a>    <span class="k">def</span> <span class="nf">resize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Resizes the internal toolkit widget according the given</span>
 <span class="sd">        width and height integers, ignoring any windowing decorations.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtWidgetComponent.pos"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.pos">[docs]</a>    <span class="k">def</span> <span class="nf">pos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtWidgetComponent.pos"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.pos">[docs]</a>    <span class="k">def</span> <span class="nf">pos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the position of the internal toolkit widget as an</span>
 <span class="sd">        (x, y) tuple of integers, including any windowing decorations. </span>
 <span class="sd">        The coordinates should be relative to the origin of the widget&#39;s </span>
@@ -291,7 +291,7 @@
         <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">Pos</span><span class="p">(</span><span class="n">pos</span><span class="o">.</span><span class="n">x</span><span class="p">(),</span> <span class="n">pos</span><span class="o">.</span><span class="n">y</span><span class="p">())</span>
             </div>
-<div class="viewcode-block" id="QtWidgetComponent.move"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.move">[docs]</a>    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">):</span>
+<div class="viewcode-block" id="QtWidgetComponent.move"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.move">[docs]</a>    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Moves the internal toolkit widget according to the given</span>
 <span class="sd">        x and y integers which are relative to the origin of the</span>
 <span class="sd">        widget&#39;s parent and includes any windowing decorations.</span>
@@ -299,14 +299,14 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="o">*</span><span class="n">pos</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtWidgetComponent.shell_enabled_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.shell_enabled_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_enabled_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enabled</span><span class="p">):</span>
+<div class="viewcode-block" id="QtWidgetComponent.shell_enabled_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.shell_enabled_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_enabled_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enabled</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;enabled&#39; attribute on the shell</span>
 <span class="sd">        object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_enabled</span><span class="p">(</span><span class="n">enabled</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtWidgetComponent.shell_bgcolor_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.shell_bgcolor_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_bgcolor_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
+<div class="viewcode-block" id="QtWidgetComponent.shell_bgcolor_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.shell_bgcolor_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_bgcolor_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;bgcolor&#39; attribute on the shell</span>
 <span class="sd">        object. Sets the background color of the internal widget to the </span>
 <span class="sd">        given color.</span>
@@ -314,7 +314,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_bgcolor</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
     </div>
-<div class="viewcode-block" id="QtWidgetComponent.shell_fgcolor_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.shell_fgcolor_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_fgcolor_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
+<div class="viewcode-block" id="QtWidgetComponent.shell_fgcolor_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.shell_fgcolor_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_fgcolor_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;fgcolor&#39; attribute on the shell</span>
 <span class="sd">        object. Sets the foreground color of the internal widget to the </span>
 <span class="sd">        given color.</span>
@@ -322,20 +322,20 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_fgcolor</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtWidgetComponent.shell_font_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.shell_font_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_font_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">font</span><span class="p">):</span>
+<div class="viewcode-block" id="QtWidgetComponent.shell_font_changed"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.shell_font_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_font_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">font</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;font&#39; attribute on the shell </span>
 <span class="sd">        object. Sets the font of the internal widget to the given font.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_font</span><span class="p">(</span><span class="n">font</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtWidgetComponent.set_enabled"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.set_enabled">[docs]</a>    <span class="k">def</span> <span class="nf">set_enabled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enabled</span><span class="p">):</span>
+<div class="viewcode-block" id="QtWidgetComponent.set_enabled"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.set_enabled">[docs]</a>    <span class="k">def</span> <span class="nf">set_enabled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enabled</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Enable or disable the widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="n">enabled</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtWidgetComponent.set_bgcolor"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.set_bgcolor">[docs]</a>    <span class="k">def</span> <span class="nf">set_bgcolor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
+<div class="viewcode-block" id="QtWidgetComponent.set_bgcolor"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.set_bgcolor">[docs]</a>    <span class="k">def</span> <span class="nf">set_bgcolor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the background color of the widget to an appropriate</span>
 <span class="sd">        QColor given the provided Enaml Color object.</span>
 
@@ -359,7 +359,7 @@
         <span class="n">palette</span><span class="o">.</span><span class="n">setColor</span><span class="p">(</span><span class="n">role</span><span class="p">,</span> <span class="n">qcolor</span><span class="p">)</span>
         <span class="n">widget</span><span class="o">.</span><span class="n">setPalette</span><span class="p">(</span><span class="n">palette</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtWidgetComponent.set_fgcolor"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.set_fgcolor">[docs]</a>    <span class="k">def</span> <span class="nf">set_fgcolor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
+<div class="viewcode-block" id="QtWidgetComponent.set_fgcolor"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.set_fgcolor">[docs]</a>    <span class="k">def</span> <span class="nf">set_fgcolor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the foreground color of the widget to an appropriate</span>
 <span class="sd">        QColor given the provided Enaml Color object.</span>
 
@@ -375,7 +375,7 @@
         <span class="n">palette</span><span class="o">.</span><span class="n">setColor</span><span class="p">(</span><span class="n">role</span><span class="p">,</span> <span class="n">qcolor</span><span class="p">)</span>
         <span class="n">widget</span><span class="o">.</span><span class="n">setPalette</span><span class="p">(</span><span class="n">palette</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtWidgetComponent.set_font"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.set_font">[docs]</a>    <span class="k">def</span> <span class="nf">set_font</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">font</span><span class="p">):</span>
+<div class="viewcode-block" id="QtWidgetComponent.set_font"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.widget_component.WidgetComponent.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent.set_font">[docs]</a>    <span class="k">def</span> <span class="nf">set_font</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">font</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the font of the widget to an appropriate QFont given </span>
 <span class="sd">        the provided Enaml Font object.</span>
 
@@ -401,7 +401,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.backends.qt.qt_widget_component</a></li>
@@ -411,7 +411,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

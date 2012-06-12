@@ -1,0 +1,391 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>PushButton &mdash; enaml 0.2alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.2alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../index.html" />
+    <link rel="up" title="Widgets" href="../enaml.widgets.html" />
+    <link rel="next" title="RadioButton" href="enaml.components.radio_button.RadioButton.html" />
+    <link rel="prev" title="ComboBox" href="enaml.components.combo_box.ComboBox.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.components.radio_button.RadioButton.html" title="RadioButton"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="enaml.components.combo_box.ComboBox.html" title="ComboBox"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" accesskey="U">Widgets</a> &raquo;</li>
+  
+    <li><a href="#">PushButton</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">PushButton</a><ul>
+<li><a class="reference internal" href="#backends">Backends</a><ul>
+<li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/api_ref/widgets/enaml.components.push_button.PushButton.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="pushbutton">
+<h1>PushButton<a class="headerlink" href="#pushbutton" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="enaml.components.push_button.PushButton">
+<em class="property">class </em><tt class="descclassname">enaml.components.push_button.</tt><tt class="descname">PushButton</tt><a class="reference internal" href="../../_modules/enaml/components/push_button.html#PushButton"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.components.push_button.PushButton" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.components.control.Control.html#enaml.components.control.Control" title="enaml.components.control.Control"><tt class="xref py py-class docutils literal"><span class="pre">enaml.components.control.Control</span></tt></a></p>
+<p>A push button widget.</p>
+<dl class="attribute">
+<dt id="enaml.components.push_button.PushButton.down">
+<tt class="descname">down</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.push_button.PushButton.down" title="Permalink to this definition">¶</a></dt>
+<dd><p>A read only property which indicates whether or not the button
+is currently pressed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.push_button.PushButton.text">
+<tt class="descname">text</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.push_button.PushButton.text" title="Permalink to this definition">¶</a></dt>
+<dd><p>The text to use as the button&#8217;s label.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.push_button.PushButton.icon">
+<tt class="descname">icon</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.push_button.PushButton.icon" title="Permalink to this definition">¶</a></dt>
+<dd><p>The an icon to display in the button.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.push_button.PushButton.clicked">
+<tt class="descname">clicked</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.push_button.PushButton.clicked" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fired when the button is pressed and released.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.push_button.PushButton.pressed">
+<tt class="descname">pressed</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.push_button.PushButton.pressed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fired when the button is pressed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.push_button.PushButton.released">
+<tt class="descname">released</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.push_button.PushButton.released" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fired when the button is released.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.push_button.PushButton.hug_width">
+<tt class="descname">hug_width</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.push_button.PushButton.hug_width" title="Permalink to this definition">¶</a></dt>
+<dd><p>How strongly a component hugs it&#8217;s contents&#8217; width. PushButtons
+hug their contents&#8217; width weakly.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.push_button.PushButton.abstract_obj">
+<tt class="descname">abstract_obj</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.components.push_button.PushButton.abstract_obj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden parent class trait</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.components.push_button.PushButton.__implements__">
+<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.components.push_button.PushButton.__implements__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="backends">
+<h2>Backends<a class="headerlink" href="#backends" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="qt">
+<h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-97bdf585679d0606fbf30be55548f013bde60724.png" alt="Inheritance diagram of enaml.backends.qt.qt_push_button.QtPushButton" usemap="#inheritancec18014fc86" class="inheritance"/>
+<map id="inheritancec18014fc86" name="inheritancec18014fc86">
+<area shape="rect" id="node1" href="#enaml.backends.qt.qt_push_button.QtPushButton" title="QtPushButton" alt="" coords="702,18,765,35"/>
+<area shape="rect" id="node2" href="enaml.components.control.Control.html#enaml.backends.qt.qt_control.QtControl" title="QtControl" alt="" coords="604,33,652,50"/>
+<area shape="rect" id="node11" href="enaml.components.constraints_widget.ConstraintsWidget.html#enaml.backends.qt.qt_constraints_widget.QtConstraintsWidget" title="QtConstraintsWidget" alt="" coords="465,33,553,50"/>
+<area shape="rect" id="node15" href="enaml.components.widget_component.WidgetComponent.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent" title="QtWidgetComponent" alt="" coords="332,33,422,50"/>
+<area shape="rect" id="node18" href="enaml.components.base_widget_component.BaseWidgetComponent.html#enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent" title="QtBaseWidgetComponent" alt="" coords="176,33,282,50"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.backends.qt.qt_push_button.QtPushButton">
+<em class="property">class </em><tt class="descclassname">enaml.backends.qt.qt_push_button.</tt><tt class="descname">QtPushButton</tt><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_push_button.html#QtPushButton"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_push_button.QtPushButton" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.components.control.Control.html#enaml.backends.qt.qt_control.QtControl" title="enaml.backends.qt.qt_control.QtControl"><tt class="xref py py-class docutils literal"><span class="pre">enaml.backends.qt.qt_control.QtControl</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.components.push_button.AbstractTkPushButton</span></tt></p>
+<p>A Qt implementation of PushButton.</p>
+<dl class="method">
+<dt id="enaml.backends.qt.qt_push_button.QtPushButton.create">
+<tt class="descname">create</tt><big>(</big><em>parent</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_push_button.html#QtPushButton.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_push_button.QtPushButton.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the underlying QPushButton control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_push_button.QtPushButton.initialize">
+<tt class="descname">initialize</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_push_button.html#QtPushButton.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_push_button.QtPushButton.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Intializes the widget with the attributes of this instance.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_push_button.QtPushButton.bind">
+<tt class="descname">bind</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_push_button.html#QtPushButton.bind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_push_button.QtPushButton.bind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connects the event handlers for the push button.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_push_button.QtPushButton.shell_text_changed">
+<tt class="descname">shell_text_changed</tt><big>(</big><em>text</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_push_button.html#QtPushButton.shell_text_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_push_button.QtPushButton.shell_text_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;text&#8217; attribute.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_push_button.QtPushButton.shell_icon_changed">
+<tt class="descname">shell_icon_changed</tt><big>(</big><em>icon</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_push_button.html#QtPushButton.shell_icon_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_push_button.QtPushButton.shell_icon_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;icon&#8217; attribute.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_push_button.QtPushButton.shell_icon_size_changed">
+<tt class="descname">shell_icon_size_changed</tt><big>(</big><em>icon_size</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_push_button.html#QtPushButton.shell_icon_size_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_push_button.QtPushButton.shell_icon_size_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;icon_size&#8217; attribute.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_push_button.QtPushButton.on_clicked">
+<tt class="descname">on_clicked</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_push_button.html#QtPushButton.on_clicked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_push_button.QtPushButton.on_clicked" title="Permalink to this definition">¶</a></dt>
+<dd><p>The event handler for the button&#8217;s clicked event.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_push_button.QtPushButton.on_pressed">
+<tt class="descname">on_pressed</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_push_button.html#QtPushButton.on_pressed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_push_button.QtPushButton.on_pressed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The event handlers for the button&#8217;s pressed event.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_push_button.QtPushButton.on_released">
+<tt class="descname">on_released</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_push_button.html#QtPushButton.on_released"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_push_button.QtPushButton.on_released" title="Permalink to this definition">¶</a></dt>
+<dd><p>The event handler for the button&#8217;s released event.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_push_button.QtPushButton.set_text">
+<tt class="descname">set_text</tt><big>(</big><em>text</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_push_button.html#QtPushButton.set_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_push_button.QtPushButton.set_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the text on the button control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_push_button.QtPushButton.set_icon">
+<tt class="descname">set_icon</tt><big>(</big><em>icon</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_push_button.html#QtPushButton.set_icon"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_push_button.QtPushButton.set_icon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the icon on the button control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.qt.qt_push_button.QtPushButton.set_icon_size">
+<tt class="descname">set_icon_size</tt><big>(</big><em>icon_size</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/qt/qt_push_button.html#QtPushButton.set_icon_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.qt.qt_push_button.QtPushButton.set_icon_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the icon size on the button control.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="wx">
+<h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-e2fa4bc27a8db37bec23c2e8616369a5f015411e.png" alt="Inheritance diagram of enaml.backends.wx.wx_push_button.WXPushButton" usemap="#inheritanceab08556c36" class="inheritance"/>
+<map id="inheritanceab08556c36" name="inheritanceab08556c36">
+<area shape="rect" id="node1" href="enaml.components.constraints_widget.ConstraintsWidget.html#enaml.backends.wx.wx_constraints_widget.WXConstraintsWidget" title="WXConstraintsWidget" alt="" coords="461,3,552,20"/>
+<area shape="rect" id="node14" href="enaml.components.control.Control.html#enaml.backends.wx.wx_control.WXControl" title="WXControl" alt="" coords="601,3,651,20"/>
+<area shape="rect" id="node2" href="enaml.components.widget_component.WidgetComponent.html#enaml.backends.wx.wx_widget_component.WXWidgetComponent" title="WXWidgetComponent" alt="" coords="329,3,420,20"/>
+<area shape="rect" id="node8" href="enaml.components.base_widget_component.BaseWidgetComponent.html#enaml.backends.wx.wx_base_widget_component.WXBaseWidgetComponent" title="WXBaseWidgetComponent" alt="" coords="173,3,281,20"/>
+<area shape="rect" id="node21" href="#enaml.backends.wx.wx_push_button.WXPushButton" title="WXPushButton" alt="" coords="700,18,765,35"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.backends.wx.wx_push_button.WXPushButton">
+<em class="property">class </em><tt class="descclassname">enaml.backends.wx.wx_push_button.</tt><tt class="descname">WXPushButton</tt><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_push_button.html#WXPushButton"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_push_button.WXPushButton" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.components.control.Control.html#enaml.backends.wx.wx_control.WXControl" title="enaml.backends.wx.wx_control.WXControl"><tt class="xref py py-class docutils literal"><span class="pre">enaml.backends.wx.wx_control.WXControl</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.components.push_button.AbstractTkPushButton</span></tt></p>
+<p>A wxPython implementation of PushButton.</p>
+<dl class="method">
+<dt id="enaml.backends.wx.wx_push_button.WXPushButton.create">
+<tt class="descname">create</tt><big>(</big><em>parent</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_push_button.html#WXPushButton.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_push_button.WXPushButton.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the underlying wx.Button control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_push_button.WXPushButton.initialize">
+<tt class="descname">initialize</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_push_button.html#WXPushButton.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_push_button.WXPushButton.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Intializes the widget with the attributes of this instance.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_push_button.WXPushButton.bind">
+<tt class="descname">bind</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_push_button.html#WXPushButton.bind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_push_button.WXPushButton.bind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Binds the event handlers for the push button.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_push_button.WXPushButton.shell_text_changed">
+<tt class="descname">shell_text_changed</tt><big>(</big><em>text</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_push_button.html#WXPushButton.shell_text_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_push_button.WXPushButton.shell_text_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;text&#8217; attribute.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_push_button.WXPushButton.shell_icon_changed">
+<tt class="descname">shell_icon_changed</tt><big>(</big><em>icon</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_push_button.html#WXPushButton.shell_icon_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_push_button.WXPushButton.shell_icon_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;icon&#8217; attribute.</p>
+<p>This is currently not implemented because the standard wx.Button
+does not support images.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_push_button.WXPushButton.shell_icon_size_changed">
+<tt class="descname">shell_icon_size_changed</tt><big>(</big><em>icon_size</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_push_button.html#WXPushButton.shell_icon_size_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_push_button.WXPushButton.shell_icon_size_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;icon_size&#8217; attribute.</p>
+<p>This is currently not implemented because the standard wx.Button
+does not support images.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_push_button.WXPushButton.on_clicked">
+<tt class="descname">on_clicked</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_push_button.html#WXPushButton.on_clicked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_push_button.WXPushButton.on_clicked" title="Permalink to this definition">¶</a></dt>
+<dd><p>The event handler for the button&#8217;s clicked event.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_push_button.WXPushButton.on_pressed">
+<tt class="descname">on_pressed</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_push_button.html#WXPushButton.on_pressed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_push_button.WXPushButton.on_pressed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The event handlers for the button&#8217;s pressed event.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_push_button.WXPushButton.on_released">
+<tt class="descname">on_released</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_push_button.html#WXPushButton.on_released"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_push_button.WXPushButton.on_released" title="Permalink to this definition">¶</a></dt>
+<dd><p>The event handler for the button&#8217;s leave window event.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.backends.wx.wx_push_button.WXPushButton.set_text">
+<tt class="descname">set_text</tt><big>(</big><em>text</em><big>)</big><a class="reference internal" href="../../_modules/enaml/backends/wx/wx_push_button.html#WXPushButton.set_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.backends.wx.wx_push_button.WXPushButton.set_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the text on the button control.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.components.radio_button.RadioButton.html" title="RadioButton"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="enaml.components.combo_box.ComboBox.html" title="ComboBox"
+             >previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" >Widgets</a> &raquo;</li>
+  
+    <li><a href="#">PushButton</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Jun 12, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

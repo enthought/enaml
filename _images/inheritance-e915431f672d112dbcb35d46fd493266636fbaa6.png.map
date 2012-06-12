@@ -1,0 +1,8 @@
+<map id="inheritance84b5acea50" name="inheritance84b5acea50">
+<area shape="rect" id="node1" href="enaml.components.constraints_widget.ConstraintsWidget.html#enaml.backends.wx.wx_constraints_widget.WXConstraintsWidget" title="WXConstraintsWidget" alt="" coords="391,3,468,17"/>
+<area shape="rect" id="node17" href="enaml.components.control.Control.html#enaml.backends.wx.wx_control.WXControl" title="WXControl" alt="" coords="514,3,557,17"/>
+<area shape="rect" id="node2" href="enaml.components.widget_component.WidgetComponent.html#enaml.backends.wx.wx_widget_component.WXWidgetComponent" title="WXWidgetComponent" alt="" coords="279,3,356,17"/>
+<area shape="rect" id="node8" href="enaml.components.base_widget_component.BaseWidgetComponent.html#enaml.backends.wx.wx_base_widget_component.WXBaseWidgetComponent" title="WXBaseWidgetComponent" alt="" coords="147,3,238,17"/>
+<area shape="rect" id="node21" href="enaml.components.toggle_control.ToggleControl.html#enaml.backends.wx.wx_toggle_control.WXToggleControl" title="WXToggleControl" alt="" coords="611,3,676,17"/>
+<area shape="rect" id="node20" href="#enaml.backends.wx.wx_radio_button.WXRadioButton" title="WXRadioButton" alt="" coords="708,15,765,30"/>
+</map>

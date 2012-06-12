@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.components.constraints_widget &mdash; enaml 0.2beta-1 documentation</title>
+    <title>enaml.components.constraints_widget &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.components.constraints_widget</a></li>
@@ -96,7 +96,7 @@
 <span class="c">#------------------------------------------------------------------------------</span>
 <span class="c"># Abstract Toolkit Constraints Widget Interface</span>
 <span class="c">#------------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="AbstractTkConstraintsWidget"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.constraints_widget.AbstractTkConstraintsWidget">[docs]</a><span class="k">class</span> <span class="nc">AbstractTkConstraintsWidget</span><span class="p">(</span><span class="n">AbstractTkWidgetComponent</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">AbstractTkConstraintsWidget</span><span class="p">(</span><span class="n">AbstractTkWidgetComponent</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; The abstract toolkit ConstraintsWidget interface.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -105,8 +105,8 @@
 
 <span class="c">#------------------------------------------------------------------------------</span>
 <span class="c"># ConstraintsWidget</span>
-<span class="c">#------------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="ConstraintsWidget"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.constraints_widget.ConstraintsWidget">[docs]</a><span class="k">class</span> <span class="nc">ConstraintsWidget</span><span class="p">(</span><span class="n">WidgetComponent</span><span class="p">,</span> <span class="n">Constrainable</span><span class="p">):</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="ConstraintsWidget"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.constraints_widget.ConstraintsWidget.html#enaml.components.constraints_widget.ConstraintsWidget">[docs]</a><span class="k">class</span> <span class="nc">ConstraintsWidget</span><span class="p">(</span><span class="n">WidgetComponent</span><span class="p">,</span> <span class="n">Constrainable</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A WidgetComponent subclass which mixes in the Constrainable</span>
 <span class="sd">    interface and adds some additional hints for being managed by </span>
 <span class="sd">    a Container.</span>
@@ -199,7 +199,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Constraint Handlers</span>
     <span class="c">#--------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="ConstraintsWidget.size_hint_constraints"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.constraints_widget.ConstraintsWidget.size_hint_constraints">[docs]</a>    <span class="k">def</span> <span class="nf">size_hint_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ConstraintsWidget.size_hint_constraints"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.constraints_widget.ConstraintsWidget.html#enaml.components.constraints_widget.ConstraintsWidget.size_hint_constraints">[docs]</a>    <span class="k">def</span> <span class="nf">size_hint_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the list of constraints relating to the size hint </span>
 <span class="sd">        of this layout component. If the size hint in a given dimension</span>
 <span class="sd">        is negative, then no constraints will be generated for that</span>
@@ -238,7 +238,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Constrainable Interface</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="ConstraintsWidget.update_layout_geometry"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.constraints_widget.ConstraintsWidget.update_layout_geometry">[docs]</a>    <span class="k">def</span> <span class="nf">update_layout_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">):</span>
+<div class="viewcode-block" id="ConstraintsWidget.update_layout_geometry"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.constraints_widget.ConstraintsWidget.html#enaml.components.constraints_widget.ConstraintsWidget.update_layout_geometry">[docs]</a>    <span class="k">def</span> <span class="nf">update_layout_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; An implementation of the required abstract method of the </span>
 <span class="sd">        Constrainable mixin. This computes the new layout geometry</span>
 <span class="sd">        rect and updates the underlying widget.</span>
@@ -270,7 +270,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.components.constraints_widget</a></li>
@@ -280,7 +280,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

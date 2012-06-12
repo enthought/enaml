@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.backends.qt.qt_base_widget_component &mdash; enaml 0.2beta-1 documentation</title>
+    <title>enaml.backends.qt.qt_base_widget_component &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../../index.html" />
     <link rel="up" title="Module code" href="../../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.backends.qt.qt_base_widget_component</a></li>
@@ -89,7 +89,7 @@
 <span class="kn">from</span> <span class="nn">...components.base_widget_component</span> <span class="kn">import</span> <span class="n">AbstractTkBaseWidgetComponent</span>
 
 
-<div class="viewcode-block" id="QtBaseWidgetComponent"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent">[docs]</a><span class="k">class</span> <span class="nc">QtBaseWidgetComponent</span><span class="p">(</span><span class="n">AbstractTkBaseWidgetComponent</span><span class="p">):</span>
+<div class="viewcode-block" id="QtBaseWidgetComponent"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.base_widget_component.BaseWidgetComponent.html#enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent">[docs]</a><span class="k">class</span> <span class="nc">QtBaseWidgetComponent</span><span class="p">(</span><span class="n">AbstractTkBaseWidgetComponent</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A Qt4 implementation of BaseWidgetComponent.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -100,7 +100,7 @@
     <span class="n">widget</span> <span class="o">=</span> <span class="bp">None</span>
 
     <span class="nd">@property</span>
-<div class="viewcode-block" id="QtBaseWidgetComponent.toolkit_widget"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent.toolkit_widget">[docs]</a>    <span class="k">def</span> <span class="nf">toolkit_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtBaseWidgetComponent.toolkit_widget"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.base_widget_component.BaseWidgetComponent.html#enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent.toolkit_widget">[docs]</a>    <span class="k">def</span> <span class="nf">toolkit_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; A property that returns the toolkit specific widget for this</span>
 <span class="sd">        component.</span>
 
@@ -123,7 +123,7 @@
     <span class="c">#: to the shell object</span>
     <span class="n">shell_obj</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_shell_obj</span><span class="p">,</span> <span class="n">_set_shell_obj</span><span class="p">)</span>
 
-<div class="viewcode-block" id="QtBaseWidgetComponent.create"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+<div class="viewcode-block" id="QtBaseWidgetComponent.create"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.base_widget_component.BaseWidgetComponent.html#enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Creates the underlying Qt object. As necessary, subclasses</span>
 <span class="sd">        should reimplement this method to create different types of</span>
 <span class="sd">        widgets.</span>
@@ -131,13 +131,13 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QObject</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtBaseWidgetComponent.initialize"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtBaseWidgetComponent.initialize"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.base_widget_component.BaseWidgetComponent.html#enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Initializes the attributes of the the Qt widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">QtBaseWidgetComponent</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
     </div>
-<div class="viewcode-block" id="QtBaseWidgetComponent.bind"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtBaseWidgetComponent.bind"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.base_widget_component.BaseWidgetComponent.html#enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Bind any event/signal handlers for the Qt Widget. By default,</span>
 <span class="sd">        this is a no-op. Subclasses should reimplement this method as</span>
 <span class="sd">        necessary to bind any widget event handlers or signals.</span>
@@ -145,7 +145,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">QtBaseWidgetComponent</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">bind</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="QtBaseWidgetComponent.destroy"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent.destroy">[docs]</a>    <span class="k">def</span> <span class="nf">destroy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtBaseWidgetComponent.destroy"><a class="viewcode-back" href="../../../../api_ref/widgets/enaml.components.base_widget_component.BaseWidgetComponent.html#enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent.destroy">[docs]</a>    <span class="k">def</span> <span class="nf">destroy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Destroys the underlying Qt widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -178,7 +178,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.backends.qt.qt_base_widget_component</a></li>
@@ -188,7 +188,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

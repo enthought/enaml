@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.components.form &mdash; enaml 0.2beta-1 documentation</title>
+    <title>enaml.components.form &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.components.form</a></li>
@@ -91,14 +91,14 @@
 <span class="kn">from</span> <span class="nn">..layout.layout_helpers</span> <span class="kn">import</span> <span class="n">align</span><span class="p">,</span> <span class="n">hbox</span><span class="p">,</span> <span class="n">vbox</span>
 
 
-<div class="viewcode-block" id="AbstractTkForm"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.form.AbstractTkForm">[docs]</a><span class="k">class</span> <span class="nc">AbstractTkForm</span><span class="p">(</span><span class="n">AbstractTkContainer</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">AbstractTkForm</span><span class="p">(</span><span class="n">AbstractTkContainer</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; The abstract toolkit Form interface.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span>
 
-</div>
-<div class="viewcode-block" id="Form"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.form.Form">[docs]</a><span class="k">class</span> <span class="nc">Form</span><span class="p">(</span><span class="n">Container</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Form"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.form.Form.html#enaml.components.form.Form">[docs]</a><span class="k">class</span> <span class="nc">Form</span><span class="p">(</span><span class="n">Container</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A Container subclass that arranges its layout children as a two </span>
 <span class="sd">    column form.</span>
 
@@ -122,7 +122,7 @@
     <span class="c">#: Overridden parent class trait</span>
     <span class="n">abstract_obj</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="n">AbstractTkForm</span><span class="p">)</span>
     
-<div class="viewcode-block" id="Form.component_constraints"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.form.Form.component_constraints">[docs]</a>    <span class="k">def</span> <span class="nf">component_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Form.component_constraints"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.form.Form.html#enaml.components.form.Form.component_constraints">[docs]</a>    <span class="k">def</span> <span class="nf">component_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Computes the current form constraints for the current</span>
 <span class="sd">        children.</span>
 
@@ -166,7 +166,7 @@
 
         <span class="k">return</span> <span class="n">constraints</span>
 </div>
-<div class="viewcode-block" id="Form.default_user_constraints"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.form.Form.default_user_constraints">[docs]</a>    <span class="k">def</span> <span class="nf">default_user_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Form.default_user_constraints"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.form.Form.html#enaml.components.form.Form.default_user_constraints">[docs]</a>    <span class="k">def</span> <span class="nf">default_user_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Overridden parent class method which returns an empty list.</span>
 <span class="sd">        All constraints are supplied by &#39;component_constraints()&#39;.</span>
 
@@ -191,7 +191,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.components.form</a></li>
@@ -201,7 +201,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

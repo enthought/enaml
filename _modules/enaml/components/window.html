@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.components.window &mdash; enaml 0.2beta-1 documentation</title>
+    <title>enaml.components.window &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.components.window</a></li>
@@ -103,57 +103,57 @@
 <span class="n">STRONGER_THAN_RESIZE</span> <span class="o">=</span> <span class="nb">set</span><span class="p">((</span><span class="s">&#39;medium&#39;</span><span class="p">,</span> <span class="s">&#39;strong&#39;</span><span class="p">,</span> <span class="s">&#39;required&#39;</span><span class="p">))</span>
 
 
-<div class="viewcode-block" id="AbstractTkWindow"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.window.AbstractTkWindow">[docs]</a><span class="k">class</span> <span class="nc">AbstractTkWindow</span><span class="p">(</span><span class="n">AbstractTkWidgetComponent</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">AbstractTkWindow</span><span class="p">(</span><span class="n">AbstractTkWidgetComponent</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; The abstract ToplevelWindow interface.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkWindow.maximize"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.window.AbstractTkWindow.maximize">[docs]</a>    <span class="k">def</span> <span class="nf">maximize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">maximize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Maximizes the window to fill the screen.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-    </div>
+    
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkWindow.minimize"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.window.AbstractTkWindow.minimize">[docs]</a>    <span class="k">def</span> <span class="nf">minimize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">minimize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Minimizes the window to the task bar.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-    </div>
+    
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkWindow.restore"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.window.AbstractTkWindow.restore">[docs]</a>    <span class="k">def</span> <span class="nf">restore</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">restore</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Restores the window after it has been minimized or maximized.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkWindow.shell_title_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.window.AbstractTkWindow.shell_title_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_title_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_title_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Update the title of the window with the new value from the</span>
 <span class="sd">        shell object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkWindow.shell_icon_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.window.AbstractTkWindow.shell_icon_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_icon_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">icon</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_icon_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">icon</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Update the icon of the window with the new value from the</span>
 <span class="sd">        shell object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkWindow.shell_central_widget_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.window.AbstractTkWindow.shell_central_widget_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_central_widget_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">central_widget</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_central_widget_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">central_widget</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Update the central widget in the window with the new value</span>
 <span class="sd">        from the shell object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
-</div></div>
-<div class="viewcode-block" id="Window"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.window.Window">[docs]</a><span class="k">class</span> <span class="nc">Window</span><span class="p">(</span><span class="n">LayoutTaskHandler</span><span class="p">,</span> <span class="n">WidgetComponent</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Window"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.window.Window.html#enaml.components.window.Window">[docs]</a><span class="k">class</span> <span class="nc">Window</span><span class="p">(</span><span class="n">LayoutTaskHandler</span><span class="p">,</span> <span class="n">WidgetComponent</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A top-level Window component.</span>
 
 <span class="sd">    A Window component is represents of a top-level visible component</span>
@@ -242,7 +242,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Overrides</span>
     <span class="c">#--------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="Window.set_visible"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.window.Window.set_visible">[docs]</a>    <span class="k">def</span> <span class="nf">set_visible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">):</span>
+<div class="viewcode-block" id="Window.set_visible"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.window.Window.html#enaml.components.window.Window.set_visible">[docs]</a>    <span class="k">def</span> <span class="nf">set_visible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Set the visibility of the component according to the given</span>
 <span class="sd">        boolean. This is overridden from the parent class to properly</span>
 <span class="sd">        handle visibility for toplevel components.</span>
@@ -291,7 +291,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Layout Handling</span>
     <span class="c">#--------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="Window.do_relayout"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.window.Window.do_relayout">[docs]</a>    <span class="k">def</span> <span class="nf">do_relayout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Window.do_relayout"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.window.Window.html#enaml.components.window.Window.do_relayout">[docs]</a>    <span class="k">def</span> <span class="nf">do_relayout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; A reimplemented LayoutTaskHandler handler method which will</span>
 <span class="sd">        perform necessary update activity when a relayout it requested.</span>
 
@@ -306,7 +306,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Auxiliary Methods</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="Window.show"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.window.Window.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Window.show"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.window.Window.html#enaml.components.window.Window.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Make the window visible on the screen.</span>
 
 <span class="sd">        If the window is not already fully initialized, then the &#39;setup&#39;</span>
@@ -333,31 +333,31 @@
         <span class="n">app</span><span class="o">.</span><span class="n">schedule</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">set_visible</span><span class="p">,</span> <span class="p">(</span><span class="bp">True</span><span class="p">,),</span> <span class="n">priority</span><span class="o">=</span><span class="mi">75</span><span class="p">)</span>
         <span class="n">app</span><span class="o">.</span><span class="n">start_event_loop</span><span class="p">()</span>
         </div>
-<div class="viewcode-block" id="Window.hide"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.window.Window.hide">[docs]</a>    <span class="k">def</span> <span class="nf">hide</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Window.hide"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.window.Window.html#enaml.components.window.Window.hide">[docs]</a>    <span class="k">def</span> <span class="nf">hide</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Hide the window, but do not destroy the underlying widgets.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="Window.maximize"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.window.Window.maximize">[docs]</a>    <span class="k">def</span> <span class="nf">maximize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Window.maximize"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.window.Window.html#enaml.components.window.Window.maximize">[docs]</a>    <span class="k">def</span> <span class="nf">maximize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Maximizes the window to fill the screen.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">maximize</span><span class="p">()</span>
             </div>
-<div class="viewcode-block" id="Window.minimize"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.window.Window.minimize">[docs]</a>    <span class="k">def</span> <span class="nf">minimize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Window.minimize"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.window.Window.html#enaml.components.window.Window.minimize">[docs]</a>    <span class="k">def</span> <span class="nf">minimize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Minimizes the window to the task bar.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">minimize</span><span class="p">()</span>
             </div>
-<div class="viewcode-block" id="Window.restore"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.window.Window.restore">[docs]</a>    <span class="k">def</span> <span class="nf">restore</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Window.restore"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.window.Window.html#enaml.components.window.Window.restore">[docs]</a>    <span class="k">def</span> <span class="nf">restore</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Restores the window after it has been minimized or maximized.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">restore</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="Window.resize_to_initial"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.window.Window.resize_to_initial">[docs]</a>    <span class="k">def</span> <span class="nf">resize_to_initial</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Window.resize_to_initial"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.window.Window.html#enaml.components.window.Window.resize_to_initial">[docs]</a>    <span class="k">def</span> <span class="nf">resize_to_initial</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Resizes the window to the computed initial size, provided </span>
 <span class="sd">        that the window has been initialized.</span>
 
@@ -366,7 +366,7 @@
             <span class="n">init_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_initial_size</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">init_size</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="Window.update_minimum_size"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.window.Window.update_minimum_size">[docs]</a>    <span class="k">def</span> <span class="nf">update_minimum_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Window.update_minimum_size"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.window.Window.html#enaml.components.window.Window.update_minimum_size">[docs]</a>    <span class="k">def</span> <span class="nf">update_minimum_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Updates the minimum size of the window based on its computed</span>
 <span class="sd">        value, provided that the window has been initialized. This may </span>
 <span class="sd">        result in a resize if the computed value is more than the current</span>
@@ -377,7 +377,7 @@
             <span class="n">min_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_minimum_size</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">set_min_size</span><span class="p">(</span><span class="n">min_size</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="Window.resize_to_minimum"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.window.Window.resize_to_minimum">[docs]</a>    <span class="k">def</span> <span class="nf">resize_to_minimum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Window.resize_to_minimum"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.window.Window.html#enaml.components.window.Window.resize_to_minimum">[docs]</a>    <span class="k">def</span> <span class="nf">resize_to_minimum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Resizes the window to the computed minimum size, provided </span>
 <span class="sd">        that the window has been initialized.</span>
 
@@ -390,7 +390,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">set_min_size</span><span class="p">(</span><span class="n">min_size</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">min_size</span><span class="p">)</span>
     </div>
-<div class="viewcode-block" id="Window.update_maximum_size"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.window.Window.update_maximum_size">[docs]</a>    <span class="k">def</span> <span class="nf">update_maximum_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Window.update_maximum_size"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.window.Window.html#enaml.components.window.Window.update_maximum_size">[docs]</a>    <span class="k">def</span> <span class="nf">update_maximum_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Updates the maximum size of the window based on its computed</span>
 <span class="sd">        value, provided that the window has been initialized. This may </span>
 <span class="sd">        result in a resize if the computed value is less than the current</span>
@@ -401,7 +401,7 @@
             <span class="n">max_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_maximum_size</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">set_max_size</span><span class="p">(</span><span class="n">max_size</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="Window.resize_to_maximum"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.window.Window.resize_to_maximum">[docs]</a>    <span class="k">def</span> <span class="nf">resize_to_maximum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Window.resize_to_maximum"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.window.Window.html#enaml.components.window.Window.resize_to_maximum">[docs]</a>    <span class="k">def</span> <span class="nf">resize_to_maximum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Resizes the window to the computed maximum size, provided </span>
 <span class="sd">        that the window has been initialized. </span>
 
@@ -579,7 +579,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.components.window</a></li>
@@ -589,7 +589,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

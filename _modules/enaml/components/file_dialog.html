@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.components.file_dialog &mdash; enaml 0.2beta-1 documentation</title>
+    <title>enaml.components.file_dialog &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.components.file_dialog</a></li>
@@ -92,54 +92,54 @@
 <span class="kn">from</span> <span class="nn">.dialog</span> <span class="kn">import</span> <span class="n">AbstractTkDialog</span><span class="p">,</span> <span class="n">Dialog</span>
 
 
-<div class="viewcode-block" id="AbstractTkFileDialog"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.file_dialog.AbstractTkFileDialog">[docs]</a><span class="k">class</span> <span class="nc">AbstractTkFileDialog</span><span class="p">(</span><span class="n">AbstractTkDialog</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">AbstractTkFileDialog</span><span class="p">(</span><span class="n">AbstractTkDialog</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; The abstract toolkit interface for a FileDialog.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkFileDialog.shell_mode_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.file_dialog.AbstractTkFileDialog.shell_mode_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_mode_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_mode_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Update the dialog for the given mode of behavior.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkFileDialog.shell_multi_select_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.file_dialog.AbstractTkFileDialog.shell_multi_select_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_multi_select_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">multi_select</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_multi_select_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">multi_select</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Update the dialog for the given multi select behavior.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-    </div>
+    
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkFileDialog.shell_directory_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.file_dialog.AbstractTkFileDialog.shell_directory_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_directory_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directory</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_directory_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directory</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Update the dialog with the new working directory.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-    </div>
+    
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkFileDialog.shell_filename_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.file_dialog.AbstractTkFileDialog.shell_filename_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_filename_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_filename_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Update the dialog with the new selected filename.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</div>
+
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkFileDialog.shell_filters_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.file_dialog.AbstractTkFileDialog.shell_filters_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_filters_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filters</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_filters_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filters</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Update the dialog with the new filename filters.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-    </div>
+    
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractTkFileDialog.shell_selected_filter_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.file_dialog.AbstractTkFileDialog.shell_selected_filter_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_selected_filter_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selected_filter</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shell_selected_filter_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selected_filter</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Update the dialog with the new selected filter.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
-</div></div>
-<div class="viewcode-block" id="FileDialog"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.file_dialog.FileDialog">[docs]</a><span class="k">class</span> <span class="nc">FileDialog</span><span class="p">(</span><span class="n">Dialog</span><span class="p">):</span>
+
+<div class="viewcode-block" id="FileDialog"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.file_dialog.FileDialog.html#enaml.components.file_dialog.FileDialog">[docs]</a><span class="k">class</span> <span class="nc">FileDialog</span><span class="p">(</span><span class="n">Dialog</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A dialog widget that allows the user to open/save files.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -195,7 +195,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Parent Class Overrides </span>
     <span class="c">#--------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="FileDialog.add_subcomponent"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.file_dialog.FileDialog.add_subcomponent">[docs]</a>    <span class="k">def</span> <span class="nf">add_subcomponent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">component</span><span class="p">):</span>
+<div class="viewcode-block" id="FileDialog.add_subcomponent"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.file_dialog.FileDialog.html#enaml.components.file_dialog.FileDialog.add_subcomponent">[docs]</a>    <span class="k">def</span> <span class="nf">add_subcomponent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">component</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; An overriden parent class method which prevents subcomponents</span>
 <span class="sd">        from being declared for a FileDialog instance.</span>
 
@@ -221,7 +221,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.components.file_dialog</a></li>
@@ -231,7 +231,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

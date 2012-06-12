@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.components.control &mdash; enaml 0.2beta-1 documentation</title>
+    <title>enaml.components.control &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.2beta-1',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.components.control</a></li>
@@ -91,14 +91,14 @@
 <span class="kn">from</span> <span class="nn">..exceptions</span> <span class="kn">import</span> <span class="n">ShellExceptionContext</span><span class="p">,</span> <span class="n">ShellNotificationContext</span>
 
 
-<div class="viewcode-block" id="AbstractTkControl"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.control.AbstractTkControl">[docs]</a><span class="k">class</span> <span class="nc">AbstractTkControl</span><span class="p">(</span><span class="n">AbstractTkConstraintsWidget</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">AbstractTkControl</span><span class="p">(</span><span class="n">AbstractTkConstraintsWidget</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; The abstract toolkit Control interface.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span>
 
-</div>
-<div class="viewcode-block" id="Control"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.control.Control">[docs]</a><span class="k">class</span> <span class="nc">Control</span><span class="p">(</span><span class="n">ConstraintsWidget</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Control"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.control.Control.html#enaml.components.control.Control">[docs]</a><span class="k">class</span> <span class="nc">Control</span><span class="p">(</span><span class="n">ConstraintsWidget</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; The base class of all leaf widgets in Enaml.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -112,14 +112,14 @@
     <span class="c">#: Overridden parent class trait</span>
     <span class="n">abstract_obj</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="n">AbstractTkControl</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Control.capture_exceptions"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.control.Control.capture_exceptions">[docs]</a>    <span class="k">def</span> <span class="nf">capture_exceptions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Control.capture_exceptions"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.control.Control.html#enaml.components.control.Control.capture_exceptions">[docs]</a>    <span class="k">def</span> <span class="nf">capture_exceptions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Return a ShellExceptionContext that will capture error state </span>
 <span class="sd">        automatically.</span>
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">ShellExceptionContext</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
     </div>
-<div class="viewcode-block" id="Control.capture_notification_exceptions"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.control.Control.capture_notification_exceptions">[docs]</a>    <span class="k">def</span> <span class="nf">capture_notification_exceptions</span><span class="p">(</span>
+<div class="viewcode-block" id="Control.capture_notification_exceptions"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.components.control.Control.html#enaml.components.control.Control.capture_notification_exceptions">[docs]</a>    <span class="k">def</span> <span class="nf">capture_notification_exceptions</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">handler</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">reraise_exceptions</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">main</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">locked</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Return a ShellNotificationContext that will set error state </span>
 <span class="sd">        automatically, including TraitErrors in listeners.</span>
@@ -148,7 +148,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.components.control</a></li>
@@ -158,7 +158,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 24, 2012.
+      Last updated on Jun 12, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
