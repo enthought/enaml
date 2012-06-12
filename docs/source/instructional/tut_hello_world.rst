@@ -92,7 +92,7 @@ the |Enaml| view.
 
 Then, we instantiate the view, passing the message to be displayed::
 
- view = Main("Hello, world, from Python!")
+ view = Main(message="Hello, world, from Python!")
 
 The ``show()`` method on ``view`` displays the window and starts the application
 mainloop::

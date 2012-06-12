@@ -1,4 +1,4 @@
-.. _tutorial_more_widgets:
+.. _tutorial_even_more_widgets:
 
 More on |Enaml| Widgets
 ===============================================================================
@@ -50,8 +50,8 @@ This sort of |Enaml| code should be fairly familiar to you at this point
 Previously all of our ``enamldef`` operations had used ``MainWindow`` as the
 widget that was being extended, but here we are using ``Form``.  Any widget can
 be used as the basis for another in an ``enamldef`` command, so you can create
-your own custom, re-usable ``Label``s, ``Field``s, ``PushButton``s, etc. using
-``enamldef``.
+your own custom, re-usable versions of ``Label``, ``Field``, ``PushButton``,
+etc. using ``enamldef``.
 
 Having defined the two forms, there is a third definition in the .enaml file::
 
@@ -204,17 +204,17 @@ Other Things to Note
 In this example you also see a number of different widget types that we have not
 seen before:
 
-    DateEdit:
-        This is a field type designed for editing Python ``datetime.date``
-        objects.
+DateEdit:
+    This is a field type designed for editing Python ``datetime.date``
+    objects.
 
-    CheckBox:
-        This is a simple checkbox widget that can toggle a value True or False.
+CheckBox:
+    This is a simple checkbox widget that can toggle a value True or False.
 
-    ToggleButton:
-        This is a like the checkbox widget in that it toggles a value True or
-        False, but instead it looks like a push button.  The button highlights
-        when it is True.
+ToggleButton:
+    This is a like the checkbox widget in that it toggles a value True or
+    False, but instead it looks like a push button.  The button highlights
+    when it is True.
 
 Additionally, the Password field shows how to set a field to hide the text
 being entered, as you would normally want for a password entry field.
