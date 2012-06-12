@@ -64,7 +64,8 @@ that the dimension be equal to the preferred value, while the ``resist_clip``
 attributes specify how strongly the widget resists compression by adding a constraint
 that specifies that the dimension be greater than or equal to the preferred value.
 
-XXX Example here
+.. todo:: 
+    Example here
 
 Containers can specify additional constraints that relate their child widgets.
 By default a container simply lays out its children as a vertical list and tries
@@ -82,7 +83,8 @@ by the components, which at least default to the box model's symbols: ``top``,
 widget exposes ``midline`` for aligning the fields of multiple forms along
 the same line.
 
-XXX Example here
+.. todo::
+     Example here
 
 However, this can get tedious, and so there are some helpers that are
 available to simply specifying layout.  These are:
@@ -111,7 +113,8 @@ available to simply specifying layout.  These are:
 By using appropriate combinations of these objects you can specify complex layouts
 quickly and clearly.
 
-XXX Example here
+.. todo::
+    Example here
 
 Binding Operators
 -----------------
