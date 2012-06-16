@@ -144,15 +144,21 @@ def _size_convert(size):
     if size is not None:
         return QSize(*size)
 
+
 # Some of these should be LRU cached    
 def _font_convert(font):
     if font:
         return q_font_from_font(font)
 
 
+def _decoration_convert(icon):
+    if icon:
+        return icon.as_QIcon()
+
+
 _QROLE_CONVERTERS = {
     int(Qt.DisplayRole): _no_convert,
-    int(Qt.DecorationRole): _not_yet_supported,
+    int(Qt.DecorationRole): _decoration_convert,
     int(Qt.EditRole): _no_convert,
     int(Qt.ToolTipRole): _no_convert,
     int(Qt.StatusTipRole): _no_convert,
