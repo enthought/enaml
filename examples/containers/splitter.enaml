@@ -9,7 +9,7 @@ several large space-consuming widgets in a manner that allows the
 user to interactively resize the space allocated to each widget.
 
 """
-from enaml.item_models.standard_models import TableModel
+from enaml.stdlib.table_model import TableModel
 
 import numpy as np
 

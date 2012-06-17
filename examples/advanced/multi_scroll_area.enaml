@@ -9,7 +9,8 @@ using group-style layout constraints. The scrollbars appear as needed
 for the various components.
 
 """
-from enaml.item_models.abstract_item_model import AbstractTableModel
+from enaml.core.item_model import AbstractTableModel
+
 
 class MyModel(AbstractTableModel):
     """ A very simple table model that is 100k x 100k filled with 

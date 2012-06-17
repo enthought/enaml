@@ -2,7 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from enaml.item_models.flat_file_system_model import FlatFileSystemModel
+from enaml.stdlib.flat_file_system_model import FlatFileSystemModel
 
 
 # Default Directory Icon which displays as a small + symbol

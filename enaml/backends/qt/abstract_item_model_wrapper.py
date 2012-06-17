@@ -8,7 +8,7 @@ import operator
 from .qt.QtCore import Qt, QAbstractItemModel, QModelIndex, QSize
 from .styling import q_color_from_color, q_font_from_font
 
-from ...item_models.abstract_item_model import AbstractItemModel
+from ...core.item_model import AbstractItemModel
 
 
 #: An invalid QModelIndex() for use in conversion routines
