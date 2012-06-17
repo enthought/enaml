@@ -1,0 +1,41 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2012, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+import sys
+
+
+enamldef OkCancelDialog(Dialog):
+    """ A Dialog component which provides two labeled buttons for 
+    affirming or cancelling the dialog.
+
+    The main content for the dialog is supplied by assigning to the
+    'content' attribute of the dialog. The supplied component is then
+    inserted into the dialog dynamically. Changing the value of this
+    attribute will update the content in the dialog.
+
+    The default text for the button is 'Ok' and 'Cancel' but this 
+    can be changed with the 'ok_text' and 'cancel_text' attributes.
+
+    """
+    attr content
+    attr ok_text: str = 'Ok'
+    attr cancel_text: str = 'Cancel'
+    Container:
+        constraints << (
+            [vbox(content, hbox(spacer, ok_btn, cancel_btn))]
+            if sys.platform == 'win32' else
+            [vbox(content, hbox(spacer, cancel_btn, ok_btn))]
+        )
+        Include:
+            components << [content]    
+        PushButton:
+            id: cancel_btn
+            text << cancel_text
+            clicked :: reject()
+        PushButton:
+            id: ok_btn
+            text << ok_text
+            constraints = [width == cancel_btn.width]
+            clicked :: accept()
+
