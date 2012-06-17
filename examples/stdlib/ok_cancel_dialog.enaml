@@ -1,0 +1,29 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2012, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+""" An example which shows how to use the stdlib OkCancelDialog
+
+"""
+from enaml.stdlib.ok_cancel_dialog import OkCancelDialog
+
+
+enamldef Main(Window):
+    Container:
+        Label:
+            text = 'Button Dialog Launcher'
+        PushButton:
+            text = 'Launch Ok Cancel'
+            clicked ::
+                src = '<center><h1>Dialog Content</h1></center>'
+                dlg = OkCancelDialog(content=Html(source=src))
+                dlg.show()
+                print "Dialog result:", dlg.result
+        PushButton:
+            text = 'Launch Save Cancel'
+            clicked ::
+                src = '<center><h1>Dialog Content</h1></center>'
+                dlg = OkCancelDialog(content=Html(source=src), ok_text='Save')
+                dlg.show()
+                print "Dialog result:", dlg.result
+
