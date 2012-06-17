@@ -1,0 +1,91 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2012, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+""" An example demonstrating the behavior of the various Enaml operators.
+
+"""
+from traits.api import HasTraits, Any
+
+
+class Foo(HasTraits):
+
+    variable = Any("initial value")
+
+    def _variable_changed(self, name, old, new):
+        print "foo's variable has been changed from %s to %s" % (old, new)
+
+
+foo = Foo()
+
+
+initial_text = """<h1>Initial Code executed before example:</h1>
+<pre>
+# ****************************************************************************
+class Foo(HasTraits):
+
+    variable = Any("initial value")
+
+    def _variable_changed(self, name, old, new):
+        print "foo's variable has been changed from %s to %s" % (old, new)
+
+foo = Foo()
+# ****************************************************************************
+</pre>
+<h4>Tweak value of foo.variable by entering a new value in Repl (Repl using Notify). </h4>
+The changed value of Repl will automatically be assigned to foo.variable
+"""
+
+enamldef Main(MainWindow):
+    initial_size = (800, 500)
+    Container:
+        constraints = [
+            sample_form.width == width,
+            output_pane.height == 300
+        ]
+        Form:
+            id: sample_form
+            Label:
+                text = "Output Pane"
+            Html:
+                id: output_pane
+                source = initial_text
+
+            Label:
+                text = "Assignment"
+            Field:
+                # Use when you want to initialize the 
+                # variable/ui-element only once
+                value = foo.variable
+
+            Label:
+                text = "Delegation"
+            Field:
+                # Use when you want a bidirectional
+                # sync between a variable/ui-element and 
+                # the external world
+                value := foo.variable
+
+            Label:
+                text = "Update"
+            Field:
+                # Use when you want to notify the external
+                # world about any changes in a variable/ui-element
+                value >> foo.variable
+
+            Label:
+                text = "Subscription"
+            Field:
+                # Use when you want a variable/ui-element to
+                # subscribe to the external world
+                value << foo.variable
+
+            Label:
+                text = "Repl using Notify"
+            Field:
+                # Use when you just want to execute a bunch of 
+                # statements whenever a variable/ui-element changes.
+                value ::
+                    print("foo.variable", value)
+                    foo.variable = value
+
