@@ -18,18 +18,22 @@ from enaml.core.enaml_compiler import EnamlCompiler
 
 # Acceptable enaml toolkit options for enaml-run
 ENAML_TOOLKITS = {
-    'default': default_toolkit, 'wx': wx_toolkit, 'qt': qt_toolkit}
+    'default': default_toolkit, 'wx': wx_toolkit, 'qt': qt_toolkit
+}
+
 
 # Mapping of the --toolkit option to the ETS_TOOLKIT value
 OPTION_TO_ETS = {'default': 'qt4', 'wx': 'wx', 'qt': 'qt4'}
 
-def set_common_toolkit(toolkit_option):
-    """ Set the ETS_TOOLKIT variable for the ets ui components.
 
-    ETS gui components default to WX while enaml defaults to Qt.  We
-    set the ETS_TOOLKIT enviroment for the process and it's childern
-    to make sure that ets amd enaml will use the same toolkit at all
-    times.
+def prepare_toolkit(toolkit_option):
+    """ Prepares the toolkit to be used by enaml.
+
+    The function creates the enaml toolkit and sets if necessary the
+    value of ETS_TOOLKIT. ETS gui components default to WX when ETS_TOOLKIT
+    is not defined, while enaml defaults to Qt. In that case we set the
+    ETS_TOOLKIT enviroment for the process and it's childern to make sure
+    that ets amd enaml will use the same toolkit at all times.
 
     If the ETS_TOOLKIT is already set a warning is raised if there is
     an incompatibility with the -t option.
@@ -41,20 +45,28 @@ def set_common_toolkit(toolkit_option):
 
     Returns
     -------
-    enaml_toolkit : str
-       The enaml toolkit object as selected by the user. 
+    enaml_toolkit : ~enaml.core.toolkit.Toolkit
+       The enaml toolkit object to be used.
 
     """
     enaml_toolkit = ENAML_TOOLKITS[toolkit_option]
-    if os.environ.has_key('ETS_TOOLKIT'):
-        ets_toolkit = os.environ.get('ETS_TOOLKIT').lower().split('.')[0]
-        if toolkit_option != 'default' and ets_toolkit != OPTION_TO_ETS[toolkit_option]:
-            msg = ('The --toolkit option is different from the ETS_TOOLKIT enviroment'
-                   ' variable which can cause issues if enable components are used.') 
-            warnings.warn(msg)
+
+    try:
+        ets_toolkit = os.environ['ETS_TOOLKIT'].lower().split('.')[0]
+    except KeyError:
+        compatible_toolkit = OPTION_TO_ETS[toolkit_option]
+        os.environ['ETS_TOOLKIT'] = compatible_toolkit
     else:
-        toolkit_name = ENAML_TO_ETS[toolkit_option]
-        os.environ['ETS_TOOLKIT'] = toolkit_name
+        # if the -t option is 'default' then enaml obeys ETS_TOOLKIT
+        # so there is no incompatibility.
+        if toolkit_option != 'default':
+            if ets_toolkit != OPTION_TO_ETS[toolkit_option]:
+                msg = ('The --toolkit option is different from the '
+                       'ETS_TOOLKIT enviroment variable which can '
+                       'cause issues if enable or chaco components '
+                       'are used.')
+                warnings.warn(msg)
+
     return enaml_toolkit()
 
 
@@ -70,9 +82,8 @@ def main():
 
     options, args = parser.parse_args()
 
-
     # Preapare the toolkit
-    toolkit = set_common_toolkit(options.toolkit)
+    toolkit = prepare_toolkit(options.toolkit)
 
     if len(args) == 0:
         print 'No .enaml file specified'
@@ -117,4 +128,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
