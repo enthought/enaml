@@ -10,7 +10,7 @@ import numpy as np
 from chaco.api import Plot, ArrayPlotData
 
 import enaml
-from enaml.core.item_model import AbstractItemModel
+from enaml.core.item_model import AbstractItemModel, ALIGN_LEFT
 
 
 class Node(object):
@@ -119,6 +119,11 @@ class FSModel(AbstractItemModel):
     
     def horizontal_header_data(self, section):
         return ['Name', 'Size', 'Last Modified'][section]
+
+    def alignment(self, index):
+        if index.column == 0:
+            return ALIGN_LEFT
+        return super(FSModel, self).alignment(index)
 
 
 def make_sin_plot():
