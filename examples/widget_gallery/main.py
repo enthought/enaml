@@ -10,7 +10,7 @@ import numpy as np
 from chaco.api import Plot, ArrayPlotData
 
 import enaml
-from enaml.item_models.abstract_item_model import AbstractItemModel
+from enaml.core.item_model import AbstractItemModel
 
 
 class Node(object):

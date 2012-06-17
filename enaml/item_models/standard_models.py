@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .abstract_item_model import (
+from enaml.core.item_model import (
     AbstractListModel, AbstractTableModel, ITEM_IS_SELECTABLE,
     ITEM_IS_ENABLED, ITEM_IS_EDITABLE,
 )

@@ -8,7 +8,7 @@ import wx.grid
 from .wx_control import WXControl
 
 from ...components.table_view import AbstractTkTableView
-from ...item_models.abstract_item_model import AbstractItemModel, ITEM_IS_EDITABLE
+from ...core.item_model import AbstractItemModel, ITEM_IS_EDITABLE
 
 
 GridCellAttr = wx.grid.GridCellAttr

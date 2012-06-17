@@ -10,7 +10,7 @@ from traits.api import (
 )
 
 import enaml
-from enaml.item_models.abstract_item_model import AbstractTableModel
+from enaml.core.item_model import AbstractTableModel
 from enaml.styling.color import Color
 from enaml.styling.brush import Brush
 
