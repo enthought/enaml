@@ -8,8 +8,7 @@ from os import listdir
 from os.path import abspath, isabs, normpath, join, isdir, pardir
 import re
 
-from .abstract_item_model import AbstractListModel, ALIGN_LEFT, ALIGN_VCENTER
-from .model_index import ModelIndex
+from enaml.core.item_model import AbstractListModel, ModelIndex, ALIGN_LEFT, ALIGN_VCENTER
 
 
 # A named tuple which holds the relative path of an item in the 

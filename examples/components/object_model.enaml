@@ -10,7 +10,7 @@ a list objects as a 2D table.
 """
 import random
 
-from enaml.item_models.standard_models import ObjectModel
+from enaml.stdlib.object_model import ObjectModel
 
 from traits.api import HasTraits, Str
 

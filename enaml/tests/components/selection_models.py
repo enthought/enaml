@@ -77,7 +77,7 @@ class TestBaseSelectionModel(EnamlTestCase, SelectionTestHelper):
 
         """
         enaml_source = """
-from enaml.item_models.standard_models import TableModel
+from enaml.stdlib.table_model import TableModel
 import numpy as np
 
 nrows = 20
@@ -208,7 +208,7 @@ class TestRowSelectionModel(EnamlTestCase, SelectionTestHelper):
 
         """
         enaml_source = """
-from enaml.item_models.standard_models import TableModel
+from enaml.stdlib.table_model import TableModel
 import numpy as np
 
 nrows = 20

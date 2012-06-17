@@ -10,8 +10,7 @@ from .base_selection_model import BaseSelectionModel
 from .control import Control, AbstractTkControl
 
 from ..core.trait_types import EnamlEvent, CoercingInstance
-from ..item_models.abstract_item_model import AbstractItemModel
-from ..item_models.model_index import ModelIndex
+from ..core.item_model import AbstractItemModel, ModelIndex
 from ..layout.geometry import Size
 
 

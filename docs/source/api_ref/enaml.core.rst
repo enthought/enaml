@@ -35,3 +35,16 @@ Enaml toolkit.
 .. automodule:: enaml.core.expressions
     :special-members:
     :no-undoc-members:
+
+
+:mod:`item_model` Module
+---------------------------------
+
+.. autoclass:: enaml.core.item_model.AbstractItemModel
+
+.. autoclass:: enaml.core.item_model.AbstractTableModel
+
+.. autoclass:: enaml.core.item_model.AbstractListModel
+
+.. autoclass:: enaml.core.item_model.ModelIndex
+

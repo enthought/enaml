@@ -5,9 +5,8 @@
 from collections import namedtuple
 from functools import wraps
 
-from .abstract_item_model import AbstractListModel, ALIGN_HCENTER, ALIGN_VCENTER
-
-from ..core.toolkit import Toolkit
+from enaml.core.toolkit import Toolkit
+from enaml.core.item_model import AbstractListModel, ALIGN_HCENTER, ALIGN_VCENTER
 
 
 # A named tuple representing a thumbnail. It contains the 'name' to show
