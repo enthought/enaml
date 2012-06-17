@@ -15,7 +15,8 @@ The 'clicked', 'double_clicked', and 'activated' events for the right-hand
 table will also be printed as they happen.
 
 """
-from enaml.item_models.standard_models import ListModel, TableModel
+from enaml.stdlib.list_model import ListModel
+from enaml.stdlib.table_model import TableModel
 from enaml.styling.brush import Brush
 from enaml.styling.color import Color
 

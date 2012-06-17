@@ -13,5 +13,4 @@ Enaml Reference
     Styling <enaml.styling>
     Widgets <enaml.widgets>
     Standard Widget Library <std_library_ref>
-    Item Models <enaml.item_models>
     Utility <enaml.util>
