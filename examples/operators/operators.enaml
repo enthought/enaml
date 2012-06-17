@@ -1,27 +1,35 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2012, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+""" An example demonstrating the behavior of the various Enaml operators.
+
+"""
 from traits.api import HasTraits, Any
 
 
 class Foo(HasTraits):
+
     variable = Any("initial value")
 
     def _variable_changed(self, name, old, new):
         print "foo's variable has been changed from %s to %s" % (old, new)
 
 
-foo = Foo(variable="initial value")
+foo = Foo()
 
 
 initial_text = """<h1>Initial Code executed before example:</h1>
 <pre>
 # ****************************************************************************
 class Foo(HasTraits):
-    variable = Any
+
+    variable = Any("initial value")
 
     def _variable_changed(self, name, old, new):
-        if self.traits_inited():
-            print "foo's variable has been changed from %s to %s" % (old, new)
+        print "foo's variable has been changed from %s to %s" % (old, new)
 
-foo = Foo(variable="initial value")
+foo = Foo()
 # ****************************************************************************
 </pre>
 <h4>Tweak value of foo.variable by entering a new value in Repl (Repl using Notify). </h4>
@@ -42,6 +50,7 @@ enamldef Main(MainWindow):
             Html:
                 id: output_pane
                 source = initial_text
+
             Label:
                 text = "Assignment"
             Field:
@@ -79,3 +88,4 @@ enamldef Main(MainWindow):
                 value ::
                     print("foo.variable", value)
                     foo.variable = value
+
