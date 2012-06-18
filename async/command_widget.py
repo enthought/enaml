@@ -8,7 +8,6 @@ from traits.api import Instance
 
 from base_component import BaseComponent
 
-
 # The code style guideline for Enaml follows PEP-8, however there are a
 # few extra rules in-place that PEP-8 doesn't specify:
 #

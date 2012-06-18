@@ -5,7 +5,7 @@
 from collections import deque
 
 from traits.api import (
-    Bool, HasStrictTraits, Instance, List, Property, Str, WeakRef, Dict, 
+    HasStrictTraits, Instance, List, Property, Str, WeakRef, Dict, 
     Disallow,
 )
 
