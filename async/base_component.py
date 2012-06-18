@@ -43,10 +43,6 @@ class BaseComponent(HasStrictTraits):
         depends_on='_subcomponents:_actual_updated',
     )
 
-    #: An optional name to give to this component to assist in finding
-    #: it in the tree. See the 'find_by_name' method.
-    name = Str
-
     #: A reference to the toolkit that was used to create this object.
     toolkit = Instance(Toolkit)
 
@@ -195,22 +191,6 @@ class BaseComponent(HasStrictTraits):
             getattr(self, name)
         for child in self._subcomponents:
             child._setup_eval_expressions()
-
-    #--------------------------------------------------------------------------
-    # Teardown Methods
-    #--------------------------------------------------------------------------
-    def destroy(self):
-        """ Destroys the component by clearing the list of subcomponents
-        and calling 'destroy' on all of the old subcomponents, then gets
-        rid of all references to the subcomponents and bound expressions.
-        Subclasses that need more control over destruction should 
-        reimplement this method.
-
-        """
-        for child in self._subcomponents:
-            child.destroy()
-        del self._subcomponents[:]
-        self._expressions.clear()
 
     #--------------------------------------------------------------------------
     # Bound Attribute Handling
@@ -429,31 +409,6 @@ class BaseComponent(HasStrictTraits):
         while parent is not root and parent is not None:
             yield parent
             parent = parent.parent
-
-    def find_by_name(self, name):
-        """ Locate and return a named item that exists in the subtree
-        which starts at this node.
-
-        This method will traverse the tree of components, breadth first,
-        from this point downward, looking for a component with the given
-        name. The first one with the given name is returned, or None if
-        no component is found.
-
-        Parameters
-        ----------
-        name : string
-            The name of the component for which to search.
-        
-        Returns
-        -------
-        result : BaseComponent or None
-            The first component found with the given name, or None if 
-            no component is found.
-        
-        """
-        for cmpnt in self.traverse():
-            if cmpnt.name == name:
-                return cmpnt
 
     def toplevel_component(self):
         """ Walks up the tree of components starting at this node and
