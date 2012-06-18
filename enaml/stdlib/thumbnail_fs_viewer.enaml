@@ -1,0 +1,207 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2012, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+import os
+import re
+from threading import Thread, Lock
+
+from enaml.core.toolkit import Toolkit
+from enaml.stdlib.thumbnail_model import ThumbnailModel, Thumbnail
+
+
+class ThumbnailFSLoader(object):
+    """ A thumbnail loader which can populate thumbnail models from 
+    a thread by recursively walking the filesystem from a given 
+    directory.
+
+    """
+    def __init__(self, size, cache_limit=None):
+        """ Initialize a ThumbnailFSLoader.
+
+        Parameters
+        ----------
+        size : 2-tuple of ints
+            The (width, height) to use when loading the thumbnails.
+            Images larger than 'size' will be scaled to 'size' while 
+            maintaining aspect ratio. Images smaller than 'size' will 
+            be left untouched. Images with a width or height of zero 
+            are skipped.
+
+        cache_limit : int, optional
+            The maximum number of thumbnails to keep in cache. The
+            default is None and indicates no limit.
+
+        Notes
+        -----
+        XXX The cache_limit is currently ignored.
+
+        """
+        self._size = size
+        self._cache = {}
+        self._cache_lock = Lock()
+
+    def _load_worker(self, model, directory, rgx, img_cls, recursive):
+        """ A thread target worker which walks the file system and 
+        loads thumbnails into the model. 
+        
+        See the 'load_thumbs' method for an explanation of parameters.
+
+        """
+        size = self._size
+        cache = self._cache
+        lock = self._cache_lock
+
+        # If we aren't walking the directories recursively, just grab
+        # the first result from os.walk rather than crafting somethin
+        # custom using os.listdir.
+        items = os.walk(directory)
+        if not recursive:
+            items = [items.next()]
+
+        # Walk the filesystem and add thumbnails to the model one
+        # directory at a time. Only files which match the pattern
+        # are accepted. Images are scaled down as necessary, but 
+        # never scaled up. Images with a zero sized dimension are
+        # ignored.
+        for dirpath, dirnames, filenames in items:
+            thumbs = []
+            for fname in filenames:
+                if rgx.match(fname):
+                    fpath = os.path.join(dirpath, fname)
+                    with lock:
+                        if fpath in cache:
+                            thumbs.append(cache[fpath])
+                            continue
+                    img = img_cls.from_file(fpath)
+                    width, height = img.size
+                    if width == 0 or height == 0:
+                        continue
+                    if width > size[0] or height > size[1]:
+                        img = img.scale(size, preserve_aspect_ratio=True)
+                    metadata = {'path': fpath}
+                    thumb = Thumbnail(fname, img, metadata)
+                    thumbs.append(thumb)
+                    with lock:
+                        cache[fpath] = thumb
+            model.extend(thumbs)
+
+    def load_thumbs(self, model, directory, pattern=None, recursive=False):
+        """ The thumbnails recursively from the given directory.
+
+        Parameters
+        ----------
+        model : ThumbnailModel
+            The thumbnail model to which to add the loaded thumbnails.
+            Thumbnails will be extended to the end of the model, one
+            directory at a time.
+
+        directory : string
+            The starting directory for walking the OS looking for images.
+
+        recursive : bool, optional
+            Whether or not to recursively descend diretories while
+            loading the thumbnails.
+
+        pattern : string, optional
+            A regex string to compile and match against a filename. 
+            Only files which match the pattern will be loaded as 
+            images. The match is case insensitive and the default
+            pattern matches png and jpeg images.
+
+        Notes
+        -----
+        The name of the thumbnail will be the file name of the image 
+        file and the metadata will be initialized as a dictionary with 
+        the following key: 'path' which is the full path to the image 
+        on disk.
+
+        """
+        toolkit = Toolkit.active_toolkit()
+        img_cls = toolkit['Image']
+        if pattern is None:
+            pattern = r'.*?\.(jpg|jpeg|png)$'
+        rgx = re.compile(pattern, re.IGNORECASE)
+        args = (model, directory, rgx, img_cls, recursive)
+        th = Thread(target=self._load_worker, args=args)
+        th.daemon = True
+        th.start()
+
+
+enamldef ThumbnailFSViewer(ThumbnailView):
+    """ A custom ThumbnailView which uses a threaded loader to walk the
+    filesystem and load thumbnails asynchronously.
+
+    """
+    # An event which can be triggered to start the loading 
+    # process of thumbnails from the specified directory
+    event load_thumbs
+
+    # An event which will be fired when a thumbnail is selected 
+    # with a single left click of the mouse.
+    event thumbnail_selected
+
+    # The directory from which to load the thumbnails
+    attr directory: str = '.'
+
+    # Whether or not to recursively descend the filesystem from the
+    # given directory when loading thumbnails.
+    attr recursive_load: bool = False
+
+    # A regex pattern to use when matching filenames for images.
+    attr file_pattern: str = r'.*?\.(jpeg|jpg|png)$'
+
+    # The maximum expected size the thumbnails will be. This controls
+    # how images will be scaled when loaded by the thumbnail loader.
+    # The default of (256, 256) is typically sufficient. Note that
+    # this has no effect on the specified icon size. It only controls
+    # to what size the images are scaled when loaded from disk. If 
+    # loading many thumbnails, it is best to keep this small in order
+    # to keep the process memory footprint low.
+    attr max_thumb_size: tuple = (256, 256)
+
+    # The thumbnail loader for this viewer. If more than one viewer is 
+    # in use in an application, it will makes sense for them to share the
+    # loader so to maximize caching. Hence, this attribute is considered
+    # public. However, if this loader is changed by the user, then the
+    # max_thumb_size flag on this attribute will have no effect and the
+    # user becomes responsible for making sure the size in the loader
+    # is appropriate.
+    attr thumb_loader: ThumbnailFSLoader = ThumbnailFSLoader(max_thumb_size)
+
+    # A attribute used to indicate that the current thumbnails are
+    # dirty an should be reloaded on the next load_thumbs event.
+    attr dirty: bool = True
+
+    # By default, thumbnails are displayed as a single column. But the
+    # user is free to excercise any of the layout options of the normal
+    # ThumbnailView.
+    flow = 'top_to_bottom'
+
+    # Initialize the display to an empty thumbnail model. It will be
+    # populated on demand by the thumbnail loader.
+    item_model = ThumbnailModel()
+
+    # Flip the dirty flag when the directory changes.
+    directory :: self.dirty = True
+
+    # Handle the load_thumbs event by clearing the current model of
+    # its thumbnails and calling the loader to populate the model.
+    # Since the loader maintains a cache. Loading the same directory
+    # more than once should be efficient. The thumbs are only loaded
+    # if the dirty flag is set to True. So if you wish to hard reload
+    # the same directory. The dirty flag must be manually set to True.
+    load_thumbs ::
+        if dirty:
+            item_model.clear()
+            thumb_loader.load_thumbs(
+                item_model, directory, file_pattern, recursive_load,
+            )
+            self.dirty = False
+
+    # Fire off the thumbnail selected event when the mouse is clicked.
+    clicked ::
+        index = event.new
+        thumb = item_model.thumbnail(index)
+        thumbnail_selected(thumb)
+

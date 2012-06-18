@@ -529,11 +529,11 @@ class LinearBoxHelper(DeferredConstraints):
         for item in items:
             # Add the helpers for the ortho constraints
             if isinstance(item, ABConstrainable):
-                items = (
+                abutment_items = (
                     first_ortho_boundary, first_ortho_spacer,
                     item, last_ortho_spacer, last_ortho_boundary,
                 )
-                helpers.append(AbutmentHelper(*items, **kwds)) 
+                helpers.append(AbutmentHelper(*abutment_items, **kwds)) 
             # Pull out nested helpers so that their constraints get
             # generated during the pass over the helpers list.
             if isinstance(item, DeferredConstraints):

@@ -1,4 +1,4 @@
-defn MainWindow:
+enamldef MainWindow:
     Window:
         title = "Form example"
         constraints = [vertical(top, myform, bottom),
@@ -9,7 +9,7 @@ defn MainWindow:
             NamedField('Surname'):
                 pass
 
-defn NamedField(name):
+enamldef NamedField(name):
         Label:
             text = name
         Field:

@@ -2,7 +2,8 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Bool, Instance
+from abc import abstractmethod
+from traits.api import Bool, Instance, Enum
 
 from .constraints_widget import (
     ConstraintsWidget, AbstractTkConstraintsWidget,
@@ -15,7 +16,12 @@ class AbstractTkControl(AbstractTkConstraintsWidget):
     """ The abstract toolkit Control interface.
 
     """
-    pass
+    @abstractmethod
+    def shell_show_focus_rect_changed(self, show):
+        """ The change handler for the 'show_focus_rect' attribute.
+
+        """
+        raise NotImplementedError
 
 
 class Control(ConstraintsWidget):
@@ -28,6 +34,11 @@ class Control(ConstraintsWidget):
 
     #: The exception object that was raised to create the error state.
     exception = Instance(Exception)
+
+    #: A flag indicating whether or not to draw a focus rectangle around
+    #: a control. Support for this may not be implemented on all controls
+    #: or on all platforms or all backends.
+    show_focus_rect = Enum('default', True, False)
 
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkControl)

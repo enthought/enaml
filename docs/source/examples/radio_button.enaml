@@ -1,4 +1,4 @@
-defn MainWindow:
+enamldef MainWindow:
     Window:
         title = "Radio button example"
         constraints = [vertical(top, rb1, rb2, rb3, rb4, bottom),

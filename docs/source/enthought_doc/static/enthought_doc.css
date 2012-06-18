@@ -125,7 +125,7 @@ dt:target,
     background-color: #fbe54e;
 }
 
-dl.class, dl.function, dl.enaml_decl, dl.enaml_defn {
+dl.class, dl.function, dl.enamldef, dl.enaml_decl, dl.enaml_defn {
     border-top: 2px solid #888;
 }
 

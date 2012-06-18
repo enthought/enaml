@@ -1,4 +1,4 @@
-defn MainWindow:
+enamldef MainWindow:
     Window:
         title = "Html example"
         constraints = [vertical(top, html, bottom),

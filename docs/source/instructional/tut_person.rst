@@ -31,7 +31,7 @@ This .enaml file begins like the :ref:`"Hello World" <hello-world>` example
 with comments, but next we see that we can do imports in Enaml, like in Python.
 ::
 
- from enaml.stdlib.fields import IntField
+    from enaml.stdlib.fields import IntField
 
 In this case, we are importing the integer field widget ``IntField`` from
 |Enaml|'s :ref:`standard component library.<std-library-ref>` This component
@@ -139,8 +139,8 @@ Traits Object
 
 |Enaml| is designed to work with `Traits objects
 <http://code.enthought.com/projects/traits/>`_. The important thing to note is
-that the ``Person`` attribute names match the names of the ``PersonForm``
-attributes from the .enaml file. 
+that the ``Person`` attribute names match the attribute names of the ``person``
+object used by the ``PersonForm`` in the .enaml file. 
 ::
 
  class Person(HasTraits):
@@ -172,9 +172,7 @@ Hooking up an |Enaml| View to a Traits Object
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 In the code block for launching the script from the command line, we create a
-Person object and pass it to ``PersonView``.
-
-::
+Person object and pass it to ``PersonView``::
 
     if __name__ == '__main__':
         import enaml
@@ -186,8 +184,7 @@ Person object and pass it to ``PersonView``.
         view = PersonView(john)
         view.show()
 
-Running it from the command line, we see
-::
+Running it from the command line, we see::
 
     $ python person.py
     is 42 years old.
@@ -196,8 +193,7 @@ Running it from the command line, we see
 
 Note that the age was assigned before the first and last names, so that those
 fields are empty when Person() prints to the command line. That's not the case
-when we make a change in the GUI and see
-::
+when we make a change in the GUI and see::
 
     John Doe Jr. is 22 years old.
 

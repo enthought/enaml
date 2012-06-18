@@ -136,7 +136,7 @@ class WXImage(AbstractTkImage):
             out[3::4] = '\xff' * (width * height)
         return out
 
-    def scale(self, size):
+    def scale(self, size, preserve_aspect_ratio=False):
         """ Create a new version of this image scaled to the given size.
         
         Parameters
@@ -144,6 +144,10 @@ class WXImage(AbstractTkImage):
         size : (width, height)
             The size of the scaled image.
             
+        preserve_aspect_ratio : bool, optional
+            Whether to preserve the original aspect ratio of the image
+            when scaling to the new size.
+
         Returns
         -------
         results : AbstractTkImage
@@ -151,6 +155,13 @@ class WXImage(AbstractTkImage):
             
         """
         width, height = size
+        if preserve_aspect_ratio:
+            img_width, img_height = self.size
+            ratio = float(img_width) / img_height
+            if width > height:
+                height = width / ratio
+            else:
+                width = height * ratio
         new_img = self._wximage.Scale(width, height, wx.IMAGE_QUALITY_HIGH)
         return WXImage(new_img)
         

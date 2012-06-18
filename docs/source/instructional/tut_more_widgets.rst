@@ -201,7 +201,7 @@ linear constraint solver.
 
 We can add additional constraints via inequalities directly, if we want.  For
 example, if we would like to make sure that the progress bar is at least 500
-pixels wide, we could add that an inequality to the constraints::
+pixels wide, we could add that inequality to the constraints::
 
     constraints = [
         vbox(progress,

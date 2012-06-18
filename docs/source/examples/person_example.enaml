@@ -1,6 +1,6 @@
 from enaml.converters import IntConverter
 
-defn PersonWindow(model):
+enamldef PersonWindow(model):
     Window -> main_window:
         title << model.name
         Form -> person_form:

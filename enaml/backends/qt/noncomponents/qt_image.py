@@ -4,6 +4,7 @@
 #------------------------------------------------------------------------------
 import sys
 
+from ..qt.QtCore import Qt
 from ..qt.QtGui import QImage, QPixmap
 
 from ....noncomponents.abstract_image import AbstractTkImage
@@ -133,7 +134,7 @@ class QtImage(AbstractTkImage):
         out[3::4] = buf[a::4]
         return out
 
-    def scale(self, size):
+    def scale(self, size, preserve_aspect_ratio=False):
         """ Returns a new version of this image scaled to the given size.
         
         Parameters
@@ -141,13 +142,22 @@ class QtImage(AbstractTkImage):
         size : (width, height)
             The size of the scaled image.
         
+        preserve_aspect_ratio : bool, optional
+            Whether to preserve the original aspect ratio of the image
+            when scaling to the new size.
+
         Returns
         -------
         results : AbstractTkImage
             A new image of the proper scaled size.
             
         """
-        return QtImage(self._qimage.scaled(*size))
+        if preserve_aspect_ratio:
+            flag = Qt.KeepAspectRatio
+        else:
+            flag = Qt.IgnoreAspectRatio
+        width, height = size
+        return QtImage(self._qimage.scaled(width, height, flag))
 
     #--------------------------------------------------------------------------
     # Toolkit Specific

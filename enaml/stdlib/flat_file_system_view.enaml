@@ -1,0 +1,151 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2012, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+from enaml.stdlib.flat_file_system_model import FlatFileSystemModel
+
+
+# Default Directory Icon which displays as a small + symbol
+_dir_icon_alphas = [
+    0, 0, 0, 1, 1, 0, 0, 0,
+    0, 0, 0, 2, 2, 0, 0, 0,
+    0, 0, 0, 3, 3, 0, 0, 0,
+    1, 2, 3, 4, 4, 3, 2, 1,
+    1, 2, 3, 4, 4, 3, 2, 1,
+    0, 0, 0, 3, 3, 0, 0, 0,
+    0, 0, 0, 2, 2, 0, 0, 0,
+    0, 0, 0, 1, 1, 0, 0, 0,
+]
+_dir_icon_alphas = [a * 63 + 3 for a in _dir_icon_alphas]
+_dir_icon_data = bytearray(8 * 8 * 4)
+_dir_icon_data[3::4] = _dir_icon_alphas
+
+
+# Default File Icon which displays as a small file.
+_file_icon_alphas = [
+    0, 3, 3, 3, 3, 0, 0, 0,
+    0, 4, 1, 1, 1, 3, 0, 0,
+    0, 4, 1, 1, 1, 1, 3, 0,
+    0, 4, 2, 2, 2, 2, 3, 0,
+    0, 4, 3, 3, 3, 3, 3, 0,
+    0, 4, 3, 3, 3, 3, 4, 0,
+    0, 4, 4, 4, 4, 4, 4, 0,
+    0, 4, 4, 4, 4, 4, 4, 0,
+]
+_file_icon_alphas = [a * 63 + 3 for a in _file_icon_alphas]
+_file_icon_data = bytearray(8 * 8 * 4)
+_file_icon_data[3::4] = _file_icon_alphas
+
+
+enamldef FlatFileSystemView(ListView):
+    """ A custom ListView component which display a FlatFileSystemModel.
+
+    """
+    #--------------------------------------------------------------------------
+    # Public API
+    #--------------------------------------------------------------------------
+    # The current working directory of the model. Changing this will 
+    # change the directory of the model. It will also be updated with 
+    # the current working directory of the model as the user navigates
+    # the filesystem through the ui. Direct changes the models working
+    # directory via calls to the model's chdir() method will not be 
+    # reflected here, but the view *will* visually update.
+    attr directory: str = '.'
+
+    # The absolute path to the currently selected file. This attribute 
+    # is output only and will be updated whenever the user selects a
+    # file in the ui.
+    attr selected_file: str = ''
+
+    # Whether or not to show hidden files and directories.
+    attr show_hidden: bool = False
+
+    # The filetype pattern to apply to the model.
+    attr file_pattern: str = r'.*'
+
+    # The icon to display next to directories.
+    attr dir_icon: Icon = Icon.from_image(Image.from_data(_dir_icon_data, (8, 8)))
+
+    # The icon to display next to files.
+    attr file_icon: Icon = Icon.from_image(Image.from_data(_file_icon_data, (8, 8)))
+
+    # The flat file system model which drives this view.
+    attr file_system_model: FlatFileSystemModel = FlatFileSystemModel(
+        directory, show_hidden, file_pattern, dir_icon, file_icon,
+    )
+
+    # Whether or not to change the working directory on a single
+    # mouse click event in addition to the normal activated event.
+    attr change_directory_on_single_click: bool = False
+
+    # Whether or not to select a file on a single mouse click event
+    # in addition to the normal activated event.
+    attr select_file_on_single_click: bool = False
+
+    #--------------------------------------------------------------------------
+    # Private API
+    #--------------------------------------------------------------------------
+    # The FlatFileSystemModel is a subclass of AbstractListModel, but
+    # having this indirection will allows to do some processing on
+    # it if its required in the future.
+    item_model << file_system_model
+    
+    # Provide a bit of spacing between each item, which gives a 
+    # better visual feel to the control.
+    item_spacing = 2
+    
+    # Set the vertical scrolling mode to smooth scroll by pixel.
+    vertical_scroll_mode = 'pixel'
+
+    # Set the control to use uniform item sizes which will speed
+    # up performance for large directories
+    uniform_item_sizes = True
+
+    # Simple attribute updates.
+    show_hidden >> file_system_model.show_hidden
+    file_pattern >> file_system_model.file_pattern
+    dir_icon >> file_system_model.dir_icon
+    file_icon >> file_system_model.file_icon
+
+    # Working directory synchronization. The comparison eliminates
+    # and extraneous reload of the directory when the change is made
+    # via an 'activated' event.
+    directory ::
+        if directory != file_system_model.getcwd():
+            file_system_model.chdir(directory)
+
+    # Update the directory or selected file when the user activates 
+    # a selection if the relevant option is enabled. The directory is 
+    # updated via item_model.getcwd() so that the model can convert it 
+    # into an absolute path.
+    activated ::
+        index = event.new
+        if file_system_model.isdir(index):
+            file_system_model.chdir(index)
+            self.directory = file_system_model.getcwd()
+        else:
+            self.selected_file = file_system_model.abspath(index)
+
+    # Set a private flag when double clicking so the single click 
+    # handler can ignore a spurious second click event.
+    attr _double_clicked: bool = False
+    double_clicked :: self._double_clicked = True
+
+    # Update the directory or selected file when the user clicks 
+    # a selection if the relevant option is enabled. The directory is 
+    # updated via item_model.getcwd() so that the model can convert it 
+    # into an absolute path. The handler is only run once during a 
+    # double click process. This helps ignore the spurious second click.
+    clicked ::
+        handle_update = not _double_clicked
+        self._double_clicked = False
+        if handle_update:
+            index = event.new
+            if file_system_model.isdir(index):
+                if change_directory_on_single_click:
+                    file_system_model.chdir(index)
+                    self.directory = file_system_model.getcwd()
+            else:
+                if select_file_on_single_click:
+                    self.selected_file = file_system_model.abspath(index)
+

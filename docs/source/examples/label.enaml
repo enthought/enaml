@@ -1,4 +1,4 @@
-defn MainWindow:
+enamldef MainWindow:
     Window:
         title = "Label example"
         constraints = [vertical(top, label1, label2, bottom),

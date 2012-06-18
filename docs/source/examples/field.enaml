@@ -1,5 +1,5 @@
 from enaml.converters import IntConverter
-defn MainWindow:
+enamldef MainWindow:
     Window:
         title = "Field example"
         constraints = [vertical(top, label, field, bottom),

@@ -21,7 +21,7 @@ else
 endif
 
 " Enaml extensions
-syn keyword enamlStatement      defn
+syn keyword enamlStatement      enamldef
 " FIXME: This captures the predefined operators, not any extensions that may be
 " added.
 syn match enamlOperator         "\%(\w\|\s\)\(::\|<<\|>>\|=\|:=\)\%(\w\|\s\)"

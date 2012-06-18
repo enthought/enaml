@@ -1,4 +1,4 @@
-defn MainWindow:
+enamldef MainWindow:
     Window:
         title = "Progressbar example"
         constraints = [vertical(top, progress, bottom),
