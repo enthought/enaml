@@ -7,7 +7,7 @@ class AsyncCommandReply(object):
 
     """
     def __init__(self):
-        """ Initialize the reply with a callback
+        """ Initialize the reply
 
         """
         self._pending = True
@@ -60,4 +60,3 @@ class AsyncCommandReply(object):
         self._results = result
         self._pending = False
         self.callback()
-

@@ -144,31 +144,8 @@ class BaseComponent(HasStrictTraits):
     # Setup Methods 
     #--------------------------------------------------------------------------
     def setup(self, parent=None):
-        """ Run the setup process for the ui tree.
-
-        DOCSTRING NEEDS UPDATE!
-
-        The setup process is fairly complex and involves multiple steps.
-        The complexity is required in order to ensure a consistent state
-        of the component tree so that default values that are computed 
-        from expressions have the necessary information available.
-
-        The setup process is comprised of the following steps:
-        
-        1)  Abstract objects create their internal toolkit object
-        2)  Abstract objects initialize their internal toolkit object
-        3)  Bound expression values are explicitly applied
-        4)  Abstract objects bind their event handlers
-        5)  Abstract objects are added as listeners to the shell object
-        6)  Visibility is initialized
-        7)  Layout is initialized
-        8)  A finalization pass is made
-        9)  Nodes are marked as initialized
-        
-        Many of these setup methods are no-ops, but are defined on this
-        BaseComponent for simplicity and continuity. Subclasses that
-        need to partake in certain portions of the layout process 
-        should re-implement the appropriate setup methods.
+        """ Run the setup process for the ui tree. Bound expression values are
+        explicitly applied
 
         Parameters
         ----------
