@@ -20,7 +20,7 @@ class CommandWidget(BaseComponent):
         context: dict
             The arguments for the command
         """
-        pass
+        self.receive_command(cmd_name, context)
         
     def receive_command(self, cmd_name, context):
         """
