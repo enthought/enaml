@@ -4,7 +4,6 @@
 #------------------------------------------------------------------------------
 from traits.api import HasTraits, ReadOnly, Undefined
 
-
 from async_application import AsyncApplication, ApplicationError
 
 
