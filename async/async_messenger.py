@@ -4,7 +4,8 @@
 #------------------------------------------------------------------------------
 from traits.api import HasTraits, ReadOnly, Undefined
 
-from async_application import AsyncApplication, ApplicationError
+from async_application import AsyncApplication
+from async_errors import AsyncApplicationError
 
 
 class AsyncMessenger(HasTraits):
@@ -34,13 +35,13 @@ class AsyncMessenger(HasTraits):
         if app is None:
             msg = 'An async application instance must be created before '
             msg += 'creating any AsyncMessenger instances.'
-            raise ApplicationError(msg)
+            raise AsyncApplicationError(msg)
         instance = super(AsyncMessenger, cls).__new__(cls, args, kwargs)
         app.register(instance)
         if instance.messenger_id is Undefined:
             msg = 'The async application failed to provide an id for '
             msg += 'AsyncMessenger instance.'
-            raise ApplicationError(msg)
+            raise AsyncApplicationError(msg)
         return instance
 
     @property
@@ -52,7 +53,7 @@ class AsyncMessenger(HasTraits):
         app = AsyncApplication.instance()
         if app is None:
             msg = 'The async application instance no longer exists.'
-            raise ApplicationError(msg)
+            raise AsyncApplicationError(msg)
         return app
 
     def send(self, cmd, context):
@@ -94,7 +95,7 @@ class AsyncMessenger(HasTraits):
         Parameters
         ----------
         cmd : string
-            The command name to be executed.
+            The command name to be executed by the client.
             
         context : dict
             The argument context for the command.
