@@ -8,10 +8,12 @@ from async_application import AsyncApplication, ApplicationError
 
 
 class AsyncMessenger(HasTraits):
-    """ The base class of all widgets in Enaml.
+    """ A base class which provides the messaging interface for objects 
+    in an AsyncApplication.
 
-    This extends BaseComponent with the concept of sending and receiving
-    commands to and from a client widget.
+    This class ensures that objects are registered with the application
+    instance when they are instantiated. It also provides 'send' and
+    'receive' methods to facilitate message passing.
 
     """
     #: A messenger id is an object provided by the application instance
@@ -54,20 +56,22 @@ class AsyncMessenger(HasTraits):
         return app
 
     def send(self, cmd, context):
-        """ Send a command to another object to be executed
+        """ Send a command to the client object to be executed.
         
         Parameters
         ----------
         cmd : string
-            The command to be executed
+            The command to be executed on the client object.
             
         context : dict
-            The argument context for the command
+            The argument context for the command to be executed.
 
         Returns
         -------
-        result : AsyncReply
-            An asynchronous reply object for the given command.
+        result : AsyncCommand
+            An asynchronous command object for the given command. When
+            the client object has finished executing the command, this
+            async object will notify any registered callbacks.
 
         """
         return self.application.send_command(self, cmd, context)
