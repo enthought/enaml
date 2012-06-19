@@ -72,7 +72,7 @@ class AsyncApplication(object):
         """ Return the messenger object for the given identifier.
 
         If the messenger does not exist for this application, then
-        an ApplicationError should be raised.
+        an AsyncApplicationError should be raised.
 
         Parameters
         ----------
@@ -87,7 +87,7 @@ class AsyncApplication(object):
 
         """
         raise NotImplementedError
-    
+
     @abstractmethod
     def send_command(self, messenger, cmd, context):
         """ Send the command to the client of the given messenger.
