@@ -119,3 +119,19 @@ class AsyncApplication(object):
         """
         raise NotImplementedError
 
+    @abstractmethod
+    def batch(self):
+        """ Returns a context manager which batches sent commands 
+        until the context is exited.
+
+        Returns
+        -------
+        result : context manager
+            While the context manager is active, anything calls to 
+            'send_command(...)' should be queued until the context
+            is exited, at which point the all of the queued commands
+            should be delivered as a single transaction.
+
+        """
+        raise NotImplementedError
+
