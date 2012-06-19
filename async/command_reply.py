@@ -3,18 +3,46 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from collections import deque
+import sys
 
 
 class Failure(object):
-    """ A stub out failure class.
+    """ A stub out failure class. For now, this just the exception
+    info, but may be extended in the future to be more robust.
 
     """
-    def __init__(self, *args, **kwargs):
-        pass
+    def __init__(self, exc_type, exc_value, traceback):
+        self.exc_type = exc_type
+        self.exc_value = exc_value
+        self.traceback = traceback
 
 
 class AsyncCommand(object):
-    """ Docstrings!!!!!
+    """ An async command object which notifies on completion.
+
+    An async command is returned by an application instance whenver
+    a command is sent to receiver. Since the commands are delivered
+    asynchronously, this object is provided so that user code can
+    be notified when the command has completed.
+
+    This class is very similar to a twisted Deferred object with the
+    key difference that chaining of AsyncCommands is not permitted.
+
+    A user may register callbacks to be executed when the results of
+    the command are available by calling the 'add_callback' method.
+    When results are available, the first registered callback will
+    receive the results of the command. The return value of this 
+    callback will be passed to the next callback and so on. 
+
+    Error handlers may be registered via 'add_errback'. If a 
+    callback raises and exception during execution, the first
+    registered errback is called. This handler may either return
+    a valid value, raise a new exception, or return the provided
+    failure value. Only the first case stops the propogation of
+    the failure.
+
+    XXX - more documentation, for now, if you know how a twisted
+          Deferred works, then this class will be familiar.
 
     """
     def __init__(self, cancel_cmd=None):
@@ -61,8 +89,8 @@ class AsyncCommand(object):
                     last_result = cb(self, last_result, *args, **kwargs)
                 finally:
                     self._dispatching = False
-            except Exception as exc:
-                last_result = Failure(exc)
+            except Exception:
+                last_result = Failure(*sys.exc_info())
 
         # We processed all of the callbacks and still have a failure
         # result that was unhandled.
