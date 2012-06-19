@@ -5,16 +5,7 @@
 from collections import deque
 import sys
 
-
-class Failure(object):
-    """ A stub out failure class. For now, this just the exception
-    info, but may be extended in the future to be more robust.
-
-    """
-    def __init__(self, exc_type, exc_value, traceback):
-        self.exc_type = exc_type
-        self.exc_value = exc_value
-        self.traceback = traceback
+from async_errors import AsyncFailure, CallbackFailure
 
 
 class AsyncCommand(object):
@@ -79,7 +70,8 @@ class AsyncCommand(object):
         while callbacks:
             if self._cancelled:
                 break # break (unlike return) allows for logging of errors
-            handler = callbacks.popleft()[isinstance(last_result, Failure)]
+            selector = isinstance(last_result, AsyncFailure)
+            handler = callbacks.popleft()[selector]
             if handler is None:
                 continue
             cb, args, kwargs = handler
@@ -90,11 +82,11 @@ class AsyncCommand(object):
                 finally:
                     self._dispatching = False
             except Exception:
-                last_result = Failure(*sys.exc_info())
+                last_result = CallbackFailure(*sys.exc_info())
 
         # We processed all of the callbacks and still have a failure
         # result that was unhandled.
-        if isinstance(last_result, Failure):
+        if isinstance(last_result, AsyncFailure):
             # probably want to log the failure here, instead of raising
             raise ValueError("Failed dispatching")
 
