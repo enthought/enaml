@@ -32,7 +32,7 @@ class AsyncMessenger(object):
             raise AsyncApplicationError(msg)
         
         instance = super(AsyncMessenger, cls).__new__(cls, args, kwargs)
-        instance.__msg_id = None
+        instance.__msg_id = '' 
 
         def id_setter(msg_id):
             if not isinstance(msg_id, str):
@@ -43,7 +43,7 @@ class AsyncMessenger(object):
 
         app.register(instance, id_setter)
 
-        if instance.__msg_id is None:
+        if not instance.__msg_id:
             msg = 'The async application failed to provide a messaging id'
             msg += 'for the AsyncMessenger instance.'
             raise AsyncApplicationError(msg)
