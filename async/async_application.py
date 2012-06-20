@@ -26,13 +26,13 @@ class AsyncApplication(object):
     #: The singleton async application instance.
     _instance_ = None
 
-    @classmethod
-    def instance(cls):
+    @staticmethod
+    def instance():
         """ Returns the singleton async application instance, or None
         if an application has not yet been created.
 
         """
-        return cls._instance_
+        return AsyncApplication._instance_
 
     def __new__(cls, *args, **kwargs):
         """ Create a new AsyncApplication instance.
@@ -41,11 +41,11 @@ class AsyncApplication(object):
         ApplicationError.
 
         """
-        if cls._instance_ is not None:
+        if AsyncApplication._instance_ is not None:
             msg = "The AsyncApplication instance already exists."
             raise AsyncApplicationError(msg)
         instance = super(AsyncApplication, cls).__new__(cls, *args, **kwargs)
-        cls._instance_ = instance
+        AsyncApplication._instance_ = instance
         return instance
 
     #--------------------------------------------------------------------------
