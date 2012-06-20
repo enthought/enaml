@@ -3,6 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from collections import namedtuple
+from itertools import izip_longest
 from uuid import uuid4
 
 from async_application import AsyncApplication, AsyncApplicationError
@@ -84,6 +85,7 @@ class QtLocalApplication(AsyncApplication):
     def register(self, messenger, id_setter):
         msg_id = uuid4().hex
         id_setter(msg_id)
+        self._recv_pipe.add_receiver(msg_id, messenger)
 
     def send_message(self, msg_id, msg, ctxt):
         return self._send_pipe.put(msg_id, msg, ctxt)
@@ -97,7 +99,7 @@ class QtLocalApplication(AsyncApplication):
     #--------------------------------------------------------------------------
     # Sketchy API
     #--------------------------------------------------------------------------
-    def create_client_tree(self, view):
+    def create_clients(self, info):
         """ Walks the view tree and creates the necessary clients.
 
         """
@@ -105,37 +107,18 @@ class QtLocalApplication(AsyncApplication):
         #
         # This is currently hacked together just to validate the ideas of the
         # async message passing, this is certainly not production quality code.
-
-        recv_pipe = self._recv_pipe
-        create = []
-        stack = [view]
-        while stack:
-            item = stack.pop()
-            if item.parent is None:
-                parent_id = ''
-            else:
-                parent_id = item.parent.msg_id
-            item_id = item.msg_id
-            recv_pipe.add_receiver(item_id, item)
-            item_name = type(item).__name__
-            create.append((item_name, item_id, parent_id))
-            stack.extend(item.children)
-
         from qt_clients import CLIENTS
-
-        send_pipe = self._send_pipe
-        items = {}
-        for rec in create:
-            name, msg_id, parent_id = rec
-            widg = CLIENTS[name](msg_id)
-            if not parent_id:
-                widg.create(None)
-            else:
-                widg.create(items[parent_id].widget)
-            items[msg_id] = widg
-            send_pipe.add_receiver(msg_id, widg)
+        info_stack = [(info, None)]
+        while info_stack:
+            info_dct, parent = info_stack.pop()
+            widget_cls = CLIENTS[info_dct['widget']]
+            widget = widget_cls(info_dct['msg_id'])
+            widget.create(parent, info_dct['attrs'])
+            self._send_pipe.add_receiver(info_dct['msg_id'], widget)
+            children = info_dct['children']
+            if children:
+                info_stack.extend(izip_longest(children, [], fillvalue=widget.widget))
 
     def run(self):
         self._qapp.exec_()
-
 

@@ -32,17 +32,18 @@ class ClientWidget(object):
             return handler(ctxt)
         return NotImplemented
 
-    def create(self, parent):
+    def create(self, parent, init_attrs):
         raise NotImplementedError
 
 
 class QtSlider(ClientWidget):
 
-    def create(self, parent):
+    def create(self, parent, init_attrs):
         self.widget = QSlider(parent)
         self.widget.valueChanged.connect(self.on_value_changed)
         self.widget.show()
         self.widget.move(100, 100)
+        self.widget.setValue(init_attrs.get('value', 0))
 
     def on_value_changed(self):
         self.send('update_value', dict(value=self.widget.value()))
@@ -53,11 +54,12 @@ class QtSlider(ClientWidget):
 
 class QtLabel(ClientWidget):
 
-    def create(self, parent):
+    def create(self, parent, init_attrs):
         self.widget = QLabel(parent)
         self.widget.show()
         self.widget.move(20, 20)
         self.widget.resize(50, 20)
+        self.widget.setText(init_attrs.get('label', ''))
 
     def receive_set_label(self, ctxt):
         self.widget.setText(ctxt['label'])
@@ -65,7 +67,7 @@ class QtLabel(ClientWidget):
 
 class QtContainer(ClientWidget):
 
-    def create(self, parent):
+    def create(self, parent, attrs):
         self.widget = QWidget(parent)
         self.widget.show()
 
