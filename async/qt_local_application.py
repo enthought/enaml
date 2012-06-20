@@ -8,28 +8,65 @@ from uuid import uuid4
 from async_application import AsyncApplication, AsyncApplicationError
 from async_reply import AsyncReply, MessageFailure
 
-from enaml.backends.qt.qt.QtGui import QApplication
-from enaml.backends.qt.qt.QtCore import Qt, Signal, Slot
+from PySide.QtGui import QApplication
+from PySide.QtCore import Qt, Signal, Slot, QObject
 
 
 QueuedMessage = namedtuple('QueuedMessage', 'msg_id msg ctxt reply')
 
 
-class QtQueuedMessagingApp(QApplication):
-    """ A custom QApplication object which provides a queued signals
-    for async message dispatching.
+class QtMessagePipe(QObject):
 
-    """
-    #: A signal emitted when the application should deliver a message
-    #: from a messenger to a client object. The payload of the signal 
-    #: should be a QueuedMessage instance.
-    send_client_message = Signal(object)
+    _process = Signal(object)
 
-    #: A signal emitted when the application should deliver a message
-    #: from a client object to a messenger. The payload of the signal 
-    #: should be a QueuedMessage instance.
-    recv_client_message = Signal(object)
+    def __init__(self):
+        super(QtMessagePipe, self).__init__()
+        self._receivers = {}
+        self._cancelled = set()
+        self._process.connect(self._on_process, Qt.QueuedConnection)
 
+    #--------------------------------------------------------------------------
+    # Private Api
+    #--------------------------------------------------------------------------
+    def _cancel_message(self, reply):
+        self._cancelled.add(reply)
+
+    @Slot(object)
+    def _on_process(self, queued_msg):
+        msg_id, msg, ctxt, reply = queued_msg
+
+        cancelled = self._cancelled
+        if reply in cancelled:
+            cancelled.remove(reply)
+            return
+
+        try:
+            receiver = self._receivers[msg_id]
+        except KeyError:
+            raise AsyncApplicationError('Receiver not found')
+        
+        try:
+            result = receiver.recv(msg, ctxt)
+        except Exception as exc:
+            # XXX better exception message trapping
+            result = MessageFailure(msg_id, msg, ctxt, exc.message)
+
+        reply.finished(result)
+
+    #--------------------------------------------------------------------------
+    # Public API
+    #--------------------------------------------------------------------------
+    def put(self, msg_id, msg, ctxt):
+        if msg_id not in self._receivers:
+            return
+        reply = AsyncReply(self._cancel_message)
+        queued_msg = QueuedMessage(msg_id, msg, ctxt, reply)
+        self._process.emit(queued_msg)
+        return reply
+
+    def add_receiver(self, msg_id, receiver):
+        self._receivers[msg_id] = receiver
+       
 
 class QtLocalApplication(AsyncApplication):
     """ An Enaml AsyncApplication which executes in the local process
@@ -37,94 +74,68 @@ class QtLocalApplication(AsyncApplication):
 
     """
     def __init__(self):
-        self._messengers = {}
-        self._clients = {}
-        self._cancelled_msgs = set()
-        self._qapp = QtQueuedMessagingApp([])
-        self._qapp.send_client_message.connect(
-            self.on_send_message, Qt.QueuedConnection,
-        )
-        self._qapp.recv_client_message.connect(
-            self.on_recv_message, Qt.QueuedConnection
-        )
-
-    def _cancel_msg(self, async_reply):
-        self._cancelled_msgs.add(async_reply)
+        self._qapp = QApplication([])
+        self._send_pipe = QtMessagePipe()
+        self._recv_pipe = QtMessagePipe()
 
     #--------------------------------------------------------------------------
     # Abstract API implementation
     #--------------------------------------------------------------------------
     def register(self, messenger, id_setter):
         msg_id = uuid4().hex
-        self._messengers[msg_id] = messenger
         id_setter(msg_id)
 
     def send_message(self, msg_id, msg, ctxt):
-        if msg_id not in self._clients:
-            raise AsyncApplicationError('Client not found')
-        reply = AsyncReply(self._cancel_msg)
-        queued_msg = QueuedMessage(msg_id, msg, ctxt, reply)
-        self._qapp.send_client_message.emit(queued_msg)
-        return reply
+        return self._send_pipe.put(msg_id, msg, ctxt)
 
     #--------------------------------------------------------------------------
-    # Signal Handlers
+    # Public API
     #--------------------------------------------------------------------------
-    @Slot(object)
-    def on_send_command(self, queued_msg):
-        """ A slot which is invoked asynchronously with a queued message
-        to be delivered from a messenger to a client.
+    def recv_message(self, msg_id, msg, ctxt):
+        return self._recv_pipe.put(msg_id, msg, ctxt)
 
-        Parameters
-        ----------
-        queued_msg : QueuedMessage
-            The queued message instance to be processed.
-
-        """
-        msg_id, msg, ctxt, reply = queued_msg
-        if reply in self._cancelled_msgs:
-            self._cancelled_msgs.remove(reply)
-            return
-
-        try:
-            client = self._clients[msg_id]
-        except KeyError:
-            raise AsyncApplicationError('Client not found')
-        
-        try:
-            result = client.recv(msg, ctxt)
-        except Exception as exc:
-            # XXX better exception message trapping
-            result = MessageFailure(msg_id, msg, ctxt, exc.message)
-
-        reply.finished(result)
-
-    @Slot(object)
-    def on_recv_command(self, queued_msg):
-        """ A slot which is invoked asynchronously with a queued message
-        to be delivered from a client to a messenger.
-
-        Parameters
-        ----------
-        queued_msg : QueuedMessage
-            The queued message instance to be processed.
+    #--------------------------------------------------------------------------
+    # Sketchy API
+    #--------------------------------------------------------------------------
+    def create_client_tree(self, view):
+        """ Walks the view tree and creates the necessary clients.
 
         """
-        msg_id, msg, ctxt, reply = queued_msg
-        if reply in self._cancelled_msgs:
-            self._cancelled_msgs.remove(reply)
-            return
+        # NOTE!!!!
+        #
+        # This is currently hacked together just to validate the ideas of the
+        # async message passing, this is certainly not production quality code.
 
-        try:
-            messenger = self._messengers[msg_id]
-        except KeyError:
-            raise AsyncApplicationError('Messenger not found')
-        
-        try:
-            result = messenger.recv(msg, ctxt)
-        except Exception as exc:
-            # XXX better exception message trapping
-            result = MessageFailure(msg_id, msg, ctxt, exc.message)
+        recv_pipe = self._recv_pipe
+        create = []
+        stack = [view]
+        while stack:
+            item = stack.pop()
+            if item.parent is None:
+                parent_id = ''
+            else:
+                parent_id = item.parent.msg_id
+            item_id = item.msg_id
+            recv_pipe.add_receiver(item_id, item)
+            item_name = type(item).__name__
+            create.append((item_name, item_id, parent_id))
+            stack.extend(item.children)
 
-        reply.finished(result)
+        from qt_clients import CLIENTS
+
+        send_pipe = self._send_pipe
+        items = {}
+        for rec in create:
+            name, msg_id, parent_id = rec
+            widg = CLIENTS[name](msg_id)
+            if not parent_id:
+                widg.create(None)
+            else:
+                widg.create(items[parent_id].widget)
+            items[msg_id] = widg
+            send_pipe.add_receiver(msg_id, widg)
+
+    def run(self):
+        self._qapp.exec_()
+
 
