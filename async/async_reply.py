@@ -2,39 +2,65 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from async_errors import CommandFailure
-
-
-class AsyncCommand(object):
-    """ An async command object which notifies on completion.
-
-    An async command is returned by an application instance whenver
-    a command is sent to a client. Since the commands are delivered
-    asynchronously, this object is provided so that user code can
-    be notified when the command has completed or failed.
-
-    A user may register a callback to be executed when the results of 
-    the command are available by calling the 'set_callback' method.
-    If the command succesfully executes, the callback will be invoked
-    with the results of the command.
-
-    A user may also register a failure callback which will be invoked
-    if the command fails to execute properly by the client by calling
-    the 'set_failback' method.
+class MessageFailure(Exception):
+    """ An exception representing the failed handling of a message.
 
     """
-    def __init__(self, cancel_cmd=None):
-        """ Initialize an AsyncCommandReply.
+    def __init__(self, msg_id, msg, ctxt, fail_message):
+        """ Initialize a CommandFailure.
 
         Parameters
         ----------
-        cancel_cmd : callable, optional
-            An optional callable that can be provided to cancel a
-            command before it has run. The callable should accept a 
-            single argument, which will be this async command instance.
+        msg_id : string
+            The message identifier used for sending the message.
+
+        msg : string
+            The message which failed to be properly handled.
+
+        ctxt : dict
+            The context dictionary for the failed message.
+
+        fail_message : string
+            A message indicating the nature of the failure.
 
         """
-        self._cancel_cmd = cancel_cmd
+        super(MessageFailure, self).__init__(fail_message)
+        self.msg_id = msg_id
+        self.msg = msg
+        self.ctxt = ctxt
+
+
+class AsyncReply(object):
+    """ An async reply object which notifies callbacks when a message
+    has finished being handled.
+
+    An async reply is created by an application instance whenever a
+    message is sent to a client. Since the messages are delivered
+    asynchronously, this object provides a means by which user code 
+    can be notified when the message has finished processing.
+
+    A user may register a callback to be executed when the results of 
+    the message are available. A callback can be supplied by calling
+    the 'set_callback' method. If the message is handled successfuly, 
+    the callback will be invoked with the results of the message.
+
+    A user may also register a failure callback which will be invoked
+    if the message fails to be handled properly by the client. This 
+    callback can be provided by calling the 'set_failback' method.
+
+    """
+    def __init__(self, cancel_msg=None):
+        """ Initialize an AsyncReply.
+
+        Parameters
+        ----------
+        cancel_msg : callable, optional
+            An optional callable that will cancel a message before it 
+            has processed by the client. It should accept a single 
+            argument, which is this async reply instance.
+
+        """
+        self._cancel_msg = cancel_msg
         self._pending = True
         self._cancelled = False
         self._results = None
@@ -45,11 +71,12 @@ class AsyncCommand(object):
     # Private API
     #--------------------------------------------------------------------------
     def _dispatch(self):
-        """ XXX document me
+        """ Dispatches the results of the message to the appropriate 
+        callback or failback, if provided by the user.
 
         """
         results = self._results
-        if isinstance(results, CommandFailure):
+        if isinstance(results, MessageFailure):
             handler = self._failback
         else:
             handler = self._callback
@@ -62,31 +89,32 @@ class AsyncCommand(object):
     # Public API
     #--------------------------------------------------------------------------
     def cancel(self):
-        """ Cancel the execution of the command. 
+        """ Cancel the delivery of the message. 
 
-        If the command is no longer pending, then this operation is a
-        no-op. Otherwise, the cancel command callback (if provided) 
-        will be called, and no further dispatching will be performed.
+        If the message is no longer pending, then this operation is a
+        no-op. Otherwise, the cancel message callback will be called, 
+        and no further dispatching will be performed.
 
         """
         self._cancelled = True
         if self._pending:
             self._pending = False
-            cancel_cmd = self._cancel_cmd
-            if cancel_cmd is not None:
-                cancel_cmd(self)
+            cancel_msg = self._cancel_msg
+            if cancel_msg is not None:
+                cancel_msg(self)
 
     def finished(self, results):
-        """ Called by the application object when the command is finished
-        executing.
+        """ Called by the application object when the message has
+        finished being processed.
 
-        Calling this method more than once is an error.
+        If the command was cancelled, this method is a no-op. Otherwise,
+        calling this method more than once is an error.
         
         Parameters
         ----------
         results : object
-            The results of the commmand that was executed on the client
-            or a CommandFailure object if the command failed.
+            The results of the message that was handled by the client
+            or a MessageFailure if it was not properly handled.
 
         """
         if self._cancelled:
@@ -94,7 +122,7 @@ class AsyncCommand(object):
                 self._pending = False
             return
         if not self._pending:
-            raise RuntimeError("AsyncCommand already finished")
+            raise RuntimeError("AsyncReply already finished")
         self._pending = False
         self._results = results
         self._dispatch()
@@ -130,24 +158,24 @@ class AsyncCommand(object):
         return self._results
 
     def set_callback(self, callback, *args, **kwargs):
-        """ Set the callback to be run when the command has finished.
+        """ Set the callback to be run when the message has finished.
 
-        If the command has already finished and was not cancelled, then
+        If the message has already finished and was not cancelled, then
         the callback will be invoked immediately with the results. If 
-        the command has been cancelled, this method is a no-op.
+        the message has been cancelled, this method is a no-op.
 
         The callback must accept at least one arguments which is the
-        results of the command.
+        results of the message.
 
-        If the command fails, then the registered callback will not be
+        If the message fails, then the registered callback will not be
         called. Instead the registered failback will be invoked with 
-        a CommandFailure instance.
+        a MessageFailure instance.
 
         Parameters
         ----------
         callback : callable
             A callable which accepts at least one argument which will 
-            be the results of the command.
+            be the results of the message.
 
         *args, **kwargs
             Any addional positional or keyword parameters to pass to 
@@ -161,16 +189,16 @@ class AsyncCommand(object):
             self._dispatch()
 
     def set_failback(self, failback, *args, **kwargs):
-        """ Set the callback to be run if the command fails.
+        """ Set the callback to be run if the message fails.
 
-        If the command has already failed and was not cancelled, then
+        If the message has already failed and was not cancelled, then
         the callback will be invoked immediately with the failure. If 
-        the command has been cancelled, this method is a no-op.
+        the message has been cancelled, this method is a no-op.
 
         The callback must accept at least one arguments which is an
-        instance of CommandFailure.
+        instance of MessageFailure.
 
-        If the command succeeds, then the failback will not be called.
+        If the message succeeds, then the failback will not be called.
 
         Parameters
         ----------
