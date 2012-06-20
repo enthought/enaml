@@ -6,7 +6,7 @@ from weakref import WeakValueDictionary
 
 from PySide.QtCore import QObject, Qt, Signal, Slot
 
-from async_reply import AsyncReply, MessageFailure
+from ..core.async_reply import AsyncReply, MessageFailure
 
 
 class QMessageBroker(QObject):
