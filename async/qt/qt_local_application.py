@@ -7,8 +7,10 @@ from uuid import uuid4
 
 from PySide.QtGui import QApplication
 
-from async_application import AsyncApplication, AbstractBuilder
+from ..core.async_application import AsyncApplication, AbstractBuilder
+
 from qt_message_broker import QMessageBroker
+from qt_clients import CLIENTS
 
 
 class QtLocalClientBuilder(AbstractBuilder):
@@ -18,22 +20,19 @@ class QtLocalClientBuilder(AbstractBuilder):
         self._root = None
 
     def build(self, info):
-        # NOTE!!!!
-        #
-        # This is currently hacked together just to validate the ideas of the
-        # async message passing, this is certainly not production quality code.
-        from qt_clients import CLIENTS
         info_stack = [(info, None)]
         while info_stack:
             info_dct, parent = info_stack.pop()
             msg_id = info_dct['msg_id']
-            widget_cls = CLIENTS[info_dct['widget']]
-            widget = widget_cls(msg_id)
+            widget_cls = CLIENTS[info_dct['widget']]()
+            widget = widget_cls(parent, msg_id)
             if parent is None:
-                widget.create(parent, info_dct['attrs'])
+                widget.create(parent)
+                widget.initialize(info_dct['attrs'])
                 self._root = widget
             else:
-                widget.create(parent.widget, info_dct['attrs'])
+                widget.create(parent.widget)
+                widget.initialize(info_dct['attrs'])
                 parent.add_child(widget)
             self._register(msg_id, widget)
             children = info_dct['children']
@@ -73,5 +72,9 @@ class QtLocalApplication(AsyncApplication):
         return self._recv_pipe.put(msg_id, msg, ctxt)
 
     def run(self):
-        self._qapp.exec_()
+        app = self._qapp
+        if not getattr(app, '_in_event_loop', False):
+            app._in_event_loop = True
+            app.exec_()
+            app._in_event_loop = False
 
