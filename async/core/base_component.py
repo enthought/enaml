@@ -143,7 +143,7 @@ class BaseComponent(HasStrictTraits):
     #--------------------------------------------------------------------------
     # Setup Methods 
     #--------------------------------------------------------------------------
-    def setup(self, parent=None):
+    def setup(self):
         """ Run the setup process for the ui tree. Bound expression values are
         explicitly applied
 
@@ -156,6 +156,7 @@ class BaseComponent(HasStrictTraits):
 
         """
         self._setup_eval_expressions()
+        self._setup_set_initialized()
 
     def _setup_eval_expressions(self):
         """ A setup method that loops over all of bound expressions and
@@ -169,6 +170,15 @@ class BaseComponent(HasStrictTraits):
         for child in self._subcomponents:
             child._setup_eval_expressions()
 
+    def _setup_set_initialized(self):
+        """ A setup method which updates the initialized attribute of 
+        the component to True. This is performed bottom-up.
+
+        """
+        for child in self._subcomponents:
+            child._setup_set_initialized()
+        self.initialized = True
+    
     #--------------------------------------------------------------------------
     # Bound Attribute Handling
     #--------------------------------------------------------------------------
