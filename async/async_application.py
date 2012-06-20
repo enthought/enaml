@@ -13,6 +13,35 @@ class AsyncApplicationError(RuntimeError):
     pass
 
 
+class AbstractBuilder(object):
+    """ An abstract base class which defines the interface for an
+    application-specific object charge with building the client
+    side ui components.
+
+    """
+    @abstractmethod
+    def build(self, info):
+        """ Build the client-side ui tree from the provided info.
+
+        XXX need to be more specific about what is in this dict.
+
+        This method should block until the client-side UI is built.
+
+        Parameters
+        ----------
+        info : dict
+            The ui tree info dict.
+
+        Returns
+        -------
+        result : bool
+            True if the client ui was built successfully, False
+            otherwise.
+
+        """
+        raise NotImplementedError
+
+
 class AsyncApplication(object):
     """ The base class for all asynchronous applications in Enaml.
 
@@ -103,6 +132,14 @@ class AsyncApplication(object):
             An asynchronous reply object for the given message. This
             async reply object will be notified by the application 
             when the client has finished handling the message.
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def builder(self):
+        """ Returns and AbstractBuilder object used to build the 
+        client-side ui.
 
         """
         raise NotImplementedError
