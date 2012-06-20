@@ -18,7 +18,14 @@ class AbstractBuilder(object):
     application-specific object charge with building the client
     side ui components.
 
+    The lifetime of the created client tree is bound to the lifetime
+    of the builder instance. So the consumer of the builder should
+    store away a reference to it until the client ui is no longer
+    needed.
+
     """
+    __metaclass__ = ABCMeta
+    
     @abstractmethod
     def build(self, info):
         """ Build the client-side ui tree from the provided info.
@@ -140,6 +147,9 @@ class AsyncApplication(object):
     def builder(self):
         """ Returns and AbstractBuilder object used to build the 
         client-side ui.
+
+        The lifetime of the created client side ui is tied to the
+        lifetime of the builder.
 
         """
         raise NotImplementedError
