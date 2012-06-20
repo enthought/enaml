@@ -77,3 +77,10 @@ class SpinBox(Control):
         }
         super_attrs.update(attrs)
         return super_attrs
+
+    def receive_value(self, context):
+        """ Callback from the UI when the value of the control changes.
+
+        """
+        self.value = context['value']
+

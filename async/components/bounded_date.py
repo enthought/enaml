@@ -62,7 +62,7 @@ class BoundedDate(Control):
         attrs = {
             'date' : self.date,
             'max_date' : self.max_date,
-            'min_date' : self.min_date
+            'min_date' : self.min_date,
         }
         super_attrs.update(attrs)
         return super_attrs

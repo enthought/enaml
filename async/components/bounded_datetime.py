@@ -71,7 +71,7 @@ class BoundedDatetime(Control):
         attrs = {
             'datetime' : self.datetime,
             'max_datetime' : self.max_datetime,
-            'min_datetime' : self.min_datetime
+            'min_datetime' : self.min_datetime,
         }
         super_attrs.update(attrs)
         return super_attrs

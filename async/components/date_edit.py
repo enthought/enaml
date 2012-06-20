@@ -49,7 +49,14 @@ class DateEdit(BoundedDate):
         """
         super_attrs = super(DateEdit, self).inital_attrs()
         attrs = {
-            'date_format' : self.date_format
+            'date_format' : self.date_format,
         }
         super_attrs.update(attrs)
         return super_attrs
+
+    def receive_date_changed(self, context):
+        """ Callback from the UI when the date value is changed.
+
+        """
+        self.date_changed()
+

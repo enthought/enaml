@@ -71,7 +71,32 @@ class PushButton(Control):
         attrs = {
             'icon' : self.icon,
             'icon_size' : self.icon_size,
-            'text' : self.text
+            'text' : self.text,
         }
         super_attrs.update(attrs)
         return super_attrs
+
+    def receive_clicked(self, context):
+        """ Callback from the UI when the control is clicked.
+
+        """
+        self.clicked()
+
+    def receive_down(self, context):
+        """ Callback from the UI when the button's down state changes
+
+        """
+        self._down = context['value']
+
+    def receive_pressed(self, context):
+        """ Callback from the UI when the control is pressed.
+
+        """
+        self.pressed()
+
+    def receive_released(self, context):
+        """ Callback from the UI when the control is released.
+
+        """
+        self.released()
+

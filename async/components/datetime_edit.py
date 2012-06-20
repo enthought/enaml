@@ -46,8 +46,14 @@ class DatetimeEdit(BoundedDatetime):
         """
         super_attrs = super(BoundedDatetime, self).initial_attrs()
         attrs = {
-            'datetime_format' : self.datetime_format
+            'datetime_format' : self.datetime_format,
         }
         super_attrs.update(attrs)
         return attrs
+
+    def receive_datetime_changed(self, context):
+        """ Callback from the UI when the datetime value is changed.
+
+        """
+        self.datetime_changed()
 

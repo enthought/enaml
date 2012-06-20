@@ -22,3 +22,19 @@ class Calendar(BoundedDate):
     #: or pressing enter on the ui. The event payload will be the date
     #: on the control.
     activated = EnamlEvent
+
+    #--------------------------------------------------------------------------
+    # Toolkit Communication
+    #--------------------------------------------------------------------------
+    def receive_activated(self, context):
+        """ Callback from the UI when the control is activated.
+
+        """
+        self.activated()
+
+    def receive_selected(self, context):
+        """ Callback from the UI when the control is selected.
+
+        """
+        self.selected()
+

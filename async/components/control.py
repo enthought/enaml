@@ -44,7 +44,7 @@ class Control(ConstraintsWidget):
         super_attrs = super(Control, self).initial_attrs()
         attrs = {
             'error' : self.error,
-            'show_focus_rect' : self.show_focus_rect
+            'show_focus_rect' : self.show_focus_rect,
             }
         super_attrs.update(attrs)
         return super_attrs

@@ -69,6 +69,30 @@ class ToggleControl(Control):
         super_attrs.update(attrs)
         return super_attrs
 
+    def receive_down(self, context):
+        """ Callback from the UI when the down state of the control changes.
+
+        """
+        self._down = context["value"]
+
+    def receive_pressed(self, context):
+        """ Callback from the UI when the control is pressed.
+
+        """
+        self.pressed()
+
+    def receive_released(self, context):
+        """ Callback from the UI when the control is released.
+
+        """
+        self.released()
+
+    def receive_toggled(self, context):
+        """ Callback from the UI when the control is toggled.
+
+        """
+        self.toggled()
+
     #--------------------------------------------------------------------------
     # Property methods 
     #--------------------------------------------------------------------------
