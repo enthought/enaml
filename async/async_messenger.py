@@ -2,28 +2,22 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import HasTraits, ReadOnly, Undefined
-
-from async_application import AsyncApplication
-from async_errors import AsyncApplicationError
+from async_application import AsyncApplication, AsyncApplicationError
 
 
-class AsyncMessenger(HasTraits):
-    """ A base class which provides the messaging interface for objects 
-    in an AsyncApplication.
+class AsyncMessenger(object):
+    """ A base class which provides the messaging interface between 
+    this object and a client object that lives elsewhere.
 
     This class ensures that objects are registered with the application
     instance when they are instantiated. It also provides 'send' and
-    'receive' methods to facilitate message passing.
+    'receive' methods to facilitate message passing between the
+    instance and its client.
+
+    The correspondence between the messenger instance and the client
+    object is 1:1.
 
     """
-    #: A messenger id is an object provided by the application instance
-    #: when an async messenger instance is created and registered. It
-    #: allows the application to attach unique meta-info to a messenger 
-    #: for any purpose it deems necessary, such as a serializable tag
-    #: to send over the network.
-    messenger_id = ReadOnly
-
     def __new__(cls, *args, **kwargs):
         """ Create a new AsyncMessenger instance.
 
@@ -36,16 +30,36 @@ class AsyncMessenger(HasTraits):
             msg = 'An async application instance must be created before '
             msg += 'creating any AsyncMessenger instances.'
             raise AsyncApplicationError(msg)
+        
         instance = super(AsyncMessenger, cls).__new__(cls, args, kwargs)
-        app.register(instance)
-        if instance.messenger_id is Undefined:
-            msg = 'The async application failed to provide an id for '
-            msg += 'AsyncMessenger instance.'
+        instance.__msg_id = None
+
+        def id_setter(msg_id):
+            if not isinstance(msg_id, str):
+                msg = 'A messaging id must be a string. Got object of '
+                msg += 'type %s instead' % type(msg_id)
+                raise TypeError(msg)
+            instance.__msg_id = msg_id
+
+        app.register(instance, id_setter)
+
+        if instance.__msg_id is None:
+            msg = 'The async application failed to provide a messaging id'
+            msg += 'for the AsyncMessenger instance.'
             raise AsyncApplicationError(msg)
+
         return instance
 
     @property
-    def application(self):
+    def msg_id(self):
+        """ Returns the messaging id string given to this messenger by 
+        the application.
+
+        """
+        return self.__msg_id
+
+    @property
+    def app(self):
         """ Returns the async application instance for use by this
         messenger.
 
@@ -56,60 +70,62 @@ class AsyncMessenger(HasTraits):
             raise AsyncApplicationError(msg)
         return app
 
-    def send(self, cmd, context):
-        """ Send a command to the client object to be executed.
+    def send(self, msg, ctxt):
+        """ Send a message to be handled by a client object.
         
         Parameters
         ----------
-        cmd : string
-            The command to be executed on the client object.
+        msg : string
+            The message to be sent to the client object.
             
-        context : dict
-            The argument context for the command to be executed.
+        ctxt : dict
+            The argument context for the message.
 
         Returns
         -------
-        result : AsyncCommand
-            An asynchronous command object for the given command. When
-            the client object has finished executing the command, this
-            async object will notify any registered callbacks.
+        result : AsyncReply
+            An asynchronous reply object for the given message. When
+            the client object has finished processing the message, 
+            this async reply will notify any registered callbacks.
 
         """
-        return self.application.send_command(self, cmd, context)
+        return self.application.send_message(self.msg_id, msg, ctxt)
         
-    def receive(self, cmd, context):
-        """ Handle a command sent by another object.
+    def recv(self, msg, ctxt):
+        """ Handle a message sent by the client object.
         
         This method is called by the async application instance when
-        there is a command ready to be delivered to this messenger.
+        there is a message from the client ready to be delivered to 
+        this messenger.
         
-        This method will dispatch the command to methods defined on a 
+        This method will dispatch the message to methods defined on a 
         subclass by prefixing the command name with 'receive_'. 
 
-        In order to handle a command named e.g. 'set_label', a sublass 
+        In order to handle a message named e.g. 'set_label', a sublass 
         should define a method with the name 'receive_set_label' which 
         takes a single argument which is the context dictionary for the 
-        command. Exceptions raised in a handler are propagated to the
-        application instance.
+        message. 
+
+        Exceptions raised in a handler are propagated.
         
         Parameters
         ----------
-        cmd : string
-            The command name to be executed by the client.
+        msg : string
+            The message to be handled by the client.
             
-        context : dict
-            The argument context for the command.
+        ctxt : dict
+            The context dictionary for the message.
 
         Returns
         -------
         result : object or NotImplemented
-            The return value of the command handler or NotImplemented
-            if this object does not define a handler for the command.
+            The return value of the message handler or NotImplemented
+            if this object does not define a handler for the message.
 
         """
-        handler_name = 'receive_' + cmd
+        handler_name = 'receive_' + msg
         handler = getattr(self, handler_name, None)
         if handler is not None:
-            return handler(context)
+            return handler(ctxt)
         return NotImplemented
 
