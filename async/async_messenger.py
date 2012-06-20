@@ -89,7 +89,7 @@ class AsyncMessenger(object):
             this async reply will notify any registered callbacks.
 
         """
-        return self.application.send_message(self.msg_id, msg, ctxt)
+        return self.app.send_message(self.msg_id, msg, ctxt)
         
     def recv(self, msg, ctxt):
         """ Handle a message sent by the client object.
