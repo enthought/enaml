@@ -25,17 +25,33 @@ class Control(ConstraintsWidget):
     #: or on all platforms or all backends.
     show_focus_rect = Enum('default', True, False)
 
+    #--------------------------------------------------------------------------
+    # Toolkit Communication
+    #--------------------------------------------------------------------------
     @on_trait_change('error, show_focus_rect')
     def sync_object_state(self, name, new):
+        """ Notify the client component of updates to the object state.
+
+        """
         msg = 'set_' + name
         self.send(msg, {'value': new})
 
     def initial_attrs(self):
+        """ Return a dictionary which contains all the state necessary to
+        initialize a client widget.
+
+        """
         super_attrs = super(Control, self).initial_attrs()
-        attrs = {'error':self.error, 'show_focus_rect':self.show_focus_rect}
-        attrs.update(super_attrs)
-        return attrs
-        
+        attrs = {
+            'error' : self.error,
+            'show_focus_rect' : self.show_focus_rect
+            }
+        super_attrs.update(attrs)
+        return super_attrs
+
+    #--------------------------------------------------------------------------
+    # Exception Handling
+    #--------------------------------------------------------------------------
     def capture_exceptions(self):
         """ Return a ShellExceptionContext that will capture error state 
         automatically.
