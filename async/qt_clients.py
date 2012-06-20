@@ -2,7 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from PySide.QtGui import QSlider, QLabel, QWidget
+from PySide.QtGui import QSlider, QLabel, QWidget, QPushButton
 
 from async_application import AsyncApplication
 
@@ -18,6 +18,10 @@ class ClientWidget(object):
     def __init__(self, msg_id):
         self.__msg_id = msg_id
         self.widget = None
+        self.children = []
+
+    def add_child(self, child):
+        self.children.append(child)
 
     def send(self, msg, ctxt):
         app = AsyncApplication.instance()
@@ -42,7 +46,7 @@ class QtSlider(ClientWidget):
         self.widget = QSlider(parent)
         self.widget.valueChanged.connect(self.on_value_changed)
         self.widget.show()
-        self.widget.move(100, 100)
+        self.widget.move(init_attrs['x'], init_attrs['y'])
         self.widget.setValue(init_attrs.get('value', 0))
 
     def on_value_changed(self):
@@ -75,10 +79,24 @@ class QtContainer(ClientWidget):
         self.widget.show()
 
 
+class QtPushButton(ClientWidget):
+
+    def create(self, parent, attrs):
+        self.widget = QPushButton(parent)
+        self.widget.setText(attrs['text'])
+        self.widget.move(attrs['x'], attrs['y'])
+        self.widget.clicked.connect(self.on_clicked)
+        self.widget.show()
+
+    def on_clicked(self):
+        self.send('clicked', {})
+
+
 CLIENTS = {
     'Slider': QtSlider,
     'Label': QtLabel,
     'Container': QtContainer,
+    'PushButton': QtPushButton,
 }
 
 
