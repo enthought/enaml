@@ -1,81 +1,74 @@
-from PySide.QtGui import *
-from PySide.QtCore import *
+#------------------------------------------------------------------------------
+#  Copyright (c) 2012, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+from traits.api import HasTraits, Instance, Range, on_trait_change, Str
 
-from command_reply import AsyncCommand
-
-
-class Application(QApplication):
-
-    process = Signal(object)
-
-    def __init__(self):
-        super(Application, self).__init__([])
-        self.widgets = {}
-        self.process.connect(self.on_process, Qt.QueuedConnection) # this makes things async
-
-    def register(self, wid, widget):
-        self.widgets[wid] = widget
-
-    def send(self, wid, cmd, ctxt):
-        w = self.widgets.get(wid)
-        if w is not None:
-            acmd = AsyncCommand()
-            items = (w, cmd, ctxt, acmd)
-            self.process.emit(items)
-            return acmd
-
-    @Slot(object)
-    def on_process(self, items):
-        widget, cmd, ctxt, reply = items
-        res = widget.receive(cmd, ctxt)
-        reply.finished(res)
+from async_messenger import AsyncMessenger
 
 
-app = Application()
+# NOTE!!!!
+#
+# This is currently hacked together just to validate the ideas of the
+# async message passing, this is certainly not production quality code.
+
+class CommandWidget(AsyncMessenger, HasTraits):
+
+    parent = Instance('CommandWidget')
+
+    def __init__(self, parent=None, **kwargs):
+        super(CommandWidget, self).__init__(parent=parent, **kwargs)
 
 
-class Slider(QSlider):
+class Slider(CommandWidget):
 
-    def __init__(self, parent):
-        super(Slider, self).__init__(parent)
-        self.valueChanged.connect(self.on_change)
+    value = Range(0, 100)
 
-    def on_change(self):
-        ac = app.send('label', 'update_text', {'text': str(self.value())})
-        ac.add_callback(self.notify)
-
-    def notify(self, ac, res):
-        print "command finished", res
+    def receive_update_value(self, ctxt):
+        self.value = ctxt['value']
 
 
-class Label(QLabel):
+class Label(CommandWidget):
+    
+    label = Str('Label')
 
-    def __init__(self, parent):
-        super(Label, self).__init__(parent)
-        app.register('label', self)
-        self.setText('Label')
-
-    def receive(self, cmd, ctxt):
-        mn = 'receive_' + cmd
-        mth = getattr(self, mn, None)
-        if mth is not None:
-            return mth(ctxt)
-
-    def receive_update_text(self, ctxt):
-        self.setText(ctxt['text'])
-        return 'succes'
+    @on_trait_change('label')
+    def update_label(self, label):
+        self.send('set_label', dict(label=label))
 
 
-w = QWidget()
-s = Slider(w)
-l = Label(w)
 
-hl = QHBoxLayout()
-hl.addWidget(l)
-hl.addWidget(s)
-w.setLayout(hl)
+class Container(CommandWidget):
+    
+    def show(self):
+        self.send('show', {})
 
-w.show()
 
-app.exec_()
+
+from qt_local_application import QtLocalApplication
+
+app = QtLocalApplication()
+
+view = Container()
+slider = Slider(view)
+label = Label(view)
+ 
+view.children = [slider, label]
+slider.children = []
+label.children = []
+
+def updater():
+    label.label = str(slider.value)
+
+slider.on_trait_change(updater, 'value')
+
+app.create_client_tree(view)
+
+view.show()
+
+app.run()
+
+
+
+
 
