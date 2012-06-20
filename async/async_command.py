@@ -2,38 +2,25 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from collections import deque
-import sys
-
-from async_errors import AsyncFailure, CallbackFailure
+from async_errors import CommandFailure
 
 
 class AsyncCommand(object):
     """ An async command object which notifies on completion.
 
     An async command is returned by an application instance whenver
-    a command is sent to receiver. Since the commands are delivered
+    a command is sent to a client. Since the commands are delivered
     asynchronously, this object is provided so that user code can
-    be notified when the command has completed.
+    be notified when the command has completed or failed.
 
-    This class is very similar to a twisted Deferred object with the
-    key difference that chaining of AsyncCommands is not permitted.
+    A user may register a callback to be executed when the results of 
+    the command are available by calling the 'set_callback' method.
+    If the command succesfully executes, the callback will be invoked
+    with the results of the command.
 
-    A user may register callbacks to be executed when the results of
-    the command are available by calling the 'add_callback' method.
-    When results are available, the first registered callback will
-    receive the results of the command. The return value of this 
-    callback will be passed to the next callback and so on. 
-
-    Error handlers may be registered via 'add_errback'. If a 
-    callback raises and exception during execution, the first
-    registered errback is called. This handler may either return
-    a valid value, raise a new exception, or return the provided
-    failure value. Only the first case stops the propogation of
-    the failure.
-
-    XXX - more documentation, for now, if you know how a twisted
-          Deferred works, then this class will be familiar.
+    A user may also register a failure callback which will be invoked
+    if the command fails to execute properly by the client by calling
+    the 'set_failback' method.
 
     """
     def __init__(self, cancel_cmd=None):
@@ -51,44 +38,25 @@ class AsyncCommand(object):
         self._pending = True
         self._cancelled = False
         self._results = None
-        self._dispatching = False
-        self._callbacks = deque()
+        self._callback = None
+        self._failback = None
 
     #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
-    def _dispatch_callbacks(self):
-        """
+    def _dispatch(self):
+        """ XXX document me
 
         """
-        # Guard against recursion
-        if self._dispatching:
-            return
-
-        last_result = self._results
-        callbacks = self._callbacks
-        while callbacks:
-            if self._cancelled:
-                break # break (unlike return) allows for logging of errors
-            selector = isinstance(last_result, AsyncFailure)
-            handler = callbacks.popleft()[selector]
-            if handler is None:
-                continue
+        results = self._results
+        if isinstance(results, CommandFailure):
+            handler = self._failback
+        else:
+            handler = self._callback
+        if handler is not None:
             cb, args, kwargs = handler
-            try:
-                self._dispatching = True
-                try:
-                    last_result = cb(self, last_result, *args, **kwargs)
-                finally:
-                    self._dispatching = False
-            except Exception:
-                last_result = CallbackFailure(*sys.exc_info())
-
-        # We processed all of the callbacks and still have a failure
-        # result that was unhandled.
-        if isinstance(last_result, AsyncFailure):
-            # probably want to log the failure here, instead of raising
-            raise ValueError("Failed dispatching")
+            # XXX handle exceptions in callbacks?
+            cb(self._results, *args, **kwargs) 
 
     #--------------------------------------------------------------------------
     # Public API
@@ -98,7 +66,7 @@ class AsyncCommand(object):
 
         If the command is no longer pending, then this operation is a
         no-op. Otherwise, the cancel command callback (if provided) 
-        will be called, and no further callbacks will be executed.
+        will be called, and no further dispatching will be performed.
 
         """
         self._cancelled = True
@@ -112,13 +80,13 @@ class AsyncCommand(object):
         """ Called by the application object when the command is finished
         executing.
 
-        Calling this method more than once is a Runtime Error.
+        Calling this method more than once is an error.
         
         Parameters
         ----------
         results : object
-            The return value of the commmand that was executed on
-            the client.
+            The results of the commmand that was executed on the client
+            or a CommandFailure object if the command failed.
 
         """
         if self._cancelled:
@@ -129,7 +97,7 @@ class AsyncCommand(object):
             raise RuntimeError("AsyncCommand already finished")
         self._pending = False
         self._results = results
-        self._dispatch_callbacks()
+        self._dispatch()
 
     def pending(self):
         """ Returns whether or not the async command is still pending
@@ -147,9 +115,9 @@ class AsyncCommand(object):
     def results(self):
         """ Returns the results of the async command.
 
-        If the results of the command are not yet available, due to the
-        command being cancelled, or the command is still pending this 
-        method will raise a ValueError.
+        If the results of the command are not yet available due to the
+        command being cancelled or still pending, then this method will 
+        raise a ValueError.
 
         Returns
         -------
@@ -161,36 +129,63 @@ class AsyncCommand(object):
             raise ValueError('Results not available')
         return self._results
 
-    def add_callback(self, callback, *args, **kwargs):
-        """ Add a callback to the list of callbacks to be run when the
-        command has finished.
+    def set_callback(self, callback, *args, **kwargs):
+        """ Set the callback to be run when the command has finished.
 
-        If the command has already finished and was not cancelled, then 
-        the callback will be executed immediately with the results of
-        the previously executed callback.
+        If the command has already finished and was not cancelled, then
+        the callback will be invoked immediately with the results. If 
+        the command has been cancelled, this method is a no-op.
 
-        The callback must accept at least two arguments: this deferred
-        object, and the results of the previous callback. These args
-        will be followed by any positional and keyword arguments 
-        provided here. 
+        The callback must accept at least one arguments which is the
+        results of the command.
 
-        The first callback added will receive the results of the 
-        command that was executed, which is the same object that
-        would be returned by a call to the 'results' method.
+        If the command fails, then the registered callback will not be
+        called. Instead the registered failback will be invoked with 
+        a CommandFailure instance.
+
+        Parameters
+        ----------
+        callback : callable
+            A callable which accepts at least one argument which will 
+            be the results of the command.
+
+        *args, **kwargs
+            Any addional positional or keyword parameters to pass to 
+            the callback when it is invoked.
 
         """
         if self._cancelled:
             return
-        cbs = ((callback, args, kwargs), None)
-        self._callbacks.append(cbs)
+        self._callback = (callback, args, kwargs)
         if not self._pending:
-            self._dispatch_callbacks()
+            self._dispatch()
 
-    def add_errback(self, errback, *args, **kwargs):
+    def set_failback(self, failback, *args, **kwargs):
+        """ Set the callback to be run if the command fails.
+
+        If the command has already failed and was not cancelled, then
+        the callback will be invoked immediately with the failure. If 
+        the command has been cancelled, this method is a no-op.
+
+        The callback must accept at least one arguments which is an
+        instance of CommandFailure.
+
+        If the command succeeds, then the failback will not be called.
+
+        Parameters
+        ----------
+        callback : callable
+            A callable which accepts at least one argument which will 
+            be the results of the command.
+
+        *args, **kwargs
+            Any addional positional or keyword parameters to pass to 
+            the callback when it is invoked.
+            
+        """
         if self._cancelled:
             return
-        cbs = (None, (errback, args, kwargs))
-        self._callbacks.append(cbs)
+        self._failback = (failback, args, kwargs)
         if not self._pending:
-            self._dispatch_callbacks()
+            self._dispatch()
 
