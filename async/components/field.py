@@ -96,20 +96,35 @@ class Field(Control):
     #: the width hug by default, so they expand freely in width.
     hug_width = 'ignore'
 
+    #--------------------------------------------------------------------------
+    # Toolkit Communication
+    #--------------------------------------------------------------------------
     @on_trait_change('max_length, password_mode, placeholder_text, read_only, \
         submit_mode, text, validator')
     def sync_object_state(self, name, new):
+        """ Notify the client component of updates to the object state.
+
+        """
         msg = 'set_' + name
         self.send(msg, {'value':new})
 
     def initial_attrs(self):
+        """ Return a dictionary which contains all the state necessary to
+        initialize a client widget.
+
+        """
         super_attrs = super(Field, self).initial_attrs()
-        attrs = {'max_length':self.max_length, 'read_only':self.read_only,
-                 'password_mode':self.password_mode, 'text':self.text,
-                 'placeholder_text':self.placeholder_text,
-                 'submit_mode':self.submit_mode, 'validator':self.validator}
-        attrs.update(super_attrs)
-        return attrs
+        attrs = {
+            'max_length' : self.max_length,
+            'read_only' : self.read_only,
+            'password_mode' : self.password_mode,
+            'text' : self.text,
+            'placeholder_text' : self.placeholder_text,
+            'submit_mode' : self.submit_mode,
+            'validator' : self.validator
+        }
+        super_attrs.update(attrs)
+        return super_attrs
 
     #--------------------------------------------------------------------------
     # Submission Machinery

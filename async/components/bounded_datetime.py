@@ -51,16 +51,30 @@ class BoundedDatetime(Control):
     #: The internal max datetime storage
     _max_datetime = Datetime(py_datetime(7999, 12, 31, 23, 59, 59, 999000))
 
+    #--------------------------------------------------------------------------
+    # Toolkit Communication
+    #--------------------------------------------------------------------------
     @on_trait_change('datetime, max_datetime, min_datetime')
     def sync_object_state(self, name, new):
+        """ Notify the client component of updates to the object state.
+
+        """
         msg = 'set_' + name
         self.send(msg, {'value':new})
 
     def initial_attrs(self):
+        """ Return a dictionary which contains all the state necessary to
+        initialize a client widget.
+
+        """
         super_attrs = super(BoundedDatetime, self).initial_attrs()
-        attrs = {'datetime':self.datetime, 'max_datetime':self.max_datetime, 'min_datetime':self.min_datetime}
-        attrs.update(super_attrs)
-        return attrs
+        attrs = {
+            'datetime' : self.datetime,
+            'max_datetime' : self.max_datetime,
+            'min_datetime' : self.min_datetime
+        }
+        super_attrs.update(attrs)
+        return super_attrs
 
     #--------------------------------------------------------------------------
     # Properties methods

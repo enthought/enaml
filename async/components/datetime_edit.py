@@ -28,14 +28,26 @@ class DatetimeEdit(BoundedDatetime):
     #: ignore the width hug by default, so they expand freely in width.
     hug_width = 'ignore'
 
+    #--------------------------------------------------------------------------
+    # Toolkit Communication
+    #--------------------------------------------------------------------------
     @on_trait_change('datetime_format')
     def sync_object_state(self, name, new):
+        """ Notify the client component of updates to the object state.
+
+        """
         msg = 'set_' + name
         self.send(msg, {'value':new})
 
     def initial_attrs(self):
+        """ Return a dictionary which contains all the state necessary to
+        initialize a client widget.
+
+        """
         super_attrs = super(BoundedDatetime, self).initial_attrs()
-        attrs = {'datetime_format':self.datetime_format}
-        attrs.update(super_attrs)
+        attrs = {
+            'datetime_format' : self.datetime_format
+        }
+        super_attrs.update(attrs)
         return attrs
 
