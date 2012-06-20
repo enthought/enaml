@@ -4,8 +4,8 @@
 #------------------------------------------------------------------------------
 from traits.api import Str
 
-from async_messenger import AsyncMessenger
-from base_component import BaseComponent
+from enaml.async.async_messenger import AsyncMessenger
+from enaml.core.base_component import BaseComponent
 
 
 class MessengerWidget(AsyncMessenger, BaseComponent):
