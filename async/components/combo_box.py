@@ -72,7 +72,7 @@ class ComboBox(Control):
     #--------------------------------------------------------------------------
     # Toolkit Communication
     #--------------------------------------------------------------------------
-    @on_trait_change('index, items')
+    @on_trait_change('index,items')
     def sync_object_state(self, name, new):
         """ Notify the client component of updates to the object state.
 
@@ -88,10 +88,23 @@ class ComboBox(Control):
         super_attrs = super(ComboBox, self).initial_attrs()
         attrs = {
             'index' : self.index,
-            'items' : self.items
+            'items' : self.items,
         }
         super_attrs.update(attrs)
         return super_attrs
+
+    def receive_selected(self, context):
+        """ Callback from the UI when a value is selected.
+
+        """
+        self.trait_set(index=context['value'], trait_change_notify=False)
+        self.selected(self.value)
+
+    def receive_index(self, context):
+        """ Callback from the UI when the index changes.
+
+        """
+        self.trait_set(index=context['value'], trait_change_notify=False)
 
     #--------------------------------------------------------------------------
     # Property Handlers
