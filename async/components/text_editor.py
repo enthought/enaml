@@ -115,6 +115,24 @@ class TextEditor(Control):
         super_attrs.update(attrs)
         return super_attrs
 
+    def receive_cursor_column(self, context):
+        """ Callback from the UI when the cursor column changes.
+
+        """
+        self._cursor_column = context['value']
+
+    def receive_cursor_line(self, context):
+        """ Callback from the UI when the cursor line changes.
+
+        """
+        self._cursor_line = context['value']
+
+    def receive_modified(self, context):
+        """ Callback from the UI when the text is modified on the client side.
+
+        """
+        self._modified = context['value']
+
     def receive_lost_focus(self, context):
         """ Callback from the UI when focus is lost.
 
