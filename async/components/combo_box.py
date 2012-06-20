@@ -69,16 +69,29 @@ class ComboBox(Control):
     #: An internal attribute that is used to synchronize :attr:`index`.
     _value = Any
 
+    #--------------------------------------------------------------------------
+    # Toolkit Communication
+    #--------------------------------------------------------------------------
     @on_trait_change('index, items')
     def sync_object_state(self, name, new):
+        """ Notify the client component of updates to the object state.
+
+        """
         msg = 'set_' + name
         self.send(msg, {'value':new})
 
     def initial_attrs(self):
+        """ Return a dictionary which contains all the state necessary to
+        initialize a client widget.
+
+        """
         super_attrs = super(ComboBox, self).initial_attrs()
-        attrs = {'index':self.index, 'items':self.items}
-        attrs.update(super_attrs)
-        return attrs
+        attrs = {
+            'index' : self.index,
+            'items' : self.items
+        }
+        super_attrs.update(attrs)
+        return super_attrs
 
     #--------------------------------------------------------------------------
     # Property Handlers

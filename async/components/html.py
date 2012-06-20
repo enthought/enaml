@@ -22,14 +22,26 @@ class Html(Control):
     #: ignore the height hug by default, so they expand freely in height.
     hug_height = 'ignore'
 
+    #--------------------------------------------------------------------------
+    # Toolkit Communication
+    #--------------------------------------------------------------------------
     @on_trait_change('source')
     def sync_object_state(self, name, new):
+        """ Notify the client component of updates to the object state.
+
+        """
         msg = 'set_' + name
         self.send(msg, {'value':new})
 
     def initial_attrs(self):
+        """ Return a dictionary which contains all the state necessary to
+        initialize a client widget.
+
+        """
         super_attrs = super(Html, self).initial_attrs()
-        attrs = {'source':self.source}
-        attrs.update(super_attrs)
-        return attrs
+        attrs = {
+            'source' : self.source
+        }
+        super_attrs.update(attrs)
+        return super_attrs
 

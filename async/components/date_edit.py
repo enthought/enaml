@@ -31,13 +31,25 @@ class DateEdit(BoundedDate):
     #: ignore the width hug by default, so they expand freely in width.
     hug_width = 'ignore'
 
+    #--------------------------------------------------------------------------
+    # Toolkit Communication
+    #--------------------------------------------------------------------------
     @on_trait_change('date_format')
     def sync_object_state(self, name, new):
+        """ Notify the client component of updates to the object state.
+
+        """
         msg = 'set_' + name
         self.send(msg, {'value':new})
 
     def inital_attrs(self):
+        """ Return a dictionary which contains all the state necessary to
+        initialize a client widget.
+
+        """
         super_attrs = super(DateEdit, self).inital_attrs()
-        attrs = {'date_format':self.date_format}
-        attrs.update(super_attrs)
-        return attrs
+        attrs = {
+            'date_format' : self.date_format
+        }
+        super_attrs.update(attrs)
+        return super_attrs

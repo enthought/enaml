@@ -42,16 +42,30 @@ class BoundedDate(Control):
     #: outside of these bounds will result in a TraitError.
     date = Bounded(Date(date.today()), low='min_date', high='max_date')
 
+    #--------------------------------------------------------------------------
+    # Toolkit Communication
+    #--------------------------------------------------------------------------
     @on_trait_change('date, max_date, min_date')
     def sync_object_state(self, name, new):
+        """ Notify the client component of updates to the object state.
+
+        """
         msg = 'set_' + name
         self.send(msg, {'value':new})
 
     def initial_attrs(self):
+        """ Return a dictionary which contains all the state necessary to
+        initialize a client widget.
+
+        """
         super_attrs = super(BoundedDate, self).inital_attrs()
-        attrs = {'date':self.date, 'max_date':self.max_date, 'min_date':self.min_date}
-        attrs.update(super_attrs)
-        return attrs
+        attrs = {
+            'date' : self.date,
+            'max_date' : self.max_date,
+            'min_date' : self.min_date
+        }
+        super_attrs.update(attrs)
+        return super_attrs
 
     #--------------------------------------------------------------------------
     # Property methods

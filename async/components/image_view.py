@@ -31,15 +31,28 @@ class ImageView(Control):
     #: An image view hugs its height weakly by default.
     hug_height = 'weak'
 
+    #--------------------------------------------------------------------------
+    # Toolkit Communication
+    #--------------------------------------------------------------------------
     @on_trait_change('image, scale_to_fit, preserve_aspect_ratio, allow_upscaling')
     def sync_object_state(self, name, new):
+        """ Notify the client component of updates to the object state.
+
+        """
         msg = 'set_' + name
         self.send(msg, {'value':new})
 
     def initial_attrs(self):
+        """ Return a dictionary which contains all the state necessary to
+        initialize a client widget.
+
+        """
         super_attrs = super(ImageView, self).initial_attrs()
-        attrs = {'image':self.image, 'scale_to_fit':self.scale_to_fit,
-                 'preserve_aspect_ratio':self.preserve_aspect_ratio,
-                 'allow_upscaling':self.allow_upscaling}
-        attrs.update(super_attrs)
-        return attrs
+        attrs = {
+            'image' : self.image,
+            'scale_to_fit' : self.scale_to_fit,
+            'preserve_aspect_ratio' : self.preserve_aspect_ratio,
+            'allow_upscaling' : self.allow_upscaling
+        }
+        super_attrs.update(attrs)
+        return super_attrs
