@@ -27,10 +27,17 @@ class Control(ConstraintsWidget):
 
     @on_trait_change('error, show_focus_rect')
     def sync_object_state(self, name, new):
+        """ Notify the client component of updates to the object state.
+
+        """
         msg = 'set_' + name
         self.send(msg, {'value': new})
 
     def initial_attrs(self):
+        """ Return a dictionary which contains all the state necessary to
+        initialize a client widget.
+
+        """
         super_attrs = super(Control, self).initial_attrs()
         attrs = {'error':self.error, 'show_focus_rect':self.show_focus_rect}
         attrs.update(super_attrs)
