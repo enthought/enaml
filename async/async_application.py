@@ -4,15 +4,21 @@
 #------------------------------------------------------------------------------
 from abc import ABCMeta, abstractmethod
 
-from async_errors import AsyncApplicationError
+
+class AsyncApplicationError(RuntimeError):
+    """ A custom RuntimeError for errors relating to the global async
+    application instance.
+
+    """
+    pass
 
 
 class AsyncApplication(object):
     """ The base class for all asynchronous applications in Enaml.
 
     This class defines the abstract api which must be implemented by
-    concrete subclasses. It also provides the application instance
-    handling logic.
+    concrete subclasses. It also provides the global application 
+    instance handling logic.
 
     """
     __metaclass__ = ABCMeta
@@ -46,91 +52,57 @@ class AsyncApplication(object):
     # Abstract API
     #--------------------------------------------------------------------------
     @abstractmethod
-    def register(self, messenger):
-        """ Registers the AsyncMessenger instance with the application.
+    def register(self, messenger, id_setter):
+        """ Registers an AsyncMessenger instance with the application.
 
         All AsyncMessenger instances will call this method once, when 
-        they are instantiated. The application must provide the messenger 
-        with an identifier by assigning to its 'messenger_id' attribute. 
-        This id can be any object an application deems necessary, as long 
-        as it is provided.
-
-        The application should also perform any other handling that is 
-        necessary to initialize message handling for the messenger.
+        they are created. The application must provide a unique string
+        identifier for the messenger by calling the provided 'id_setter' 
+        function with a single string argument. This id will be used for 
+        all future message passing between this messenger and its client.
 
         Parameters
         ----------
         messenger : AsyncMessenger
             The async messenger instance for which the application must
-            provide an identifier.
+            provide a unique identifier.
+
+        id_setter : callable
+            A callable which takes one argument which is the unique
+            string identifier to assign for this messenger.
 
         """
         raise NotImplementedError
 
     @abstractmethod
-    def messenger(self, messenger_id):
-        """ Return the messenger object for the given identifier.
+    def send_message(self, msg_id, msg, ctxt):
+        """ Send a message to the client of the given messaging id.
 
-        If the messenger does not exist for this application, then
-        an AsyncApplicationError should be raised.
-
-        Parameters
-        ----------
-        messenger_id : object
-            The identifier given to a messenger during a previous
-            call to 'register(...)'.
-
-        Returns
-        -------
-        result : AsyncMessenger
-            The async messenger for the given identifier.
-
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def send_command(self, messenger, cmd, context):
-        """ Send the command to the client of the given messenger.
-
-        This method delivers commands to the clients of AsyncMessenger
-        instance. How these messages are delivered is implementation
-        dependent, the only requirement is that this must method not
-        block while delivering the command.
+        This method asynchronously delivers messages to the client of 
+        the given messaging id. The messaging id is the same as that 
+        provided by the application when a messenger was registered. 
+        The mechanism by which messages are delivered is dependent
+        upon the implementation. The only requirement is that this 
+        method must not block while delivering the message.
 
         Parameters
         ----------
-        messenger : AsyncMessenger
-            The async messenger instance which is sending the command
-            to a client.
+        msg_id : string
+            The messaging id to use to route the message to the proper
+            client object.
 
-        cmd : string
-            The command name to be executed by the client.
+        msg : string
+            The message to deliver to the client object.
             
-        context : dict
-            The argument context for the command.
+        ctxt : dict
+            The message context to deliver with the message.
 
         Returns
         -------
-        result : AsyncCommand
-            An asynchronous command object for the given command. This
-            async command object will be notified by the application 
-            when the client has finished executing the command.
-
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def batch(self):
-        """ Returns a context manager which batches sent commands 
-        until the context is exited.
-
-        Returns
-        -------
-        result : context manager
-            While the context manager is active, anything calls to 
-            'send_command(...)' should be queued until the context
-            is exited, at which point the all of the queued commands
-            should be delivered as a single transaction.
+        result : AsyncReply
+            An asynchronous reply object for the given message. This
+            async reply object will be notified by the application 
+            when the client has finished handling the message.
 
         """
         raise NotImplementedError
