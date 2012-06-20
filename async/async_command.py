@@ -101,9 +101,9 @@ class AsyncCommand(object):
         will be called, and no further callbacks will be executed.
 
         """
+        self._cancelled = True
         if self._pending:
             self._pending = False
-            self._cancelled = True
             cancel_cmd = self._cancel_cmd
             if cancel_cmd is not None:
                 cancel_cmd(self)
@@ -122,6 +122,8 @@ class AsyncCommand(object):
 
         """
         if self._cancelled:
+            if self._pending:
+                self._pending = False
             return
         if not self._pending:
             raise RuntimeError("AsyncCommand already finished")
