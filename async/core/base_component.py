@@ -6,7 +6,7 @@ from collections import deque
 
 from traits.api import (
     HasStrictTraits, Instance, List, Property, Str, WeakRef, Dict, 
-    Disallow,
+    Disallow, Bool
 )
 
 from enaml.core.expressions import AbstractExpression
@@ -45,6 +45,8 @@ class BaseComponent(HasStrictTraits):
 
     #: A reference to the toolkit that was used to create this object.
     toolkit = Instance(Toolkit)
+
+    initialized = Bool(False)
 
     #: The private dictionary of expression objects that are bound to 
     #: attributes on this component. It should not be manipulated by
