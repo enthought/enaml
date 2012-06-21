@@ -4,8 +4,7 @@
 #------------------------------------------------------------------------------
 from .qt.QtGui import QWidget
 from .qt.QtCore import QSize
-
-from qt_client_widget import QtClientWidget
+from .qt_client_widget import QtClientWidget
 
 
 class QtWindow(QtClientWidget):
@@ -24,13 +23,13 @@ class QtWindow(QtClientWidget):
 
         """
         self.set_title(init_attrs.get('title', ''))
-        self.set_icon(init_attrs.get('icon'))
-        self.set_maximum_size(init_attrs.get('maximum_size'))
-        self.set_minimum_size(init_attrs.get('minimum_size'))
-        self.set_initial_size(init_attrs.get('initial_size'))
-        self.set_initial_size_default(init_attrs.get('initial_size_default'))
-        self.set_minimum_size_default(init_attrs.get('minimum_size_default'))
-        self.set_maximum_size_default(init_attrs.get('maximum_size_default'))
+        #self.set_icon(init_attrs.get('icon'))
+        #self.set_maximum_size(init_attrs.get('maximum_size'))
+        #self.set_minimum_size(init_attrs.get('minimum_size'))
+        #self.set_initial_size(init_attrs.get('initial_size'))
+        #self.set_initial_size_default(init_attrs.get('initial_size_default'))
+        #self.set_minimum_size_default(init_attrs.get('minimum_size_default'))
+        #self.set_maximum_size_default(init_attrs.get('maximum_size_default'))
 
     #--------------------------------------------------------------------------
     # Message Handlers

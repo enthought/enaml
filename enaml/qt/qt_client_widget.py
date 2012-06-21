@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from weakref import ref
 
-from ..core.async_application import AsyncApplication
+from enaml.async.async_application import AsyncApplication
 
 
 class QtClientWidget(object):

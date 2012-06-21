@@ -3,7 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 def window_importer():
-    from qt_window import QtWindow
+    from .qt_window import QtWindow
     return QtWindow
 
 

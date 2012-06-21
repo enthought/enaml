@@ -5,12 +5,11 @@
 from itertools import izip_longest
 from uuid import uuid4
 
-from PySide.QtGui import QApplication
+from enaml.async.async_application import AsyncApplication, AbstractBuilder
 
-from ..core.async_application import AsyncApplication, AbstractBuilder
-
-from qt_message_broker import QMessageBroker
-from qt_clients import CLIENTS
+from .qt.QtGui import QApplication
+from .qt_clients import CLIENTS
+from .qt_message_broker import QMessageBroker
 
 
 class QtLocalClientBuilder(AbstractBuilder):
