@@ -26,6 +26,21 @@ class QtDateEdit(QtBoundedDate):
         self.set_max_date(init_attrs.get('max_date'))
         self.set_date_format(init_attrs.get('date_format'))
 
+    def bind(self):
+        """ Connect the widgets signals to slots
+
+        """
+        self.widget.dateChanged.connect(self.on_date_changed)
+        
+    #--------------------------------------------------------------------------
+    # Event Handlers
+    #--------------------------------------------------------------------------
+    def on_date_changed(self):
+        """ Event handler for date_changed
+
+        """
+        self.send('date_changed', {})
+
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
