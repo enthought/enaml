@@ -40,6 +40,11 @@ class Control(ConstraintsWidget):
         """ Return a dictionary which contains all the state necessary to
         initialize a client widget.
 
+            Attributes
+            ----------
+            error : bool
+
+            show_focus_rect : enumeration string
         """
         super_attrs = super(Control, self).initial_attrs()
         attrs = {
