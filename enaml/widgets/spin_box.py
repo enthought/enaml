@@ -22,8 +22,8 @@ class SpinBox(Control):
     single_step = Int(1)
 
     #: The current integer value for the spin box, constrained to
-    #: low <= value <= high.
-    value = Range('low', 'high')
+    #: minimum <= value <= maximum.
+    value = Range('minimum', 'maximum')
 
     #: A validator object to convert to and from a spin box integer
     #: and a unicode string for display. The format method will be 
@@ -51,15 +51,6 @@ class SpinBox(Control):
     #--------------------------------------------------------------------------
     # Toolkit Communication
     #--------------------------------------------------------------------------
-    @on_trait_change('maximum, minimum, single_step, tracking, validator, \
-                     value, wrap')
-    def sync_object_state(self, name, new):
-        """ Notify the client component of updates to the object state.
-
-        """
-        msg = 'set_' + name
-        self.send(msg, {'value':new})
-
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
         initialize a client widget.
@@ -78,9 +69,27 @@ class SpinBox(Control):
         super_attrs.update(attrs)
         return super_attrs
 
-    def receive_value(self, context):
+    def receive_set_value(self, context):
         """ Callback from the UI when the value of the control changes.
 
         """
+        self._setting = True
         self.value = context['value']
+        self._setting = False
+
+    @on_trait_change('maximum,minimum,single_step,tracking,validator,wrap')
+    def sync_object_state(self, name, new):
+        """ Notify the client component of updates to the object state.
+
+        """
+        msg = 'set_' + name
+        self.send(msg, {'value':new})
+
+    @on_trait_change('value')
+    def update_value(self):
+        """ Notify the client component of updates to the object state.
+
+        """
+        if not self._setting:
+            self.send('set_value', {'value':self.value})
 

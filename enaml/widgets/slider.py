@@ -114,15 +114,6 @@ class Slider(Control):
     #--------------------------------------------------------------------------
     # Toolkit Communication
     #--------------------------------------------------------------------------
-    @on_trait_change('maximum, minimum, orientation, page_step, single_step, \
-                     tick_interval, tick_position, tracking, value')
-    def sync_object_state(self, name, new):
-        """ Notify the client component of updates to the object state.
-
-        """
-        msg = 'set_' + name
-        self.send(msg, {'value':new})
-
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
         initialize a client widget.
@@ -143,12 +134,6 @@ class Slider(Control):
         super_attrs.update(attrs)
         return super_attrs
 
-    def receive_down(self, context):
-        """ Callback from the UI when the slider's down state changes
-
-        """
-        self._down = context['value']
-
     def receive_moved(self, context):
         """ Callback from the UI when the control is moved.
 
@@ -167,11 +152,36 @@ class Slider(Control):
         """
         self.released()
 
-    def receive_value(self, context):
+    def receive_set_down(self, context):
+        """ Callback from the UI when the slider's down state changes
+
+        """
+        self._down = context['value']
+
+    def receive_set_value(self, context):
         """ Callback from the UI when the slider's value changes
 
         """
+        self._setting = True
         self.value = context['value']
+        self._setting = False
+
+    @on_trait_change('maximum, minimum, orientation, page_step, single_step, \
+                     tick_interval, tick_position, tracking')
+    def sync_object_state(self, name, new):
+        """ Notify the client component of updates to the object state.
+
+        """
+        msg = 'set_' + name
+        self.send(msg, {'value':new})
+
+    @on_trait_change('value')
+    def update_value(self):
+        """ Notify the client UI of changes to the control's value.
+
+        """
+        if not self._setting:
+            self.send('set_value', {'value':new})
 
     #--------------------------------------------------------------------------
     # Trait defaults

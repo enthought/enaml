@@ -47,14 +47,6 @@ class FloatSlider(Slider):
     #--------------------------------------------------------------------------
     # Toolkit Communication
     #--------------------------------------------------------------------------
-    @on_trait_change('precision, maximum, minimum, tick_interval, page_step')
-    def sync_object_state(self, name, new):
-        """ Notify the client component of updates to the object state.
-
-        """
-        msg = 'set_' + name
-        self.send(msg, {'value':new})
-
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
         initialize a client widget.
@@ -62,15 +54,18 @@ class FloatSlider(Slider):
         """
         super_attrs = super(FloatSlider, self).initial_attrs()
         attrs = {
-            'maximum' : self.maximum,
-            'minimum' : self.minimum,
             'precision' : self.precision,
-            'tick_interval' : self.tick_interval,
-            'page_step' : self.page_step
         }
         super_attrs.update(attrs)
         return super_attrs
-    
+
+    @on_trait_change('precision')
+    def update_precision(self):
+        """ Notify the client component of updates to the precision.
+
+        """
+        self.send('set_precision', {'value':self.precision})
+
     #--------------------------------------------------------------------------
     # Property methods
     #--------------------------------------------------------------------------
