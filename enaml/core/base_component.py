@@ -100,6 +100,29 @@ class BaseComponent(HasStrictTraits):
             return repr(base)
         return super(BaseComponent, self).__repr__()
 
+    @classmethod
+    def __enaml_call__(cls, identifiers=None):
+        """ This implements the __enaml_call__ protocol for a given
+        component. 
+
+        For the builtin components this method simply constructs an
+        instance of the class and the dictionary of identifiers is
+        ignored.
+
+        Parameters
+        ----------
+        identifiers : dict or None, optional
+            The dict of identifiers to use when binding expressions
+            on the component. This parameter is ignored.
+
+        Returns
+        -------
+        result : BaseComponent
+            The BaseComponent instance that was created.
+
+        """
+        return cls()
+    
     #--------------------------------------------------------------------------
     # Property Getters
     #--------------------------------------------------------------------------
