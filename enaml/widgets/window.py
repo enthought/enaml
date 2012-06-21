@@ -4,8 +4,8 @@
 #------------------------------------------------------------------------------
 from traits.api import Instance, Unicode, on_trait_change, Tuple, Range
 
-from ..core.messenger_widget import MessengerWidget
-from ..core.async_application import AbstractBuilder, AsyncApplication
+from enaml.async.async_application import AbstractBuilder, AsyncApplication
+from .messenger_widget import MessengerWidget
 
 
 class Window(MessengerWidget):
@@ -22,7 +22,7 @@ class Window(MessengerWidget):
 
     #: The titlebar icon.
     # XXX needs to be implemented
-    icon = Instance()
+    #icon = Instance()
 
     #: The initial size to set the window on the first call show()
     #: If the initial size is set to (-1, -1), then a default value
@@ -65,17 +65,19 @@ class Window(MessengerWidget):
     maximum_size_default = Tuple(Range(0, value=(2**24 - 1)), 
                                  Range(0, value=(2**24 - 1)))
 
-    #: The widget tree builder
+    #: The private storage for the widget tree builder. A reference must
+    #: be kept to the builder, since the lifetime of the implementation
+    #: widgets is tied to the lifetime of the builder.
     _builder = Instance(AbstractBuilder)
 
     #--------------------------------------------------------------------------
-    # Toolkit Communication
+    # Initialization
     #--------------------------------------------------------------------------
     def initial_attrs(self):
         super_attrs = super(Window, self).initial_attrs()
         attrs = {
             'title' : self.title,
-            'icon' : self.icon,
+            #'icon' : self.icon,
             'initial_size' : self.initial_size,
             'initial_size_default' : self.initial_size_default,
             'minimum_size' : self.minimum_size,
@@ -86,6 +88,17 @@ class Window(MessengerWidget):
         super_attrs.update(attrs)
         return super_attrs
 
+    def bind(self):
+        super(Window, self).bind()
+        self.default_send_attr_bind(
+            'title', 'initial_size', 'minimum_size', 'maximum_size',
+            'initial_size_default', 'minimum_size_default',
+            'maximum_size_default'
+        )
+
+    #--------------------------------------------------------------------------
+    # Public API
+    #--------------------------------------------------------------------------
     def maximize(self):
         """ Send a 'maximize' command to the client UI.
 
@@ -108,6 +121,8 @@ class Window(MessengerWidget):
         """ Build the UI tree for this window and tell the client to show it.
 
         """
+        if not self.initialized:
+            self.initialize()
         builder = self._builder
         if builder is None:
             builder = self._builder = AsyncApplication.instance().builder()
@@ -115,12 +130,5 @@ class Window(MessengerWidget):
             builder.build(build_info)
         self.send('show', {})
 
-    @on_trait_change('title, icon, initial_size, minimum_size, maximum_size \
-        initial_size_default, minimum_size_default, maximum_size_default')
-    def sync_object_state(self, name, new):
-        """ Notify the client UI of changes to object state.
-
-        """
-        msg = 'set_' + name
-        self.send(msg, {'value': new})
+    
 
