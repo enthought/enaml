@@ -96,18 +96,12 @@ class Field(Control):
     #: the width hug by default, so they expand freely in width.
     hug_width = 'ignore'
 
+    #: A variable to hold text that is received from the toolkit component
+    _text = Unicode(u'')
+
     #--------------------------------------------------------------------------
     # Toolkit Communication
     #--------------------------------------------------------------------------
-    @on_trait_change('max_length, password_mode, placeholder_text, read_only, \
-        submit_mode, text, validator')
-    def sync_object_state(self, name, new):
-        """ Notify the client component of updates to the object state.
-
-        """
-        msg = 'set_' + name
-        self.send(msg, {'value':new})
-
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
         initialize a client widget.
@@ -118,13 +112,67 @@ class Field(Control):
             'max_length' : self.max_length,
             'read_only' : self.read_only,
             'password_mode' : self.password_mode,
-            'text' : self.text,
             'placeholder_text' : self.placeholder_text,
             'submit_mode' : self.submit_mode,
-            'validator' : self.validator
+            'validator' : self.validator,
+            'value' : self.validator.format(self.value),
         }
         super_attrs.update(attrs)
         return super_attrs
+
+    def receive_lost_focus(self, context):
+        """ Callback from the UI when the control loses focus.
+
+        """
+        self._text = context['text']
+        self._field_lost_focus()
+
+    def receive_return_pressed(self, context):
+        """ Callback from the UI when return is pressed.
+
+        """
+        self._text = context['text']
+        self._field_return_pressed()
+
+    def receive_selected_text(self, context):
+        """ Callback from the UI when the control's text is selected
+
+        """
+        self.selected_text = context['value']
+
+    def receive_set_cursor_position(self, context):
+        """ Callback from the UI when the control's cursor position changes.
+
+        """
+        self.cursor_position = context['value']
+
+    def receive_set_modified(self, context):
+        """ Callback from the UI when the control's value is modified.
+
+        """
+        self.modified = context['value']
+
+    def receive_text_edited(self, context):
+        """ Callback from the UI when the control's text is edited.
+
+        """
+        self._text = context['text']
+        self._field_text_edited()
+
+    @on_trait_change('max_length, password_mode, placeholder_text, read_only, \
+        submit_mode, validator')
+    def sync_object_state(self, name, new):
+        """ Notify the client component of updates to the object state.
+
+        """
+        msg = 'set_' + name
+        self.send(msg, {'value':new})
+
+    def update_text(self, text):
+        """ Forcibly update the text in the UI.
+
+        """
+        self.send('set_text', {'text':text})
 
     #--------------------------------------------------------------------------
     # Submission Machinery
@@ -158,7 +206,7 @@ class Field(Control):
             is not valid or the conversion from text to value fails. 
 
         """
-        text = self.get_text()
+        text = self._text
         v = self.validator
         self.acceptable = acceptable = (v.validate(text) == v.ACCEPTABLE)
 
@@ -189,9 +237,9 @@ class Field(Control):
 
         if format:
             text = v.format(self.value)
-            self.set_text(text)
+            self.update_text(text)
             self.acceptable = (v.validate(text) == v.ACCEPTABLE)
-        
+
         return res
 
     @on_trait_change('value, validator')
@@ -204,9 +252,9 @@ class Field(Control):
             self.modified = False
             v = self.validator
             text = v.format(self.value)
-            self.set_text(text)
+            self.update_text(text)
             self.acceptable = (v.validate(text) == v.ACCEPTABLE)
-    
+
     #--------------------------------------------------------------------------
     # Field Update Methods
     #--------------------------------------------------------------------------
@@ -225,7 +273,7 @@ class Field(Control):
             v = self.validator
             self.acceptable = (v.validate(self.get_text()) == v.ACCEPTABLE)
         self.text_edited()
-    
+
     def _field_return_pressed(self):
         """ A method which should be called by the toolkit implementation
         whenever the user presses the return key, but only if the text in 
@@ -235,7 +283,7 @@ class Field(Control):
         if 'return_pressed' in self.submit_mode:
             self.submit()
         self.return_pressed()
-    
+
     def _field_lost_focus(self):
         """ A method which should be called by the toolkit implementation 
         whenever the field loses focus.

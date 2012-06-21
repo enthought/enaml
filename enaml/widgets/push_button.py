@@ -54,14 +54,6 @@ class PushButton(Control):
     #--------------------------------------------------------------------------
     # Toolkit Communication
     #--------------------------------------------------------------------------
-    @on_trait_change('icon, icon_size, text')
-    def sync_object_state(self, name, new):
-        """ Notify the client component of updates to the object state.
-
-        """
-        msg = 'set_' + name
-        self.send(msg, {'value':new})
-
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
         initialize a client widget.
@@ -75,6 +67,14 @@ class PushButton(Control):
         }
         super_attrs.update(attrs)
         return super_attrs
+
+    @on_trait_change('icon, icon_size, text')
+    def sync_object_state(self, name, new):
+        """ Notify the client component of updates to the object state.
+
+        """
+        msg = 'set_' + name
+        self.send(msg, {'value':new})
 
     def receive_clicked(self, context):
         """ Callback from the UI when the control is clicked.

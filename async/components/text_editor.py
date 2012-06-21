@@ -89,8 +89,8 @@ class TextEditor(Control):
     #--------------------------------------------------------------------------
     # Toolkit Communication
     #--------------------------------------------------------------------------
-    @on_trait_change('anchor_position,cursor_position,overwrite,read_only,'
-                     'text,wrap_lines')
+    @on_trait_change('anchor_position,cursor_position,overwrite,read_only, \
+                     wrap_lines')
     def sync_object_state(self, name, new):
         """ Notify the client component of updates to the object state.
 
@@ -109,35 +109,34 @@ class TextEditor(Control):
             'cursor_position' : self.cursor_position,
             'overwrite' : self.overwrite,
             'read_only' : self.read_only
-            'text' : self.text,
-            'wrap_lines' : self.wrap_lines
-            }
+            'wrap_lines' : self.wrap_lines,
+        }
         super_attrs.update(attrs)
         return super_attrs
-
-    def receive_cursor_column(self, context):
-        """ Callback from the UI when the cursor column changes.
-
-        """
-        self._cursor_column = context['value']
-
-    def receive_cursor_line(self, context):
-        """ Callback from the UI when the cursor line changes.
-
-        """
-        self._cursor_line = context['value']
-
-    def receive_modified(self, context):
-        """ Callback from the UI when the text is modified on the client side.
-
-        """
-        self._modified = context['value']
 
     def receive_lost_focus(self, context):
         """ Callback from the UI when focus is lost.
 
         """
         self.lost_focus()
+
+    def receive_set_cursor_column(self, context):
+        """ Callback from the UI when the cursor column changes.
+
+        """
+        self._cursor_column = context['value']
+
+    def receive_set_cursor_line(self, context):
+        """ Callback from the UI when the cursor line changes.
+
+        """
+        self._cursor_line = context['value']
+
+    def receive_set_modified(self, context):
+        """ Callback from the UI when the text is modified on the client side.
+
+        """
+        self._modified = context['value']
 
     def receive_text_changed(self, context):
         """ Callback from UI when the text changes.

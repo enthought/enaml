@@ -48,14 +48,6 @@ class ToggleControl(Control):
     #--------------------------------------------------------------------------
     # Toolkit Communication
     #--------------------------------------------------------------------------
-    @on_trait_change('checked,text')
-    def sync_object_state(self, name, new):
-        """ Notify the client component of updates to the object state.
-
-        """
-        msg = 'set_' + name
-        self.send(msg, {'value':new})
-
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
         initialize a client widget.
@@ -64,16 +56,10 @@ class ToggleControl(Control):
         super_attrs = super(ToggleControl, self).initial_attrs()
         attrs = {
             'checked' : self.checked,
-            'text': self.text
-            }
+            'text': self.text,
+        }
         super_attrs.update(attrs)
         return super_attrs
-
-    def receive_set_down(self, context):
-        """ Callback from the UI when the down state of the control changes.
-
-        """
-        self._down = context["value"]
 
     def receive_pressed(self, context):
         """ Callback from the UI when the control is pressed.
@@ -87,11 +73,25 @@ class ToggleControl(Control):
         """
         self.released()
 
+    def receive_set_down(self, context):
+        """ Callback from the UI when the down state of the control changes.
+
+        """
+        self._down = context["value"]
+
     def receive_toggled(self, context):
         """ Callback from the UI when the control is toggled.
 
         """
         self.toggled()
+
+    @on_trait_change('checked,text')
+    def sync_object_state(self, name, new):
+        """ Notify the client component of updates to the object state.
+
+        """
+        msg = 'set_' + name
+        self.send(msg, {'value':new})
 
     #--------------------------------------------------------------------------
     # Property methods 

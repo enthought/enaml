@@ -37,14 +37,6 @@ class ToggleButton(ToggleControl):
     #--------------------------------------------------------------------------
     # Toolkit Communication
     #--------------------------------------------------------------------------
-    @on_trait_change('icon,icon_size')
-    def sync_object_state(self, name, new):
-        """ Notify the client component of updates to the object state.
-
-        """
-        msg = 'set_' + name
-        self.send(msg, {'value':new})
-
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
         initialize a client widget.
@@ -53,7 +45,16 @@ class ToggleButton(ToggleControl):
         super_attrs = super(ToggleButton, self).initial_attrs()
         attrs = {
             'icon' : self.icon,
-            'icon_size': self.icon_size
-            }
+            'icon_size': self.icon_size,
+        }
         super_attrs.update(attrs)
         return super_attrs
+
+    @on_trait_change('icon,icon_size')
+    def sync_object_state(self, name, new):
+        """ Notify the client component of updates to the object state.
+
+        """
+        msg = 'set_' + name
+        self.send(msg, {'value':new})
+

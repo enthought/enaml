@@ -31,15 +31,6 @@ class DatetimeEdit(BoundedDatetime):
     #--------------------------------------------------------------------------
     # Toolkit Communication
     #--------------------------------------------------------------------------
-    @on_trait_change('datetime_format')
-    def sync_object_state(self, name, new):
-        """ Notify the client component of updates to the object state.
-
-        """
-        if not self._setting:
-            msg = 'set_' + name
-            self.send(msg, {'value':new})
-
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
         initialize a client widget.
@@ -59,5 +50,12 @@ class DatetimeEdit(BoundedDatetime):
         self._setting = True
         self.datetime = context['value']
         self._setting = False
-        self.datetime_changed()
+        self.datetime_changed(self.datetime)
+
+    @on_trait_change('datetime_format')
+    def update_datetime_format(self):
+        """ Notify the client component of updates to datetime_format.
+
+        """
+        self.send('set_datetime_format', {'value':self.datetime_format})
 
