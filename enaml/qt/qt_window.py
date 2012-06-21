@@ -24,7 +24,7 @@ class QtWindow(QtClientWidget):
 
         """
         self.set_title(init_attrs.get('title', ''))
-        self.set_icon(init_attrs.get('icon'))
+        #self.set_icon(init_attrs.get('icon'))
         self.set_maximum_size(init_attrs.get('maximum_size'))
         self.set_minimum_size(init_attrs.get('minimum_size'))
         self.set_initial_size(init_attrs.get('initial_size'))
@@ -219,14 +219,14 @@ class QtWindow(QtClientWidget):
             return (computed_width, computed_height)
         
         # Otherwise, try to compute a default from the central widget.
-        widget = self.widget
-        if widget is not None:
-            size_hint_width = widget.sizeHint().width()
-            size_hint_height = widget.sizeHint().height()
-            if computed_width == -1:
-                computed_width = size_hint_width
-            if computed_height == -1:
-                computed_height = size_hint_height
+        #widget = self.widget
+        #if widget is not None:
+        #    size_hint_width = widget.sizeHint().width()
+        #    size_hint_height = widget.sizeHint().height()
+        #    if computed_width == -1:
+        #        computed_width = size_hint_width
+        #    if computed_height == -1:
+        #        computed_height = size_hint_height
 
         # We use the last resort values to replace any remaining 
         # -1 values. This ensures the return value will be >= 0 
