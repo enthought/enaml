@@ -2,7 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt.QtGui import QDateEdit
+from .qt.QtGui import QCalendarWidget
 from .qt import QtCore
 from .qt_bounded_date import QtBoundedDate
 
@@ -13,14 +13,14 @@ except AttributeError: # pragma: no cover
     qdate_to_python = QtCore.QDate.toPyDate
 
 class QtDateEdit(QtBoundedDate):
-    """ A Qt implementation of a date edit
+    """ A Qt implementation of a calendar
 
     """
     def create(self, parent):
         """ Create the underlying widget
 
         """
-        self.widget = QDateEdit(parent)
+        self.widget = QCalendarWidget(parent)
         self.widget.show()
 
     def initialize(self, init_attrs):
@@ -36,16 +36,23 @@ class QtDateEdit(QtBoundedDate):
         """ Connect the widgets signals to slots
 
         """
-        self.widget.dateChanged.connect(self.on_date_changed)
+        self.widget.activated.connect(self.on_date_activated)
+        self.widget.selectionChanged.connect(self.on_date_selected)
         
     #--------------------------------------------------------------------------
     # Event Handlers
     #--------------------------------------------------------------------------
-    def on_date_changed(self, date):
-        """ Event handler for date_changed
+    def on_date_activated(self, date):
+        """ Event handler for date_activated
 
         """
-        self.send('date_changed', {'value':qdate_to_python(date)})
+        self.send('date_activated', {'value':qdate_to_python(date)})
+
+    def on_date_selected(self, date):
+        """ Event handler for date_selected
+
+        """
+        self.send('date_selected', {'value':qdate_to_python(date)})
 
     #--------------------------------------------------------------------------
     # Message Handlers
