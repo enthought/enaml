@@ -72,14 +72,6 @@ class ComboBox(Control):
     #--------------------------------------------------------------------------
     # Toolkit Communication
     #--------------------------------------------------------------------------
-    @on_trait_change('index,items')
-    def sync_object_state(self, name, new):
-        """ Notify the client component of updates to the object state.
-
-        """
-        msg = 'set_' + name
-        self.send(msg, {'value':new})
-
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
         initialize a client widget.
@@ -97,14 +89,32 @@ class ComboBox(Control):
         """ Callback from the UI when a value is selected.
 
         """
-        self.trait_set(index=context['value'], trait_change_notify=False)
+        self.receive_set_index(context)
         self.selected(self.value)
 
-    def receive_index(self, context):
+    def receive_set_index(self, context):
         """ Callback from the UI when the index changes.
 
         """
-        self.trait_set(index=context['value'], trait_change_notify=False)
+        self._setting = True
+        self.value = self.items[context['index']]
+        self._setting = False
+
+    @on_trait_change('items')
+    def update_items(self):
+        """ Notify the client component of updates to the items.
+
+        """
+        self.send('set_items', {'items':self.items})
+
+    @on_trait_change('value')
+    def update_index(self):
+        """ Notify the client component of updates to the value
+
+        """
+        if not self._setting:
+            idx = self.items.index(self.value)
+            self.send('set_index', {'index':idx})
 
     #--------------------------------------------------------------------------
     # Property Handlers
