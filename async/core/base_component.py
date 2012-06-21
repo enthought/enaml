@@ -10,7 +10,6 @@ from traits.api import (
 )
 
 from enaml.core.expressions import AbstractExpression
-from enaml.core.toolkit import Toolkit
 from enaml.core.trait_types import (
     EnamlEvent, LazyProperty, UserAttribute, UserEvent, ExpressionTrait,
 )
@@ -43,9 +42,9 @@ class BaseComponent(HasStrictTraits):
         depends_on='_subcomponents:_actual_updated',
     )
 
-    #: A reference to the toolkit that was used to create this object.
-    toolkit = Instance(Toolkit)
-
+    #: Whether the component has been initialized or not. This will be 
+    #: set to True after the initialize() method is called. It should 
+    #: not be changed afterwards.
     initialized = Bool(False)
 
     #: The private dictionary of expression objects that are bound to 
@@ -141,45 +140,6 @@ class BaseComponent(HasStrictTraits):
         """
         component.parent = self
         self._subcomponents.append(component)
-    
-    #--------------------------------------------------------------------------
-    # Setup Methods 
-    #--------------------------------------------------------------------------
-    def setup(self):
-        """ Run the setup process for the ui tree. Bound expression values are
-        explicitly applied
-
-        Parameters
-        ----------
-        parent : native toolkit widget, optional
-            If embedding this BaseComponent into a non-Enaml GUI, use 
-            this to pass the appropriate toolkit widget that should be 
-            the parent toolkit widget for this component.
-
-        """
-        self._setup_eval_expressions()
-        self._setup_set_initialized()
-
-    def _setup_eval_expressions(self):
-        """ A setup method that loops over all of bound expressions and
-        performs a getattr for those attributes. This ensures that all
-        bound attributes are initialized, even if they weren't implicitly
-        initialized in any of the previous setup methods.
-
-        """
-        for name in self._expressions:
-            getattr(self, name)
-        for child in self._subcomponents:
-            child._setup_eval_expressions()
-
-    def _setup_set_initialized(self):
-        """ A setup method which updates the initialized attribute of 
-        the component to True. This is performed bottom-up.
-
-        """
-        for child in self._subcomponents:
-            child._setup_set_initialized()
-        self.initialized = True
     
     #--------------------------------------------------------------------------
     # Bound Attribute Handling
@@ -310,6 +270,18 @@ class BaseComponent(HasStrictTraits):
                 if val is not NotImplemented:
                     setattr(self, name, val)
 
+    def initialize(self):
+        """ A method which pulls the bound expressions into a consistent
+        state and updates the initialized attribute of the component to 
+        True. This is performed bottom-up.
+
+        """
+        for child in self._subcomponents:
+            child.initialize()
+        for name in self._expressions:
+            getattr(self, name)
+        self.initialized = True
+
     def _on_expression_changed(self, expression, name, value):
         """ A private signal callback for the expression_changed signal
         of the bound expressions. It updates the value of the attribute
@@ -321,14 +293,14 @@ class BaseComponent(HasStrictTraits):
     def _on_bound_attr_changed(self, obj, name, old, new):
         """ A private handler which is called when any attribute which
         has a bound signal changes. It calls the notify method on each
-        of the expressions bound to that attribute, but only after the
-        component has been fully initialized.
+        of the expressions bound to that attribute, but if the component
+        is marked as live.
 
         """
-        # The check for None is for the case where there are no left 
-        # associative expressions bound to the attribute, so the first
-        # entry in the list is still None.
         if self.initialized:
+            # The check for None is for the case where there are no left 
+            # associative expressions bound to the attribute, so the first
+            # entry in the list is still None.
             for expr in self._expressions[name]:
                 if expr is not None:
                     expr.notify(old, new)
@@ -377,7 +349,6 @@ class BaseComponent(HasStrictTraits):
             stack = deque([self])
             stack_pop = stack.popleft
             stack_extend = stack.extend
-
         while stack:
             item = stack_pop()
             yield item
@@ -410,3 +381,4 @@ class BaseComponent(HasStrictTraits):
             res = cmpnt
             cmpnt = cmpnt.parent
         return res
+
