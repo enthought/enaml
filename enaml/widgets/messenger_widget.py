@@ -16,28 +16,31 @@ class MessengerWidget(AsyncMessenger, BaseComponent):
     class.
 
     """
-    # This is a hack so that the message id can be set by the async
-    # messenger class (since we inherit HasStrictTraits)
-    # XXX we need to make this better.
-    _AsyncMessenger__msg_id = Str
-
-    #: The widget class name
-    widget_name = Str
-
     #: A private flag to guard trait modifications
     # XXX This seems a bit hackish.
     _setting = Bool(False)
 
-    def _widget_name_default(self):
+    #: A string provided to implementation clients indicated which type
+    #: of widget they should construct. The default type is computed
+    #: based on the name of the component class. This may be overridden
+    #: by users to define custom behavior, but is typically not needed.
+    widget_type = Str
+
+    def _widget_type_default(self):
+        """ Computes the type string for widget which should be built
+        by implementation clients. The default is simply the name of
+        the component class.
+
+        """
         return type(self).__name__
 
     def build_info(self):
-        """ Returns the dictionary of build information for this tree
+        """ Returns the dictionary of build info for the component tree
         from this point downward.
 
         """
         info = {}
-        info['widget'] = self.widget_name
+        info['widget'] = self.widget_type
         info['msg_id'] = self.msg_id
         info['attrs'] = self.initial_attrs()
         child_info = []
