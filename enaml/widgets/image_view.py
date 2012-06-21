@@ -34,7 +34,8 @@ class ImageView(Control):
     #--------------------------------------------------------------------------
     # Toolkit Communication
     #--------------------------------------------------------------------------
-    @on_trait_change('image, scale_to_fit, preserve_aspect_ratio, allow_upscaling')
+    @on_trait_change('image, scale_to_fit, preserve_aspect_ratio, \
+        allow_upscaling')
     def sync_object_state(self, name, new):
         """ Notify the client component of updates to the object state.
 
@@ -52,7 +53,7 @@ class ImageView(Control):
             'image' : self.image,
             'scale_to_fit' : self.scale_to_fit,
             'preserve_aspect_ratio' : self.preserve_aspect_ratio,
-            'allow_upscaling' : self.allow_upscaling
+            'allow_upscaling' : self.allow_upscaling,
         }
         super_attrs.update(attrs)
         return super_attrs

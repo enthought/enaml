@@ -12,7 +12,7 @@ class Label(Control):
     """
     #: The text in the label.
     text = Str
-    
+
     #: Whether or not the label should wrap around on long lines.
     #: This may not be supported by all toolkit backends (like Wx)
     #: and it may be necessary with those toolkits to insert newline 
@@ -42,7 +42,7 @@ class Label(Control):
         super_attrs = super(Label, self).initial_attrs()
         attrs = {
             'text' : self.text,
-            'word_wrap' : self.word_wrap
+            'word_wrap' : self.word_wrap,
         }
         super_attrs.update(attrs)
         return super_attrs
