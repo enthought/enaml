@@ -29,38 +29,58 @@ class QtWindow(QtClientWidget):
     # Message Handlers
     #--------------------------------------------------------------------------
     def receive_maximize(self, ctxt):
+        """ Message handler for maximize
+
+        """
         self.maximize()
 
     def receive_minimize(self, ctxt):
+        """ Message handler for minimize
+
+        """
         self.minimize()
 
     def receive_restore(self, ctxt):
+        """ Message handler for restore
+
+        """
         self.restore()
 
     def receive_set_icon(self, ctxt):
-        pass
+        """ Message handler for set_icon
 
-    def receive_set_initial_size(self, ctxt):
-        pass
-
-    def receive_set_initial_size_default(self, ctxt):
+        """
         pass
 
     def receive_set_maximum_size(self, ctxt):
+        """ Message handler for set_maximum_size
+
+        """
         size = ctxt.get('value')
         if size is not None:
             self.set_maximum_size(size)
 
-    def receive_set_maximum_size_default(self, ctxt):
-        pass
-
     def receive_set_minimum_size(self, ctxt):
+        """ Message handler for set_minimum_size
+
+        """
         size = ctxt.get('value')
-    
+        if size is not None:
+            self.set_minimum_size(size)
+
     def receive_set_title(self, ctxt):
+        """ Message handler for set_title
+
+        """
         title = ctxt.get('value')
         if title is not None:
             self.set_title(title)
+
+    def receive_show(self, ctxt):
+        """ Message handler for show
+
+        """
+        self.show()
     
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -89,41 +109,17 @@ class QtWindow(QtClientWidget):
         """
         pass
 
-    def set_initial_size(self, size):
-        """ Set the initial size of the window
-
-        """
-        pass
-
-    def set_initial_size_default(self, size):
-        """ Set the default initial size of the window
-
-        """
-        pass
-
     def set_maximum_size(self, size):
         """ Set the maximum size of the window
 
         """
         self.widget.setMaximumSize(QSize(*size))
 
-    def set_maximum_size_default(self, size):
-        """ Set the default maximum size of the window
-
-        """
-        pass
-
     def set_minimum_size(self, size):
         """ Set the minimum size of the window
 
         """
         self.widget.setMinimumSize(QSize(*size))
-
-    def set_minimum_size_default(self, size):
-        """ Set the default minimum size of the window
-
-        """
-        pass
     
     def set_title(self, title):
         """ Set the title of the window
