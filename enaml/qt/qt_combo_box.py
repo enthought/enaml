@@ -24,6 +24,21 @@ class QtComboBox(QtControl):
         self.set_index(init_attrs.get('index', 0))
         self.set_index(init_attrs.get('items'), [])
 
+    def bind(self):
+        """ Bind qt signals to slots
+
+        """
+        self.widget.currentIndexChanged.connect(self.on_selected)
+
+    #--------------------------------------------------------------------------
+    # Event Handlers
+    #--------------------------------------------------------------------------
+    def on_selected(self):
+        """ Event handler for selected
+
+        """
+        self.send('selected', {})
+
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------

@@ -36,23 +36,23 @@ class QtDateEdit(QtBoundedDate):
         """ Connect the widgets signals to slots
 
         """
-        self.widget.activated.connect(self.on_date_activated)
-        self.widget.selectionChanged.connect(self.on_date_selected)
+        self.widget.activated.connect(self.on_activated)
+        self.widget.selectionChanged.connect(self.on_selected)
         
     #--------------------------------------------------------------------------
     # Event Handlers
     #--------------------------------------------------------------------------
-    def on_date_activated(self, date):
+    def on_activated(self, date):
         """ Event handler for date_activated
 
         """
-        self.send('date_activated', {'value':qdate_to_python(date)})
+        self.send('activated', {'value':qdate_to_python(date)})
 
-    def on_date_selected(self, date):
+    def on_selected(self, date):
         """ Event handler for date_selected
 
         """
-        self.send('date_selected', {'value':qdate_to_python(date)})
+        self.send('selected', {'value':qdate_to_python(date)})
 
     #--------------------------------------------------------------------------
     # Message Handlers
