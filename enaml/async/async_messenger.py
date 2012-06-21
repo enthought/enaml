@@ -2,10 +2,12 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from traits.api import HasStrictTraits, ReadOnly, Undefined
+
 from async_application import AsyncApplication, AsyncApplicationError
 
 
-class AsyncMessenger(object):
+class AsyncMessenger(HasStrictTraits):
     """ A base class which provides the messaging interface between 
     this object and a client object that lives elsewhere.
 
@@ -18,6 +20,10 @@ class AsyncMessenger(object):
     object is 1:1.
 
     """
+    #: The string messaging id for the messenger. This will be set 
+    #: by the application instance when the messenger is created.
+    msg_id = ReadOnly
+
     def __new__(cls, *args, **kwargs):
         """ Create a new AsyncMessenger instance.
 
@@ -32,31 +38,22 @@ class AsyncMessenger(object):
             raise AsyncApplicationError(msg)
         
         instance = super(AsyncMessenger, cls).__new__(cls, args, kwargs)
-        instance.__msg_id = '' 
 
         def id_setter(msg_id):
             if not isinstance(msg_id, str):
                 msg = 'A messaging id must be a string. Got object of '
                 msg += 'type %s instead' % type(msg_id)
                 raise TypeError(msg)
-            instance.__msg_id = msg_id
+            instance.msg_id = msg_id
 
         app.register(instance, id_setter)
 
-        if not instance.__msg_id:
+        if instance.msg_id is Undefined:
             msg = 'The async application failed to provide a messaging id'
             msg += 'for the AsyncMessenger instance.'
             raise AsyncApplicationError(msg)
-
+            
         return instance
-
-    @property
-    def msg_id(self):
-        """ Returns the messaging id string given to this messenger by 
-        the application.
-
-        """
-        return self.__msg_id
 
     @property
     def app(self):
