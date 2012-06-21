@@ -27,18 +27,22 @@ from .byteplay import (
 #     line number specified by the ast. The workaround is to compile the 
 #     code object, then make a new copy of it with the proper firstlineno 
 #     set via the types.CodeType constructor.
-COMPILER_VERSION = 2
+# 3 : Update the generated code to remove the toolkit - 21 June 2012
+#     This updates the compiler for the coming switch to async UI's
+#     which will see the removal of the Toolkit concept. The only
+#     magic scope maintained is for that of operators.
+COMPILER_VERSION = 3
 
 
 #------------------------------------------------------------------------------
 # Compiler Helpers
 #------------------------------------------------------------------------------
 # Code that will be executed at the top of every enaml module
-STARTUP = ['from enaml.core.factory import EnamlDeclaration']
+STARTUP = ['from enaml.core.enaml_def import EnamlDef']
 
 
 # Cleanup code that will be included in every compiled enaml module
-CLEANUP = ['del EnamlDeclaration']
+CLEANUP = ['del EnamlDef']
 
 
 def _var_name_generator():
@@ -114,19 +118,19 @@ class DeclarationCompiler(_NodeVisitor):
         We generate bytecode that would correspond to a Python function that
         looks similar to this::
         
-        def FooWindow(identifiers, toolkit):
+        def FooWindow(identifiers, operators):
             f_globals = globals()
             eval_ = eval
-            foo_cls = eval('Window', toolkit, f_globals)
-            foo = foo_cls.__enaml_call__(identifiers, toolkit)
+            foo_cls = eval('Window', f_globals)
+            foo = foo_cls.__enaml_call__(identifiers, operators)
             identifiers['foo'] = foo
-            op = eval_('__operator_Equal__', toolkit, f_globals)
-            op(foo, 'a', <ast>, <code>, identifiers, f_globals, toolkit)
-            btn_cls = eval_('PushButton', toolkit, f_globals)
-            btn = btn_cls.__enaml_call__(None, toolkit)
+            op = eval_('__operator_Equal__', operators)
+            op(foo, 'a', <ast>, <code>, identifiers, f_globals, operators)
+            btn_cls = eval_('PushButton', f_globals)
+            btn = btn_cls.__enaml_call__(None, operators)
             identifiers['btn'] = button
-            op = eval_('__operator_Equal__', toolkit, f_globals)
-            op(item, 'text', <ast>, <code>, identifiers, f_globals, toolkit)
+            op = eval_('__operator_Equal__', operators)
+            op(item, 'text', <ast>, <code>, identifiers, f_globals, operators)
             foo.add_subcomponent(button)
             return foo
         
@@ -135,7 +139,7 @@ class DeclarationCompiler(_NodeVisitor):
         compiler.visit(node)
         code_ops = compiler.code_ops
         code = Code(
-            code_ops, [], ['identifiers', 'toolkit'], False, False, True, 
+            code_ops, [], ['identifiers', 'operators'], False, False, True, 
             node.name, filename, node.lineno, node.doc,
         )
         return code
@@ -175,16 +179,15 @@ class DeclarationCompiler(_NodeVisitor):
             (LOAD_GLOBAL, 'eval'),
             (STORE_FAST, 'eval_'),
 
-            # foo_cls = eval('Window', toolkit, f_globals)
-            # foo = foo_cls.__enaml_call__(identifiers, toolkit)
+            # foo_cls = eval('Window', f_globals)
+            # foo = foo_cls.__enaml_call__(identifiers, operators)
             (LOAD_FAST, 'eval_'),
             (LOAD_CONST, base_code),
-            (LOAD_FAST, 'toolkit'),
             (LOAD_FAST, 'f_globals'),
-            (CALL_FUNCTION, 0x0003),
+            (CALL_FUNCTION, 0x0002),
             (LOAD_ATTR, '__enaml_call__'),
             (LOAD_FAST, 'identifiers'),
-            (LOAD_FAST, 'toolkit'),
+            (LOAD_FAST, 'operators'),
             (CALL_FUNCTION, 0x0002),
             (STORE_FAST, name),
         ])
@@ -233,9 +236,8 @@ class DeclarationCompiler(_NodeVisitor):
             extend_ops([
                 (LOAD_FAST, 'eval_'),
                 (LOAD_CONST, type_code),
-                (LOAD_FAST, 'toolkit'),
                 (LOAD_FAST, 'f_globals'),
-                (CALL_FUNCTION, 0x0003),
+                (CALL_FUNCTION, 0x0002),
                 (LOAD_CONST, node.is_event),
                 (CALL_FUNCTION, 0x0003),
                 (POP_TOP, None),
@@ -261,8 +263,8 @@ class DeclarationCompiler(_NodeVisitor):
         # A binding is accomplished by loading the appropriate binding
         # operator function and passing it the a number of arguments:
         #
-        # op = eval('__operator_Equal__', toolkit, f_globals)
-        # op(item, 'a', code, identifiers, f_globals, toolkit)
+        # op = eval('__operator_Equal__', operators)
+        # op(item, 'a', code, identifiers, f_globals, operators)
         fn = self.filename
         op_code = compile(node.binding.op, fn, mode='eval')
         py_ast = node.binding.expr.py_ast
@@ -278,15 +280,14 @@ class DeclarationCompiler(_NodeVisitor):
         self.extend_ops([
             (LOAD_FAST, 'eval_'),
             (LOAD_CONST, op_code),
-            (LOAD_FAST, 'toolkit'),
-            (LOAD_FAST, 'f_globals'),
-            (CALL_FUNCTION, 0x0003),
+            (LOAD_FAST, 'operators'),
+            (CALL_FUNCTION, 0x0002),
             (LOAD_FAST, self.curr_name()),
             (LOAD_CONST, node.name),
             (LOAD_CONST, expr_code),
             (LOAD_FAST, 'identifiers'),
             (LOAD_FAST, 'f_globals'),
-            (LOAD_FAST, 'toolkit'),
+            (LOAD_FAST, 'operators'),
             (CALL_FUNCTION, 0x0006),
             (POP_TOP, None),
         ])
@@ -302,20 +303,19 @@ class DeclarationCompiler(_NodeVisitor):
         self.push_name(name)
         op_code = compile(node.name, self.filename, mode='eval')
         extend_ops([
-            # btn_cls = eval('PushButton', toolkit, f_globals)
-            # btn = btn_cls.__enaml_call__(None, toolkit)
+            # btn_cls = eval('PushButton', f_globals)
+            # btn = btn_cls.__enaml_call__(None, operators)
             # When instantiating a Declaration, it is called without
             # identifiers, so that it creates it's own new identifiers
             # scope. This means that derived declarations share ids,
             # but the composed children have an isolated id space.
             (LOAD_FAST, 'eval_'),
             (LOAD_CONST, op_code),
-            (LOAD_FAST, 'toolkit'),
             (LOAD_FAST, 'f_globals'),
-            (CALL_FUNCTION, 0x0003),
+            (CALL_FUNCTION, 0x0002),
             (LOAD_ATTR, '__enaml_call__'),
             (LOAD_CONST, None),
-            (LOAD_FAST, 'toolkit'),
+            (LOAD_FAST, 'operators'),
             (CALL_FUNCTION, 0x0002),
             (STORE_FAST, name),
         ])
@@ -429,7 +429,7 @@ class EnamlCompiler(_NodeVisitor):
 
     def visit_Declaration(self, node):
         """ The declaration node visitor. This will add an instance
-        of EnamlDeclaration to the module.
+        of EnamlDef to the module.
 
         """
         # This creates a function from the generated code ops then
@@ -440,7 +440,7 @@ class EnamlCompiler(_NodeVisitor):
             (LOAD_CONST, func_code),
             (MAKE_FUNCTION, 0),
             (STORE_NAME, name),
-            (LOAD_NAME, 'EnamlDeclaration'),
+            (LOAD_NAME, 'EnamlDef'),
             (LOAD_NAME, name),
             (CALL_FUNCTION, 0x0001),
             (STORE_NAME, name),

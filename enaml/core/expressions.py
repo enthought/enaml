@@ -57,7 +57,7 @@ class ExecutionScope(object):
     order to avoid issues with reference cycles.
 
     """
-    def __init__(self, obj, identifiers, f_globals, toolkit, overrides, cb):
+    def __init__(self, obj, identifiers, overrides, attr_cb):
         """ Initialize an execution scope.
 
         Parameters
@@ -70,17 +70,10 @@ class ExecutionScope(object):
             expression. These are checked before the attribute space
             of the component.
 
-        f_globals : dict
-            The globals dict to check after checking the attribute space
-            of the given component, but before checking the toolkit.
-
-        toolkit : Toolkit
-            The toolkit to check after checking the globals.
-
         overrides : dict
             An dictionary of override values to check before identifiers.
 
-        cb : callable or None
+        attr_cb : callable or None
             A callable which is called when an implicit attribute is 
             found and accessed on the object. The arguments passed are 
             the object and the attribute name.
@@ -88,10 +81,8 @@ class ExecutionScope(object):
         """
         self._obj = obj
         self._identifiers = identifiers
-        self._f_globals = f_globals
-        self._toolkit = toolkit
         self._overrides = overrides
-        self._attr_cb = cb
+        self._attr_cb = attr_cb
         self._assignments = {}
 
     def __getitem__(self, name):
@@ -157,14 +148,7 @@ class ExecutionScope(object):
                     cb(parent, name)
                 return res
 
-        # Global variables come after implicit attributes
-        dct = self._f_globals
-        if name in dct:
-            return dct[name]
-        
-        # End with the toolkit which will raise KeyError on failure.
-        # Builtins will be checked by Python using the global dict.
-        return self._toolkit[name]
+        raise KeyError(name)
 
     def __setitem__(self, name, val):
         """ Stores the value into the internal assignments dict. This 
@@ -210,7 +194,7 @@ class NonlocalScope(object):
     which would otherwise be implicitly scoped.
 
     """
-    def __init__(self, obj, cb):
+    def __init__(self, obj, attr_cb):
         """ Initialize a nonlocal scope.
 
         Parameters
@@ -219,14 +203,14 @@ class NonlocalScope(object):
             The BaseComponent instance which forms the first level of
             the scope.
         
-        cb : callable or None
+        attr_cb : callable or None
             A callable which is called when an implicit attribute is 
             found and accessed on the object. The arguments passed are 
             the object and the attribute name.
         
         """
         self._nls_obj = obj
-        self._nls_attr_cb = cb
+        self._nls_attr_cb = attr_cb
 
     def __repr__(self):
         """ A pretty representation of the NonlocalScope.
@@ -367,7 +351,7 @@ class AbstractExpression(object):
     #: computed value of the expression.
     expression_changed = Signal()
 
-    def __init__(self, obj, name, code, identifiers, f_globals, toolkit):
+    def __init__(self, obj, name, code, identifiers, f_globals, operators):
         """ Initializes and expression object.
 
         Parameters
@@ -387,11 +371,15 @@ class AbstractExpression(object):
             expression.
 
         f_globals : dict
-            The globals dictionary in which the expression should execute.
+            The globals dictionary in which the expression should 
+            execute.
 
-        toolkit : Toolkit
-            The toolkit that was used to create the object and in which
-            the expression should execute.
+        operators : OperatorContext
+            The operator context used when creating this expression.
+            This context is entered before evaluating any code objects.
+            This ensures that any components created by the expression
+            share the same operator context as this expression, unless
+            explicitly overridden.
 
         """
         self.obj_ref = ref(obj)
@@ -399,7 +387,7 @@ class AbstractExpression(object):
         self.code = code
         self.identifiers = identifiers
         self.f_globals = f_globals
-        self.toolkit = toolkit
+        self.operators = operators
 
     @abstractmethod
     def eval(self):
@@ -451,15 +439,10 @@ class SimpleExpression(AbstractExpression):
             return NotImplemented
         
         overrides = {'nonlocals': NonlocalScope(obj, None)}
-        identifiers = self.identifiers
-        f_globals = self.f_globals
-        toolkit = self.toolkit
-        scope = ExecutionScope(
-            obj, identifiers, f_globals, toolkit, overrides, None,
-        )
+        scope = ExecutionScope(obj, self.identifiers, overrides, None)
 
-        with toolkit:
-            res =  eval(self.code, f_globals, scope)
+        with self.operators:
+            res =  eval(self.code, self.f_globals, scope)
         
         return res
 
@@ -502,19 +485,14 @@ class NotificationExpression(AbstractExpression):
         if obj is None:
             return
 
-        identifiers = self.identifiers
-        f_globals = self.f_globals
-        toolkit = self.toolkit
-        override = {
+        overrides = {
             'event': self.event(obj, self.name, old, new),
             'nonlocals': NonlocalScope(obj, None),
         }
-        scope = ExecutionScope(
-            obj, identifiers, f_globals, toolkit, override, None,
-        )
+        scope = ExecutionScope(obj, self.identifiers, overrides, None)
 
-        with toolkit:
-            eval(self.code, f_globals, scope)
+        with self.operators:
+            eval(self.code, self.f_globals, scope)
 
 
 #------------------------------------------------------------------------------
@@ -580,28 +558,24 @@ class UpdateExpression(AbstractExpression):
         if obj is None:
             return
 
-        # The override dict is populated with information about the
+        # The overrides dict is populated with information about the
         # expression and the change. The values allow the generated
         # inverter codes to access the information which is required
         # to perform the operation. The items are added using names
         # which are not valid Python identifiers and therefore do
         # not risk clashing with names in the expression. This is
         # the same technique used by the Python interpreter itself.
-        identifiers = self.identifiers
-        f_globals = self.f_globals
-        toolkit = self.toolkit
         overrides = {
             '_[expr]': self, '_[obj]': obj, '_[old]': old, '_[new]': new, 
             '_[name]': self.name, 'nonlocals': NonlocalScope(obj, None),
         }
-        scope = ExecutionScope(
-            obj, identifiers, f_globals, toolkit, overrides, None,
-        )
+        scope = ExecutionScope(obj, self.identifiers, overrides, None)
 
         # Run through the inverters, giving each a chance to do the
         # inversion. The process ends with the first success. If 
         # none of the invertors are successful an error is raised.
-        with toolkit:
+        f_globals = self.f_globals
+        with self.operators:
             for inverter in self.inverters:
                 if eval(inverter, f_globals, scope):
                     break
@@ -757,16 +731,11 @@ class SubscriptionExpression(AbstractExpression):
         if obj is None:
             return NotImplemented
         
-        identifiers = self.identifiers
-        f_globals = self.f_globals
-        toolkit = self.toolkit
         overrides = {'nonlocals': NonlocalScope(obj, binder)}
-        scope = ExecutionScope(
-            obj, identifiers, f_globals, toolkit, overrides, binder,
-        )
+        scope = ExecutionScope(obj, self.identifiers, overrides, binder)
 
-        with toolkit:
-            res = eval(self.eval_code, f_globals, scope)
+        with self.operators:
+            res = eval(self.eval_code, self.f_globals, scope)
 
         return res
 
@@ -855,21 +824,17 @@ class DelegationExpression(SubscriptionExpression):
         # which are not valid Python identifiers and therefore do
         # not risk clashing with names in the expression. This is
         # the same technique used by the Python interpreter itself.
-        identifiers = self.identifiers
-        f_globals = self.f_globals
-        toolkit = self.toolkit
         overrides = {
             '_[expr]': self, '_[obj]': obj, '_[old]': old, '_[new]': new, 
             '_[name]': self.name, 'nonlocals': NonlocalScope(obj, None),
         }
-        scope = ExecutionScope(
-            obj, identifiers, f_globals, toolkit, overrides, None,
-        )
+        scope = ExecutionScope(obj, self.identifiers, overrides, None)
 
         # Run through the inverters, giving each a chance to do the
         # inversion. The process ends with the first success. If 
         # none of the invertors are successful an error is raised.
-        with toolkit:
+        f_globals = self.f_globals
+        with self.operators:
             for inverter in self.inverters:
                 if eval(inverter, f_globals, scope):
                     break

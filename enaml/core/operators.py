@@ -42,10 +42,10 @@ from .monitors import TraitAttributeMonitor, TraitGetattrMonitor
 #:          The same rules about sharing and copying that apply to
 #:          the identifiers dict, apply here as well.
 #:
-#:      toolkit : Toolkit
-#:          The toolkit instance that is in scope for the expression.
-#:          The same rules about sharing and copying that apply to
-#:          the identifiers dict, apply here as well.
+#:      operators : OperatorContext
+#:          The operator context used when looking up the operator.
+#:          For the standard operators, this context is passed along
+#:          to the generated expressions.
 #:
 #: Operators may do whatever they please with the information provided
 #: to them. The default operators in Enaml use this information to 
@@ -54,35 +54,35 @@ from .monitors import TraitAttributeMonitor, TraitGetattrMonitor
 #: are free to get creative with the operators.
 
 
-def op_simple(cmpnt, attr, code, identifiers, f_globals, toolkit):
+def op_simple(cmpnt, attr, code, identifiers, f_globals, operators):
     """ The default Enaml operator for '=' expressions. It binds an
     instance of SimpleExpression to the component.
 
     """
-    expr = SimpleExpression(cmpnt, attr, code, identifiers, f_globals, toolkit)
+    expr = SimpleExpression(cmpnt, attr, code, identifiers, f_globals, operators)
     cmpnt.bind_expression(attr, expr)
 
 
-def op_notify(cmpnt, attr, code, identifiers, f_globals, toolkit):
+def op_notify(cmpnt, attr, code, identifiers, f_globals, operators):
     """ The default Enaml operator for '::' expressions. It binds an
     instance of NotificationExpression to the component.
 
     """
-    expr = NotificationExpression(cmpnt, attr, code, identifiers, f_globals, toolkit)
+    expr = NotificationExpression(cmpnt, attr, code, identifiers, f_globals, operators)
     cmpnt.bind_expression(attr, expr, notify_only=True)
 
 
-def op_update(cmpnt, attr, code, identifiers, f_globals, toolkit):
+def op_update(cmpnt, attr, code, identifiers, f_globals, operators):
     """ The default Enaml operator for '>>' expressions. It binds an
     instance of UpdateExpression to the component.
 
     """
     inverters = [GenericAttributeInverter, GetattrInverter, ImplicitAttrInverter]
-    expr = UpdateExpression(inverters, cmpnt, attr, code, identifiers, f_globals, toolkit)
+    expr = UpdateExpression(inverters, cmpnt, attr, code, identifiers, f_globals, operators)
     cmpnt.bind_expression(attr, expr, notify_only=True)
 
 
-def op_subscribe(cmpnt, attr, code, identifiers, f_globals, toolkit):
+def op_subscribe(cmpnt, attr, code, identifiers, f_globals, operators):
     """ The default Enaml operator for '<<' expressions. It binds an
     instance of SubscriptionExpression to the component using monitors
     which understand traits attribute access via dotted notation and
@@ -90,11 +90,11 @@ def op_subscribe(cmpnt, attr, code, identifiers, f_globals, toolkit):
 
     """
     monitors = [TraitAttributeMonitor, TraitGetattrMonitor]
-    expr = SubscriptionExpression(monitors, cmpnt, attr, code, identifiers, f_globals, toolkit)
+    expr = SubscriptionExpression(monitors, cmpnt, attr, code, identifiers, f_globals, operators)
     cmpnt.bind_expression(attr, expr)
 
 
-def op_delegate(cmpnt, attr, code, identifiers, f_globals, toolkit):
+def op_delegate(cmpnt, attr, code, identifiers, f_globals, operators):
     """ The default Enaml operator for ':=' expressions. It binds an
     instance of DelegationExpression to the component using monitors
     which understand traits attribute access via dotted notation and
@@ -105,7 +105,7 @@ def op_delegate(cmpnt, attr, code, identifiers, f_globals, toolkit):
     """
     inverters = [GenericAttributeInverter, GetattrInverter, ImplicitAttrInverter]
     monitors = [TraitAttributeMonitor, TraitGetattrMonitor]
-    expr = DelegationExpression(inverters, monitors, cmpnt, attr, code, identifiers, f_globals, toolkit)
+    expr = DelegationExpression(inverters, monitors, cmpnt, attr, code, identifiers, f_globals, operators)
     cmpnt.bind_expression(attr, expr)
 
 
