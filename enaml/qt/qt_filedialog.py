@@ -3,7 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 
-from PySide.QtGui import QFileDialog
+from .qt.QtGui import QFileDialog
 from qt_dialog import QtDialog
 
 QT_ACCEPT_MODE = {

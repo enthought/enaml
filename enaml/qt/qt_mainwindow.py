@@ -3,7 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 
-from PySide.QtGui import QMainWindow
+from .qt.QtGui import QMainWindow
 from qt_window import QtWindow
 
 class QtMainWindow(QtWindow):

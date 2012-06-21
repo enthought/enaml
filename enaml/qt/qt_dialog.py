@@ -2,8 +2,8 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from PySide.QtGui import QDialog
-from PySide.Qt import NonModal, WindowModal, ApplicationModal
+from .qt.QtGui import QDialog
+from .qt.Qt import NonModal, WindowModal, ApplicationModal
 from qt_window import QtWindow
 
 QT_MODALITY = {

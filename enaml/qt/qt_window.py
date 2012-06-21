@@ -2,8 +2,8 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from PySide.QtGui import QWidget
-from PySide.QtCore import QSize
+from .qt.QtGui import QWidget
+from .qt.QtCore import QSize
 
 from qt_client_widget import QtClientWidget
 

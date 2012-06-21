@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 
 from qt_dialog import QtDialog
-from PySide.QtGui import QFileDialog
+from .qt.QtGui import QFileDialog
 
 class QtDirectoryDialog(QtDialog):
     """ A dialog that allows the user to select directories
