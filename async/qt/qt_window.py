@@ -24,6 +24,10 @@ class QtWindow(QtClientWidget):
 
         """
         self.set_title(init_attrs.get('title', ''))
+        self.set_icon(init_attrs.get('icon'))
+        self.set_maximum_size(init_attrs.get('maximum_size'))
+        self.set_minimum_size(init_attrs.get('minimum_size'))
+        self.set_initial_size(init_attrs.get('initial_size'))
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -51,6 +55,14 @@ class QtWindow(QtClientWidget):
 
         """
         pass
+
+    def receive_set_initial_size(self, ctxt):
+        """ Message handler for set_initial_size
+
+        """
+        size = ctxt.get('value')
+        if size is not None:
+            self.set_initial_size(size)
 
     def receive_set_maximum_size(self, ctxt):
         """ Message handler for set_maximum_size
@@ -108,6 +120,12 @@ class QtWindow(QtClientWidget):
 
         """
         pass
+
+    def set_initial_size(self, size):
+        """ Set the initial window size
+
+        """
+        self.widget.resize(QSize(*size))
 
     def set_maximum_size(self, size):
         """ Set the maximum size of the window
