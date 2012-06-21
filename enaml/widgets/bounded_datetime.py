@@ -54,14 +54,6 @@ class BoundedDatetime(Control):
     #--------------------------------------------------------------------------
     # Toolkit Communication
     #--------------------------------------------------------------------------
-    @on_trait_change('datetime, max_datetime, min_datetime')
-    def sync_object_state(self, name, new):
-        """ Notify the client component of updates to the object state.
-
-        """
-        msg = 'set_' + name
-        self.send(msg, {'value':new})
-
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
         initialize a client widget.
@@ -75,6 +67,22 @@ class BoundedDatetime(Control):
         }
         super_attrs.update(attrs)
         return super_attrs
+
+    @on_trait_change('max_datetime, min_datetime')
+    def sync_object_state(self, name, new):
+        """ Notify the client component of updates to the object state.
+
+        """
+        msg = 'set_' + name
+        self.send(msg, {'value':new})
+
+    @on_trait_change('datetime')
+    def update_datetime(self):
+        """ Notify the client component of updates to the datetime.
+
+        """
+        if not self._setting:
+            self.send('set_datetime', {'value':self.datetime})
 
     #--------------------------------------------------------------------------
     # Properties methods

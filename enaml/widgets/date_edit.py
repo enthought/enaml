@@ -34,15 +34,6 @@ class DateEdit(BoundedDate):
     #--------------------------------------------------------------------------
     # Toolkit Communication
     #--------------------------------------------------------------------------
-    @on_trait_change('date_format')
-    def sync_object_state(self, name, new):
-        """ Notify the client component of updates to the object state.
-
-        """
-        if not self._setting:
-            msg = 'set_' + name
-            self.send(msg, {'value':new})
-
     def inital_attrs(self):
         """ Return a dictionary which contains all the state necessary to
         initialize a client widget.
@@ -63,4 +54,11 @@ class DateEdit(BoundedDate):
         self.date = context['value']
         self._setting = False
         self.date_changed(self.date)
+
+    @on_trait_change('date_format')
+    def update_date_format(self):
+        """ Notify the client component of updates to the date format.
+
+        """
+        self.send('set_date_format', {'value':self.date_format})
 

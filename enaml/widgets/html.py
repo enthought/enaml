@@ -25,14 +25,6 @@ class Html(Control):
     #--------------------------------------------------------------------------
     # Toolkit Communication
     #--------------------------------------------------------------------------
-    @on_trait_change('source')
-    def sync_object_state(self, name, new):
-        """ Notify the client component of updates to the object state.
-
-        """
-        msg = 'set_' + name
-        self.send(msg, {'value':new})
-
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
         initialize a client widget.
@@ -40,8 +32,15 @@ class Html(Control):
         """
         super_attrs = super(Html, self).initial_attrs()
         attrs = {
-            'source' : self.source
+            'source' : self.source,
         }
         super_attrs.update(attrs)
         return super_attrs
+
+    @on_trait_change('source')
+    def update_source(self):
+        """ Notify the client component of updates to the source
+
+        """
+        self.send('set_source', {'value':self.source})
 

@@ -47,14 +47,6 @@ class ProgressBar(Control):
     #--------------------------------------------------------------------------
     # Toolkit Communication
     #--------------------------------------------------------------------------
-    @on_trait_change('maximum, minimum, value')
-    def sync_object_state(self, name, new):
-        """ Notify the client component of updates to the object state.
-
-        """
-        msg = 'set_' + name
-        self.send(msg, {'value':new})
-
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
         initialize a client widget.
@@ -64,10 +56,18 @@ class ProgressBar(Control):
         attrs = {
             'maximum' : self.maximum,
             'minimum' : self.minimum,
-            'value' : self.value
+            'value' : self.value,
         }
         super_attrs.update(attrs)
         return super_attrs
+
+    @on_trait_change('maximum, minimum, value')
+    def sync_object_state(self, name, new):
+        """ Notify the client component of updates to the object state.
+
+        """
+        msg = 'set_' + name
+        self.send(msg, {'value':new})
 
     #--------------------------------------------------------------------------
     # Property methods
