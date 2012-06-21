@@ -69,7 +69,7 @@ class ToggleControl(Control):
         super_attrs.update(attrs)
         return super_attrs
 
-    def receive_down(self, context):
+    def receive_set_down(self, context):
         """ Callback from the UI when the down state of the control changes.
 
         """

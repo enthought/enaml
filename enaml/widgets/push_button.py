@@ -82,12 +82,6 @@ class PushButton(Control):
         """
         self.clicked()
 
-    def receive_down(self, context):
-        """ Callback from the UI when the button's down state changes
-
-        """
-        self._down = context['value']
-
     def receive_pressed(self, context):
         """ Callback from the UI when the control is pressed.
 
@@ -99,4 +93,10 @@ class PushButton(Control):
 
         """
         self.released()
+
+    def receive_set_down(self, context):
+        """ Callback from the UI when the button's down state changes
+
+        """
+        self._down = context['value']
 

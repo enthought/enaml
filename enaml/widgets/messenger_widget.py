@@ -2,7 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Str
+from traits.api import Bool, Str
 
 from enaml.async.async_messenger import AsyncMessenger
 from enaml.core.base_component import BaseComponent
@@ -21,7 +21,12 @@ class MessengerWidget(AsyncMessenger, BaseComponent):
     # XXX we need to make this better.
     _AsyncMessenger__msg_id = Str
 
+    #: The widget class name
     widget_name = Str
+
+    #: A private flag to guard trait modifications
+    # XXX This seems a bit hackish.
+    _setting = Bool(False)
 
     def _widget_name_default(self):
         return type(self).__name__
