@@ -34,7 +34,7 @@ class QtDirectoryDialog(QtDialog):
         """ Message handler for set_directory
 
         """
-        directory = ctxt.get('directory')
+        directory = ctxt.get('value')
         if directory is not None:
             self.set_directory(directory)
 

@@ -28,6 +28,35 @@ class QtWindow(QtClientWidget):
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
+    def receive_maximize(self, ctxt):
+        self.maximize()
+
+    def receive_minimize(self, ctxt):
+        self.minimize()
+
+    def receive_restore(self, ctxt):
+        self.restore()
+
+    def receive_set_icon(self, ctxt):
+        pass
+
+    def receive_set_initial_size(self, ctxt):
+        pass
+
+    def receive_set_initial_size_default(self, ctxt):
+        pass
+
+    def receive_set_maximum_size(self, ctxt):
+        size = ctxt.get('value')
+        if size is not None:
+            self.set_maximum_size(size)
+
+    def receive_set_maximum_size_default(self, ctxt):
+        pass
+
+    def receive_set_minimum_size(self, ctxt):
+        size = ctxt.get('value')
+    
     def receive_set_title(self, ctxt):
         title = ctxt.get('value')
         if title is not None:

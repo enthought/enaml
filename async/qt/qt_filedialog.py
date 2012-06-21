@@ -39,7 +39,7 @@ class QtFileDialog(QtDialog):
         """ Message handler for set_mode
 
         """
-        mode = ctxt.get('mode')
+        mode = ctxt.get('value')
         if mode is not None:
             self.set_mode(mode)
 
@@ -47,7 +47,7 @@ class QtFileDialog(QtDialog):
         """ Message handler for set_multi_select
 
         """
-        multi_select = ctxt.get('multi_select')
+        multi_select = ctxt.get('value')
         if multi_select is not None:
             self.set_multi_select(multi_select)
 
@@ -55,7 +55,7 @@ class QtFileDialog(QtDialog):
         """ Message handler for set_directory
 
         """
-        directory = ctxt.get('directory')
+        directory = ctxt.get('value')
         if directory is not None:
             self.set_directory(directory)
 
@@ -63,7 +63,7 @@ class QtFileDialog(QtDialog):
         """ Message handler for set_filename
 
         """
-        filename = ctxt.get('filename')
+        filename = ctxt.get('value')
         if filename is not None:
             self.set_filename(filename)
 
@@ -71,7 +71,7 @@ class QtFileDialog(QtDialog):
         """ Message handler for set_filters
 
         """
-        filters = ctxt.get('filters')
+        filters = ctxt.get('value')
         if filters is not None:
             self.set_filters(filters)
 
@@ -79,7 +79,7 @@ class QtFileDialog(QtDialog):
         """ Message handler for set_selected_filter
 
         """
-        selected_filter = ctxt.get('selected_filter')
+        selected_filter = ctxt.get('value')
         if selected_filter is not None:
             self.set_selected_filter(selected_filter)
 

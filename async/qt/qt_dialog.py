@@ -44,7 +44,7 @@ class QtDialog(QtWindow):
         """ Handle a set_modality message
 
         """
-        modality = ctxt.get('modality')
+        modality = ctxt.get('value')
         if modality is not None:
             self.set_modality(modality)
 
