@@ -218,14 +218,14 @@ class QtWindow(QtClientWidget):
             return (computed_width, computed_height)
         
         # Otherwise, try to compute a default from the central widget.
-        widget = self.widget
-        if widget is not None:
-            size_hint_width = widget.sizeHint().width()
-            size_hint_height = widget.sizeHint().height()
-            if computed_width == -1:
-                computed_width = size_hint_width
-            if computed_height == -1:
-                computed_height = size_hint_height
+        #widget = self.widget
+        #if widget is not None:
+        #    size_hint_width = widget.sizeHint().width()
+        #    size_hint_height = widget.sizeHint().height()
+        #    if computed_width == -1:
+        #        computed_width = size_hint_width
+        #    if computed_height == -1:
+        #        computed_height = size_hint_height
 
         # We use the last resort values to replace any remaining 
         # -1 values. This ensures the return value will be >= 0 
