@@ -3,6 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .base_component import BaseComponent
+from .operator_context import OperatorContext
 
 
 class EnamlDef(object):
@@ -56,15 +57,20 @@ class EnamlDef(object):
         component.trait_set(**kwargs)
         return component
 
-    def __enaml_call__(self, identifiers=None):
+    def __enaml_call__(self, identifiers=None, operators=None):
         """ Invokes the underlying Enaml building function, creating 
-        the local identifiers scope if necessary.
+        the local identifiers scope if necessary and loading the 
+        current operator context.
 
         Parameters
         ----------
         identifiers : dict or None, optional
             The dict of identifiers to use when binding expressions
             on the component. If None, a new dict will be created.
+
+        operators : OperatorContext or None, optional
+            The operator context to use when building the component.
+            If None, the current operator context will be retrieved.
 
         Returns
         -------
@@ -74,7 +80,9 @@ class EnamlDef(object):
         """
         if identifiers is None:
             identifiers = {}
-        component = self.__func__(identifiers)
+        if operators is None:
+            operators = OperatorContext.active_context()
+        component = self.__func__(identifiers, operators)
         component._bases.insert(0, self)
         return component
 

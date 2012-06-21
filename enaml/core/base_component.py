@@ -101,19 +101,23 @@ class BaseComponent(HasStrictTraits):
         return super(BaseComponent, self).__repr__()
 
     @classmethod
-    def __enaml_call__(cls, identifiers=None):
+    def __enaml_call__(cls, identifiers=None, operators=None):
         """ This implements the __enaml_call__ protocol for a given
         component. 
 
         For the builtin components this method simply constructs an
-        instance of the class and the dictionary of identifiers is
-        ignored.
+        instance of the class. The dictionary of identifiers and the
+        operators are ingored.
 
         Parameters
         ----------
         identifiers : dict or None, optional
             The dict of identifiers to use when binding expressions
             on the component. This parameter is ignored.
+
+        operators : OperatorContext or None, optional
+            The operator context to use when building the component.
+            This parameter is ignored.
 
         Returns
         -------
@@ -122,7 +126,7 @@ class BaseComponent(HasStrictTraits):
 
         """
         return cls()
-    
+
     #--------------------------------------------------------------------------
     # Property Getters
     #--------------------------------------------------------------------------
