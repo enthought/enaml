@@ -2,7 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Instance, Unicode, on_trait_change, Tuple, Range
+from traits.api import Instance, Unicode, Tuple, Range
 
 from enaml.async.async_application import AbstractBuilder, AsyncApplication
 from .messenger_widget import MessengerWidget
@@ -129,6 +129,4 @@ class Window(MessengerWidget):
             build_info = self.build_info()
             builder.build(build_info)
         self.send('show', {})
-
-    
 
