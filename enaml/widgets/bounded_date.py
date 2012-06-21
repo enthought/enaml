@@ -43,8 +43,19 @@ class BoundedDate(Control):
     date = Bounded(Date(date.today()), low='min_date', high='max_date')
 
     #--------------------------------------------------------------------------
-    # Toolkit Communication
+    # Initialization
     #--------------------------------------------------------------------------
+    def bind(self):
+        """ A method called after initialization which allows the widget
+        to bind any event handlers necessary.
+
+        """
+        super(BoundedDate, self).bind()
+        self.default_send_attr_bind(
+            'max_date', 'min_date',
+            )
+        self.default_send_attr_bind('date', guarded=True)
+
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
         initialize a client widget.
@@ -58,22 +69,6 @@ class BoundedDate(Control):
         }
         super_attrs.update(attrs)
         return super_attrs
-
-    @on_trait_change('max_date, min_date')
-    def sync_object_state(self, name, new):
-        """ Notify the client component of updates to the object state.
-
-        """
-        msg = 'set_' + name
-        self.send(msg, {'value':new})
-
-    @on_trait_change('date')
-    def update_date(self):
-        """ Notify the client component of updates to the date.
-
-        """
-        if not self._setting:
-            self.send('set_date', {'value':self.date})
 
     #--------------------------------------------------------------------------
     # Property methods

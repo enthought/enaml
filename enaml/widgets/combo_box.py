@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import List, Any, Callable, Int, Property, Str, on_trait_change
+from traits.api import List, Any, Callable, Int, Property, Str
 
 from .control import Control
 
@@ -70,8 +70,19 @@ class ComboBox(Control):
     _value = Any
 
     #--------------------------------------------------------------------------
-    # Toolkit Communication
+    # Initialization
     #--------------------------------------------------------------------------
+    def bind(self):
+        """ A method called after initialization which allows the widget
+        to bind any event handlers necessary.
+
+        """
+        super(ComboBox, self).bind()
+        self.default_send_attr_bind(
+            'items',
+            )
+        self.on_trait_change(self._update_index, 'value')
+
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
         initialize a client widget.
@@ -85,6 +96,9 @@ class ComboBox(Control):
         super_attrs.update(attrs)
         return super_attrs
 
+    #--------------------------------------------------------------------------
+    # Toolkit Communication
+    #--------------------------------------------------------------------------
     def receive_selected(self, context):
         """ Callback from the UI when a value is selected.
 
@@ -100,15 +114,7 @@ class ComboBox(Control):
         self.value = self.items[context['index']]
         self._setting = False
 
-    @on_trait_change('items')
-    def update_items(self):
-        """ Notify the client component of updates to the items.
-
-        """
-        self.send('set_items', {'items':self.items})
-
-    @on_trait_change('value')
-    def update_index(self):
+    def _update_index(self):
         """ Notify the client component of updates to the value
 
         """

@@ -2,8 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Constant, Float, Property, Range, TraitError, \
-    on_trait_change
+from traits.api import Constant, Float, Property, Range, TraitError
 
 from .slider import Slider, MAX_SLIDER_VALUE
 
@@ -45,8 +44,18 @@ class FloatSlider(Slider):
     page_step = Range(low='_one', high='precision', value=10)
 
     #--------------------------------------------------------------------------
-    # Toolkit Communication
+    # Initialization
     #--------------------------------------------------------------------------
+    def bind(self):
+        """ A method called after initialization which allows the widget
+        to bind any event handlers necessary.
+
+        """
+        super(FloatSlider, self).bind()
+        self.default_send_attr_bind(
+                'precision',
+            )
+
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
         initialize a client widget.
@@ -58,13 +67,6 @@ class FloatSlider(Slider):
         }
         super_attrs.update(attrs)
         return super_attrs
-
-    @on_trait_change('precision')
-    def update_precision(self):
-        """ Notify the client component of updates to the precision.
-
-        """
-        self.send('set_precision', {'value':self.precision})
 
     #--------------------------------------------------------------------------
     # Property methods

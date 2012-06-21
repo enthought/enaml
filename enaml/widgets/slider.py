@@ -112,8 +112,20 @@ class Slider(Control):
     _hug_height = Either(None, PolicyEnum, default=None)
 
     #--------------------------------------------------------------------------
-    # Toolkit Communication
+    # Initialization
     #--------------------------------------------------------------------------
+    def bind(self):
+        """ A method called after initialization which allows the widget
+        to bind any event handlers necessary.
+
+        """
+        super(Slider, self).bind()
+        self.default_send_attr_bind(
+            'maximum', 'minimum', 'orientation', 'page_step', 'single_step',
+            'tick_interval', 'tick_position', 'tracking',
+            )
+        self.default_send_attr_bind('value', guarded=True)
+
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
         initialize a client widget.
@@ -134,6 +146,9 @@ class Slider(Control):
         super_attrs.update(attrs)
         return super_attrs
 
+    #--------------------------------------------------------------------------
+    # Toolkit Communication
+    #--------------------------------------------------------------------------
     def receive_moved(self, context):
         """ Callback from the UI when the control is moved.
 
@@ -165,23 +180,6 @@ class Slider(Control):
         self._setting = True
         self.value = context['value']
         self._setting = False
-
-    @on_trait_change('maximum, minimum, orientation, page_step, single_step, \
-                     tick_interval, tick_position, tracking')
-    def sync_object_state(self, name, new):
-        """ Notify the client component of updates to the object state.
-
-        """
-        msg = 'set_' + name
-        self.send(msg, {'value':new})
-
-    @on_trait_change('value')
-    def update_value(self):
-        """ Notify the client UI of changes to the control's value.
-
-        """
-        if not self._setting:
-            self.send('set_value', {'value':new})
 
     #--------------------------------------------------------------------------
     # Trait defaults

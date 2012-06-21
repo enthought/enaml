@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Int, Bool, Range, Instance, on_trait_change
+from traits.api import Int, Bool, Range, Instance
 
 from .control import Control
 
@@ -49,8 +49,20 @@ class SpinBox(Control):
     hug_width = 'ignore'
 
     #--------------------------------------------------------------------------
-    # Toolkit Communication
+    # Initialization
     #--------------------------------------------------------------------------
+    def bind(self):
+        """ A method called after initialization which allows the widget
+        to bind any event handlers necessary.
+
+        """
+        super(SpinBox, self).bind()
+        self.default_send_attr_bind(
+            'maximum', 'minimum', 'single_step', 'tracking', 'validator',
+            'wrap',
+            )
+        self.default_send_attr_bind('value', guarded=True)
+
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
         initialize a client widget.
@@ -69,6 +81,9 @@ class SpinBox(Control):
         super_attrs.update(attrs)
         return super_attrs
 
+    #--------------------------------------------------------------------------
+    # Toolkit Communication
+    #--------------------------------------------------------------------------
     def receive_set_value(self, context):
         """ Callback from the UI when the value of the control changes.
 
@@ -76,20 +91,4 @@ class SpinBox(Control):
         self._setting = True
         self.value = context['value']
         self._setting = False
-
-    @on_trait_change('maximum,minimum,single_step,tracking,validator,wrap')
-    def sync_object_state(self, name, new):
-        """ Notify the client component of updates to the object state.
-
-        """
-        msg = 'set_' + name
-        self.send(msg, {'value':new})
-
-    @on_trait_change('value')
-    def update_value(self):
-        """ Notify the client component of updates to the object state.
-
-        """
-        if not self._setting:
-            self.send('set_value', {'value':self.value})
 

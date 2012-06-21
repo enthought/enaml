@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Bool, Instance, Enum, on_trait_change
+from traits.api import Bool, Instance, Enum
 
 from .constraints_widget import ConstraintsWidget
 
@@ -26,8 +26,16 @@ class Control(ConstraintsWidget):
     show_focus_rect = Enum('default', True, False)
 
     #--------------------------------------------------------------------------
-    # Toolkit Communication
+    # Initialization
     #--------------------------------------------------------------------------
+    def bind(self):
+        """ A method called after initialization which allows the widget
+        to bind any event handlers necessary.
+
+        """
+        super(Control, self).bind()
+        self.default_send_attr_bind('error', 'show_focus_rect')
+
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
         initialize a client widget.
@@ -45,14 +53,6 @@ class Control(ConstraintsWidget):
         }
         super_attrs.update(attrs)
         return super_attrs
-
-    @on_trait_change('error, show_focus_rect')
-    def sync_object_state(self, name, new):
-        """ Notify the client component of updates to the object state.
-
-        """
-        msg = 'set_' + name
-        self.send(msg, {'value': new})
 
     #--------------------------------------------------------------------------
     # Exception Handling

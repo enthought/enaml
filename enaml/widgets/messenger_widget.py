@@ -2,7 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Bool, Str, on_trait_change
+from traits.api import Bool, Str
 
 from enaml.async.async_messenger import AsyncMessenger
 from enaml.core.base_component import BaseComponent
@@ -77,7 +77,7 @@ class MessengerWidget(AsyncMessenger, BaseComponent):
         """
         pass
 
-    def default_send_attr_bind(self, *attrs):
+    def default_send_attr_bind(self, *attrs, guarded=False):
         """ A convenience method provided for subclasses to use to bind
         an arbitrary number of attributes to a handler which will send
         the attribute change to the client. 
@@ -86,17 +86,30 @@ class MessengerWidget(AsyncMessenger, BaseComponent):
         'set_' with the name of the changed attribute.
 
         """
-        otc = on_trait_change
-        handler = self._send_attr_handler
+        otc = self.on_trait_change
+        handler = self._send_attr_handler \
+            if not guarded else self._guarded_send_attr_handler
         for attr in attrs:
             otc(handler, attr)
 
     #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
+    def _guarded_send_attr_handler(self, name, new):
+        """ A trait change handler which will send an attribute change
+        to a client by mangling the attr name with 'set_', but only if doing
+        so won't lead to a notification loop.
+
+        The value of the attribute is expected to be simply serializable.
+
+        """
+        if not self._setting:
+            msg = 'set_' + name
+            self.send(msg, {'value': new})
+
     def _send_attr_handler(self, name, new):
         """ A trait change handler which will send an attribute change
-        to a client by mangling the attr name with 'set_'. 
+        to a client by mangling the attr name with 'set_'.
 
         The value of the attribute is expected to be simply serializable.
 

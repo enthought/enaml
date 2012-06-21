@@ -100,8 +100,19 @@ class Field(Control):
     _text = Unicode(u'')
 
     #--------------------------------------------------------------------------
-    # Toolkit Communication
+    # Initialization
     #--------------------------------------------------------------------------
+    def bind(self):
+        """ A method called after initialization which allows the widget
+        to bind any event handlers necessary.
+
+        """
+        super(Field, self).bind()
+        self.default_send_attr_bind(
+                'max_length', 'password_mode', 'placeholder_text', 'read_only',
+                'submit_mode', 'validator',
+            )
+
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
         initialize a client widget.
@@ -120,6 +131,9 @@ class Field(Control):
         super_attrs.update(attrs)
         return super_attrs
 
+    #--------------------------------------------------------------------------
+    # Toolkit Communication
+    #--------------------------------------------------------------------------
     def receive_lost_focus(self, context):
         """ Callback from the UI when the control loses focus.
 
@@ -158,15 +172,6 @@ class Field(Control):
         """
         self._text = context['text']
         self._field_text_edited()
-
-    @on_trait_change('max_length, password_mode, placeholder_text, read_only, \
-        submit_mode, validator')
-    def sync_object_state(self, name, new):
-        """ Notify the client component of updates to the object state.
-
-        """
-        msg = 'set_' + name
-        self.send(msg, {'value':new})
 
     def update_text(self, text):
         """ Forcibly update the text in the UI.

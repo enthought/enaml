@@ -52,8 +52,19 @@ class BoundedDatetime(Control):
     _max_datetime = Datetime(py_datetime(7999, 12, 31, 23, 59, 59, 999000))
 
     #--------------------------------------------------------------------------
-    # Toolkit Communication
+    # Initialization
     #--------------------------------------------------------------------------
+    def bind(self):
+        """ A method called after initialization which allows the widget
+        to bind any event handlers necessary.
+
+        """
+        super(BoundedDatetime, self).bind()
+        self.default_send_attr_bind(
+            'max_datetime', 'min_datetime',
+            )
+        self.default_send_attr_bind('datetime', guarded=True)
+
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
         initialize a client widget.
@@ -67,22 +78,6 @@ class BoundedDatetime(Control):
         }
         super_attrs.update(attrs)
         return super_attrs
-
-    @on_trait_change('max_datetime, min_datetime')
-    def sync_object_state(self, name, new):
-        """ Notify the client component of updates to the object state.
-
-        """
-        msg = 'set_' + name
-        self.send(msg, {'value':new})
-
-    @on_trait_change('datetime')
-    def update_datetime(self):
-        """ Notify the client component of updates to the datetime.
-
-        """
-        if not self._setting:
-            self.send('set_datetime', {'value':self.datetime})
 
     #--------------------------------------------------------------------------
     # Properties methods

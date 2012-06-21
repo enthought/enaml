@@ -85,25 +85,6 @@ class ConstraintsWidget(MessengerWidget):#, Constrainable):
         self.trait_set(resist_clip_width=width, resist_clip_height=height)
 
     #--------------------------------------------------------------------------
-    # Toolkit Communication
-    #--------------------------------------------------------------------------
-    def initial_attrs(self):
-        """ Return a dictionary which contains all the state necessary to
-        initialize a client widget.
-
-        """
-        super_attrs = super(ConstraintsWidget, self).initial_attrs()
-        return super_attrs
-
-    @on_trait_change('hug, resist_clip')
-    def sync_object_state(self, name, new):
-        """ Notify the client component of updates to the object state.
-
-        """
-        # XXX: Update constraints of parent container here?
-        pass
-
-    #--------------------------------------------------------------------------
     # Constraint Handlers
     #--------------------------------------------------------------------------
     def size_hint_constraints(self):

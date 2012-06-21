@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Str, on_trait_change
+from traits.api import Str
 
 from .bounded_datetime import BoundedDatetime
 
@@ -29,20 +29,33 @@ class DatetimeEdit(BoundedDatetime):
     hug_width = 'ignore'
 
     #--------------------------------------------------------------------------
-    # Toolkit Communication
+    # Initialization
     #--------------------------------------------------------------------------
+    def bind(self):
+        """ A method called after initialization which allows the widget
+        to bind any event handlers necessary.
+
+        """
+        super(DatetimeEdit, self).bind()
+        self.default_send_attr_bind(
+            'datetime_format',
+            )
+
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
         initialize a client widget.
 
         """
-        super_attrs = super(BoundedDatetime, self).initial_attrs()
+        super_attrs = super(DatetimeEdit, self).initial_attrs()
         attrs = {
             'datetime_format' : self.datetime_format,
         }
         super_attrs.update(attrs)
         return attrs
 
+    #--------------------------------------------------------------------------
+    # Toolkit Communication
+    #--------------------------------------------------------------------------
     def receive_datetime_changed(self, context):
         """ Callback from the UI when the datetime value is changed.
 
@@ -51,11 +64,4 @@ class DatetimeEdit(BoundedDatetime):
         self.datetime = context['value']
         self._setting = False
         self.datetime_changed(self.datetime)
-
-    @on_trait_change('datetime_format')
-    def update_datetime_format(self):
-        """ Notify the client component of updates to datetime_format.
-
-        """
-        self.send('set_datetime_format', {'value':self.datetime_format})
 

@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Str, on_trait_change
+from traits.api import Str
 
 from .bounded_date import BoundedDate
 
@@ -32,8 +32,18 @@ class DateEdit(BoundedDate):
     hug_width = 'ignore'
 
     #--------------------------------------------------------------------------
-    # Toolkit Communication
+    # Initialization
     #--------------------------------------------------------------------------
+    def bind(self):
+        """ A method called after initialization which allows the widget
+        to bind any event handlers necessary.
+
+        """
+        super(DateEdit, self).bind()
+        self.default_send_attr_bind(
+            'date_format',
+            )
+
     def inital_attrs(self):
         """ Return a dictionary which contains all the state necessary to
         initialize a client widget.
@@ -46,6 +56,9 @@ class DateEdit(BoundedDate):
         super_attrs.update(attrs)
         return super_attrs
 
+    #--------------------------------------------------------------------------
+    # Toolkit Communication
+    #--------------------------------------------------------------------------
     def receive_date_changed(self, context):
         """ Callback from the UI when the date value is changed.
 
@@ -54,11 +67,4 @@ class DateEdit(BoundedDate):
         self.date = context['value']
         self._setting = False
         self.date_changed(self.date)
-
-    @on_trait_change('date_format')
-    def update_date_format(self):
-        """ Notify the client component of updates to the date format.
-
-        """
-        self.send('set_date_format', {'value':self.date_format})
 

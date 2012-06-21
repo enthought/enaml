@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Str, Bool, on_trait_change
+from traits.api import Str, Bool
 
 from .control import Control
 
@@ -24,8 +24,18 @@ class Label(Control):
     hug_width = 'weak'
 
     #--------------------------------------------------------------------------
-    # Toolkit Communication
+    # Initialization
     #--------------------------------------------------------------------------
+    def bind(self):
+        """ A method called after initialization which allows the widget
+        to bind any event handlers necessary.
+
+        """
+        super(Label, self).bind()
+        self.default_send_attr_bind(
+                'text', 'word_wrap',
+            )
+
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
         initialize a client widget.
@@ -38,12 +48,4 @@ class Label(Control):
         }
         super_attrs.update(attrs)
         return super_attrs
-
-    @on_trait_change('text, word_wrap')
-    def sync_object_state(self, name, new):
-        """ Notify the client component of updates to the object state.
-
-        """
-        msg = 'set_' + name
-        self.send(msg, {'value':new})
 

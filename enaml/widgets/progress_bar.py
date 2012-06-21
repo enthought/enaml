@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Int, Property, TraitError, on_trait_change
+from traits.api import Int, Property, TraitError
 
 from .control import Control
 
@@ -45,8 +45,18 @@ class ProgressBar(Control):
     hug_width = 'ignore'
 
     #--------------------------------------------------------------------------
-    # Toolkit Communication
+    # Initialization
     #--------------------------------------------------------------------------
+    def bind(self):
+        """ A method called after initialization which allows the widget
+        to bind any event handlers necessary.
+
+        """
+        super(ProgressBar, self).bind()
+        self.default_send_attr_bind(
+                'maximum', 'minimum', 'value',
+            )
+
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
         initialize a client widget.
@@ -60,14 +70,6 @@ class ProgressBar(Control):
         }
         super_attrs.update(attrs)
         return super_attrs
-
-    @on_trait_change('maximum, minimum, value')
-    def sync_object_state(self, name, new):
-        """ Notify the client component of updates to the object state.
-
-        """
-        msg = 'set_' + name
-        self.send(msg, {'value':new})
 
     #--------------------------------------------------------------------------
     # Property methods

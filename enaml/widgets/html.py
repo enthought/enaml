@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Str, on_trait_change
+from traits.api import Str
 
 from .control import Control
 
@@ -23,8 +23,18 @@ class Html(Control):
     hug_height = 'ignore'
 
     #--------------------------------------------------------------------------
-    # Toolkit Communication
+    # Initialization
     #--------------------------------------------------------------------------
+    def bind(self):
+        """ A method called after initialization which allows the widget
+        to bind any event handlers necessary.
+
+        """
+        super(Html, self).bind()
+        self.default_send_attr_bind(
+                'source',
+            )
+
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
         initialize a client widget.
@@ -36,11 +46,4 @@ class Html(Control):
         }
         super_attrs.update(attrs)
         return super_attrs
-
-    @on_trait_change('source')
-    def update_source(self):
-        """ Notify the client component of updates to the source
-
-        """
-        self.send('set_source', {'value':self.source})
 

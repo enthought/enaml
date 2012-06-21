@@ -2,9 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from abc import abstractmethod
-
-from traits.api import Bool, Str, Instance, Property, on_trait_change
+from traits.api import Bool, Str, Instance, Property
 
 from .control import Control
 from ..core.trait_types import EnamlEvent
@@ -46,8 +44,16 @@ class ToggleControl(Control):
     hug_width = 'weak'
 
     #--------------------------------------------------------------------------
-    # Toolkit Communication
+    # Initialization
     #--------------------------------------------------------------------------
+    def bind(self):
+        """ A method called after initialization which allows the widget
+        to bind any event handlers necessary.
+
+        """
+        super(ToggleControl, self).bind()
+        self.default_send_attr_bind('checked', 'text')
+
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
         initialize a client widget.
@@ -61,6 +67,9 @@ class ToggleControl(Control):
         super_attrs.update(attrs)
         return super_attrs
 
+    #--------------------------------------------------------------------------
+    # Toolkit Communication
+    #--------------------------------------------------------------------------
     def receive_pressed(self, context):
         """ Callback from the UI when the control is pressed.
 
@@ -84,14 +93,6 @@ class ToggleControl(Control):
 
         """
         self.toggled()
-
-    @on_trait_change('checked,text')
-    def sync_object_state(self, name, new):
-        """ Notify the client component of updates to the object state.
-
-        """
-        msg = 'set_' + name
-        self.send(msg, {'value':new})
 
     #--------------------------------------------------------------------------
     # Property methods 

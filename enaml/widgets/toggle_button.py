@@ -35,8 +35,18 @@ class ToggleButton(ToggleControl):
     icon_size = CoercingInstance(Size)
 
     #--------------------------------------------------------------------------
-    # Toolkit Communication
+    # Initialization
     #--------------------------------------------------------------------------
+    def bind(self):
+        """ A method called after initialization which allows the widget
+        to bind any event handlers necessary.
+
+        """
+        super(ToggleButton, self).bind()
+        self.default_send_attr_bind(
+            'icon', 'icon_size',
+            )
+
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
         initialize a client widget.
@@ -49,12 +59,4 @@ class ToggleButton(ToggleControl):
         }
         super_attrs.update(attrs)
         return super_attrs
-
-    @on_trait_change('icon,icon_size')
-    def sync_object_state(self, name, new):
-        """ Notify the client component of updates to the object state.
-
-        """
-        msg = 'set_' + name
-        self.send(msg, {'value':new})
 
