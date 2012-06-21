@@ -9,8 +9,8 @@ from traits.api import (
     Disallow, Bool
 )
 
-from enaml.core.expressions import AbstractExpression
-from enaml.core.trait_types import (
+from .expressions import AbstractExpression
+from .trait_types import (
     EnamlEvent, LazyProperty, UserAttribute, UserEvent, ExpressionTrait,
 )
 

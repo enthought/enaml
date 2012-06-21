@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from base_component import BaseComponent
+from .base_component import BaseComponent
 
 
 class EnamlDef(object):
