@@ -3,7 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt.QtGui import QDialog
-from .qt.Qt import NonModal, WindowModal, ApplicationModal
+from .qt.QtCore.Qt import NonModal, WindowModal, ApplicationModal
 from qt_window import QtWindow
 
 QT_MODALITY = {
