@@ -24,8 +24,8 @@ class QtDialog(QtWindow):
         self.widget.show()
 
     def initialize(self, init_attrs):
-        """ Initialize the dialog with the given modality. The default value is
-        'application_modal', which Qt defines as True.
+        """ Initialize the dialog with the given modality. The default value
+        is 'non_modal'
 
         """
         self.set_modality(init_attrs.get('modality', 'non_modal'))
