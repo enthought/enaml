@@ -2,8 +2,6 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import os
-import sys
 
 
 #------------------------------------------------------------------------------
@@ -18,100 +16,49 @@ def imports():
 
 
 #------------------------------------------------------------------------------
-# Toolkit Factory Functions
+# Operator Context Functions
 #------------------------------------------------------------------------------
-#: The private storage for the optional default toolkit function which 
-#: overrides that which is computed from environment variables.
-_default_toolkit_func = None
+#: The private storage for the optional default operator context function 
+#: which overrides that which is provided by default.
+_default_operator_context_func = None
 
 
-def set_default_toolkit_func(func):
-    """ Set the default toolkit function to the given callable.
+def set_default_operator_context_func(func):
+    """ Set the default operator context func to the given callable.
 
     Parameters
     ----------
     func : callable
         A callable object which takes no arguments and returns an
-        instance of Toolkit.
+        instance of OperatorContext.
     
     """
-    global _default_toolkit_func
-    _default_toolkit_func = func
+    global _default_operator_context_func
+    _default_operator_context_func = func
 
 
-def reset_default_toolkit_func():
-    """ Reset the default toolkit func such that the default toolkit
-    is computed from environment variables.
-
-    """
-    global _default_toolkit_func
-    _default_toolkit_func = None
-
-
-def default_toolkit():
-    """ Creates an returns the default toolkit object based on the user's
-    current ETS_TOOLKIT environment variables, or the default toolkit
-    function supplied via the set_default_toolkit_func function.
+def reset_default_operator_context_func():
+    """ Reset the default operator context func such that the default
+    context is returned to the framework default.
 
     """
-    tk_func = _default_toolkit_func
-    if tk_func is not None:
-        return tk_func()
-
-    # Accepts forms such as 'qt4' and 'qt4.agg' to allow for kiva backends
-    toolkit = os.environ.get('ETS_TOOLKIT', 'qt').lower().split('.')[0]
-
-    if toolkit == 'qt' or toolkit == 'qt4':
-        return qt_toolkit()
-
-    if toolkit == 'wx':
-        return wx_toolkit()
-
-    raise ValueError('Invalid Toolkit: %s' % toolkit)
+    global _default_operator_context_func
+    _default_operator_context_func = None
 
 
-def qt_toolkit():
-    """ Creates and return a toolkit object for the Qt backend.
+def default_operator_context():
+    """ Creates an returns the default operator context. The default
+    context is either that which is provided by the framework unless
+    overridden by the user by providing a default context func via
+    'set_default_operator_context_func'
 
     """
-    from .core.operators import OPERATORS
-    from .core.toolkit import Toolkit
-    from .components.constructors import CONSTRUCTORS
-    from .layout.layout_helpers import LAYOUT_HELPERS
-    from .backends.qt.constructors import QT_CONSTRUCTORS
-    from .backends.qt.qt_application import QtApplication
-    from .backends.qt.noncomponents.toolkit_items import TOOLKIT_ITEMS
-
-    toolkit = Toolkit(QT_CONSTRUCTORS)
-    toolkit.update(TOOLKIT_ITEMS)
-    toolkit.update(CONSTRUCTORS)
-    toolkit.update(OPERATORS)
-    toolkit.update(LAYOUT_HELPERS)
-    toolkit.app = QtApplication()
-
-    return toolkit
-
-
-def wx_toolkit():
-    """ Creates and return a toolkit object for the Wx backend.
-
-    """
-    from .core.operators import OPERATORS
-    from .core.toolkit import Toolkit
-    from .components.constructors import CONSTRUCTORS
-    from .layout.layout_helpers import LAYOUT_HELPERS
-    from .backends.wx.constructors import WX_CONSTRUCTORS
-    from .backends.wx.wx_application import WXApplication
-    from .backends.wx.noncomponents.toolkit_items import TOOLKIT_ITEMS
-
-    toolkit = Toolkit(WX_CONSTRUCTORS)
-    toolkit.update(TOOLKIT_ITEMS)
-    toolkit.update(CONSTRUCTORS)
-    toolkit.update(OPERATORS)
-    toolkit.update(LAYOUT_HELPERS)
-    toolkit.app = WXApplication()
-
-    return toolkit
+    ctxt_func = _default_operator_context_func
+    if ctxt_func is not None:
+        return ctxt_func()
+    from enaml.core.operator_context import OperatorContext
+    from enaml.core.operators import OPERATORS
+    return OperatorContext(OPERATORS)
 
 
 #------------------------------------------------------------------------------
@@ -122,6 +69,8 @@ def test_collector():
 
         .. note :: addapted from the unittest2
     """
+    import os
+    import sys
     from unittest import TestLoader
 
     # import __main__ triggers code re-execution

@@ -30,7 +30,7 @@ class OperatorContext(dict):
         return ctxt
 
     @staticmethod
-    def default_toolkit():
+    def default_context():
         """ A staticmethod that returns the default operator context,
         creating one if necessary.
 
