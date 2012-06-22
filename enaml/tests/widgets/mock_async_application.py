@@ -3,7 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from itertools import izip_longest
-from threading import Thread
+from threading import Condition, Thread
 from uuid import uuid4
 from weakref import WeakValueDictionary
 
@@ -16,6 +16,8 @@ class MockMessenger(object):
     def __init__(self):
         self._receivers = WeakValueDictionary()
         self._cancelled = set()
+        self._messages = list()
+        self._queue_lock = Condition()
 
     #--------------------------------------------------------------------------
     # Private Api
@@ -35,7 +37,7 @@ class MockMessenger(object):
             receiver = self._receivers[msg_id]
         except KeyError:
             return # Log this instead.
-        
+
         try:
             result = receiver.recv(msg, ctxt)
         except Exception as exc:
@@ -43,6 +45,19 @@ class MockMessenger(object):
             result = MessageFailure(msg_id, msg, ctxt, exc.message)
 
         reply.finished(result)
+
+    def _main_loop(self):
+        """ Run the main loop of this messenger.
+
+        """
+        ql = self._queue_lock
+
+        while True:
+            ql.acquire()
+            while len(self._messages) == 0:
+                ql.wait()
+            self._process(self._messages.pop(0))
+            ql.release()
 
     #--------------------------------------------------------------------------
     # Public API
@@ -52,14 +67,28 @@ class MockMessenger(object):
             return
         reply = AsyncReply(self._cancel_message)
         queued_msg = (msg_id, msg, ctxt, reply)
-        self._process(queued_msg)
+
+        ql = self._queue_lock
+        ql.acquire()
+        self._messages.append(queued_msg)
+        ql.notify()
+        ql.release()
+
         return reply
 
     def register(self, msg_id, receiver):
         self._receivers[msg_id] = receiver
 
+    def run(self):
+        self.thread = Thread(target=self._main_loop)
+        self.thread.daemon = True
+        self.thread.start()
+
 
 class MockWidget(object):
+    """ A mock client UI widget
+
+    """
     def __init__(self, parent, msg_id):
         self._parent = parent
         self._msg_id = msg_id
@@ -72,8 +101,24 @@ class MockWidget(object):
     def add_child(self, widget):
         self._children.append(widget)
 
+    def send(self, msg, ctxt):
+        app = AsyncApplication.instance()
+        if app is None:
+            return
+        app.recv_message(self._msg_id, msg, ctxt)
+
+    def recv(self, msg, ctxt):
+        handler_name = 'receive_' + msg
+        handler = getattr(self, handler_name, None)
+        if handler is not None:
+            return handler(ctxt)
+        return NotImplemented
+
 
 class MockBuilder(AbstractBuilder):
+    """ A builder that generates a client-side UI tree.
+
+    """
     def __init__(self, register):
         self._register = register
         self._root = None
@@ -96,8 +141,13 @@ class MockBuilder(AbstractBuilder):
 
 
 class MockApplication(AsyncApplication):
+    """ An application
+
+    """
     def __init__(self):
+        # server -> client
         self._send_pipe = MockMessenger()
+        # client -> server
         self._recv_pipe = MockMessenger()
 
     #--------------------------------------------------------------------------
@@ -123,4 +173,6 @@ class MockApplication(AsyncApplication):
         return self._recv_pipe.put(msg_id, msg, ctxt)
 
     def run(self):
-        pass
+        self._send_pipe.run()
+        self._recv_pipe.run()
+
