@@ -3,44 +3,40 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from itertools import izip_longest
-from threading import Condition, Thread
-from uuid import uuid4
-from weakref import WeakValueDictionary
 
 from enaml.async.async_application import AbstractBuilder, AsyncApplication, \
     AsyncApplicationError
-from enaml.async.async_reply import AsyncReply, MessageFailure
 
+from .mock_test_pipe import MockTestPipe
 
 class MockWidget(object):
     """ A mock client UI widget
 
     """
-    def __init__(self, parent, msg_id):
-        self._parent = parent
-        self._msg_id = msg_id
-        self._children = []
-        self._attrs = {}
+    def __init__(self, parent, send_pipe, recv_pipe):
+        self.parent = parent
+        self.send_pipe = send_pipe
+        self.recv_pipe = recv_pipe
+        self.children = []
+        self.attributes = {}
+        self.recv_pipe.set_callback(self.recv)
 
     def initialize(self, attributes):
         # Add receive functions for attributes as needed.
         for k in attributes.iterkeys():
             def recv_func(slf, context):
                 setattr(slf, k, context['value'])
-            attr_name = 'receive_set_'+k
+            attr_name = 'receive_set_' + k
             if not hasattr(self, attr_name):
                 setattr(self, attr_name, recv_func)
 
-        self._attrs.update(attributes)
+        self.attributes.update(attributes)
 
     def add_child(self, widget):
-        self._children.append(widget)
+        self.children.append(widget)
 
     def send(self, msg, ctxt):
-        app = AsyncApplication.instance()
-        if app is None:
-            return
-        app.recv_message(self._msg_id, msg, ctxt)
+        return self.send_pipe.put(msg, ctxt)
 
     def recv(self, msg, ctxt):
         handler_name = 'receive_' + msg
@@ -50,140 +46,50 @@ class MockWidget(object):
         return NotImplemented
 
 
-class MockMessenger(object):
-    def __init__(self):
-        self._receivers = WeakValueDictionary()
-        self._cancelled = set()
-        self._messages = list()
-        self._queue_lock = Condition()
-
-    #--------------------------------------------------------------------------
-    # Private Api
-    #--------------------------------------------------------------------------
-    def _cancel_message(self, reply):
-        self._cancelled.add(reply)
-
-    def _process(self, queued_msg):
-        msg_id, msg, ctxt, reply = queued_msg
-
-        cancelled = self._cancelled
-        if reply in cancelled:
-            cancelled.remove(reply)
-            return
-
-        try:
-            receiver = self._receivers[msg_id]
-        except KeyError:
-            return # Log this instead.
-
-        try:
-            result = receiver.recv(msg, ctxt)
-        except Exception as exc:
-            # XXX better exception message trapping
-            result = MessageFailure(msg_id, msg, ctxt, exc.message)
-
-        reply.finished(result)
-
-    def _main_loop(self):
-        """ Run the main loop of this messenger.
-
-        """
-        ql = self._queue_lock
-
-        while True:
-            ql.acquire()
-            if len(self._messages) == 0:
-                ql.wait()
-            message = self._messages.pop(0)
-            ql.release()
-            # Call _process outside of the lock since the receiver might try to
-            # send a message.
-            self._process(message)
-
-    #--------------------------------------------------------------------------
-    # Public API
-    #--------------------------------------------------------------------------
-    def put(self, msg_id, msg, ctxt):
-        if msg_id not in self._receivers:
-            return
-        reply = AsyncReply(self._cancel_message)
-        queued_msg = (msg_id, msg, ctxt, reply)
-
-        ql = self._queue_lock
-        ql.acquire()
-        self._messages.append(queued_msg)
-        ql.notify()
-        ql.release()
-
-        return reply
-
-    def register(self, msg_id, receiver):
-        self._receivers[msg_id] = receiver
-
-    def run(self):
-        self.thread = Thread(target=self._main_loop)
-        self.thread.daemon = True
-        self.thread.start()
-
-
 class MockBuilder(AbstractBuilder):
     """ A builder that generates a client-side UI tree.
 
     """
-    def __init__(self, register):
-        self._register = register
+    def __init__(self):
         self._root = None
 
     def build(self, info):
         info_stack = [(info, None)]
         while info_stack:
             info_dct, parent = info_stack.pop()
-            msg_id = info_dct['msg_id']
-            widget = MockWidget(parent, msg_id)
-            if parent is None:
-                widget.initialize(info_dct['attrs'])
-                self._root = widget
-            else:
-                widget.initialize(info_dct['attrs'])
-                parent.add_child(widget)
-            self._register(msg_id, widget)
+            send_pipe = info_dct['send_pipe']
+            recv_pipe = info_dct['recv_pipe']
+            widget_cls = MockWidget
+            # Cross the pipes when hooking the MockWidget up to the server widget
+            widget = widget_cls(parent, recv_pipe, send_pipe)
+            widget.initialize(info_dct['attrs'])
             children = info_dct['children']
             info_stack.extend(izip_longest(children, [], fillvalue=widget))
+
+            # Store a reference to the root widget to prevent things 
+            # from being garbage collected
+            if parent is None:
+                self._root = widget
 
 
 class MockApplication(AsyncApplication):
     """ A mock application for testing server widget components.
 
     """
-    def __init__(self):
-        # server -> client
-        self._send_pipe = MockMessenger()
-        # client -> server
-        self._recv_pipe = MockMessenger()
-
     #--------------------------------------------------------------------------
     # Abstract API implementation
     #--------------------------------------------------------------------------
-    def register(self, messenger, id_setter):
-        msg_id = uuid4().hex
-        id_setter(msg_id)
-        self._recv_pipe.register(msg_id, messenger)
-
-    def send_message(self, msg_id, msg, ctxt):
-        return self._send_pipe.put(msg_id, msg, ctxt)
+    def register(self, messenger):
+        return (MockTestPipe(), MockTestPipe())
 
     def builder(self):
-        def register(msg_id, client):
-            self._send_pipe.register(msg_id, client)
-        return MockBuilder(register)
+        return MockBuilder()
 
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
-    def recv_message(self, msg_id, msg, ctxt):
-        return self._recv_pipe.put(msg_id, msg, ctxt)
-
     def run(self):
+        # XXX How should these get started?
         self._send_pipe.run()
         self._recv_pipe.run()
 
