@@ -12,6 +12,44 @@ from enaml.async.async_application import AbstractBuilder, AsyncApplication, \
 from enaml.async.async_reply import AsyncReply, MessageFailure
 
 
+class MockWidget(object):
+    """ A mock client UI widget
+
+    """
+    def __init__(self, parent, msg_id):
+        self._parent = parent
+        self._msg_id = msg_id
+        self._children = []
+        self._attrs = {}
+
+    def initialize(self, attributes):
+        # Add receive functions for attributes as needed.
+        for k in attributes.iterkeys():
+            def recv_func(slf, context):
+                setattr(slf, k, context['value'])
+            attr_name = 'receive_set_'+k
+            if not hasattr(self, attr_name):
+                setattr(self, attr_name, recv_func)
+
+        self._attrs.update(attributes)
+
+    def add_child(self, widget):
+        self._children.append(widget)
+
+    def send(self, msg, ctxt):
+        app = AsyncApplication.instance()
+        if app is None:
+            return
+        app.recv_message(self._msg_id, msg, ctxt)
+
+    def recv(self, msg, ctxt):
+        handler_name = 'receive_' + msg
+        handler = getattr(self, handler_name, None)
+        if handler is not None:
+            return handler(ctxt)
+        return NotImplemented
+
+
 class MockMessenger(object):
     def __init__(self):
         self._receivers = WeakValueDictionary()
@@ -54,10 +92,13 @@ class MockMessenger(object):
 
         while True:
             ql.acquire()
-            while len(self._messages) == 0:
+            if len(self._messages) == 0:
                 ql.wait()
-            self._process(self._messages.pop(0))
+            message = self._messages.pop(0)
             ql.release()
+            # Call _process outside of the lock since the receiver might try to
+            # send a message.
+            self._process(message)
 
     #--------------------------------------------------------------------------
     # Public API
@@ -83,36 +124,6 @@ class MockMessenger(object):
         self.thread = Thread(target=self._main_loop)
         self.thread.daemon = True
         self.thread.start()
-
-
-class MockWidget(object):
-    """ A mock client UI widget
-
-    """
-    def __init__(self, parent, msg_id):
-        self._parent = parent
-        self._msg_id = msg_id
-        self._children = []
-        self._attrs = {}
-
-    def initialize(self, attrs):
-        self._attrs.update(attrs)
-
-    def add_child(self, widget):
-        self._children.append(widget)
-
-    def send(self, msg, ctxt):
-        app = AsyncApplication.instance()
-        if app is None:
-            return
-        app.recv_message(self._msg_id, msg, ctxt)
-
-    def recv(self, msg, ctxt):
-        handler_name = 'receive_' + msg
-        handler = getattr(self, handler_name, None)
-        if handler is not None:
-            return handler(ctxt)
-        return NotImplemented
 
 
 class MockBuilder(AbstractBuilder):
@@ -141,7 +152,7 @@ class MockBuilder(AbstractBuilder):
 
 
 class MockApplication(AsyncApplication):
-    """ An application
+    """ A mock application for testing server widget components.
 
     """
     def __init__(self):
