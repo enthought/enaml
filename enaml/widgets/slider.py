@@ -3,13 +3,13 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from traits.api import (
-    Bool, Instance, Property, Int, TraitError, Either, Range, on_trait_change,
+    Bool, Property, Int, TraitError, Either, Range, on_trait_change,
 )
 
-from .control import Control
+from enaml.core.trait_types import Bounded, EnamlEvent
+from enaml.enums import Orientation, TickPosition, PolicyEnum
 
-from ..core.trait_types import Bounded, EnamlEvent
-from ..enums import Orientation, TickPosition, PolicyEnum
+from .control import Control
 
 
 #: The maximum slider value
@@ -120,11 +120,10 @@ class Slider(Control):
 
         """
         super(Slider, self).bind()
-        self.default_send_attr_bind(
+        self.default_send(
             'maximum', 'minimum', 'orientation', 'page_step', 'single_step',
-            'tick_interval', 'tick_position', 'tracking',
-            )
-        self.default_send_attr_bind('value', guarded=True)
+            'tick_interval', 'tick_position', 'tracking', 'value'
+        )
 
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
@@ -159,28 +158,22 @@ class Slider(Control):
         """ Callback from the UI when the control is pressed.
 
         """
+        self._down = True
         self.pressed()
 
     def receive_released(self, context):
         """ Callback from the UI when the control is released.
 
         """
+        self._down = False
         self.released()
-
-    def receive_set_down(self, context):
-        """ Callback from the UI when the slider's down state changes
-
-        """
-        self._down = context['value']
 
     def receive_set_value(self, context):
         """ Callback from the UI when the slider's value changes
 
         """
-        self._setting = True
-        self.value = context['value']
-        self._setting = False
-
+        self.set_guarded(value=context['value'])
+    
     #--------------------------------------------------------------------------
     # Trait defaults
     #--------------------------------------------------------------------------
