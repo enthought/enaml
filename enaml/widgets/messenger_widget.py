@@ -6,6 +6,7 @@ from collections import defaultdict
 
 from traits.api import Instance, Str
 
+from enaml.async.async_application import AsyncApplication, AbstractBuilder
 from enaml.async.async_messenger import AsyncMessenger
 from enaml.core.base_component import BaseComponent
 
@@ -158,6 +159,11 @@ class MessengerWidget(AsyncMessenger, BaseComponent):
     #: by users to define custom behavior, but is typically not needed.
     widget_type = Str
 
+    #: The private storage for the widget tree builder. A reference must
+    #: be kept to the builder, since the lifetime of the implementation
+    #: widgets is tied to the lifetime of the builder.
+    _builder = Instance(AbstractBuilder)
+
     def _widget_type_default(self):
         """ Computes the type string for widget which should be built
         by implementation clients. The default is simply the name of
@@ -175,8 +181,9 @@ class MessengerWidget(AsyncMessenger, BaseComponent):
         """
         info = {}
         info['widget'] = self.widget_type
-        info['msg_id'] = self.msg_id
         info['attrs'] = self.initial_attrs()
+        info['send_pipe'] = self.send_pipe
+        info['recv_pipe'] = self.recv_pipe
         child_info = []
         for child in self.children:
             child_info.append(child.build_info())
@@ -239,6 +246,19 @@ class MessengerWidget(AsyncMessenger, BaseComponent):
         with self.loopback_guard(*attrs):
             for name, value in attrs.iteritems():
                 setattr(self, name, value)
+
+    def prepare(self):
+        """ Prepare this widget for use before call the .run() method
+        of an application.
+
+        """
+        if not self.initialized:
+            self.initialize()
+        builder = self._builder
+        if builder is None:
+            builder = self._builder = AsyncApplication.instance().builder()
+            build_info = self.build_info()
+            builder.build(build_info)
 
     #--------------------------------------------------------------------------
     # Private API
