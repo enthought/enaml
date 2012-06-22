@@ -4,32 +4,25 @@
 #------------------------------------------------------------------------------
 from .qt.QtGui import QWidget
 from .qt.QtCore import QSize
-from .qt_client_widget import QtClientWidget
+from .qt_widget_component import QtWidgetComponent
 
 
-class QtWindow(QtClientWidget):
+class QtWindow(QtWidgetComponent):
     """ A Qt implementation of a window
 
     """
-    def create(self, parent):
+    def create(self):
         """ Create the underlying widget
 
         """
-        self.widget = QWidget(parent)
-        self.widget.show()
+        self.widget = QWidget(self.parent_widget)
 
     def initialize(self, init_attrs):
         """ Initialize the widget's attributes
 
         """
+        super(QtWindow, self).initialize(init_attrs)
         self.set_title(init_attrs.get('title', ''))
-        #self.set_icon(init_attrs.get('icon'))
-        #self.set_maximum_size(init_attrs.get('maximum_size'))
-        #self.set_minimum_size(init_attrs.get('minimum_size'))
-        #self.set_initial_size(init_attrs.get('initial_size'))
-        #self.set_initial_size_default(init_attrs.get('initial_size_default'))
-        #self.set_minimum_size_default(init_attrs.get('minimum_size_default'))
-        #self.set_maximum_size_default(init_attrs.get('maximum_size_default'))
 
     #--------------------------------------------------------------------------
     # Message Handlers
