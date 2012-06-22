@@ -57,11 +57,10 @@ class SpinBox(Control):
 
         """
         super(SpinBox, self).bind()
-        self.default_send_attr_bind(
+        self.default_send(
             'maximum', 'minimum', 'single_step', 'tracking', 'validator',
-            'wrap',
+            'value', 'wrap'
             )
-        self.default_send_attr_bind('value', guarded=True)
 
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
@@ -88,7 +87,5 @@ class SpinBox(Control):
         """ Callback from the UI when the value of the control changes.
 
         """
-        self._setting = True
-        self.value = context['value']
-        self._setting = False
+        self.set_guarded(value=context['value'])
 

@@ -43,9 +43,7 @@ class ToggleButton(ToggleControl):
 
         """
         super(ToggleButton, self).bind()
-        self.default_send_attr_bind(
-            'icon', 'icon_size',
-            )
+        self.default_send('icon', 'icon_size')
 
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to

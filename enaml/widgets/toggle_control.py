@@ -52,7 +52,7 @@ class ToggleControl(Control):
 
         """
         super(ToggleControl, self).bind()
-        self.default_send_attr_bind('checked', 'text')
+        self.default_send('checked', 'text')
 
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
@@ -74,19 +74,15 @@ class ToggleControl(Control):
         """ Callback from the UI when the control is pressed.
 
         """
+        self._down = True
         self.pressed()
 
     def receive_released(self, context):
         """ Callback from the UI when the control is released.
 
         """
+        self._down = False
         self.released()
-
-    def receive_set_down(self, context):
-        """ Callback from the UI when the down state of the control changes.
-
-        """
-        self._down = context["value"]
 
     def receive_toggled(self, context):
         """ Callback from the UI when the control is toggled.

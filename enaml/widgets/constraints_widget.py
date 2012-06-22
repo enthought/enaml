@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from traits.api import Property, Tuple, Enum
 
-from .messenger_widget import MessengerWidget
+from .widget_component import WidgetComponent
 
 from ..layout.constrainable import Constrainable
 from ..layout.geometry import Rect
@@ -16,7 +16,7 @@ PolicyEnum = Enum('ignore', 'weak', 'medium', 'strong', 'required')
 # ConstraintsWidget
 #------------------------------------------------------------------------------
 # XXX: Constrainable needs work before it can be included here
-class ConstraintsWidget(MessengerWidget):#, Constrainable):
+class ConstraintsWidget(WidgetComponent):#, Constrainable):
     """ A WidgetComponent subclass which mixes in the Constrainable
     interface and adds some additional hints for being managed by 
     a Container.

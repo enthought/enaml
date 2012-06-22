@@ -60,10 +60,7 @@ class BoundedDatetime(Control):
 
         """
         super(BoundedDatetime, self).bind()
-        self.default_send_attr_bind(
-            'max_datetime', 'min_datetime',
-            )
-        self.default_send_attr_bind('datetime', guarded=True)
+        self.default_send('datetime', 'max_datetime', 'min_datetime')
 
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to

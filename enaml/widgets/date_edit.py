@@ -40,9 +40,7 @@ class DateEdit(BoundedDate):
 
         """
         super(DateEdit, self).bind()
-        self.default_send_attr_bind(
-            'date_format',
-            )
+        self.default_send('date_format')
 
     def inital_attrs(self):
         """ Return a dictionary which contains all the state necessary to
@@ -63,8 +61,6 @@ class DateEdit(BoundedDate):
         """ Callback from the UI when the date value is changed.
 
         """
-        self._setting = True
-        self.date = context['value']
-        self._setting = False
+        self.set_guarded(date=context['value'])
         self.date_changed(self.date)
 

@@ -108,9 +108,9 @@ class Field(Control):
 
         """
         super(Field, self).bind()
-        self.default_send_attr_bind(
+        self.default_send(
                 'max_length', 'password_mode', 'placeholder_text', 'read_only',
-                'submit_mode', 'validator',
+                'submit_mode', 'validator', 'value',
             )
 
     def initial_attrs(self):

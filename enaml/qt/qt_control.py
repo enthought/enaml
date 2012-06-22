@@ -2,9 +2,9 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt_client_widget import QtClientWidget
+from .qt_widget_component import QtWidgetComponent
 
-class QtControl(QtClientWidget):
+class QtControl(QtWidgetComponent):
       """ A base class for all Qt controls
       
       """

@@ -37,9 +37,7 @@ class DatetimeEdit(BoundedDatetime):
 
         """
         super(DatetimeEdit, self).bind()
-        self.default_send_attr_bind(
-            'datetime_format',
-            )
+        self.default_send('datetime_format')
 
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
@@ -60,8 +58,6 @@ class DatetimeEdit(BoundedDatetime):
         """ Callback from the UI when the datetime value is changed.
 
         """
-        self._setting = True
-        self.datetime = context['value']
-        self._setting = False
+        self.set_guarded(datetime=context['value'])
         self.datetime_changed(self.datetime)
 
