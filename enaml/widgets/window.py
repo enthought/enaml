@@ -23,6 +23,10 @@ class Window(WidgetComponent):
     #: The titlebar text.
     title = Unicode
 
+    #: The initial size of the window. A value of (-1, -1) indicates
+    #: to let the client choose the initial size
+    # initial_size = SizeTuple
+
     #: The titlebar icon.
     # XXX needs to be implemented
     #icon = Instance()

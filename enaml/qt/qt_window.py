@@ -3,7 +3,6 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt.QtGui import QWidget
-from .qt.QtCore import QSize
 from .qt_widget_component import QtWidgetComponent
 
 
@@ -31,172 +30,69 @@ class QtWindow(QtWidgetComponent):
         """ Message handler for maximize
 
         """
-        self.maximize()
+        return self.maximize()
 
     def receive_minimize(self, ctxt):
         """ Message handler for minimize
 
         """
-        self.minimize()
+        return self.minimize()
 
     def receive_restore(self, ctxt):
         """ Message handler for restore
 
         """
-        self.restore()
+        return self.restore()
 
     def receive_set_icon(self, ctxt):
         """ Message handler for set_icon
 
         """
-        # XXX needs to be implemented
-        pass
-
-    def receive_set_initial_size(self, ctxt):
-        """ Message handler for set_initial_size
-
-        """
-        size = ctxt.get('value')
-        if size is not None:
-            self.set_initial_size(size)
-
-    def receive_set_initial_size_default(self, ctxt):
-        """ Message handler for set_initial_size_default
-
-        """
-        size = ctxt.get('value')
-        if size is not None:
-            self.set_initial_default_size(size)
-            
-    def receive_set_maximum_size(self, ctxt):
-        """ Message handler for set_maximum_size
-
-        """
-        size = ctxt.get('value')
-        if size is not None:
-            self.set_maximum_size(size)
-
-    def receive_set_maximum_size_default(self, ctxt):
-        """ Message handler for set_maximum_size_default
-
-        """
-        size = ctxt.get('value')
-        if size is not None:
-            self.set_maximum_size_default(size)
-
-    def receive_set_minimum_size(self, ctxt):
-        """ Message handler for set_minimum_size
-
-        """
-        size = ctxt.get('value')
-        if size is not None:
-            self.set_minimum_size(size)
-
-    def receive_set_minimum_size_default(self, ctxt):
-        """ Message handler for set_minimum_size_default
-
-        """
-        size = ctxt.get('value')
-        if size is not None:
-            self.set_minimum_size_default(size)
+        return NotImplemented
 
     def receive_set_title(self, ctxt):
         """ Message handler for set_title
 
         """
-        title = ctxt.get('value')
-        if title is not None:
-            self.set_title(title)
-
-    def receive_show(self, ctxt):
-        """ Message handler for show
-
-        """
-        self.show()
+        return self.set_title(ctxt.get('value', ''))
     
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
     def maximize(self):
-        """ Maximize the window
+        """ Maximize the window.
 
         """
         self.widget.showMaximized()
+        return True
 
     def minimize(self):
-        """ Minimize the window
+        """ Minimize the window.
 
         """
         self.widget.showMinimized()
+        return True
 
     def restore(self):
-        """ Restore the window after a minimize or maximize
+        """ Restore the window after a minimize or maximize.
 
         """
         self.widget.showNormal()
+        return True
 
     def set_icon(self, icon):
-        """ Set the window icon
+        """ Set the window icon.
 
         """
-        # XXX needs to be implemented
-        pass
+        return NotImplemented
 
-    def set_initial_size(self, size):
-        """ Set the initial window size
-        
-        """
-        self.initial_size = size
-        self.widget.resize(QSize(*self._compute_initial_size()))
-
-    def set_initial_size_default(self, size):
-        """ Set the initial window size default (used if no other initial
-        size could be calculated)
-
-        """
-        self.initial_size_default = size
-        self.set_initial_size(self._compute_initial_size())
-
-    def set_maximum_size(self, size):
-        """ Set the maximum size of the window
-
-        """
-        self.maximum_size = size
-        self.widget.setMaximumSize(QSize(*self._compute_maximum_size()))
-
-    def set_maximum_size_default(self, size):
-        """ Set the maximum window size default
-
-        """
-        self.maximum_size_default = size
-        self.set_maximum_size(self._compute_maximum_size())
-
-    def set_minimum_size(self, size):
-        """ Set the minimum size of the window
-
-        """
-        self.minimum_size = size
-        self.widget.setMinimumSize(QSize(*self._compute_minimum_size()))
-
-    def set_minimum_size_default(self, size):
-        """ Set the minimum size default
-
-        """
-        self.minimum_size_default = size
-        self.set_minimum_size(self._compute_minimum_size())
-    
     def set_title(self, title):
-        """ Set the title of the window
+        """ Set the title of the window.
 
         """
         self.widget.setWindowTitle(title)
-
-    def show(self):
-        """ Show the window
-
-        """
-        self.widget.show()
-
+        return True
+        
     #--------------------------------------------------------------------------
     # Size Computation Methods
     #--------------------------------------------------------------------------
@@ -331,3 +227,4 @@ class QtWindow(QtWidgetComponent):
                 computed_height = default_height
         
         return (computed_width, computed_height)
+
