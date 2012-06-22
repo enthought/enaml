@@ -2,9 +2,8 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Instance, Unicode
+from traits.api import Unicode
 
-from enaml.async.async_application import AbstractBuilder, AsyncApplication
 from .widget_component import WidgetComponent
 
 
@@ -27,11 +26,6 @@ class Window(WidgetComponent):
     #: The titlebar icon.
     # XXX needs to be implemented
     #icon = Instance()
-
-    #: The private storage for the widget tree builder. A reference must
-    #: be kept to the builder, since the lifetime of the implementation
-    #: widgets is tied to the lifetime of the builder.
-    _builder = Instance(AbstractBuilder)
 
     #--------------------------------------------------------------------------
     # Initialization
@@ -73,18 +67,4 @@ class Window(WidgetComponent):
 
         """
         self.send('restore', {})
-
-    def show(self):
-        """ Build the UI tree for this window and tell the client to show it.
-
-        """
-        # XXX this needs some work
-        if not self.initialized:
-            self.initialize()
-        builder = self._builder
-        if builder is None:
-            builder = self._builder = AsyncApplication.instance().builder()
-            build_info = self.build_info()
-            builder.build(build_info)
-        self.send('show', {})
 
