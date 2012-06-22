@@ -7,7 +7,7 @@ from weakref import ref
 from enaml.utils import WeakMethodWrapper
 
 
-class QtClientWidget(object):
+class QtMessengerWidget(object):
     """ The base class of the Qt widgets wrappers for a Qt Enaml client.
 
     """
