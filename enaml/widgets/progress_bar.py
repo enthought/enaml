@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Int, Property, TraitError
+from traits.api import Int, Property, TraitError, on_trait_change
 
 from .control import Control
 
