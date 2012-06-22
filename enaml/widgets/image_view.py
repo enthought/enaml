@@ -40,7 +40,7 @@ class ImageView(Control):
 
         """
         super(ImageView, self).bind()
-        self.default_send_attr_bind(
+        self.default_send(
                 'image', 'scale_to_fit', 'preserve_aspect_ratio',
                 'allow_upscaling',
             )

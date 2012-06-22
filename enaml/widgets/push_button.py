@@ -60,9 +60,7 @@ class PushButton(Control):
 
         """
         super(PushButton, self).bind()
-        self.default_send_attr_bind(
-                'icon', 'icon_size', 'text',
-            )
+        self.default_send('icon', 'icon_size', 'text')
 
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
@@ -81,27 +79,19 @@ class PushButton(Control):
     #--------------------------------------------------------------------------
     # Toolkit Communication
     #--------------------------------------------------------------------------
-    def receive_clicked(self, context):
-        """ Callback from the UI when the control is clicked.
-
-        """
-        self.clicked()
-
     def receive_pressed(self, context):
         """ Callback from the UI when the control is pressed.
 
         """
+        self._down = True
         self.pressed()
+        self.clicked()
 
     def receive_released(self, context):
         """ Callback from the UI when the control is released.
 
         """
+        self._down = False
         self.released()
-
-    def receive_set_down(self, context):
-        """ Callback from the UI when the button's down state changes
-
-        """
-        self._down = context['value']
+        self.clicked()
 

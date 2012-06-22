@@ -52,9 +52,7 @@ class FloatSlider(Slider):
 
         """
         super(FloatSlider, self).bind()
-        self.default_send_attr_bind(
-                'precision',
-            )
+        self.default_send('precision')
 
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to

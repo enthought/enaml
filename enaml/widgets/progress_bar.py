@@ -53,9 +53,7 @@ class ProgressBar(Control):
 
         """
         super(ProgressBar, self).bind()
-        self.default_send_attr_bind(
-                'maximum', 'minimum', 'value',
-            )
+        self.default_send('maximum', 'minimum', 'value')
 
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to

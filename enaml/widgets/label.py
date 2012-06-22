@@ -32,9 +32,7 @@ class Label(Control):
 
         """
         super(Label, self).bind()
-        self.default_send_attr_bind(
-                'text', 'word_wrap',
-            )
+        self.default_send('text', 'word_wrap')
 
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to

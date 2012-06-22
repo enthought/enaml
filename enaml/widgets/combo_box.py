@@ -78,9 +78,7 @@ class ComboBox(Control):
 
         """
         super(ComboBox, self).bind()
-        self.default_send_attr_bind(
-            'items',
-            )
+        self.default_send('items')
         self.on_trait_change(self._update_index, 'value')
 
     def initial_attrs(self):
@@ -110,17 +108,15 @@ class ComboBox(Control):
         """ Callback from the UI when the index changes.
 
         """
-        self._setting = True
-        self.value = self.items[context['index']]
-        self._setting = False
+        self.set_guarded(value=self.items[context['value']])
 
     def _update_index(self):
         """ Notify the client component of updates to the value
 
         """
-        if not self._setting:
+        with self.loopback_guard('index'):
             idx = self.items.index(self.value)
-            self.send('set_index', {'index':idx})
+            self.send('set_index', {'value':idx})
 
     #--------------------------------------------------------------------------
     # Property Handlers

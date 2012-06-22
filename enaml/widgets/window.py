@@ -30,6 +30,14 @@ class Window(WidgetComponent):
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
+    def bind(self):
+        """ A method called after initialization which allows the widget
+        to bind any event handlers necessary.
+
+        """
+        super(Window, self).bind()
+        self.default_send(*_WINDOW_PROXY_ATTRS)
+
     def initial_attrs(self):
         """ Return the attr initialization dict for a window.
 
@@ -39,13 +47,6 @@ class Window(WidgetComponent):
         attrs = dict((attr, get(self, attr)) for attr in _WINDOW_PROXY_ATTRS)
         super_attrs.update(attrs)
         return super_attrs
-
-    def bind(self):
-        """ Bind the change handlers for the window.
-
-        """
-        super(Window, self).bind()
-        self.default_send(*_WINDOW_PROXY_ATTRS)
 
     #--------------------------------------------------------------------------
     # Public API
