@@ -34,7 +34,7 @@ class Control(ConstraintsWidget):
 
         """
         super(Control, self).bind()
-        self.default_send_attr_bind('error', 'show_focus_rect')
+        self.default_send('error', 'show_focus_rect')
 
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
