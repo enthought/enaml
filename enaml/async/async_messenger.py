@@ -2,9 +2,12 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import HasStrictTraits, ReadOnly, Undefined
+from traits.api import HasStrictTraits, Instance
 
-from async_application import AsyncApplication, AsyncApplicationError
+from enaml.utils import WeakMethodWrapper
+
+from .async_application import AsyncApplication, AsyncApplicationError
+from .async_pipe import AsyncSendPipe, AsyncRecvPipe
 
 
 class AsyncMessenger(HasStrictTraits):
@@ -20,9 +23,13 @@ class AsyncMessenger(HasStrictTraits):
     object is 1:1.
 
     """
-    #: The string messaging id for the messenger. This will be set 
-    #: by the application instance when the messenger is created.
-    msg_id = ReadOnly
+    #: The messaging send pipe. This will be supplied by the application
+    #: when the messenger registers itself.
+    send_pipe = Instance(AsyncSendPipe)
+
+    #: The messaging recv pipe. This will be supplied by the application
+    #: then the messenger registers itself.
+    recv_pipe = Instance(AsyncRecvPipe)
 
     def __new__(cls, *args, **kwargs):
         """ Create a new AsyncMessenger instance.
@@ -38,38 +45,23 @@ class AsyncMessenger(HasStrictTraits):
             raise AsyncApplicationError(msg)
         
         instance = super(AsyncMessenger, cls).__new__(cls, args, kwargs)
+        send_pipe, recv_pipe = app.register(instance)
 
-        def id_setter(msg_id):
-            if not isinstance(msg_id, str):
-                msg = 'A messaging id must be a string. Got object of '
-                msg += 'type %s instead' % type(msg_id)
-                raise TypeError(msg)
-            instance.msg_id = msg_id
+        instance.send_pipe = send_pipe
+        instance.recv_pipe = recv_pipe
 
-        app.register(instance, id_setter)
-
-        if instance.msg_id is Undefined:
-            msg = 'The async application failed to provide a messaging id'
-            msg += 'for the AsyncMessenger instance.'
-            raise AsyncApplicationError(msg)
-            
+        callback = WeakMethodWrapper(instance.recv, default=NotImplemented)
+        instance.recv_pipe.set_callback(callback)
+        
         return instance
-
-    @property
-    def app(self):
-        """ Returns the async application instance for use by this
-        messenger.
-
-        """
-        app = AsyncApplication.instance()
-        if app is None:
-            msg = 'The async application instance no longer exists.'
-            raise AsyncApplicationError(msg)
-        return app
 
     def send(self, msg, ctxt):
         """ Send a message to be handled by a client object.
         
+        The message is placed on the send pipe for later delivery to
+        the client. The return value is an asynchronous reply object
+        which can provide notification when the message is finished.
+
         Parameters
         ----------
         msg : string
@@ -86,14 +78,13 @@ class AsyncMessenger(HasStrictTraits):
             this async reply will notify any registered callbacks.
 
         """
-        return self.app.send_message(self.msg_id, msg, ctxt)
+        return self.send_pipe.put(msg, ctxt)
         
     def recv(self, msg, ctxt):
         """ Handle a message sent by the client object.
         
-        This method is called by the async application instance when
-        there is a message from the client ready to be delivered to 
-        this messenger.
+        This method is called by the recv pipe when there is a message 
+        from the client ready to be delivered to this messenger.
         
         This method will dispatch the message to methods defined on a 
         subclass by prefixing the command name with 'receive_'. 

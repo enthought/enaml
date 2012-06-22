@@ -88,14 +88,12 @@ class AsyncApplication(object):
     # Abstract API
     #--------------------------------------------------------------------------
     @abstractmethod
-    def register(self, messenger, id_setter):
+    def register(self, messenger):
         """ Registers an AsyncMessenger instance with the application.
 
         All AsyncMessenger instances will call this method once, when 
-        they are created. The application must provide a unique string
-        identifier for the messenger by calling the provided 'id_setter' 
-        function with a single string argument. This id will be used for 
-        all future message passing between this messenger and its client.
+        they are created. The application must provide the messaging
+        pipes which will be used for communication by this messenger.
 
         Parameters
         ----------
@@ -103,42 +101,12 @@ class AsyncApplication(object):
             The async messenger instance for which the application must
             provide a unique identifier.
 
-        id_setter : callable
-            A callable which takes one argument which is the unique
-            string identifier to assign for this messenger.
-
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def send_message(self, msg_id, msg, ctxt):
-        """ Send a message to the client of the given messaging id.
-
-        This method asynchronously delivers messages to the client of 
-        the given messaging id. The messaging id is the same as that 
-        provided by the application when a messenger was registered. 
-        The mechanism by which messages are delivered is dependent
-        upon the implementation. The only requirement is that this 
-        method must not block while delivering the message.
-
-        Parameters
-        ----------
-        msg_id : string
-            The messaging id to use to route the message to the proper
-            client object.
-
-        msg : string
-            The message to deliver to the client object.
-            
-        ctxt : dict
-            The message context to deliver with the message.
-
         Returns
         -------
-        result : AsyncReply
-            An asynchronous reply object for the given message. This
-            async reply object will be notified by the application 
-            when the client has finished handling the message.
+        result : (send_pipe, recv_pipe)
+            A 2-tuple of pipes to be used by the messenger. The first
+            must be an instance of async_pipe.AsyncSendPipe and the 
+            second must be an instance of async_pipe.AsyncRecvPipe.
 
         """
         raise NotImplementedError
