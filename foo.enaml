@@ -1,0 +1,14 @@
+from enaml.widgets import Window, Slider
+
+
+enamldef SomeMain(Window):
+    title = 'Foo Title'
+    min_size = (400, 400)
+    max_size = (600, 600)
+    Slider:
+        id: foo
+        min_size = (30, 600)
+        value :: nonlocals.title = str(value)
+    Slider:
+        value << max(0, foo.value - 10)
+
