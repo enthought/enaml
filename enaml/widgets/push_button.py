@@ -2,13 +2,14 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Bool, Str, Instance, Property
+from traits.api import Bool, Str, Property
 
 from .control import Control
 
-from ..core.trait_types import CoercingInstance, EnamlEvent
-from ..layout.geometry import Size
-from ..noncomponents.abstract_icon import AbstractTkIcon
+from ..core.trait_types import EnamlEvent
+
+
+_PB_PROXY_ATTRS = ['text']
 
 
 class PushButton(Control):
@@ -23,10 +24,10 @@ class PushButton(Control):
     text = Str
 
     #: The an icon to display in the button.
-    icon = Instance(AbstractTkIcon)
+    #icon = Instance(AbstractTkIcon)
 
     # The size of the icon
-    icon_size = CoercingInstance(Size)
+    #icon_size = CoercingInstance(Size)
     
     #: Fired when the button is pressed and released.
     clicked = EnamlEvent
@@ -60,7 +61,7 @@ class PushButton(Control):
 
         """
         super(PushButton, self).bind()
-        self.default_send('icon', 'icon_size', 'text')
+        self.default_send(*_PB_PROXY_ATTRS)
 
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
@@ -68,30 +69,30 @@ class PushButton(Control):
 
         """
         super_attrs = super(PushButton, self).initial_attrs()
-        attrs = {
-            'icon' : self.icon,
-            'icon_size' : self.icon_size,
-            'text' : self.text,
-        }
+        attrs = dict((attr, getattr(self, attr)) for attr in _PB_PROXY_ATTRS)
         super_attrs.update(attrs)
         return super_attrs
 
     #--------------------------------------------------------------------------
-    # Toolkit Communication
+    # Message Handlers
     #--------------------------------------------------------------------------
-    def receive_pressed(self, context):
+    def receive_pressed(self, ctxt):
         """ Callback from the UI when the control is pressed.
 
         """
         self._down = True
         self.pressed()
-        self.clicked()
 
-    def receive_released(self, context):
+    def receive_released(self, ctxt):
         """ Callback from the UI when the control is released.
 
         """
         self._down = False
         self.released()
+
+    def receive_clicked(self, ctxt):
+        """ Callback from the UI when the control is clicked.
+
+        """
         self.clicked()
 
