@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Bool, Str, Tuple, Range
+from traits.api import Bool, Str, Tuple, Range, Enum
 
 from .messenger_widget import MessengerWidget
 
@@ -15,7 +15,7 @@ SizeTuple = Tuple(Range(low=-1, value=-1), Range(low=-1, value=-1))
 #: The standard attributes to proxy for a widget component.
 _WIDGET_PROXY_ATTRS = [
     'enabled', 'visible', 'bgcolor', 'fgcolor', 'font', 'size_hint',
-    'min_size', 'max_size'
+    'min_size', 'max_size', 'show_focus_rect'
 ]
 
 
@@ -29,6 +29,11 @@ class WidgetComponent(MessengerWidget):
 
     #: Whether or not the widget is visible.
     visible = Bool(True)
+
+    #: A flag indicating whether or not to show the focus rectangle for 
+    #: the given widget. This is not necessarily support by all widgets 
+    #: on all clients.
+    show_focus_rect = Enum(None, True, False)
 
     #: The background color of the widget. Supports CSS color formats.
     bgcolor = Str

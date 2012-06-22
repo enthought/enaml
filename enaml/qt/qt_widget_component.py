@@ -2,7 +2,10 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+import sys
+
 from .qt.QtGui import QWidget
+from .qt.QtCore import Qt
 from .qt_messenger_widget import QtMessengerWidget
 
 
@@ -10,6 +13,10 @@ class QtWidgetComponent(QtMessengerWidget):
     """ A Qt4 implementation of the Enaml WidgetComponent class.
 
     """
+    #: An attribute which will hold the defautl focus rect state if
+    #: it is ever changed by the user.
+    _default_focus_attr = None
+
     def create(self):
         """ Creates the underlying QWidget object.
 
@@ -29,6 +36,7 @@ class QtWidgetComponent(QtMessengerWidget):
         self.set_font(get('font', ''))
         self.set_enabled(get('enabled', True))
         self.set_visible(get('visible', True))
+        self.set_show_focus_rect(get('show_focus_rect', None))
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -80,7 +88,13 @@ class QtWidgetComponent(QtMessengerWidget):
 
         """
         return self.set_max_size(ctxt['value'])
-    
+
+    def receive_set_show_focus_rect(self, ctxt):
+        """ Process the 'set_show_focus_rect' message from Enaml.
+
+        """
+        return self.set_show_focus_rect(ctxt['value'])
+
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
@@ -185,4 +199,19 @@ class QtWidgetComponent(QtMessengerWidget):
 
         """
         return False
+
+    def set_show_focus_rect(self, show):
+        """ Sets whether or not to show the focus rectangle around
+        the widget. This is currently only supported on OSX.
+
+        """
+        if sys.platform == 'darwin':
+            attr = Qt.WA_MacShowFocusRect
+            if show is None:
+                if self._default_focus_attr is not None:
+                    self.widget.setAttribute(attr, self._default_focus_attr)
+            else:
+                if self._default_focus_attr is None:
+                    self._default_focus_attr = self.widget.testAttribute(attr)
+                self.widget.setAttribute(attr, show)
 
