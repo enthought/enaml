@@ -3,13 +3,13 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt.QtGui import QDialog
-from .qt.QtCore.Qt import NonModal, WindowModal, ApplicationModal
+from .qt.QtCore import Qt
 from qt_window import QtWindow
 
 QT_MODALITY = {
-    'application_modal' : ApplicationModal,
-    'window_modal' : WindowModal,
-    'non_modal' : NonModal
+    'application_modal' : Qt.ApplicationModal,
+    'window_modal' : Qt.WindowModal,
+    'non_modal' : Qt.NonModal
 }
 
 class QtDialog(QtWindow):
