@@ -170,6 +170,8 @@ class MessengerWidget(AsyncMessenger, BaseComponent):
         """ Returns the dictionary of build info for the component tree
         from this point downward.
 
+        XXX - this needs to be formalized a bit more.
+        
         """
         info = {}
         info['widget'] = self.widget_type
