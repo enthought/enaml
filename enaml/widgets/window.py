@@ -78,19 +78,19 @@ class Window(MessengerWidget):
         attrs = {
             'title' : self.title,
             #'icon' : self.icon,
-            'initial_size' : self.initial_size,
-            'initial_size_default' : self.initial_size_default,
-            'minimum_size' : self.minimum_size,
-            'minimum_size_default' : self.minimum_size_default,
-            'maximum_size' : self.maximum_size,
-            'maximum_size_default' : self.maximum_size_default
+            #'initial_size' : self.initial_size,
+            #'initial_size_default' : self.initial_size_default,
+            #'minimum_size' : self.minimum_size,
+            #'minimum_size_default' : self.minimum_size_default,
+            #'maximum_size' : self.maximum_size,
+            #'maximum_size_default' : self.maximum_size_default
         }
         super_attrs.update(attrs)
         return super_attrs
 
     def bind(self):
         super(Window, self).bind()
-        self.default_send_attr_bind(
+        self.default_send(
             'title', 'initial_size', 'minimum_size', 'maximum_size',
             'initial_size_default', 'minimum_size_default',
             'maximum_size_default'
