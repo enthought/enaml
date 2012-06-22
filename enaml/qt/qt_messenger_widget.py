@@ -110,7 +110,18 @@ class QtMessengerWidget(object):
         for this client widget, or None if this widget has no parent.
 
         """
-        return self.parent_ref()
+        return self.__parent_ref()
+
+    @property
+    def parent_widget(self):
+        """ A read-only property which returns the parent qt widget 
+        for this client widget, or None if it has no parent.
+
+        """
+        parent = self.parent
+        if parent is None:
+            return None
+        return parent.widget
 
     def add_child(self, child):
         """ Add a child to this widget. This is called by a child widget
