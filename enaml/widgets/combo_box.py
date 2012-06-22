@@ -4,12 +4,12 @@
 #------------------------------------------------------------------------------
 from traits.api import List, Any, Callable, Int, Property, Str
 
-from .control import Control
+from enaml.core.trait_types import EnamlEvent
 
-from ..core.trait_types import EnamlEvent
+from .constraints_widget import ConstraintsWidget
 
 
-class ComboBox(Control):
+class ComboBox(ConstraintsWidget):
     """ A drop-down list from which one item can be selected at a time.
 
     Use a combo box to select a single item from a collection of items.

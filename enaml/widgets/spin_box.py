@@ -4,11 +4,12 @@
 #------------------------------------------------------------------------------
 from traits.api import Int, Bool, Range, Instance
 
-from .control import Control
+from .constraints_widget import ConstraintsWidget
 
 from ..validation import AbstractValidator, IntValidator
 
-class SpinBox(Control):
+
+class SpinBox(ConstraintsWidget):
     """ A spin box widget which manipulates integer values.
 
     """

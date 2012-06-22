@@ -9,14 +9,14 @@ from traits.api import (
 from enaml.core.trait_types import Bounded, EnamlEvent
 from enaml.enums import Orientation, TickPosition, PolicyEnum
 
-from .control import Control
+from .constraints_widget import ConstraintsWidget
 
 
 #: The maximum slider value
 MAX_SLIDER_VALUE = (1 << 16) - 1
 
 
-class Slider(Control):
+class Slider(ConstraintsWidget):
     """ A simple slider widget that can be used to select from a 
     range of values.
 

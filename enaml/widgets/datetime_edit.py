@@ -4,9 +4,9 @@
 #------------------------------------------------------------------------------
 from traits.api import Str
 
-from .bounded_datetime import BoundedDatetime
+from enaml.core.trait_types import EnamlEvent
 
-from ..core.trait_types import EnamlEvent
+from .bounded_datetime import BoundedDatetime
 
 
 class DatetimeEdit(BoundedDatetime):

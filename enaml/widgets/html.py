@@ -4,10 +4,10 @@
 #------------------------------------------------------------------------------
 from traits.api import Str
 
-from .control import Control
+from .constraints_widget import ConstraintsWidget
 
 
-class Html(Control):
+class Html(ConstraintsWidget):
     """ An extremely simple widget for displaying HTML.
     
     """

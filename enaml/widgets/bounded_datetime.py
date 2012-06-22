@@ -4,19 +4,17 @@
 #------------------------------------------------------------------------------
 from datetime import datetime as py_datetime
 
-from traits.api import (
-    Property, BaseInstance, Instance, TraitError, on_trait_change,
-)
+from traits.api import Property, BaseInstance, TraitError, on_trait_change
 
-from .control import Control
+from enaml.core.trait_types import Bounded
 
-from ..core.trait_types import Bounded
+from .constraints_widget import ConstraintsWidget
 
 
 Datetime = BaseInstance(py_datetime)
 
 
-class BoundedDatetime(Control):
+class BoundedDatetime(ConstraintsWidget):
     """ A base class for use with widgets that edit a Python 
     datetime.datetime object bounded between minimum and maximum 
     values. This class is not meant to be used directly.

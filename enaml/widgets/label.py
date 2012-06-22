@@ -4,9 +4,10 @@
 #------------------------------------------------------------------------------
 from traits.api import Str, Bool
 
-from .control import Control
+from .constraints_widget import ConstraintsWidget
 
-class Label(Control):
+
+class Label(ConstraintsWidget):
     """ A simple read-only text display.
 
     """

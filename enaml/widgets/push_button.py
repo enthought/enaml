@@ -4,15 +4,15 @@
 #------------------------------------------------------------------------------
 from traits.api import Bool, Str, Property
 
-from .control import Control
+from enaml.core.trait_types import EnamlEvent
 
-from ..core.trait_types import EnamlEvent
+from .constraints_widget import ConstraintsWidget
 
 
 _PB_PROXY_ATTRS = ['text']
 
 
-class PushButton(Control):
+class PushButton(ConstraintsWidget):
     """ A push button widget.
 
     """

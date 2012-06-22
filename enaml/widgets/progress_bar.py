@@ -4,12 +4,12 @@
 #------------------------------------------------------------------------------
 from traits.api import Int, Property, TraitError, on_trait_change
 
-from .control import Control
+from enaml.core.trait_types import Bounded
 
-from ..core.trait_types import Bounded
+from .constraints_widget import ConstraintsWidget
 
 
-class ProgressBar(Control):
+class ProgressBar(ConstraintsWidget):
     """ A progress bar.
 
     """

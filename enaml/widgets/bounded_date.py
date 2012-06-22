@@ -6,12 +6,12 @@ from datetime import date
 
 from traits.api import Date, Property, TraitError, on_trait_change
 
-from .control import Control
+from enaml.core.trait_types import Bounded
 
-from ..core.trait_types import Bounded
+from .constraints_widget import ConstraintsWidget
 
 
-class BoundedDate(Control):
+class BoundedDate(ConstraintsWidget):
     """ A base class for use with widgets that edit a Python 
     datetime.date object bounded between minimum and maximum 
     values. This class is not meant to be used directly.

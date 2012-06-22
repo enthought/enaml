@@ -4,12 +4,12 @@
 #------------------------------------------------------------------------------
 from traits.api import Bool, Instance
 
-from .control import Control
+from .constraints_widget import ConstraintsWidget
 
 from ..noncomponents.abstract_image import AbstractTkImage
 
 
-class ImageView(Control):
+class ImageView(ConstraintsWidget):
     """ A simple viewer for instances of AbstractTkImage.
 
     """

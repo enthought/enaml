@@ -6,14 +6,15 @@ from traits.api import (
     Bool, Int, Unicode, Enum, Instance, Any, List, on_trait_change,
 )
 
-from .control import Control
+from enaml.core.trait_types import EnamlEvent
+from enaml.validation import AbstractValidator, CoercingValidator
 
-from ..core.trait_types import EnamlEvent
+from .constraints_widget import ConstraintsWidget
+
 from ..guard import guard
-from ..validation import AbstractValidator, CoercingValidator
 
 
-class Field(Control):
+class Field(ConstraintsWidget):
     """ A single-line editable text widget.
 
     Among many other attributes, a Field accepts a validator object

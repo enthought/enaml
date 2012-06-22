@@ -2,13 +2,14 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Bool, Str, Instance, Property
+from traits.api import Bool, Str, Property
 
-from .control import Control
-from ..core.trait_types import EnamlEvent
+from enaml.core.trait_types import EnamlEvent
+
+from .constraints_widget import ConstraintsWidget
 
 
-class ToggleControl(Control):
+class ToggleControl(ConstraintsWidget):
     """ An abstract toggle element. 
     
     An element which toggles the value of a boolean field. This is an 

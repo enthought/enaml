@@ -2,9 +2,10 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from enaml.core.trait_types import EnamlEvent
+
 from .bounded_date import BoundedDate
 
-from ..core.trait_types import EnamlEvent
 
 class Calendar(BoundedDate):
     """ A calendar widget.
