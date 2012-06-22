@@ -7,7 +7,13 @@ def window_importer():
     return QtWindow
 
 
+def slider_importer():
+    from .qt_slider import QtSlider
+    return QtSlider
+
+
 CLIENTS = {
-    'Window': window_importer
+    'Window': window_importer,
+    'Slider': slider_importer,
 }
 
