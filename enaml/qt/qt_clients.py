@@ -12,8 +12,15 @@ def slider_importer():
     return QtSlider
 
 
+def push_button_importer():
+    from .qt_push_button import QtPushButton
+    return QtPushButton
+
+
 CLIENTS = {
     'Window': window_importer,
     'Slider': slider_importer,
+    'PushButton': push_button_importer,
 }
+
 

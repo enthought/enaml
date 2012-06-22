@@ -1,4 +1,4 @@
-from enaml.widgets import Window, Slider
+from enaml.widgets import Window, Slider, PushButton
 
 
 enamldef SomeMain(Window):
@@ -10,5 +10,11 @@ enamldef SomeMain(Window):
         min_size = (30, 600)
         value :: nonlocals.title = str(value)
     Slider:
+        id: sldr
         value << max(0, foo.value - 10)
+        enabled = False
+    PushButton:
+        text = 'Enabler'
+        clicked :: 
+            sldr.enabled = not sldr.enabled
 
