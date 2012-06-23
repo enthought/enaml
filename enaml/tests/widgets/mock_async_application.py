@@ -3,6 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from itertools import izip_longest
+from types import MethodType
 
 from enaml.async.async_application import AbstractBuilder, AsyncApplication, \
     AsyncApplicationError
@@ -10,20 +11,10 @@ from enaml.async.async_application import AbstractBuilder, AsyncApplication, \
 from .mock_test_pipe import MockTestPipe
 
 
-def find_widget(root, type_name):
-    """ A simple function that recursively walks a widget tree until it finds
-    a widget of a particular type.
-
-    """
-    if root.widget_type == type_name:
-        return root
-
-    for child in root.children:
-        found = find_widget(child, type_name)
-        if found is not None:
-            return found
-
-    return None
+def make_handler_func(func_name, name, obj):
+    func = lambda slf, ctxt: setattr(slf, name, ctxt['value'])
+    func.func_name = func_name
+    return MethodType(func, obj)
 
 
 class MockWidget(object):
@@ -44,9 +35,8 @@ class MockWidget(object):
     def initialize(self, attributes):
         # Add receive functions for attributes as needed.
         for k in attributes.iterkeys():
-            def recv_func(slf, context):
-                setattr(slf, k, context['value'])
             attr_name = 'receive_set_' + k
+            recv_func = make_handler_func(attr_name, k, self)
             if not hasattr(self, attr_name):
                 setattr(self, attr_name, recv_func)
 
@@ -60,7 +50,9 @@ class MockWidget(object):
 
     def recv(self, msg, ctxt):
         handler_name = 'receive_' + msg
+        print handler_name
         handler = getattr(self, handler_name, None)
+        print handler
         if handler is not None:
             return handler(ctxt)
         return NotImplemented
@@ -107,11 +99,7 @@ class MockApplication(AsyncApplication):
     # Abstract API implementation
     #--------------------------------------------------------------------------
     def register(self, messenger):
-        send_pipe = MockTestPipe()
-        recv_pipe = MockTestPipe()
-        send_pipe.run()
-        recv_pipe.run()
-        return (send_pipe, recv_pipe)
+        return (MockTestPipe(), MockTestPipe())
 
     def builder(self):
         if self._builder is None:

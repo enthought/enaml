@@ -5,7 +5,7 @@
 from enaml.widgets.label import Label
 
 from .enaml_test_case import EnamlTestCase
-from .mock_async_application import MockApplication, find_widget
+from .mock_async_application import MockApplication
 
 
 class TestLabel(EnamlTestCase):
@@ -21,10 +21,9 @@ enamldef MainView(Window):
         self.view = self.parse_and_create(enaml_source)
         self.view.prepare()
 
-        for child in self.view.children:
-            if isinstance(child, Label):
-                self.server_label = child
-        self.client_label = find_widget(self.app.builder().root, "Label")
+        client_root = self.app.builder().root
+        self.server_label = self.find_server_widget(self.view, "Label")
+        self.client_label = self.find_client_widget(client_root, "Label")
 
     def test_set_text(self):
         """ Test the setting of a Label's text attribute.

@@ -16,6 +16,36 @@ class EnamlTestCase(object):
 
     """
 
+    def find_client_widget(self, root, type_name):
+        """ A simple function that recursively walks a widget tree until it
+        finds a widget of a particular type.
+
+        """
+        if root.widget_type == type_name:
+            return root
+
+        for child in root.children:
+            found = self.find_client_widget(child, type_name)
+            if found is not None:
+                return found
+
+        return None
+
+    def find_server_widget(self, root, type_name):
+        """ A simple function that recursively walks a widget tree until it
+        finds a widget of a particular type.
+
+        """
+        if root.__class__.__name__ == type_name:
+            return root
+
+        for child in root.children:
+            found = self.find_server_widget(child, type_name)
+            if found is not None:
+                return found
+
+        return None
+
     def parse_and_create(self, source, **kwargs):
         """ Parses and compiles the source. The source should have a
         component defined with the name 'MainView'. 

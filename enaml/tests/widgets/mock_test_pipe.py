@@ -5,25 +5,18 @@ from enaml.async.async_reply import AsyncReply, MessageFailure
 
 
 class MockTestPipe(object):
+    """ A really dumb Async[Send/Recv]Pipe that isn't really asynchronous.
+
+    """
+
     def __init__(self):
         self._callback = None
-        self._cancelled = set()
-        self._messages = list()
-        self._queue_lock = Condition()
 
     #--------------------------------------------------------------------------
     # Private Api
     #--------------------------------------------------------------------------
-    def _cancel_message(self, reply):
-        self._cancelled.add(reply)
-
     def _process(self, queued_msg):
         msg, ctxt, reply = queued_msg
-
-        cancelled = self._cancelled
-        if reply in cancelled:
-            cancelled.remove(reply)
-            return
 
         callback = self._callback
         if callback is not None:
@@ -36,22 +29,6 @@ class MockTestPipe(object):
             result = None
 
         reply.finished(result)
-
-    def _main_loop(self):
-        """ Run the main loop of this messenger.
-
-        """
-        ql = self._queue_lock
-
-        while True:
-            ql.acquire()
-            if len(self._messages) == 0:
-                ql.wait()
-            message = self._messages.pop(0)
-            ql.release()
-            # Call _process outside of the lock since the receiver might try to
-            # send a message.
-            self._process(message)
 
     #--------------------------------------------------------------------------
     # Public API
@@ -74,13 +51,9 @@ class MockTestPipe(object):
             results of the message handler.
 
         """
-        reply = AsyncReply(self._cancel_message)
+        reply = AsyncReply()
         queued_msg = (msg, ctxt, reply)
-        ql = self._queue_lock
-        ql.acquire()
-        self._messages.append(queued_msg)
-        ql.notify()
-        ql.release()
+        self._process(queued_msg)
         return reply
 
     def set_callback(self, callback):
@@ -97,13 +70,6 @@ class MockTestPipe(object):
 
         """
         self._callback = callback
-
-    def run(self):
-        """ Run the message pipe in a thread for asyncronicity
-        """
-        self.thread = Thread(target=self._main_loop)
-        self.thread.daemon = True
-        self.thread.start()
 
 
 AsyncSendPipe.register(MockTestPipe)
