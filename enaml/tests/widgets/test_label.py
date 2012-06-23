@@ -2,8 +2,6 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from enaml.widgets.label import Label
-
 from .enaml_test_case import EnamlTestCase
 
 
