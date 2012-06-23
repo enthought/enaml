@@ -139,20 +139,14 @@ class TestQtComponents(unittest.TestCase):
         window.recv('set_title', {'value':title_str})
         self.assertEqual(window.widget.windowTitle(), title_str)
 
-        initial_size = (200,200)
-        window.recv('set_initial_size', {'value':initial_size})
-        q_size = window.widget.size()
-        widget_size = (q_size.width(), q_size.height())
-        self.assertEqual(widget_size, initial_size)
-
         maximum_size = (1000,1000)
-        window.recv('set_maximum_size', {'value':maximum_size})
+        window.recv('set_max_size', {'value':maximum_size})
         q_max_size = window.widget.maximumSize()
         widget_max_size = (q_max_size.width(), q_max_size.height())
         self.assertEqual(widget_max_size, maximum_size)
 
         minimum_size = (10, 10)
-        window.recv('set_minimum_size', {'value':minimum_size})
+        window.recv('set_min_size', {'value':minimum_size})
         q_min_size = window.widget.minimumSize()
         widget_min_size = (q_min_size.width(), q_min_size.height())
         self.assertEqual(widget_min_size, minimum_size)
@@ -165,29 +159,6 @@ class TestQtComponents(unittest.TestCase):
 
         window.recv('restore', {})
         self.assertEqual(window.widget.isMaximized(), False)
-
-        #XXX if size hints are implemented this is not a sure way to test for
-        # defaults
-        initial_size_default = (50, 50)
-        window.recv('set_initial_size_default', {'value':initial_size_default})
-        window.recv('set_initial_size', {'value':(-1,-1)})
-        init_d_size = (window.widget.size().width(),
-                       window.widget.size().height())
-        self.assertEqual(init_d_size, initial_size_default)
-
-        maximum_size_default = (500, 500)
-        window.recv('set_maximum_size_default', {'value':maximum_size_default})
-        window.recv('set_maximum_size', {'value':(-1,-1)})
-        max_d_size = (window.widget.maximumSize().width(),
-                      window.widget.maximumSize().height())
-        self.assertEqual(max_d_size, maximum_size_default)
-
-        minimum_size_default = (5, 5)
-        window.recv('set_minimum_size_default', {'value':minimum_size_default})
-        window.recv('set_minimum_size', {'value':(-1,-1)})
-        min_d_size = (window.widget.minimumSize().width(),
-                      window.widget.minimumSize().height())
-        self.assertEqual(min_d_size, minimum_size_default)
 
         window.recv('show', {})
         self.assertEqual(window.widget.isVisible(), True)
