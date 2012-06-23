@@ -3,19 +3,17 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt.QtGui import QComboBox
-from .qt.QtCore import QStringList, QString
 from .qt_control import QtControl
 
 class QtComboBox(QtControl):
     """ A Qt implementation of a combo box
     
     """
-    def create(self, parent):
+    def create(self):
         """ Create the underlying widget
 
         """
-        self.widget = QComboBox(parent)
-        self.widget.show()
+        self.widget = QComboBox(self.parent_widget)
 
     def initialize(self, init_attrs):
         """ Initialize the widget's attributes
@@ -71,6 +69,5 @@ class QtComboBox(QtControl):
         """ Set the items of the ComboBox
 
         """
-        q_string_list = QStringList()
-        for item in items:
-            q_string_list.append(QString(item))
+        self.widget.clear()
+        self.widget.addItems(items)

@@ -10,12 +10,11 @@ class QtDirectoryDialog(QtDialog):
     """ A dialog that allows the user to select directories
 
     """
-    def create(self, parent):
+    def create(self):
         """ Create the underlying widget
 
         """
-        self.widget = QFileDialog(parent)
-        self.widget.show()
+        self.widget = QFileDialog(self.parent_widget)
 
     def initialize(self, init_attrs):
         """ Initialize the attributes of the file dialog so that it only
