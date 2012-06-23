@@ -50,9 +50,7 @@ class MockWidget(object):
 
     def recv(self, msg, ctxt):
         handler_name = 'receive_' + msg
-        print handler_name
         handler = getattr(self, handler_name, None)
-        print handler
         if handler is not None:
             return handler(ctxt)
         return NotImplemented

@@ -7,6 +7,8 @@ import types
 from enaml.core.parser import parse
 from enaml.core.enaml_compiler import EnamlCompiler
 
+from .mock_async_application import MockApplication
+
 
 class EnamlTestCase(object):
     """ Base class for testing Enaml object widgets.
@@ -63,6 +65,12 @@ class EnamlTestCase(object):
             The component tree for the 'MainView' component.
 
         """
+        # Start the app instance first.
+        app = MockApplication.instance()
+        if app is None:
+            app = MockApplication()
+        self.app = app
+
         enaml_ast = parse(source)
         enaml_module = types.ModuleType('__tests__')
         ns = enaml_module.__dict__
@@ -70,5 +78,8 @@ class EnamlTestCase(object):
 
         exec code in ns
         view = ns['MainView']
-        return view(**kwargs)
+        self.view = view(**kwargs)
+        self.view.prepare()
+
+        self.client_view = app.builder().root
 
