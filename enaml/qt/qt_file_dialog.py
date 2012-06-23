@@ -15,12 +15,11 @@ class QtFileDialog(QtDialog):
     """ A Qt implementation of a file dialog
 
     """
-    def create(self, parent):
+    def create(self):
         """ Create the underlying widget
 
         """
-        self.widget = QFileDialog(parent)
-        self.widget.show()
+        self.widget = QFileDialog(self.parent_widget)
 
     def initialize(self, init_attrs):
         """ Initialize the attributes of the file dialog
@@ -115,7 +114,7 @@ class QtFileDialog(QtDialog):
         """ Set the current filename of the file dialog
 
         """
-        self.widget.setFilename(filename)
+        self.widget.selectFile(filename)
 
     def set_filters(self, filters):
         """ Set the list of name filters for the file dialog
@@ -127,4 +126,8 @@ class QtFileDialog(QtDialog):
         """ Set the selected filter of the file dialog
 
         """
-        self.widget.selectNameFilter(selected_filter)
+        # XXX Qt does not allow you to programatically set the name filter,
+        # it has to be changed through user input.
+        
+        #self.widget.selectNameFilter(selected_filter)
+        pass

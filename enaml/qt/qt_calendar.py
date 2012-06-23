@@ -12,16 +12,15 @@ try: # pragma: no cover
 except AttributeError: # pragma: no cover
     qdate_to_python = QtCore.QDate.toPyDate
 
-class QtDateEdit(QtBoundedDate):
+class QtCalendar(QtBoundedDate):
     """ A Qt implementation of a calendar
 
     """
-    def create(self, parent):
+    def create(self):
         """ Create the underlying widget
 
         """
-        self.widget = QCalendarWidget(parent)
-        self.widget.show()
+        self.widget = QCalendarWidget(self.parent_widget)
 
     def initialize(self, init_attrs):
         """ Initialize the widget's attributes
@@ -96,7 +95,7 @@ class QtDateEdit(QtBoundedDate):
         """ Set the widget's date
 
         """
-        self.widget.setDate(date)
+        self.widget.setSelectedDate(date)
 
     def set_max_date(self, date):
         """ Set the widget's maximum date

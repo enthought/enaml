@@ -16,11 +16,11 @@ class QtDialog(QtWindow):
     """ A Qt implementation of a dialog
 
     """
-    def create(self, parent):
+    def create(self):
         """ Create the underlying widget
 
         """
-        self.widget = QDialog()
+        self.widget = QDialog(self.parent_widget)
         self.widget.show()
 
     def initialize(self, init_attrs):

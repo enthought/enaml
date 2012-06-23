@@ -16,12 +16,11 @@ class QtDatetimeEdit(QtBoundedDatetime):
     """ A Qt implementation of a datetime edit
 
     """
-    def create(self, parent):
+    def create(self):
         """ Create the underlying widget
 
         """
-        self.widget = QDateTimeEdit(parent)
-        self.widget.show()
+        self.widget = QDateTimeEdit(self.parent_widget)
 
     def initialize(self, init_attrs):
         """ Initialize the widget's attributes
