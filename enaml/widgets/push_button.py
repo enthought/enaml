@@ -55,14 +55,6 @@ class PushButton(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
-    def bind(self):
-        """ A method called after initialization which allows the widget
-        to bind any event handlers necessary.
-
-        """
-        super(PushButton, self).bind()
-        self.default_send(*_PB_PROXY_ATTRS)
-
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
         initialize a client widget.
@@ -72,6 +64,14 @@ class PushButton(ConstraintsWidget):
         attrs = dict((attr, getattr(self, attr)) for attr in _PB_PROXY_ATTRS)
         super_attrs.update(attrs)
         return super_attrs
+
+    def bind(self):
+        """ A method called after initialization which allows the widget
+        to bind any event handlers necessary.
+
+        """
+        super(PushButton, self).bind()
+        self.default_send(*_PB_PROXY_ATTRS)
 
     #--------------------------------------------------------------------------
     # Message Handlers
