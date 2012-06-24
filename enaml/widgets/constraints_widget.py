@@ -6,31 +6,21 @@ from uuid import uuid4
 
 from traits.api import Property, Tuple, Enum, Instance, List
 
-from .constraint_variable import ConstraintVariable 
-from .widget_component import WidgetComponent
+from enaml.layout.box_model import BoxModel
+from enaml.layout.layout_helpers import expand_constraints, ABConstrainable
+
+from .widget_component import WidgetComponent   
 
 
-class BoxModel(object):
-
-    def __init__(self, owner):
-        owner = str(owner)
-        for primitive in ('left', 'top', 'width', 'height'):
-            var = ConstraintVariable(primitive, owner)
-            setattr(self, primitive, var) 
-        self.right = self.left + self.width
-        self.bottom = self.top + self.height
-        self.v_center = self.top + self.height / 2.0
-        self.h_center = self.left + self.width / 2.0   
+#: A traits enum which defines the allowable constraints strengths.
+PolicyEnum = Enum('ignore', 'weak', 'medium', 'strong', 'required')
 
 
-def _get_from_box_model(self, name):
+def get_from_box_model(self, name):
     """ Property getter for all attributes that come from the box model.
 
     """
     return getattr(self._box_model, name)
-
-
-PolicyEnum = Enum('ignore', 'weak', 'medium', 'strong', 'required')
 
 
 class ConstraintsWidget(WidgetComponent):
@@ -44,40 +34,41 @@ class ConstraintsWidget(WidgetComponent):
     constraints = List
         
     #: A unique identifier for this object to help distinguish its
-    #: constraints from those of other objects.
+    #: constraints from those of other objects. This should never 
+    #: be modified by the user.
     constraints_id = Instance(str, factory=lambda: uuid4().hex)
 
     #: A read-only symbolic object that represents the left boundary of 
     #: the component
-    left = Property(fget=_get_from_box_model)
+    left = Property(fget=get_from_box_model)
 
     #: A read-only symbolic object that represents the top boundary of 
     #: the component
-    top = Property(fget=_get_from_box_model)
+    top = Property(fget=get_from_box_model)
 
     #: A read-only symbolic object that represents the width of the 
     #: component
-    width = Property(fget=_get_from_box_model)
+    width = Property(fget=get_from_box_model)
 
     #: A read-only symbolic object that represents the height of the 
     #: component
-    height = Property(fget=_get_from_box_model)
+    height = Property(fget=get_from_box_model)
 
     #: A read-only symbolic object that represents the right boundary 
     #: of the component
-    right = Property(fget=_get_from_box_model)
+    right = Property(fget=get_from_box_model)
 
     #: A read-only symbolic object that represents the bottom boundary 
     #: of the component
-    bottom = Property(fget=_get_from_box_model)
+    bottom = Property(fget=get_from_box_model)
 
     #: A read-only symbolic object that represents the vertical center 
     #: of the component
-    v_center = Property(fget=_get_from_box_model)
+    v_center = Property(fget=get_from_box_model)
 
     #: A read-only symbolic object that represents the horizontal 
     #: center of the component
-    h_center = Property(fget=_get_from_box_model)
+    h_center = Property(fget=get_from_box_model)
 
     #: How strongly a component hugs it's width hint. Valid strengths
     #: are 'weak', 'medium', 'strong', 'required' and 'ignore'. Default 
@@ -118,6 +109,38 @@ class ConstraintsWidget(WidgetComponent):
         return BoxModel(self.constraints_id)
 
     #--------------------------------------------------------------------------
+    # Initialization
+    #--------------------------------------------------------------------------
+    def initial_attrs(self):
+        super_attrs = super(ConstraintsWidget, self).initial_attrs()
+        attrs = {
+            'constraints': self._generate_constraints(),
+            'hug': self.hug,
+            'resist_clip': self.resist_clip,
+        }
+        super_attrs.update(attrs)
+        return super_attrs
+
+    def bind(self):
+        super(ConstraintsWidget, self).bind()
+        self.default_send('constraints', 'hug', 'resist_clip')
+
+    #--------------------------------------------------------------------------
+    # Constraints Generation
+    #--------------------------------------------------------------------------
+    def _generate_constraints(self):
+        """ Returns a dictionary of constraints information.
+
+        This method converts the list of object constraints and deferred
+        constraints stored in the 'constraints' attribute into a dict
+        of constraint information usable by a client.
+
+        """
+        cns = self.constraints
+        cns = [cn.as_dict() for cn in expand_constraints(self, cns)]
+        return cns
+
+    #--------------------------------------------------------------------------
     # Property Getters and Setters
     #--------------------------------------------------------------------------
     def _get_hug(self):
@@ -145,4 +168,7 @@ class ConstraintsWidget(WidgetComponent):
         """
         width, height = value
         self.trait_set(resist_clip_width=width, resist_clip_height=height)
+
+
+ABConstrainable.register(ConstraintsWidget)
 
