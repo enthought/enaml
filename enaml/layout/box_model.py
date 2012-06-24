@@ -49,7 +49,7 @@ class PaddingBoxModel(BoxModel):
         super(PaddingBoxModel, self).__init__(owner)
         for primitive in ('left', 'right', 'top', 'bottom'):
             attr = 'padding_' + primitive
-            var = ConstraintVariable(primitive, owner)
+            var = ConstraintVariable(attr, owner)
             setattr(self, attr, var)
         self.contents_left = self.left + self.padding_left
         self.contents_top = self.top + self.padding_top
