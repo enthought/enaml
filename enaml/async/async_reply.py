@@ -6,14 +6,11 @@ class MessageFailure(Exception):
     """ An exception representing the failed handling of a message.
 
     """
-    def __init__(self, msg_id, msg, ctxt, fail_message):
+    def __init__(self, msg, ctxt, fail_message):
         """ Initialize a CommandFailure.
 
         Parameters
         ----------
-        msg_id : string
-            The message identifier used for sending the message.
-
         msg : string
             The message which failed to be properly handled.
 
@@ -25,7 +22,6 @@ class MessageFailure(Exception):
 
         """
         super(MessageFailure, self).__init__(fail_message)
-        self.msg_id = msg_id
         self.msg = msg
         self.ctxt = ctxt
 

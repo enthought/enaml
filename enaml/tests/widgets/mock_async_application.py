@@ -3,30 +3,40 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from itertools import izip_longest
+from types import MethodType
 
 from enaml.async.async_application import AbstractBuilder, AsyncApplication, \
     AsyncApplicationError
 
 from .mock_test_pipe import MockTestPipe
 
+
+def make_handler_func(func_name, name, obj):
+    func = lambda slf, ctxt: setattr(slf, name, ctxt['value'])
+    func.func_name = func_name
+    return MethodType(func, obj)
+
+
 class MockWidget(object):
     """ A mock client UI widget
 
     """
-    def __init__(self, parent, send_pipe, recv_pipe):
+    def __init__(self, widget_type, parent, send_pipe, recv_pipe):
+        self.widget_type = widget_type
         self.parent = parent
         self.send_pipe = send_pipe
         self.recv_pipe = recv_pipe
         self.children = []
         self.attributes = {}
         self.recv_pipe.set_callback(self.recv)
+        if parent is not None:
+            parent.add_child(self)
 
     def initialize(self, attributes):
         # Add receive functions for attributes as needed.
         for k in attributes.iterkeys():
-            def recv_func(slf, context):
-                setattr(slf, k, context['value'])
             attr_name = 'receive_set_' + k
+            recv_func = make_handler_func(attr_name, k, self)
             if not hasattr(self, attr_name):
                 setattr(self, attr_name, recv_func)
 
@@ -53,6 +63,10 @@ class MockBuilder(AbstractBuilder):
     def __init__(self):
         self._root = None
 
+    @property
+    def root(self):
+        return self._root
+
     def build(self, info):
         info_stack = [(info, None)]
         while info_stack:
@@ -61,7 +75,7 @@ class MockBuilder(AbstractBuilder):
             recv_pipe = info_dct['recv_pipe']
             widget_cls = MockWidget
             # Cross the pipes when hooking the MockWidget up to the server widget
-            widget = widget_cls(parent, recv_pipe, send_pipe)
+            widget = widget_cls(info_dct['widget'], parent, recv_pipe, send_pipe)
             widget.initialize(info_dct['attrs'])
             children = info_dct['children']
             info_stack.extend(izip_longest(children, [], fillvalue=widget))
@@ -76,6 +90,9 @@ class MockApplication(AsyncApplication):
     """ A mock application for testing server widget components.
 
     """
+    def __init__(self):
+        self._builder = None
+
     #--------------------------------------------------------------------------
     # Abstract API implementation
     #--------------------------------------------------------------------------
@@ -83,13 +100,7 @@ class MockApplication(AsyncApplication):
         return (MockTestPipe(), MockTestPipe())
 
     def builder(self):
-        return MockBuilder()
-
-    #--------------------------------------------------------------------------
-    # Public API
-    #--------------------------------------------------------------------------
-    def run(self):
-        # XXX How should these get started?
-        self._send_pipe.run()
-        self._recv_pipe.run()
+        if self._builder is None:
+            self._builder = MockBuilder()
+        return self._builder
 
