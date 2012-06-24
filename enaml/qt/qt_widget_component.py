@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 import sys
 
-from .qt.QtGui import QWidget
+from .qt.QtGui import QWidget, QWidgetItem
 from .qt.QtCore import Qt
 from .qt_messenger_widget import QtMessengerWidget
 
@@ -37,6 +37,21 @@ class QtWidgetComponent(QtMessengerWidget):
         self.set_enabled(get('enabled', True))
         self.set_visible(get('visible', True))
         self.set_show_focus_rect(get('show_focus_rect', None))
+
+    #--------------------------------------------------------------------------
+    # Properties
+    #--------------------------------------------------------------------------
+    @property
+    def widget_item(self):
+        """ A readonly cached property which returns the QWidgetItem
+        for the underlying Qt widget.
+
+        """
+        try:
+            res = self.__widget_item
+        except AttributeError:
+            res = self.__widget_item = QWidgetItem(self.widget)
+        return res
 
     #--------------------------------------------------------------------------
     # Message Handlers
