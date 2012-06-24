@@ -3,10 +3,10 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt.QtGui import QSlider
-from .qt_widget_component import QtWidgetComponent
+from .qt_constraints_widget import QtConstraintsWidget
 
 
-class QtSlider(QtWidgetComponent):
+class QtSlider(QtConstraintsWidget):
     """ A Qt4 implementation of an Enaml Slider.
 
     """

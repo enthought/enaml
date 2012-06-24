@@ -3,10 +3,10 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt.QtGui import QPushButton
-from .qt_widget_component import QtWidgetComponent
+from .qt_constraints_widget import QtConstraintsWidget
 
 
-class QtPushButton(QtWidgetComponent):
+class QtPushButton(QtConstraintsWidget):
     """ A Qt4 implementation of an Enaml Slider.
 
     """
