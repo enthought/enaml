@@ -24,9 +24,17 @@ def get_from_box_model(self, name):
 
 
 class ConstraintsWidget(WidgetComponent):
-    """ A WidgetComponent subclass which mixes in the Constrainable
-    interface and adds some additional hints for being managed by 
-    a Container.
+    """ A WidgetComponent subclass which adds constraint information.
+
+    A ConstraintsWidget is augmented with symbolic constraint variables
+    which define a box model on the widget. This box model is used to
+    declare constraints between this widget and other components which
+    participate in constraints-based layout.
+
+    Constraints are added to a widget by assigning a list to the 
+    'constraints' attribute.
+
+    XXX more documentation
 
     """
     #: The list of user-specified constraints or constraint-generating
@@ -112,22 +120,49 @@ class ConstraintsWidget(WidgetComponent):
     # Initialization
     #--------------------------------------------------------------------------
     def initial_attrs(self):
+        """ Populate the initial attributes dict for the component.
+
+        """
         super_attrs = super(ConstraintsWidget, self).initial_attrs()
         attrs = {
-            'constraints': self._generate_constraints(),
-            'hug': self.hug,
-            'resist_clip': self.resist_clip,
+            'constraints_id': self.constraints_id,
+            'layout': self._layout_info(),
         }
         super_attrs.update(attrs)
         return super_attrs
 
     def bind(self):
+        """ Bind the change handlers for the component.
+
+        """
         super(ConstraintsWidget, self).bind()
-        self.default_send('constraints', 'hug', 'resist_clip')
+        items = 'constraints, hug, resist_clip'
+        self.on_trait_change(self._update_layout, items)
+
+    #--------------------------------------------------------------------------
+    # Change Handlers
+    #--------------------------------------------------------------------------
+    def _update_layout(self):
+        """ Sends the 'relayout' message to the client.
+
+        """
+        self.send('relayout', self._layout_info())
 
     #--------------------------------------------------------------------------
     # Constraints Generation
     #--------------------------------------------------------------------------
+    def _layout_info(self):
+        """ Returns a dictionary of layout information for the current
+        state of the component.
+
+        """
+        info = {
+            'constraints': self._generate_constraints(),
+            'resist_clip': self.resist_clip,
+            'hug': self.hug,
+        }
+        return info
+
     def _generate_constraints(self):
         """ Returns a dictionary of constraints information.
 
@@ -136,9 +171,35 @@ class ConstraintsWidget(WidgetComponent):
         of constraint information usable by a client.
 
         """
-        cns = self.constraints
+        cns = self._collect_constraints()
         cns = [cn.as_dict() for cn in expand_constraints(self, cns)]
         return cns
+
+    def _collect_constraints(self):
+        """ A method which returns the component's symbolic constraints.
+
+        This may be overridden by subclasses to add to the constraints
+        which are sent to the client.
+
+        """
+        return self.constraints + self._hard_constraints()
+
+    def _hard_constraints(self):
+        """ Returns the list of required symbolic constraints for the 
+        component. 
+
+        These are constraints that apply to both the internal layout 
+        computations of a component as well as that of containers which
+        may parent this component. The default implementation constrains
+        the variables 'left', 'right', 'width', and 'height' to >= 0
+        with the strength of 'required'.
+
+        """
+        cns = [
+            self.left >= 0, self.top >= 0, 
+            self.width >= 0, self.height >= 0,
+        ]
+        return cns 
 
     #--------------------------------------------------------------------------
     # Property Getters and Setters
