@@ -8,6 +8,7 @@ from .bounded_datetime import BoundedDatetime
 from .calendar import Calendar
 from .check_box import CheckBox
 from .combo_box import ComboBox
+from .container import Container
 from .date_edit import DateEdit
 from .datetime_edit import DatetimeEdit
 from .field import Field
