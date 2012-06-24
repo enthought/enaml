@@ -159,7 +159,7 @@ class ConstraintsWidget(WidgetComponent):
         return super_attrs
 
     def bind(self):
-        """ Bind the change handlers for the component.
+        """ Binds the change handlers for the component.
 
         """
         super(ConstraintsWidget, self).bind()
@@ -170,7 +170,8 @@ class ConstraintsWidget(WidgetComponent):
     # Change Handlers
     #--------------------------------------------------------------------------
     def _update_layout(self):
-        """ Sends the 'relayout' message to the client.
+        """ A private change handler which sends a 'relayout' message 
+        to the client.
 
         """
         self.send('relayout', self._layout_info())
@@ -179,8 +180,16 @@ class ConstraintsWidget(WidgetComponent):
     # Constraints Generation
     #--------------------------------------------------------------------------
     def _layout_info(self):
-        """ Returns a dictionary of layout information for the current
-        state of the component.
+        """ Creates a dictionary from the current layout information.
+
+        This method uses the current layout state of the component, 
+        comprised of constraints, clip, and hug policies, and creates
+        a dictionary which can be serialized and sent to clients.
+
+        Returns
+        -------
+        result : dict
+            A dictionary of the current layout state for the component.
 
         """
         info = {
@@ -191,11 +200,17 @@ class ConstraintsWidget(WidgetComponent):
         return info
 
     def _generate_constraints(self):
-        """ Returns a dictionary of constraints information.
+        """ Creates a list of constraint info dictionaries.
 
-        This method converts the list of object constraints and deferred
-        constraints stored in the 'constraints' attribute into a dict
-        of constraint information usable by a client.
+        This method converts the list of symbolic constraints returned
+        by the call to '_collect_constraints' into a list of constraint
+        info dictionaries which can be serialized and sent to clients.
+
+        Returns
+        -------
+        result : list of dicts
+            A list of dictionaries which are serializable versions of
+            the symbolic constraints defined for the widget.
 
         """
         cns = self._collect_constraints()
@@ -203,23 +218,37 @@ class ConstraintsWidget(WidgetComponent):
         return cns
 
     def _collect_constraints(self):
-        """ A method which returns the component's symbolic constraints.
+        """ Creates a list of symbolic constraints for the component.
 
-        This may be overridden by subclasses to add to the constraints
-        which are sent to the client.
+        By default, this method combines the constraints defined by
+        the 'constraints' this, and those returned by a call to the
+        '_hard_constraints' method. Subclasses which need more control
+        should override this method.
+
+        Returns
+        -------
+        result : list
+            A list of symbolic constraints and deferred constraints
+            for this component.
 
         """
         return self.constraints + self._hard_constraints()
 
     def _hard_constraints(self):
-        """ Returns the list of required symbolic constraints for the 
-        component. 
+        """ Creates the list of required symbolic constraints.
 
-        These are constraints that apply to both the internal layout 
+        These are constraints that must apply to the internal layout
         computations of a component as well as that of containers which
         may parent this component. The default implementation constrains
         the variables 'left', 'right', 'width', and 'height' to >= 0
-        with the strength of 'required'.
+        with the strength of 'required'. Subclasses which need more
+        control should override this method.
+
+        Returns
+        -------
+        result : list
+            A list of symbolic constraints which must always be applied
+            to a component.
 
         """
         cns = [
