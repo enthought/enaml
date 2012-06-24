@@ -7,6 +7,11 @@ def window_importer():
     return QtWindow
 
 
+def container_importer():
+    from .qt_container import QtContainer
+    return QtContainer
+
+
 def slider_importer():
     from .qt_slider import QtSlider
     return QtSlider
@@ -19,6 +24,7 @@ def push_button_importer():
 
 CLIENTS = {
     'Window': window_importer,
+    'Container': container_importer,
     'Slider': slider_importer,
     'PushButton': push_button_importer,
 }
