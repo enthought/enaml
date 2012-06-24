@@ -7,11 +7,10 @@ from uuid import uuid4
 
 from traits.api import HasTraits, Range
 
-from .constraint_variable import ConstraintVariable, LinearSymbolic, STRENGTHS
-
-from enaml.layout.geometry import Box
-
 from enaml.core.trait_types import CoercingInstance
+
+from .constraint_variable import ConstraintVariable, LinearSymbolic, STRENGTHS
+from .geometry import Box
 
 
 #------------------------------------------------------------------------------
