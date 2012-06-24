@@ -21,6 +21,9 @@ class LinearSymbolic(object):
     def nonlinear_op(self, op):
         raise TypeError('Non-linear operator: `%s`' % op)
 
+    def as_dict(self):
+        raise NotImplementedError
+
     def __repr__(self):
         raise NotImplementedError
 
@@ -148,6 +151,14 @@ class ConstraintVariable(LinearSymbolic):
         self.name = name
         self.owner = owner
 
+    def as_dict(self):
+        dct = {
+            'type': 'linear_symbolic',
+            'name': self.name,
+            'owner': self.owner,
+        }
+        return dct
+
     def __repr__(self):
         template = 'ConstraintVariable({0!r}, {1!r})'
         return template.format(self.name, self.owner)
@@ -203,6 +214,14 @@ class Term(LinearSymbolic):
     def __init__(self, var, coeff=1.0):
         self.var = var
         self.coeff = coeff
+
+    def as_dict(self):
+        dct = {
+            'type': 'term',
+            'var': self.var.as_dict(),
+            'coeff': self.coeff,
+        }
+        return dct
 
     def __repr__(self):
         template = 'Term({0!r}, {1!r})'
@@ -280,6 +299,14 @@ class LinearExpression(LinearSymbolic):
         self.terms = self.reduce_terms(terms)
         self.constant = constant
 
+    def as_dict(self):
+        dct = {
+            'type': 'linear_expression',
+            'terms': [term.as_dict() for term in self.terms],
+            'constant': self.constant,
+        }
+        return dct
+
     def __repr__(self):
         if len(self.terms) > 0:
             s = sorted(self.terms, key=operator.attrgetter('var.name'))
@@ -343,6 +370,18 @@ class LinearConstraint(object):
         self.rhs = rhs
         self.strength = strength
         self.weight = weight
+        self.op = None
+
+    def as_dict(self):
+        dct = {
+            'type': 'linear_constraint',
+            'lhs': self.lhs.as_dict(),
+            'op': self.op,
+            'rhs': self.rhs.as_dict(),
+            'strength': self.strength,
+            'weight': self.weight,
+        }
+        return dct
 
     def __repr__(self):
         template = '<{name}: ({lhs} {op} {rhs}) | {strength} | {weight}>'
