@@ -154,3 +154,11 @@ class QtMessengerWidget(object):
         """
         pass
 
+    def initialize_layout(self):
+        """ A method called by the builder after the entire tree has
+        been built. Subclasses should implement this method if they
+        need to do layout initialization.
+
+        """
+        pass
+
