@@ -1,20 +1,60 @@
-from enaml.widgets import Window, Slider, PushButton
+from enaml.widgets import Window, Slider, PushButton, Container
+from enaml.layout.layout_helpers import hbox, vbox, spacer
 
 
 enamldef SomeMain(Window):
+    id: bar
     title = 'Foo Title'
-    min_size = (400, 400)
-    max_size = (600, 600)
-    Slider:
-        id: foo
-        min_size = (30, 600)
-        value :: nonlocals.title = str(value)
-    Slider:
-        id: sldr
-        value << max(0, foo.value - 10)
-        enabled = False
-    PushButton:
-        text = 'Enabler'
-        clicked :: 
-            sldr.enabled = not sldr.enabled
+    min_size = (100, 200)
+    Container:
+        constraints = [
+            vbox(
+                hbox(foo, spacer, sldr), 
+                slam, whiz, cntr, spacer
+            )
+        ]
+        Slider:
+            id: foo
+            value :: nonlocals.title = str(value)
+            orientation = 'vertical'
+        Slider:
+            id: sldr
+            orientation = 'vertical'
+            value << max(0, foo.value - 10)
+            enabled = False
+        PushButton:
+            id: slam
+            text = 'Visibility'
+            clicked :: 
+                sldr.visible = not sldr.visible
+        PushButton:
+            id: whiz
+            text = 'Enabler'
+            clicked ::
+                sldr.enabled = not sldr.enabled
+        Container:
+            id: cntr
+            constraints = [
+                vbox(
+                    hbox(one, two),
+                    hbox(three, four),
+                ),
+                one.width == two.width,
+                three.width == four.width,
+            ]
+            PushButton:
+                id: one
+                text = 'one'
+            PushButton:
+                id: two
+                text = 'minimize'
+                clicked :: minimize()
+            PushButton:
+                id: three
+                text = 'restore'
+                clicked :: restore()
+            PushButton:
+                id: four
+                text = 'maximize'
+                clicked :: maximize()
 
