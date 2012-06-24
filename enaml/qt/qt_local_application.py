@@ -40,6 +40,13 @@ class QtLocalClientBuilder(AbstractBuilder):
             if parent is None:
                 self._root = widget
 
+        # Temparary hack to initialize layout
+        stack = [self._root]
+        while stack:
+            child = stack.pop()
+            child.initialize_layout()
+            stack.extend(child.children)
+
 
 class QtLocalApplication(AsyncApplication):
     """ An Enaml AsyncApplication which executes in the local process
