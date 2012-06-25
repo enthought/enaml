@@ -19,7 +19,7 @@ class DateEdit(BoundedDate):
     """
     #: A python date format string to format the date. If none is
     #: supplied (or is invalid) the system locale setting is used.
-    #: This may not be supported by allo backends.
+    #: This may not be supported by all backends.
     date_format = Str
 
     #: Triggered whenever the user changes the date through the ui
