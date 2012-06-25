@@ -7,8 +7,8 @@ from datetime import date
 from .enaml_test_case import EnamlTestCase
 
 
-class TestLabel(EnamlTestCase):
-    """ Unit tests for the Label widget.
+class TestBoundedDate(EnamlTestCase):
+    """ Unit tests for the BoundedDate widget.
 
     """
 

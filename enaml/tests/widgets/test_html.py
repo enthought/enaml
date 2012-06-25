@@ -5,7 +5,7 @@
 from .enaml_test_case import EnamlTestCase
 
 
-class TestLabel(EnamlTestCase):
+class TestHtml(EnamlTestCase):
     """ Unit tests for the Html widget.
 
     """
