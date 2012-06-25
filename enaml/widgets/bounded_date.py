@@ -58,7 +58,7 @@ class BoundedDate(ConstraintsWidget):
         initialize a client widget.
 
         """
-        super_attrs = super(BoundedDate, self).inital_attrs()
+        super_attrs = super(BoundedDate, self).initial_attrs()
         attrs = {
             'date' : self.date,
             'max_date' : self.max_date,
