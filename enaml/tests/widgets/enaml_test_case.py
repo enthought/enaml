@@ -7,7 +7,7 @@ import types
 from enaml.core.parser import parse
 from enaml.core.enaml_compiler import EnamlCompiler
 
-from .mock_async_application import MockApplication
+from .mock_application import MockApplication
 
 
 class EnamlTestCase(object):

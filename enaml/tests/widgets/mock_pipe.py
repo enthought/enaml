@@ -4,7 +4,7 @@ from enaml.async.async_pipe import AsyncRecvPipe, AsyncSendPipe
 from enaml.async.async_reply import AsyncReply, MessageFailure
 
 
-class MockTestPipe(object):
+class MockPipe(object):
     """ A really dumb Async[Send/Recv]Pipe that isn't really asynchronous.
 
     """
@@ -72,6 +72,6 @@ class MockTestPipe(object):
         self._callback = callback
 
 
-AsyncSendPipe.register(MockTestPipe)
-AsyncRecvPipe.register(MockTestPipe)
+AsyncSendPipe.register(MockPipe)
+AsyncRecvPipe.register(MockPipe)
 
