@@ -8,7 +8,7 @@ from .enaml_test_case import EnamlTestCase
 
 
 class TestBoundedDatetime(EnamlTestCase):
-    """ Unit tests for the  widget.
+    """ Unit tests for the BoundedDatetime widget.
 
     """
 
