@@ -42,12 +42,12 @@ class DateEdit(BoundedDate):
         super(DateEdit, self).bind()
         self.default_send('date_format')
 
-    def inital_attrs(self):
+    def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
         initialize a client widget.
 
         """
-        super_attrs = super(DateEdit, self).inital_attrs()
+        super_attrs = super(DateEdit, self).initial_attrs()
         attrs = {
             'date_format' : self.date_format,
         }
