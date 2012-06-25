@@ -29,10 +29,10 @@ class MockWidget(object):
     def initialize(self, attributes):
         # Add receive functions for attributes as needed.
         for k in attributes.iterkeys():
-            attr_name = 'receive_set_' + k
-            recv_func = make_handler_func(attr_name, k, self)
-            if not hasattr(self, attr_name):
-                setattr(self, attr_name, recv_func)
+            func_name = 'receive_set_' + k
+            recv_func = make_handler_func(func_name, k, self)
+            if not hasattr(self, func_name):
+                setattr(self, func_name, recv_func)
 
         self.attributes.update(attributes)
 
@@ -47,6 +47,9 @@ class MockWidget(object):
         handler = getattr(self, handler_name, None)
         if handler is not None:
             return handler(ctxt)
+        elif 'set' not in msg and not hasattr(self, msg):
+            setattr(self, msg, True)
+            return None
         return NotImplemented
 
 
