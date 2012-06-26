@@ -11,36 +11,34 @@ from enaml.core.trait_types import Bounded
 from .constraints_widget import ConstraintsWidget
 
 
+#: The attributes of a BoundedDate to proxy to clients.
+_DATE_PROXY_ATTRS = ['minimum', 'maximum', 'value']
+
+
 class BoundedDate(ConstraintsWidget):
-    """ A base class for use with widgets that edit a Python 
-    datetime.date object bounded between minimum and maximum 
-    values. This class is not meant to be used directly.
+    """ A base class for components which edit a Python datetime.date 
+    object bounded between minimum and maximum values. 
+
+    This class is not meant to be used directly.
 
     """
     #: The minimum date available in the date edit. If not defined then
-    #: the default value is September 14, 1752. Extra checks take place 
-    #: to make sure that the user does not programmatically set
-    #: :attr:`min_date` > :attr:`max_date`.
-    min_date = Property(Date, depends_on ='_min_date')
+    #: the default value is September 14, 1752.
+    mininmum = Property(Date, depends_on ='_minimum')
 
-    #: The internal min date storage
-    _min_date = Date(date(1752, 9, 14))
+    #: The internal minimum date storage
+    _minimum = Date(date(1752, 9, 14))
 
     #: The maximum date available in the date edit. If not defined then
-    #: the default value is December 31, 7999. Extra checks take place 
-    #: to make sure that the user does not programmatically set
-    #: :attr:`min_date` > :attr:`max_date`.
-    max_date = Property(Date, depends_on ='_max_date')
+    #: the default value is December 31, 7999.
+    maximum = Property(Date, depends_on ='_maximum')
 
-    #: The internal max date storage
-    _max_date = Date(date(7999, 12, 31))
+    #: The internal maximum date storage
+    _maximum = Date(date(7999, 12, 31))
 
     #: The currently selected date. Default is the current date. The
-    #: value is bounded between :attr:`min_date` and :attr:`max_date`. 
-    #: Changing the boundary attributes might result in an update of 
-    #: :attr:`date` to fit in the new range. Attempts to assign a value 
-    #: outside of these bounds will result in a TraitError.
-    date = Bounded(Date(date.today()), low='min_date', high='max_date')
+    #: value is bounded between :attr:`minimum` and :attr:`maximum`. 
+    value = Bounded(Date(date.today()), low='minimum', high='maximum')
 
     #--------------------------------------------------------------------------
     # Initialization
@@ -51,7 +49,7 @@ class BoundedDate(ConstraintsWidget):
 
         """
         super(BoundedDate, self).bind()
-        self.default_send('date', 'max_date', 'min_date')
+        self.default_send(*_DATE_PROXY_ATTRS)
 
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
@@ -59,58 +57,54 @@ class BoundedDate(ConstraintsWidget):
 
         """
         super_attrs = super(BoundedDate, self).initial_attrs()
-        attrs = {
-            'date' : self.date,
-            'max_date' : self.max_date,
-            'min_date' : self.min_date,
-        }
+        attrs = dict((attr, getattr(self, attr)) for attr in _DATE_PROXY_ATTRS)
         super_attrs.update(attrs)
         return super_attrs
 
     #--------------------------------------------------------------------------
     # Property methods
     #--------------------------------------------------------------------------
-    def _set_min_date(self, date):
-        """ Set the min_date. Addtional checks are applied to make sure 
-        that :attr:`min_date` < :attr:`max_date`
+    def _get_minimum(self):
+        """ The property getter for the minimum date.
 
         """
-        if date > self.max_date:
+        return self._min_date
+
+    def _set_minimum(self, date):
+        """ Set the minimum date. Addtional checks are applied to make 
+        sure that :attr:`minimum` < :attr:`maximum`
+
+        """
+        if date > self.maximum:
             msg = ("The minimum date should be smaller than the current "
                    "maximum date({0}), but a value of {1} was given.")
-            msg = msg.format(self.max_date, date)
+            msg = msg.format(self.maximum, date)
             raise TraitError(msg)
-        self._min_date = date
+        self._minimum = date
 
-    def _set_max_date(self, date):
-        """ Set the max_date. Addtional checks are applied to make sure
-        that :attr:`min_date` < :attr:`max_date`
-
-        """
-        if date < self.min_date:
-            msg = ("The maximum date should be larger than the current "
-                   "minimum date({0}), but a value of {1} was given.")
-            msg = msg.format(self.min_date, date)
-            raise TraitError(msg)
-        self._max_date = date
-
-    def _get_max_date(self):
+    def _get_maximum(self):
         """ The property getter for the maximum date.
 
         """
         return self._max_date
 
-    def _get_min_date(self):
-        """ The property getter for the minimum date.
+    def _set_maximum(self, date):
+        """ Set the maximum date. Addtional checks are applied to make 
+        sure that :attr:`minimum` < :attr:`maximum`
 
         """
-        return self._min_date
+        if date < self.minimum:
+            msg = ("The maximum date should be larger than the current "
+                   "minimum date({0}), but a value of {1} was given.")
+            msg = msg.format(self.minimum, date)
+            raise TraitError(msg)
+        self._maximum = date
     
-    @on_trait_change('min_date, max_date')
-    def _adapt_date(self):
-        """ Adapt the date to the bounderies
+    @on_trait_change('minimum, maximum')
+    def _adapt_value(self):
+        """ Actively adapt the date to lie within the boundaries.
 
         """
         if self.initialized:
-            self.date = min(max(self.date, self.min_date), self.max_date)
+            self.value = min(max(self.value, self.minimum), self.maximum)
 

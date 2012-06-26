@@ -8,34 +8,32 @@ from .bounded_date import BoundedDate
 
 
 class Calendar(BoundedDate):
-    """ A calendar widget.
-
-    A Calendar displays a Python datetime.date using an appropriate
-    toolkit specific control.
+    """ A bounded date control which edits a Python datetime.date using 
+    a widget which resembles a calendar.
 
     """
-    #: Triggered whenever the user clicks or changes the control from
-    #: the ui, but not programmatically. The event payload will be the 
-    #: date on the control.
+    #: An event triggered when the user clicks or changes the control
+    #: from the user interface. The event payload will be the date
+    #: selected in the control.
     selected = EnamlEvent
 
-    #: Triggered whenever the user activates a new date via double click 
-    #: or pressing enter on the ui. The event payload will be the date
-    #: on the control.
+    #: An event triggered whenever the user activates a new date by
+    #: double clicking or pressing enter on the user interface. The event
+    #: payload will be the date activated in the control.
     activated = EnamlEvent
 
     #--------------------------------------------------------------------------
     # Toolkit Communication
     #--------------------------------------------------------------------------
-    def receive_activated(self, context):
-        """ Callback from the UI when the control is activated.
-
-        """
-        self.activated()
-
-    def receive_selected(self, context):
+    def receive_selected(self, ctxt):
         """ Callback from the UI when the control is selected.
 
         """
-        self.selected()
+        self.selected(ctxt['value'])
+
+    def receive_activated(self, ctxt):
+        """ Callback from the UI when the control is activated.
+
+        """
+        self.activated(ctxt['value'])
 

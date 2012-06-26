@@ -11,6 +11,11 @@ from enaml.core.trait_types import Bounded
 from .constraints_widget import ConstraintsWidget
 
 
+#: The attributes of a BoundedDatetim to proxy to clients.
+_DT_PROXY_ATTRS = ['minimum', 'maximum', 'value']
+
+
+#: A custom trait which validates Python datetime instances.
 Datetime = BaseInstance(py_datetime)
 
 
@@ -20,35 +25,25 @@ class BoundedDatetime(ConstraintsWidget):
     values. This class is not meant to be used directly.
 
     """
-    #: The currently selected datetime. Default value is the current
-    #: date and time in the machine. The value is bounded between
-    #: :attr:`min_datetime` and :attr:`max_datetime`. Changing the
-    #: boundary attributes might result in an update of :attr:`datetime` 
-    #: to fit in the new range. Attempts to assign a value outside of 
-    #: these bounds will result in a TraitError.
-    datetime = Bounded(Datetime(py_datetime.now()),
-                       low='min_datetime', high='max_datetime')
+    #: The minimum datetime available in the datetime edit. If not 
+    #: defined then the default value is midnight September 14, 1752.
+    mininmum = Property(Datetime, depends_on ='_minimum')
+
+    #: The internal minimum datetime storage
+    _minimum = Datetime(py_datetime(1752, 9, 14, 0, 0, 0, 0))
+
+    #: The maximum datetime available in the datetime edit. If not 
+    #: defined then the default value is the second before midnight
+    #: December 31, 7999.
+    maximum = Property(Datetime, depends_on ='_maximum')
+
+    #: The internal maximum datetime storage
+    _minimum = Datetime(py_datetime(7999, 12, 31, 23, 59, 59, 999000))
+
+    #: The currently selected date. Default is datetime.now(). The
+    #: value is bounded between :attr:`minimum` and :attr:`maximum`. 
+    value = Bounded(Datetime(py_datetime.now()), low='minimum', high='maximum')
                     
-    #: The minimum datetime available in the date edit. By default, this
-    #: property contains a date that refers to September 14, 1752 and a
-    #: time of 00:00:00 and 0 milliseconds. Extra checks take place to
-    #: make sure that the user does not programmatically set
-    #: :attr:`min_datetime` > :attr:`max_datetime`.
-    min_datetime = Property(Datetime, depends_on='_min_datetime')
-
-    #: The internal min datetime storage
-    _min_datetime = Datetime(py_datetime(1752,9,14, 0, 0, 0, 0))
-
-    #: The maximum datetime available in the date edit. By default, this
-    #: property contains a date that refers to 31 December, 7999 and a
-    #: time of 23:59:59 and 999 milliseconds. Extra checks take place to
-    #: make sure that the user does not programmatically set
-    #: :attr:`min_datetime` > :attr:`max_datetime`.
-    max_datetime = Property(Datetime, depends_on='_max_datetime')
-
-    #: The internal max datetime storage
-    _max_datetime = Datetime(py_datetime(7999, 12, 31, 23, 59, 59, 999000))
-
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
@@ -58,7 +53,7 @@ class BoundedDatetime(ConstraintsWidget):
 
         """
         super(BoundedDatetime, self).bind()
-        self.default_send('datetime', 'max_datetime', 'min_datetime')
+        self.default_send(*_DT_PROXY_ATTRS)
 
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
@@ -66,65 +61,56 @@ class BoundedDatetime(ConstraintsWidget):
 
         """
         super_attrs = super(BoundedDatetime, self).initial_attrs()
-        attrs = {
-            'datetime' : self.datetime,
-            'max_datetime' : self.max_datetime,
-            'min_datetime' : self.min_datetime,
-        }
+        attrs = dict((attr, getattr(self, attr)) for attr in _DT_PROXY_ATTRS)
         super_attrs.update(attrs)
         return super_attrs
 
     #--------------------------------------------------------------------------
     # Properties methods
     #--------------------------------------------------------------------------
-    def _set_min_datetime(self, datetime):
-        """ Set the min_datetime.
-
-        Addtional checks are perfomed to make sure that
-        :attr:`min_datetime` < :attr:`max_datetime`
+    def _get_minimum(self):
+        """ The property getter for the minimum datetime.
 
         """
-        if datetime > self.max_datetime:
+        return self._minimum
+
+    def _set_minimum(self, datetime):
+        """ Set the minimum datetime. Addtional checks are perfomed to 
+        make sure that :attr:`minimum` < :attr:`maximum`
+
+        """
+        if datetime > self.maximum:
             msg = ("The minimum datetime of DatetimeEdit should be smaller "
-                    "than the current maximum datetime({0}), but a value of "
-                    "{1} was given ")
-            msg = msg.format(self.max_datetime, datetime)
+                   "than the current maximum datetime({0}), but a value of "
+                   "{1} was given ")
+            msg = msg.format(self.maximum, datetime)
             raise TraitError(msg)
-        self._min_datetime = datetime
+        self._minimum = datetime
 
-    def _set_max_datetime(self, datetime):
-        """ Set the max_datetime.
-
-        Addtional checks are perfomed to make sure that
-        :attr:`minimum_datetime` < :attr:`maximum_datetime`
+    def _get_maximum(self):
+        """ The property getter for the maximum datetime.
 
         """
-        if datetime < self.min_datetime:
+        return self._maximum
+
+    def _set_maximum(self, datetime):
+        """ Set the maximum datetime. Addtional checks are perfomed to 
+        make sure that :attr:`minimum` < :attr:`maximum`
+
+        """
+        if datetime < self.minimum:
             msg = ("The maximum datetime of DatetimeEdit should be larger "
                    "than the current minimum datetime({0}), but a value of "
                    "{1} was given ")
-            msg = msg.format(self.min_datetime, datetime)
+            msg = msg.format(self.minimum, datetime)
             raise TraitError(msg)
-        self._max_datetime = datetime
+        self._maximum = datetime
 
-    def _get_max_datetime(self):
-        """ The property getter for the max datetime.
-
-        """
-        return self._max_datetime
-
-    def _get_min_datetime(self):
-        """ The property getter for the min datetime.
-
-        """
-        return self._min_datetime
-
-    @on_trait_change('min_datetime, max_datetime')
-    def _adapt_datetime(self):
-        """ Adapt the date to the bounderies
+    @on_trait_change('minimum, maximum')
+    def _adapt_value(self):
+        """ Actively adapt the datetime to lie within the boundaries.
 
         """
         if self.initialized:
-            min_dt, max_dt = self.min_datetime, self.max_datetime
-            self.datetime = min(max(self.datetime, min_dt), max_dt)
+            self.value = min(max(self.value, self.minimum), self.maximum)
 
