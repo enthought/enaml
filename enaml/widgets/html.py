@@ -39,9 +39,7 @@ class Html(ConstraintsWidget):
 
         """
         super_attrs = super(Html, self).initial_attrs()
-        attrs = {
-            'source' : self.source,
-        }
+        attrs = {'source' : self.source}
         super_attrs.update(attrs)
         return super_attrs
 

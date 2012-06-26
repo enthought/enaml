@@ -2,11 +2,15 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Bool, Instance
+from traits.api import Bool
 
 from .constraints_widget import ConstraintsWidget
 
-from ..noncomponents.abstract_image import AbstractTkImage
+
+_IV_PROXY_ATTRS = [
+    #'image', 
+    'scale_to_fit', 'preserve_aspect_ratio', 'allow_upscaling'
+]
 
 
 class ImageView(ConstraintsWidget):
@@ -14,7 +18,7 @@ class ImageView(ConstraintsWidget):
 
     """
     #: A Pixmap instance containing the image to display.
-    image = Instance(AbstractTkImage)
+    # image = Instance(AbstractTkImage)
     
     #: Whether or not to scale the image with the size of the component.
     scale_to_fit = Bool(True)
@@ -40,10 +44,7 @@ class ImageView(ConstraintsWidget):
 
         """
         super(ImageView, self).bind()
-        self.default_send(
-                'image', 'scale_to_fit', 'preserve_aspect_ratio',
-                'allow_upscaling',
-            )
+        self.default_send(*_IV_PROXY_ATTRS)
 
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
@@ -51,12 +52,7 @@ class ImageView(ConstraintsWidget):
 
         """
         super_attrs = super(ImageView, self).initial_attrs()
-        attrs = {
-            'image' : self.image,
-            'scale_to_fit' : self.scale_to_fit,
-            'preserve_aspect_ratio' : self.preserve_aspect_ratio,
-            'allow_upscaling' : self.allow_upscaling,
-        }
+        attrs = dict((attr, getattr(self, attr)) for attr in _IV_PROXY_ATTRS)
         super_attrs.update(attrs)
         return super_attrs
 
