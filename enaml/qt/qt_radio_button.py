@@ -6,7 +6,7 @@ from .qt.QtGui import QRadioButton
 from .qt_abstract_button import QtAbstractButton
 
 
-class QtCheckBox(QtAbstractButton):
+class QtRadioButton(QtAbstractButton):
     """ A Qt4 implementation of an Enaml RadioButton.
 
     """

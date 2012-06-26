@@ -1,4 +1,4 @@
-from enaml.widgets import Window, Slider, PushButton, Container
+from enaml.widgets import Window, Slider, PushButton, Container, RadioButton, CheckBox
 from enaml.layout.layout_helpers import hbox, vbox, spacer
 
 
@@ -10,7 +10,7 @@ enamldef SomeMain(Window):
         constraints = [
             vbox(
                 hbox(foo, spacer, sldr), 
-                slam, whiz, cntr, spacer
+                slam, whiz, cntr,
             )
         ]
         Slider:
@@ -42,10 +42,12 @@ enamldef SomeMain(Window):
                 one.width == two.width,
                 three.width == four.width,
             ]
-            PushButton:
+            CheckBox:
                 id: one
                 text = 'one'
-            PushButton:
+                clicked :: print 'check clicked'
+                toggled :: print 'check toggled'
+            RadioButton:
                 id: two
                 text = 'minimize'
                 clicked :: minimize()
@@ -53,6 +55,7 @@ enamldef SomeMain(Window):
                 id: three
                 text = 'restore'
                 clicked :: restore()
+                checkable = True
             PushButton:
                 id: four
                 text = 'maximize'
