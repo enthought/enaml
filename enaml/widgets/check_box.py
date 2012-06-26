@@ -2,20 +2,24 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .toggle_control import ToggleControl
+from .abstract_button import AbstractButton
 
 
-class CheckBox(ToggleControl):
-    """ A check box widget.
+class CheckBox(AbstractButton):
+    """ An checkable button represented by a standard check box widget.
 
     Use a check box when it's necessary to toggle a boolean value
-    independent of any other widgets in the group. For allowing the
-    toggling of only one value in a group of values, use a group
-    of radio buttons.
+    independent of any other widgets in a group. 
+
+    When its necessary to allow the toggling of only one value in a 
+    group of values, use a group of RadioButtons or the RadioGroup
+    control from the Enaml standard library.
 
     See Also
     --------
     ToggleControl
 
     """
+    #: Check boxes are checkable by default.
+    checkable = True
 
