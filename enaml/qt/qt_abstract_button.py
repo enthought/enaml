@@ -50,19 +50,19 @@ class QtAbstractButton(QtConstraintsWidget):
         """ Handle the 'set_checkable' message from the Enaml widget.
 
         """
-        self.set_checkable(ctxt['checkable'])
+        self.set_checkable(ctxt['value'])
 
     def receive_set_checked(self, ctxt):
         """ Handle the 'set_checked' message from the Enaml widget.
 
         """
-        self.set_checked(ctxt['checked'])
+        self.set_checked(ctxt['value'])
 
     def receive_set_text(self, ctxt):
         """ Handle the 'set_text' message from the Enaml widget.
 
         """
-        self.set_text(ctxt['text'])
+        self.set_text(ctxt['value'])
         # Trigger a relayout since the size hint likely changed
 
     #--------------------------------------------------------------------------
