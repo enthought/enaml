@@ -3,6 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from collections import defaultdict
+from uuid import uuid4
 
 from traits.api import Instance, Str
 
@@ -153,24 +154,25 @@ class MessengerWidget(AsyncMessenger, BaseComponent):
     #: setting attributes from with a receive handler.
     loopback_guard = Instance(LoopbackGuard, ())    
 
+    #: A uuid given to every messenger widget. This is not directly used
+    #: by this class, but can be useful for sublasses to create mappings
+    #: between objects on the client and server. It is also used by the
+    #: constraints layout system to identify the owner of constraint 
+    #: variables. This should never be modified by user code.
+    uuid = Instance(str, factory=lambda: uuid4().hex)
+
     #: A string provided to implementation clients indicated which type
     #: of widget they should construct. The default type is computed
     #: based on the name of the component class. This may be overridden
     #: by users to define custom behavior, but is typically not needed.
     widget_type = Str
+    def _widget_type_default(self):
+        return type(self).__name__
 
     #: The private storage for the widget tree builder. A reference must
     #: be kept to the builder, since the lifetime of the implementation
     #: widgets is tied to the lifetime of the builder.
     _builder = Instance(AbstractBuilder)
-
-    def _widget_type_default(self):
-        """ Computes the type string for widget which should be built
-        by implementation clients. The default is simply the name of
-        the component class.
-
-        """
-        return type(self).__name__
 
     def build_info(self):
         """ Returns the dictionary of build info for the component tree
@@ -180,14 +182,12 @@ class MessengerWidget(AsyncMessenger, BaseComponent):
         
         """
         info = {}
+        info['uuid'] = self.uuid
         info['widget'] = self.widget_type
         info['attrs'] = self.initial_attrs()
         info['send_pipe'] = self.send_pipe
         info['recv_pipe'] = self.recv_pipe
-        child_info = []
-        for child in self.children:
-            child_info.append(child.build_info())
-        info['children'] = child_info
+        info['children'] = [child.build_info() for child in self.children]
         return info
 
     def initial_attrs(self):
