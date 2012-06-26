@@ -10,7 +10,7 @@ from .constraints_widget import ConstraintsWidget
 
 
 class ProgressBar(ConstraintsWidget):
-    """ A progress bar.
+    """ A control which displays a value as a ticking progress bar.
 
     """
     #: The minimum value that the progress bar can take. Extra checks
@@ -18,7 +18,7 @@ class ProgressBar(ConstraintsWidget):
     #: set :attr:`minimum` > :attr:`maximum`.
     minimum = Property(Int, depends_on='_minimum')
 
-    #: The internal min value storage
+    #: The internal minimum storage.
     _minimum = Int(0)
 
     #: The maximum value that the progress bar can take. Extra checks 
@@ -26,7 +26,7 @@ class ProgressBar(ConstraintsWidget):
     #: set :attr:`minimum` > :attr:`maximum`.
     maximum = Property(Int, depends_on='_maximum')
 
-    #: The internal max value storage
+    #: The internal maximum storage.
     _maximum = Int(100)
 
     #: The current value. Default is the minimum value. The value is 
@@ -72,6 +72,12 @@ class ProgressBar(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Property methods
     #--------------------------------------------------------------------------
+    def _get_minimum(self):
+        """ The property getter for the ProgressBar minimum.
+
+        """
+        return self._minimum
+
     def _set_minimum(self, value):
         """ The property setter for :attr:`minimum`. Addtional checks are 
         applied to make sure that :attr:`minimum` < :attr:`maximum`
@@ -85,6 +91,12 @@ class ProgressBar(ConstraintsWidget):
             raise TraitError(msg)
         self._minimum = value
 
+    def _get_maximum(self):
+        """ The property getter for the ProgressBar maximum.
+
+        """
+        return self._maximum
+
     def _set_maximum(self, value):
         """ The property setter for :attr:`maximum`. Addtional checks are 
         applied to make sure that :attr:`minimum` < :attr:`maximum`
@@ -97,18 +109,6 @@ class ProgressBar(ConstraintsWidget):
             msg = msg.format(self.minimum, value)
             raise TraitError(msg)
         self._maximum = value
-
-    def _get_maximum(self):
-        """ The property getter for the ProgressBar maximum.
-
-        """
-        return self._maximum
-
-    def _get_minimum(self):
-        """ The property getter for the ProgressBar minimum.
-
-        """
-        return self._minimum
 
     def _get_percentage(self):
         """ The property getter for the ProgressBar percentage.
@@ -125,9 +125,9 @@ class ProgressBar(ConstraintsWidget):
         else:
             dx = float(value - minimum)
             res = int(round(100.0 * dx / dy))
-            # We already excluded the case where the value was exactly the 
-            # maximum, so we can't really be at 100%, so round this down to 
-            # 99% if necessary.
+            # We already excluded the case where the value was exactly 
+            # the maximum, so we can't really be at 100%, so round this 
+            # down to 99% if necessary.
             res = min(res, 99)
         return res
 
