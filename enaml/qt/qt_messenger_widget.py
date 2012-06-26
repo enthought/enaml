@@ -11,7 +11,7 @@ class QtMessengerWidget(object):
     """ The base class of the Qt widgets wrappers for a Qt Enaml client.
 
     """
-    def __init__(self, parent, send_pipe, recv_pipe):
+    def __init__(self, parent, uuid, send_pipe, recv_pipe):
         """ Initialize a QtClientWidget
 
         Parameters
@@ -19,6 +19,10 @@ class QtMessengerWidget(object):
         parent : QtClientWidget or None
             The parent client widget of this widget, or None if this
             client widget has no parent.
+
+        uuid : str
+            A uuid4 hex string which uniquely identifies the Enaml
+            widget on the server side.
 
         send_pipe : AsyncSendPipe
             The async send pipe used to send messages to the Enaml
@@ -34,6 +38,7 @@ class QtMessengerWidget(object):
         else:
             self.__parent_ref = ref(parent)
             parent.add_child(self)
+        self.uuid = uuid
         self.send_pipe = send_pipe
         self.recv_pipe = recv_pipe
         self.widget = None
@@ -41,6 +46,39 @@ class QtMessengerWidget(object):
         callback = WeakMethodWrapper(self.recv)
         self.recv_pipe.set_callback(callback)
 
+    #--------------------------------------------------------------------------
+    # Properties
+    #--------------------------------------------------------------------------
+    @property
+    def widget_type(self):
+        """ A read-only property which provides the name of this widget
+        type, which is simply the name of this class.
+
+        """
+        return type(self).__name__
+
+    @property
+    def parent(self):
+        """ A read-only property which returns the parent client widget
+        for this client widget, or None if this widget has no parent.
+
+        """
+        return self.__parent_ref()
+
+    @property
+    def parent_widget(self):
+        """ A read-only property which returns the parent qt widget 
+        for this client widget, or None if it has no parent.
+
+        """
+        parent = self.parent
+        if parent is None:
+            return None
+        return parent.widget
+
+    #--------------------------------------------------------------------------
+    # Messaging API
+    #--------------------------------------------------------------------------
     def send(self, msg, ctxt):
         """ Send a message to be handled by the Enaml widget.
         
@@ -104,34 +142,8 @@ class QtMessengerWidget(object):
             return handler(ctxt)
         return NotImplemented
 
-    @property
-    def parent(self):
-        """ A read-only property which returns the parent client widget
-        for this client widget, or None if this widget has no parent.
-
-        """
-        return self.__parent_ref()
-
-    @property
-    def parent_widget(self):
-        """ A read-only property which returns the parent qt widget 
-        for this client widget, or None if it has no parent.
-
-        """
-        parent = self.parent
-        if parent is None:
-            return None
-        return parent.widget
-
-    def add_child(self, child):
-        """ Add a child to this widget. This is called by a child widget
-        when it is parented.
-
-        """
-        self.children.append(child)
-
     #--------------------------------------------------------------------------
-    # Setup Methods
+    # Abstract API
     #--------------------------------------------------------------------------
     def create(self):
         """ A method called by the builder in order to create the 
@@ -140,6 +152,9 @@ class QtMessengerWidget(object):
         """
         raise NotImplementedError
 
+    #--------------------------------------------------------------------------
+    # Public API
+    #--------------------------------------------------------------------------
     def initialize(self, init_attrs):
         """ A method called by the builder in order to initialize the
         attributes of the underlying QWidget object.
@@ -161,4 +176,11 @@ class QtMessengerWidget(object):
 
         """
         pass
+
+    def add_child(self, child):
+        """ Add a child to this widget. This is called by a child widget
+        when it is parented.
+
+        """
+        self.children.append(child)
 
