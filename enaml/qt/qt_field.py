@@ -28,12 +28,11 @@ class QtField(QtControl):
     """ A Qt implementation of a field (called QLineEdit in Qt)
 
     """
-    def create(self, parent):
+    def create(self):
         """ Create underlying widget
 
         """
-        self.widget = QtEnamlLineEdit(parent)
-        self.widget.show()
+        self.widget = QtEnamlLineEdit(self.parent_widget)
 
     def initialize(self, init_attrs):
         """ Initialize the attributes of the widget

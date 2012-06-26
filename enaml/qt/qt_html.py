@@ -9,12 +9,11 @@ class QtHtml(QtControl):
     """ An html display widget based on a QTextEdit
 
     """
-    def create(self, parent):
+    def create(self):
         """ Create the underlying widget
 
         """
-        self.widget = QTextEdit(parent)
-        self.widget.show()
+        self.widget = QTextEdit(self.parent_widget)
 
     def initialize(self, init_attrs):
         """ Initialize the widget's attributes
