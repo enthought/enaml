@@ -2,8 +2,6 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from uuid import uuid4
-
 from traits.api import Property, Tuple, Enum, Instance, List
 
 from enaml.layout.box_model import BoxModel
@@ -47,11 +45,6 @@ class ConstraintsWidget(WidgetComponent):
     #: The list of user-specified constraints or constraint-generating
     #: objects for this component.
     constraints = List
-        
-    #: A unique identifier for this object to help distinguish its
-    #: constraints from those of other objects. This should never 
-    #: be modified by the user.
-    constraints_id = Instance(str, factory=lambda: uuid4().hex)
 
     #: A read-only symbolic object that represents the left boundary of 
     #: the component
@@ -121,7 +114,7 @@ class ConstraintsWidget(WidgetComponent):
     #: The private storage the box model instance for this component.
     _box_model = Instance(BoxModel)
     def __box_model_default(self):
-        return BoxModel(self.constraints_id)
+        return BoxModel(self.uuid)
 
     #--------------------------------------------------------------------------
     # Initialization
@@ -151,10 +144,7 @@ class ConstraintsWidget(WidgetComponent):
 
         """
         super_attrs = super(ConstraintsWidget, self).initial_attrs()
-        attrs = {
-            'constraints_id': self.constraints_id,
-            'layout': self._layout_info(),
-        }
+        attrs = {'layout': self._layout_info()}
         super_attrs.update(attrs)
         return super_attrs
 
