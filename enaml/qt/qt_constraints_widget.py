@@ -10,11 +10,15 @@ from .qt_widget_component import QtWidgetComponent
 
 class LayoutBox(object):
     """ A class which encapsulates a layout box using casuarius 
-    constraint variables for the 'left', 'top', 'width', and 'height'
-    primitives.
+    constraint variables.
+
+    The constraint variables are created on an as-needed basis, this
+    allows Enaml widgets to define new constraints and build layouts
+    with them, without having to specifically update this client 
+    code.
 
     """
-    def __init__(self, name, owner_id):
+    def __init__(self, name, owner):
         """ Initialize a LayoutBox.
 
         Parameters
@@ -23,19 +27,42 @@ class LayoutBox(object):
             A name to use in the label for the constraint variables in
             this layout box.
 
-        owner_id : str
+        owner : str
             The owner id to use in the label for the constraint variables
             in this layout box.
 
-        info : dict
-            A layout info dictionary from Enaml which will be used to
-            initialize this layout box.
+        """
+        self._name = name
+        self._owner = owner
+        self._primitives = {}
+
+    def primitive(self, name, force_create=True):
+        """ Returns a primitive casuarius constraint variable for the
+        given name.
+
+        Parameters
+        ----------
+        name : str
+            The name of the constraint variable to return.
+
+        force_create : bool, optional
+            If the constraint variable does not yet exist and this 
+            parameter is True, then the constraint variable will be
+            created on-the-fly. If the parameter is False, and the
+            variable does not exist, a ValueError will be raised.
 
         """
-        label = '{0}_{1}'.format(name, owner_id)
-        for primitive in ('left', 'top', 'width', 'height'):
-            var = ConstraintVariable('{0}_{1}'.format(primitive, label))
-            setattr(self, primitive, var)
+        primitives = self._primitives
+        try:
+            res = primitives[name]
+        except KeyError:
+            if force_create:
+                label = '{0}_{1}'.format(self._name, self._owner)
+                res = primitives[name] = ConstraintVariable(label)
+            else:
+                msg = 'Constraint variable `{0}` does not exist'
+                raise ValueError(msg.format(name))
+        return res
 
 
 class QtConstraintsWidget(QtWidgetComponent):
@@ -55,28 +82,11 @@ class QtConstraintsWidget(QtWidgetComponent):
 
         """
         super(QtConstraintsWidget, self).initialize(init_attrs)
-        self.constraints_id = init_attrs['constraints_id']
         layout = init_attrs['layout']
         self.hug = layout['hug']
         self.resist_clip = layout['resist_clip']
         self.constraints = layout['constraints']
-
-    #--------------------------------------------------------------------------
-    # Properties
-    #--------------------------------------------------------------------------
-    @property
-    def layout_box(self):
-        """ A read-only cached property which creates the layout box
-        for this object the first time it is requested.
-
-        """
-        try:
-            res = self.__layout_box
-        except AttributeError:
-            name = type(self).__name__
-            res = LayoutBox(name, self.constraints_id)
-            self.__layout_box = res
-        return res
+        self.layout_box = LayoutBox(self.widget_type, self.uuid)
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -113,9 +123,9 @@ class QtConstraintsWidget(QtWidgetComponent):
         if hint.isValid():
             width_hint = hint.width()
             height_hint = hint.height()
-            box = self.layout_box
-            width = box.width
-            height = box.height
+            primitive = self.layout_box.primitive
+            width = primitive('width')
+            height = primitive('height')
             hug_width, hug_height = self.hug
             resist_width, resist_height = self.resist_clip
             if width_hint >= 0:
@@ -133,6 +143,26 @@ class QtConstraintsWidget(QtWidgetComponent):
                     cn = (height >= height_hint) | resist_height
                     push(cn)
         return cns
+
+    def layout_size_hint(self):
+        """ Returns the size hint to use in layout computation.
+
+        The default implementation returns the appropriate size hint 
+        based on whether or not a widget item should be used. If a
+        subclass requires more control, it should override this method.
+
+        Returns
+        -------
+        result : QSize
+            The size hint to use in layout computations for the widget.
+
+        """
+        if self.use_widget_item_for_layout:
+            item = self.widget_item
+        else:
+            item = self.widget
+        size = item.sizeHint()
+        return size
 
     def update_layout_geometry(self, dx, dy):
         """ A method which can be called during a layout pass to compute
@@ -157,34 +187,14 @@ class QtConstraintsWidget(QtWidgetComponent):
             the given dx and dy.
 
         """
-        box = self.layout_box
-        x = int(round(box.left.value))
-        y = int(round(box.top.value))
-        width = int(round(box.width.value))
-        height = int(round(box.height.value))
+        primitive = self.layout_box.primitive
+        x = int(round(primitive('left', False).value))
+        y = int(round(primitive('top', False).value))
+        width = int(round(primitive('width', False).value))
+        height = int(round(primitive('height', False).value))
         self.set_layout_geometry(x - dx, y - dy, width, height)
         return (x, y)
-
-    def layout_size_hint(self):
-        """ Returns the size hint to use in layout computation.
-
-        The default implementation returns the appropriate size hint 
-        based on whether or not a widget item should be used. If a
-        subclass requires more control, it should override this method.
-
-        Returns
-        -------
-        result : QSize
-            The size hint to use in layout computations for the widget.
-
-        """
-        if self.use_widget_item_for_layout:
-            item = self.widget_item
-        else:
-            item = self.widget
-        size = item.sizeHint()
-        return size
-
+    
     def set_layout_geometry(self, x, y, width, height):
         """ Updates the layout geometry for the widget.
 
