@@ -12,6 +12,13 @@ from enaml.enums import Orientation, TickPosition, PolicyEnum
 from .constraints_widget import ConstraintsWidget
 
 
+#: The slider attributes to proxy to clients
+_SL_PROXY_ATTRS = [
+    'maximum', 'minimum', 'orientation', 'page_step', 'single_step',
+    'tick_interval', 'tick_position', 'tracking', 'value'
+]
+
+
 #: The maximum slider value
 MAX_SLIDER_VALUE = (1 << 16) - 1
 
@@ -21,14 +28,14 @@ class Slider(ConstraintsWidget):
     range of values.
 
     """
-    #: The minimum value for the index. To avoid issues where
+    #: The minimum value for the slider. To avoid issues where
     #: :attr:`minimum` is higher than :attr:`maximum`. The value is
     #: a positive integer capped by the :attr:`maximum`. If the new
     #: value of :attr:`minimum` make the current position invalid then
     #: the current position is set to :attr:minimum. Default value is 0.
     minimum = Property(Int, depends_on ='_minimum')
 
-    #: The internal minimum storage
+    #: The internal minimum storage.
     _minimum = Int(0)
 
     #: The maximum value for the index. Checks make sure that
@@ -38,17 +45,17 @@ class Slider(ConstraintsWidget):
     #: is restricted to 65535, while the default is 100.
     maximum = Property(Int, depends_on ='_maximum')
 
-    #: The internal maximum storage
+    #: The internal maximum storage.
     _maximum = Int(100)
+
+    #: The position value of the Slider. The bounds are defined by
+    #: :attr:minimum: and :attr:maximum:.
+    value = Bounded(low='minimum', high='maximum')
 
     #: The span of the slider, a read only property that depends on
     #: :attr:`minimum` and :attr:`maximum`. The span value is used
     #: by a number of properties that adapt the slider's appearence.
     span = Property(Int, depends_on=('minimum', 'maximum'))
-
-    #: The position value of the Slider. The bounds are defined by
-    #: :attr:minimum: and :attr:maximum:.
-    value = Bounded(low='minimum', high='maximum')
 
     #: The interval to put between tick marks in slider range units.
     #: Default value is `10`.
@@ -120,10 +127,7 @@ class Slider(ConstraintsWidget):
 
         """
         super(Slider, self).bind()
-        self.default_send(
-            'maximum', 'minimum', 'orientation', 'page_step', 'single_step',
-            'tick_interval', 'tick_position', 'tracking', 'value'
-        )
+        self.default_send(*_SL_PROXY_ATTRS)
 
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
@@ -131,17 +135,7 @@ class Slider(ConstraintsWidget):
 
         """
         super_attrs = super(Slider, self).initial_attrs()
-        attrs = {
-            'maximum' : self.maximum,
-            'minimum' : self.minimum,
-            'orientation' : self.orientation,
-            'page_step' : self.page_step,
-            'single_step' : self.single_step,
-            'tick_interval' : self.tick_interval,
-            'tick_position' : self.tick_position,
-            'tracking' : self.tracking,
-            'value' : self.value,
-        }
+        attrs = dict((attr, getattr(self, attr)) for attr in _SL_PROXY_ATTRS)
         super_attrs.update(attrs)
         return super_attrs
 
@@ -153,6 +147,7 @@ class Slider(ConstraintsWidget):
 
         """
         self.moved()
+        return True
 
     def receive_pressed(self, context):
         """ Callback from the UI when the control is pressed.
@@ -160,6 +155,7 @@ class Slider(ConstraintsWidget):
         """
         self._down = True
         self.pressed()
+        return True
 
     def receive_released(self, context):
         """ Callback from the UI when the control is released.
@@ -167,13 +163,15 @@ class Slider(ConstraintsWidget):
         """
         self._down = False
         self.released()
+        return True
 
     def receive_set_value(self, context):
         """ Callback from the UI when the slider's value changes
 
         """
         self.set_guarded(value=context['value'])
-    
+        return True
+
     #--------------------------------------------------------------------------
     # Trait defaults
     #--------------------------------------------------------------------------
@@ -232,6 +230,12 @@ class Slider(ConstraintsWidget):
         """
         return (self.maximum - self.minimum) + 1
 
+    def _get_minimum(self):
+        """ The property getter for the slider minimum.
+
+        """
+        return self._minimum
+
     def _set_minimum(self, value):
         """ The property setter for the 'minimum' attribute. This
         validates that the value is always smaller than :attr:`maximum`.
@@ -246,6 +250,12 @@ class Slider(ConstraintsWidget):
         else:
             self._minimum = value
 
+    def _get_maximum(self):
+        """ The property getter for the slider maximum.
+
+        """
+        return self._maximum
+
     def _set_maximum(self, value):
         """ The property setter for the 'maximum' attribute. This
         validates that the value is always larger than :attr:`minimum`.
@@ -259,18 +269,6 @@ class Slider(ConstraintsWidget):
             raise TraitError(msg)
         else:
             self._maximum = value
-
-    def _get_maximum(self):
-        """ The property getter for the slider maximum.
-
-        """
-        return self._maximum
-
-    def _get_minimum(self):
-        """ The property getter for the slider minimum.
-
-        """
-        return self._minimum
 
     @on_trait_change('minimum, maximum')
     def _adapt_value(self):
