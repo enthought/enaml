@@ -4,7 +4,8 @@
 #------------------------------------------------------------------------------
 import unittest, os, datetime
 from enaml.qt.qt import QtCore
-from enaml.qt.qt.QtGui import QApplication, QFileDialog
+from enaml.qt.qt.QtGui import QApplication, QFileDialog, QLineEdit, \
+    QIntValidator
 from enaml.qt.qt_local_pipe import QtLocalPipe
 
 # Workarounds for an incompatibility between PySide and PyQt
@@ -22,6 +23,12 @@ from enaml.qt.qt_calendar import QtCalendar
 from enaml.qt.qt_date_edit import QtDateEdit
 from enaml.qt.qt_datetime_edit import QtDatetimeEdit
 from enaml.qt.qt_combo_box import QtComboBox
+from enaml.qt.qt_field import QtField
+from enaml.qt.qt_html import QtHtml
+from enaml.qt.qt_enaml_validator import QtEnamlValidator
+from enaml.qt.qt_label import QtLabel
+from enaml.qt.qt_progress_bar import QtProgressBar
+from enaml.qt.qt_push_button import QtPushButton
 from enaml.qt.qt_window import QtWindow
 from enaml.qt.qt_dialog import QtDialog
 from enaml.qt.qt_directory_dialog import QtDirectoryDialog
@@ -127,7 +134,99 @@ class TestQtComponents(unittest.TestCase):
         combo_box.recv('set_index', {'value':index})
         widget_index = combo_box.widget.currentIndex()
         self.assertEqual(widget_index, index)
-        
+
+    def test_field(self):
+        """ Test the QtField
+
+        """
+        field = QtField(None, QtLocalPipe(), QtLocalPipe())
+        field.create()
+
+        max_length = 20
+        field.recv('set_max_length', {'value':max_length})
+        self.assertEqual(field.widget.maxLength(), max_length)
+
+        password_mode = QLineEdit.Password
+        field.recv('set_password_mode', {'value':'password'})
+        self.assertEqual(field.widget.echoMode(), password_mode)
+
+        p_text = "Placeholder text"
+        field.recv('set_placeholder_text', {'value':p_text})
+        self.assertEqual(field.widget.placeholderText(), p_text)
+
+        field.recv('set_read_only', {'value':True})
+        self.assertEqual(field.widget.isReadOnly(), True)
+
+        # XXX submit mode not implemented
+
+        text = "Test"
+        field.recv('set_text', {'value':text})
+        self.assertEqual(field.widget.text(), text)
+
+        validator = QtEnamlValidator(QIntValidator())
+        field.recv('set_validator', {'value':validator})
+        # a new instance of the validator is created when it is set,
+        # so the best we can do is check that the types are the same
+        self.assertEqual(type(field.widget.validator()), type(validator))
+
+    def test_html(self):
+        """ Test the QtHtml
+
+        """
+        html = QtHtml(None, QtLocalPipe(), QtLocalPipe())
+        html.create()
+
+        source = "<html><p>hello</p></html>"
+        html.recv('set_source', {'value':source})
+        # Qt returns the html with a bunch of metadata and extra tags,
+        # so we compare the plain text
+        self.assertEqual(html.widget.toPlainText(), 'hello')
+
+    def test_label(self):
+        """ Test the QtLabel
+
+        """
+        label = QtLabel(None, QtLocalPipe(), QtLocalPipe())
+        label.create()
+
+        text = "test"
+        label.recv('set_text', {'value':text})
+        self.assertEqual(label.widget.text(), text)
+
+        wrap = True
+        label.recv('set_word_wrap', {'value':wrap})
+        self.assertEqual(label.widget.wordWrap(), wrap)
+
+    def test_progress_bar(self):
+        """ Test the QtProgressBar
+
+        """
+        pbar = QtProgressBar(None, QtLocalPipe(), QtLocalPipe())
+        pbar.create()
+
+        maximum = 20
+        pbar.recv('set_maximum', {'value':maximum})
+        self.assertEqual(pbar.widget.maximum(), maximum)
+
+        minimum = 10
+        pbar.recv('set_minimum', {'value':minimum})
+        self.assertEqual(pbar.widget.minimum(), minimum)
+
+        value = 15
+        pbar.recv('set_value', {'value':value})
+        self.assertEqual(pbar.widget.value(), value)
+
+    def test_push_button(self):
+        """ Test the QtPushButton
+
+        """
+        button = QtPushButton(None, QtLocalPipe(), QtLocalPipe())
+        button.create()
+
+        text = "Button"
+        button.recv('set_text', {'value':text})
+        self.assertEqual(button.widget.text(), text)
+    
     def test_window(self):
         """ Test the QtWindow
 
