@@ -2,10 +2,6 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import weakref
-
-from casuarius import ConstraintVariable
-
 from enaml.layout.layout_manager import LayoutManager
 
 from .qt.QtCore import QSize
@@ -13,13 +9,34 @@ from .qt_constraints_widget import QtConstraintsWidget, LayoutBox
 from .qt_resizing_widgets import QResizingFrame, QResizingWidget
 
 
-class _VirtualConstraintOwner(object):
-    """ An empty object which serves to store the synthesized 
-    constraint variables generated in '_convert_cn_info'.
+class _QResizingFrame(QResizingFrame):
+    """ A subclass of QResizingFrame which allows the default sizeHint
+    to be overridden by calling 'setSizeHint'.
+
+    This functionality is used by the QtContainer to override the 
+    size hint with a value computed from the constraints layout 
+    manager.
 
     """
-    def __del__(self):
-        print 'collected', self
+    #: An invalid QSize used as the default value for class instances.
+    _size_hint = QSize()
+
+    def sizeHint(self):
+        """ Computes the size hint from the given QtContainer using the
+        containers minimimum computed size. If the container returns an
+        invalid size, the superclass' sizeHint will be used.
+
+        """
+        hint = self._size_hint
+        if not hint.isValid():
+            hint = super(_QResizingFrame, self).sizeHint()
+        return hint
+
+    def setSizeHint(self, hint):
+        """ Sets the size hint to use for this resizing frame.
+
+        """
+        self._size_hint = hint
 
 
 def _convert_cn_info(info, owners):
@@ -42,16 +59,8 @@ def _convert_cn_info(info, owners):
         owner_id = info['owner']
         owner = owners.get(owner_id, None)
         if owner is None:
-            owner = _VirtualConstraintOwner()
-            owners[owner_id] = owner
-        res = getattr(owner, sym_name, None)
-        if res is None:
-            if not isinstance(owner, _VirtualConstraintOwner):
-                msg = '`%s` has no constraint variable `%s`'
-                raise ValueError(msg % (owner, sym_name))
-            label = 'virtual-{0}_{1}'.format(info['name'], owner_id)
-            res = ConstraintVariable(label)
-            setattr(owner, sym_name, res)
+            owner = owners[owner_id] = LayoutBox(info['name'], owner_id)
+        res = owner.primitive(sym_name)
     else:
         msg = 'Unhandled constraint info type `%s`' % cn_type
         raise ValueError(msg)
@@ -101,47 +110,6 @@ def as_linear_constraint(info, owners):
     return cn | info['strength'] | info['weight']
 
 
-class _QResizingFrame(QResizingFrame):
-    """ A subclass of QResizingFrame which calls back onto the widget 
-    wrapper to get the size hint. If that size hint is invalid, it
-    falls back onto the Qt default.
-
-    """
-    def __init__(self, qt_container, *args, **kwargs):
-        super(QResizingFrame, self).__init__(*args, **kwargs)
-        self.qt_container = weakref.ref(qt_container)
-    
-    def ssizeHint(self):
-        """ Computes the size hint from the given Container, falling
-        back on the default size hint computation if the Container 
-        returns one that is invalid.
-
-        """
-        res = None
-        qt_container = self.qt_container()
-        if qt_container is not None:
-            sh = qt_container.cn_size_hint()
-            if sh != (-1, -1):
-                res = QSize(*sh)
-        if res is None:
-            res = super(_QResizingFrame, self).sizeHint()
-        return res
-
-
-class LayoutPaddingBox(LayoutBox):
-    """ A LayoutBox subclass which adds the constraint variable 
-    primitives for 'padding' left, top, right, and bottom.
-
-    """
-    def __init__(self, name, owner_id):
-        super(LayoutPaddingBox, self).__init__(name, owner_id)
-        label = '{0}_{1}'.format(name, owner_id)
-        for primitive in ('left', 'top', 'right', 'bottom'):
-            attr = 'padding_' + primitive
-            var = ConstraintVariable('{0}_{1}'.format(attr, label))
-            setattr(self, attr, var)
-
-
 class QtContainer(QtConstraintsWidget):
     """ A Qt4 implementation of an Enaml Container.
 
@@ -150,7 +118,7 @@ class QtContainer(QtConstraintsWidget):
         """ Creates the underlying QResizingFrame widget.
 
         """
-        self.widget = _QResizingFrame(self, self.parent_widget)
+        self.widget = _QResizingFrame(self.parent_widget)
 
     def initialize(self, init_attrs):
         """ Initialize the attributes of the widget.
@@ -170,23 +138,6 @@ class QtContainer(QtConstraintsWidget):
         widget = self.widget
         if isinstance(widget, QResizingWidget):
             widget.resized.connect(self.on_resize)
-
-    #--------------------------------------------------------------------------
-    # Properties
-    #--------------------------------------------------------------------------
-    @property
-    def layout_box(self):
-        """ A read-only cached property which creates the padding layout
-        box for this object the first time it is requested.
-
-        """
-        try:
-            res = self.__layout_box
-        except AttributeError:
-            name = type(self).__name__
-            res = LayoutPaddingBox(name, self.constraints_id)
-            self.__layout_box = res
-        return res
 
     #--------------------------------------------------------------------------
     # Signal Handlers
@@ -209,6 +160,7 @@ class QtContainer(QtConstraintsWidget):
         if self._owns_layout:
             mgr = self._layout_manager = LayoutManager()
             mgr.initialize(self._generate_constraints())
+            self.widget.setSizeHint(self.compute_min_size())
 
     def relayout(self):
         """ Rebuilds the constraints layout for this widget if it owns
@@ -227,9 +179,9 @@ class QtContainer(QtConstraintsWidget):
 
         """
         if self._owns_layout:
-            box = self.layout_box
-            width = box.width
-            height = box.height
+            primitive = self.layout_box.primitive
+            width = primitive('width', False)
+            height = primitive('height', False)
             widget = self.widget
             size = (widget.width(), widget.height())
             self._layout_manager.layout(self.layout, width, height, size)
@@ -271,7 +223,7 @@ class QtContainer(QtConstraintsWidget):
         # The mapping of constraint owners and the list of constraint
         # info dictionaries provided by the Enaml widgets.
         box = self.layout_box
-        cn_owners = {self.constraints_id: box}
+        cn_owners = {self.uuid: box}
         cn_dicts = list(self.constraints)
         cn_dicts_extend = cn_dicts.extend
 
@@ -296,7 +248,7 @@ class QtContainer(QtConstraintsWidget):
             child = stack_pop()
             if isinstance(child, QtConstraintsWidget):
                 child_box = child.layout_box
-                cn_owners[child.constraints_id] = child_box
+                cn_owners[child.uuid] = child_box
                 if isinstance(child, QtContainer):
                     if child.transfer_layout_ownership(self):
                         cn_dicts_extend(child.constraints)
@@ -314,8 +266,9 @@ class QtContainer(QtConstraintsWidget):
             add_cn(as_linear_constraint(info, cn_owners))
 
         # We keep a strong reference to the constraint owners dict,
-        # since it may include instance of _VirtualConstraintOwner
-        # which holds constraint variables which should not be deleted.
+        # since it may include instances of LayoutBox which were 
+        # created on-the-fly and hold constraint variables which 
+        # should not be deleted.
         self._cn_owners = cn_owners
 
         return raw_cns
@@ -350,4 +303,52 @@ class QtContainer(QtConstraintsWidget):
         self._layout_owner = owner
         self._layout_manager = None
         return True
+
+    def compute_min_size(self):
+        """ Calculates the minimum size of the container which would 
+        allow all constraints to be satisfied. 
+
+        If this container does not own its layout then it will return 
+        an invalid QSize.
+
+        Returns
+        -------
+        result : QSize
+            A (potentially) invalid QSize which is the minimum size 
+            required to satisfy all constraints.
+
+        """
+        if self._owns_layout and self._layout_manager is not None:
+            primitive = self.layout_box.primitive
+            width = primitive('width')
+            height = primitive('height')
+            w, h = self._layout_manager.get_min_size(width, height)
+            res = QSize(int(round(w)), int(round(h)))
+        else:
+            res = QSize()
+        return res
+
+    def compute_max_size(self):
+        """ Calculates the maximum size of the container which would 
+        allow all constraints to be satisfied. 
+
+        If this container does not own its layout then it will return 
+        an invalid QSize.
+
+        Returns
+        -------
+        result : QSize
+            A (potentially) invalid QSize which is the maximum size 
+            allowable while still satisfying all constraints.
+
+        """
+        if self._owns_layout and self._layout_manager is not None:
+            primitive = self.layout_box.primitive
+            width = primitive('width')
+            height = primitive('height')
+            w, h = self._layout_manager.get_max_size(width, height)
+            res = QSize(int(round(w)), int(round(h)))
+        else:
+            res = QSize()
+        return res
 
