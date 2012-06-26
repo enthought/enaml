@@ -15,9 +15,8 @@ class CheckBox(AbstractButton):
     group of values, use a group of RadioButtons or the RadioGroup
     control from the Enaml standard library.
 
-    See Also
-    --------
-    ToggleControl
+    The interface for AbstractButton fully defines the interface for
+    a CheckBox.
 
     """
     #: Check boxes are checkable by default.
