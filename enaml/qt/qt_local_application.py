@@ -20,15 +20,20 @@ class QtLocalClientBuilder(AbstractBuilder):
         info_stack = [(info, None)]
         while info_stack:
             info_dct, parent = info_stack.pop()
+
+            # Unpack the identifier information from the dict
+            uuid = info_dct['uuid']
             send_pipe = info_dct['send_pipe']
             recv_pipe = info_dct['recv_pipe']
+
+            # Load the widget class that will be used.
             widget_cls = CLIENTS[info_dct['widget']]()
 
             # Create, initialize, and bind the toolkit widget. We swap 
             # the order of the pipes on purpose, which provides the 
             # other end of the pipe to the widget as required.
             # XXX we may want to delay some of this initialization
-            widget = widget_cls(parent, recv_pipe, send_pipe)
+            widget = widget_cls(parent, uuid, recv_pipe, send_pipe)
             widget.create()
             widget.initialize(info_dct['attrs'])
             widget.bind()
