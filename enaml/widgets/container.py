@@ -100,7 +100,7 @@ class Container(ConstraintsWidget):
     #: The private storage the box model instance for this component. 
     _box_model = Instance(PaddingBoxModel)
     def __box_model_default(self):
-        return PaddingBoxModel(self.constraints_id)
+        return PaddingBoxModel(self.uuid)
 
     #--------------------------------------------------------------------------
     # Constraints Generation
