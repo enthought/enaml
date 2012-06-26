@@ -24,7 +24,7 @@ class DateEdit(BoundedDate):
 
     #: Triggered whenever the user changes the date through the ui
     #: control, but not programmatically. The event payload will be 
-    #: the date on the control.
+    #: the current date on the control.
     date_changed = EnamlEvent
     
     #: How strongly a component hugs it's contents' width. DateEdits 
@@ -48,19 +48,18 @@ class DateEdit(BoundedDate):
 
         """
         super_attrs = super(DateEdit, self).initial_attrs()
-        attrs = {
-            'date_format' : self.date_format,
-        }
+        attrs = {'date_format': self.date_format}
         super_attrs.update(attrs)
         return super_attrs
 
     #--------------------------------------------------------------------------
     # Toolkit Communication
     #--------------------------------------------------------------------------
-    def receive_date_changed(self, context):
+    def receive_date_changed(self, ctxt):
         """ Callback from the UI when the date value is changed.
 
         """
-        self.set_guarded(date=context['value'])
-        self.date_changed(self.date)
+        date = ctxt['value']
+        self.set_guarded(date=date)
+        self.date_changed(date)
 

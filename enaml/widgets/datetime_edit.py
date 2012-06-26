@@ -10,8 +10,8 @@ from .bounded_datetime import BoundedDatetime
 
 
 class DatetimeEdit(BoundedDatetime):
-    """ A datetime widget that displays a Python datetime.datetime object 
-    using an appropriate toolkit specific control.
+    """ A datetime widget that displays a Python datetime.datetime 
+    object using an appropriate toolkit specific control.
 
     """
     #: A python date format string to format the datetime. If None is
@@ -45,19 +45,18 @@ class DatetimeEdit(BoundedDatetime):
 
         """
         super_attrs = super(DatetimeEdit, self).initial_attrs()
-        attrs = {
-            'datetime_format' : self.datetime_format,
-        }
+        attrs = {'datetime_format' : self.datetime_format}
         super_attrs.update(attrs)
         return attrs
 
     #--------------------------------------------------------------------------
     # Toolkit Communication
     #--------------------------------------------------------------------------
-    def receive_datetime_changed(self, context):
+    def receive_datetime_changed(self, ctxt):
         """ Callback from the UI when the datetime value is changed.
 
         """
-        self.set_guarded(datetime=context['value'])
-        self.datetime_changed(self.datetime)
+        datetime = ctxt['value']
+        self.set_guarded(datetime=datetime)
+        self.datetime_changed(datetime)
 
