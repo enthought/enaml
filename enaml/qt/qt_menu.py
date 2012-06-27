@@ -50,7 +50,7 @@ class QtMenu(QtWidgetComponent):
         """ Message handler for set_title
 
         """
-        self.set_title(ctxt['value'])
+        return self.set_title(ctxt['value'])
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -60,3 +60,4 @@ class QtMenu(QtWidgetComponent):
 
         """
         self.widget.setTitle(title)
+        return True
