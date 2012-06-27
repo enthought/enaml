@@ -43,6 +43,16 @@ class Container(LayoutTaskHandler, PaddingConstraints, ConstraintsWidget):
         List(Instance(Constrainable)), depends_on='children',
     )
 
+    #: A boolean which indicates whether or not to allow the layout
+    #: ownership of this container to be transferred to an ancestor.
+    #: This is False by default, which means that every container
+    #: get its own layout solver. This improves speed and reduces
+    #: memory use (by keeping a solver's internal tableaux small)
+    #: but at the cost of not being able to share constraints 
+    #: across Container boundaries. This flag must be explicitly 
+    #: marked as True to enable sharing.
+    share_layout = Bool(False)
+
     #: A read-only property which returns True if this container owns
     #: its layout and is responsible for setting the geometry of its
     #: children, or False if that responsibility has been transferred
@@ -354,10 +364,10 @@ class Container(LayoutTaskHandler, PaddingConstraints, ConstraintsWidget):
     def transfer_layout_ownership(self, owner):
         """ A method which can be called by other components in the
         hierarchy to gain ownership responsibility for the layout 
-        of the children of this container. By default, the transfer
-        is allowed and is the mechanism which allows constraints to
-        cross widget boundaries. Subclasses should reimplement this 
-        method if different behavior is desired.
+        of the children of this container. 
+
+        Whether or not to allow the transfer is determined  by the 
+        boolean value of the 'share_layout' flag.
 
         Parameters
         ----------
@@ -373,6 +383,8 @@ class Container(LayoutTaskHandler, PaddingConstraints, ConstraintsWidget):
             True if the transfer was allowed, False otherwise.
         
         """
+        if not self.share_layout:
+            return False
         self._layout_owner = owner
         return True
     
