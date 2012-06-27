@@ -2,17 +2,23 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import unittest
 from uuid import uuid4
 
 from enaml.qt.qt.QtGui import QApplication
 from enaml.qt.qt_push_button import QtPushButton
 from enaml.qt.qt_local_pipe import QtLocalPipe
 
-class TestQtPushButton(unittest.TestCase):
+class TestQtPushButton(object):
     """ Unit tests for the QtPushButton
 
     """
+    def __init__(self):
+        """ Create an application instance so that widgets can be created
+
+        """
+        if not QApplication.instance():
+            self.app = QApplication([])
+    
     def setUp(self):
         """ Set up the widget for testing
 
@@ -27,8 +33,4 @@ class TestQtPushButton(unittest.TestCase):
         """
         text = "Button"
         self.button.recv('set_text', {'value':text})
-        self.assertEqual(self.button.widget.text(), text)
-
-if __name__ == '__main__':
-    app = QApplication([])
-    unittest.main()
+        assert self.button.widget.text() == text

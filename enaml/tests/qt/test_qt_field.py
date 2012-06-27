@@ -2,7 +2,6 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import unittest
 from uuid import uuid4
 
 from enaml.qt.qt.QtGui import QApplication, QLineEdit, QIntValidator
@@ -10,10 +9,17 @@ from enaml.qt.qt_enaml_validator import QtEnamlValidator
 from enaml.qt.qt_field import QtField
 from enaml.qt.qt_local_pipe import QtLocalPipe
 
-class TestQtField(unittest.TestCase):
+class TestQtField(object):
     """ Unit tests for the QtField
 
     """
+    def __init__(self):
+        """ Create an application instance so that widgets can be created
+
+        """
+        if not QApplication.instance():
+            self.app = QApplication([])
+    
     def setUp(self):
         """ Set up the widget for testing
 
@@ -28,7 +34,7 @@ class TestQtField(unittest.TestCase):
         """
         max_length = 20
         self.field.recv('set_max_length', {'value':max_length})
-        self.assertEqual(self.field.widget.maxLength(), max_length)
+        assert self.field.widget.maxLength() == max_length
 
     def test_set_password_mode(self):
         """ Test the QtField's set_password_mode command
@@ -36,7 +42,7 @@ class TestQtField(unittest.TestCase):
         """
         password_mode = QLineEdit.Password
         self.field.recv('set_password_mode', {'value':'password'})
-        self.assertEqual(self.field.widget.echoMode(), password_mode)
+        assert self.field.widget.echoMode() == password_mode
 
     def test_set_placeholder_text(self):
         """ Test the QtField's set_placeholder_text command
@@ -44,14 +50,14 @@ class TestQtField(unittest.TestCase):
         """
         p_text = "Placeholder text"
         self.field.recv('set_placeholder_text', {'value':p_text})
-        self.assertEqual(self.field.widget.placeholderText(), p_text)
+        assert self.field.widget.placeholderText() == p_text
 
     def test_set_read_only(self):
         """ Test the QtField's set_read_only command
 
         """
         self.field.recv('set_read_only', {'value':True})
-        self.assertEqual(self.field.widget.isReadOnly(), True)
+        assert self.field.widget.isReadOnly() == True
 
     def test_set_submit_mode(self):
         """ Test the QtField's set_submit_mode command
@@ -66,7 +72,7 @@ class TestQtField(unittest.TestCase):
         """
         text = "Test"
         self.field.recv('set_text', {'value':text})
-        self.assertEqual(self.field.widget.text(), text)
+        assert self.field.widget.text() == text
 
     def test_set_validator(self):
         """ Test the QtField's set_validator command
@@ -77,8 +83,4 @@ class TestQtField(unittest.TestCase):
         # a new instance of the validator is created when it is set,
         # so the best we can do is check that the types are the same,
         # as the default Qt validator will not be of type QtEnamlValidator
-        self.assertEqual(type(self.field.widget.validator()), type(validator))
-
-if __name__ == '__main__':
-    app = QApplication([])
-    unittest.main()
+        assert type(self.field.widget.validator()) == type(validator)

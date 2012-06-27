@@ -2,17 +2,23 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import unittest
 from uuid import uuid4
 
 from enaml.qt.qt.QtGui import QApplication
 from enaml.qt.qt_progress_bar import QtProgressBar
 from enaml.qt.qt_local_pipe import QtLocalPipe
 
-class TestQtProgressBar(unittest.TestCase):
+class TestQtProgressBar(object):
     """ Unit tests for the QtProgressBar
 
     """
+    def __init__(self):
+        """ Create an application instance so that widgets can be created
+
+        """
+        if not QApplication.instance():
+            self.app = QApplication([])
+            
     def setUp(self):
         """ Set up the widget for testing
 
@@ -27,7 +33,7 @@ class TestQtProgressBar(unittest.TestCase):
         """
         maximum = 20
         self.progress_bar.recv('set_maximum', {'value':maximum})
-        self.assertEqual(self.progress_bar.widget.maximum(), maximum)
+        assert self.progress_bar.widget.maximum() == maximum
 
     def test_set_minimum(self):
         """ Test the QtProgressBar's set_minimum command
@@ -35,7 +41,7 @@ class TestQtProgressBar(unittest.TestCase):
         """
         minimum = 10
         self.progress_bar.recv('set_minimum', {'value':minimum})
-        self.assertEqual(self.progress_bar.widget.minimum(), minimum)
+        assert self.progress_bar.widget.minimum() == minimum
 
     def test_set_value(self):
         """ Test the QtProgressBar's set_value command
@@ -43,8 +49,4 @@ class TestQtProgressBar(unittest.TestCase):
         """
         value = 15
         self.progress_bar.recv('set_value', {'value':value})
-        self.assertEqual(self.progress_bar.widget.value(), value)
-
-if __name__ == '__main__':
-    app = QApplication([])
-    unittest.main()
+        assert self.progress_bar.widget.value() == value

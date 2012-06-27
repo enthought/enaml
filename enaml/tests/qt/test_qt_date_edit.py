@@ -2,7 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import unittest, datetime
+import datetime
 from uuid import uuid4
 
 from enaml.qt.qt import QtCore
@@ -16,10 +16,17 @@ try: # pragma: no cover
 except AttributeError: # pragma: no cover
     qdate_to_python = QtCore.QDate.toPyDate
 
-class TestQtDateEdit(unittest.TestCase):
+class TestQtDateEdit(object):
     """ Unit tests for the QtDateEdit
 
     """
+    def __init__(self):
+        """ Create an application instance so that widgets can be created
+
+        """
+        if not QApplication.instance():
+            self.app = QApplication([])
+    
     def setUp(self):
         """ Set up the widget for testing
 
@@ -35,7 +42,7 @@ class TestQtDateEdit(unittest.TestCase):
         display_format = 'MMMM dd, YYYY'
         self.date_edit.recv('set_date_format', {'value':display_format})
         widget_format = self.date_edit.widget.displayFormat()
-        self.assertEqual(widget_format, display_format)
+        assert widget_format == display_format
 
     def test_set_date(self):
         """ Test the QtDateEdit's set_date command
@@ -44,7 +51,7 @@ class TestQtDateEdit(unittest.TestCase):
         date = datetime.date.today()
         self.date_edit.recv('set_date', {'value':date})
         widget_date = qdate_to_python(self.date_edit.widget.date())
-        self.assertEqual(widget_date, date)
+        assert widget_date == date
 
     def test_set_max_date(self):
         """ Test the QtDateEdit's set_max_date command
@@ -53,7 +60,7 @@ class TestQtDateEdit(unittest.TestCase):
         max_date = datetime.date(7999, 12, 31)
         self.date_edit.recv('set_max_date', {'value':max_date})
         widget_max_date = qdate_to_python(self.date_edit.widget.maximumDate())
-        self.assertEqual(widget_max_date, max_date)
+        assert widget_max_date == max_date
 
         
     def test_set_min_date(self):
@@ -63,8 +70,4 @@ class TestQtDateEdit(unittest.TestCase):
         min_date = datetime.date(1752, 9, 14)
         self.date_edit.recv('set_min_date', {'value':min_date})
         widget_min_date = qdate_to_python(self.date_edit.widget.minimumDate())
-        self.assertEqual(widget_min_date, min_date)
- 
-if __name__ == '__main__':
-    app = QApplication([])
-    unittest.main()
+        assert widget_min_date == min_date
