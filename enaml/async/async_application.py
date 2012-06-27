@@ -32,7 +32,7 @@ class AbstractBuilder(object):
 
         XXX need to be more specific about what is in this dict.
 
-        This method should block until the client-side UI is built.
+        This method should(?) block until the client-side UI is built.
 
         Parameters
         ----------
