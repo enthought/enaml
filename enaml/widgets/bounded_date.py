@@ -24,7 +24,7 @@ class BoundedDate(ConstraintsWidget):
     """
     #: The minimum date available in the date edit. If not defined then
     #: the default value is September 14, 1752.
-    mininmum = Property(Date, depends_on ='_minimum')
+    minimum = Property(Date, depends_on ='_minimum')
 
     #: The internal minimum date storage
     _minimum = Date(date(1752, 9, 14))
@@ -68,7 +68,7 @@ class BoundedDate(ConstraintsWidget):
         """ The property getter for the minimum date.
 
         """
-        return self._min_date
+        return self._minimum
 
     def _set_minimum(self, date):
         """ Set the minimum date. Addtional checks are applied to make 
@@ -86,7 +86,7 @@ class BoundedDate(ConstraintsWidget):
         """ The property getter for the maximum date.
 
         """
-        return self._max_date
+        return self._maximum
 
     def _set_maximum(self, date):
         """ Set the maximum date. Addtional checks are applied to make 

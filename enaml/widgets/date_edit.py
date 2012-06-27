@@ -60,6 +60,6 @@ class DateEdit(BoundedDate):
 
         """
         date = ctxt['value']
-        self.set_guarded(date=date)
+        self.set_guarded(value=date)
         self.date_changed(date)
 

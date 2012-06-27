@@ -3,9 +3,9 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 
-from .qt_control import QtControl
+from .qt_constraints_widget import QtConstraintsWidget
 
-class QtBoundedDate(QtControl):
+class QtBoundedDate(QtConstraintsWidget):
     """ A base class for date widgets
 
     """

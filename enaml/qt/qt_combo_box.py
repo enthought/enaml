@@ -3,9 +3,9 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt.QtGui import QComboBox
-from .qt_control import QtControl
+from .qt_constraints_widget import QtConstraintsWidget
 
-class QtComboBox(QtControl):
+class QtComboBox(QtConstraintsWidget):
     """ A Qt implementation of a combo box
     
     """
@@ -19,8 +19,9 @@ class QtComboBox(QtControl):
         """ Initialize the widget's attributes
 
         """
+        super(QtComboBox, self).initialize(init_attrs)
         self.set_index(init_attrs.get('index', 0))
-        self.set_index(init_attrs.get('items'), [])
+        self.set_items(init_attrs.get('items', []))
 
     def bind(self):
         """ Bind qt signals to slots
@@ -35,7 +36,7 @@ class QtComboBox(QtControl):
         """ Event handler for selected
 
         """
-        self.send('selected', {})
+        self.send('selected', {'value':self.widget.currentIndex()})
 
     #--------------------------------------------------------------------------
     # Message Handlers

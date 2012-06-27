@@ -26,10 +26,10 @@ class QtCalendar(QtBoundedDate):
         """ Initialize the widget's attributes
 
         """
+        super(QtCalendar, self).initialize(init_attrs)
         self.set_date(init_attrs.get('date'))
         self.set_min_date(init_attrs.get('min_date'))
         self.set_max_date(init_attrs.get('max_date'))
-        self.set_date_format(init_attrs.get('date_format'))
 
     def bind(self):
         """ Connect the widgets signals to slots
@@ -47,11 +47,12 @@ class QtCalendar(QtBoundedDate):
         """
         self.send('activated', {'value':qdate_to_python(date)})
 
-    def on_selected(self, date):
+    def on_selected(self):
         """ Event handler for date_selected
 
         """
-        self.send('selected', {'value':qdate_to_python(date)})
+        self.send('selected', {'value':qdate_to_python(
+            self.widget.selectedDate())})
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -80,14 +81,6 @@ class QtCalendar(QtBoundedDate):
         if date is not None:
             self.set_min_date(date)
 
-    def receive_set_date_format(self, ctxt):
-        """ Message handler for set_date_format
-
-        """
-        date = ctxt.get('value')
-        if date is not None:
-            self.set_date_format(date)
-
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
@@ -108,9 +101,3 @@ class QtCalendar(QtBoundedDate):
 
         """
         self.widget.setMinimumDate(date)
-
-    def set_date_format(self, date_format):
-        """ Set the widget's date format
-
-        """
-        self.widget.setDisplayFormat(date_format)

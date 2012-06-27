@@ -26,6 +26,7 @@ class QtDateEdit(QtBoundedDate):
         """ Initialize the widget's attributes
 
         """
+        super(QtDateEdit, self).initialize(init_attrs)
         self.set_date(init_attrs.get('date'))
         self.set_min_date(init_attrs.get('min_date'))
         self.set_max_date(init_attrs.get('max_date'))
