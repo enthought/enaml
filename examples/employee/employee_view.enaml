@@ -90,7 +90,6 @@ enamldef EmployeeView(MainWindow):
             id: top_box
             title = "Personal Details"
             share_layout = True
-            hug_width = 'ignore'
             EmployeeForm:
                 id: top_form
                 # We access the employee object through the identifier
@@ -103,7 +102,6 @@ enamldef EmployeeView(MainWindow):
             title = "Employer Details"
             visible << top_form.show_employer
             share_layout = True
-            hug_width = 'ignore'
             EmployerForm:
                 id: bottom_form
                 employer << employee.boss

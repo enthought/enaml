@@ -24,8 +24,10 @@ enamldef Main(MainWindow):
         GroupBox:
             id: top_box
             title = "Personal Details"
+            share_layout = True
             Form:
                 id: top_form
+                share_layout = True
                 Label:
                     text = "First name:"
                 Field:
@@ -41,8 +43,10 @@ enamldef Main(MainWindow):
         GroupBox:
             id: bottom_box
             title = "Employment Details"
+            share_layout = True
             Form:
                 id: bottom_form
+                share_layout = True
                 Label:
                     text = "Employer:"
                 Field:
