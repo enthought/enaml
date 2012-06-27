@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from .qt.QtGui import QLineEdit
 from .qt.QtCore import Signal
-from .qt_control import QtControl
+from .qt_constraints_widget import QtConstraintsWidget
 from .qt_enaml_validator import QtEnamlValidator
 
 PASSWORD_MODE = {
@@ -24,7 +24,7 @@ class QtEnamlLineEdit(QLineEdit):
         self.lostFocus.emit()
         return super(QtEnamlLineEdit, self).focusOutEvent(event)
 
-class QtField(QtControl):
+class QtField(QtConstraintsWidget):
     """ A Qt implementation of a field (called QLineEdit in Qt)
 
     """
@@ -38,11 +38,11 @@ class QtField(QtControl):
         """ Initialize the attributes of the widget
 
         """
+        super(QtField, self).initialize(init_attrs)
         self.set_max_length(init_attrs.get('max_length'))
         self.set_password_mode(init_attrs.get('password_mode'))
         self.set_placeholder_text(init_attrs.get('placeholder_text'))
         self.set_read_only(init_attrs.get('read_only'))
-        self.set_submit_mode(init_attrs.get('submit_mode'))
         self.set_text(init_attrs.get('text'))
         self.set_validator(init_attrs.get('validator'))
 
@@ -61,19 +61,19 @@ class QtField(QtControl):
         """ Event handler for lost_focus
 
         """
-        self.send('lost_focus', {})
+        self.send('lost_focus', {'text':self.widget.text()})
 
     def on_return_pressed(self):
         """ Event handler for return_pressed
 
         """
-        self.send('return_pressed', {})
+        self.send('return_pressed', {'text':self.widget.text()})
 
     def on_text_edited(self):
         """ Event handler for text_edited
 
         """
-        self.send('text_edited', {})
+        self.send('text_edited', {'text':self.widget.text()})
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -110,19 +110,11 @@ class QtField(QtControl):
         if read_only is not None:
             self.set_read_only(read_only)
 
-    def receive_set_submit_mode(self, ctxt):
-        """ Message handler for set_submit_mode
-
-        """
-        mode = ctxt.get('value')
-        if mode is not None:
-            self.set_submit_mode(mode)
-
     def receive_set_text(self, ctxt):
         """ Message handler for set_text
 
         """
-        text = ctxt.get('value')
+        text = ctxt.get('text')
         if text is not None:
             self.set_text(text)
 
@@ -163,13 +155,6 @@ class QtField(QtControl):
 
         """
         self.widget.setReadOnly(read_only)
-
-    def set_submit_mode(self, mode):
-        """ Set the submit mode of the field
-
-        """
-        # XXX Qt implementation?
-        pass
 
     def set_text(self, text):
         """ Set the text of the field

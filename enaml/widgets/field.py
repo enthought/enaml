@@ -277,7 +277,7 @@ class Field(ConstraintsWidget):
             self.submit(format=False)
         else:
             v = self.validator
-            self.acceptable = (v.validate(self.get_text()) == v.ACCEPTABLE)
+            self.acceptable = (v.validate(self._text) == v.ACCEPTABLE)
         self.text_edited()
 
     def _field_return_pressed(self):
