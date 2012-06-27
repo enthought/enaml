@@ -13,8 +13,8 @@ enamldef VariableTweaker(Container):
     attr slider_maximum
     constraints = [
         vertical(top, 0, sldr, 0, bottom),
-        horizontal(left, 0, lbl, 0, sldr, 0, right),
-        align('top', lbl, sldr),
+        horizontal(left, 0, lbl, sldr, 0, right),
+        align('v_center', lbl, sldr),
         lbl.width == 50,
     ]
     Label:

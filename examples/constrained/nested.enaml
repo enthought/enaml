@@ -23,6 +23,7 @@ enamldef LabeledField(Container):
         hbox(label, field),
         align('v_center', label, field)
     ]
+    hug_height = 'strong'
     Label:
         id: label
         text = label_text

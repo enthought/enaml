@@ -64,6 +64,11 @@ class GroupBox(Container):
     #: The alignment of the title text.
     title_align = HorizontalAlign
 
+    #: A group box hugs its height strongly by default. Group boxes
+    #: are typically used in configuration dialogs with multiple boxes
+    #: stacked vertically. Hugging the height is desired in this case.
+    hug_height = 'strong'
+    
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkGroupBox)
 

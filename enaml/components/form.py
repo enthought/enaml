@@ -39,6 +39,12 @@ class Form(Container):
     # FIXME: Use an Enum.
     layout_strength = Str('strong')
 
+    #: A form hugs its height strongly by default. Forms are typcially
+    #: used to display vertical arrangements of widgets, with forms
+    #: often being stacked on top of each other. For this case, hugging
+    #: the height is desired.
+    hug_height = 'strong'
+    
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkForm)
     

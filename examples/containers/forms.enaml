@@ -27,6 +27,7 @@ enamldef Main(MainWindow):
             text = "Personal Details"
         Form:
             id: top_form
+            share_layout = True
             Label:
                 text = "First name:"
             Field:
@@ -44,6 +45,7 @@ enamldef Main(MainWindow):
             text = "Employment Details"
         Form:
             id: bottom_form
+            share_layout = True
             Label:
                 text = "Employer:"
             Field:

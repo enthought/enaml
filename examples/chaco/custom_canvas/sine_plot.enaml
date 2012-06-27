@@ -37,6 +37,7 @@ enamldef Main(MainWindow):
             padding_top = 10
         Form:
             id: form
+            hug_width = 'strong'
             Label:
                 text = "Phase:"
             FloatRange:
