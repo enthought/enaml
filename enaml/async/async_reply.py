@@ -6,16 +6,13 @@ class MessageFailure(Exception):
     """ An exception representing the failed handling of a message.
 
     """
-    def __init__(self, msg, ctxt, fail_message):
+    def __init__(self, msg, fail_message):
         """ Initialize a CommandFailure.
 
         Parameters
         ----------
-        msg : string
+        msg : dict
             The message which failed to be properly handled.
-
-        ctxt : dict
-            The context dictionary for the failed message.
 
         fail_message : string
             A message indicating the nature of the failure.
@@ -23,7 +20,6 @@ class MessageFailure(Exception):
         """
         super(MessageFailure, self).__init__(fail_message)
         self.msg = msg
-        self.ctxt = ctxt
 
 
 class AsyncReply(object):
