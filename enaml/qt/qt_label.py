@@ -3,9 +3,9 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt.QtGui import QLabel
-from .qt_control import QtControl
+from .qt_constraints_widget import QtConstraintsWidget
 
-class QtLabel(QtControl):
+class QtLabel(QtConstraintsWidget):
     """ An label widget based on a QLabel
 
     """
@@ -19,6 +19,7 @@ class QtLabel(QtControl):
         """ Initialize the widget's attributes
 
         """
+        super(QtLabel, self).initialize(init_attrs)
         self.set_text(init_attrs.get('text'))
         self.set_word_wrap(init_attrs.get('word_wrap'))
 
