@@ -62,6 +62,13 @@ class Container(LayoutTaskHandler, PaddingConstraints, ConstraintsWidget):
     #: A container has a default padding of 10 on all sides.
     padding = Box(10, 10, 10, 10)
     
+    #: Containers freely exapnd in width and height. The size hint 
+    #: constraints for a Container are used when the container is
+    #: not sharing its layout. In these cases, expansion of the 
+    #: container is typically desired.
+    hug_width = 'ignore'
+    hug_height = 'ignore'
+
     #: A private trait which stores a weak reference to the owner of 
     #: the layout for this container, or None if this container owns 
     #: its layout.
