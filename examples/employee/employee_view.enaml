@@ -2,12 +2,20 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+""" This examples shows advanced layouts with forms.
+
+The 'share_layout' flag on the Containers is used to allows the midline
+constraints of the two forms to be aligned. Where this flag not set to
+True, the extra midline constraint between the two forms would be ignored.
+
+"""
 from phone_validator import PhoneNumberValidator
 
 
 enamldef EmployeeForm(Form):
     attr employee
     attr show_employer: bool = False
+    share_layout = True
     Label:
         text = "First name:"
     Field:
@@ -47,6 +55,7 @@ enamldef EmployeeForm(Form):
 
 enamldef EmployerForm(Form):
     attr employer
+    share_layout = True
     Label:
         text = "Company:"
     Field:
@@ -73,13 +82,15 @@ enamldef EmployeeView(MainWindow):
     Container:
         constraints << [
             vertical(top, top_box, bottom_box.when(bottom_box.visible), bottom),
-            horizontal(left, spacer.flex(), top_box, spacer.flex(), right),
-            horizontal(left, spacer.flex(), bottom_box, spacer.flex(), right),
-            align('midline', top_form, bottom_form, clear_invisible=False)
+            horizontal(contents_left, top_box, contents_right),
+            horizontal(contents_left, bottom_box, contents_right).when(bottom_box.visible),
+            align('midline', top_form, bottom_form).when(bottom_box.visible)
         ]
         GroupBox:
             id: top_box
             title = "Personal Details"
+            share_layout = True
+            hug_width = 'ignore'
             EmployeeForm:
                 id: top_form
                 # We access the employee object through the identifier
@@ -91,6 +102,8 @@ enamldef EmployeeView(MainWindow):
             id: bottom_box
             title = "Employer Details"
             visible << top_form.show_employer
+            share_layout = True
+            hug_width = 'ignore'
             EmployerForm:
                 id: bottom_form
                 employer << employee.boss
