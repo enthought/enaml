@@ -11,6 +11,7 @@ enamldef Loader(Container):
         vbox(hbox(lbl, fld, pb), slbl),
         align('v_center', lbl, fld, pb),
     ]
+    hug_height = 'strong'
     Label:
         id: lbl
         text = 'Filename'
@@ -39,8 +40,11 @@ enamldef CannyParams(GroupBox):
     attr form = _form
     title = 'Canny Parameters'
     flat = True      
+    share_layout = True
+    hug_width = 'strong'    
     Form:
         id: _form
+        share_layout = True
         Label:
             text = 'Sigma'
         FloatField:
@@ -58,9 +62,12 @@ enamldef CannyParams(GroupBox):
 enamldef HoughParams(GroupBox):
     attr form = _form
     title = 'Hough Parameters'
-    flat = True      
+    flat = True     
+    share_layout = True  
+    hug_width = 'strong'    
     Form:
         id: _form
+        share_layout = True
         Label:
             text = 'Threshold'
         IntField:
@@ -78,10 +85,11 @@ enamldef HoughParams(GroupBox):
 enamldef SliderField(Container):
     attr value
     constraints = [
-        vertical(top, 0, fld, 0, bottom),
-        horizontal(left, 5, sldr, fld, 0, right),
+        hbox(sldr, fld),
         align('v_center', sldr, fld),
     ]
+    padding = (0, 0, 5, 0)
+    hug_height = 'strong'
     FloatSlider:
         id: sldr
         value := parent.value
@@ -95,9 +103,12 @@ enamldef SliderField(Container):
 enamldef DisplayParams(GroupBox):
     attr form = _form
     title = 'Display Parameters'
-    flat = True      
+    flat = True  
+    share_layout = True
+    hug_width = 'strong'    
     Form:
         id: _form
+        share_layout = True
         Label:
             text = 'Original Alpha'
         SliderField:

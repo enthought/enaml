@@ -9,7 +9,6 @@ enamldef MainView(MainWindow):
     attr plot
     attr stock_data_table
     title << ("Enaml Stock Viewer - %s - %s - %s" % (model.symbol, model.start_date, model.end_date))
-    #title = "Enaml Stock Viewer"
     Container:
         constraints = [
             hbox(left_content, right_content)
@@ -17,13 +16,14 @@ enamldef MainView(MainWindow):
         Container:
             id: left_content
             constraints = [
-                vertical(top, frm, lbl, sldr, bottom),
-                horizontal(left, frm, right),
+                vbox(frm, lbl, sldr),
                 sldr.left == frm.midline,
                 lbl.h_center == sldr.h_center,
             ]
+            hug_width = 'strong'
             Form:
                 id: frm
+                share_layout = True
                 Label:
                     text = 'Symbol'
                 ComboBox:

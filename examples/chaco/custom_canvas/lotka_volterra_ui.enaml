@@ -51,6 +51,7 @@ enamldef Main(MainWindow):
             plot_bgcolor << color_selector.value
         Form:
             id: form
+            hug_width = 'strong'
             Label:
                 text = "Background Color:"
             ComboBox:

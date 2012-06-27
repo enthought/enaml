@@ -40,7 +40,7 @@ enamldef Buttons(Container):
 enamldef Fields(Container):
     padding = (0, 0, 0, 0)
     Calendar:
-        pass
+        hug_width = 'ignore'
     DateEdit:
         pass
     DatetimeEdit:
@@ -140,14 +140,16 @@ enamldef WidgetGallery(MainWindow):
         ]
         Buttons:
             id: btns
+            hug_width = 'strong'
+            hug_height = 'strong'
         Fields:
             id: flds
-        Notebook:
-            id: nbk
+            hug_height = 'strong'
         Html:
             id: rtxt
             source = html_data
-            constraints = [right == flds.right]
+        Notebook:
+            id: nbk
         ImageView:
             id: img
             scale_to_fit = True
