@@ -29,7 +29,7 @@ class QtMenuBar(QtWidgetComponent):
         """ Message handler for set_menus
 
         """
-        return self.set_menus(ctxt['value'])
+        self.set_menus(ctxt['value'])
         
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -42,4 +42,3 @@ class QtMenuBar(QtWidgetComponent):
         print menu_list
         for menu in menu_list:
             self.widget.addMenu(menu.widget)
-        return True
