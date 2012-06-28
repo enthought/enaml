@@ -2,7 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-
+import os
 from .qt.QtGui import QFileDialog
 from qt_dialog import QtDialog
 
@@ -25,11 +25,20 @@ class QtFileDialog(QtDialog):
         """ Initialize the attributes of the file dialog
 
         """
+        super(QtFileDialog, self).initialize(init_attrs)
         self.set_mode(init_attrs.get('mode'))
         self.set_multi_select(init_attrs.get('multi_select'))
         self.set_directory(init_attrs.get('directory'))
         self.set_filename(init_attrs.get('filename'))
         self.set_selected_filter(init_attrs.get('selected_filter'))
+
+    def bind(self):
+        """ Binds the signal handlers for the file dialog.
+
+        """
+        super(QtFileDialog, self).bind()
+        self.widget.filesSelected.connect(self.on_files_selected)
+        self.widget.filterSelected.connect(self.on_filter_selected)
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -83,6 +92,25 @@ class QtFileDialog(QtDialog):
             self.set_selected_filter(selected_filter)
 
     #--------------------------------------------------------------------------
+    # Event Handlers 
+    #--------------------------------------------------------------------------
+    def on_files_selected(self, files):
+        """ The signal handler for the dialog's `filesSelected` signal.
+
+        """
+        first_file = files[0] if files else u''
+        directory, filename = os.path.split(first_file)
+        self.send('set_directory', {'directory':directory})
+        self.send('set_filename', {'filename':filename})
+        self.send('set_paths', {'paths':files})
+
+    def on_filter_selected(self, qt_filter):
+        """ The signal handler for the dialog's `filterSelected` signal.
+
+        """
+        self.send('set_selected_filter', {'filter':qt_filter})
+
+    #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
     def set_mode(self, mode):
@@ -125,9 +153,5 @@ class QtFileDialog(QtDialog):
     def set_selected_filter(self, selected_filter):
         """ Set the selected filter of the file dialog
 
-        """
-        # XXX Qt does not allow you to programatically set the name filter,
-        # it has to be changed through user input.
-        
-        #self.widget.selectNameFilter(selected_filter)
-        pass
+        """        
+        self.widget.selectNameFilter(selected_filter)

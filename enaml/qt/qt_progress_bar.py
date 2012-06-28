@@ -3,9 +3,9 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt.QtGui import QProgressBar
-from .qt_control import QtControl
+from .qt_constraints_widget import QtConstraintsWidget
 
-class QtProgressBar(QtControl):
+class QtProgressBar(QtConstraintsWidget):
     """ An progress bar based on a QProgressBar
 
     """
@@ -19,6 +19,7 @@ class QtProgressBar(QtControl):
         """ Initialize the widget's attributes
 
         """
+        super(QtProgressBar, self).initialize(init_attrs)
         self.set_minimum(init_attrs.get('minimum'))
         self.set_maximum(init_attrs.get('maximum'))
         self.set_value(init_attrs.get('value'))

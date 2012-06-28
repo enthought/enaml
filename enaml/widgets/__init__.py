@@ -11,6 +11,7 @@ from .combo_box import ComboBox
 from .container import Container
 from .date_edit import DateEdit
 from .datetime_edit import DatetimeEdit
+from .dialog import Dialog
 from .field import Field
 from .float_slider import FloatSlider
 from .html import Html

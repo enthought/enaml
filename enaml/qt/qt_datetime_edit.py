@@ -26,9 +26,10 @@ class QtDatetimeEdit(QtBoundedDatetime):
         """ Initialize the widget's attributes
 
         """
-        self.set_datetime(init_attrs.get('datetime'))
-        self.set_min_datetime(init_attrs.get('min_datetime'))
-        self.set_max_datetime(init_attrs.get('max_datetime'))
+        super(QtDatetimeEdit, self).initialize(init_attrs)
+        self.set_datetime(init_attrs.get('value'))
+        self.set_min_datetime(init_attrs.get('minimum'))
+        self.set_max_datetime(init_attrs.get('maximum'))
         self.set_datetime_format(init_attrs.get('datetime_format'))
 
     def bind(self):

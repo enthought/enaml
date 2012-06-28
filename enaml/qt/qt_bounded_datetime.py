@@ -2,17 +2,17 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from .qt_constraints_widget import QtConstraintsWidget
 
-from .qt_control import QtControl
 
-class QtBoundedDatetime(QtControl):
+class QtBoundedDatetime(QtConstraintsWidget):
     """ A base class for datetime widgets
 
     """
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
-    def receive_set_date(self, ctxt):
+    def receive_set_datetime(self, ctxt):
         """ Message handler for set_datetime
     
         """
@@ -20,7 +20,7 @@ class QtBoundedDatetime(QtControl):
         if datetime is not None:
             self.set_datetime(datetime)
 
-    def receive_set_max_date(self, ctxt):
+    def receive_set_max_datetime(self, ctxt):
         """ Message handler for set_max_datetime
 
         """
@@ -28,7 +28,7 @@ class QtBoundedDatetime(QtControl):
         if datetime is not None:
             self.set_max_datetime(datetime)
 
-    def receive_set_min_date(self, ctxt):
+    def receive_set_min_datetime(self, ctxt):
         """ Message handler for set_min_datetime
 
         """

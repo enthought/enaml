@@ -47,7 +47,7 @@ class DatetimeEdit(BoundedDatetime):
         super_attrs = super(DatetimeEdit, self).initial_attrs()
         attrs = {'datetime_format' : self.datetime_format}
         super_attrs.update(attrs)
-        return attrs
+        return super_attrs
 
     #--------------------------------------------------------------------------
     # Toolkit Communication

@@ -27,7 +27,7 @@ class BoundedDatetime(ConstraintsWidget):
     """
     #: The minimum datetime available in the datetime edit. If not 
     #: defined then the default value is midnight September 14, 1752.
-    mininmum = Property(Datetime, depends_on ='_minimum')
+    minimum = Property(Datetime, depends_on ='_minimum')
 
     #: The internal minimum datetime storage
     _minimum = Datetime(py_datetime(1752, 9, 14, 0, 0, 0, 0))
@@ -38,7 +38,7 @@ class BoundedDatetime(ConstraintsWidget):
     maximum = Property(Datetime, depends_on ='_maximum')
 
     #: The internal maximum datetime storage
-    _minimum = Datetime(py_datetime(7999, 12, 31, 23, 59, 59, 999000))
+    _maximum = Datetime(py_datetime(7999, 12, 31, 23, 59, 59, 999000))
 
     #: The currently selected date. Default is datetime.now(). The
     #: value is bounded between :attr:`minimum` and :attr:`maximum`. 

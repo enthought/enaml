@@ -81,6 +81,7 @@ class QtSpinBox(QtConstraintsWidget):
         """ Initialize the widget's attributes
 
         """
+        super(QtSpinBox, self).initialize(init_attrs)
         self.set_maximum(init_attrs.get('maximum', 100))
         self.set_minimum(init_attrs.get('minimum', 0))
         self.set_single_step(init_attrs.get('single_step', 1))

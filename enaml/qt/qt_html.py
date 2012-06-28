@@ -3,9 +3,9 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt.QtGui import QTextEdit
-from .qt_control import QtControl
+from .qt_constraints_widget import QtConstraintsWidget
 
-class QtHtml(QtControl):
+class QtHtml(QtConstraintsWidget):
     """ An html display widget based on a QTextEdit
 
     """
@@ -19,6 +19,7 @@ class QtHtml(QtControl):
         """ Initialize the widget's attributes
 
         """
+        super(QtHtml, self).initialize(init_attrs)
         self.set_source(init_attrs.get('source'))
 
     #--------------------------------------------------------------------------

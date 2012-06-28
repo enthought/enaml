@@ -27,9 +27,9 @@ class QtDateEdit(QtBoundedDate):
 
         """
         super(QtDateEdit, self).initialize(init_attrs)
-        self.set_date(init_attrs.get('date'))
-        self.set_min_date(init_attrs.get('min_date'))
-        self.set_max_date(init_attrs.get('max_date'))
+        self.set_date(init_attrs.get('value'))
+        self.set_min_date(init_attrs.get('minimum'))
+        self.set_max_date(init_attrs.get('maximum'))
         self.set_date_format(init_attrs.get('date_format'))
 
     def bind(self):
