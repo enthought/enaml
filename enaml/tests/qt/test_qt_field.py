@@ -59,20 +59,12 @@ class TestQtField(object):
         self.field.recv('set_read_only', {'value':True})
         assert self.field.widget.isReadOnly() == True
 
-    def test_set_submit_mode(self):
-        """ Test the QtField's set_submit_mode command
-
-        """
-        # XXX submit mode not implemented
-        pass
-
     def test_set_text(self):
         """ Test the QtField's set_text command
 
         """
         text = "Test"
         self.field.recv('set_text', {'text':text})
-	print self.field.widget.text()
         assert self.field.widget.text() == text
 
     def test_set_validator(self):
