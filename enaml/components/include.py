@@ -195,11 +195,11 @@ class Include(BaseComponent):
         ----------
         removed : set
             The set of components being removed. This is allowed to 
-            overlap with added (e.g. a reverse operation).
+            overlap with `added` (e.g. a reverse operation).
 
         added : set
             The set of components being added. This is allowed to 
-            overlap with added (e.g. a reverse operation).
+            overlap with `removed` (e.g. a reverse operation).
 
         """
         if self.initialized:
