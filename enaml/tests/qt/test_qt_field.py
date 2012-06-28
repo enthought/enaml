@@ -71,7 +71,8 @@ class TestQtField(object):
 
         """
         text = "Test"
-        self.field.recv('set_text', {'value':text})
+        self.field.recv('set_text', {'text':text})
+	print self.field.widget.text()
         assert self.field.widget.text() == text
 
     def test_set_validator(self):
