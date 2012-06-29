@@ -45,42 +45,18 @@ class QtDateEdit(QtBoundedDate):
         """ Event handler for date_changed
 
         """
-        self.send('date_changed', {'value':qdate_to_python(date)})
+        self.send({'action':'date_changed','date':qdate_to_python(date)})
 
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
-    def receive_set_date(self, ctxt):
-        """ Message handler for set_date
-
-        """
-        date = ctxt.get('value')
-        if date is not None:
-            self.set_date(date)
-
-    def receive_set_max_date(self, ctxt):
-        """ Message handler for set_max_date
-
-        """
-        date = ctxt.get('value')
-        if date is not None:
-            self.set_max_date(date)
-
-    def receive_set_min_date(self, ctxt):
-        """ Message handler for set_min_date
-
-        """
-        date = ctxt.get('value')
-        if date is not None:
-            self.set_min_date(date)
-
     def receive_set_date_format(self, ctxt):
         """ Message handler for set_date_format
 
         """
-        date = ctxt.get('value')
-        if date is not None:
-            self.set_date_format(date)
+        date_format = ctxt.get('date_format')
+        if date_format is not None:
+            self.set_date_format(date_format)
 
     #--------------------------------------------------------------------------
     # Widget Update Methods

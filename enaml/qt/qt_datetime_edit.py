@@ -45,43 +45,9 @@ class QtDatetimeEdit(QtBoundedDatetime):
         """ Event handler for datetime_changed
 
         """
-        self.send('datetime_changed', {'value':qdatetime_to_python(datetime)})
-
-    #--------------------------------------------------------------------------
-    # Message Handlers
-    #--------------------------------------------------------------------------
-    def receive_set_datetime(self, ctxt):
-        """ Message handler for set_datetime
-
-        """
-        datetime = ctxt.get('value')
-        if datetime is not None:
-            self.set_datetime(datetime)
-
-    def receive_set_max_datetime(self, ctxt):
-        """ Message handler for set_max_datetime
-
-        """
-        datetime = ctxt.get('value')
-        if datetime is not None:
-            self.set_max_datetime(datetime)
-
-    def receive_set_min_datetime(self, ctxt):
-        """ Message handler for set_min_datetime
-
-        """
-        datetime = ctxt.get('value')
-        if datetime is not None:
-            self.set_min_datetime(datetime)
-
-    def receive_set_datetime_format(self, ctxt):
-        """ Message handler for set_datetime_format
-
-        """
-        datetime = ctxt.get('value')
-        if datetime is not None:
-            self.set_datetime_format(datetime)
-
+        self.send({'action':'datetime_changed',
+                   'datetime':qdatetime_to_python(datetime)})
+        
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------

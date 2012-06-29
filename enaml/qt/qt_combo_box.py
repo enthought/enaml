@@ -36,7 +36,7 @@ class QtComboBox(QtConstraintsWidget):
         """ Event handler for selected
 
         """
-        self.send('selected', {'value':self.widget.currentIndex()})
+        self.send({'action':'selected','index':self.widget.currentIndex()})
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -45,7 +45,7 @@ class QtComboBox(QtConstraintsWidget):
         """ Message handler for set_index
 
         """
-        index = ctxt.get('value')
+        index = ctxt.get('index')
         if index is not None:
             self.set_index(index)
 
@@ -53,7 +53,7 @@ class QtComboBox(QtConstraintsWidget):
         """ Message handler for set_items
 
         """
-        items = ctxt.get('value')
+        items = ctxt.get('items')
         if items is not None:
             self.set_items(items)
 

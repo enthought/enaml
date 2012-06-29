@@ -16,7 +16,7 @@ class QtBoundedDatetime(QtConstraintsWidget):
         """ Message handler for set_datetime
     
         """
-        datetime = ctxt.get('value')
+        datetime = ctxt.get('datetime')
         if datetime is not None:
             self.set_datetime(datetime)
 
@@ -24,7 +24,7 @@ class QtBoundedDatetime(QtConstraintsWidget):
         """ Message handler for set_max_datetime
 
         """
-        datetime = ctxt.get('value')
+        datetime = ctxt.get('max_datetime')
         if datetime is not None:
             self.set_max_datetime(datetime)
 
@@ -32,7 +32,7 @@ class QtBoundedDatetime(QtConstraintsWidget):
         """ Message handler for set_min_datetime
 
         """
-        datetime = ctxt.get('value')
+        datetime = ctxt.get('min_datetime')
         if datetime is not None:
             self.set_min_datetime(datetime)
             

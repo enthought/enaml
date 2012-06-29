@@ -29,11 +29,12 @@ class Calendar(BoundedDate):
         """ Callback from the UI when the control is selected.
 
         """
-        self.selected(ctxt['value'])
+        self.selected(ctxt['date'])
+        self.set_guarded(value=ctxt['date'])
 
     def receive_activated(self, ctxt):
         """ Callback from the UI when the control is activated.
 
         """
-        self.activated(ctxt['value'])
+        self.activated(ctxt['date'])
 

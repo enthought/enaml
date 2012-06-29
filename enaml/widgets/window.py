@@ -59,29 +59,29 @@ class Window(WidgetComponent):
         """ Send a 'close' command to the client UI
 
         """
-        self.send('close', {})
+        self.send({'action':'close'})
 
     def maximize(self):
         """ Send a 'maximize' command to the client UI.
 
         """
-        self.send('maximize', {})
+        self.send({'action':'maximize'})
 
     def minimize(self):
         """ Send a 'minimize' command to the client UI.
 
         """
-        self.send('minimize', {})
+        self.send({'action':'minimize'})
 
     def restore(self):
         """ Send a 'restore' command to the client UI.
 
         """
-        self.send('restore', {})
+        self.send({'action':'restore'})
 
     def show(self):
         """ Send a 'show' command to the client UI.
 
         """
         self.visible = True
-        self.send('show', {})
+        self.send({'action':'show'})

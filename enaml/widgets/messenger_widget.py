@@ -274,5 +274,5 @@ class MessengerWidget(AsyncMessenger, BaseComponent):
         """
         if name not in self.loopback_guard:
             msg = 'set_' + name
-            self.send(msg, {'value': new})
+            self.send({'action':msg, name:new})
 

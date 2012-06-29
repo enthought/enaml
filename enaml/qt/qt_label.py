@@ -30,7 +30,7 @@ class QtLabel(QtConstraintsWidget):
         """ Message handler for set_text
 
         """
-        text = ctxt.get('value')
+        text = ctxt.get('text')
         if text is not None:
             self.set_text(text)
 
@@ -38,7 +38,7 @@ class QtLabel(QtConstraintsWidget):
         """ Message handler for set_word_wrap
 
         """
-        wrap = ctxt.get('value')
+        wrap = ctxt.get('word_wrap')
         if wrap is not None:
             self.set_word_wrap(wrap)
 

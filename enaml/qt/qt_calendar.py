@@ -45,41 +45,14 @@ class QtCalendar(QtBoundedDate):
         """ Event handler for date_activated
 
         """
-        self.send('activated', {'value':qdate_to_python(date)})
+        self.send({'action':'activated','date':qdate_to_python(date)})
 
     def on_selected(self):
         """ Event handler for date_selected
 
         """
-        self.send('selected', {'value':qdate_to_python(
+        self.send({'action':'selected','date':qdate_to_python(
             self.widget.selectedDate())})
-
-    #--------------------------------------------------------------------------
-    # Message Handlers
-    #--------------------------------------------------------------------------
-    def receive_set_date(self, ctxt):
-        """ Message handler for set_date
-
-        """
-        date = ctxt.get('value')
-        if date is not None:
-            self.set_date(date)
-
-    def receive_set_max_date(self, ctxt):
-        """ Message handler for set_max_date
-
-        """
-        date = ctxt.get('value')
-        if date is not None:
-            self.set_max_date(date)
-
-    def receive_set_min_date(self, ctxt):
-        """ Message handler for set_min_date
-
-        """
-        date = ctxt.get('value')
-        if date is not None:
-            self.set_min_date(date)
 
     #--------------------------------------------------------------------------
     # Widget Update Methods

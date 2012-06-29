@@ -50,19 +50,19 @@ class QtAbstractButton(QtConstraintsWidget):
         """ Handle the 'set_checkable' message from the Enaml widget.
 
         """
-        self.set_checkable(ctxt['value'])
+        self.set_checkable(ctxt['checkable'])
 
     def receive_set_checked(self, ctxt):
         """ Handle the 'set_checked' message from the Enaml widget.
 
         """
-        self.set_checked(ctxt['value'])
+        self.set_checked(ctxt['checked'])
 
     def receive_set_text(self, ctxt):
         """ Handle the 'set_text' message from the Enaml widget.
 
         """
-        self.set_text(ctxt['value'])
+        self.set_text(ctxt['text'])
         # Trigger a relayout since the size hint likely changed
 
     #--------------------------------------------------------------------------
@@ -72,25 +72,25 @@ class QtAbstractButton(QtConstraintsWidget):
         """ The event handler for the pressed event.
 
         """
-        self.send('pressed', {})
+        self.send({'action':'pressed'})
 
     def on_released(self):
         """ The event handler for the released event.
 
         """
-        self.send('released', {})
+        self.send({'action':'released'})
 
     def on_clicked(self):
         """ The event handler fo the clicked event.
 
         """
-        self.send('clicked', {'checked': self.widget.isChecked()})
+        self.send({'action':'clicked','checked': self.widget.isChecked()})
 
     def on_toggled(self):
         """ The event handler for the toggled event.
 
         """
-        self.send('toggled', {'checked': self.widget.isChecked()})
+        self.send({'action':'toggled','checked': self.widget.isChecked()})
 
     #--------------------------------------------------------------------------
     # Widget update methods

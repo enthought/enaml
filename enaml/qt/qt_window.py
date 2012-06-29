@@ -146,7 +146,7 @@ class QtWindow(QtWidgetComponent):
         """ Message handler for set_title
 
         """
-        return self.set_title(ctxt.get('value', ''))
+        return self.set_title(ctxt.get('title', ''))
     
     #--------------------------------------------------------------------------
     # Widget Update Methods

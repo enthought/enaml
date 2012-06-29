@@ -59,7 +59,7 @@ class DateEdit(BoundedDate):
         """ Callback from the UI when the date value is changed.
 
         """
-        date = ctxt['value']
+        date = ctxt['date']
         self.set_guarded(value=date)
         self.date_changed(date)
 

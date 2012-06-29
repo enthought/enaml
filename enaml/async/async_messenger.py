@@ -55,7 +55,7 @@ class AsyncMessenger(HasStrictTraits):
         
         return instance
 
-    def send(self, msg, ctxt):
+    def send(self, ctxt):
         """ Send a message to be handled by a client object.
         
         The message is placed on the send pipe for later delivery to
@@ -78,9 +78,9 @@ class AsyncMessenger(HasStrictTraits):
             this async reply will notify any registered callbacks.
 
         """
-        return self.send_pipe.put(msg, ctxt)
+        return self.send_pipe.put(ctxt)
         
-    def recv(self, msg, ctxt):
+    def recv(self, ctxt):
         """ Handle a message sent by the client object.
         
         This method is called by the recv pipe when there is a message 
@@ -111,7 +111,7 @@ class AsyncMessenger(HasStrictTraits):
             if this object does not define a handler for the message.
 
         """
-        handler_name = 'receive_' + msg
+        handler_name = 'receive_' + ctxt['action']
         handler = getattr(self, handler_name, None)
         if handler is not None:
             return handler(ctxt)

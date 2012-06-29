@@ -71,49 +71,49 @@ class QtSlider(QtConstraintsWidget):
         """ Handle the 'set_maximum' message from the Enaml widget.
 
         """
-        return self.set_maximum(ctxt['value'])
+        return self.set_maximum(ctxt['maximum'])
 
     def receive_set_minimum(self, ctxt):
         """ Handle the 'set_minimum' message from the Enaml widget.
 
         """
-        return self.set_minimum(ctxt['value'])
+        return self.set_minimum(ctxt['minimum'])
 
     def receive_set_orientation(self, ctxt):
         """ Handle the 'set_orientation' message from the Enaml widget.
 
         """
-        return self.set_orientation(ctxt['value'])
+        return self.set_orientation(ctxt['orientation'])
 
     def receive_set_page_step(self, ctxt):
         """ Handle the 'set_page_step' message from the Enaml widget.
 
         """
-        return self.set_page_step(ctxt['value'])
+        return self.set_page_step(ctxt['page_step'])
 
     def receive_set_single_step(self, ctxt):
         """ Handle the 'set_single_step' message from the Enaml widget.
 
         """
-        return self.set_single_step(ctxt['value'])
+        return self.set_single_step(ctxt['single_step'])
 
     def receive_set_tick_interval(self, ctxt):
         """ Handle the 'set_tick_interval' message from the Enaml widget.
 
         """
-        return self.set_tick_interval(ctxt['value'])
+        return self.set_tick_interval(ctxt['tick_interval'])
 
     def receive_set_tick_position(self, ctxt):
         """ Handle the 'set_tick_position' message from the Enaml widget.
 
         """
-        return self.set_tick_position(ctxt['value'])
+        return self.set_tick_position(ctxt['tick_position'])
 
     def receive_set_tracking(self, ctxt):
         """ Handle the 'set_tracking' message from the Enaml widget.
 
         """
-        return self.set_tracking(ctxt['value'])
+        return self.set_tracking(ctxt['tracking'])
     
     #--------------------------------------------------------------------------
     # Signal Handlers
@@ -123,8 +123,11 @@ class QtSlider(QtConstraintsWidget):
         slider value has changed.
 
         """
-        ctxt = {'value': self.widget.value()}
-        self.send('set_value', ctxt)
+        ctxt = {
+            'action':'set_value',
+            'value': self.widget.value()
+        }
+        self.send(ctxt)
 
     def on_moved(self):
         """ XXX

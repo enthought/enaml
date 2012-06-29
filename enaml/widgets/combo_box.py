@@ -108,7 +108,7 @@ class ComboBox(ConstraintsWidget):
         """ Callback from the UI when the index changes.
 
         """
-        self.set_guarded(value=self.items[context['value']])
+        self.set_guarded(value=self.items[context['index']])
 
     def _update_index(self):
         """ Notify the client component of updates to the value
@@ -116,7 +116,7 @@ class ComboBox(ConstraintsWidget):
         """
         with self.loopback_guard('index'):
             idx = self.items.index(self.value)
-            self.send('set_index', {'value':idx})
+            self.send({'action':'set_index', 'index':idx})
 
     #--------------------------------------------------------------------------
     # Property Handlers

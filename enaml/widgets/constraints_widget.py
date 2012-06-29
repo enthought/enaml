@@ -164,7 +164,9 @@ class ConstraintsWidget(WidgetComponent):
         to the client.
 
         """
-        self.send('relayout', self._layout_info())
+        context = {'action':'relayout'}
+        context.update(self._layout_info())
+        self.send(context)
 
     #--------------------------------------------------------------------------
     # Constraints Generation

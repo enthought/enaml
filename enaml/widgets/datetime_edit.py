@@ -56,7 +56,7 @@ class DatetimeEdit(BoundedDatetime):
         """ Callback from the UI when the datetime value is changed.
 
         """
-        datetime = ctxt['value']
-        self.set_guarded(datetime=datetime)
+        datetime = ctxt['datetime']
+        self.set_guarded(value=datetime)
         self.datetime_changed(datetime)
 

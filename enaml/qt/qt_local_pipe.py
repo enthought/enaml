@@ -46,7 +46,7 @@ class QtLocalPipe(QObject):
         reply will be None.
 
         """
-        msg, ctxt, reply = queued_msg
+        ctxt, reply = queued_msg
 
         cancelled = self._cancelled
         if reply in cancelled:
@@ -56,10 +56,10 @@ class QtLocalPipe(QObject):
         callback = self._callback
         if callback is not None:
             try:
-                result = callback(msg, ctxt)
+                result = callback(ctxt)
             except Exception as exc:
                 # XXX better exception message trapping
-                result = MessageFailure(msg, ctxt, exc.message)
+                result = MessageFailure(ctxt, exc.message)
         else:
             result = None
 
@@ -68,7 +68,7 @@ class QtLocalPipe(QObject):
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
-    def put(self, msg, ctxt):
+    def put(self, ctxt):
         """ Place a message into the queue for later delivery.
 
         Parameters
@@ -87,7 +87,7 @@ class QtLocalPipe(QObject):
 
         """
         reply = AsyncReply(self._cancel_message)
-        queued_msg = (msg, ctxt, reply)
+        queued_msg = (ctxt, reply)
         self._receive.emit(queued_msg)
         return reply
 

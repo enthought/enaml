@@ -16,7 +16,7 @@ class AsyncSendPipe(object):
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def put(self, msg, ctxt):
+    def put(self, ctxt):
         """ Put a message on a queue to be handled by the client 
         object.
         
