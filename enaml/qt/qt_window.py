@@ -100,11 +100,18 @@ class QtWindow(QtWidgetComponent):
         # XXX this a temporary hack until we decide on the central widget
         # of a window
         super(QtWindow, self).initialize_layout()
-        self.widget.layout().addWidget(self.children[0].widget)
+        if len(self.children) > 0:
+            self.widget.layout().addWidget(self.children[0].widget)
 
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
+    def receive_close(self, ctxt):
+        """ Message handler for close
+
+        """
+        return self.close()
+
     def receive_maximize(self, ctxt):
         """ Message handler for maximize
 
@@ -123,6 +130,12 @@ class QtWindow(QtWidgetComponent):
         """
         return self.restore()
 
+    def receive_show(self, ctxt):
+        """ Message handler for show
+
+        """
+        return self.show()
+
     def receive_set_icon(self, ctxt):
         """ Message handler for set_icon
 
@@ -138,6 +151,13 @@ class QtWindow(QtWidgetComponent):
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
+    def close(self):
+        """ Close the window
+
+        """
+        self.widget.close()
+        return True
+
     def maximize(self):
         """ Maximize the window.
 
@@ -159,6 +179,13 @@ class QtWindow(QtWidgetComponent):
         self.widget.showNormal()
         return True
 
+    def show(self):
+        """ Show the widget
+
+        """
+        self.set_visible(True)
+        return True
+
     def set_icon(self, icon):
         """ Set the window icon.
 
@@ -171,4 +198,3 @@ class QtWindow(QtWidgetComponent):
         """
         self.widget.setWindowTitle(title)
         return True
-        

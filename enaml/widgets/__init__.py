@@ -13,6 +13,7 @@ from .date_edit import DateEdit
 from .datetime_edit import DatetimeEdit
 from .dialog import Dialog
 from .field import Field
+from .file_dialog import FileDialog
 from .float_slider import FloatSlider
 from .html import Html
 from .image_view import ImageView

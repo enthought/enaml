@@ -23,21 +23,11 @@ class QtDialog(QtWindow):
         self.widget = QDialog(self.parent_widget)
         self.widget.setLayout(QtWindowLayout())
 
-    def initialize(self, init_attrs):
-        """ Initialize the dialog with the given modality. The default value
-        is 'non_modal'
-
-        """
-        super(QtDialog, self).initialize(init_attrs)
-        self.set_modality(init_attrs.get('modality', 'non_modal'))
-
     def bind(self):
         """ Connect the events to the correct slots
 
         """
         super(QtDialog, self).bind()
-        # XXX Qt has no opened signal
-        #self.widget.opened.connect(self.on_opened)
         self.widget.finished.connect(self.on_closed)
 
     #--------------------------------------------------------------------------
@@ -66,12 +56,6 @@ class QtDialog(QtWindow):
     #--------------------------------------------------------------------------
     # Signal Handlers
     #--------------------------------------------------------------------------
-    def on_opened(self):
-        """ The event handler for the opened event.
-
-        """
-        self.send('opened', {})
-
     def on_closed(self, qt_result):
         """ The event handler for the closed event.
 
@@ -80,12 +64,24 @@ class QtDialog(QtWindow):
             result = 'accepted'
         else:
             result = 'rejected'
-            
+
         self.send('closed', {'value':result})
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
+    def set_visible(self, visible):
+        """ Override the parent's set_visible method so that the dialog launches
+        correctly with the specified modality
+
+        """
+        if visible:
+            self.send('set_active', {'value':True})
+            self.send('opened', {})
+            self.widget.exec_()
+        else:
+            self.reject()
+
     def set_modality(self, modality):
         """ Set the modality of the dialog window.
 

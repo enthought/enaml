@@ -55,6 +55,12 @@ class Window(WidgetComponent):
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
+    def close(self):
+        """ Send a 'close' command to the client UI
+
+        """
+        self.send('close', {})
+
     def maximize(self):
         """ Send a 'maximize' command to the client UI.
 
@@ -73,3 +79,9 @@ class Window(WidgetComponent):
         """
         self.send('restore', {})
 
+    def show(self):
+        """ Send a 'show' command to the client UI.
+
+        """
+        self.visible = True
+        self.send('show', {})

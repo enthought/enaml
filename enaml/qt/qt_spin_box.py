@@ -4,8 +4,7 @@
 #------------------------------------------------------------------------------
 from .qt.QtGui import QSpinBox, QValidator
 from .qt_constraints_widget import QtConstraintsWidget
-from .qt_enaml_validator import QtEnamlValidator
-
+from enaml.validation.number_validators import IntValidator
 
 class EnamlQSpinBox(QSpinBox):
     """ A QSpinBox sublcass with hooks for user supplied validation.
@@ -35,11 +34,12 @@ class EnamlQSpinBox(QSpinBox):
         then simple unicode(...) conversion is used.
 
         """
-        try:
-            text = self._validator.format(value)
-        except ValueError:
-            text = unicode(value)
-        return text
+        if self.validator():
+            try:
+                text = self._validator.format(value)
+            except ValueError:
+                text = unicode(value)
+            return text
 
     def valueFromText(self, text):
         """ Converts the user typed string into an integer for the
@@ -82,12 +82,11 @@ class QtSpinBox(QtConstraintsWidget):
 
         """
         super(QtSpinBox, self).initialize(init_attrs)
+        self.set_validator(init_attrs.get('validator', IntValidator()))
         self.set_maximum(init_attrs.get('maximum', 100))
         self.set_minimum(init_attrs.get('minimum', 0))
         self.set_single_step(init_attrs.get('single_step', 1))
         self.set_tracking(init_attrs.get('tracking', True))
-        self.set_validator(init_attrs.get('validator',
-                                          QtEnamlValidator(QValidator)))
         self.set_value(init_attrs.get('value', 0))
         self.set_wrap(init_attrs.get('wrap', False))
 

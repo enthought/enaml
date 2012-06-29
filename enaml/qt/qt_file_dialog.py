@@ -26,11 +26,17 @@ class QtFileDialog(QtDialog):
 
         """
         super(QtFileDialog, self).initialize(init_attrs)
-        self.set_mode(init_attrs.get('mode'))
-        self.set_multi_select(init_attrs.get('multi_select'))
-        self.set_directory(init_attrs.get('directory'))
-        self.set_filename(init_attrs.get('filename'))
+        self.set_mode(init_attrs.get('mode', 'open'))
+        self.set_multi_select(init_attrs.get('multi_select', False))
+        self.set_directory(init_attrs.get('directory',
+                           os.path.abspath(os.path.curdir)))
+        self.set_filename(init_attrs.get('filename',
+                          os.path.abspath(__file__)))
+        self.set_filters(init_attrs.get('filters', []))
         self.set_selected_filter(init_attrs.get('selected_filter'))
+        self.widget.setViewMode(QFileDialog.Detail)
+
+
 
     def bind(self):
         """ Binds the signal handlers for the file dialog.
@@ -153,5 +159,5 @@ class QtFileDialog(QtDialog):
     def set_selected_filter(self, selected_filter):
         """ Set the selected filter of the file dialog
 
-        """        
+        """
         self.widget.selectNameFilter(selected_filter)

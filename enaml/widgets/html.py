@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Str
+from traits.api import Str, Bool
 
 from .constraints_widget import ConstraintsWidget
 
@@ -22,6 +22,9 @@ class Html(ConstraintsWidget):
     #: ignore the height hug by default, so they expand freely in height.
     hug_height = 'ignore'
 
+    #: Whether or not the text is editable
+    read_only = Bool(False)
+
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
@@ -31,7 +34,7 @@ class Html(ConstraintsWidget):
 
         """
         super(Html, self).bind()
-        self.default_send('source')
+        self.default_send(['source','read_only'])
 
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
@@ -39,7 +42,7 @@ class Html(ConstraintsWidget):
 
         """
         super_attrs = super(Html, self).initial_attrs()
-        attrs = {'source' : self.source}
+        attrs = {'source' : self.source, 'read_only' : self.read_only}
         super_attrs.update(attrs)
         return super_attrs
 

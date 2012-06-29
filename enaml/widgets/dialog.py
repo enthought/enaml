@@ -9,7 +9,7 @@ from .window import Window
 from ..core.trait_types import EnamlEvent
 from ..enums import DialogResult, Modality
 
-_DIALOG_PROXY_ATTRS = ['modality']
+_DIALOG_PROXY_ATTRS = ['modality', 'visible']
 
 class Dialog(Window):
     """ A Window subclass which adds modal style behavior.
@@ -21,6 +21,10 @@ class Dialog(Window):
     #: A read only property which will be True when the dialog is open, 
     #: False otherwise.
     active = Property(Bool, depends_on='_active')
+
+    #: Override widget_components visible attribute so that the dialog does
+    #: not show when prepare() is called
+    visible = Bool(False)
 
     #: Fired when the dialog is opened.
     opened = EnamlEvent
@@ -113,3 +117,15 @@ class Dialog(Window):
         """
         self._active = False
         self._result = ctxt['value']
+
+    def receive_opened(self, ctxt):
+        """ Message handler for opened
+
+        """
+        self.opened()
+
+    def receive_set_active(self, ctxt):
+        """ Message handler for set_active
+
+        """
+        self._active = ctxt['value']

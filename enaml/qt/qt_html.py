@@ -21,6 +21,7 @@ class QtHtml(QtConstraintsWidget):
         """
         super(QtHtml, self).initialize(init_attrs)
         self.set_source(init_attrs.get('source'))
+        self.set_read_only(init_attrs.get('read_only'))
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -33,6 +34,14 @@ class QtHtml(QtConstraintsWidget):
         if source is not None:
             self.set_source(source)
 
+    def receive_set_read_only(self, ctxt):
+        """ Message handler for set_read_only
+
+        """
+        read_only = ctxt.get('value')
+        if read_only is not None:
+            self.set_read_only(read_only)
+
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
@@ -41,3 +50,9 @@ class QtHtml(QtConstraintsWidget):
 
         """
         self.widget.setHtml(source)
+
+    def set_read_only(self, read_only):
+        """ Set whether or not the widget is editable
+
+        """
+        self.widget.setReadOnly(read_only)
