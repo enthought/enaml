@@ -2,62 +2,37 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-class MessageFailure(Exception):
-    """ An exception representing the failed handling of a message.
-
-    """
-    def __init__(self, msg, fail_message):
-        """ Initialize a CommandFailure.
-
-        Parameters
-        ----------
-        msg : dict
-            The message which failed to be properly handled.
-
-        fail_message : string
-            A message indicating the nature of the failure.
-
-        """
-        super(MessageFailure, self).__init__(fail_message)
-        self.msg = msg
-
-
 class AsyncReply(object):
-    """ An async reply object which notifies callbacks when a message
-    has finished being handled.
+    """ An async reply object which notifies callbacks when a 'reply'
+    is available for a previously made 'request'.
 
-    An async reply is created by an application instance whenever a
-    message is sent to a client. Since the messages are delivered
-    asynchronously, this object provides a means by which user code 
-    can be notified when the message has finished processing.
+    An async reply is created by an application instance whenever an
+    operation of type 'request' is sent to a target. Since the messages
+    are delivered asynchronously, this object provides a means by which 
+    user code can be notified when the operation is completed.
 
     A user may register a callback to be executed when the results of 
-    the message are available. A callback can be supplied by calling
-    the 'set_callback' method. If the message is handled successfuly, 
-    the callback will be invoked with the results of the message.
-
-    A user may also register a failure callback which will be invoked
-    if the message fails to be handled properly by the client. This 
-    callback can be provided by calling the 'set_failback' method.
+    the operation are available. A callback can be supplied by calling
+    the 'set_callback' method. It will be invoked with the payload of 
+    the reply.
 
     """
-    def __init__(self, cancel_msg=None):
+    def __init__(self, cancel_request=None):
         """ Initialize an AsyncReply.
 
         Parameters
         ----------
-        cancel_msg : callable, optional
-            An optional callable that will cancel a message before it 
-            has processed by the client. It should accept a single 
+        cancel_request : callable, optional
+            An optional callable that will cancel a request before 
+            it has processed by the target. It should accept a single 
             argument, which is this async reply instance.
 
         """
-        self._cancel_msg = cancel_msg
+        self._cancel_request = cancel_request
         self._pending = True
         self._cancelled = False
         self._results = None
         self._callback = None
-        self._failback = None
 
     #--------------------------------------------------------------------------
     # Private API
@@ -67,11 +42,7 @@ class AsyncReply(object):
         callback or failback, if provided by the user.
 
         """
-        results = self._results
-        if isinstance(results, MessageFailure):
-            handler = self._failback
-        else:
-            handler = self._callback
+        handler = self._callback
         if handler is not None:
             cb, args, kwargs = handler
             # XXX handle exceptions in callbacks?
@@ -91,9 +62,9 @@ class AsyncReply(object):
         self._cancelled = True
         if self._pending:
             self._pending = False
-            cancel_msg = self._cancel_msg
-            if cancel_msg is not None:
-                cancel_msg(self)
+            cancel_req = self._cancel_request
+            if cancel_req is not None:
+                cancel_req(self)
 
     def finished(self, results):
         """ Called by the application object when the message has
@@ -150,18 +121,14 @@ class AsyncReply(object):
         return self._results
 
     def set_callback(self, callback, *args, **kwargs):
-        """ Set the callback to be run when the message has finished.
+        """ Set the callback to be run when the request has finished.
 
         If the message has already finished and was not cancelled, then
-        the callback will be invoked immediately with the results. If 
+        the callback will be invoked immediately with the payload. If 
         the message has been cancelled, this method is a no-op.
 
         The callback must accept at least one arguments which is the
-        results of the message.
-
-        If the message fails, then the registered callback will not be
-        called. Instead the registered failback will be invoked with 
-        a MessageFailure instance.
+        payload of the reply.
 
         Parameters
         ----------
@@ -177,35 +144,6 @@ class AsyncReply(object):
         if self._cancelled:
             return
         self._callback = (callback, args, kwargs)
-        if not self._pending:
-            self._dispatch()
-
-    def set_failback(self, failback, *args, **kwargs):
-        """ Set the callback to be run if the message fails.
-
-        If the message has already failed and was not cancelled, then
-        the callback will be invoked immediately with the failure. If 
-        the message has been cancelled, this method is a no-op.
-
-        The callback must accept at least one arguments which is an
-        instance of MessageFailure.
-
-        If the message succeeds, then the failback will not be called.
-
-        Parameters
-        ----------
-        callback : callable
-            A callable which accepts at least one argument which will 
-            be the results of the command.
-
-        *args, **kwargs
-            Any addional positional or keyword parameters to pass to 
-            the callback when it is invoked.
-            
-        """
-        if self._cancelled:
-            return
-        self._failback = (failback, args, kwargs)
         if not self._pending:
             self._dispatch()
 

@@ -103,10 +103,14 @@ class AsyncApplication(object):
 
         Returns
         -------
-        result : (send_pipe, recv_pipe)
-            A 2-tuple of pipes to be used by the messenger. The first
-            must be an instance of async_pipe.AsyncSendPipe and the 
-            second must be an instance of async_pipe.AsyncRecvPipe.
+        result : (target_id, send_pipe, recv_pipe)
+            A 3-tuple of id, and pipes to be used by the messenger. The
+            id is a string to use as the 'target_id' property for an 
+            operation in the Enaml messaging protocol. The first pipe 
+            is an instance of async_pipe.AsyncSendPipe and should be
+            used to send operations to the target. The second pipe is
+            an instance of async_pipe.AsyncRecvPipe and should be used
+            to receive operations from the target.
 
         """
         raise NotImplementedError

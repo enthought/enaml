@@ -41,7 +41,7 @@
         // on the peer that should process the operation. These 
         // identifiers are unique and implementation depenent. They are 
         // generated as peers are created.
-        "target": "<string>",
+        "target_id": "<string>",
           
         // An identifier which uniquely defines this operation. For
         // operations of type "message", this will be null. For 
