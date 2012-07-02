@@ -20,8 +20,8 @@ class QtHtml(QtConstraintsWidget):
 
         """
         super(QtHtml, self).initialize(init_attrs)
-        self.set_source(init_attrs.get('source'))
-        self.set_read_only(init_attrs.get('read_only'))
+        self.set_source(init_attrs.get('source', ''))
+        self.set_read_only(init_attrs.get('read_only', False))
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -30,7 +30,7 @@ class QtHtml(QtConstraintsWidget):
         """ Message handler for set_source
 
         """
-        source = ctxt.get('value')
+        source = ctxt.get('source')
         if source is not None:
             self.set_source(source)
 
@@ -38,7 +38,7 @@ class QtHtml(QtConstraintsWidget):
         """ Message handler for set_read_only
 
         """
-        read_only = ctxt.get('value')
+        read_only = ctxt.get('read_only')
         if read_only is not None:
             self.set_read_only(read_only)
 

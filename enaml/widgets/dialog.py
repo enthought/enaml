@@ -97,7 +97,7 @@ class Dialog(Window):
         Ok button.
 
         """
-        self.send('accept', {})
+        self.send({'action':'accept'})
 
     def reject(self):
         """ Close the dialog and set the result to `rejected`.
@@ -106,7 +106,7 @@ class Dialog(Window):
         Cancel button.
 
         """
-        self.send('reject', {})
+        self.send({'action':'reject'})
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -116,7 +116,7 @@ class Dialog(Window):
 
         """
         self._active = False
-        self._result = ctxt['value']
+        self._result = ctxt['result']
 
     def receive_opened(self, ctxt):
         """ Message handler for opened

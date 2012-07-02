@@ -90,6 +90,22 @@ class QtSpinBox(QtConstraintsWidget):
         self.set_value(init_attrs.get('value', 0))
         self.set_wrap(init_attrs.get('wrap', False))
 
+    def bind(self):
+        """ Bind the widget's events
+
+        """
+        super(QtSpinBox, self).bind()
+        self.widget.valueChanged.connect(self.on_value_changed)
+
+    #--------------------------------------------------------------------------
+    # Event Handlers
+    #--------------------------------------------------------------------------
+    def on_value_changed(self):
+        """ Event handler for value_changed
+
+        """
+        self.send({'action':'set_value','value':self.widget.value()})
+        
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
@@ -97,31 +113,31 @@ class QtSpinBox(QtConstraintsWidget):
         """ Message handler for set_maximum
 
         """
-        return self.set_maximum(ctxt['value'])
+        return self.set_maximum(ctxt['maximum'])
 
     def receive_set_minimum(self, ctxt):
         """ Message handler for set_minimum
 
         """
-        return self.set_minimum(ctxt['value'])
+        return self.set_minimum(ctxt['minimum'])
 
     def receive_set_single_step(self, ctxt):
         """ Message handler for set_single_step
 
         """
-        return self.set_single_step(ctxt['value'])
+        return self.set_single_step(ctxt['single_step'])
 
     def receive_set_tracking(self, ctxt):
         """ Message handler for set_tracking
 
         """
-        self.set_tracking(ctxt['value'])
+        self.set_tracking(ctxt['tracking'])
 
     def receive_set_validator(self, ctxt):
         """ Message handler for set_validator
 
         """
-        return self.set_validator(ctxt['value'])
+        return self.set_validator(ctxt['validator'])
 
     def receive_set_value(self, ctxt):
         """ Message handler for set_value
@@ -133,7 +149,7 @@ class QtSpinBox(QtConstraintsWidget):
         """ Message handler for set_wrap
 
         """
-        return self.set_wrap(ctxt['value'])
+        return self.set_wrap(ctxt['wrap'])
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
