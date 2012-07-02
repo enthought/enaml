@@ -93,7 +93,8 @@ class AsyncApplication(object):
 
         All AsyncMessenger instances will call this method once, when 
         they are created. The application must provide the messaging
-        pipes which will be used for communication by this messenger.
+        target id and pipes which will be used for communication by 
+        this messenger.
 
         Parameters
         ----------
@@ -104,13 +105,13 @@ class AsyncApplication(object):
         Returns
         -------
         result : (target_id, send_pipe, recv_pipe)
-            A 3-tuple of id, and pipes to be used by the messenger. The
-            id is a string to use as the 'target_id' property for an 
-            operation in the Enaml messaging protocol. The first pipe 
-            is an instance of async_pipe.AsyncSendPipe and should be
-            used to send operations to the target. The second pipe is
-            an instance of async_pipe.AsyncRecvPipe and should be used
-            to receive operations from the target.
+            A 3-tuple of target id and pipes to be used by the messenger.
+            The target id is a string which will uniquely identify the 
+            messenger instance for the application. The first pipe is an 
+            instance of async_pipe.AsyncSendPipe and should be used to 
+            send operations to the target. The second pipe is an instance
+            of async_pipe.AsyncRecvPipe and should be used to receive 
+            operations from the target.
 
         """
         raise NotImplementedError

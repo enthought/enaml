@@ -30,7 +30,6 @@ class QtWidgetComponent(QtMessengerWidget):
         get = init_attrs.get
         self.set_min_size(get('min_size', (-1, -1)))
         self.set_max_size(get('max_size', (-1, -1)))
-        self.set_size_hint(get('size_hint', (-1, -1)))
         self.set_bgcolor(get('bgcolor', ''))
         self.set_fgcolor(get('fgcolor', ''))
         self.set_font(get('font', ''))
@@ -56,59 +55,53 @@ class QtWidgetComponent(QtMessengerWidget):
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
-    def receive_set_enabled(self, ctxt):
-        """ Process the 'set_enabled' message from Enaml.
+    def on_message_set_enabled(self, payload):
+        """ Process the 'set-enabled' message from Enaml.
 
         """
-        return self.set_enabled(ctxt['value'])
+        self.set_enabled(payload['enabled'])
 
-    def receive_set_visible(self, ctxt):
-        """ Process the 'set_visible' message from Enaml.
+    def on_message_set_visible(self, payload):
+        """ Process the 'set-visible' message from Enaml.
         
         """
-        return self.set_visible(ctxt['value'])
+        self.set_visible(payload['visble'])
 
-    def receive_set_bgcolor(self, ctxt):
-        """ Process the 'set_bgcolor' message from Enaml.
-
-        """
-        return self.set_bgcolor(ctxt['value'])
-
-    def receive_set_fgcolor(self, ctxt):
-        """ Process the 'set_fgcolor' message from Enaml.
+    def on_message_set_bgcolor(self, payload):
+        """ Process the 'set-bgcolor' message from Enaml.
 
         """
-        return self.set_fgcolor(ctxt['value'])
+        self.set_bgcolor(payload['bgcolor'])
 
-    def receive_set_font(self, ctxt):
-        """ Process the 'set_font' message from Enaml.
-
-        """
-        return self.set_font(ctxt['value'])
-
-    def receive_set_size_hint(self, ctxt):
-        """ Process the 'set_size_hint' message from Enaml.
+    def on_message_set_fgcolor(self, payload):
+        """ Process the 'set-fgcolor' message from Enaml.
 
         """
-        return self.set_size_hint(ctxt['value'])
+        self.set_fgcolor(payload['fgcolor'])
 
-    def receive_set_min_size(self, ctxt):
-        """ Process the 'set_min_size' message from Enaml.
-
-        """
-        return self.set_min_size(ctxt['value'])
-
-    def receive_set_max_size(self, ctxt):
-        """ Process the 'set_max_size' message from Enaml.
+    def on_message_set_font(self, payload):
+        """ Process the 'set-font' message from Enaml.
 
         """
-        return self.set_max_size(ctxt['value'])
+        self.set_font(payload['font'])
 
-    def receive_set_show_focus_rect(self, ctxt):
-        """ Process the 'set_show_focus_rect' message from Enaml.
+    def on_message_set_min_size(self, payload):
+        """ Process the 'set-min_size' message from Enaml.
 
         """
-        return self.set_show_focus_rect(ctxt['value'])
+        self.set_min_size(payload['min_size'])
+
+    def on_message_set_max_size(self, payload):
+        """ Process the 'set-max_size' message from Enaml.
+
+        """
+        self.set_max_size(payload['max_size'])
+
+    def on_message_set_show_focus_rect(self, payload):
+        """ Process the 'set-show_focus_rect' message from Enaml.
+
+        """
+        self.set_show_focus_rect(payload['show_focus_rect'])
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -127,7 +120,6 @@ class QtWidgetComponent(QtMessengerWidget):
         if -1 in min_size:
             min_size = (0, 0)
         self.widget.setMinimumSize(*min_size)
-        return True
 
     def set_max_size(self, max_size):
         """ Sets the maximum size on the underlying widget.
@@ -143,20 +135,6 @@ class QtWidgetComponent(QtMessengerWidget):
         if -1 in max_size:
             max_size = (16777215, 16777215)
         self.widget.setMaximumSize(*max_size)
-        return True
-
-    def set_size_hint(self, size_hint):
-        """ Sets the size hint on the underlying widget.
-
-        Parameters
-        ----------
-        size_hint : (int, int)
-            The size hint to use for the widget. A value of (-1, -1)
-            indicates the default size hint.
-
-        """
-        # Setting the size hint is not currently supported.
-        return False
 
     def set_enabled(self, enabled):
         """ Set the enabled state on the underlying widget.
@@ -168,7 +146,6 @@ class QtWidgetComponent(QtMessengerWidget):
 
         """
         self.widget.setEnabled(enabled)
-        return True
 
     def set_visible(self, visible):
         """ Set the visibility state on the underlying widget.
@@ -180,7 +157,6 @@ class QtWidgetComponent(QtMessengerWidget):
 
         """
         self.widget.setVisible(visible)
-        return True
 
     def set_bgcolor(self, bgcolor):
         """ Set the background color on the underlying widget.
@@ -191,7 +167,7 @@ class QtWidgetComponent(QtMessengerWidget):
             The background color of the widget as a CSS color string.
 
         """
-        return False
+        pass
 
     def set_fgcolor(self, fgcolor):
         """ Set the foreground color on the underlying widget.
@@ -202,7 +178,7 @@ class QtWidgetComponent(QtMessengerWidget):
             The foreground color of the widget as a CSS color string.
 
         """
-        return False
+        pass
 
     def set_font(self, font):
         """ Set the font on the underlying widget.
@@ -213,8 +189,8 @@ class QtWidgetComponent(QtMessengerWidget):
             The font for the widget as a CSS font string.
 
         """
-        return False
-
+        pass
+        
     def set_show_focus_rect(self, show):
         """ Sets whether or not to show the focus rectangle around
         the widget. This is currently only supported on OSX.

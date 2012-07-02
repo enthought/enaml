@@ -2,7 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from itertools import izip_longest
+from itertools import count, izip_longest
 
 from enaml.async.async_application import AsyncApplication, AbstractBuilder
 
@@ -53,6 +53,22 @@ class QtLocalClientBuilder(AbstractBuilder):
             stack.extend(child.children)
 
 
+def local_id_gen(stem):
+    """ An identifier generator used by the QtLocalApplication to 
+    generate unique identifiers for messaging.
+
+    Parameters
+    ----------
+    stem : str
+        A string stem to prepend to a incrementing integer value.
+
+    """
+    counter = count()
+    str_ = str
+    while True:
+        yield stem % str_(counter.next())
+
+       
 class QtLocalApplication(AsyncApplication):
     """ An Enaml AsyncApplication which executes in the local process
     and uses Qt to create the client widgets.
@@ -60,12 +76,20 @@ class QtLocalApplication(AsyncApplication):
     """
     def __init__(self):
         self._qapp = QApplication([])
+        self._target_id_gen = local_id_gen('w')
+        op_id_gen = local_id_gen('op')
+        self._server_pipe = QtLocalPipe(op_id_gen)
+        self._client_pipe = QtLocalPipe(op_id_gen)
 
     #--------------------------------------------------------------------------
-    # Abstract API implementation
+    # AsyncApplication Interface
     #--------------------------------------------------------------------------
     def register(self, messenger):
-        return (QtLocalPipe(), QtLocalPipe())
+        """ Register a messenger with the application.
+
+        """
+        target_id = self._target_id_gen.next()
+        return (target_id, self._server_pipe, self._client_pipe)
 
     def builder(self):
         return QtLocalClientBuilder()

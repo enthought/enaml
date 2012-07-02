@@ -4,14 +4,14 @@
 #------------------------------------------------------------------------------
 from weakref import ref
 
-from enaml.utils import WeakMethodWrapper
+from enaml.async.messenger_mixin import MessengerMixin
 
 
-class QtMessengerWidget(object):
+class QtMessengerWidget(MessengerMixin):
     """ The base class of the Qt widgets wrappers for a Qt Enaml client.
 
     """
-    def __init__(self, parent, uuid, send_pipe, recv_pipe):
+    def __init__(self, parent, target_id, send_pipe, recv_pipe):
         """ Initialize a QtClientWidget
 
         Parameters
@@ -20,9 +20,9 @@ class QtMessengerWidget(object):
             The parent client widget of this widget, or None if this
             client widget has no parent.
 
-        uuid : str
-            A uuid4 hex string which uniquely identifies the Enaml
-            widget on the server side.
+        target_id : str
+            A string which identifies the target Enaml widget with
+            which this widget will communicate.
 
         send_pipe : AsyncSendPipe
             The async send pipe used to send messages to the Enaml
@@ -37,15 +37,13 @@ class QtMessengerWidget(object):
             self.__parent_ref = lambda: None
         else:
             self.__parent_ref = ref(parent)
-            parent.add_child(self)
-        self.uuid = uuid
+            parent.children.add(self)
+        self.widget = None
+        self.children = set()
+        self.target_id = target_id
         self.send_pipe = send_pipe
         self.recv_pipe = recv_pipe
-        self.widget = None
-        self.children = []
-        callback = WeakMethodWrapper(self.recv)
-        self.recv_pipe.set_callback(callback)
-
+        
     #--------------------------------------------------------------------------
     # Properties
     #--------------------------------------------------------------------------
@@ -77,84 +75,15 @@ class QtMessengerWidget(object):
         return parent.widget
 
     #--------------------------------------------------------------------------
-    # Messaging API
-    #--------------------------------------------------------------------------
-    def send(self, ctxt):
-        """ Send a message to be handled by the Enaml widget.
-        
-        The message is placed on the send pipe for later delivery to
-        the Enaml widget on the other side. The return value is an 
-        asynchronous reply object which can provide notification when 
-        the message is finished.
-
-        Parameters
-        ----------
-        msg : string
-            The message to be sent to the Enaml widget.
-            
-        ctxt : dict
-            The argument context for the message.
-
-        Returns
-        -------
-        result : AsyncReply
-            An asynchronous reply object for the given message. When
-            the Enaml widget has finished processing the message, this 
-            async reply will notify any registered callbacks.
-
-        """
-        return self.send_pipe.put(ctxt)
-
-    def recv(self, ctxt):
-        """ Handle a message sent by the Enaml widget.
-        
-        This method is called by the recv pipe when there is a message 
-        from the Enaml widget ready to be handled.
-        
-        This method will dispatch the message to methods defined on a 
-        subclass by prefixing the command name with 'receive_'. 
-
-        In order to handle a message named e.g. 'set_label', a sublass 
-        should define a method with the name 'receive_set_label' which 
-        takes a single argument which is the context dictionary for the 
-        message. 
-
-        Exceptions raised in a handler are propagated.
-        
-        Parameters
-        ----------
-        msg : string
-            The message to be handled by the widget.
-            
-        ctxt : dict
-            The context dictionary for the message.
-
-        Returns
-        -------
-        result : object or NotImplemented
-            The return value of the message handler or NotImplemented
-            if this object does not define a handler for the message.
-
-        """
-        handler_name = 'receive_' + ctxt['action']
-        handler = getattr(self, handler_name, None)
-        if handler is not None:
-            return handler(ctxt)
-        return NotImplemented
-
-    #--------------------------------------------------------------------------
-    # Abstract API
+    # Public API
     #--------------------------------------------------------------------------
     def create(self):
-        """ A method called by the builder in order to create the 
-        underlying QWidget object.
+        """ A method which must be implemented by subclasses. It should
+        create the underlying QWidget object.
 
         """
         raise NotImplementedError
 
-    #--------------------------------------------------------------------------
-    # Public API
-    #--------------------------------------------------------------------------
     def initialize(self, init_attrs):
         """ A method called by the builder in order to initialize the
         attributes of the underlying QWidget object.
@@ -177,10 +106,13 @@ class QtMessengerWidget(object):
         """
         pass
 
-    def add_child(self, child):
-        """ Add a child to this widget. This is called by a child widget
-        when it is parented.
+    def init_messaging(self):
+        """ A method called by the builder after layout as been inited.
+        and which binds the receiving handlers for the pipes.
 
         """
-        self.children.append(child)
-
+        # XXX not sure if I like this at the moment.
+        self.bind_recv_handlers()
+        for child in self.children:
+            child.init_messaging()
+            

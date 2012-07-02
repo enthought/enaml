@@ -20,11 +20,19 @@ class abstractclassmethod(classmethod):
         super(abstractclassmethod, self).__init__(func)
 
 
-class WeakMethodWrapper(object):
+class WeakMethod(object):
     """ An object which weakly binds a method with a lifetime bound
-    to the lifetime of the underlying object.
+    to the lifetime of the underlying object. 
+
+    Instances of WeakMethodWrapper are also weakref-able with a 
+    lifetime which is also bound to lifetime of the method owner.
 
     """
+    #: An internal set which will maintain a strong reference to the
+    #: the underlying weak method wrapper until the owner of the 
+    #: method is destroyed.
+    _instances_ = set()
+
     def __init__(self, method, default=None):
         """ Initialize a WeakMethodWrapper.
 
@@ -38,10 +46,15 @@ class WeakMethodWrapper(object):
             the method has been garbage colleced. Defaults to None.
 
         """
+        def remove(wr, thisref=ref(self)):
+            this = thisref()
+            if this is not None:
+                this._instances_.discard(this)
         self._im_func = method.im_func
         self._im_class = method.im_class
-        self._im_self_ref = ref(method.im_self)
+        self._im_self_ref = ref(method.im_self, remove)
         self._default = default
+        self._instances_.add(self)
 
     def __call__(self, *args, **kwargs):
         """ Invoke the wrapped method by reconstructing the bound
