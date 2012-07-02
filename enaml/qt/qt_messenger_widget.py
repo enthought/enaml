@@ -89,9 +89,6 @@ class QtMessengerWidget(object):
 
         Parameters
         ----------
-        msg : string
-            The message to be sent to the Enaml widget.
-            
         ctxt : dict
             The argument context for the message.
 
@@ -123,9 +120,6 @@ class QtMessengerWidget(object):
         
         Parameters
         ----------
-        msg : string
-            The message to be handled by the widget.
-            
         ctxt : dict
             The context dictionary for the message.
 

@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 import os
 from .qt.QtGui import QFileDialog
-from qt_dialog import QtDialog
+from .qt_dialog import QtDialog
 
 QT_ACCEPT_MODE = {
     'open' : QFileDialog.AcceptOpen,
@@ -53,7 +53,7 @@ class QtFileDialog(QtDialog):
         """ Message handler for set_mode
 
         """
-        mode = ctxt.get('value')
+        mode = ctxt.get('mode')
         if mode is not None:
             self.set_mode(mode)
 
@@ -61,7 +61,7 @@ class QtFileDialog(QtDialog):
         """ Message handler for set_multi_select
 
         """
-        multi_select = ctxt.get('value')
+        multi_select = ctxt.get('multi_select')
         if multi_select is not None:
             self.set_multi_select(multi_select)
 
@@ -69,7 +69,7 @@ class QtFileDialog(QtDialog):
         """ Message handler for set_directory
 
         """
-        directory = ctxt.get('value')
+        directory = ctxt.get('directory')
         if directory is not None:
             self.set_directory(directory)
 
@@ -77,7 +77,7 @@ class QtFileDialog(QtDialog):
         """ Message handler for set_filename
 
         """
-        filename = ctxt.get('value')
+        filename = ctxt.get('filename')
         if filename is not None:
             self.set_filename(filename)
 
@@ -85,7 +85,7 @@ class QtFileDialog(QtDialog):
         """ Message handler for set_filters
 
         """
-        filters = ctxt.get('value')
+        filters = ctxt.get('filters')
         if filters is not None:
             self.set_filters(filters)
 
@@ -93,7 +93,7 @@ class QtFileDialog(QtDialog):
         """ Message handler for set_selected_filter
 
         """
-        selected_filter = ctxt.get('value')
+        selected_filter = ctxt.get('selected_filter')
         if selected_filter is not None:
             self.set_selected_filter(selected_filter)
 
@@ -106,15 +106,15 @@ class QtFileDialog(QtDialog):
         """
         first_file = files[0] if files else u''
         directory, filename = os.path.split(first_file)
-        self.send('set_directory', {'directory':directory})
-        self.send('set_filename', {'filename':filename})
-        self.send('set_paths', {'paths':files})
+        self.send({'action':'set_directory', 'directory':directory})
+        self.send({'action':'set_filename', 'filename':filename})
+        self.send({'action':'set_paths', 'paths':files})
 
     def on_filter_selected(self, qt_filter):
         """ The signal handler for the dialog's `filterSelected` signal.
 
         """
-        self.send('set_selected_filter', {'filter':qt_filter})
+        self.send({'action':'set_selected_filter', 'filter':qt_filter})
 
     #--------------------------------------------------------------------------
     # Widget Update Methods

@@ -20,8 +20,8 @@ class QtLabel(QtConstraintsWidget):
 
         """
         super(QtLabel, self).initialize(init_attrs)
-        self.set_text(init_attrs.get('text'))
-        self.set_word_wrap(init_attrs.get('word_wrap'))
+        self.set_text(init_attrs.get('text', ''))
+        self.set_word_wrap(init_attrs.get('word_wrap', False))
 
     #--------------------------------------------------------------------------
     # Message Handlers

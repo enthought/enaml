@@ -149,23 +149,23 @@ class Field(ConstraintsWidget):
         self._text = context['text']
         self._field_return_pressed()
 
-    def receive_selected_text(self, context):
+    def receive_set_selected_text(self, context):
         """ Callback from the UI when the control's text is selected
 
         """
-        self.selected_text = context['value']
+        self.selected_text = context['selected_text']
 
     def receive_set_cursor_position(self, context):
         """ Callback from the UI when the control's cursor position changes.
 
         """
-        self.cursor_position = context['value']
+        self.cursor_position = context['cursor_position']
 
     def receive_set_modified(self, context):
         """ Callback from the UI when the control's value is modified.
 
         """
-        self.modified = context['value']
+        self.modified = context['modified']
 
     def receive_text_edited(self, context):
         """ Callback from the UI when the control's text is edited.
@@ -178,7 +178,7 @@ class Field(ConstraintsWidget):
         """ Forcibly update the text in the UI.
 
         """
-        self.send('set_text', {'text':text})
+        self.send({'action':'set_text', 'text':text})
 
     #--------------------------------------------------------------------------
     # Submission Machinery

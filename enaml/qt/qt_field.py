@@ -53,6 +53,8 @@ class QtField(QtConstraintsWidget):
         self.widget.lostFocus.connect(self.on_lost_focus)
         self.widget.returnPressed.connect(self.on_return_pressed)
         self.widget.textEdited.connect(self.on_text_edited)
+        self.widget.selectionChanged.connect(self.on_selection_changed)
+        self.widget.cursorPositionChanged.connect(self.on_cursor_changed)
 
     #--------------------------------------------------------------------------
     # Event Handlers
@@ -61,19 +63,33 @@ class QtField(QtConstraintsWidget):
         """ Event handler for lost_focus
 
         """
-        self.send('lost_focus', {'text':self.widget.text()})
+        self.send({'action':'lost_focus', 'text':self.widget.text()})
 
     def on_return_pressed(self):
         """ Event handler for return_pressed
 
         """
-        self.send('return_pressed', {'text':self.widget.text()})
+        self.send({'action':'return_pressed', 'text':self.widget.text()})
 
     def on_text_edited(self):
         """ Event handler for text_edited
 
         """
-        self.send('text_edited', {'text':self.widget.text()})
+        self.send({'action':'text_edited', 'text':self.widget.text()})
+
+    def on_selection_changed(self):
+        """ Event handler for selection_changed
+
+        """
+        self.send({'action':'set_selected_text',
+                   'selected_text':self.widget.selectedText()})
+
+    def on_cursor_changed(self):
+        """ Event handler for cursor_changed
+
+        """
+        self.send({'action':'set_cursor_position',
+                   'cursor_position':self.widget.cursorPosition()})
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -82,7 +98,7 @@ class QtField(QtConstraintsWidget):
         """ Message handler for set_max_length
 
         """
-        length = ctxt.get('value')
+        length = ctxt.get('max_length')
         if length is not None:
             self.set_max_length(length)
 
@@ -90,7 +106,7 @@ class QtField(QtConstraintsWidget):
         """ Message handler for set_password_mode
 
         """
-        mode = ctxt.get('value')
+        mode = ctxt.get('password_mode')
         if mode is not None:
             self.set_password_mode(mode)
 
@@ -98,7 +114,7 @@ class QtField(QtConstraintsWidget):
         """ Message handler for set_placeholder_text
 
         """
-        text = ctxt.get('value')
+        text = ctxt.get('placeholder_text')
         if text is not None:
             self.set_placeholder_text(text)
 
@@ -106,7 +122,7 @@ class QtField(QtConstraintsWidget):
         """ Message handler for set_read_only
 
         """
-        read_only = ctxt.get('value')
+        read_only = ctxt.get('read_only')
         if read_only is not None:
             self.set_read_only(read_only)
 
@@ -122,7 +138,7 @@ class QtField(QtConstraintsWidget):
         """ Message handler for set_validator
 
         """
-        val = ctxt.get('value')
+        val = ctxt.get('validator')
         if val is not None:
             self.set_validator(val)
 

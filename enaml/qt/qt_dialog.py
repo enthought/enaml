@@ -37,7 +37,7 @@ class QtDialog(QtWindow):
         """ Handle a set_modality message
 
         """
-        modality = ctxt.get('value')
+        modality = ctxt.get('modality')
         if modality is not None:
             self.set_modality(modality)
 
@@ -65,7 +65,7 @@ class QtDialog(QtWindow):
         else:
             result = 'rejected'
 
-        self.send('closed', {'value':result})
+        self.send({'action':'closed','result':result})
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -76,8 +76,8 @@ class QtDialog(QtWindow):
 
         """
         if visible:
-            self.send('set_active', {'value':True})
-            self.send('opened', {})
+            self.send({'action':'set_active','value':True})
+            self.send({'action':'opened'})
             self.widget.exec_()
         else:
             self.reject()

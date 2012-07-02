@@ -64,9 +64,6 @@ class AsyncMessenger(HasStrictTraits):
 
         Parameters
         ----------
-        msg : string
-            The message to be sent to the client object.
-            
         ctxt : dict
             The argument context for the message.
 
@@ -98,9 +95,6 @@ class AsyncMessenger(HasStrictTraits):
         
         Parameters
         ----------
-        msg : string
-            The message to be handled by the client.
-            
         ctxt : dict
             The context dictionary for the message.
 

@@ -20,9 +20,9 @@ class QtProgressBar(QtConstraintsWidget):
 
         """
         super(QtProgressBar, self).initialize(init_attrs)
-        self.set_minimum(init_attrs.get('minimum'))
-        self.set_maximum(init_attrs.get('maximum'))
-        self.set_value(init_attrs.get('value'))
+        self.set_minimum(init_attrs.get('minimum', 0))
+        self.set_maximum(init_attrs.get('maximum', 100))
+        self.set_value(init_attrs.get('value', 0))
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -31,7 +31,7 @@ class QtProgressBar(QtConstraintsWidget):
         """ Message handler for set_minimum
 
         """
-        minimum = ctxt.get('value')
+        minimum = ctxt.get('minimum')
         if minimum is not None:
             self.set_minimum(minimum)
 
@@ -39,7 +39,7 @@ class QtProgressBar(QtConstraintsWidget):
         """ Message handler for set_maximum
 
         """
-        maximum = ctxt.get('value')
+        maximum = ctxt.get('maximum')
         if maximum is not None:
             self.set_maximum(maximum)
 
