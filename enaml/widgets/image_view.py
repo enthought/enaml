@@ -2,13 +2,12 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Bool
-
+from base64 import b64encode
+from traits.api import Bool, Instance
 from .constraints_widget import ConstraintsWidget
-
+from .image import Image
 
 _IV_PROXY_ATTRS = [
-    #'image', 
     'scale_to_fit', 'preserve_aspect_ratio', 'allow_upscaling'
 ]
 
@@ -18,7 +17,7 @@ class ImageView(ConstraintsWidget):
 
     """
     #: A Pixmap instance containing the image to display.
-    # image = Instance(AbstractTkImage)
+    image = Instance(Image)
     
     #: Whether or not to scale the image with the size of the component.
     scale_to_fit = Bool(True)
@@ -45,6 +44,7 @@ class ImageView(ConstraintsWidget):
         """
         super(ImageView, self).bind()
         self.default_send(*_IV_PROXY_ATTRS)
+        self.on_trait_change(self.send_image, 'image')
 
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
@@ -54,5 +54,21 @@ class ImageView(ConstraintsWidget):
         super_attrs = super(ImageView, self).initial_attrs()
         attrs = dict((attr, getattr(self, attr)) for attr in _IV_PROXY_ATTRS)
         super_attrs.update(attrs)
+        super_attrs.update({'image_data':b64encode(self.image.data())})
         return super_attrs
 
+    def send_image(self):
+        """ Sends the image data, encoded in a base64 format
+
+        """
+        enc_data = b64encode(self.image.data())
+        self.send({'action':'set_image_data', 'image_data':enc_data})
+
+    #--------------------------------------------------------------------------
+    # Public API
+    #--------------------------------------------------------------------------
+    def scale(self, size):
+        """ Scale the image to the given size
+
+        """
+        self.send({'action':'scale', 'size':size})
