@@ -2,12 +2,13 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+import re
+
 from traits.api import (
-    Bool, Int, Unicode, Enum, Instance, Any, List, on_trait_change,
+    Bool, Int, Unicode, Enum, Any, List, on_trait_change,
 )
 
 from enaml.core.trait_types import EnamlEvent
-from enaml.validation import AbstractValidator, CoercingValidator
 
 from .constraints_widget import ConstraintsWidget
 
@@ -26,10 +27,14 @@ class Field(ConstraintsWidget):
     #: is an empty string.
     value = Any(u'')
 
-    #: A validator which manages validation/conversion to and from the
-    #: widget's unicode text and the value attribute.
-    validator = Instance(AbstractValidator, factory=CoercingValidator)
+    #: A regular expression that only allows the user to type values that would
+    #: satisfy the expression
+    validator = Unicode
 
+    #: A validator which checks the text value when the field is submitted. This validator
+    #: determines whether or not to color the field red.
+    submit_validator = Unicode
+    
     #: The maximum length of the field in characters. The default value
     #: is Zero and indicates there is no maximum length.
     max_length = Int
@@ -67,8 +72,8 @@ class Field(ConstraintsWidget):
     #: by the user will be ignored.
     acceptable = Bool
     def _acceptable_default(self):
-        v = self.validator
-        return v.validate(v.format(self.value)) == v.ACCEPTABLE
+        match = re.match(self.submit_validator, self._text)
+        return (match is not None)
 
     #: A list of strings which indicates when the text the in the field
     #: should be converted to a Python object representation and stored 
@@ -111,7 +116,7 @@ class Field(ConstraintsWidget):
         super(Field, self).bind()
         self.default_send(
                 'max_length', 'password_mode', 'placeholder_text', 'read_only',
-                'submit_mode', 'validator', 'value',
+                'submit_mode', 'value', 'validator'
             )
 
     def initial_attrs(self):
@@ -127,7 +132,7 @@ class Field(ConstraintsWidget):
             'placeholder_text' : self.placeholder_text,
             'submit_mode' : self.submit_mode,
             'validator' : self.validator,
-            'value' : self.validator.format(self.value),
+            'value' : self.value,
         }
         super_attrs.update(attrs)
         return super_attrs
@@ -201,38 +206,31 @@ class Field(ConstraintsWidget):
 
         """
         text = self._text
-        v = self.validator
-        self.acceptable = acceptable = (v.validate(text) == v.ACCEPTABLE)
+        valid = re.match(self.submit_validator, text)
+        self.acceptable = acceptable = (valid is not None)
 
         res = False
         if acceptable:
+            # Setting the value attribute may fire off a model 
+            # subscription which has the potential to raise other
+            # exceptions. XXX we may want to log this exception
+            # at some point in the future.
             try:
-                value = v.convert(text)
-            except ValueError as e:
+                with guard(self, 'submitting'):
+                    self.value = text
+                    self.send({'action':'set_valid'})
+            except Exception as e:
                 self.exception = e
                 self.error = True
                 return
             else:
-                # Setting the value attribute may fire off a model 
-                # subscription which has the potential to raise other
-                # exceptions. XXX we may want to log this exception
-                # at some point in the future.
-                try:
-                    with guard(self, 'submitting'):
-                        self.value = value
-                except Exception as e:
-                    self.exception = e
-                    self.error = True
-                    return
-                else:
-                    res = True
-                    self.exception = None
-                    self.error = False
+                res = True
+                self.exception = None
+                self.error = False
+                self.update_text(text)
 
-        if format:
-            text = v.format(self.value)
-            self.update_text(text)
-            self.acceptable = (v.validate(text) == v.ACCEPTABLE)
+        else:
+            self.send({'action':'set_invalid'})
 
         return res
 
@@ -244,10 +242,10 @@ class Field(ConstraintsWidget):
         """
         if not guard.guarded(self, 'submitting'):
             self.modified = False
-            v = self.validator
-            text = v.format(self.value)
+            text = self.value
             self.update_text(text)
-            self.acceptable = (v.validate(text) == v.ACCEPTABLE)
+            valid = re.match(self.submit_validator, text)
+            self.acceptable = (valid is not None)
 
     #--------------------------------------------------------------------------
     # Field Update Methods
@@ -264,8 +262,8 @@ class Field(ConstraintsWidget):
         if 'always' in self.submit_mode:
             self.submit(format=False)
         else:
-            v = self.validator
-            self.acceptable = (v.validate(self._text) == v.ACCEPTABLE)
+            valid = re.match(self.submit_validator, self._text)
+            self.acceptable = (valid is not None)
         self.text_edited()
 
     def _field_return_pressed(self):
