@@ -2,9 +2,10 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+import re
+
 from .qt.QtGui import QSpinBox, QValidator
 from .qt_constraints_widget import QtConstraintsWidget
-from enaml.validation.number_validators import IntValidator
 
 class EnamlQSpinBox(QSpinBox):
     """ A QSpinBox sublcass with hooks for user supplied validation.
@@ -35,10 +36,8 @@ class EnamlQSpinBox(QSpinBox):
 
         """
         if self.validator():
-            try:
-                text = self._validator.format(value)
-            except ValueError:
-                text = unicode(value)
+            # XXX needs to be actually implemented
+            text = unicode(value)
             return text
 
     def valueFromText(self, text):
@@ -46,24 +45,19 @@ class EnamlQSpinBox(QSpinBox):
         control using the user supplied validator.
 
         """
-        return self._validator.convert(text)
+        # XXX needs to be actually implemented
+        return int(text)
 
     def validate(self, text, pos):
         """ Validates whether or not the given text can be converted
         to an integer.
 
         """
-        v = self._validator
-        rv = v.validate(text)
-        if rv == v.ACCEPTABLE:
+        valid = re.match(self.validator(), text)
+        if valid is not None:
             res = QValidator.Acceptable
-        elif rv == v.INTERMEDIATE:
-            res = QValidator.Intermediate
-        elif rv == v.INVALID:
-            res = QValidator.Invalid
         else:
-            # This should never happen
-            raise ValueError('Invalid validation result')
+            res = QValidator.Invalid
         return (res, text, pos)
     
 
@@ -82,7 +76,7 @@ class QtSpinBox(QtConstraintsWidget):
 
         """
         super(QtSpinBox, self).initialize(init_attrs)
-        self.set_validator(init_attrs.get('validator', IntValidator()))
+        self.set_validator(init_attrs.get('validator', '^[0-9]+$'))
         self.set_maximum(init_attrs.get('maximum', 100))
         self.set_minimum(init_attrs.get('minimum', 0))
         self.set_single_step(init_attrs.get('single_step', 1))

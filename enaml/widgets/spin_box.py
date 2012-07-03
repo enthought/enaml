@@ -2,11 +2,9 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Int, Bool, Range, Instance
+from traits.api import Int, Bool, Range, Unicode
 
 from .constraints_widget import ConstraintsWidget
-
-from ..validation import AbstractValidator, IntValidator
 
 
 class SpinBox(ConstraintsWidget):
@@ -34,7 +32,7 @@ class SpinBox(ConstraintsWidget):
     #: If the conversion is succesful but the returned int does not fall
     #: within the allowed range of the spin box, then the spin box will
     #: not be updated. The default validator is a simple IntValidator.
-    validator = Instance(AbstractValidator, factory=IntValidator)
+    validator = Unicode('^[0-9]+$')
 
     #: Whether or not the spin box will wrap around at its extremes. 
     #: Defaults to False.
