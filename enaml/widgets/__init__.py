@@ -17,6 +17,7 @@ from .field import Field
 from .file_dialog import FileDialog
 from .float_slider import FloatSlider
 from .html import Html
+from .icon import Icon
 from .image import Image
 from .image_view import ImageView
 from .label import Label
@@ -25,5 +26,4 @@ from .push_button import PushButton
 from .radio_button import RadioButton
 from .slider import Slider
 from .spin_box import SpinBox
-from .toggle_button import ToggleButton
 from .window import Window

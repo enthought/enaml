@@ -2,15 +2,18 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Bool, Unicode, Property
+from base64 import b64encode
+
+from traits.api import Bool, Unicode, Tuple, Instance
 
 from enaml.core.trait_types import EnamlEvent
 
 from .constraints_widget import ConstraintsWidget
+from .icon import Icon
 
 
 #: The button attributes to proxy to clients.
-_AB_PROXY_ATTRS = ['text', 'checkable', 'checked']
+_AB_PROXY_ATTRS = ['text', 'checkable', 'checked','icon_size']
 
 
 class AbstractButton(ConstraintsWidget):
@@ -22,10 +25,10 @@ class AbstractButton(ConstraintsWidget):
     text = Unicode
 
     #: The icon to use for the button.
-    # icon = ...
+    icon = Instance(Icon)
 
     #: The size to use for the icon.
-    # icon_size = ...
+    icon_size = Tuple
 
     #: Whether or not the button is checkable. The default is False.
     checkable = Bool(False)
@@ -33,24 +36,11 @@ class AbstractButton(ConstraintsWidget):
     #: Whether a checkable button is currently checked.
     checked = Bool(False)
 
-    #: A read only property which indicates whether the user is 
-    #: currently pressing the element.
-    down = Property(Bool, depends_on='_down')
-    
-    #: Fired when the button is pressed.
-    pressed = EnamlEvent
-
-    #: Fired when the button is released.
-    released = EnamlEvent
-
     #: Fired when the button is pressed then released.
     clicked = EnamlEvent
 
     #: Fired when a checkable button is toggled.
     toggled = EnamlEvent
-
-    #: Internal storage for the down attribute
-    _down = Bool(False)
     
     #: How strongly a component hugs it's contents' width. Buttons hug
     #: their contents' width weakly by default.
@@ -66,6 +56,7 @@ class AbstractButton(ConstraintsWidget):
         """
         super(AbstractButton, self).bind()
         self.default_send(*_AB_PROXY_ATTRS)
+        self.on_trait_change(self.send_icon, 'icon')
 
     def initial_attrs(self):
         """ Return a dictionary which contains all the state necessary to
@@ -75,27 +66,19 @@ class AbstractButton(ConstraintsWidget):
         super_attrs = super(AbstractButton, self).initial_attrs()
         attrs = dict((attr, getattr(self, attr)) for attr in _AB_PROXY_ATTRS)
         super_attrs.update(attrs)
+        super_attrs.update({'icon':b64encode(self.icon.data())})
         return super_attrs
 
+    def send_icon(self):
+        """ Send the icon data to the Enaml widget, encoded in base 64 format
+
+        """
+        enc_data = b64encode(self.icon.data())
+        self.send({'action':'set_icon','icon':enc_data})
+        
     #--------------------------------------------------------------------------
     # Toolkit Communication
     #--------------------------------------------------------------------------
-    def receive_pressed(self, ctxt):
-        """ Callback from the UI when the control is pressed.
-
-        """
-        self._down = True
-        self.pressed()
-        return True
-
-    def receive_released(self, ctxt):
-        """ Callback from the UI when the control is released.
-
-        """
-        self._down = False
-        self.released()
-        return True
-
     def receive_clicked(self, ctxt):
         """ Callback from the UI when the control is clicked. The ctxt
         will contain the current checked state.
@@ -115,13 +98,3 @@ class AbstractButton(ConstraintsWidget):
         self.set_guarded(checked=checked)
         self.toggled(checked)
         return True
-
-    #--------------------------------------------------------------------------
-    # Property Getters
-    #--------------------------------------------------------------------------
-    def _get_down(self):
-        """ The property getter for the 'down' attribute.
-
-        """
-        return self._down
-
