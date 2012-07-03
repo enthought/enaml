@@ -118,12 +118,6 @@ class Dialog(Window):
         self._active = False
         self._result = ctxt['result']
 
-    def receive_opened(self, ctxt):
-        """ Message handler for opened
-
-        """
-        self.opened()
-
     def receive_set_active(self, ctxt):
         """ Message handler for set_active
 

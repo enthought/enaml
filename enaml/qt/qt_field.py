@@ -53,8 +53,6 @@ class QtField(QtConstraintsWidget):
         self.widget.lostFocus.connect(self.on_lost_focus)
         self.widget.returnPressed.connect(self.on_return_pressed)
         self.widget.textEdited.connect(self.on_text_edited)
-        self.widget.selectionChanged.connect(self.on_selection_changed)
-        self.widget.cursorPositionChanged.connect(self.on_cursor_changed)
 
     #--------------------------------------------------------------------------
     # Event Handlers
@@ -76,20 +74,6 @@ class QtField(QtConstraintsWidget):
 
         """
         self.send({'action':'text_edited', 'text':self.widget.text()})
-
-    def on_selection_changed(self):
-        """ Event handler for selection_changed
-
-        """
-        self.send({'action':'set_selected_text',
-                   'selected_text':self.widget.selectedText()})
-
-    def on_cursor_changed(self):
-        """ Event handler for cursor_changed
-
-        """
-        self.send({'action':'set_cursor_position',
-                   'cursor_position':self.widget.cursorPosition()})
 
     #--------------------------------------------------------------------------
     # Message Handlers

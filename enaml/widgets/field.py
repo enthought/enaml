@@ -149,18 +149,6 @@ class Field(ConstraintsWidget):
         self._text = context['text']
         self._field_return_pressed()
 
-    def receive_set_selected_text(self, context):
-        """ Callback from the UI when the control's text is selected
-
-        """
-        self.selected_text = context['selected_text']
-
-    def receive_set_cursor_position(self, context):
-        """ Callback from the UI when the control's cursor position changes.
-
-        """
-        self.cursor_position = context['cursor_position']
-
     def receive_set_modified(self, context):
         """ Callback from the UI when the control's value is modified.
 

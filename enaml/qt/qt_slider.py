@@ -54,9 +54,6 @@ class QtSlider(QtConstraintsWidget):
 
         """
         self.widget.valueChanged.connect(self.on_value_changed)
-        self.widget.sliderMoved.connect(self.on_moved)
-        self.widget.sliderPressed.connect(self.on_pressed)
-        self.widget.sliderReleased.connect(self.on_released)
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -128,24 +125,6 @@ class QtSlider(QtConstraintsWidget):
             'value': self.widget.value()
         }
         self.send(ctxt)
-
-    def on_moved(self):
-        """ XXX
-
-        """
-        pass
-    
-    def on_pressed(self):
-        """ XXX
-
-        """
-        pass
-
-    def on_released(self):
-        """ XXX
-
-        """
-        pass
 
     #--------------------------------------------------------------------------
     # Widget Update Methods

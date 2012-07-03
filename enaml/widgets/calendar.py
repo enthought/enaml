@@ -29,6 +29,7 @@ class Calendar(BoundedDate):
         """ Callback from the UI when the control is selected.
 
         """
+        print 'selected'
         self.selected(ctxt['date'])
         self.set_guarded(value=ctxt['date'])
 
@@ -36,5 +37,6 @@ class Calendar(BoundedDate):
         """ Callback from the UI when the control is activated.
 
         """
+        print 'activated'
         self.activated(ctxt['date'])
 
