@@ -20,7 +20,7 @@ class ImageView(ConstraintsWidget):
     image = Instance(Image)
     
     #: Whether or not to scale the image with the size of the component.
-    scale_to_fit = Bool(True)
+    scale_to_fit = Bool(False)
     
     #: Whether or not to preserve the aspect ratio if scaling the image.
     preserve_aspect_ratio = Bool(True)
@@ -67,8 +67,14 @@ class ImageView(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
-    def scale(self, size):
+    def scale_to_size(self, size):
         """ Scale the image to the given size
 
         """
-        self.send({'action':'scale', 'size':size})
+        self.send({'action':'scale_to_size', 'size':size})
+
+    def scale_by_factor(self, size_factor):
+        """ Scale the image by a factor
+
+        """
+        self.send({'action':'scale_by_factor', 'size_factor':size_factor})

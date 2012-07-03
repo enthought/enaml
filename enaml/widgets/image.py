@@ -2,7 +2,8 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-    
+import os
+
 class Image(object):
     """ An image
     
@@ -23,9 +24,12 @@ class Image(object):
     # Static methods
     #--------------------------------------------------------------------------
     @staticmethod
-    def from_file(path):
+    def from_file(file_path):
         """ Read in the image data from a file.
 
         """
-        data = open(path, 'rb').read()
-        return Image(data)
+        if os.path.exists(file_path):
+            data = open(file_path, 'rb').read()
+            return Image(data)
+        else:
+            raise IOError("'%s' does not exist" % file_path)

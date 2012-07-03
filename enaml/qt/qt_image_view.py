@@ -23,18 +23,21 @@ class EnamlQtLabel(QLabel):
        # The pixmap is initialized to None, causing the resizing to throw an
        # error, so we have to check that the pixmap exists before continuing
        # with the resize
-       if self.pixmap():
+       if self.pixmap() and self.hasScaledContents():
             size = resize_event.size()
-            if self.preserve_aspect_ratio:
-               if self.allow_upscaling:
-                  aspect_ratio = Qt.KeepAspectRatioByExpanding
-               else:
-                  aspect_ratio = Qt.KeepAspectRatio
-            else:
-                aspect_ratio = Qt.IgnoreAspectRatio
+            self.scale(size)
 
-            pix = self.pixmap().scaled(size, aspect_ratio)
-            self.setPixmap(pix)
+    def scale(self, size):
+       if self.preserve_aspect_ratio:
+          if self.allow_upscaling:
+             aspect_ratio = Qt.KeepAspectRatioByExpanding
+          else:
+             aspect_ratio = Qt.KeepAspectRatio
+       else:
+          aspect_ratio = Qt.IgnoreAspectRatio
+       
+       pix = self.pixmap().scaled(size, aspect_ratio)
+       self.setPixmap(pix)
 
 class QtImageView(QtConstraintsWidget):
     """ A Qt implementation of an image view. Uses a QLabel to display the
@@ -92,13 +95,21 @@ class QtImageView(QtConstraintsWidget):
         if scale is not None:
             self.set_scale_to_fit(scale)
 
-    def receive_scale(self, ctxt):
-       """ Message hander for scale
+    def receive_scale_by_factor(self, ctxt):
+       """ Message hander for scale_by_factor
+
+       """
+       size_factor = ctxt.get('size_factor')
+       if size_factor is not None:
+          self.scale_by_factor(size_factor)
+
+    def receive_scale_to_size(self, ctxt):
+       """ Message handler for scale_to_size
 
        """
        size = ctxt.get('size')
        if size is not None:
-          self.scale(size)
+          self.scale_to_size(size)
           
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -130,8 +141,22 @@ class QtImageView(QtConstraintsWidget):
         """
         self.widget.setScaledContents(scale)
 
-    def scale(self, size):
-       """ Scale the view's image to a given size
+    def scale_by_factor(self, size_scale):
+       """ Scale the view's image by a constant facor
+
+       Parameters:
+       -----------
+       size_scale : Tuple
+           A tuple of constants to scale the image by
 
        """
-       self.widget.resize(QSize(*size))
+       w, h = size_scale
+       w = self.widget.pixmap().size().width()*w
+       h = self.widget.pixmap().size().height()*h
+       self.widget.scale(QSize(w,h))
+
+    def scale_to_size(self, size):
+       """ Scale the view's image to an explicit size
+
+       """
+       self.widget.scale(QSize(*size))
