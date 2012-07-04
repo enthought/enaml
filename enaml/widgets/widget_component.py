@@ -13,9 +13,9 @@ SizeTuple = Tuple(Range(low=-1, value=-1), Range(low=-1, value=-1))
 
 
 #: The standard attributes to proxy for a widget component.
-_WIDGET_PROXY_ATTRS = [
-    'enabled', 'visible', 'bgcolor', 'fgcolor', 'font', 'size_hint',
-    'min_size', 'max_size', 'show_focus_rect'
+_WIDGET_ATTRS = [
+    'enabled', 'visible', 'bgcolor', 'fgcolor', 'font', 'min_size', 
+    'max_size', 'show_focus_rect'
 ]
 
 
@@ -32,7 +32,8 @@ class WidgetComponent(MessengerWidget):
 
     #: A flag indicating whether or not to show the focus rectangle for 
     #: the given widget. This is not necessarily support by all widgets 
-    #: on all clients.
+    #: on all clients. A value of None indicates to use the default as
+    #: supplied by the client.
     show_focus_rect = Enum(None, True, False)
 
     #: The background color of the widget. Supports CSS color formats.
@@ -43,11 +44,6 @@ class WidgetComponent(MessengerWidget):
 
     #: The font used for the widget. Supports CSS font formats.
     font = Str
-
-    #: The size hint for the widget. The default means that the client
-    #: should determine the size hint. This is normally sufficient, but
-    #: can be overridden to supply custom size hinting.
-    size_hint = SizeTuple
 
     #: The minimum size for the widget. The default means that the
     #: client should determine an intelligent minimum size.
@@ -60,20 +56,20 @@ class WidgetComponent(MessengerWidget):
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
-    def initial_attrs(self):
-        """ Return the attr initialization dict for a widget component.
+    def creation_attributes(self):
+        """ Return the initial properties for a widget component.
 
         """
-        super_attrs = super(WidgetComponent, self).initial_attrs()
+        super_attrs = super(WidgetComponent, self).creation_attributes()
         get = getattr
-        attrs = dict((attr, get(self, attr)) for attr in _WIDGET_PROXY_ATTRS)
+        attrs = dict((attr, get(self, attr)) for attr in _WIDGET_ATTRS)
         super_attrs.update(attrs)
         return super_attrs
 
     def bind(self):
-        """ Bind the change handlers for the widget component.
+        """ Bind the change handlers for a widget component.
 
         """
         super(WidgetComponent, self).bind()
-        self.default_send(*_WIDGET_PROXY_ATTRS)
+        self.publish_attributes(*_WIDGET_ATTRS)
 
