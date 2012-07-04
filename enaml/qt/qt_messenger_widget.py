@@ -11,12 +11,12 @@ class QtMessengerWidget(MessengerMixin):
     """ The base class of the Qt widgets wrappers for a Qt Enaml client.
 
     """
-    def __init__(self, parent, target_id, send_pipe, recv_pipe):
+    def __init__(self, parent, target_id, async_pipe):
         """ Initialize a QtClientWidget
 
         Parameters
         ----------
-        parent : QtClientWidget or None
+        parent : QtMessengerWidget or None
             The parent client widget of this widget, or None if this
             client widget has no parent.
 
@@ -24,44 +24,29 @@ class QtMessengerWidget(MessengerMixin):
             A string which identifies the target Enaml widget with
             which this widget will communicate.
 
-        send_pipe : AsyncSendPipe
-            The async send pipe used to send messages to the Enaml
-            widget on the other end.
-
-        recv_pipe : AsyncRecvPipe
-            The async recv pipe used to recv messages from the Enaml
-            widget on the other end.
+        async_pipe : AsyncPipe
+            The async pipe to use for messaging with the Enaml widget.
 
         """
-        if parent is None:
-            self.__parent_ref = lambda: None
-        else:
-            self.__parent_ref = ref(parent)
-            parent.children.add(self)
+        self._parent_ref = ref(parent) if parent is not None else lambda: None
         self.widget = None
-        self.children = set()
+        self.children = []
         self.target_id = target_id
-        self.send_pipe = send_pipe
-        self.recv_pipe = recv_pipe
-        
+        self.async_pipe = async_pipe
+        async_pipe.set_message_callback(target_id, self.recv_message)
+        async_pipe.set_request_callback(target_id, self.recv_request)
+        if parent is not None:
+            parent.children.append(self)
+
     #--------------------------------------------------------------------------
     # Properties
     #--------------------------------------------------------------------------
     @property
-    def widget_type(self):
-        """ A read-only property which provides the name of this widget
-        type, which is simply the name of this class.
-
-        """
-        return type(self).__name__
-
-    @property
     def parent(self):
-        """ A read-only property which returns the parent client widget
-        for this client widget, or None if this widget has no parent.
+        """ A read-only property which returns the parent of this widget.
 
         """
-        return self.__parent_ref()
+        return self._parent_ref()
 
     @property
     def parent_widget(self):
@@ -78,41 +63,65 @@ class QtMessengerWidget(MessengerMixin):
     # Public API
     #--------------------------------------------------------------------------
     def create(self):
-        """ A method which must be implemented by subclasses. It should
-        create the underlying QWidget object.
+        """ A method which must be implemented by subclasses. 
+
+        This method should create the underlying QWidget object and 
+        assign it to the 'widget' attribute. Implementations of this
+        method should *not* call the superclass version.
 
         """
         raise NotImplementedError
 
-    def initialize(self, init_attrs):
-        """ A method called by the builder in order to initialize the
-        attributes of the underlying QWidget object.
+    def initialize(self, attributes):
+        """ A method called to initialize the attributes of the 
+        underlying widget.
+
+        The default implementation of this method is a no-op in order
+        to be super() friendly. Implementations of this method should
+        call the superclass version to make sure that all attributes
+        get properly initialized.
+
+        This method will be called after all other widgets for the
+        creation pass have been created.
+
+        Parameters
+        ----------
+        attributes : dict
+            The dictionary of attributes that was contained in the
+            payload of the operation for the 'create' action which
+            created this widget.
 
         """
         pass
 
-    def bind(self):
-        """ A method called by the builder in order to bind any required
-        signal/event handlers for the underlying QWidget object.
+    def post_initialize(self):
+        """ A method that allows widgets to do post initialization work.
+
+        This method is called after all widgets in a creation pass have
+        had their 'initialize' method called. It is useful for e.g.
+        layout initialization, which requires that all child widgets
+        have their attributes already initialized.
+
+        The default implementation of this method is a no-op in order
+        to be super() friendly. Implementations of this method should
+        call the superclass version to make sure that all post
+        initialization is properly performed.
 
         """
         pass
 
-    def initialize_layout(self):
-        """ A method called by the builder after the entire tree has
-        been built. Subclasses should implement this method if they
-        need to do layout initialization.
+    def destroy(self):
+        """ Destroy this widget by removing all references to it from
+        it parent and its children and destroy the underlying Qt widget.
 
         """
-        pass
+        parent = self.parent
+        if parent is not None:
+            if self in parent.children:
+                parent.children.remove(self)
+        self.children = []
+        widget = self.widget
+        if widget is not None:
+            widget.destroy()
+            self.widget = None
 
-    def init_messaging(self):
-        """ A method called by the builder after layout as been inited.
-        and which binds the receiving handlers for the pipes.
-
-        """
-        # XXX not sure if I like this at the moment.
-        self.bind_recv_handlers()
-        for child in self.children:
-            child.init_messaging()
-            
