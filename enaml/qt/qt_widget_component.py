@@ -10,7 +10,7 @@ from .qt_messenger_widget import QtMessengerWidget
 
 
 class QtWidgetComponent(QtMessengerWidget):
-    """ A Qt4 implementation of the Enaml WidgetComponent class.
+    """ A Qt4 implementation of an Enaml WidgetComponent.
 
     """
     #: An attribute which will hold the defautl focus rect state if
@@ -23,11 +23,11 @@ class QtWidgetComponent(QtMessengerWidget):
         """
         self.widget = QWidget(self.parent_widget)
 
-    def initialize(self, init_attrs):
+    def initialize(self, attrs):
         """ Initialize the attributes of the underlying QWidget.
 
         """
-        get = init_attrs.get
+        get = attrs.get
         self.set_min_size(get('min_size', (-1, -1)))
         self.set_max_size(get('max_size', (-1, -1)))
         self.set_bgcolor(get('bgcolor', ''))
