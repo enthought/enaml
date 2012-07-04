@@ -4,11 +4,8 @@
 #------------------------------------------------------------------------------
 from traits.api import Unicode
 
-from .widget_component import WidgetComponent
-
-
-#: The standard attributes to proxy for a window component.
-_WINDOW_PROXY_ATTRS = ['title']
+from enaml.async.async_application import AsyncApplication
+from .widget_component import WidgetComponent, SizeTuple
 
 
 class Window(WidgetComponent):
@@ -25,7 +22,7 @@ class Window(WidgetComponent):
 
     #: The initial size of the window. A value of (-1, -1) indicates
     #: to let the client choose the initial size
-    # initial_size = SizeTuple
+    initial_size = SizeTuple
 
     #: The titlebar icon.
     # XXX needs to be implemented
@@ -34,23 +31,22 @@ class Window(WidgetComponent):
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
+    def creation_attributes(self):
+        """ Return the attr initialization dict for a window.
+
+        """
+        super_attrs = super(Window, self).creation_attributes()
+        attrs = {'title': self.title, 'initial_size': self.initial_size}
+        super_attrs.update(attrs)
+        return super_attrs
+
     def bind(self):
         """ A method called after initialization which allows the widget
         to bind any event handlers necessary.
 
         """
         super(Window, self).bind()
-        self.default_send(*_WINDOW_PROXY_ATTRS)
-
-    def initial_attrs(self):
-        """ Return the attr initialization dict for a window.
-
-        """
-        super_attrs = super(Window, self).initial_attrs()
-        get = getattr
-        attrs = dict((attr, get(self, attr)) for attr in _WINDOW_PROXY_ATTRS)
-        super_attrs.update(attrs)
-        return super_attrs
+        self.publish_attributes('title')
 
     #--------------------------------------------------------------------------
     # Public API
@@ -59,29 +55,51 @@ class Window(WidgetComponent):
         """ Send a 'close' command to the client UI
 
         """
-        self.send({'action':'close'})
+        self.send_message({'action': 'close'})
 
     def maximize(self):
         """ Send a 'maximize' command to the client UI.
 
         """
-        self.send({'action':'maximize'})
+        self.send_message({'action': 'maximize'})
 
     def minimize(self):
         """ Send a 'minimize' command to the client UI.
 
         """
-        self.send({'action':'minimize'})
+        self.send_message({'action': 'minimize'})
 
     def restore(self):
         """ Send a 'restore' command to the client UI.
 
         """
-        self.send({'action':'restore'})
+        self.send_message({'action': 'restore'})
 
-    def show(self):
-        """ Send a 'show' command to the client UI.
+    def publish(self):
+        """ Publish this Window with the application. 
 
+        This method takes care of ensuring that all the child widgets
+        are also published and that all of the binding/initialization
+        handlers are called.
+        
         """
-        self.visible = True
-        self.send({'action':'show'})
+        # XXX We are currently assuming all children will be messenger 
+        # widgets. This will probably need to be updated at some
+        # point in the future. Use cases will be the deciders.
+        widgets = []
+        stack = [self]
+        while stack:
+            widget = stack.pop()
+            widgets.append(widget)
+            stack.extend(widget.children)
+
+        targets = []
+        for widget in widgets:
+            targets.append(widget.target_id)
+        
+        app = AsyncApplication.instance()
+        app.publish(targets)
+        
+        for widget in widgets:
+            widget.bind()
+
