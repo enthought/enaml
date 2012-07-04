@@ -42,9 +42,9 @@ class BaseComponent(HasStrictTraits):
         depends_on='_subcomponents:_actual_updated',
     )
 
-    #: Whether the component has been initialized or not. This will be 
-    #: set to True after the initialize() method is called. It should 
-    #: not be changed afterwards.
+    #: A flag indicating whether the component has been initialized or
+    #: not. This will be set to True when the mark_initialized() method
+    #: is called. It should not be changed afterwards.
     initialized = Bool(False)
 
     #: The private dictionary of expression objects that are bound to 
@@ -168,6 +168,19 @@ class BaseComponent(HasStrictTraits):
         component.parent = self
         self._subcomponents.append(component)
     
+    def mark_initialized(self):
+        """ A method which can be called by the user code to walk the
+        tree and set the `initialized` flag to True. 
+
+        This method should not be called until the component is indeed 
+        fully initialized. The meaning of which is left up to the user
+        of this class. This method sets the flags bottom-up.
+
+        """
+        for comp in self._subcomponents:
+            comp.mark_initialized()
+        self.initialized = True
+
     #--------------------------------------------------------------------------
     # Bound Attribute Handling
     #--------------------------------------------------------------------------
@@ -232,9 +245,6 @@ class BaseComponent(HasStrictTraits):
          
         If the attribute does not exist, an exception is raised. A 
         strong reference to the expression object is kept internally.
-        If the expression is not notify_only and the object is already
-        fully initialized, the value of the expression will be applied
-        immediately.
 
         Parameters
         ----------
@@ -281,33 +291,13 @@ class BaseComponent(HasStrictTraits):
                 old.expression_changed.disconnect(handler)
             expression.expression_changed.connect(handler)
             expressions[name][0] = expression
-        
-            # Hookup support for default value computation.
-            if not self.initialized:
-                # We only need to add an ExpressionTrait once, since it 
-                # will reach back into the _expressions dict as needed
-                # and retrieve the bound expression.
-                if not isinstance(curr.trait_type, ExpressionTrait):
-                    self.add_trait(name, ExpressionTrait(curr))
-            else:
-                # If the component is already initialized, and the given
-                # expression supports evaluation, update the attribute 
-                # with the current value.
-                val = expression.eval()
-                if val is not NotImplemented:
-                    setattr(self, name, val)
-
-    def initialize(self):
-        """ A method which pulls the bound expressions into a consistent
-        state and updates the initialized attribute of the component to 
-        True. This is performed bottom-up.
-
-        """
-        for child in self._subcomponents:
-            child.initialize()
-        for name in self._expressions:
-            getattr(self, name)
-        self.initialized = True
+            
+            # Hookup support for default value computation. We only need
+            # to add an ExpressionTrait once, since it will reach back 
+            # into the _expressions dict as needed and retrieve the most
+            # current bound expression.
+            if not isinstance(curr.trait_type, ExpressionTrait):
+                self.add_trait(name, ExpressionTrait(curr))
 
     def _on_expression_changed(self, expression, name, value):
         """ A private signal callback for the expression_changed signal
@@ -324,13 +314,12 @@ class BaseComponent(HasStrictTraits):
         is marked as live.
 
         """
-        if self.initialized:
-            # The check for None is for the case where there are no left 
-            # associative expressions bound to the attribute, so the first
-            # entry in the list is still None.
-            for expr in self._expressions[name]:
-                if expr is not None:
-                    expr.notify(old, new)
+        # The check for None is for the case where there are no left 
+        # associative expressions bound to the attribute, so the first
+        # entry in the list is still None.
+        for expr in self._expressions[name]:
+            if expr is not None:
+                expr.notify(old, new)
 
     #--------------------------------------------------------------------------
     # Auxiliary Methods 
