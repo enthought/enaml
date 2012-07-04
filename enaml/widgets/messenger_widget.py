@@ -3,13 +3,14 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from collections import defaultdict
-from uuid import uuid4
 
-from traits.api import Instance, Str
+from traits.api import Instance, ReadOnly, Str
 
-from enaml.async.async_application import AsyncApplication, AbstractBuilder
+from enaml.async.async_application import AsyncApplication, AsyncApplicationError
 from enaml.async.async_messenger import AsyncMessenger
+from enaml.async.messenger_mixin import MessengerMixin
 from enaml.core.base_component import BaseComponent
+from enaml.utils import WeakMethod
 
 
 class LoopbackContext(object):
@@ -142,93 +143,173 @@ class LoopbackGuard(object):
                 del self._locked[item]
 
 
-class MessengerWidget(AsyncMessenger, BaseComponent):
-    """ The base class of all widgets in Enaml.
+class MessengerWidget(MessengerMixin, BaseComponent):
+    """ The base class of all widget classes in Enaml.
 
     This extends BaseComponent with the ability to send and receive
-    commands to and from a client widget by mixing in the AsyncMessenger
-    class.
+    commands to and from a target by mixing in the AsyncMessenger
+    class. It aslo provides the necessary data members and methods
+    required to initialize the client widget.
 
     """
-    #: A loopback guard used to prevent ping ponging of messages when
-    #: setting attributes from with a receive handler.
-    loopback_guard = Instance(LoopbackGuard, ())    
+    #: A loopback guard which can be used to prevent a loopback cycle
+    #: of messages when setting attributes from within a handler.
+    loopback_guard = Instance(LoopbackGuard, ())
 
-    #: A uuid given to every messenger widget. This is not directly used
-    #: by this class, but can be useful for sublasses to create mappings
-    #: between objects on the client and server. It is also used by the
-    #: constraints layout system to identify the owner of constraint 
-    #: variables. This should never be modified by user code.
-    uuid = Instance(str, factory=lambda: uuid4().hex)
-
-    #: A string provided to implementation clients indicated which type
-    #: of widget they should construct. The default type is computed
-    #: based on the name of the component class. This may be overridden
-    #: by users to define custom behavior, but is typically not needed.
+    #: A string used to speficy the type of widget which should be 
+    #: created by clients when this widget is published. The default 
+    #: type is computed based on the name of the component class. This 
+    #: may be overridden by users as needed to define custom behavior.
     widget_type = Str
     def _widget_type_default(self):
         return type(self).__name__
+    
+    #: The internal storage for the target_id property.
+    _target_id = ReadOnly
 
-    #: The private storage for the widget tree builder. A reference must
-    #: be kept to the builder, since the lifetime of the implementation
-    #: widgets is tied to the lifetime of the builder.
-    _builder = Instance(AbstractBuilder)
+    #: The internal storage for the async_pipe property.
+    _async_pipe = ReadOnly
 
-    def build_info(self):
-        """ Returns the dictionary of build info for the component tree
-        from this point downward.
+    def __new__(cls, *args, **kwargs):
+        """ Create a new AsyncMessenger instance.
 
-        XXX - this needs to be formalized a bit more.
-        
+        New instances cannot be created unless an AsyncApplication 
+        instance is available.
+
+        Parameters
+        ----------
+        *args, **kwargs
+            Any required position and keyword arguments to pass to the
+            superclass.
+
         """
-        info = {}
-        info['uuid'] = self.uuid
-        info['widget'] = self.widget_type
-        info['attrs'] = self.initial_attrs()
-        info['send_pipe'] = self.send_pipe
-        info['recv_pipe'] = self.recv_pipe
-        info['children'] = [child.build_info() for child in self.children]
-        return info
+        app = AsyncApplication.instance()
+        if app is None:
+            msg = 'An async application instance must be created before '
+            msg += 'creating any AsyncMessenger instances.'
+            raise AsyncApplicationError(msg)
+        instance = super(MessengerWidget, cls).__new__(cls, *args, **kwargs)
+        app.register(instance)
+        return instance
 
-    def initial_attrs(self):
-        """ Returns a dictionary of attributes to initialize on the
-        client widget.
+    #--------------------------------------------------------------------------
+    # AsyncMessenger Interface
+    #--------------------------------------------------------------------------
+    def target_id():
+        """ The property get/set pair for the 'target_id' attribute.
 
-        XXX - document what types of things to put in this dict.
+        """
+        def getter(self):
+            return self._target_id
+        def setter(self, target_id):
+            self._target_id = target_id
+        return property(getter, setter)
+
+    target_id = target_id()
+    
+    def async_pipe():
+        """ The property get/set pair for the 'async_pipe' attribute.
+
+        """
+        def getter(self):
+            return self._async_pipe
+        def setter(self, pipe):
+            self._async_pipe = pipe
+            pipe.set_message_callback(self.target_id, WeakMethod(self.recv_message))
+            pipe.set_request_callback(self.target_id, WeakMethod(self.recv_request))
+        return property(getter, setter)
+
+    async_pipe = async_pipe()
+
+    def creation_payload(self):
+        """ Returns the payload dict for the 'create' action for the
+        messenger.
+
+        Returns
+        -------
+        results : dict
+            The creation payload dict for the messenger widget.
+
+        """
+        payload = {}
+        payload['action'] = 'create'
+        payload['type'] = self.widget_type
+        payload['parent_id'] = self.parent_id
+        payload['attributes'] = self.creation_attributes()
+        return payload
+
+    #--------------------------------------------------------------------------
+    # Public API
+    #--------------------------------------------------------------------------
+    @property
+    def parent_id(self):
+        """ A read only property which returns the target id of the 
+        parent of this messenger.
+
+        Returns
+        -------
+        result : str or None
+            The target id of the parent messenger, or None if the parent
+            is not an instance of MessengerWidget.
+
+        """
+        parent = self.parent
+        if isinstance(parent, MessengerWidget):
+            return parent.target_id
+
+    def creation_attributes(self):
+        """ Returns a dictionary of attributes to initialize the state
+        of the target widget when it is created. 
+
+        This method is called by 'creation_info' when assembling the
+        dictionary of initial state for creation of the client.
+
+        This method returns a a new empty dictionary which should be 
+        updated in-place by subclasses before being returned to the
+        caller.
+
+        Returns
+        -------
+        results : dict
 
         """
         return {}
 
-    def initialize(self):
-        """ A re-implemented initialize method which calls the bind()
-        method on the widgets to allow notification handlers to be 
-        hooked up.
-
-        """
-        super(MessengerWidget, self).initialize()
-        self.bind()
-
     def bind(self):
-        """ A method called after initialization which allows the widget
-        to bind any event handlers necessary.
+        """ A method which should be called when preparing a widget for
+        publishing.
 
-        The default implementation is a no-op, but is provided to be
-        super()-friendly.
+        The intent of this method is to allow a widget to hook up its
+        trait change notification handlers which will send messages
+        to the client. The default implementation of this method is 
+        a no-op, but is provided to be super() friendly. It's assumed
+        that this method will only be called once by the object which
+        manages the process of preparing a widget for publishing.
 
         """
         pass
 
-    def default_send(self, *attrs):
-        """ A convenience method provided for subclasses to use to bind
-        an arbitrary number of attributes to a handler which will send
-        the attribute change to the client. 
+    def publish_attributes(self, *attrs):
+        """ A convenience method provided for subclasses to use to 
+        publish an arbitrary number of attributes to the target widet.
 
-        The command generated for the client is created by mangling
-        'set_' with the name of the changed attribute.
+        The action generated for the target message is created by 
+        prefixing 'set-' to the name of the changed attribute. This
+        method is not intended to meet the needs of *all* attribute
+        publishing. Rather it is meant to handle the majority of 
+        simple cases. More complex attributes will need to implement
+        their own dispatching handlers.
+
+        Parameters
+        ----------
+        *attrs
+            The string names of the attributes to publish to the client.
+            These attributes are expected to be simply serializable.
+            More complex values should use their own dispatch handlers.
 
         """
         otc = self.on_trait_change
-        handler = self._send_attr_handler
+        handler = self._publish_attr_handler
         for attr in attrs:
             otc(handler, attr)
 
@@ -247,32 +328,27 @@ class MessengerWidget(AsyncMessenger, BaseComponent):
             for name, value in attrs.iteritems():
                 setattr(self, name, value)
 
-    def prepare(self):
-        """ Prepare this widget for use before call the .run() method
-        of an application.
-
-        """
-        if not self.initialized:
-            self.initialize()
-        builder = self._builder
-        if builder is None:
-            builder = self._builder = AsyncApplication.instance().builder()
-            build_info = self.build_info()
-            builder.build(build_info)
-
     #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
-    def _send_attr_handler(self, name, new):
+    def _publish_attr_handler(self, name, new):
         """ A trait change handler which will send an attribute change
-        to a client by mangling the attr name with 'set_'.
+        message to a target by prefixe the attr name with 'set-' in 
+        order to creation the action name.
 
-        The value of the attribute is expected to be simply serializable.
-        If the loopback guard is held for the given name, the message
-        will be ignored and discarded.
+        The value of the attribute is expected to be serializable.
+        If the loopback guard is held for the given name, then the 
+        message will no be sent (avoiding potential loopbacks).
 
         """
         if name not in self.loopback_guard:
-            msg = 'set_' + name
-            self.send({'action':msg, name:new})
+            action = 'set-' + name
+            payload = {'action': action, name: new}
+            self.send_message(payload)
+
+
+#: Registers the MessengerWidget as an instance of AsyncMessenger.
+#: This is done in lieu of inheritence due to metaclass conflicts 
+#: with HasTraits classes.
+AsyncMessenger.register(MessengerWidget)
 
