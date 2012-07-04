@@ -239,33 +239,25 @@ class ExpressionTrait(TraitType):
     def get(self, obj, name):
         """ Handle computing the initial value for the expression trait. 
         This method first restores the old trait, then evaluates the 
-        expression and sets the value on the trait. It then performs
-        a getattr to return the new value of the trait. If the object
-        is not yet fully initialized, the value is set quietly.
+        expression and sets the value on the trait quietly. It then 
+        performs a getattr to return the new value of the trait.
 
         """
         self.swapout(obj, name)
         val = self.compute_default(obj, name)
         if val is not NotImplemented:
-            if not obj.initialized:
-                obj.trait_setq(**{name: val})
-            else:    
-                setattr(obj, name, val)
+            obj.trait_setq(**{name: val})
         return getattr(obj, name, val)
 
     def set(self, obj, name, val):
         """ Handle the setting of an initial value for the expression
         trait. This method first restores the old trait, then sets
         the value on that trait. In this case, the expression object
-        is not needed. If the object is not yet fully initialized, the 
-        value is set quietly.
+        is not needed.
 
         """
         self.swapout(obj, name)
-        if not obj.initialized:
-            obj.trait_setq(**{name: val})
-        else:
-            setattr(obj, name, val)
+        setattr(obj, name, val)
 
 
 #------------------------------------------------------------------------------
