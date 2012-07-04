@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from weakref import WeakValueDictionary
 
-from enaml.async.async_pipe import AsyncSendPipe, AsyncRecvPipe
+from enaml.async.async_pipe import AsyncPipe
 from enaml.async.async_reply import AsyncReply
 
 from .qt.QtCore import QObject, Signal, Slot
@@ -60,12 +60,11 @@ class QtLocalPipe(QObject):
         """
         handler = self._msg_callbacks.get(operation['target_id'])
         if handler is not None:
-            # XXX log message handler excecptions?
             handler(operation['payload'])
         else:
             # XXX log message handler misses?
             pass
-
+            
     def _dispatch_request(self, operation):
         """ A private method which dispatches a 'request' operation and
         emits an appriate 'reply' operation.
@@ -117,11 +116,9 @@ class QtLocalPipe(QObject):
         send back a 'reply' operation if appropriate.
 
         """
-        handler_name = '_disptach_' + operation['type']
-        handler = getattr(self, handler_name, None)
-        if handler is not None:
-            handler(operation)
-        raise TypeError('Invalid operation type `%s`' % operation['type'])
+        handler_name = '_dispatch_' + operation['type']
+        handler = getattr(self, handler_name)
+        handler(operation)
 
     #--------------------------------------------------------------------------
     # Async Pipe Interface
@@ -237,6 +234,5 @@ class QtLocalPipe(QObject):
         self._req_callbacks[target_id] = callback
 
 
-AsyncSendPipe.register(QtLocalPipe)
-AsyncRecvPipe.register(QtLocalPipe)
+AsyncPipe.register(QtLocalPipe)
 
