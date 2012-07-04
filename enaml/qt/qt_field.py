@@ -2,10 +2,9 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt.QtGui import QLineEdit
-from .qt.QtCore import Signal
+from .qt.QtGui import QLineEdit, QRegExpValidator
+from .qt.QtCore import Signal, QRegExp
 from .qt_constraints_widget import QtConstraintsWidget
-from .qt_enaml_validator import QtEnamlValidator
 
 PASSWORD_MODE = {
     'normal': QLineEdit.Normal,
@@ -53,8 +52,6 @@ class QtField(QtConstraintsWidget):
         self.widget.lostFocus.connect(self.on_lost_focus)
         self.widget.returnPressed.connect(self.on_return_pressed)
         self.widget.textEdited.connect(self.on_text_edited)
-        self.widget.selectionChanged.connect(self.on_selection_changed)
-        self.widget.cursorPositionChanged.connect(self.on_cursor_changed)
 
     #--------------------------------------------------------------------------
     # Event Handlers
@@ -77,23 +74,21 @@ class QtField(QtConstraintsWidget):
         """
         self.send({'action':'text_edited', 'text':self.widget.text()})
 
-    def on_selection_changed(self):
-        """ Event handler for selection_changed
-
-        """
-        self.send({'action':'set_selected_text',
-                   'selected_text':self.widget.selectedText()})
-
-    def on_cursor_changed(self):
-        """ Event handler for cursor_changed
-
-        """
-        self.send({'action':'set_cursor_position',
-                   'cursor_position':self.widget.cursorPosition()})
-
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
+    def receive_set_invalid(self, ctxt):
+        """ Message handler for set_invalid
+
+        """
+        self.set_invalid()
+
+    def receive_set_valid(self, ctxt):
+        """ Message handler for set_valid
+
+        """
+        self.set_valid()
+
     def receive_set_max_length(self, ctxt):
         """ Message handler for set_max_length
 
@@ -141,10 +136,22 @@ class QtField(QtConstraintsWidget):
         val = ctxt.get('validator')
         if val is not None:
             self.set_validator(val)
-
+            
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
+    def set_invalid(self):
+        """ Mark the field as invalid
+
+        """
+        self.widget.setStyleSheet("QLineEdit {background: #FF7070;}")
+
+    def set_valid(self):
+        """ Mark the field as valid
+
+        """
+        self.widget.setStyleSheet("QLineEdit {background: white;}")
+    
     def set_max_length(self, length):
         """ Set the maximum length of the field
 
@@ -179,8 +186,7 @@ class QtField(QtConstraintsWidget):
         self.widget.setText(text)
 
     def set_validator(self, val):
-        """ Set the field's validator
+        """ Set the field's text valdiator
 
         """
-        validator = QtEnamlValidator(val)
-        self.widget.setValidator(validator)
+        self.widget.setValidator(QRegExpValidator(QRegExp(val), None))

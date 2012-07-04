@@ -2,7 +2,10 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from base64 import b64decode
+from .qt.QtCore import QSize
 from .qt_constraints_widget import QtConstraintsWidget
+from .qt_icon import QtIcon
 
 
 class QtAbstractButton(QtConstraintsWidget):
@@ -30,28 +33,21 @@ class QtAbstractButton(QtConstraintsWidget):
         super(QtAbstractButton, self).initialize(init_attrs)
         self.set_checkable(init_attrs['checkable'])
         self.set_checked(init_attrs['checked'])
-        self.set_text(init_attrs['text']) 
+        self.set_text(init_attrs['text'])
+        self.set_icon(init_attrs['icon'])
+        self.set_icon_size(init_attrs['icon_size'])
 
     def bind(self):
         """ Bind the signal handlers for the underlying control.
 
         """
         super(QtAbstractButton, self).bind()
-        widget = self.widget
-        widget.pressed.connect(self.on_pressed)
-        widget.released.connect(self.on_released)
-        widget.clicked.connect(self.on_clicked)
-        widget.toggled.connect(self.on_toggled)
+        self.widget.clicked.connect(self.on_clicked)
+        self.widget.toggled.connect(self.on_toggled)
 
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
-    def receive_set_checkable(self, ctxt):
-        """ Handle the 'set_checkable' message from the Enaml widget.
-
-        """
-        self.set_checkable(ctxt['checkable'])
-
     def receive_set_checked(self, ctxt):
         """ Handle the 'set_checked' message from the Enaml widget.
 
@@ -65,21 +61,21 @@ class QtAbstractButton(QtConstraintsWidget):
         self.set_text(ctxt['text'])
         # Trigger a relayout since the size hint likely changed
 
+    def receive_set_icon(self, ctxt):
+        """ Handle the 'set_icon' message from the Enaml widget.
+
+        """
+        self.set_icon(ctxt['icon'])
+
+    def receive_set_icon_size(self, ctxt):
+        """ Handle the 'set_icon_size' message from the Enaml widget.
+
+        """
+        self.set_icon_size(ctxt['icon_size'])
+
     #--------------------------------------------------------------------------
     # Signal Handlers
     #--------------------------------------------------------------------------
-    def on_pressed(self):
-        """ The event handler for the pressed event.
-
-        """
-        self.send({'action':'pressed'})
-
-    def on_released(self):
-        """ The event handler for the released event.
-
-        """
-        self.send({'action':'released'})
-
     def on_clicked(self):
         """ The event handler fo the clicked event.
 
@@ -123,3 +119,16 @@ class QtAbstractButton(QtConstraintsWidget):
         """
         self.widget.setText(text)
 
+    def set_icon(self, icon):
+        """ Sets the widget's icon to the provided image
+
+        """
+        dec_data = b64decode(icon)
+        self._icon = QtIcon(dec_data)
+        self.widget.setIcon(self._icon.as_QIcon())
+
+    def set_icon_size(self, icon_size):
+        """ Sets the widget's icon size to the provided tuple
+
+        """
+        self.widget.setIconSize(QSize(*icon_size))

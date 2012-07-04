@@ -6,7 +6,7 @@ from traits.api import (
     Bool, Property, Int, TraitError, Either, Range, on_trait_change,
 )
 
-from enaml.core.trait_types import Bounded, EnamlEvent
+from enaml.core.trait_types import Bounded
 from enaml.enums import Orientation, TickPosition, PolicyEnum
 
 from .constraints_widget import ConstraintsWidget
@@ -85,25 +85,7 @@ class Slider(ConstraintsWidget):
     #: If True, the value is updated while sliding. Otherwise, it is
     #: only updated when the slider is released. Defaults to True.
     tracking = Bool(True)
-
-    #: Fired when the slider is pressed.
-    pressed = EnamlEvent
-
-    #: Fired when the slider is released.
-    released = EnamlEvent
-
-    #: Fired when the user drags the slider handle via the mouse.
-    #: The event payload will be the position of the slider. This is
-    #: always fired regardless of the value of :attr:`tracking`
-    moved = EnamlEvent
-
-    #: A read only property which indicates whether or not the slider
-    #: is pressed down.
-    down = Property(Bool, depends_on='_down')
-
-    #: The internal down storage
-    _down = Bool
-
+    
     #: Hug width is redefined as a property to be computed based on the 
     #: orientation of the slider unless overridden by the user.
     hug_width = Property(PolicyEnum, depends_on=['_hug_width', 'orientation'])
@@ -142,29 +124,6 @@ class Slider(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Toolkit Communication
     #--------------------------------------------------------------------------
-    def receive_moved(self, context):
-        """ Callback from the UI when the control is moved.
-
-        """
-        self.moved()
-        return True
-
-    def receive_pressed(self, context):
-        """ Callback from the UI when the control is pressed.
-
-        """
-        self._down = True
-        self.pressed()
-        return True
-
-    def receive_released(self, context):
-        """ Callback from the UI when the control is released.
-
-        """
-        self._down = False
-        self.released()
-        return True
-
     def receive_set_value(self, context):
         """ Callback from the UI when the slider's value changes
 
@@ -218,12 +177,6 @@ class Slider(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Property methods
     #--------------------------------------------------------------------------
-    def _get_down(self):
-        """ The property getter for the 'down' attribute.
-
-        """
-        return self._down
-
     def _get_span(self):
         """ The property getter for the 'length' attribute.
 

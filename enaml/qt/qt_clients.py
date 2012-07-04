@@ -57,6 +57,11 @@ def html_importer():
     return QtHtml
 
 
+def image_view_importer():
+    from .qt_image_view import QtImageView
+    return QtImageView
+
+
 def label_importer():
     from .qt_label import QtLabel
     return QtLabel
@@ -104,6 +109,7 @@ CLIENTS = {
     'Field': field_importer,
     'FileDialog': file_dialog_importer,
     'Html': html_importer,
+    'ImageView': image_view_importer,
     'Label': label_importer,
     'PushButton': push_button_importer,
     'ProgressBar': progress_bar_importer,
