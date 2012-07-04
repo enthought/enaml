@@ -86,7 +86,7 @@ class QtConstraintsWidget(QtWidgetComponent):
         self.hug = layout['hug']
         self.resist_clip = layout['resist_clip']
         self.constraints = layout['constraints']
-        self.layout_box = LayoutBox(self.widget_type, self.uuid)
+        self.layout_box = LayoutBox(type(self).__name__, self.target_id)
 
     #--------------------------------------------------------------------------
     # Message Handlers
