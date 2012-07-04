@@ -13,42 +13,6 @@ class AsyncApplicationError(RuntimeError):
     pass
 
 
-class AbstractBuilder(object):
-    """ An abstract base class which defines the interface for an
-    application-specific object charge with building the client
-    side ui components.
-
-    The lifetime of the created client tree is bound to the lifetime
-    of the builder instance. So the consumer of the builder should
-    store away a reference to it until the client ui is no longer
-    needed.
-
-    """
-    __metaclass__ = ABCMeta
-    
-    @abstractmethod
-    def build(self, info):
-        """ Build the client-side ui tree from the provided info.
-
-        XXX need to be more specific about what is in this dict.
-
-        This method should(?) block until the client-side UI is built.
-
-        Parameters
-        ----------
-        info : dict
-            The ui tree info dict.
-
-        Returns
-        -------
-        result : bool
-            True if the client ui was built successfully, False
-            otherwise.
-
-        """
-        raise NotImplementedError
-
-
 class AsyncApplication(object):
     """ The base class for all asynchronous applications in Enaml.
 
@@ -91,38 +55,77 @@ class AsyncApplication(object):
     def register(self, messenger):
         """ Registers an AsyncMessenger instance with the application.
 
-        All AsyncMessenger instances will call this method once, when 
-        they are created. The application must provide the messaging
-        target id and pipes which will be used for communication by 
-        this messenger.
+        The application should supply an appropriate target_id and
+        async_pipe to the messenger by assigning to those properties.
 
         Parameters
         ----------
         messenger : AsyncMessenger
-            The async messenger instance for which the application must
-            provide a unique identifier.
-
-        Returns
-        -------
-        result : (target_id, send_pipe, recv_pipe)
-            A 3-tuple of target id and pipes to be used by the messenger.
-            The target id is a string which will uniquely identify the 
-            messenger instance for the application. The first pipe is an 
-            instance of async_pipe.AsyncSendPipe and should be used to 
-            send operations to the target. The second pipe is an instance
-            of async_pipe.AsyncRecvPipe and should be used to receive 
-            operations from the target.
+            The async messenger instance for which the application 
+            must provide a unique target id and communication pipe.
+            The target id must be assigned to the messenger *before*
+            the async pipe.
 
         """
         raise NotImplementedError
 
     @abstractmethod
-    def builder(self):
-        """ Returns and AbstractBuilder object used to build the 
-        client-side ui.
+    def publish(self, targets):
+        """ Make previously registered messengers available on the 
+        client.
 
-        The lifetime of the created client side ui is tied to the
-        lifetime of the builder.
+        The semantics of 'publish' are implementation defined. At a
+        minimum, publishing a messenger will make it available on 
+        the client for communication. Targets will be published on
+        the client in the order in which their target ids are 
+        provided.
+
+        Parameters
+        ----------
+        targets : iterable
+            An iterable which yields the target ids for previously 
+            registered AsyncMessenger instances. If any of the target
+            ids do not exist, or were not registered, a ValueError will
+            be raised and nothing will be transmitted to the client.
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def destroy(self, targets):
+        """ Destroy previously registered messengers. If the messenger
+        has been published, it will be effecitvely unpublished.
+
+        Parameters
+        ----------
+        targets : iterable
+            An iterable which yields the target ids for previously 
+            registered AsyncMessenger instances. If any of the target
+            ids do not exist, or were not registered, that id will
+            be skipped.
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def mainloop(self):
+        """ Enter the mainloop of the application.
+
+        This is a blocking call which starts and enters the main event 
+        loop of the application. The event loop can be explicitly ended
+        by calling the 'exit' method. Implicit termination of the event
+        loop is allowed, but is implementation defined. 
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def exit(self):
+        """ Exit the mainloop of the application.
+
+        Calling this method will cause a previous blocking call to
+        'mainloop' to unblock and return. If the mainloop is not 
+        running, then this is a no-op.
 
         """
         raise NotImplementedError

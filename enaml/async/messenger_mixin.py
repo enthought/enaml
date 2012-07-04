@@ -2,35 +2,14 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from enaml.utils import WeakMethod
-
-
 class MessengerMixin(object):
     """ A mixin class which provides some convenience methods for
     sending and receiving messages across async pipes.
 
-    This mixin expects the following attributes to be available on
-    the object:
-
-    target_id : str
-        The target id to use when sending messages on the send pipe.
-
-    send_pipe : AsyncSendPipe
-        An instance AsyncSendPipe to use when sending messages.
-
-    recv_pipe : AsyncRecvPipe
-        An instance of AsyncRecvPipe to use when receiving messages.
+    This mixin expects that it is included in a class heierarchy 
+    which contains an instance of AsyncMessenger.
 
     """
-    def bind_recv_handlers(self):
-        """ Bind the receiving handlers to the receive pipe.
-
-        """
-        msg_callback = WeakMethod(self.recv_message)
-        req_callback = WeakMethod(self.recv_request)
-        self.recv_pipe.set_message_callback(msg_callback)
-        self.recv_pipe.set_request_callback(req_callback)
-
     def send_message(self, payload):
         """ Send a message to be handled by the target object.
         
@@ -42,7 +21,7 @@ class MessengerMixin(object):
             protocol.
 
         """
-        self.send_pipe.put_message(self.target_id, payload)
+        self.async_pipe.put_message(self.target_id, payload)
         
     def send_request(self, payload):
         """ Send a request to be handled by the target object.
@@ -62,7 +41,7 @@ class MessengerMixin(object):
             'reply'.
 
         """
-        return self.send_pipe.put_request(self.target_id, payload)
+        return self.async_pipe.put_request(self.target_id, payload)
 
     def recv_message(self, payload):
         """ Handle a message sent by the client object.
@@ -96,7 +75,9 @@ class MessengerMixin(object):
         handler = getattr(self, handler_name, None)
         if handler is not None:
             handler(payload)
-
+            return
+        # XXX log handler misses?
+            
     def recv_request(self, payload):
         """ Handle a request sent by the client object.
         

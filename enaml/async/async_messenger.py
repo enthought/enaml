@@ -2,60 +2,66 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import HasStrictTraits, Instance, Str
-
-from .async_application import AsyncApplication, AsyncApplicationError
-from .async_pipe import AsyncSendPipe, AsyncRecvPipe
-from .messenger_mixin import MessengerMixin
+from abc import ABCMeta, abstractmethod, abstractproperty
 
 
-class AsyncMessenger(HasStrictTraits, MessengerMixin):
-    """ A base class which provides the messaging interface between 
-    this object and a client object that lives elsewhere.
+class AsyncMessenger(object):
+    """ An abstract base class which defines the interface of an async
+    messenger.
 
-    This class ensures that objects are registered with the application
-    instance when they are instantiated. It also provides 'send' and
-    'receive' methods to facilitate message passing between the
-    instance and its client.
-
-    The correspondence between the messenger instance and the client
-    object is 1:1.
+    The interface of an async messenger is deliberately vague to allow
+    maximum flexibility for implementations. The interface defined here
+    is only that which is required for a messenger which will register
+    itelf with an AsyncApplication and may, at some point, be published
+    to a client.
 
     """
-    #: The target id to use when sending messages across the pipes.
-    #: This will be supplied by the applicaiton when the messenger
-    #: registers itself. It should not be modified by the user code.
-    target_id = Str
+    __metaclass__ = ABCMeta
 
-    #: The messaging send pipe. This will be supplied by the application
-    #: when the messenger registers itself. It should not be modified
-    #: by the user code.
-    send_pipe = Instance(AsyncSendPipe)
+    @abstractproperty
+    def target_id(self):
+        """ A property which should be write once and then read only. 
 
-    #: The messaging recv pipe. This will be supplied by the application
-    #: then the messenger registers itself. It should not be modified
-    #: by the user code.
-    recv_pipe = Instance(AsyncRecvPipe)
-
-    def __new__(cls, *args, **kwargs):
-        """ Create a new AsyncMessenger instance.
-
-        New instances cannot be created unless and AsyncApplication 
-        instance is available.
+        The target id will be a string and will be set by the async 
+        application when the messenger is registered. The target id
+        should be set before the async pipe since the setter for the
+        pipe property may depend on the existence of the target it.
 
         """
-        app = AsyncApplication.instance()
-        if app is None:
-            msg = 'An async application instance must be created before '
-            msg += 'creating any AsyncMessenger instances.'
-            raise AsyncApplicationError(msg)
-        
-        instance = super(AsyncMessenger, cls).__new__(cls, args, kwargs)
-        target_id, send_pipe, recv_pipe = app.register(instance)
+        raise NotImplementedError
 
-        instance.target_id = target_id
-        instance.send_pipe = send_pipe
-        instance.recv_pipe = recv_pipe
+    @abstractproperty
+    def async_pipe(self):
+        """ A property which should be write once and the read only.
 
-        return instance
+        The async pipe will be an instance of AsyncPipe and will be
+        set by the async application when the messenger is registered.
+        This is the pipe that should be used by the messenger for 
+        communication with the client.
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def creation_payload(self):
+        """ Returns the payload dict for the 'create' action for the
+        messenger.
+
+        The contents of this must contain the keys 'action', 'type',
+        'parent_id', and 'attributes'. The value of 'action' must be
+        the string 'create'. The value of 'type' should be a string
+        indicating the type of object to be created by the client.
+        The value of 'parent_id' should be a string which is the 
+        target id of the parent, or None if the messenger has no
+        parent. The value of 'attributes' should be a dictionary 
+        of initial attributes to provide to the client.
+
+        Returns
+        -------
+        results : dict
+            A dict which is json serializable and contains the payload
+            needed to create a client of the appropriate type.
+
+        """
+        raise NotImplementedError
 

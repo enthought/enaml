@@ -5,9 +5,9 @@
 from abc import ABCMeta, abstractmethod
 
 
-class AsyncSendPipe(object):
+class AsyncPipe(object):
     """ An abstract base class which defines the interface for a pipe
-    used to send operations to a target.
+    used to communicate with a target.
 
     """
     __metaclass__ = ABCMeta
@@ -56,14 +56,6 @@ class AsyncSendPipe(object):
 
         """
         raise NotImplementedError
-
-
-class AsyncRecvPipe(object):
-    """ An abstract base class which defines the interface for a pipe
-    used to receive operations from a peer.
-
-    """
-    __metaclass__ = ABCMeta
 
     def set_message_callback(self, target_id, callback):
         """ Supply a callback to be called when an operation of type
