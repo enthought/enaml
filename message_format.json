@@ -32,41 +32,41 @@
   // The array of operations to execute by the peer. The operations
   // must be executed in order.
   "operations": [
-      {
-        // The type of the operation. Will always be one of "message", 
-        // "request", "response".
-        "type": "<message | request | reply>",
+    {
+      // The type of the operation. Will always be one of "message", 
+      // "request", "response".
+      "type": "<message | request | reply>",
+      
+      // The target of the operation is the identifier of the handler 
+      // on the peer that should process the operation. These 
+      // identifiers are unique and implementation depenent. They are 
+      // generated as peers are created.
+      "target_id": "<string>",
         
-        // The target of the operation is the identifier of the handler 
-        // on the peer that should process the operation. These 
-        // identifiers are unique and implementation depenent. They are 
-        // generated as peers are created.
-        "target_id": "<string>",
-          
-        // An identifier which uniquely defines this operation. For
-        // operations of type "message", this will be null. For 
-        // "request" and "reply" this will be a string which identifies
-        // a "request"/"reply" pair, and can be used by an application
-        // to route the operation to the proper handler.
-        "operation_id": null,
+      // An identifier which uniquely defines this operation. For
+      // operations of type "message", this will be null. For 
+      // "request" and "reply" this will be a string which identifies
+      // a "request"/"reply" pair, and can be used by an application
+      // to route the operation to the proper handler.
+      "operation_id": null,
 
-        // The payload of an operation is the information required by
-        // the target handler to process the operation. The payload
-        // contents are partially dependent on the type of the 
-        // operation.
-        "payload": {
-          // The action associate with this operation. The available
-          // actions for a peer are dependent on the type of that
-          // peer and the type of the operation. See the specification 
-          // for actions for further info. (this spec is not yet defined)
-          "action": "<string>",
+      // The payload of an operation is the information required by
+      // the target handler to process the operation. The payload
+      // contents are partially dependent on the type of the 
+      // operation.
+      "payload": {
+        // The action associate with this operation. The available
+        // actions for a peer are dependent on the type of that
+        // peer and the type of the operation. See the specification 
+        // for actions for further info. (this spec is not yet defined)
+        "action": "<string>",
 
-          // The remaining properties of the payload depend on the 
-          // action. See the specification for actions for further 
-          // info. (this spec is not yet defined)
+        // The remaining properties of the payload depend on the 
+        // action. See the specification for actions for further 
+        // info. (this spec is not yet defined)
 
-        }
       }
+    }
   ]
 }
 
