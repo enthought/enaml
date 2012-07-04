@@ -73,80 +73,75 @@ class QtWindowLayout(QLayout):
 
 
 class QtWindow(QtWidgetComponent):
-    """ A Qt implementation of a window
+    """ A Qt4 implementation of an Enaml Window.
 
     """
     def create(self):
-        """ Create the underlying widget
+        """ Create the underlying QWidget object.
 
         """
         self.widget = QWidget(self.parent_widget)
         self.widget.setLayout(QtWindowLayout())
 
-    def initialize(self, init_attrs):
-        """ Initialize the widget's attributes
+    def initialize(self, attrs):
+        """ Initialize the widget's attributes.
 
         """
-        super(QtWindow, self).initialize(init_attrs)
-        self.set_title(init_attrs.get('title', ''))
+        super(QtWindow, self).initialize(attrs)
+        self.set_title(attrs.get('title', ''))
+        self.set_initial_size(attrs.get('initial_size', (-1, -1)))
 
-    #--------------------------------------------------------------------------
-    # Layout Handling
-    #--------------------------------------------------------------------------
-    def initialize_layout(self):
-        """ Adds the central widget to the window layout.
+    def post_initialize(self):
+        """ Perform the post initialization work.
+
+        For a QtWindow, this involves adding the the central widget
+        to the window layout.
 
         """
-        # XXX this a temporary hack until we decide on the central widget
-        # of a window
-        super(QtWindow, self).initialize_layout()
-        if len(self.children) > 0:
-            self.widget.layout().addWidget(self.children[0].widget)
+        super(QtWindow, self).post_initialize()
+        children = self.children
+        if len(children) > 0:
+            central_widget = children[0].widget
+            self.widget.layout().addWidget(central_widget)
 
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
-    def receive_close(self, ctxt):
-        """ Message handler for close
+    def on_message_close(self, payload):
+        """ Message handler for the 'close' action.
 
         """
-        return self.close()
+        self.close()
 
-    def receive_maximize(self, ctxt):
-        """ Message handler for maximize
-
-        """
-        return self.maximize()
-
-    def receive_minimize(self, ctxt):
-        """ Message handler for minimize
+    def on_message_maximize(self, payload):
+        """ Message handler for the 'maximize' action.
 
         """
-        return self.minimize()
+        self.maximize()
 
-    def receive_restore(self, ctxt):
-        """ Message handler for restore
-
-        """
-        return self.restore()
-
-    def receive_show(self, ctxt):
-        """ Message handler for show
+    def on_message_minimize(self, payload):
+        """ Message handler for the 'minimize' action.
 
         """
-        return self.show()
+        self.minimize()
 
-    def receive_set_icon(self, ctxt):
-        """ Message handler for set_icon
-
-        """
-        return NotImplemented
-
-    def receive_set_title(self, ctxt):
-        """ Message handler for set_title
+    def on_message_restore(self, payload):
+        """ Message handler for the 'restore' action.
 
         """
-        return self.set_title(ctxt['title'])
+        self.restore()
+
+    def on_message_set_icon(self, payload):
+        """ Message handler for the 'set-icon' action.
+
+        """
+        pass
+
+    def on_message_set_title(self, payload):
+        """ Message handler for the 'set-title' action.
+
+        """
+        self.set_title(payload['title'])
     
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -156,45 +151,42 @@ class QtWindow(QtWidgetComponent):
 
         """
         self.widget.close()
-        return True
 
     def maximize(self):
         """ Maximize the window.
 
         """
         self.widget.showMaximized()
-        return True
 
     def minimize(self):
         """ Minimize the window.
 
         """
         self.widget.showMinimized()
-        return True
 
     def restore(self):
         """ Restore the window after a minimize or maximize.
 
         """
         self.widget.showNormal()
-        return True
-
-    def show(self):
-        """ Show the widget
-
-        """
-        self.set_visible(True)
-        return True
 
     def set_icon(self, icon):
         """ Set the window icon.
 
         """
-        return NotImplemented
+        pass 
 
     def set_title(self, title):
         """ Set the title of the window.
 
         """
         self.widget.setWindowTitle(title)
-        return True
+
+    def set_initial_size(self, size):
+        """ Set the initial size of the window.
+
+        """
+        if -1 in size:
+            return
+        self.widget.resize(*size)
+
