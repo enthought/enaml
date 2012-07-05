@@ -4,8 +4,6 @@
 #------------------------------------------------------------------------------
 from traits.api import Str
 
-from enaml.core.trait_types import EnamlEvent
-
 from .bounded_datetime import BoundedDatetime
 
 
@@ -18,11 +16,6 @@ class DatetimeEdit(BoundedDatetime):
     #: supplied (or is invalid) the system locale setting is used.
     #: This may not be supported by all backends.
     datetime_format = Str
-
-    #: Triggered whenever the user changes the date through the ui
-    #: control, but not programmatically. The event payload will be 
-    #: the datetime on the control.
-    datetime_changed = EnamlEvent
 
     #: How strongly a component hugs its contents' width. DatetimeEdits 
     #: ignore the width hug by default, so they expand freely in width.
@@ -37,8 +30,7 @@ class DatetimeEdit(BoundedDatetime):
 
         """
         super_attrs = super(DatetimeEdit, self).creation_attributes()
-        attrs = {'datetime_format' : self.datetime_format}
-        super_attrs.update(attrs)
+        super_attrs['datetime_format'] = self.datetime_format
         return super_attrs
 
     def bind(self):

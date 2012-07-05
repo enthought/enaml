@@ -4,15 +4,12 @@
 #------------------------------------------------------------------------------
 from datetime import datetime as py_datetime
 
+from datetutil.parser import parse as parse_iso_dt
 from traits.api import Property, BaseInstance, TraitError, on_trait_change
 
 from enaml.core.trait_types import Bounded
 
 from .constraints_widget import ConstraintsWidget
-
-
-#: The attributes of a BoundedDatetim to proxy to clients.
-_DATETIME_ATTRS = ['minimum', 'maximum', 'datetime']
 
 
 #: A custom trait which validates Python datetime instances.
@@ -47,14 +44,15 @@ class BoundedDatetime(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
-    def creation_attrs(self):
+    def creation_attributes(self):
         """ Return a dictionary which contains all the state necessary to
         initialize a client widget.
 
         """
-        super_attrs = super(BoundedDatetime, self).creation_attrs()
-        attrs = dict((attr, getattr(self, attr)) for attr in _DATETIME_ATTRS)
-        super_attrs.update(attrs)
+        super_attrs = super(BoundedDatetime, self).creation_attributes()
+        super_attrs['minimum'] = self.minimum
+        super_attrs['maximum'] = self.maximum
+        super_attrs['datetime'] = self.datetime.isoformat()
         return super_attrs
 
     def bind(self):
@@ -63,17 +61,28 @@ class BoundedDatetime(ConstraintsWidget):
 
         """
         super(BoundedDatetime, self).bind()
-        self.default_send(*_DATETIME_ATTRS)
+        self.publish_attributes('minimum', 'maximum')
+        self.on_trait_change(self._send_datetime, 'datetime')
 
     #--------------------------------------------------------------------------
     # Message Handling
     #--------------------------------------------------------------------------
-    def on_message_set_datetime(self, payload):
-        """ The handler for the 'set-datetime' action sent from the UI.
+    def on_message_event_changed(self, payload):
+        """ The handler for the 'event-changed' message sent from the UI.
 
         """
-        pass
+        datetime = parse_iso_dt(payload['datetime'])
+        self.set_guarded(datetime=datetime)
         
+    def _send_datetime(self):
+        """ Send the current datetime to the client widget.
+
+        """
+        if 'datetime' not in self.loopback_guard:
+            dt = self.datetime.isoformat()
+            payload = {'action': 'set-datetime', 'datetime': dt}
+            self.send_message(payload)
+
     #--------------------------------------------------------------------------
     # Properties
     #--------------------------------------------------------------------------
@@ -115,6 +124,9 @@ class BoundedDatetime(ConstraintsWidget):
             raise TraitError(msg)
         self._maximum = datetime
 
+    #--------------------------------------------------------------------------
+    # Private API
+    #--------------------------------------------------------------------------
     @on_trait_change('minimum, maximum')
     def _adapt_datetime(self):
         """ Actively adapt the datetime to lie within the boundaries.

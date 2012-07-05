@@ -5,6 +5,8 @@
 from traits.api import Unicode
 
 from enaml.async.async_application import AsyncApplication
+from enaml.core.trait_types import EnamlEvent
+
 from .widget_component import WidgetComponent, SizeTuple
 
 
@@ -23,6 +25,9 @@ class Window(WidgetComponent):
     #: The initial size of the window. A value of (-1, -1) indicates
     #: to let the client choose the initial size
     initial_size = SizeTuple
+
+    #: An event fired when the window is closed.
+    closed = EnamlEvent
 
     #: The titlebar icon.
     # XXX needs to be implemented
@@ -47,6 +52,15 @@ class Window(WidgetComponent):
         """
         super(Window, self).bind()
         self.publish_attributes('title')
+
+    #--------------------------------------------------------------------------
+    # Message Handling
+    #--------------------------------------------------------------------------
+    def on_message_event_closed(self, payload):
+        """ The handler for the 'event-closed' message from the client. 
+
+        """
+        self.closed()
 
     #--------------------------------------------------------------------------
     # Public API

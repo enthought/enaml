@@ -17,7 +17,7 @@ class RadioButton(AbstractButton):
     in their own Container.
 
     The interface for AbstractButton fully defines the interface for
-    a CheckBox.
+    a RadioButton.
 
     """
     #: Radio buttons are checkable by default.

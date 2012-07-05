@@ -12,10 +12,6 @@ from .constraints_widget import ConstraintsWidget
 from .icon import Icon
 
 
-#: The button attributes to proxy to clients.
-_BUTTON_ATTRS = ['text', 'checkable', 'checked', 'icon_size']
-
-
 class AbstractButton(ConstraintsWidget):
     """ A base class which provides functionality common for several
     button-like widgets.
@@ -56,8 +52,10 @@ class AbstractButton(ConstraintsWidget):
 
         """
         super_attrs = super(AbstractButton, self).creation_attributes()
-        attrs = dict((attr, getattr(self, attr)) for attr in _BUTTON_ATTRS)
-        super_attrs.update(attrs)
+        super_attrs['text'] = self.text
+        super_attrs['checkable'] = self.checkable
+        super_attrs['checked'] = self.checked
+        super_attrs['icon_size'] = self.icon_size
         icon = self.icon
         super_attrs['icon'] = b64encode(icon.data()) if icon else None
         return super_attrs
@@ -67,35 +65,35 @@ class AbstractButton(ConstraintsWidget):
 
         """
         super(AbstractButton, self).bind()
-        self.publish_attributes(*_BUTTON_ATTRS)
-        self.on_trait_change(self.send_icon, 'icon')
+        self.publish_attributes('text', 'checkable', 'checked', 'icon_size')
+        self.on_trait_change(self._send_icon, 'icon')
 
-    def send_icon(self):
-        """ Send the icon data to the Enaml widget, encoded in base 64 format
-
-        """
-        icon = self.icon
-        enc_data = b64encode(icon.data()) if icon else None
-        self.send_message({'action': 'set-icon','icon': enc_data})
-        
     #--------------------------------------------------------------------------
-    # Toolkit Communication
+    # Message Handling
     #--------------------------------------------------------------------------
-    def on_message_clicked(self, payload):
-        """ Handle the 'clicked' action from the UI widget. The payload
-        will contain the current checked state.
+    def on_message_event_clicked(self, payload):
+        """ Handle the 'event-clicked' action from the UI widget. The 
+        payload will contain the current checked state.
 
         """
         checked = payload['checked']
         self.set_guarded(checked=checked)
         self.clicked(checked)
 
-    def on_message_toggled(self, payload):
-        """ Callback from the UI when the control is toggled. The payload
-        will contain the current checked state.
+    def on_message_event_toggled(self, payload):
+        """ Handle the 'event-toggled' action from the UI widget. The
+        payload will contain the current checked state.
 
         """
         checked = payload['checked']
         self.set_guarded(checked=checked)
         self.toggled(checked)
+
+    def _send_icon(self):
+        """ Send the current icon to the client widget.
+
+        """
+        icon = self.icon
+        enc_data = b64encode(icon.data()) if icon else None
+        self.send_message({'action': 'set-icon', 'icon': enc_data})
 

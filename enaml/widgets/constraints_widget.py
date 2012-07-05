@@ -136,8 +136,7 @@ class ConstraintsWidget(WidgetComponent):
 
         """
         super_attrs = super(ConstraintsWidget, self).creation_attributes()
-        attrs = {'layout': self._layout_info()}
-        super_attrs.update(attrs)
+        super_attrs['layout'] = self._layout_info()
         return super_attrs
 
     def bind(self):
@@ -146,14 +145,13 @@ class ConstraintsWidget(WidgetComponent):
         """
         super(ConstraintsWidget, self).bind()
         items = 'constraints, hug, resist_clip'
-        self.on_trait_change(self._update_layout, items)
+        self.on_trait_change(self._send_relayout, items)
 
     #--------------------------------------------------------------------------
-    # Change Handlers
+    # Message Handling
     #--------------------------------------------------------------------------
-    def _update_layout(self):
-        """ A private change handler which sends a 'relayout' message 
-        to the client.
+    def _send_relayout(self):
+        """ Send the 'relayout' message to the client widget.
 
         """
         payload = {'action': 'relayout'}

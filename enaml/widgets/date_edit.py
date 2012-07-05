@@ -4,8 +4,6 @@
 #------------------------------------------------------------------------------
 from traits.api import Str
 
-from enaml.core.trait_types import EnamlEvent
-
 from .bounded_date import BoundedDate
 
 
@@ -17,15 +15,10 @@ class DateEdit(BoundedDate):
     than what is provided by Calendar.
 
     """
-    #: A python date format string to format the date. If none is
-    #: supplied (or is invalid) the system locale setting is used.
-    #: This may not be supported by all backends.
+    #: A python date format string to format the date for display. If
+    #: If none is supplied (or is invalid) the system locale setting 
+    #: is used. This may not be supported by all backends.
     date_format = Str
-
-    #: Triggered whenever the user changes the date through the ui
-    #: control, but not programmatically. The event payload will be 
-    #: the current date on the control.
-    date_changed = EnamlEvent
     
     #: How strongly a component hugs it's contents' width. DateEdits 
     #: ignore the width hug by default, so they expand freely in width.
@@ -40,8 +33,7 @@ class DateEdit(BoundedDate):
 
         """
         super_attrs = super(DateEdit, self).creation_attributes()
-        attrs = {'date_format': self.date_format}
-        super_attrs.update(attrs)
+        super_attrs['date_format'] = self.date_format
         return super_attrs
 
     def bind(self):

@@ -10,6 +10,6 @@ class Calendar(BoundedDate):
     a widget which resembles a calendar.
 
     """
-    # The BoundedData interface is sufficient for a Calendar
+    # The BoundedDate interface is sufficient for a Calendar
     pass
 

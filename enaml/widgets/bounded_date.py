@@ -2,17 +2,14 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from datetime import date
+from datetime import date as py_date
 
+from datetutil.parser import parse as parse_iso_dt
 from traits.api import Date, Property, TraitError, on_trait_change
 
 from enaml.core.trait_types import Bounded
 
 from .constraints_widget import ConstraintsWidget
-
-
-#: The attributes of a BoundedDate to proxy to clients.
-_DATE_ATTRS = ['minimum', 'maximum', 'date']
 
 
 class BoundedDate(ConstraintsWidget):
@@ -27,18 +24,18 @@ class BoundedDate(ConstraintsWidget):
     minimum = Property(Date, depends_on ='_minimum')
 
     #: The internal minimum date storage
-    _minimum = Date(date(1752, 9, 14))
+    _minimum = Date(py_date(1752, 9, 14))
 
     #: The maximum date available in the date edit. If not defined then
     #: the default value is December 31, 7999.
     maximum = Property(Date, depends_on ='_maximum')
 
     #: The internal maximum date storage
-    _maximum = Date(date(7999, 12, 31))
+    _maximum = Date(py_date(7999, 12, 31))
 
     #: The currently selected date. Default is the current date. The
     #: value is bounded between :attr:`minimum` and :attr:`maximum`. 
-    date = Bounded(Date(date.today()), low='minimum', high='maximum')
+    date = Bounded(Date(py_date.today()), low='minimum', high='maximum')
 
     #--------------------------------------------------------------------------
     # Initialization
@@ -49,8 +46,9 @@ class BoundedDate(ConstraintsWidget):
 
         """
         super_attrs = super(BoundedDate, self).creation_attributes()
-        attrs = dict((attr, getattr(self, attr)) for attr in _DATE_ATTRS)
-        super_attrs.update(attrs)
+        super_attrs['minimum'] = self.minimum
+        super_attrs['maximum'] = self.maximum
+        super_attrs['date'] = self.date.isoformat()
         return super_attrs
 
     def bind(self):
@@ -59,16 +57,26 @@ class BoundedDate(ConstraintsWidget):
 
         """
         super(BoundedDate, self).bind()
-        self.publish_attributes(*_DATE_ATTRS)
+        self.publish_attributes('minimum', 'maximum')
+        self.on_trait_change(self._send_date, 'date')
 
     #--------------------------------------------------------------------------
     # Message Handling
     #--------------------------------------------------------------------------
-    def on_message_set_date(self, payload):
-        """ Handle the 'set-date' message from the UI control.
+    def on_message_event_changed(self, payload):
+        """ Handle the 'event-changed' message from the UI control.
 
         """
-        pass
+        date = parse_iso_dt(payload['date']).date()
+        self.set_guarded(date=date)
+
+    def _send_date(self):
+        """ Send the current date to the client widget.
+
+        """
+        if 'date' not in self.loopback_guard:
+            payload = {'action': 'set-date', 'date': self.date.isoformat()}
+            self.send_message(payload)
 
     #--------------------------------------------------------------------------
     # Property methods
@@ -109,6 +117,9 @@ class BoundedDate(ConstraintsWidget):
             raise TraitError(msg)
         self._maximum = date
     
+    #--------------------------------------------------------------------------
+    # Private API
+    #--------------------------------------------------------------------------
     @on_trait_change('minimum, maximum')
     def _adapt_date(self):
         """ Actively adapt the date to lie within the boundaries.

@@ -92,7 +92,7 @@ class Container(ConstraintsWidget):
 
     #: The list of children that can participate in constraints based
     #: layout. This list is composed of components in the list of 
-    #: children that are instances of Constrainable.
+    #: children that are instances of ConstraintsWidget.
     constraints_children = Property(
         List(Instance(ConstraintsWidget)), depends_on='children',
     )
