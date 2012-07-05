@@ -62,6 +62,7 @@ class QtLocalPipe(QObject):
         if handler is not None:
             handler(operation['payload'])
         else:
+            print 'handler miss', operation
             # XXX log message handler misses?
             pass
             

@@ -5,6 +5,7 @@
 from weakref import ref
 
 from enaml.async.messenger_mixin import MessengerMixin
+from enaml.utils import WeakMethod
 
 
 class QtMessengerWidget(MessengerMixin):
@@ -33,8 +34,8 @@ class QtMessengerWidget(MessengerMixin):
         self.children = []
         self.target_id = target_id
         self.async_pipe = async_pipe
-        async_pipe.set_message_callback(target_id, self.recv_message)
-        async_pipe.set_request_callback(target_id, self.recv_request)
+        async_pipe.set_message_callback(target_id, WeakMethod(self.recv_message))
+        async_pipe.set_request_callback(target_id, WeakMethod(self.recv_request))
         if parent is not None:
             parent.children.append(self)
 
