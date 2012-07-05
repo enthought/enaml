@@ -214,7 +214,10 @@ class ConstraintsWidget(WidgetComponent):
             for this component.
 
         """
-        return self.constraints + self._hard_constraints()
+        cns = self.constraints
+        if not cns:
+            cns = self._default_constraints()
+        return cns + self._hard_constraints()
 
     def _hard_constraints(self):
         """ Creates the list of required symbolic constraints.
@@ -238,6 +241,15 @@ class ConstraintsWidget(WidgetComponent):
             self.width >= 0, self.height >= 0,
         ]
         return cns 
+
+    def _default_constraints(self):
+        """ Returns a list of constraints to include if the user has
+        not specified their own in the 'constraints' list. 
+
+        The default implementation returns an empty list.
+
+        """
+        return []
 
     #--------------------------------------------------------------------------
     # Property Getters and Setters

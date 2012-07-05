@@ -7,6 +7,7 @@ from traits.api import Property, Either, Tuple, Instance, List, cached_property
 from enaml.core.trait_types import CoercingInstance
 from enaml.layout.geometry import Box
 from enaml.layout.box_model import PaddingBoxModel
+from enaml.layout.layout_helpers import vbox
 
 from .constraints_widget import (
     ConstraintsWidget, PolicyEnum, get_from_box_model
@@ -139,6 +140,15 @@ class Container(ConstraintsWidget):
             cns.append(sym >= 0)
             if strength != 'ignore':
                 cns.append((sym == padding) | strength)
+        return cns
+
+    def _default_constraints(self):
+        """ Supplies a default vbox constraint to the constraints 
+        children of the container if other constraints are not given.
+
+        """
+        cns = super(Container, self)._default_constraints()
+        cns.append(vbox(*self.constraints_children))
         return cns
 
     #--------------------------------------------------------------------------
