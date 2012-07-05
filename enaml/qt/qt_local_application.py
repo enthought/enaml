@@ -8,7 +8,7 @@ from enaml.async.async_application import AsyncApplication
 
 from .qt.QtCore import Qt
 from .qt.QtGui import QApplication
-from .qt_factores import QT_FACTORIES
+from .qt_factories import QT_FACTORIES
 from .qt_local_pipe import QtLocalPipe
 
 

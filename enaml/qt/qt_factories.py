@@ -87,7 +87,7 @@ def window_factory():
     return QtWindow
 
 
-FACTORIES = {
+QT_FACTORIES = {
     'Calendar': calendar_factory,
     'CheckBox': check_box_factory,
     'ComboBox': combo_box_factory,
