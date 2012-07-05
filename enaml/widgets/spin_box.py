@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Int, Bool, Range, Unicode
+from traits.api import Int, Bool, Range
 
 from .constraints_widget import ConstraintsWidget
 
@@ -24,16 +24,6 @@ class SpinBox(ConstraintsWidget):
     #: minimum <= value <= maximum.
     value = Range('minimum', 'maximum')
 
-    #: A validator object to convert to and from a spin box integer
-    #: and a unicode string for display. The format method will be 
-    #: called with an integer and should return a string for display. 
-    #: The convert method will be passed a string and should return 
-    #: an int or raise a ValueError if the string cannot be converted. 
-    #: If the conversion is succesful but the returned int does not fall
-    #: within the allowed range of the spin box, then the spin box will
-    #: not be updated. The default validator is a simple IntValidator.
-    validator = Unicode('^[0-9]+$')
-
     #: Whether or not the spin box will wrap around at its extremes. 
     #: Defaults to False.
     wrap = Bool(False)
@@ -50,41 +40,40 @@ class SpinBox(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
-    def bind(self):
-        """ A method called after initialization which allows the widget
-        to bind any event handlers necessary.
+    def creation_attributes(self):
+        """ Return the dict of creation attributes for the control.
 
         """
-        super(SpinBox, self).bind()
-        self.default_send(
-            'maximum', 'minimum', 'single_step', 'tracking', 'validator',
-            'value', 'wrap'
-            )
-
-    def initial_attrs(self):
-        """ Return a dictionary which contains all the state necessary to
-        initialize a client widget.
-
-        """
-        super_attrs = super(SpinBox, self).initial_attrs()
+        super_attrs = super(SpinBox, self).creation_attributes()
         attrs = {
             'maximum' : self.maximum,
             'minimum' : self.minimum,
             'single_step' : self.single_step,
             'tracking' : self.tracking,
-            'validator' : self.validator,
             'value' : self.value,
             'wrap' : self.wrap
         }
         super_attrs.update(attrs)
         return super_attrs
 
-    #--------------------------------------------------------------------------
-    # Toolkit Communication
-    #--------------------------------------------------------------------------
-    def receive_set_value(self, context):
-        """ Callback from the UI when the value of the control changes.
+    def bind(self):
+        """ A method called after initialization which allows the widget
+        to bind any event handlers necessary.
 
         """
-        self.set_guarded(value=context['value'])
+        super(SpinBox, self).bind()
+        attrs = (
+            'maximum', 'minimum', 'single_step', 'tracking', 'validator',
+            'value', 'wrap'
+        )
+        self.publish_attributes(*attrs)
+
+    #--------------------------------------------------------------------------
+    # Message Handling
+    #--------------------------------------------------------------------------
+    def on_message_event_changed(self, payload):
+        """ Handle the 'event-changed' action from the client widget.
+
+        """
+        self.set_guarded(value=payload['value'])
 

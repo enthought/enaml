@@ -41,8 +41,8 @@ class Window(WidgetComponent):
 
         """
         super_attrs = super(Window, self).creation_attributes()
-        attrs = {'title': self.title, 'initial_size': self.initial_size}
-        super_attrs.update(attrs)
+        super_attrs['title'] = self.title
+        super_attrs['initial_size'] = self.initial_size
         return super_attrs
 
     def bind(self):

@@ -47,30 +47,26 @@ class ProgressBar(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
+    def creation_attributes(self):
+        """ Returns the dict of creation attributes for the control.
+
+        """
+        super_attrs = super(ProgressBar, self).creation_attributes()
+        super_attrs['maximum'] = self.maximum
+        super_attrs['minimum'] = self.minimum
+        super_attrs['value'] = self.value
+        return super_attrs
+
     def bind(self):
         """ A method called after initialization which allows the widget
         to bind any event handlers necessary.
 
         """
         super(ProgressBar, self).bind()
-        self.default_send('maximum', 'minimum', 'value')
-
-    def initial_attrs(self):
-        """ Return a dictionary which contains all the state necessary to
-        initialize a client widget.
-
-        """
-        super_attrs = super(ProgressBar, self).initial_attrs()
-        attrs = {
-            'maximum' : self.maximum,
-            'minimum' : self.minimum,
-            'value' : self.value,
-        }
-        super_attrs.update(attrs)
-        return super_attrs
+        self.publish_attributes('maximum', 'minimum', 'value')
 
     #--------------------------------------------------------------------------
-    # Property methods
+    # Property Methods
     #--------------------------------------------------------------------------
     def _get_minimum(self):
         """ The property getter for the ProgressBar minimum.
@@ -131,6 +127,9 @@ class ProgressBar(ConstraintsWidget):
             res = min(res, 99)
         return res
 
+    #--------------------------------------------------------------------------
+    # Private API
+    #--------------------------------------------------------------------------
     @on_trait_change('minimum, maximum')
     def _adapt_value(self):
         """ Adapt the value to the boundaries

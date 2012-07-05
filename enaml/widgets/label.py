@@ -24,21 +24,20 @@ class Label(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
+    def creation_attributes(self):
+        """ Returns the dict of creation attributes for the control.
+
+        """
+        super_attrs = super(Label, self).creation_attributes()
+        super_attrs['text'] = self.text
+        super_attrs['word_wrap'] = self.word_wrap
+        return super_attrs
+
     def bind(self):
         """ A method called after initialization which allows the widget
         to bind any event handlers necessary.
 
         """
         super(Label, self).bind()
-        self.default_send('text', 'word_wrap')
-
-    def initial_attrs(self):
-        """ Return a dictionary which contains all the state necessary to
-        initialize a client widget.
-
-        """
-        super_attrs = super(Label, self).initial_attrs()
-        attrs = {'text' : self.text, 'word_wrap' : self.word_wrap}
-        super_attrs.update(attrs)
-        return super_attrs
+        self.publish_attributes('text', 'word_wrap')
 
