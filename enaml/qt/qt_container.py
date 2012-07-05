@@ -129,15 +129,16 @@ class QtContainer(QtConstraintsWidget):
         self._owns_layout = True
         self._layout_owner = None
         self._layout_manager = None
-
-    def bind(self):
-        """ Binds the signal handlers for the widget.
-
-        """
-        super(QtContainer, self).bind()
         widget = self.widget
         if isinstance(widget, QResizingWidget):
             widget.resized.connect(self.on_resize)
+
+    def post_initialize(self):
+        """ Initializes the layout manager for the container. 
+
+        """
+        super(QtContainer, self).post_initialize()
+        self.setup_layout()
 
     #--------------------------------------------------------------------------
     # Signal Handlers
@@ -152,11 +153,12 @@ class QtContainer(QtConstraintsWidget):
     #--------------------------------------------------------------------------
     # Layout Handling
     #--------------------------------------------------------------------------
-    def initialize_layout(self):
+    def setup_layout(self):
         """ Creates the layout manager for this widget if it owns the
         reponsibility for laying out its descendents.
 
         """
+        self._layout_manager = None
         if self._owns_layout:
             mgr = self._layout_manager = LayoutManager()
             mgr.initialize(self._generate_constraints())
