@@ -120,11 +120,12 @@ class QtContainer(QtConstraintsWidget):
         """
         self.widget = _QResizingFrame(self.parent_widget)
 
-    def initialize(self, init_attrs):
+    def initialize(self, attrs):
         """ Initialize the attributes of the widget.
 
         """
-        super(QtContainer, self).initialize(init_attrs)
+        super(QtContainer, self).initialize(attrs)
+        self._share_layout = attrs['layout']['share_layout']
         self._cn_owners = None
         self._owns_layout = True
         self._layout_owner = None
@@ -153,13 +154,31 @@ class QtContainer(QtConstraintsWidget):
     #--------------------------------------------------------------------------
     # Layout Handling
     #--------------------------------------------------------------------------
-    def setup_layout(self):
+    def setup_layout(self, force=False):
         """ Creates the layout manager for this widget if it owns the
         reponsibility for laying out its descendents.
 
+        Parameters
+        ----------
+        force : bool, optional
+            Force the recreation of the layout manager. The default is
+            False and makes it safe to call this method multiple times
+            during the initialization process. This is handy for when
+            layout is being initialized top-down and the parent needs
+            to have a child setup its layout before its post_initialize
+            method is called.
+
         """
-        self._layout_manager = None
         if self._owns_layout:
+            # XXX this is a bit of a hack, not sure if a I like it
+            # yet. The problem is that it's difficult to guarantee
+            # the order of initialization when components are being
+            # built without an O(n**2) sort of the widgets. Is much
+            # easier for the builder to assume that widgets were 
+            # published in an intelligent order and try not to rely
+            # on any particular initialization order. 
+            if self._layout_manager is not None and not force:
+                return
             mgr = self._layout_manager = LayoutManager()
             mgr.initialize(self._generate_constraints())
             self.widget.setSizeHint(self.compute_min_size())
@@ -170,7 +189,7 @@ class QtContainer(QtConstraintsWidget):
 
         """
         if self._owns_layout:
-            self.initialize_layout()
+            self.setup_layout(force=True)
             self.refresh()
         else:
             self._layout_owner.relayout()
@@ -256,6 +275,9 @@ class QtContainer(QtConstraintsWidget):
                         cn_dicts_extend(child.constraints)
                         stack_extend(child.children)
                     else:
+                        # XXX see the comment in setup_layout() for 
+                        # why I don't really like this solution.
+                        child.setup_layout()
                         raw_cns_extend(child.size_hint_constraints())
                 else:
                     raw_cns_extend(child.size_hint_constraints())
@@ -300,6 +322,8 @@ class QtContainer(QtConstraintsWidget):
             True if the transfer was allowed, False otherwise.
         
         """
+        if not self._share_layout:
+            return False
         self._cn_owners = None
         self._owns_layout = False
         self._layout_owner = owner

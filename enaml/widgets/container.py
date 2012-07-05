@@ -2,7 +2,9 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Property, Either, Tuple, Instance, List, cached_property
+from traits.api import (
+    Property, Either, Tuple, Instance, List, Bool, cached_property,
+)
 
 from enaml.core.trait_types import CoercingInstance
 from enaml.layout.geometry import Box
@@ -31,6 +33,16 @@ class Container(ConstraintsWidget):
     constraints may cross its boundaries.
 
     """
+    #: A boolean which indicates whether or not to allow the layout
+    #: ownership of this container to be transferred to an ancestor.
+    #: This is False by default, which means that every container
+    #: get its own layout solver. This improves speed and reduces
+    #: memory use (by keeping a solver's internal tableaux small)
+    #: but at the cost of not being able to share constraints 
+    #: across Container boundaries. This flag must be explicitly 
+    #: marked as True to enable sharing.
+    share_layout = Bool(False)
+
     #: A read-only symbolic object that represents the internal left 
     #: padding of the container.
     padding_left = Property(fget=get_from_box_model)
@@ -91,6 +103,13 @@ class Container(ConstraintsWidget):
         default='required'
     )
 
+    #: Containers freely exapnd in width and height. The size hint 
+    #: constraints for a Container are used when the container is
+    #: not sharing its layout. In these cases, expansion of the 
+    #: container is typically desired.
+    hug_width = 'ignore'
+    hug_height = 'ignore'
+    
     #: The list of children that can participate in constraints based
     #: layout. This list is composed of components in the list of 
     #: children that are instances of ConstraintsWidget.
@@ -104,8 +123,26 @@ class Container(ConstraintsWidget):
         return PaddingBoxModel(self.target_id)
 
     #--------------------------------------------------------------------------
+    # Initialization
+    #--------------------------------------------------------------------------
+    def bind(self):
+        """ Bind the necessary change handlers for the control.
+
+        """
+        self.on_trait_change(self._send_relayout, 'share_layout')
+
+    #--------------------------------------------------------------------------
     # Constraints Generation
     #--------------------------------------------------------------------------
+    def _layout_info(self):
+        """ An overridden parent class method which adds the 'share'
+        layout key to the dict of layout information sent to the client.
+
+        """
+        layout = super(Container, self)._layout_info()
+        layout['share_layout'] = self.share_layout
+        return layout
+
     def _collect_constraints(self):
         """ Collect the list of symbolic constraints for the component.
 
