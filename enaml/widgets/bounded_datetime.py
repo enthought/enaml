@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from datetime import datetime as py_datetime
 
-from datetutil.parser import parse as parse_iso_dt
+from dateutil.parser import parse as parse_iso_dt
 from traits.api import Property, BaseInstance, TraitError, on_trait_change
 
 from enaml.core.trait_types import Bounded
@@ -50,8 +50,8 @@ class BoundedDatetime(ConstraintsWidget):
 
         """
         super_attrs = super(BoundedDatetime, self).creation_attributes()
-        super_attrs['minimum'] = self.minimum
-        super_attrs['maximum'] = self.maximum
+        super_attrs['minimum'] = self.minimum.isoformat()
+        super_attrs['maximum'] = self.maximum.isoformat()
         super_attrs['datetime'] = self.datetime.isoformat()
         return super_attrs
 
@@ -61,8 +61,10 @@ class BoundedDatetime(ConstraintsWidget):
 
         """
         super(BoundedDatetime, self).bind()
-        self.publish_attributes('minimum', 'maximum')
-        self.on_trait_change(self._send_datetime, 'datetime')
+        otc = self.on_trait_change
+        otc(self._send_minimum, 'minimum')
+        otc(self._send_maximum, 'maximum')
+        otc(self._send_datetime, 'datetime')
 
     #--------------------------------------------------------------------------
     # Message Handling
@@ -74,6 +76,24 @@ class BoundedDatetime(ConstraintsWidget):
         datetime = parse_iso_dt(payload['datetime'])
         self.set_guarded(datetime=datetime)
         
+    def _send_minimum(self):
+        """ Send the minimum datetime to the client widget.
+
+        """
+        payload = {
+            'action': 'set-minimum', 'minimum': self.minimum.isoformat(),
+        }
+        self.send_message(payload)
+
+    def _send_maximum(self):
+        """ Send the maximum datetime to the client widget.
+
+        """
+        payload = {
+            'action': 'set-maximum', 'maximum': self.maximum.isoformat(),
+        }
+        self.send_message(payload)
+
     def _send_datetime(self):
         """ Send the current datetime to the client widget.
 

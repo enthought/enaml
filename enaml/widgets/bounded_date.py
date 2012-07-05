@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from datetime import date as py_date
 
-from datetutil.parser import parse as parse_iso_dt
+from dateutil.parser import parse as parse_iso_dt
 from traits.api import Date, Property, TraitError, on_trait_change
 
 from enaml.core.trait_types import Bounded
@@ -46,8 +46,8 @@ class BoundedDate(ConstraintsWidget):
 
         """
         super_attrs = super(BoundedDate, self).creation_attributes()
-        super_attrs['minimum'] = self.minimum
-        super_attrs['maximum'] = self.maximum
+        super_attrs['minimum'] = self.minimum.isoformat()
+        super_attrs['maximum'] = self.maximum.isoformat()
         super_attrs['date'] = self.date.isoformat()
         return super_attrs
 
@@ -57,8 +57,10 @@ class BoundedDate(ConstraintsWidget):
 
         """
         super(BoundedDate, self).bind()
-        self.publish_attributes('minimum', 'maximum')
-        self.on_trait_change(self._send_date, 'date')
+        otc = self.on_trait_change
+        otc(self._send_minimum, 'minimum')
+        otc(self._send_maximum, 'maximum')
+        otc(self._send_date, 'date')
 
     #--------------------------------------------------------------------------
     # Message Handling
@@ -69,6 +71,24 @@ class BoundedDate(ConstraintsWidget):
         """
         date = parse_iso_dt(payload['date']).date()
         self.set_guarded(date=date)
+
+    def _send_minimum(self):
+        """ Send the minimum date to the client widget.
+
+        """
+        payload = {
+            'action': 'set-minimum', 'minimum': self.minimum.isoformat(),
+        }
+        self.send_message(payload)
+
+    def _send_maximum(self):
+        """ Send the maximum date to the client widget.
+
+        """
+        payload = {
+            'action': 'set-maximum', 'maximum': self.maximum.isoformat(),
+        }
+        self.send_message(payload)
 
     def _send_date(self):
         """ Send the current date to the client widget.
