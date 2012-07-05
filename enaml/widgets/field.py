@@ -2,286 +2,119 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import re
-
-from traits.api import (
-    Bool, Int, Unicode, Enum, Any, List, on_trait_change,
-)
-
-from enaml.core.trait_types import EnamlEvent
+from traits.api import Bool, Int, Unicode, Enum, List, Str
 
 from .constraints_widget import ConstraintsWidget
-
-from ..guard import guard
 
 
 class Field(ConstraintsWidget):
     """ A single-line editable text widget.
 
-    Among many other attributes, a Field accepts a validator object
-    which allows any arbitrary python object to be displayed and edited
-    by the Field.
-
     """
-    #: The Python value to display in the field. The default value
-    #: is an empty string.
-    value = Any(u'')
+    #: The unicode text to display in the field.
+    text = Unicode
 
-    #: A regular expression that only allows the user to type values that would
-    #: satisfy the expression
-    validator = Unicode
+    #: A regular expression string which is checked every time the user
+    #: presses a key. If the new text does not pass this expressions, 
+    #: then the user will not be able to add that character. The default
+    #: expression accepts all input.
+    key_validator = Unicode(ur'.*')
 
-    #: A validator which checks the text value when the field is submitted. This validator
-    #: determines whether or not to color the field red.
-    submit_validator = Unicode
-    
+    #: A regular expression which is checked when the user attempt to
+    #: submits the value in the field. If the text does not pass this
+    #: expression, it will not be submitted and the background color
+    #: of the field will be changed to the 'error_color'. The default
+    #: expression accepts all input.
+    submit_validator = Unicode(ur'.*')
+
+    #: The background color to use if the user attempts to submit text
+    #: which does not pass the submit validator. Supports CSS style
+    #: color strings.
+    error_color = Str
+
     #: The maximum length of the field in characters. The default value
     #: is Zero and indicates there is no maximum length.
-    max_length = Int
+    max_length = Int(0)
 
     #: Whether or not the field is read only. Defaults to False.
     read_only = Bool(False)
 
-    #: The position of the cursor in the field. Defaults to Zero.
-    cursor_position = Int
-
-    #: The grayed-out text to display if 'value' is empty and the
+    #: The grayed-out text to display if the field is empty and the
     #: widget doesn't have focus. Defaults to the empty string.
     placeholder_text = Unicode
     
     #: How to obscure password text in the field.
     password_mode = Enum('normal', 'password', 'silent')
 
-    #: A boolean which is set to True if the user has changed the text
-    #: from the ui, False otherwise. This is reset to False if the
-    #: value is updated programmatically. This should be considered
-    #: read-only and any assignment by the user will be ignored.
-    modified = Bool(False)
-
-    #: A unicode attribute that is updated with the text selected in the
-    #: field. This should be considered read-only and any assignment by 
-    #: the user will be ignored. Use the various selection methods to
-    #: programmatically change the selection.
-    selected_text = Unicode
-
-    #: A boolean indicating whether or not the text typed by the user 
-    #: is acceptable for conversion as indicated by the validator. Note
-    #: that this is distinctly different from the 'error' attribute which
-    #: indicates an error occured while converting acceptable text to the
-    #: Python value. This should be considered read-only and assignment 
-    #: by the user will be ignored.
-    acceptable = Bool
-    def _acceptable_default(self):
-        match = re.match(self.submit_validator, self._text)
-        return (match is not None)
-
     #: A list of strings which indicates when the text the in the field
     #: should be converted to a Python object representation and stored 
     #: in the 'value' attribute. The default mode triggers submissions 
     #: on lost focus events and return pressed events. Allowable modes 
-    #: are 'always', 'lost_focus', and 'return_pressed'. A submission 
-    #: can also be manually triggered by calling the 'submit()' method.
+    #: are 'lost_focus', and 'return_pressed'. The default value is to 
+    #: submit on either lost focus or return pressed. A submission can
+    #: also be performed manually by calling the 'submit()' method.
     submit_mode = List(
-        Enum('lost_focus', 'return_pressed', 'always'),
+        Enum('lost_focus', 'return_pressed'), 
         value=['lost_focus', 'return_pressed'],
     )
-
-    #: Fired when the text is changed by the user explicitly through
-    #: the ui but not programmatically. The event object will contain
-    #: the text.
-    text_edited = EnamlEvent
-
-    #: Fired when the return/enter key is pressed in the field, provided 
-    #: that the text in the field validates as ACCEPTABLE.
-    return_pressed = EnamlEvent
-    
-    #: Fired when the widget has lost input focus.
-    lost_focus = EnamlEvent
-        
+   
     #: How strongly a component hugs it's contents' width. Fields ignore 
     #: the width hug by default, so they expand freely in width.
     hug_width = 'ignore'
 
-    #: A variable to hold text that is received from the toolkit component
-    _text = Unicode(u'')
-
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
+    def creation_attributes(self):
+        """ Returns the dict of creation attributes for the control.
+
+        """
+        super_attrs = super(Field, self).creation_attributes()
+        attrs = {
+            'text': self.text,
+            'key_validator': self.key_validator,
+            'submit_validator': self.submit_validator,
+            'error_color': self.error_color,
+            'max_length': self.max_length,
+            'read_only': self.read_only,
+            'placeholder_text' : self.placeholder_text,
+            'password_mode' : self.password_mode,
+            'submit_mode' : self.submit_mode,
+        }
+        super_attrs.update(attrs)
+        return super_attrs
+
     def bind(self):
         """ A method called after initialization which allows the widget
         to bind any event handlers necessary.
 
         """
         super(Field, self).bind()
-        self.default_send(
-                'max_length', 'password_mode', 'placeholder_text', 'read_only',
-                'submit_mode', 'value', 'validator'
-            )
-
-    def initial_attrs(self):
-        """ Return a dictionary which contains all the state necessary to
-        initialize a client widget.
-
-        """
-        super_attrs = super(Field, self).initial_attrs()
-        attrs = {
-            'max_length' : self.max_length,
-            'read_only' : self.read_only,
-            'password_mode' : self.password_mode,
-            'placeholder_text' : self.placeholder_text,
-            'submit_mode' : self.submit_mode,
-            'validator' : self.validator,
-            'value' : self.value,
-        }
-        super_attrs.update(attrs)
-        return super_attrs
+        attrs = (
+            'text', 'key_validator', 'submit_validator', 'error_color',
+            'max_length', 'read_only', 'placeholder_text', 'password_mode', 
+            'submit_mode',
+        )
+        self.publish_attributes(*attrs)
 
     #--------------------------------------------------------------------------
-    # Toolkit Communication
+    # Message Handling
     #--------------------------------------------------------------------------
-    def receive_lost_focus(self, context):
-        """ Callback from the UI when the control loses focus.
+    def on_message_event_changed(self, payload):
+        """ Handle the 'event-changed' action from the client widget.
 
         """
-        self._text = context['text']
-        self._field_lost_focus()
-
-    def receive_return_pressed(self, context):
-        """ Callback from the UI when return is pressed.
-
-        """
-        self._text = context['text']
-        self._field_return_pressed()
-
-    def receive_set_modified(self, context):
-        """ Callback from the UI when the control's value is modified.
-
-        """
-        self.modified = context['modified']
-
-    def receive_text_edited(self, context):
-        """ Callback from the UI when the control's text is edited.
-
-        """
-        self._text = context['text']
-        self._field_text_edited()
-
-    def update_text(self, text):
-        """ Forcibly update the text in the UI.
-
-        """
-        self.send({'action':'set_text', 'text':text})
+        text = payload['text']
+        self.set_guarded(text=text)
 
     #--------------------------------------------------------------------------
-    # Submission Machinery
+    # Public API
     #--------------------------------------------------------------------------
-    def submit(self, format=True):
-        """ A method which is called to perform the submission. 
-
-        A submit involves converting the current text in the field into a 
-        Python value using the current validator, and storing that value
-        in the 'value' attribute. If an error occurs during conversion,
-        then the 'invalid', 'error' and 'exception' attributes on the 
-        field will be set appropriately.
-
-        If the current text does not validate as ACCEPTABLE then the
-        'value' attribute will not be changed. In such case if 'format'
-        is True, then the existing value will be formatted and the 
-        display text updated.
-        
-        Parameters
-        ----------
-        format : bool, optional
-            Whether or not to re-format the text after conversion and
-            submission. A False value is useful for submitting the value
-            without causing the text in the field to be updated. The
-            default is True.
-        
-        Returns
-        -------
-        result : bool
-            True if the submission is successful, or False if the text
-            is not valid or the conversion from text to value fails. 
+    def submit(self):
+        """ A method which will perform a manual submission of the text
+        in the field. This is useful for form-based submission where all
+        the values for several fields should all be submitted at once.
 
         """
-        text = self._text
-        valid = re.match(self.submit_validator, text)
-        self.acceptable = acceptable = (valid is not None)
-
-        res = False
-        if acceptable:
-            # Setting the value attribute may fire off a model 
-            # subscription which has the potential to raise other
-            # exceptions. XXX we may want to log this exception
-            # at some point in the future.
-            try:
-                with guard(self, 'submitting'):
-                    self.value = text
-                    self.send({'action':'set_valid'})
-            except Exception as e:
-                self.exception = e
-                self.error = True
-                return
-            else:
-                res = True
-                self.exception = None
-                self.error = False
-                self.update_text(text)
-
-        else:
-            self.send({'action':'set_invalid'})
-
-        return res
-
-    @on_trait_change('value, validator')
-    def _update_text_from_value(self):
-        """ A change handler which updates the displayed text whenever
-        the 'value' or the 'validator' attributes change.
-
-        """
-        if not guard.guarded(self, 'submitting'):
-            self.modified = False
-            text = self.value
-            self.update_text(text)
-            valid = re.match(self.submit_validator, text)
-            self.acceptable = (valid is not None)
-
-    #--------------------------------------------------------------------------
-    # Field Update Methods
-    #--------------------------------------------------------------------------
-    def _field_text_edited(self):
-        """ A method which should be called by the toolkit implementation
-        whenever the user edits the text in the ui, but not when the text
-        has been updated by a call to set_text(). This method should not
-        be called if the user input validates as INVALID as such text
-        should be rejected entirely.
-
-        """
-        self.modified = True
-        if 'always' in self.submit_mode:
-            self.submit(format=False)
-        else:
-            valid = re.match(self.submit_validator, self._text)
-            self.acceptable = (valid is not None)
-        self.text_edited()
-
-    def _field_return_pressed(self):
-        """ A method which should be called by the toolkit implementation
-        whenever the user presses the return key, but only if the text in 
-        the field validates as ACCEPTABLE.
-
-        """
-        if 'return_pressed' in self.submit_mode:
-            self.submit()
-        self.return_pressed()
-
-    def _field_lost_focus(self):
-        """ A method which should be called by the toolkit implementation 
-        whenever the field loses focus.
-
-        """
-        if 'lost_focus' in self.submit_mode:
-            self.submit()
-        self.lost_focus()
+        self.send_message({'action': 'submit'})
 
