@@ -77,12 +77,12 @@ class QtConstraintsWidget(QtWidgetComponent):
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
-    def initialize(self, init_attrs):
+    def initialize(self, attrs):
         """ Initialize the attributes of the widget.
 
         """
-        super(QtConstraintsWidget, self).initialize(init_attrs)
-        layout = init_attrs['layout']
+        super(QtConstraintsWidget, self).initialize(attrs)
+        layout = attrs['layout']
         self.hug = layout['hug']
         self.resist_clip = layout['resist_clip']
         self.constraints = layout['constraints']
