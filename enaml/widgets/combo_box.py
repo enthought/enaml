@@ -2,9 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import (
-    List, Any, Callable, Int, Property, Unicode, cached_property,
-)
+from traits.api import List, Int, Property, Unicode, cached_property
 
 from .constraints_widget import ConstraintsWidget
 
@@ -31,30 +29,16 @@ class ComboBox(ConstraintsWidget):
           is changed programmatically.
 
     """
-    #: The objects that compose the collection.
-    items = List(Any)
+    #: The strings to display in the combo box.
+    items = List(Unicode)
 
     #: The integer index of the current selection in items. If the 
     #: given index falls outside of the range of items, no item will
     #: be selected.
     index = Int(-1)
 
-    #: A callable which will convert the objects in the items list to
-    #: strings for display. Defaults to unicode.
-    to_string = Callable(unicode)
-
-    #: A read-only property that returns the currently selected item in
-    #: the list of items. If the current selected index is -1 or out
-    #: of range of the list of items, then this will be None.
-    value = Property(Any, depends_on=['index', 'items[]'])
-
-    #: A readonly property that holds the component items as a list of
-    #: strings that are produced by the :attr:`to_string` attribute.
-    strings = Property(List(Unicode), depends_on=['to_string', 'items[]'])
-
-    #: A readonly property that will return the result of calling
-    #: :attr:`to_string` on :attr:`value`
-    selected_text = Property(Unicode, depends_on=['to_string', 'value'])
+    #: A readonly property that will return the selected item
+    selected_item = Property(Unicode, depends_on=['index', 'items[]'])
     
     #: How strongly a component hugs it's contents' width. ComboBoxes hug 
     #: width weakly, by default.
@@ -68,7 +52,7 @@ class ComboBox(ConstraintsWidget):
 
         """
         super_attrs = super(ComboBox, self).creation_attributes()
-        super_attrs['strings'] = self.labels
+        super_attrs['items'] = self.items
         super_attrs['index'] = self.index
         return super_attrs
 
@@ -78,7 +62,7 @@ class ComboBox(ConstraintsWidget):
 
         """
         super(ComboBox, self).bind()
-        self.publish_attributes('strings', 'index')
+        self.publish_attributes('items', 'index')
 
     #--------------------------------------------------------------------------
     # Message Handling
@@ -95,27 +79,13 @@ class ComboBox(ConstraintsWidget):
     # Property Handlers
     #--------------------------------------------------------------------------
     @cached_property
-    def _get_value(self):
-        """ The default value handler for :attr:`value`.
+    def _get_selected_item(self):
+        """ The default value handler for :attr:`selected_item`.
 
         """
         items = self.items
         idx = self.index
         if idx < 0 or idx >= len(items):
-            return None
+            return u''
         return items[idx]
-
-    @cached_property
-    def _get_strings(self):
-        """ The property getter for :attr:`strings`.
-
-        """
-        return map(self.to_string, self.items)
-        
-    @cached_property
-    def _get_selected_text(self):
-        """ The property getter for :attr:`selected_text`.
-
-        """
-        return self.to_string(self.value)
 
