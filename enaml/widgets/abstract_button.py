@@ -13,7 +13,7 @@ from .icon import Icon
 
 
 #: The button attributes to proxy to clients.
-_AB_PROXY_ATTRS = ['text', 'checkable', 'checked','icon_size']
+_BUTTON_ATTRS = ['text', 'checkable', 'checked', 'icon_size']
 
 
 class AbstractButton(ConstraintsWidget):
@@ -36,10 +36,12 @@ class AbstractButton(ConstraintsWidget):
     #: Whether a checkable button is currently checked.
     checked = Bool(False)
 
-    #: Fired when the button is pressed then released.
+    #: Fired when the button is pressed then released. The payload will
+    #: be the current checked state.
     clicked = EnamlEvent
 
-    #: Fired when a checkable button is toggled.
+    #: Fired when a checkable button is toggled. The payload will be
+    #: the current checked state.
     toggled = EnamlEvent
     
     #: How strongly a component hugs it's contents' width. Buttons hug
@@ -49,52 +51,51 @@ class AbstractButton(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
+    def creation_attributes(self):
+        """ Returns the creation attributes for an abstract button.
+
+        """
+        super_attrs = super(AbstractButton, self).creation_attributes()
+        attrs = dict((attr, getattr(self, attr)) for attr in _BUTTON_ATTRS)
+        super_attrs.update(attrs)
+        icon = self.icon
+        super_attrs['icon'] = b64encode(icon.data()) if icon else None
+        return super_attrs
+
     def bind(self):
-        """ A method called after initialization which allows the widget
-        to bind any event handlers necessary.
+        """ Bind the change handlers for an abstract button.
 
         """
         super(AbstractButton, self).bind()
-        self.default_send(*_AB_PROXY_ATTRS)
+        self.publish_attributes(*_BUTTON_ATTRS)
         self.on_trait_change(self.send_icon, 'icon')
-
-    def initial_attrs(self):
-        """ Return a dictionary which contains all the state necessary to
-        initialize a client widget.
-
-        """
-        super_attrs = super(AbstractButton, self).initial_attrs()
-        attrs = dict((attr, getattr(self, attr)) for attr in _AB_PROXY_ATTRS)
-        super_attrs.update(attrs)
-        super_attrs.update({'icon':b64encode(self.icon.data())})
-        return super_attrs
 
     def send_icon(self):
         """ Send the icon data to the Enaml widget, encoded in base 64 format
 
         """
-        enc_data = b64encode(self.icon.data())
-        self.send({'action':'set_icon','icon':enc_data})
+        icon = self.icon
+        enc_data = b64encode(icon.data()) if icon else None
+        self.send_message({'action': 'set-icon','icon': enc_data})
         
     #--------------------------------------------------------------------------
     # Toolkit Communication
     #--------------------------------------------------------------------------
-    def receive_clicked(self, ctxt):
-        """ Callback from the UI when the control is clicked. The ctxt
+    def on_message_clicked(self, payload):
+        """ Handle the 'clicked' action from the UI widget. The payload
         will contain the current checked state.
 
         """
-        checked = ctxt['checked']
+        checked = payload['checked']
         self.set_guarded(checked=checked)
         self.clicked(checked)
-        return True
 
-    def receive_toggled(self, ctxt):
-        """ Callback from the UI when the control is toggled. The ctxt
+    def on_message_toggled(self, payload):
+        """ Callback from the UI when the control is toggled. The payload
         will contain the current checked state.
 
         """
-        checked = ctxt['checked']
+        checked = payload['checked']
         self.set_guarded(checked=checked)
         self.toggled(checked)
-        return True
+

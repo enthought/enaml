@@ -15,12 +15,13 @@ enamldef SomeMain(Window):
         ]
         Slider:
             id: foo
+            value = 50
             value :: nonlocals.title = str(value)
             orientation = 'vertical'
         Slider:
             id: sldr
             orientation = 'vertical'
-            value << max(0, foo.value - 10)
+            value << foo.value
             enabled = False
         PushButton:
             id: slam
@@ -54,7 +55,11 @@ enamldef SomeMain(Window):
             PushButton:
                 id: three
                 text = 'restore'
-                clicked :: restore()
+                #clicked :: restore()
+                clicked :: 
+                    from enaml.async.async_application import AsyncApplication
+                    app = AsyncApplication.instance()
+                    app.destroy([{'target_id': self.target_id}])
                 checkable = True
             PushButton:
                 id: four

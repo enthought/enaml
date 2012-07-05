@@ -34,32 +34,21 @@ class DateEdit(BoundedDate):
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
+    def creation_attributes(self):
+        """ Return a dictionary which contains all the state necessary to
+        initialize a client widget.
+
+        """
+        super_attrs = super(DateEdit, self).creation_attributes()
+        attrs = {'date_format': self.date_format}
+        super_attrs.update(attrs)
+        return super_attrs
+
     def bind(self):
         """ A method called after initialization which allows the widget
         to bind any event handlers necessary.
 
         """
         super(DateEdit, self).bind()
-        self.default_send('date_format')
-
-    def initial_attrs(self):
-        """ Return a dictionary which contains all the state necessary to
-        initialize a client widget.
-
-        """
-        super_attrs = super(DateEdit, self).initial_attrs()
-        attrs = {'date_format': self.date_format}
-        super_attrs.update(attrs)
-        return super_attrs
-
-    #--------------------------------------------------------------------------
-    # Toolkit Communication
-    #--------------------------------------------------------------------------
-    def receive_date_changed(self, ctxt):
-        """ Callback from the UI when the date value is changed.
-
-        """
-        date = ctxt['date']
-        self.set_guarded(value=date)
-        self.date_changed(date)
+        self.publish_attributes('date_format')
 

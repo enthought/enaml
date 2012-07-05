@@ -12,7 +12,7 @@ from .constraints_widget import ConstraintsWidget
 
 
 #: The attributes of a BoundedDatetim to proxy to clients.
-_DT_PROXY_ATTRS = ['minimum', 'maximum', 'value']
+_DATETIME_ATTRS = ['minimum', 'maximum', 'datetime']
 
 
 #: A custom trait which validates Python datetime instances.
@@ -42,31 +42,40 @@ class BoundedDatetime(ConstraintsWidget):
 
     #: The currently selected date. Default is datetime.now(). The
     #: value is bounded between :attr:`minimum` and :attr:`maximum`. 
-    value = Bounded(Datetime(py_datetime.now()), low='minimum', high='maximum')
+    datetime = Bounded(Datetime(py_datetime.now()), low='minimum', high='maximum')
                     
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
+    def creation_attrs(self):
+        """ Return a dictionary which contains all the state necessary to
+        initialize a client widget.
+
+        """
+        super_attrs = super(BoundedDatetime, self).creation_attrs()
+        attrs = dict((attr, getattr(self, attr)) for attr in _DATETIME_ATTRS)
+        super_attrs.update(attrs)
+        return super_attrs
+
     def bind(self):
         """ A method called after initialization which allows the widget
         to bind any event handlers necessary.
 
         """
         super(BoundedDatetime, self).bind()
-        self.default_send(*_DT_PROXY_ATTRS)
-
-    def initial_attrs(self):
-        """ Return a dictionary which contains all the state necessary to
-        initialize a client widget.
-
-        """
-        super_attrs = super(BoundedDatetime, self).initial_attrs()
-        attrs = dict((attr, getattr(self, attr)) for attr in _DT_PROXY_ATTRS)
-        super_attrs.update(attrs)
-        return super_attrs
+        self.default_send(*_DATETIME_ATTRS)
 
     #--------------------------------------------------------------------------
-    # Properties methods
+    # Message Handling
+    #--------------------------------------------------------------------------
+    def on_message_set_datetime(self, payload):
+        """ The handler for the 'set-datetime' action sent from the UI.
+
+        """
+        pass
+        
+    #--------------------------------------------------------------------------
+    # Properties
     #--------------------------------------------------------------------------
     def _get_minimum(self):
         """ The property getter for the minimum datetime.
@@ -107,10 +116,10 @@ class BoundedDatetime(ConstraintsWidget):
         self._maximum = datetime
 
     @on_trait_change('minimum, maximum')
-    def _adapt_value(self):
+    def _adapt_datetime(self):
         """ Actively adapt the datetime to lie within the boundaries.
 
         """
         if self.initialized:
-            self.value = min(max(self.value, self.minimum), self.maximum)
+            self.datetime = min(max(self.datetime, self.minimum), self.maximum)
 

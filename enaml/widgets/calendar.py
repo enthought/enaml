@@ -2,8 +2,6 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from enaml.core.trait_types import EnamlEvent
-
 from .bounded_date import BoundedDate
 
 
@@ -12,31 +10,6 @@ class Calendar(BoundedDate):
     a widget which resembles a calendar.
 
     """
-    #: An event triggered when the user clicks or changes the control
-    #: from the user interface. The event payload will be the date
-    #: selected in the control.
-    selected = EnamlEvent
-
-    #: An event triggered whenever the user activates a new date by
-    #: double clicking or pressing enter on the user interface. The event
-    #: payload will be the date activated in the control.
-    activated = EnamlEvent
-
-    #--------------------------------------------------------------------------
-    # Toolkit Communication
-    #--------------------------------------------------------------------------
-    def receive_selected(self, ctxt):
-        """ Callback from the UI when the control is selected.
-
-        """
-        print 'selected'
-        self.selected(ctxt['date'])
-        self.set_guarded(value=ctxt['date'])
-
-    def receive_activated(self, ctxt):
-        """ Callback from the UI when the control is activated.
-
-        """
-        print 'activated'
-        self.activated(ctxt['date'])
+    # The BoundedData interface is sufficient for a Calendar
+    pass
 

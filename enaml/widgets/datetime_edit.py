@@ -31,32 +31,21 @@ class DatetimeEdit(BoundedDatetime):
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
+    def creation_attributes(self):
+        """ Return a dictionary which contains all the state necessary to
+        initialize a client widget.
+
+        """
+        super_attrs = super(DatetimeEdit, self).creation_attributes()
+        attrs = {'datetime_format' : self.datetime_format}
+        super_attrs.update(attrs)
+        return super_attrs
+
     def bind(self):
         """ A method called after initialization which allows the widget
         to bind any event handlers necessary.
 
         """
         super(DatetimeEdit, self).bind()
-        self.default_send('datetime_format')
-
-    def initial_attrs(self):
-        """ Return a dictionary which contains all the state necessary to
-        initialize a client widget.
-
-        """
-        super_attrs = super(DatetimeEdit, self).initial_attrs()
-        attrs = {'datetime_format' : self.datetime_format}
-        super_attrs.update(attrs)
-        return super_attrs
-
-    #--------------------------------------------------------------------------
-    # Toolkit Communication
-    #--------------------------------------------------------------------------
-    def receive_datetime_changed(self, ctxt):
-        """ Callback from the UI when the datetime value is changed.
-
-        """
-        datetime = ctxt['datetime']
-        self.set_guarded(value=datetime)
-        self.datetime_changed(datetime)
+        self.publish_attributes('datetime_format')
 

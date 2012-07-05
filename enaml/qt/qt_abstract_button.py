@@ -48,30 +48,30 @@ class QtAbstractButton(QtConstraintsWidget):
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
-    def receive_set_checked(self, ctxt):
-        """ Handle the 'set_checked' message from the Enaml widget.
+    def on_message_set_checked(self, payload):
+        """ Handle the 'set-checked' action from the Enaml widget.
 
         """
-        self.set_checked(ctxt['checked'])
+        self.set_checked(payload['checked'])
 
-    def receive_set_text(self, ctxt):
-        """ Handle the 'set_text' message from the Enaml widget.
+    def on_message_set_text(self, payload):
+        """ Handle the 'set-text' message from the Enaml widget.
 
         """
-        self.set_text(ctxt['text'])
+        self.set_text(payload['text'])
         # Trigger a relayout since the size hint likely changed
 
-    def receive_set_icon(self, ctxt):
-        """ Handle the 'set_icon' message from the Enaml widget.
+    def on_message_set_icon(self, payload):
+        """ Handle the 'set-icon' message from the Enaml widget.
 
         """
-        self.set_icon(ctxt['icon'])
+        self.set_icon(payload['icon'])
 
-    def receive_set_icon_size(self, ctxt):
-        """ Handle the 'set_icon_size' message from the Enaml widget.
+    def receive_set_icon_size(self, payload):
+        """ Handle the 'set-icon_size' message from the Enaml widget.
 
         """
-        self.set_icon_size(ctxt['icon_size'])
+        self.set_icon_size(payload['icon_size'])
 
     #--------------------------------------------------------------------------
     # Signal Handlers
@@ -80,13 +80,15 @@ class QtAbstractButton(QtConstraintsWidget):
         """ The event handler fo the clicked event.
 
         """
-        self.send({'action':'clicked','checked': self.widget.isChecked()})
+        payload = {'action': 'clicked', 'checked': self.widget.isChecked()}
+        self.send_message(payload)
 
     def on_toggled(self):
         """ The event handler for the toggled event.
 
         """
-        self.send({'action':'toggled','checked': self.widget.isChecked()})
+        payload = {'action': 'toggled', 'checked': self.widget.isChecked()}
+        self.send_message(payload)
 
     #--------------------------------------------------------------------------
     # Widget update methods
@@ -132,3 +134,4 @@ class QtAbstractButton(QtConstraintsWidget):
 
         """
         self.widget.setIconSize(QSize(*icon_size))
+

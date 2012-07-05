@@ -109,14 +109,14 @@ class Slider(ConstraintsWidget):
 
         """
         super(Slider, self).bind()
-        self.default_send(*_SL_PROXY_ATTRS)
+        self.publish_attributes(*_SL_PROXY_ATTRS)
 
-    def initial_attrs(self):
+    def creation_attributes(self):
         """ Return a dictionary which contains all the state necessary to
         initialize a client widget.
 
         """
-        super_attrs = super(Slider, self).initial_attrs()
+        super_attrs = super(Slider, self).creation_attributes()
         attrs = dict((attr, getattr(self, attr)) for attr in _SL_PROXY_ATTRS)
         super_attrs.update(attrs)
         return super_attrs
@@ -124,12 +124,11 @@ class Slider(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Toolkit Communication
     #--------------------------------------------------------------------------
-    def receive_set_value(self, context):
+    def on_message_set_value(self, payload):
         """ Callback from the UI when the slider's value changes
 
         """
-        self.set_guarded(value=context['value'])
-        return True
+        self.set_guarded(value=payload['value'])
 
     #--------------------------------------------------------------------------
     # Trait defaults

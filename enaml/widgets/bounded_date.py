@@ -12,7 +12,7 @@ from .constraints_widget import ConstraintsWidget
 
 
 #: The attributes of a BoundedDate to proxy to clients.
-_DATE_PROXY_ATTRS = ['minimum', 'maximum', 'value']
+_DATE_ATTRS = ['minimum', 'maximum', 'date']
 
 
 class BoundedDate(ConstraintsWidget):
@@ -38,28 +38,37 @@ class BoundedDate(ConstraintsWidget):
 
     #: The currently selected date. Default is the current date. The
     #: value is bounded between :attr:`minimum` and :attr:`maximum`. 
-    value = Bounded(Date(date.today()), low='minimum', high='maximum')
+    date = Bounded(Date(date.today()), low='minimum', high='maximum')
 
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
+    def creation_attributes(self):
+        """ Return a dictionary which contains all the state necessary to
+        initialize a client widget.
+
+        """
+        super_attrs = super(BoundedDate, self).creation_attributes()
+        attrs = dict((attr, getattr(self, attr)) for attr in _DATE_ATTRS)
+        super_attrs.update(attrs)
+        return super_attrs
+
     def bind(self):
         """ A method called after initialization which allows the widget
         to bind any event handlers necessary.
 
         """
         super(BoundedDate, self).bind()
-        self.default_send(*_DATE_PROXY_ATTRS)
+        self.publish_attributes(*_DATE_ATTRS)
 
-    def initial_attrs(self):
-        """ Return a dictionary which contains all the state necessary to
-        initialize a client widget.
+    #--------------------------------------------------------------------------
+    # Message Handling
+    #--------------------------------------------------------------------------
+    def on_message_set_date(self, payload):
+        """ Handle the 'set-date' message from the UI control.
 
         """
-        super_attrs = super(BoundedDate, self).initial_attrs()
-        attrs = dict((attr, getattr(self, attr)) for attr in _DATE_PROXY_ATTRS)
-        super_attrs.update(attrs)
-        return super_attrs
+        pass
 
     #--------------------------------------------------------------------------
     # Property methods
@@ -101,10 +110,10 @@ class BoundedDate(ConstraintsWidget):
         self._maximum = date
     
     @on_trait_change('minimum, maximum')
-    def _adapt_value(self):
+    def _adapt_date(self):
         """ Actively adapt the date to lie within the boundaries.
 
         """
         if self.initialized:
-            self.value = min(max(self.value, self.minimum), self.maximum)
+            self.date = min(max(self.date, self.minimum), self.maximum)
 

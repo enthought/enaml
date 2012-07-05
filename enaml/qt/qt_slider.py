@@ -58,59 +58,59 @@ class QtSlider(QtConstraintsWidget):
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
-    def receive_set_value(self, ctxt):
-        """ Handle the 'set_value' message from the Enaml widget.
+    def on_message_set_value(self, payload):
+        """ Handle the 'set-value' message from the Enaml widget.
 
         """
-        return self.set_value(ctxt['value'])
+        self.set_value(payload['value'])
 
     def receive_set_maximum(self, ctxt):
         """ Handle the 'set_maximum' message from the Enaml widget.
 
         """
-        return self.set_maximum(ctxt['maximum'])
+        self.set_maximum(ctxt['maximum'])
 
     def receive_set_minimum(self, ctxt):
         """ Handle the 'set_minimum' message from the Enaml widget.
 
         """
-        return self.set_minimum(ctxt['minimum'])
+        self.set_minimum(ctxt['minimum'])
 
     def receive_set_orientation(self, ctxt):
         """ Handle the 'set_orientation' message from the Enaml widget.
 
         """
-        return self.set_orientation(ctxt['orientation'])
+        self.set_orientation(ctxt['orientation'])
 
     def receive_set_page_step(self, ctxt):
         """ Handle the 'set_page_step' message from the Enaml widget.
 
         """
-        return self.set_page_step(ctxt['page_step'])
+        self.set_page_step(ctxt['page_step'])
 
     def receive_set_single_step(self, ctxt):
         """ Handle the 'set_single_step' message from the Enaml widget.
 
         """
-        return self.set_single_step(ctxt['single_step'])
+        self.set_single_step(ctxt['single_step'])
 
     def receive_set_tick_interval(self, ctxt):
         """ Handle the 'set_tick_interval' message from the Enaml widget.
 
         """
-        return self.set_tick_interval(ctxt['tick_interval'])
+        self.set_tick_interval(ctxt['tick_interval'])
 
     def receive_set_tick_position(self, ctxt):
         """ Handle the 'set_tick_position' message from the Enaml widget.
 
         """
-        return self.set_tick_position(ctxt['tick_position'])
+        self.set_tick_position(ctxt['tick_position'])
 
     def receive_set_tracking(self, ctxt):
         """ Handle the 'set_tracking' message from the Enaml widget.
 
         """
-        return self.set_tracking(ctxt['tracking'])
+        self.set_tracking(ctxt['tracking'])
     
     #--------------------------------------------------------------------------
     # Signal Handlers
@@ -120,11 +120,8 @@ class QtSlider(QtConstraintsWidget):
         slider value has changed.
 
         """
-        ctxt = {
-            'action':'set_value',
-            'value': self.widget.value()
-        }
-        self.send(ctxt)
+        payload = {'action':'set-value', 'value': self.widget.value()}
+        self.send_message(payload)
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -134,60 +131,52 @@ class QtSlider(QtConstraintsWidget):
 
         """
         self.widget.setValue(value)
-        return True
 
     def set_maximum(self, maximum):
         """ Set the maximum value of the underlying widget.
 
         """
         self.widget.setMaximum(maximum)
-        return True
 
     def set_minimum(self, minimum):
         """ Set the minimum value of the underlying widget.
 
         """
         self.widget.setMinimum(minimum)
-        return True
 
     def set_orientation(self, orientation):
         """ Set the orientation of the underlying widget.
 
         """
         self.widget.setOrientation(_ORIENTATION_MAP[orientation])
-        return True
 
     def set_page_step(self, page_step):
         """ Set the page step of the underlying widget.
 
         """
         self.widget.setPageStep(page_step)
-        return True
 
     def set_single_step(self, single_step):
         """ Set the single step of the underlying widget.
 
         """
         self.widget.setSingleStep(single_step)
-        return True
 
     def set_tick_interval(self, tick_interval):
         """ Set the tick interval of the underlying widget
 
         """
         self.widget.setTickInterval(tick_interval)
-        return True
 
     def set_tick_position(self, tick_position):
         """ Set the tick position of the underlying widget.
 
         """
         self.widget.setTickPosition(_TICK_POSITION_MAP[tick_position])
-        return True
 
     def set_tracking(self, tracking):
         """ Set the tracking of the underlying widget.
 
         """
         self.widget.setTracking(tracking)
-        return True
+
