@@ -3,6 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from base64 import b64decode
+
 from .qt.QtCore import QSize
 from .qt_constraints_widget import QtConstraintsWidget
 from .qt_icon import QtIcon
@@ -26,22 +27,16 @@ class QtAbstractButton(QtConstraintsWidget):
         """
         raise NotImplementedError
 
-    def initialize(self, init_attrs):
+    def initialize(self, attrs):
         """ Initialize the attribute of the underlying Qt widget.
 
         """
-        super(QtAbstractButton, self).initialize(init_attrs)
-        self.set_checkable(init_attrs['checkable'])
-        self.set_checked(init_attrs['checked'])
-        self.set_text(init_attrs['text'])
-        self.set_icon(init_attrs['icon'])
-        self.set_icon_size(init_attrs['icon_size'])
-
-    def bind(self):
-        """ Bind the signal handlers for the underlying control.
-
-        """
-        super(QtAbstractButton, self).bind()
+        super(QtAbstractButton, self).initialize(attrs)
+        self.set_checkable(attrs['checkable'])
+        self.set_checked(attrs['checked'])
+        self.set_text(attrs['text'])
+        self.set_icon(attrs['icon'])
+        self.set_icon_size(attrs['icon_size'])
         self.widget.clicked.connect(self.on_clicked)
         self.widget.toggled.connect(self.on_toggled)
 
@@ -67,7 +62,7 @@ class QtAbstractButton(QtConstraintsWidget):
         """
         self.set_icon(payload['icon'])
 
-    def receive_set_icon_size(self, payload):
+    def on_message_set_icon_size(self, payload):
         """ Handle the 'set-icon_size' message from the Enaml widget.
 
         """
@@ -80,14 +75,18 @@ class QtAbstractButton(QtConstraintsWidget):
         """ The event handler fo the clicked event.
 
         """
-        payload = {'action': 'clicked', 'checked': self.widget.isChecked()}
+        payload = {
+            'action': 'event-clicked', 'checked': self.widget.isChecked(),
+        }
         self.send_message(payload)
 
     def on_toggled(self):
         """ The event handler for the toggled event.
 
         """
-        payload = {'action': 'toggled', 'checked': self.widget.isChecked()}
+        payload = {
+            'action': 'event-toggled', 'checked': self.widget.isChecked(),
+        }
         self.send_message(payload)
 
     #--------------------------------------------------------------------------
@@ -125,6 +124,7 @@ class QtAbstractButton(QtConstraintsWidget):
         """ Sets the widget's icon to the provided image
 
         """
+        return
         dec_data = b64decode(icon)
         self._icon = QtIcon(dec_data)
         self.widget.setIcon(self._icon.as_QIcon())
@@ -133,5 +133,6 @@ class QtAbstractButton(QtConstraintsWidget):
         """ Sets the widget's icon size to the provided tuple
 
         """
+        return
         self.widget.setIconSize(QSize(*icon_size))
 

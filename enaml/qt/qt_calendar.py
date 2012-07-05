@@ -3,14 +3,8 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt.QtGui import QCalendarWidget
-from .qt import QtCore
 from .qt_bounded_date import QtBoundedDate
 
-# Workaround for an incompatibility between PySide and PyQt
-try: # pragma: no cover
-    qdate_to_python = QtCore.QDate.toPython
-except AttributeError: # pragma: no cover
-    qdate_to_python = QtCore.QDate.toPyDate
 
 class QtCalendar(QtBoundedDate):
     """ A Qt implementation of a calendar
@@ -22,55 +16,52 @@ class QtCalendar(QtBoundedDate):
         """
         self.widget = QCalendarWidget(self.parent_widget)
 
-    def initialize(self, init_attrs):
+    def initialize(self, attrs):
         """ Initialize the widget's attributes
 
         """
-        super(QtCalendar, self).initialize(init_attrs)
-        self.set_date(init_attrs.get('date'))
-        self.set_min_date(init_attrs.get('min_date'))
-        self.set_max_date(init_attrs.get('max_date'))
-
-    def bind(self):
-        """ Connect the widgets signals to slots
-
-        """
-        self.widget.activated.connect(self.on_activated)
-        self.widget.selectionChanged.connect(self.on_selected)
+        super(QtCalendar, self).initialize(attrs)
+        self.widget.activated.connect(self.on_date_changed)
         
     #--------------------------------------------------------------------------
-    # Event Handlers
+    # Abstract Method Implementations
     #--------------------------------------------------------------------------
-    def on_activated(self, date):
-        """ Event handler for date_activated
+    def get_date(self):
+        """ Return the current date in the control as a QDate object.
 
         """
-        self.send({'action':'activated','date':qdate_to_python(date)})
+        return self.widget.selectedDate()
 
-    def on_selected(self):
-        """ Event handler for date_selected
-
-        """
-        self.send({'action':'selected','date':qdate_to_python(
-            self.widget.selectedDate())})
-
-    #--------------------------------------------------------------------------
-    # Widget Update Methods
-    #--------------------------------------------------------------------------
     def set_date(self, date):
-        """ Set the widget's date
+        """ Set the widget's current date.
+
+        Parameters
+        ----------
+        date : QDate
+            The QDate object to use for setting the date.
 
         """
         self.widget.setSelectedDate(date)
 
     def set_max_date(self, date):
-        """ Set the widget's maximum date
+        """ Set the widget's maximum date.
+
+        Parameters
+        ----------
+        date : QDate
+            The QDate object to use for setting the maximum date.
 
         """
         self.widget.setMaximumDate(date)
 
     def set_min_date(self, date):
-        """ Set the widget's minimum date
+        """ Set the widget's minimum date.
+
+        Parameters
+        ----------
+        date : QDate
+            The QDate object to use for setting the minimum date.
 
         """
         self.widget.setMinimumDate(date)
+
