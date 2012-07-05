@@ -12,36 +12,22 @@ class ComboBox(ConstraintsWidget):
 
     Use a combo box to select a single item from a collection of items.
 
-    The combo box works by first using the to_string callable to convert
-    the value and the list of items into strings for display and then 
-    using the index of the combo box to make appropriate selections.
-
-    .. note::
-        - If a value is specified that does not exist in the list of
-          items then the box is deselected and the index attribute will
-          be set to -1. However, the value attribute will still be 
-          assigned the invalid value.
-        - If list of items is changed then component will try to find
-          the current value in the list and select it. If the value is
-          not found then the index will be updated to -1.
-        - The selected event is only emitted when the user selects
-          a valid value through the ui control, not when the value
-          is changed programmatically.
-
     """
-    #: The strings to display in the combo box.
+    #: The unicode strings to display in the combo box.
     items = List(Unicode)
 
-    #: The integer index of the current selection in items. If the 
-    #: given index falls outside of the range of items, no item will
-    #: be selected.
+    #: The integer index of the currently selected item. If the given 
+    #: index falls outside of the range of items, the item will be
+    #: deselected.
     index = Int(-1)
 
-    #: A readonly property that will return the selected item
+    #: A readonly property that will return the currently selected 
+    #: item. If the index falls out of range, the selected item will
+    #: be the empty string.
     selected_item = Property(Unicode, depends_on=['index', 'items[]'])
     
-    #: How strongly a component hugs it's contents' width. ComboBoxes hug 
-    #: width weakly, by default.
+    #: How strongly a component hugs it's contents' width. ComboBoxes 
+    #: hug width weakly, by default.
     hug_width = 'weak'
 
     #--------------------------------------------------------------------------
