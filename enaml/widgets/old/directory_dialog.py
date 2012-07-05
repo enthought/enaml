@@ -2,18 +2,20 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import os
 from traits.api import Unicode
+
 from .dialog import Dialog
 
+
 _DIR_DIALOG_PROXY_ATTRS = ['directory']
+
 
 class DirectoryDialog(Dialog):
     """ A dialog widget that allows the user to select directories.
 
     """
     #: The current directory of the dialog.
-    directory = Unicode(os.path.abspath(os.path.curdir))
+    directory = Unicode(u'.')
 
     #--------------------------------------------------------------------------
     # Parent Class Overrides 
@@ -37,14 +39,12 @@ class DirectoryDialog(Dialog):
         super(DirectoryDialog, self).bind()
         self.default_send(*_DIR_DIALOG_PROXY_ATTRS)
 
-    def initial_attrs(self):
+    def creation_attributes(self):
         """ Return the attr initialization dict for a window.
 
         """
-        super_attrs = super(DirectoryDialog, self).initial_attrs()
-        get = getattr
-        attrs = dict((attr, get(self, attr)) for attr in _DIR_DIALOG_PROXY_ATTRS)
-        super_attrs.update(attrs)
+        super_attrs = super(DirectoryDialog, self).creation_attributes()
+        super_attrs['directory'] = self.directory
         return super_attrs
 
     #--------------------------------------------------------------------------
@@ -56,3 +56,4 @@ class DirectoryDialog(Dialog):
         """
         self.directory = ctxt['directory']
         return True
+
