@@ -12,10 +12,7 @@ from .container import Container
 from .date_edit import DateEdit
 from .datetime_edit import DatetimeEdit
 from .dialog import Dialog
-from .directory_dialog import DirectoryDialog
 from .field import Field
-from .file_dialog import FileDialog
-from .float_slider import FloatSlider
 from .html import Html
 from .icon import Icon
 from .image import Image
