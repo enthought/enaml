@@ -8,7 +8,7 @@ from enaml.async.async_application import AsyncApplication
 
 from .qt.QtCore import Qt
 from .qt.QtGui import QApplication
-from .qt_clients import CLIENTS
+from .qt_factores import QT_FACTORIES
 from .qt_local_pipe import QtLocalPipe
 
 
@@ -81,7 +81,7 @@ class QtLocalApplication(AsyncApplication):
         self._widget_pipe = client = QtLocalPipe(op_id_gen)
 
         # The factories to use to create the Qt classes
-        self._widget_factories = factories or CLIENTS
+        self._widget_factories = factories or QT_FACTORIES
 
         # Hook up the signals and slots on the two pipes to enable
         # queued message passing between them.
