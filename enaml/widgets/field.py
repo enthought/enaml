@@ -2,9 +2,43 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Bool, Int, Unicode, Enum, List, Str
+from traits.api import Bool, Int, Unicode, Enum, List, Dict
 
 from .constraints_widget import ConstraintsWidget
+
+
+# Each validator in the list of validators has the following form:
+#
+# A validator object is a dict of the
+#
+#   'type' : string, required
+#       The type of this validator, additional keys are dependent 
+#       upon the type of this validator.
+#
+#   'triggers' : list of strings or None, required
+#       The triggers to use to fire off this validator. Currently 
+#       supported are 'key-pressed', 'return-pressed', and 'lost-focus'.
+#       Validation can be manually triggered by calling the 'validate()'
+#       method
+#   
+#   // From here down is undecided
+#
+#   'bgcolor' : string, optional
+#       The background color to use the validator fails.
+#
+#   'message' : string, optional
+#       The string to display when validation fails.
+#
+#   <other>
+#       'type' dependent information
+
+
+DEFAULT_VALIDATORS = [
+    {
+        'type': 'null',
+        'triggers': ['return-pressed', 'lost-focus'],
+    },
+]
 
 
 class Field(ConstraintsWidget):
@@ -14,23 +48,24 @@ class Field(ConstraintsWidget):
     #: The unicode text to display in the field.
     text = Unicode
 
-    #: A regular expression string which is checked every time the user
-    #: presses a key. If the new text does not pass this expressions, 
-    #: then the user will not be able to add that character. The default
-    #: expression accepts all input.
-    key_validator = Unicode(ur'.*')
+    #: A list of dictionaries representing the validation to perform 
+    #: on the field. Validators will be executed in order and will 
+    #: stop at the first failing validator. The client will only
+    #: send a text update if all validators pass. See the full Enaml 
+    #: documentation for the spec of these validators. The default 
+    #: validators accepts all input and trigger on 'lost-focus' and
+    #: 'return-pressed'.
+    validators = List(Dict, value=DEFAULT_VALIDATORS)
 
-    #: A regular expression which is checked when the user attempt to
-    #: submits the value in the field. If the text does not pass this
-    #: expression, it will not be submitted and the background color
-    #: of the field will be changed to the 'error_color'. The default
-    #: expression accepts all input.
-    submit_validator = Unicode(ur'.*')
+    #: The grayed-out text to display if the field is empty and the
+    #: widget doesn't have focus. Defaults to the empty string.
+    placeholder = Unicode
 
-    #: The background color to use if the user attempts to submit text
-    #: which does not pass the submit validator. Supports CSS style
-    #: color strings.
-    error_color = Str
+    #: How to display the text in the field. Valid values are 'normal' 
+    #: which displays the text as normal, 'password' which displays the
+    #: text with an obscured character, and 'silent' which displays no
+    #: text at all but still allows input.
+    echo_mode = Enum('normal', 'password', 'silent')
 
     #: The maximum length of the field in characters. The default value
     #: is Zero and indicates there is no maximum length.
@@ -39,25 +74,6 @@ class Field(ConstraintsWidget):
     #: Whether or not the field is read only. Defaults to False.
     read_only = Bool(False)
 
-    #: The grayed-out text to display if the field is empty and the
-    #: widget doesn't have focus. Defaults to the empty string.
-    placeholder_text = Unicode
-    
-    #: How to obscure password text in the field.
-    password_mode = Enum('normal', 'password', 'silent')
-
-    #: A list of strings which indicates when the text the in the field
-    #: should be converted to a Python object representation and stored 
-    #: in the 'value' attribute. The default mode triggers submissions 
-    #: on lost focus events and return pressed events. Allowable modes 
-    #: are 'lost_focus', and 'return_pressed'. The default value is to 
-    #: submit on either lost focus or return pressed. A submission can
-    #: also be performed manually by calling the 'submit()' method.
-    submit_mode = List(
-        Enum('lost_focus', 'return_pressed'), 
-        value=['lost_focus', 'return_pressed'],
-    )
-   
     #: How strongly a component hugs it's contents' width. Fields ignore 
     #: the width hug by default, so they expand freely in width.
     hug_width = 'ignore'
@@ -72,14 +88,11 @@ class Field(ConstraintsWidget):
         super_attrs = super(Field, self).creation_attributes()
         attrs = {
             'text': self.text,
-            'key_validator': self.key_validator,
-            'submit_validator': self.submit_validator,
-            'error_color': self.error_color,
+            'validators': self.validators,
+            'placeholder' : self.placeholder,
+            'echo_mode' : self.echo_mode,
             'max_length': self.max_length,
             'read_only': self.read_only,
-            'placeholder_text' : self.placeholder_text,
-            'password_mode' : self.password_mode,
-            'submit_mode' : self.submit_mode,
         }
         super_attrs.update(attrs)
         return super_attrs
@@ -91,11 +104,10 @@ class Field(ConstraintsWidget):
         """
         super(Field, self).bind()
         attrs = (
-            'text', 'key_validator', 'submit_validator', 'error_color',
-            'max_length', 'read_only', 'placeholder_text', 'password_mode', 
-            'submit_mode',
+            'text', 'placeholder', 'echo_mode', 'max_length', 'read_only',
         )
         self.publish_attributes(*attrs)
+        self.on_trait_change(self._send_validators, 'validators[]')
 
     #--------------------------------------------------------------------------
     # Message Handling
@@ -107,14 +119,20 @@ class Field(ConstraintsWidget):
         text = payload['text']
         self.set_guarded(text=text)
 
+    def _send_validators(self):
+        """ Send the new validators to the client widget.
+
+        """
+        payload = {'action': 'set-validators', 'validators': self.validators}
+        self.send_message(payload)
+
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
-    def submit(self):
-        """ A method which will perform a manual submission of the text
-        in the field. This is useful for form-based submission where all
-        the values for several fields should all be submitted at once.
+    def validate(self):
+        """ A method which will perform a manual validation of the text
+        in the field.
 
         """
-        self.send_message({'action': 'submit'})
+        self.send_message({'action': 'validate'})
 
