@@ -27,7 +27,12 @@ class QtCalendar(QtBoundedDate):
     # Abstract Method Implementations
     #--------------------------------------------------------------------------
     def get_date(self):
-        """ Return the current date in the control as a QDate object.
+        """ Return the current date in the control.
+
+        Returns
+        -------
+        result : QDate
+            The current control date as a QDate object.
 
         """
         return self.widget.selectedDate()

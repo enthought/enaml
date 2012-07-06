@@ -3,84 +3,93 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt.QtGui import QDateEdit
-from .qt import QtCore
 from .qt_bounded_date import QtBoundedDate
 
-# Workaround for an incompatibility between PySide and PyQt
-try: # pragma: no cover
-    qdate_to_python = QtCore.QDate.toPython
-except AttributeError: # pragma: no cover
-    qdate_to_python = QtCore.QDate.toPyDate
 
 class QtDateEdit(QtBoundedDate):
-    """ A Qt implementation of a date edit
+    """ A Qt4 implementation of an Enaml DateEdit.
 
     """
     def create(self):
-        """ Create the underlying widget
+        """ Create the underlying QDateEdit widget.
 
         """
         self.widget = QDateEdit(self.parent_widget)
 
-    def initialize(self, init_attrs):
-        """ Initialize the widget's attributes
+    def initialize(self, attrs):
+        """ Initialize the widget's attributes.
 
         """
-        super(QtDateEdit, self).initialize(init_attrs)
-        self.set_date(init_attrs.get('value'))
-        self.set_min_date(init_attrs.get('minimum'))
-        self.set_max_date(init_attrs.get('maximum'))
-        self.set_date_format(init_attrs.get('date_format'))
-
-    def bind(self):
-        """ Connect the widgets signals to slots
-
-        """
+        super(QtDateEdit, self).initialize(attrs)
+        self.set_date_format(attrs['date_format'])
         self.widget.dateChanged.connect(self.on_date_changed)
-        
+
     #--------------------------------------------------------------------------
-    # Event Handlers
+    # Message Handling
     #--------------------------------------------------------------------------
-    def on_date_changed(self, date):
-        """ Event handler for date_changed
+    def on_message_set_date_format(self, payload):
+        """ Handle the 'set-date_format action from the Enaml widget.'
 
         """
-        self.send({'action':'date_changed','date':qdate_to_python(date)})
-
-    #--------------------------------------------------------------------------
-    # Message Handlers
-    #--------------------------------------------------------------------------
-    def receive_set_date_format(self, ctxt):
-        """ Message handler for set_date_format
-
-        """
-        date_format = ctxt.get('date_format')
-        if date_format is not None:
-            self.set_date_format(date_format)
+        self.set_date_format(payload['date_format'])
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
+    def get_date(self):
+        """ Return the current date in the control.
+
+        Returns
+        -------
+        result : QDate
+            The current control date as a QDate object.
+
+        """
+        return self.widget.date()
+
     def set_date(self, date):
-        """ Set the widget's date
+        """ Set the widget's current date.
+
+        Parameters
+        ----------
+        date : QDate
+            The QDate object to use for setting the date.
 
         """
         self.widget.setDate(date)
 
     def set_max_date(self, date):
-        """ Set the widget's maximum date
+        """ Set the widget's maximum date.
+
+        Parameters
+        ----------
+        date : QDate
+            The QDate object to use for setting the maximum date.
 
         """
         self.widget.setMaximumDate(date)
 
     def set_min_date(self, date):
-        """ Set the widget's minimum date
+        """ Set the widget's minimum date.
+
+        Parameters
+        ----------
+        date : QDate
+            The QDate object to use for setting the minimum date.
 
         """
         self.widget.setMinimumDate(date)
 
     def set_date_format(self, date_format):
-        """ Set the widget's date format
+        """ Set the widget's date format.
 
+        Parameters
+        ----------
+        date_format : str
+            A Python time formatting string.
+            
         """
+        # XXX make sure Python's and Qt's format strings are the 
+        # same, or convert between the two.
         self.widget.setDisplayFormat(date_format)
+

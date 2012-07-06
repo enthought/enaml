@@ -60,7 +60,7 @@ class QtBoundedDatetime(QtConstraintsWidget):
     #--------------------------------------------------------------------------
     # Signal Handlers
     #--------------------------------------------------------------------------
-    def on_date_changed(self):
+    def on_datetime_changed(self):
         """ A signal handler to connect to the datetime changed signal 
         of the underlying widget.
 
@@ -78,26 +78,45 @@ class QtBoundedDatetime(QtConstraintsWidget):
     # Widget Update Methods
     #--------------------------------------------------------------------------
     def get_datetime(self):
-        """ Return the current datetime in the control as a QDateTime
-        object.
+        """ Return the current datetime in the control.
+
+        Returns
+        -------
+        result : QDateTime
+            The current control datetime as a QDateTime object.
 
         """
         raise NotImplementedError
 
     def set_datetime(self, datetime):
-        """ Set the widget's datetime
+        """ Set the widget's current datetime.
+
+        Parameters
+        ----------
+        datetime : QDateTime
+            The QDateTime object to use for setting the datetime.
 
         """
         raise NotImplementedError
 
     def set_max_datetime(self, datetime):
-        """ Set the widget's maximum datetime
+        """ Set the widget's maximum datetime.
+
+        Parameters
+        ----------
+        datetime : QDateTime
+            The QDateTime object to use for setting the maximum datetime.
 
         """
         raise NotImplementedError
 
     def set_min_datetime(self, datetime):
-        """ Set the widget's minimum datetime
+        """ Set the widget's minimum datetime.
+
+        Parameters
+        ----------
+        datetime : QDateTime
+            The QDateTime object to use for setting the minimum datetime.
 
         """
         raise NotImplementedError
