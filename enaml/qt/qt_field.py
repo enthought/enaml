@@ -2,7 +2,6 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from abc import ABCMeta, abstractmethod
 import re
 
 from .qt.QtGui import QLineEdit, QWhatsThis
@@ -17,93 +16,61 @@ ECHO_MODES = {
 }
 
 
-class AbstractValidator(object):
-    """ An abstract base class which defines the api for creating a 
-    field validator.
+def null_validator(text):
+    """ A validator which validates all input as acceptable.
 
     """
-    __metaclass__ = ABCMeta
-
-    def __init__(self, info):
-        """ Initialize a validator.
-
-        Parameters
-        ----------
-        info : dict
-            The validator info dict sent over by the Enaml widget.
-
-        """
-        self.info = info
-
-    @abstractmethod
-    def validate(self, text):
-        """ Validate the text as valid input.
-
-        This method should check the text against the internal rules
-        of the validator. If the text is acceptable, the validator
-        should return the text (optionally modified). If the text
-        is not acceptable, it should raise a ValueError.
-
-        Parameters
-        ----------
-        text : unicode
-            The unicode text to validate.
-
-        Returns
-        -------
-        result : unicode
-            The (optionally modified) acceptable text.
-
-        Raises
-        ------
-        ValueError
-            A ValueError will be raised if the text does not validate.
-
-        """
-        raise NotImplementedError
+    return text
 
 
-class NullValidator(AbstractValidator):
-    """ A concrete validator which accepts all input values.
+def regexp_validator(regexp):
+    """ Creates a callable which will validate text input against the
+    provided regex string.
+
+    Parameters
+    ----------
+    regexp : string
+        A regular expression string to use for matching.
+
+    Returns
+    -------
+    results : callable
+        A callable which returns the original text if it matches the
+        regex, or raises a ValueError if it doesn't.
 
     """
-    def validate(self, text):
-        return text
-
-
-class RegexpValidator(AbstractValidator):
-    """ A concrete validator based on a regular expression matching.
-
-    """
-    def __init__(self, info):
-        super(RegexpValidator, self).__init__(info)
-        self.regexp = re.compile(info['regexp'], re.UNICODE)
-
-    def validate(self, text):
-        if self.regexp.match(text):
+    regexp = re.compile(regexp, re.UNICODE)
+    def validator(text):
+        if regexp.match(text):
             return text
         raise ValueError
-
-
-VALIDATORS = {
-    'null': NullValidator,
-    'regexp': RegexpValidator,
-}
+    return validator
 
 
 def parse_validators(validators):
+    """ Parses a list of validator dicts into a dict of tuples keyed
+    on the trigger type. This is used internally by the QtField to
+    dispatch its validation behaviors.
+    
+    """
     res = {'all': []}
     for info in validators:
-        vldr_cls = VALIDATORS.get(info['type'])
-        if vldr_cls is not None:
-            vldr = vldr_cls(info)
-            res['all'].append(vldr)
-            triggers = info['triggers']
+        vtype = info['type']
+        if vtype == 'null':
+            vldr = null_validator
+        elif vtype == 'regexp':
+            vldr = regexp_validator(info['regexp'])
+        else:
+            vldr = None 
+        if vldr is not None:
+            item = (info, vldr)
+            res['all'].append(item)
+            triggers = info.get('triggers')
             if triggers:
                 for trigger in triggers:
                     if trigger not in res:
                         res[trigger] = []
-                    res[trigger].append(vldr)
+                    res[trigger].append(item)
     return res
 
 
@@ -263,11 +230,11 @@ class QtField(QtConstraintsWidget):
 
         """
         text = orig = self.widget.text()
-        for validator in validators:
+        for info, validator in validators:
             try:
-                text = validator.validate(text)
+                text = validator(text)
             except ValueError:
-                self._validation_failure(orig, text, validator)
+                self._validation_failure(orig, text, info)
                 return
 
         # Everything validated, we need to send the text update to
@@ -282,13 +249,12 @@ class QtField(QtConstraintsWidget):
         self.send_message(payload)
         self.dirty = False
 
-    def _validation_failure(self, orig, text, validator):
+    def _validation_failure(self, orig, text, info):
         """ Handle a validator failing its validation.
 
         """
         # This is just a temporary popup hack for now until we get 
         # Naveen's pretty popup widget in place.
-        info = validator.info
         msg = info.get('message', '')
         msg = 'Validation Failure: %s' % msg
         widget = self.widget

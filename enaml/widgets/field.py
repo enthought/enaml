@@ -7,37 +7,10 @@ from traits.api import Bool, Int, Unicode, Enum, List, Dict
 from .constraints_widget import ConstraintsWidget
 
 
-# Each validator in the list of validators has the following form:
-#
-# A validator object is a dict of the
-#
-#   'type' : string, required
-#       The type of this validator, additional keys are dependent 
-#       upon the type of this validator.
-#
-#   'triggers' : list of strings or None, required
-#       The triggers to use to fire off this validator. Currently 
-#       supported are 'key-pressed', 'return-pressed', and 'lost-focus'.
-#       Validation can be manually triggered by calling the 'validate()'
-#       method
-#   
-#   // From here down is undecided
-#
-#   'bgcolor' : string, optional
-#       The background color to use the validator fails.
-#
-#   'message' : string, optional
-#       The string to display when validation fails.
-#
-#   <other>
-#       'type' dependent information
-
-
-DEFAULT_VALIDATORS = [
-    {
-        'type': 'null',
-        'triggers': ['return-pressed', 'lost-focus'],
-    },
+#: The default validators to use in a Field.
+DEFAULT_FIELD_VALIDATORS = [
+    {'type': 'null',
+     'triggers': ['return-pressed', 'lost-focus']},
 ]
 
 
@@ -51,11 +24,11 @@ class Field(ConstraintsWidget):
     #: A list of dictionaries representing the validation to perform 
     #: on the field. Validators will be executed in order and will 
     #: stop at the first failing validator. The client will only
-    #: send a text update if all validators pass. See the full Enaml 
-    #: documentation for the spec of these validators. The default 
-    #: validators accepts all input and trigger on 'lost-focus' and
+    #: send a text update if all validators pass. The validator format 
+    #: is specified in the file validator_format.js. The default 
+    #: validator accepts all input and triggers on 'lost-focus' and 
     #: 'return-pressed'.
-    validators = List(Dict, value=DEFAULT_VALIDATORS)
+    validators = List(Dict, value=DEFAULT_FIELD_VALIDATORS)
 
     #: The grayed-out text to display if the field is empty and the
     #: widget doesn't have focus. Defaults to the empty string.
