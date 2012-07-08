@@ -418,7 +418,7 @@ class Bounded(TraitType):
                 raise TraitError(msg)
         
         if not is_inside_bounds:
-            msg = ('The assigned date value must be bounded between {0} '
+            msg = ('The assigned value must be bounded between {0} '
                    ' and {1}. Got {2} instead.'.format(low, high, value))
             raise TraitError(msg)
 
