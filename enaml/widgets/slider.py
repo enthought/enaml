@@ -15,7 +15,7 @@ from .constraints_widget import ConstraintsWidget, PolicyEnum
 #: The slider attributes to proxy to clients
 _SLIDER_ATTRS = [
     'maximum', 'minimum', 'orientation', 'page_step', 'single_step',
-    'precision', 'tick_position', 'tracking', 'value'
+    'tick_interval', 'tick_position', 'tracking', 'value'
 ]
 
 
@@ -25,12 +25,7 @@ MAX_SLIDER_VALUE = (1 << 16) - 1
 
 class Slider(ConstraintsWidget):
     """ A simple slider widget that can be used to select from a range 
-    of values. 
-    
-    If any of the 'minimum', 'maximum', or 'value' attribute contain
-    floating point numbers, then the slider will act as a floating
-    point slider. Otherwise, the slider will act as an integral 
-    slider.
+    of integral values.
 
     """
     #: The minimum value for the slider. To avoid issues where
@@ -38,29 +33,24 @@ class Slider(ConstraintsWidget):
     #: a positive integer capped by the :attr:`maximum`. If the new
     #: value of :attr:`minimum` make the current position invalid then
     #: the current position is set to :attr:minimum. Default value is 0.
-    minimum = Property(Either(Int, Float), depends_on ='_minimum')
+    minimum = Property(Int, depends_on ='_minimum')
 
     #: The internal minimum storage.
-    _minimum = Either(Int, Float, default=0)
+    _minimum = Int(0)
 
     #: The maximum value for the slider. Checks make sure that
     #: :attr:`maximum` cannot be lower than :attr:`minimum`. If the
     #: new value of :attr:`maximum` make the current position invalid
     #: then the current position is set to :attr:maximum. The max value
     #: is restricted to 65535, while the default is 100.
-    maximum = Property(Either(Int, Float), depends_on ='_maximum')
+    maximum = Property(Int, depends_on ='_maximum')
 
     #: The internal maximum storage.
-    _maximum = Either(Int, Float, default=100)
+    _maximum = Int(100)
 
     #: The position value of the Slider. The bounds are defined by
     #: :attr:minimum: and :attr:maximum:.
     value = Bounded(low='minimum', high='maximum')
-
-    #: The number of ticks to use when subdividing the slider. The 
-    #: minimum is two, and a silent upper limit may be imposed by
-    #: a client widgets according to its capabilities.
-    precision = Range(low=2)
 
     #: Defines the number of steps that the slider will move when the
     #: user presses the arrow keys. The default is 1. An upper limit 
@@ -81,6 +71,11 @@ class Slider(ConstraintsWidget):
     tick_position = Enum( 
         'bottom', ('no_ticks', 'left', 'right', 'top', 'bottom', 'both'),
     )
+
+    #: The interval to place between slider tick marks in units of
+    #: value (as opposed to pixels). The minimum value is 0, which
+    #: indicates that the choice is left up to the client.
+    tick_interval = Range(low=0)
 
     #: The orientation of the slider. The default orientation is
     #: horizontal. When the orientation is flipped the tick positions
