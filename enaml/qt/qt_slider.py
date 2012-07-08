@@ -25,7 +25,6 @@ _ORIENTATION_MAP = {
 }
 
 
-# XXX handle floating point values
 class QtSlider(QtConstraintsWidget):
     """ A Qt4 implementation of an Enaml Slider.
 
