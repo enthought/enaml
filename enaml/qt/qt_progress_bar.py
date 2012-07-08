@@ -5,51 +5,46 @@
 from .qt.QtGui import QProgressBar
 from .qt_constraints_widget import QtConstraintsWidget
 
+
 class QtProgressBar(QtConstraintsWidget):
-    """ An progress bar based on a QProgressBar
+    """ A Qt4 implementation of an Enaml ProgressBar.
 
     """
     def create(self):
-        """ Create the underlying widget
+        """ Create the underlying progress bar widget.
 
         """
         self.widget = QProgressBar(self.parent_widget)
 
-    def initialize(self, init_attrs):
-        """ Initialize the widget's attributes
+    def initialize(self, attrs):
+        """ Initialize the widget's attributes.
 
         """
-        super(QtProgressBar, self).initialize(init_attrs)
-        self.set_minimum(init_attrs.get('minimum', 0))
-        self.set_maximum(init_attrs.get('maximum', 100))
-        self.set_value(init_attrs.get('value', 0))
+        super(QtProgressBar, self).initialize(attrs)
+        self.set_minimum(attrs['minimum'])
+        self.set_maximum(attrs['maximum'])
+        self.set_value(attrs['value'])
 
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
-    def receive_set_minimum(self, ctxt):
-        """ Message handler for set_minimum
+    def on_message_set_minimum(self, payload):
+        """ Handle the 'set-minimum' action from the Enaml widget.
 
         """
-        minimum = ctxt.get('minimum')
-        if minimum is not None:
-            self.set_minimum(minimum)
+        self.set_minimum(payload['minimum'])
 
-    def receive_set_maximum(self, ctxt):
-        """ Message handler for set_maximum
+    def on_message_set_maximum(self, payload):
+        """ Handle the 'set-maximum' action from the Enaml widget.
 
         """
-        maximum = ctxt.get('maximum')
-        if maximum is not None:
-            self.set_maximum(maximum)
+        self.set_maximum(payload['maximum'])
 
-    def receive_set_value(self, ctxt):
-        """ Message handler for set_value
+    def on_message_set_value(self, payload):
+        """ Handle the 'set-value' action from the Enaml widget.
 
         """
-        value = ctxt.get('value')
-        if value is not None:
-            self.set_value(value)
+        self.set_value(payload['value'])
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -71,3 +66,4 @@ class QtProgressBar(QtConstraintsWidget):
 
         """
         self.widget.setValue(value)
+
