@@ -49,7 +49,7 @@ class QPopupWidget(QtGui.QWidget):
 
         """
         layout = self.layout()
-        layout.addWidget(widget)
+        layout.addWidget(widget, 0, 0)
 
     def setAnchor(self, anchor):
         """ Set the positioning of the popup relative to the parent widget.
