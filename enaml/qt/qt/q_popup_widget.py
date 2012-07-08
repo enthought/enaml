@@ -12,8 +12,6 @@ import QtGui, QtCore
 
 # Implementation of Popup widget
 
-ANCHOR = dict(left=0, right=1, top=2, bottom=3)
-
 class QPopupWidget(QtGui.QWidget):
     
     def __init__(self, parent):
@@ -50,7 +48,8 @@ class QPopupWidget(QtGui.QWidget):
             The widget to show in the popup.
 
         """
-        self.layout().addWidget(widget)
+        layout = self.layout()
+        layout.addWidget(widget)
 
     def setAnchor(self, anchor):
         """ Set the positioning of the popup relative to the parent widget.
@@ -61,9 +60,9 @@ class QPopupWidget(QtGui.QWidget):
             Can be one of 'left', 'right', 'top', 'bottom'
 
         """
-        if anchor not in ANCHOR:
+        if anchor not in set(['left', 'right', 'top', 'bottom']):
             raise Exception("anchor must be one of 'left', 'right', 'top', 'bottom'")
-        self._anchor_type = ANCHOR[anchor]
+        self._anchor_type = anchor
         if self.isVisible(): self._rebuild()
 
     def anchor(self):
@@ -75,8 +74,7 @@ class QPopupWidget(QtGui.QWidget):
             A string specifying the position relative to the parent widget
 
         """
-        for anchor, val in ANCHOR.items():
-            if val == self._anchor_type: return anchor
+        return self._anchor_type
 
     def setArrowSize(self, arrow):
         """ Set size of the arrow.
@@ -215,13 +213,13 @@ class QPopupWidget(QtGui.QWidget):
         size = self.size()
         margins = QtCore.QMargins()
         anchor_type = self._anchor_type
-        if anchor_type == ANCHOR['right']:
+        if anchor_type == 'right':
             adj = QtCore.QPoint(0, size.height()/2)
             margins.setLeft(h)
-        elif anchor_type == ANCHOR['bottom']:
+        elif anchor_type == 'bottom':
             adj = QtCore.QPoint(size.width()/2, 0)
             margins.setTop(h)
-        elif anchor_type == ANCHOR['left']:
+        elif anchor_type == 'left':
             adj = QtCore.QPoint(size.width(), size.height()/2)
             margins.setRight(h)
         else:
@@ -230,19 +228,41 @@ class QPopupWidget(QtGui.QWidget):
         self.move(anchor_pt - adj)
         self.setContentsMargins(margins)
         
-        self._path = _generatePopupPath(self.rect(),
+        self._path = _generate_popup_path(self.rect(),
                                         self._radius, self._radius,
                                         self._arrow, anchor_type)
 
-def _generatePopupPath(rect, xRadius, yRadius, arrowSize, anchor):
+
+def _generate_popup_path(rect, xRadius, yRadius, arrowSize, anchor):
+    """ Generate the QPainterPath used to draw the outline of the popup
+
+    Parameters
+    ----------
+    rect : QRect
+        Bounding QRect for the popup
+    xRadius, yRadius : Int
+        Radii of the 
+    arrowSize : QSize
+        Width and height of the popup anchor arrow
+    anchor : Int
+        Positioning of the popup relative to the parent. Determines the position
+        of the arrow
+
+    Returns
+    -------
+    result : QPainterPath
+        Path that can be passed to QPainter.drawPath to render popup
+
+    """
+
     awidth, aheight = arrowSize.width(), arrowSize.height()
     draw_arrow = (awidth > 0 and aheight > 0)
 
-    if anchor == ANCHOR['right']:
+    if anchor == 'right':
         rect.adjust(aheight,0, 0, 0)
-    elif anchor == ANCHOR['left']:
+    elif anchor == 'left':
         rect.adjust(0,0,-aheight, 0)
-    elif anchor == ANCHOR['bottom']:
+    elif anchor == 'bottom':
         rect.adjust(0,aheight,0, 0)
     else:
         rect.adjust(0,0,0,-aheight)
@@ -272,31 +292,31 @@ def _generatePopupPath(rect, xRadius, yRadius, arrowSize, anchor):
     path.arcMoveTo(x, y, rxx2, ryy2, 180)
     path.arcTo(x, y, rxx2, ryy2, 180, -90)
     
-    if anchor == ANCHOR['bottom'] and draw_arrow:
+    if anchor == 'bottom' and draw_arrow:
         path.lineTo(center.x() - awidth, y)
-        path.lineTo(center.x(),          y - aheight)
+        path.lineTo(center.x(), y - aheight)
         path.lineTo(center.x() + awidth, y)
     
     path.arcTo(x+w-rxx2, y, rxx2, ryy2, 90, -90)
     
-    if anchor == ANCHOR['left'] and draw_arrow:
-        path.lineTo(x + w,           center.y() - awidth)
+    if anchor == 'left' and draw_arrow:
+        path.lineTo(x + w, center.y() - awidth)
         path.lineTo(x + w + aheight, center.y())
-        path.lineTo(x + w,           center.y() + awidth)
+        path.lineTo(x + w, center.y() + awidth)
     
     path.arcTo(x+w-rxx2, y+h-ryy2, rxx2, ryy2, 0, -90)
     
-    if anchor == ANCHOR['top'] and draw_arrow:
+    if anchor == 'top' and draw_arrow:
         path.lineTo(center.x() + awidth, y + h)
-        path.lineTo(center.x(),          y + h + aheight)
+        path.lineTo(center.x(), y + h + aheight)
         path.lineTo(center.x() - awidth, y + h)
     
     path.arcTo(x, y+h-ryy2, rxx2, ryy2, 270, -90)
     
-    if anchor == ANCHOR['right'] and draw_arrow:
-        path.lineTo(x,           center.y() + awidth)
+    if anchor == 'right' and draw_arrow:
+        path.lineTo(x, center.y() + awidth)
         path.lineTo(x - aheight, center.y())
-        path.lineTo(x,           center.y() - awidth)
+        path.lineTo(x,  center.y() - awidth)
     
     path.closeSubpath()
     return path
