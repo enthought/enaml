@@ -46,7 +46,9 @@ class QtImage(object):
 
     def rgb_converter(self, data):
         """ Shuffle the RGB channels and add an alpha channel to conform with Qt
-
+            XXX: Qt supports just an RGB format (no alpha), but there were issues
+            with it so we just added an alpha channel filled with 255 and used the
+            ARGB format.
         """
         if sys.byteorder == 'little':
             r, g, b, a = (2, 1, 0, 3)
@@ -58,6 +60,8 @@ class QtImage(object):
         qt_data[g::4] = data[1::4]
         qt_data[b::4] = data[2::4]
         qt_data[a::4] = [255] * len(qt_data[a::4])
+
+        return qt_data
 
     def rgba_converter(self, data):
         """ Shuffle the RGBA channels to conform with Qt
