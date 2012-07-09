@@ -15,9 +15,8 @@
     // that it is JSON-serializable. Required
     "data": "<string>",
 
-    // A string representation of the image format. Currently indexed 8-bit, 
-    // RGB32 and RGBA32 are supported. Required
-    "format": "<string>",
+    // The format of the image data. Required
+    "format": "<'raw_file' | 'rgb32' | 'rgba32' | 'indexed8'>",
 
     // A tuple with the width and height of the image. Required
     "size": "<tuple>",

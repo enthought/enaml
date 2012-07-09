@@ -3,6 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from abstract_image import AbstractImage
+from base64 import b64encode, b64decode
 
 _FORMATS = ['indexed8', 'rgba32', 'rgb32']
 
@@ -32,7 +33,7 @@ class ImageFromArray(AbstractImage):
 
         """
         img_dict = {
-            'data' : self._data,
+            'data' : b64encode(self._data),
             'format' : self._format,
             'size' : self._size,
             'color_table' : self._color_table
@@ -45,7 +46,7 @@ class ImageFromArray(AbstractImage):
         appropriate Python object
 
         """
-        data = image_dict['data']
+        data = b64decode(image_dict['data'])
         size = image_dict['size']
         img_format = image_dict['format']
         color_table = image_dict['color_table']

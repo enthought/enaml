@@ -31,7 +31,7 @@ class ImageFromPIL(AbstractImage):
 
         image_dict = {
             'data' : b64encode(contents),
-            'format' : self._image.format,
+            'format' : 'raw_file',
             'size' : self._image.size
         }
         return image_dict
