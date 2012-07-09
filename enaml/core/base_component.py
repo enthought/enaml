@@ -47,6 +47,10 @@ class BaseComponent(HasStrictTraits):
     #: is called. It should not be changed afterwards.
     initialized = Bool(False)
 
+    #: An optional name to give to this component to assist in finding
+    #: it in the tree. See the 'find_by_name' method.
+    name = Str
+
     #: The private dictionary of expression objects that are bound to 
     #: attributes on this component. It should not be manipulated by
     #: user code. Rather, expressions should be bound by calling the 
@@ -386,6 +390,31 @@ class BaseComponent(HasStrictTraits):
             yield parent
             parent = parent.parent
 
+    def find_by_name(self, name):
+        """ Locate and return a named item that exists in the subtree
+        which starts at this node.
+
+        This method will traverse the tree of components, breadth first,
+        from this point downward, looking for a component with the given
+        name. The first one with the given name is returned, or None if
+        no component is found.
+
+        Parameters
+        ----------
+        name : string
+            The name of the component for which to search.
+        
+        Returns
+        -------
+        result : BaseComponent or None
+            The first component found with the given name, or None if 
+            no component is found.
+        
+        """
+        for cmpnt in self.traverse():
+            if cmpnt.name == name:
+                return cmpnt
+                
     def toplevel_component(self):
         """ Walks up the tree of components starting at this node and
         returns the toplevel node, which is the first node encountered
