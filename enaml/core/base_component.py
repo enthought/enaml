@@ -391,8 +391,8 @@ class BaseComponent(HasStrictTraits):
             parent = parent.parent
 
     def find_by_name(self, name):
-        """ Locate and return a named item that exists in the subtree
-        which starts at this node.
+        """ Locate and return the first named item that exists in the 
+        subtree which starts at this node.
 
         This method will traverse the tree of components, breadth first,
         from this point downward, looking for a component with the given
@@ -414,7 +414,34 @@ class BaseComponent(HasStrictTraits):
         for cmpnt in self.traverse():
             if cmpnt.name == name:
                 return cmpnt
-                
+
+    def find_all_by_name(self, name):
+        """ Locate and return all the named items that exist in the
+        subtree which starts at this node.
+
+        This method will traverse the tree of components, breadth first,
+        from this point downward, looking for a components with the given
+        name.
+
+        Parameters
+        ----------
+        name : string
+            The name of the components for which to search.
+        
+        Returns
+        -------
+        result : list of BaseComponents
+            The list of components found with the given name, or an
+            empty list if no components are found.
+        
+        """
+        res = []
+        push = res.append
+        for cmpnt in self.traverse():
+            if cmpnt.name == name:
+                push(cmpnt)
+        return res
+
     def toplevel_component(self):
         """ Walks up the tree of components starting at this node and
         returns the toplevel node, which is the first node encountered
