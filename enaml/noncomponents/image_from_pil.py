@@ -21,11 +21,11 @@ class ImageFromPIL(AbstractImage):
     def as_dict(self):
         """ Return the image as a JSON-serializable dict
 
-        """        
+        """
+        # XXX is there a better way to retrieve the data from a PIL image
+        # than saving it to a string buffer?
         output = StringIO()
-
         self._image.save(output, format=self._image.format)
-            
         contents = output.getvalue()
         output.close()
 
