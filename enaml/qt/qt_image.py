@@ -29,18 +29,19 @@ class QtImage(object):
             'rgba32': self.rgba_converter
         }
 
-        data = info['data']
+        data = b64decode(info['data'])
         w, h = info['size']
         _format = info['format']
         color_table = info.get('color_table')
 
         if _format == 'raw_file':
-            qt_data = QByteArray(b64decode(data))
+            qt_data = QByteArray(data)
             self._image = QImage()
             self._image.loadFromData(qt_data)
         else:
-            qt_data = _FORMAT_CONVERTERS[_format](b64decode(data))
-            self._image = QImage(str(qt_data), w, h, _QT_IMAGE_FORMAT[_format])
+            if _format in _FORMAT_CONVERTERS:
+                data = _FORMAT_CONVERTERS[_format](data)
+            self._image = QImage(str(data), w, h, _QT_IMAGE_FORMAT[_format])
             if color_table:
                 self._image.setColorTable([qRgb(*color) for color in color_table])
 
@@ -55,10 +56,13 @@ class QtImage(object):
         else:
             r, g, b, a = (1, 2, 3, 0)
 
-        qt_data = bytearray(len(data))
-        qt_data[r::4] = data[0::4]
-        qt_data[g::4] = data[1::4]
-        qt_data[b::4] = data[2::4]
+        # increase the size of the array to allow for an alpha channel
+        alpha_size = int(len(data)*(4.0/3))
+        qt_data = bytearray(alpha_size)
+        
+        qt_data[r::4] = data[0::3]
+        qt_data[g::4] = data[1::3]
+        qt_data[b::4] = data[2::3]
         qt_data[a::4] = [255] * len(qt_data[a::4])
 
         return qt_data

@@ -2,12 +2,10 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from base64 import b64encode
-
 from traits.api import Bool, Instance
 
 from .constraints_widget import ConstraintsWidget
-from .image import Image
+from ..noncomponents.image.abstract_image import AbstractImage
 
 
 class ImageView(ConstraintsWidget):
@@ -15,7 +13,7 @@ class ImageView(ConstraintsWidget):
 
     """
     #: The image to display in the control
-    image = Instance(Image)
+    image = Instance(AbstractImage)
     
     #: Whether or not to scale the image with the size of the component.
     scale_to_fit = Bool(False)
@@ -43,7 +41,7 @@ class ImageView(ConstraintsWidget):
         super_attrs['scale_to_fit'] = self.scale_to_fit
         super_attrs['preserve_aspect_ratio'] = self.preserve_aspect_ratio
         super_attrs['allow_upscaling'] = self.allow_upscaling
-        super_attrs['image'] = b64encode(self.image.data())
+        super_attrs['image'] = self.image.as_dict()
         return super_attrs
 
     def bind(self):
@@ -64,6 +62,5 @@ class ImageView(ConstraintsWidget):
         """ Sends the image data, encoded in a base64 format
 
         """
-        enc_data = b64encode(self.image.data())
-        self.send({'action': 'set-image', 'image':enc_data})
+        self.send({'action': 'set-image', 'image':self.image.as_dict()})
 

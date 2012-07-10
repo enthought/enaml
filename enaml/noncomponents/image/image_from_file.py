@@ -29,7 +29,7 @@ class ImageFromFile(AbstractImage):
         """
         image_dict = {
             'data' : b64encode(self._data),
-            'format' : 'file',
+            'format' : 'raw_file',
             'size' : (-1, -1)
         }
         return image_dict

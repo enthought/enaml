@@ -2,9 +2,8 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from base64 import b64decode
 from .qt.QtGui import QLabel
-from .qt.QtCore import Qt, QSize
+from .qt.QtCore import Qt
 from .qt_constraints_widget import QtConstraintsWidget
 from .qt_image import QtImage
 
@@ -50,66 +49,42 @@ class QtImageView(QtConstraintsWidget):
        """
        self.widget = EnamlQtLabel(self.parent_widget)
 
-    def initialize(self, init_attrs):
+    def initialize(self, attrs):
        """ Initialize the attributes of the widget
        
        """
-       super(QtImageView, self).initialize(init_attrs)
-       self.set_allow_upscaling(init_attrs.get('allow_upscaling', True))
-       self.set_image_data(init_attrs.get('image_data', ''))
-       self.set_preserve_aspect_ratio(init_attrs.get('preserve_aspect_ratio', True))
-       self.set_scale_to_fit(init_attrs.get('scale_to_fit', True))
+       super(QtImageView, self).initialize(attrs)
+       self.set_allow_upscaling(attrs['allow_upscaling'])
+       self.set_image(attrs['image'])
+       self.set_preserve_aspect_ratio(attrs['preserve_aspect_ratio'])
+       self.set_scale_to_fit(attrs['scale_to_fit'])
 
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
-    def receive_set_allow_upscaling(self, ctxt):
+    def on_message_set_allow_upscaling(self, payload):
         """ Message handler for set_allow_upscaling
 
         """
-        upscaling = ctxt.get('allow_upscaling')
-        if upscaling is not None:
-            self.set_allow_upscaling(upscaling)
+        self.set_allow_upscaling(payload['allow_upscaling'])
 
-    def receive_set_image_data(self, ctxt):
+    def on_message_set_image_data(self, payload):
         """ Message handler for set_image_data
 
         """
-        image_data = ctxt.get('image')
-        if image_data is not None:
-            self.set_image_data(image_data)
+        self.set_image(payload['image'])
 
-    def receive_set_preserve_aspect_ratio(self, ctxt):
+    def on_message_set_preserve_aspect_ratio(self, payload):
         """ Message handler for set_preserve_aspect_ratio
 
         """
-        ratio = ctxt.get('preserve_aspect_ratio')
-        if ratio is not None:
-            self.set_preserve_aspect_ratio(ratio)
+        self.set_preserve_aspect_ratio(payload['preserve_aspect_ratio'])
 
-    def receive_set_scale_to_fit(self, ctxt):
+    def on_message_set_scale_to_fit(self, payload):
         """ Message handler for set_scale_to_fit
 
         """
-        scale = ctxt.get('scale_to_fit')
-        if scale is not None:
-            self.set_scale_to_fit(scale)
-
-    def receive_scale_by_factor(self, ctxt):
-       """ Message hander for scale_by_factor
-
-       """
-       size_factor = ctxt.get('size_factor')
-       if size_factor is not None:
-          self.scale_by_factor(size_factor)
-
-    def receive_scale_to_size(self, ctxt):
-       """ Message handler for scale_to_size
-
-       """
-       size = ctxt.get('size')
-       if size is not None:
-          self.scale_to_size(size)
+        self.set_scale_to_fit(payload['scale_to_fit'])
           
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -120,12 +95,11 @@ class QtImageView(QtConstraintsWidget):
         """
         self.widget.allow_upscaling = upscaling
 
-    def set_image_data(self, image_data):
+    def set_image(self, image):
         """ Set the image of the widget
 
         """
-        dec_data = b64decode(image_data)
-        self._image = QtImage(dec_data)
+        self._image = QtImage(image)
         self.widget.setPixmap(self._image.as_QPixmap())
     
     def set_preserve_aspect_ratio(self, ratio):
@@ -140,23 +114,3 @@ class QtImageView(QtConstraintsWidget):
 
         """
         self.widget.setScaledContents(scale)
-
-    def scale_by_factor(self, size_scale):
-       """ Scale the view's image by a constant facor
-
-       Parameters:
-       -----------
-       size_scale : Tuple
-           A tuple of constants to scale the image by
-
-       """
-       w, h = size_scale
-       w = self.widget.pixmap().size().width()*w
-       h = self.widget.pixmap().size().height()*h
-       self.widget.scale(QSize(w,h))
-
-    def scale_to_size(self, size):
-       """ Scale the view's image to an explicit size
-
-       """
-       self.widget.scale(QSize(*size))
