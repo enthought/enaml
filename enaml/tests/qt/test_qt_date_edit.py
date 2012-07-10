@@ -31,8 +31,7 @@ class TestQtDateEdit(object):
         """ Set up the widget for testing
 
         """
-        self.date_edit = QtDateEdit(None, uuid4().hex, QtLocalPipe(),
-                                    QtLocalPipe())
+        self.date_edit = QtDateEdit(None, uuid4().hex, QtLocalPipe(uuid4))
         self.date_edit.create()
 
     def test_set_date_format(self):
@@ -40,7 +39,8 @@ class TestQtDateEdit(object):
 
         """
         display_format = 'MMMM dd, YYYY'
-        self.date_edit.recv('set_date_format', {'value':display_format})
+        self.date_edit.recv_message({'action':'set-date_format',
+                                     'date_format':display_format})
         widget_format = self.date_edit.widget.displayFormat()
         assert widget_format == display_format
 
@@ -49,7 +49,7 @@ class TestQtDateEdit(object):
 
         """
         date = datetime.date.today()
-        self.date_edit.recv('set_date', {'value':date})
+        self.date_edit.recv_message({'action':'set-date', 'date':str(date)})
         widget_date = qdate_to_python(self.date_edit.widget.date())
         assert widget_date == date
 
@@ -58,7 +58,8 @@ class TestQtDateEdit(object):
 
         """
         max_date = datetime.date(7999, 12, 31)
-        self.date_edit.recv('set_max_date', {'value':max_date})
+        self.date_edit.recv_message({'action':'set-maximum',
+                                     'maximum':str(max_date)})
         widget_max_date = qdate_to_python(self.date_edit.widget.maximumDate())
         assert widget_max_date == max_date
 
@@ -68,6 +69,7 @@ class TestQtDateEdit(object):
 
         """
         min_date = datetime.date(1752, 9, 14)
-        self.date_edit.recv('set_min_date', {'value':min_date})
+        self.date_edit.recv_message({'action':'set-minimum',
+                                     'minimum':str(min_date)})
         widget_min_date = qdate_to_python(self.date_edit.widget.minimumDate())
         assert widget_min_date == min_date

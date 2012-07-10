@@ -23,8 +23,7 @@ class TestQtComboBox(object):
         """ Set up the widget for testing
 
         """
-        self.combo_box = QtComboBox(None, uuid4().hex, QtLocalPipe(),
-                                    QtLocalPipe())
+        self.combo_box = QtComboBox(None, uuid4().hex, QtLocalPipe(uuid4))
         self.combo_box.create()
 
     def test_set_items(self):
@@ -32,7 +31,7 @@ class TestQtComboBox(object):
 
         """
         items = ['one', 'two', 'three']
-        self.combo_box.recv('set_items', {'value':items})
+        self.combo_box.recv_message({'action':'set-items', 'items':items})
         widget_items = []
         for ind in range(self.combo_box.widget.count()):
             widget_items.append(self.combo_box.widget.itemText(ind))
@@ -47,6 +46,6 @@ class TestQtComboBox(object):
         self.combo_box.widget.addItems(['one', 'two', 'three'])
         
         index = 0
-        self.combo_box.recv('set_index', {'value':index})
+        self.combo_box.recv_message({'action':'set-index', 'index':index})
         widget_index = self.combo_box.widget.currentIndex()
         assert widget_index == index

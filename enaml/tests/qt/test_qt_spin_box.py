@@ -23,8 +23,7 @@ class TestQtSpinBox(object):
         """ Set up the widget for testing
 
         """
-        self.spin_box = QtSpinBox(None, uuid4().hex, QtLocalPipe(),
-                                  QtLocalPipe())
+        self.spin_box = QtSpinBox(None, uuid4().hex, QtLocalPipe(uuid4))
         self.spin_box.create()
 
     def test_set_maximum(self):
@@ -32,7 +31,8 @@ class TestQtSpinBox(object):
 
         """
         maximum = 50
-        self.spin_box.recv('set_maximum', {'value':maximum})
+        self.spin_box.recv_message({'action':'set-maximum',
+                                    'maximum':maximum})
         assert self.spin_box.widget.maximum() == maximum
 
     def test_set_minimum(self):
@@ -40,7 +40,8 @@ class TestQtSpinBox(object):
 
         """
         minimum = 10
-        self.spin_box.recv('set_minimum', {'value':minimum})
+        self.spin_box.recv_message({'action':'set-minimum',
+                                    'minimum':minimum})
         assert self.spin_box.widget.minimum() == minimum
 
     def test_set_single_step(self):
@@ -48,7 +49,8 @@ class TestQtSpinBox(object):
 
         """
         step = 5
-        self.spin_box.recv('set_single_step', {'value':step})
+        self.spin_box.recv_message({'action':'set-single_step',
+                                    'single_step':step})
         assert self.spin_box.widget.singleStep() == step
 
     def test_set_tracking(self):
@@ -56,7 +58,8 @@ class TestQtSpinBox(object):
 
         """
         tracking = False
-        self.spin_box.recv('set_tracking', {'value':tracking})
+        self.spin_box.recv_message({'action':'set-tracking',
+                                    'tracking':tracking})
         assert self.spin_box.widget.keyboardTracking() == tracking
 
     def test_set_validator(self):
@@ -65,7 +68,7 @@ class TestQtSpinBox(object):
         """
         # XXX
         #validator = ???
-        #self.spin_box.recv('set_validator', {'value':validator})
+        #self.spin_box.recv('set-validator', {'value':validator})
         #assert self.spin_box.widget.validator() == validator
         pass
 
@@ -74,7 +77,8 @@ class TestQtSpinBox(object):
 
         """
         value = 20
-        self.spin_box.recv('set_value', {'value':value})
+        self.spin_box.recv_message({'action':'set-value',
+                                    'value':value})
         assert self.spin_box.widget.value() == value
 
     def test_set_wrap(self):
@@ -82,5 +86,6 @@ class TestQtSpinBox(object):
 
         """
         wrap = True
-        self.spin_box.recv('set_wrap', {'value':wrap})
+        self.spin_box.recv_message({'action':'set-wrapping',
+                                    'wrapping':wrap})
         assert self.spin_box.widget.wrapping() == wrap

@@ -23,8 +23,7 @@ class TestQtLabel(object):
         """ Set up the widget for testing
 
         """
-        self.label = QtLabel(None, uuid4().hex, QtLocalPipe(),
-                             QtLocalPipe())
+        self.label = QtLabel(None, uuid4().hex, QtLocalPipe(uuid4))
         self.label.create()
 
     def test_set_text(self):
@@ -32,7 +31,7 @@ class TestQtLabel(object):
 
         """
         text = "test"
-        self.label.recv('set_text', {'value':text})
+        self.label.recv_message({'action':'set-text', 'text':text})
         assert self.label.widget.text() == text
 
     def test_set_word_wrap(self):
@@ -40,5 +39,6 @@ class TestQtLabel(object):
 
         """
         wrap = True
-        self.label.recv('set_word_wrap', {'value':wrap})
+        self.label.recv_message({'action':'set-word_wrap',
+                                 'word_wrap':wrap})
         assert self.label.widget.wordWrap() == wrap

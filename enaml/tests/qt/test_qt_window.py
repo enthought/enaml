@@ -23,8 +23,7 @@ class TestQtWindow(object):
         """ Set up the widget for testing
 
         """
-        self.window = QtWindow(None, uuid4().hex, QtLocalPipe(),
-                               QtLocalPipe())
+        self.window = QtWindow(None, uuid4().hex, QtLocalPipe(uuid4))
         self.window.create()
 
     def test_set_title(self):
@@ -32,46 +31,27 @@ class TestQtWindow(object):
 
         """
         title_str = 'Test title'
-        self.window.recv('set_title', {'value':title_str})
+        self.window.recv_message({'action':'set-title',
+                                  'title':title_str})
         assert self.window.widget.windowTitle() == title_str
-
-    def test_set_max_size(self):
-        """ Test the QtWindow's set_max_size command
-
-        """
-        maximum_size = (1000,1000)
-        self.window.recv('set_max_size', {'value':maximum_size})
-        q_max_size = self.window.widget.maximumSize()
-        widget_max_size = (q_max_size.width(), q_max_size.height())
-        assert widget_max_size == maximum_size
-
-    def test_set_min_size(self):
-        """ Test the QtWindow's set_min_size command
-
-        """
-        minimum_size = (10, 10)
-        self.window.recv('set_min_size', {'value':minimum_size})
-        q_min_size = self.window.widget.minimumSize()
-        widget_min_size = (q_min_size.width(), q_min_size.height())
-        assert widget_min_size == minimum_size
 
     def test_minimize(self):
         """ Test the QtWindow's minimize command
 
         """
-        self.window.recv('minimize', {})
+        self.window.recv_message({'action':'minimize'})
         assert self.window.widget.isMinimized() == True
 
     def test_maximize(self):
         """ Test the QtWindow's maximize command
 
         """
-        self.window.recv('maximize', {})
+        self.window.recv_message({'action':'maximize'})
         assert self.window.widget.isMaximized() == True
 
     def test_restore(self):
         """ Test the QtWindow's restore command
 
         """
-        self.window.recv('restore', {})
+        self.window.recv_message({'action':'restore'})
         assert self.window.widget.isMaximized() == False

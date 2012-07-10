@@ -24,8 +24,7 @@ class TestQtSlider(object):
         """ Set up the widget for testing
 
         """
-        self.slider = QtSlider(None, uuid4().hex, QtLocalPipe(),
-                               QtLocalPipe())
+        self.slider = QtSlider(None, uuid4().hex, QtLocalPipe(uuid4))
         self.slider.create()
 
     def test_set_maximum(self):
@@ -33,7 +32,8 @@ class TestQtSlider(object):
 
         """
         maximum = 50
-        self.slider.recv('set_maximum', {'value':maximum})
+	self.slider.recv_message({'action':'set-maximum',
+				  'maximum':maximum})
         assert self.slider.widget.maximum() == maximum
 
     def test_set_minimum(self):
@@ -41,7 +41,8 @@ class TestQtSlider(object):
 
         """
         minimum = 10
-        self.slider.recv('set_minimum', {'value':minimum})
+	self.slider.recv_message({'action':'set-minimum',
+				  'minimum':minimum})
         assert self.slider.widget.minimum() == minimum
 
     def test_set_value(self):
@@ -49,14 +50,16 @@ class TestQtSlider(object):
 
         """
         value = 20
-        self.slider.recv('set_value', {'value':value})
+	self.slider.recv_message({'action':'set-value',
+				  'value':value})
         assert self.slider.widget.value() == value
 
     def test_set_orientation(self):
         """ Test the QtSlider's set_orientation command
 
         """
-        self.slider.recv('set_orientation', {'value':'vertical'})
+        self.slider.recv_message({'action':'set-orientation',
+				  'orientation':'vertical'})
         assert self.slider.widget.orientation() == Qt.Vertical
 
     def test_set_page_step(self):
@@ -64,7 +67,8 @@ class TestQtSlider(object):
 
         """
         step = 2
-        self.slider.recv('set_page_step', {'value':step})
+	self.slider.recv_message({'action':'set-page_step',
+				  'page_step':step})
         assert self.slider.widget.pageStep() == step
 
     def test_set_single_step(self):
@@ -72,7 +76,8 @@ class TestQtSlider(object):
 
         """
         step = 10
-        self.slider.recv('set_single_step', {'value':step})
+	self.slider.recv_message({'action':'set-single_step',
+				  'single_step':step})
         assert self.slider.widget.singleStep() == step
 
     def test_set_tick_interval(self):
@@ -80,19 +85,22 @@ class TestQtSlider(object):
 
         """
         interval = 5
-        self.slider.recv('set_tick_interval', {'value':interval})
+	self.slider.recv_message({'action':'set-tick_interval',
+				  'tick_interval':interval})
         assert self.slider.widget.tickInterval() == interval
 
     def test_set_tick_position(self):
         """ Test the QtSlider's set_tick_position command
 
         """
-        self.slider.recv('set_tick_position', {'value':'left'})
+        self.slider.recv_message({'action':'set-tick_position',
+				  'tick_position':'left'})
         assert self.slider.widget.tickPosition() == QSlider.TicksLeft
 
     def test_set_tracking(self):
         """ Test the QtSlider's set_tracking command
 
         """
-        self.slider.recv('set_tracking', {'value':False})
+        self.slider.recv_message({'action':'set-tracking',
+				  'tracking':False})
         assert self.slider.widget.hasTracking() == False

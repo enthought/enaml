@@ -31,8 +31,8 @@ class TestQtDatetimeEdit(object):
         """ Set up the widget for testing
 
         """
-        self.datetime_edit = QtDatetimeEdit(None, uuid4().hex, QtLocalPipe(),
-                                            QtLocalPipe())
+        self.datetime_edit = QtDatetimeEdit(None, uuid4().hex,
+                                            QtLocalPipe(uuid4))
         self.datetime_edit.create()
 
     def test_set_datetime(self):
@@ -40,7 +40,8 @@ class TestQtDatetimeEdit(object):
 
         """
         date_time = datetime.datetime(2012,6,22,0,0,0,0)
-        self.datetime_edit.recv('set_datetime', {'value':date_time})
+        self.datetime_edit.recv_message({'action':'set-datetime',
+                                         'datetime':str(date_time)})
         widget_date_time = qdatetime_to_python(self.datetime_edit.widget.dateTime())
         assert widget_date_time == date_time
 
@@ -49,7 +50,8 @@ class TestQtDatetimeEdit(object):
 
         """
         min_date_time = datetime.datetime(1752,9,14, 0, 0, 0, 0)
-        self.datetime_edit.recv('set_min_datetime', {'value':min_date_time})
+        self.datetime_edit.recv_message({'action':'set-minimum',
+                                         'minimum':str(min_date_time)})
         widget_min_date_time = qdatetime_to_python(
             self.datetime_edit.widget.minimumDateTime())
         assert widget_min_date_time == min_date_time
@@ -59,7 +61,8 @@ class TestQtDatetimeEdit(object):
 
         """
         max_date_time = datetime.datetime(7999, 12, 31, 23, 59, 59, 999000)
-        self.datetime_edit.recv('set_max_datetime', {'value':max_date_time})
+        self.datetime_edit.recv_message({'action':'set-maximum',
+                                         'maximum':str(max_date_time)})
         widget_max_date_time = qdatetime_to_python(
             self.datetime_edit.widget.maximumDateTime())
         assert widget_max_date_time == max_date_time
@@ -69,6 +72,7 @@ class TestQtDatetimeEdit(object):
 
         """
         date_time_format = 'd M y - hh:mm:ss'
-        self.datetime_edit.recv('set_datetime_format', {'value':date_time_format})
+        self.datetime_edit.recv_message({'action':'set-datetime_format',
+                                         'datetime_format':date_time_format})
         widget_format = self.datetime_edit.widget.displayFormat()
         assert widget_format == date_time_format

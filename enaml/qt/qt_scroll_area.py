@@ -22,51 +22,50 @@ class QtScrollArea(QtConstraintsWidget):
         """
         self.widget = QScrollArea(self.parent_widget)
 
-    def initialize(self, init_attrs):
+    def initialize(self, attrs):
         """ Initialize the widget attributes
 
         """
-        self.set_horizontal_scroll_policy(init_attrs.get(
-            'horizontal_scroll_policy', 'as_needed'))
-        self.set_preferred_size(init_attrs.get('preferred_size', (100, 100)))
-        self.set_scroll_position(init_attrs.get('scroll_position', (0, 0)))
-        self.set_scrolled_component(init_attrs.get('scrolled_component',
-                                                   QWidget()))
-        self.set_vertical_scroll_policy(init_attrs.get(
-            'vertical_scroll_policy', 'as_needed'))
+        super(QtScrollArea, self).initialize(attrs)
+        self.set_horizontal_scroll_policy(attrs['horizontal_scroll_policy'])
+        self.set_preferred_size(attrs['preferred_size'])
+        self.set_scroll_position(attrs['scroll_position'])
+        self.set_scrolled_component(attrs['scrolled_component'])
+        self.set_vertical_scroll_policy(attrs['vertical_scroll_policy'])
     
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
-    def receive_set_horizontal_scroll_policy(self, ctxt):
+    def on_message_set_horizontal_scroll_policy(self, payload):
         """ Message handler for set_horizontal_scroll_policy
 
         """
-        return self.set_horizontal_scroll_policy(ctxt['value'])
+        self.set_horizontal_scroll_policy(
+            payload['horizontal_scroll_policy'])
 
-    def receive_set_preferred_size(self, ctxt):
+    def on_message_set_preferred_size(self, payload):
         """ Message handler for set_preferred_size
 
         """
-        return self.set_preferred_size(ctxt['value'])
+        self.set_preferred_size(payload['preferred_size'])
 
-    def receive_set_scroll_position(self, ctxt):
+    def on_message_set_scroll_position(self, payload):
         """ Message handler for set_scroll_position
 
         """
-        return self.set_scroll_position(ctxt['value'])
+        self.set_scroll_position(payload['scroll_position'])
 
-    def receive_set_scrolled_component(self, ctxt):
+    def on_message_set_scrolled_component(self, payload):
         """ Message handler for set_scrolled_component
 
         """
-        return self.set_scrolled_component(ctxt['value'])
+        self.set_scrolled_component(payload['scrolled_component'])
 
-    def receive_set_vertical_scroll_policy(self, ctxt):
+    def on_message_set_vertical_scroll_policy(self, payload):
         """ Message handler for set_vertical_scroll_policy
 
         """
-        return self.set_vertical_scroll_policy(ctxt['value'])
+        self.set_vertical_scroll_policy(payload['vertical_scroll_policy'])
         
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -76,15 +75,14 @@ class QtScrollArea(QtConstraintsWidget):
 
         """
         self.widget.setHorizontalScrollBarPolicy(_SCROLLBAR_POLICY_MAP[policy])
-        return True
 
     def set_preferred_size(self, size):
         """ Set the preferred size of the widget
 
         """
         # XXX
-        return True
-
+        pass
+    
     def set_scroll_position(self, pos):
         """ Set the scroll position of the widget
 
@@ -92,18 +90,15 @@ class QtScrollArea(QtConstraintsWidget):
         horizontal_pos, vertical_pos = pos
         self.widget.horizontalScrollBar().setValue(horizontal_pos)
         self.widget.verticalScrollBar().setValue(vertical_pos)
-        return True
 
     def set_scrolled_component(self, comp):
         """ Set the component to be scrolled of the widget
 
         """
         self.widget.setViewport(comp)
-        return True
 
     def set_vertical_scroll_policy(self, policy):
         """ Set the vertical scroll policy of the widget
 
         """
         self.widget.setVerticalScrollBarPolicy(_SCROLLBAR_POLICY_MAP[policy])
-        return True

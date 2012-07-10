@@ -16,20 +16,21 @@ class QtMenuBar(QtWidgetComponent):
         """
         self.widget = QMenuBar()
 
-    def initialize(self, init_attrs):
+    def initialize(self, attrs):
         """ Initialize the widget attributes
 
         """
-        self.set_menus(init_attrs.get('menus', []))
+        super(QtMenuBar, self).initialize(attrs)
+        self.set_menus(attrs['menus'])
 
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
-    def receive_set_menus(self, ctxt):
+    def on_message_set_menus(self, payload):
         """ Message handler for set_menus
 
         """
-        self.set_menus(ctxt['value'])
+        self.set_menus(payload['menus'])
         
     #--------------------------------------------------------------------------
     # Widget Update Methods

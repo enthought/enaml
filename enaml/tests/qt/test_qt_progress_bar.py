@@ -23,8 +23,7 @@ class TestQtProgressBar(object):
         """ Set up the widget for testing
 
         """
-        self.progress_bar = QtProgressBar(None, uuid4().hex, QtLocalPipe(),
-                                          QtLocalPipe())
+        self.progress_bar = QtProgressBar(None, uuid4().hex, QtLocalPipe(uuid4))
         self.progress_bar.create()
 
     def test_set_maximum(self):
@@ -32,7 +31,8 @@ class TestQtProgressBar(object):
 
         """
         maximum = 20
-        self.progress_bar.recv('set_maximum', {'value':maximum})
+        self.progress_bar.recv_message({'action':'set-maximum',
+                                        'maximum':maximum})
         assert self.progress_bar.widget.maximum() == maximum
 
     def test_set_minimum(self):
@@ -40,7 +40,8 @@ class TestQtProgressBar(object):
 
         """
         minimum = 10
-        self.progress_bar.recv('set_minimum', {'value':minimum})
+        self.progress_bar.recv_message({'action':'set-minimum',
+                                        'minimum':minimum})
         assert self.progress_bar.widget.minimum() == minimum
 
     def test_set_value(self):
@@ -48,5 +49,5 @@ class TestQtProgressBar(object):
 
         """
         value = 15
-        self.progress_bar.recv('set_value', {'value':value})
+        self.progress_bar.recv_message({'action':'set-value', 'value':value})
         assert self.progress_bar.widget.value() == value

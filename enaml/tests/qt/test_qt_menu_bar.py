@@ -24,23 +24,22 @@ class TestQtMenuBar(object):
         """ Set up the widget for testing
 
         """
-        self.menu_bar = QtMenuBar(None, uuid4().hex, QtLocalPipe(),
-                                  QtLocalPipe())
+        self.menu_bar = QtMenuBar(None, uuid4().hex, QtLocalPipe(uuid4))
         self.menu_bar.create()
 
     def test_set_menus(self):
         """ Test the QtMenuBar's set_menus command
 
         """
-        menu1 = QtMenu(self.menu_bar, uuid4().hex, QtLocalPipe(), QtLocalPipe())
+        menu1 = QtMenu(self.menu_bar, uuid4().hex, QtLocalPipe(uuid4))
 	menu1.create()
         menu1.set_title('test1')
 	
-        menu2 = QtMenu(self.menu_bar, uuid4().hex, QtLocalPipe(), QtLocalPipe())
+        menu2 = QtMenu(self.menu_bar, uuid4().hex, QtLocalPipe(uuid4))
 	menu2.create()
         menu2.set_title('test2')
 
         menus = [menu1, menu2]
 
-        self.menu_bar.recv('set_menus', {'value':menus})
+	self.menu_bar.recv_message({'action':'set-menus', 'menus':menus})
         assert self.menu_bar.children == menus

@@ -33,21 +33,19 @@ class QtDialog(QtWindow):
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
-    def receive_set_modality(self, ctxt):
+    def on_message_set_modality(self, payload):
         """ Handle a set_modality message
 
         """
-        modality = ctxt.get('modality')
-        if modality is not None:
-            self.set_modality(modality)
+        self.set_modality(payload['modality'])
 
-    def receive_accept(self, ctxt):
+    def on_message_accept(self, payload):
         """ Handle an accept message
 
         """
         self.accept()
 
-    def receive_reject(self, ctxt):
+    def on_message_reject(self, payload):
         """ Handle a reject message
 
         """

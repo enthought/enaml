@@ -24,16 +24,15 @@ class TestQtScrollArea(object):
         """ Set up the widget for testing
 
         """
-        self.scroll_area = QtScrollArea(None, uuid4().hex, QtLocalPipe(),
-                                        QtLocalPipe())
+        self.scroll_area = QtScrollArea(None, uuid4().hex, QtLocalPipe(uuid4))
         self.scroll_area.create()
 
     def test_set_horizontal_scroll_policy(self):
         """ Test the QtScrollArea's set_horizontal_scroll_policy command
 
         """
-        self.scroll_area.recv('set_horizontal_scroll_policy',
-                              {'value':'always_off'})
+        self.scroll_area.recv_message({'action':'set-horizontal_scroll_policy',
+				       'horizontal_scroll_policy':'always_off'})
         widget_policy =  self.scroll_area.widget.horizontalScrollBarPolicy()
         assert widget_policy == Qt.ScrollBarAlwaysOff
 
@@ -55,7 +54,8 @@ class TestQtScrollArea(object):
         self.scroll_area.widget.horizontalScrollBar().setMaximum(50)
         self.scroll_area.widget.verticalScrollBar().setMaximum(50)
         
-        self.scroll_area.recv('set_scroll_position', {'value':pos})
+	self.scroll_area.recv_message({'action':'set-scroll_position',
+				       'scroll_position':pos})
         widget = self.scroll_area.widget
         widget_h_pos = widget.horizontalScrollBar().value()
         widget_v_pos = widget.verticalScrollBar().value()
@@ -67,15 +67,16 @@ class TestQtScrollArea(object):
 
         """
         comp = QWidget()
-        self.scroll_area.recv('set_scrolled_component', {'value':comp})
+	self.scroll_area.recv_message({'action':'set-scrolled_component',
+				       'scrolled_component':comp})
         assert self.scroll_area.widget.viewport() == comp
 
     def test_set_vertical_scroll_policy(self):
         """ Test the QtScrollArea's set_vertical_scroll_policy command
 
         """
-        self.scroll_area.recv('set_vertical_scroll_policy',
-                              {'value':'always_off'})
+        self.scroll_area.recv_message({'action':'set-vertical_scroll_policy',
+				       'vertical_scroll_policy':'always_off'})
         widget_policy =  self.scroll_area.widget.verticalScrollBarPolicy()
         assert widget_policy == Qt.ScrollBarAlwaysOff
         

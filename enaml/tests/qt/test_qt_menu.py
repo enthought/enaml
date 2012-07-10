@@ -23,7 +23,7 @@ class TestQtMenuBar(object):
         """ Set up the widget for testing
 
         """
-        self.menu = QtMenu(None, uuid4().hex, QtLocalPipe(), QtLocalPipe())
+        self.menu = QtMenu(None, uuid4().hex, QtLocalPipe(uuid4))
         self.menu.create()
 
     def test_set_title(self):
@@ -31,5 +31,5 @@ class TestQtMenuBar(object):
 
         """
         title = 'Menu title'
-        self.menu.recv('set_title', {'value':title})
+        self.menu.recv_message({'action':'set-title', 'title':title})
         assert self.menu.widget.title() == title

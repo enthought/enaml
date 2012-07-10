@@ -24,13 +24,13 @@ class TestQtDialog(object):
         """ Set up the widget for testing
 
         """
-        self.dialog = QtDialog(None, uuid4().hex, QtLocalPipe(),
-                               QtLocalPipe())
+        self.dialog = QtDialog(None, uuid4().hex, QtLocalPipe(uuid4))
         self.dialog.create()
 
     def test_set_modality(self):
         """ Test the set_modality command of the QtDialog
 
         """
-        self.dialog.recv('set_modality', {'value':'application_modal'})
+        self.dialog.recv_message({'action':'set-modality',
+				  'modality':'application_modal'})
         assert self.dialog.widget.windowModality() == Qt.ApplicationModal

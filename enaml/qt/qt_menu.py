@@ -15,11 +15,12 @@ class QtMenu(QtWidgetComponent):
         """
         self.widget = QMenu(self.parent_widget)
 
-    def initialize(self, init_attrs):
+    def initialize(self, attrs):
         """ Initialize the attributes of the widget
 
         """
-        self.set_title(init_attrs.get('title', ''))
+        super(QtMenu, self).initialize(attrs)
+        self.set_title(attrs['title'])
 
     def bind(self):
         """ Bind the widget's events
@@ -35,22 +36,22 @@ class QtMenu(QtWidgetComponent):
         """ Event handler for about_to_hide
 
         """
-        self.send("about_to_hide", {})
+        self.send_message({'action':'about_to_hide'})
 
     def on_about_to_show(self):
         """ Event handler for about_to_show
 
         """
-        self.send("about_to_show", {})
+        self.send_message({'action':'about_to_show'})
     
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
-    def receive_set_title(self, ctxt):
+    def on_message_set_title(self, payload):
         """ Message handler for set_title
 
         """
-        return self.set_title(ctxt['value'])
+        self.set_title(payload['title'])
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -60,4 +61,3 @@ class QtMenu(QtWidgetComponent):
 
         """
         self.widget.setTitle(title)
-        return True

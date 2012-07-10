@@ -23,8 +23,7 @@ class TestQtHtml(object):
         """ Set up the widget for testing
 
         """
-        self.html = QtHtml(None, uuid4().hex, QtLocalPipe(),
-                           QtLocalPipe())
+        self.html = QtHtml(None, uuid4().hex, QtLocalPipe(uuid4))
         self.html.create()
 
     def test_set_source(self):
@@ -32,7 +31,7 @@ class TestQtHtml(object):
 
         """
         source = "<html><p>hello</p></html>"
-        self.html.recv('set_source', {'value':source})
+        self.html.recv_message({'action':'set-source', 'source':source})
         # Qt wraps the html with a bunch of metadata and extra tags,
         # so we compare the plain text
         assert self.html.widget.toPlainText() == 'hello'

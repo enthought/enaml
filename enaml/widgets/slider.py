@@ -3,7 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from traits.api import (
-    Bool, Property, Int, Float, TraitError, Either, Range, on_trait_change,
+    Bool, Property, Int, TraitError, Either, Range, on_trait_change,
     Enum,
 )
 

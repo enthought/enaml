@@ -23,8 +23,7 @@ class TestQtPushButton(object):
         """ Set up the widget for testing
 
         """
-        self.button = QtPushButton(None, uuid4().hex, QtLocalPipe(),
-                                 QtLocalPipe())
+        self.button = QtPushButton(None, uuid4().hex, QtLocalPipe(uuid4))
         self.button.create()
 
     def test_set_text(self):
@@ -32,5 +31,5 @@ class TestQtPushButton(object):
 
         """
         text = "Button"
-        self.button.recv('set_text', {'value':text})
+        self.button.recv_message({'action':'set-text', 'text':text})
         assert self.button.widget.text() == text

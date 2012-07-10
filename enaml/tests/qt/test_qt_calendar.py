@@ -31,8 +31,7 @@ class TestQtCalendar(object):
         """ Set up the widget for testing
 
         """
-        self.calendar = QtCalendar(None, uuid4().hex, QtLocalPipe(),
-                                   QtLocalPipe())
+        self.calendar = QtCalendar(None, uuid4().hex, QtLocalPipe(uuid4))
         self.calendar.create()
         
     def test_set_date(self):
@@ -40,7 +39,7 @@ class TestQtCalendar(object):
 
         """
         date = datetime.date.today()
-        self.calendar.recv('set_date', {'value':date})
+        self.calendar.recv_message({'action':'set-date', 'date':str(date)})
         widget_date = qdate_to_python(self.calendar.widget.selectedDate())
         assert widget_date == date
 
@@ -49,7 +48,8 @@ class TestQtCalendar(object):
 
         """
         max_date = datetime.date(7999, 12, 31)
-        self.calendar.recv('set_max_date', {'value':max_date})
+        self.calendar.recv_message({'action':'set-maximum',
+                                    'maximum':str(max_date)})
         widget_max_date = qdate_to_python(self.calendar.widget.maximumDate())
         assert widget_max_date == max_date
         
@@ -58,6 +58,7 @@ class TestQtCalendar(object):
 
         """
         min_date = datetime.date(1752, 9, 14)
-        self.calendar.recv('set_min_date', {'value':min_date})
+        self.calendar.recv_message({'action':'set-minimum',
+                                    'minimum':str(min_date)})
         widget_min_date = qdate_to_python(self.calendar.widget.minimumDate())
         assert widget_min_date == min_date

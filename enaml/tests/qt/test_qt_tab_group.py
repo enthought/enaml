@@ -23,8 +23,7 @@ class TestQtTabGroup(object):
         """ Set up the widget for testing
 
         """
-        self.tab_group = QtTabGroup(None, uuid4().hex, QtLocalPipe(),
-                                    QtLocalPipe())
+        self.tab_group = QtTabGroup(None, uuid4().hex, QtLocalPipe(uuid4))
         self.tab_group.create()
 
     def test_set_selected_index(self):
@@ -35,12 +34,14 @@ class TestQtTabGroup(object):
             self.tab_group.widget.addTab(QWidget(self.tab_group.widget), 'tab%s' % (i+1))
 
         ind = 1
-        self.tab_group.recv('set_selected_index', {'value':ind})
+        self.tab_group.recv_message({'action':'set-selected_index',
+                                     'selected_index':ind})
         assert self.tab_group.widget.currentIndex() == ind
 
     def test_set_tab_position(self):
         """ Test the QtTabGroup's set_tab_position command
 
         """
-        self.tab_group.recv('set_tab_position', {'value':'right'})
+        self.tab_group.recv_message({'action':'set-tab_position',
+                                     'tab_position':'right'})
         assert self.tab_group.widget.tabPosition() == QTabWidget.East        

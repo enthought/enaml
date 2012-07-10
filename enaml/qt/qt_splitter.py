@@ -26,34 +26,35 @@ class QtSplitter(QtConstraintsWidget):
         """
         self.widget = QSplitter(self.parent_widget)
 
-    def initialize(self, init_attrs):
+    def initialize(self, attrs):
         """ Intializes the widget with the attributes of this instance.
 
         """
-        self.set_orientation(init_attrs.get('orientation', 'horizontal'))
-        self.set_live_drag(init_attrs.get('live_drag', True))
-        self.set_preferred_sizes(init_attrs.get('preferred_sizes', []))
+        super(QtSplitter, self).initialize(attrs)
+        self.set_orientation(attrs['orientation'])
+        self.set_live_drag(attrs['live_drag'])
+        self.set_preferred_sizes(attrs['preferred_sizes'])
 
     #--------------------------------------------------------------------------
     # Message Handler Methods 
     #--------------------------------------------------------------------------
-    def receive_set_orientation(self, ctxt):
+    def on_message_set_orientation(self, payload):
         """ Message handler for set_orientation
 
         """
-        self.set_orientation(ctxt['value'])
+        self.set_orientation(payload['orientation'])
 
-    def receive_set_live_drag(self, ctxt):
+    def on_message_set_live_drag(self, payload):
         """ Message handler for set_live_drag
 
         """
-        self.set_live_drag(ctxt['value'])
+        self.set_live_drag(payload['live_drag'])
 
-    def receive_set_preferred_sizes(self, ctxt):
+    def on_message_set_preferred_sizes(self, payload):
         """ Message handler for set_preferred_sizes
 
         """
-        self.set_preferred_sizes(ctxt['value'])
+        self.set_preferred_sizes(payload['preferred_sizes'])
     
     #--------------------------------------------------------------------------
     # Widget Update Methods 
