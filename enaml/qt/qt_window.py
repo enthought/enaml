@@ -103,7 +103,7 @@ class QtWindow(QtWidgetComponent):
         if len(children) > 0:
             central_widget = children[0].widget
             self.widget.layout().addWidget(central_widget)
-
+    
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------

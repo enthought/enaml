@@ -4,7 +4,8 @@
 #------------------------------------------------------------------------------
 from .qt.QtGui import QDialog
 from .qt.QtCore import Qt
-from qt_window import QtWindow, QtWindowLayout
+from .qt_window import QtWindow, QtWindowLayout
+
 
 QT_MODALITY = {
     'application_modal' : Qt.ApplicationModal,
@@ -12,8 +13,9 @@ QT_MODALITY = {
     'non_modal' : Qt.NonModal
 }
 
+
 class QtDialog(QtWindow):
-    """ A Qt implementation of a dialog
+    """ A Qt4 implementation of a an Enaml Dialog.
 
     """
     def create(self):
@@ -23,12 +25,13 @@ class QtDialog(QtWindow):
         self.widget = QDialog(self.parent_widget)
         self.widget.setLayout(QtWindowLayout())
 
-    def bind(self):
-        """ Connect the events to the correct slots
+    def initialize(self, attrs):
+        """ Initialize the underlying widget.
 
         """
-        super(QtDialog, self).bind()
-        self.widget.finished.connect(self.on_closed)
+        super(QtDialog, self).initialize(attrs)
+        self.set_modality(attrs['modality'])
+        self.widget.finished.connect(self.on_finished)
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -40,13 +43,13 @@ class QtDialog(QtWindow):
         self.set_modality(payload['modality'])
 
     def on_message_accept(self, payload):
-        """ Handle an accept message
+        """ Handle the 'accept' action from the Enaml widget.
 
         """
         self.accept()
 
     def on_message_reject(self, payload):
-        """ Handle a reject message
+        """ Handle the 'reject' action from the Enaml widget.
 
         """
         self.reject()
@@ -54,7 +57,7 @@ class QtDialog(QtWindow):
     #--------------------------------------------------------------------------
     # Signal Handlers
     #--------------------------------------------------------------------------
-    def on_closed(self, qt_result):
+    def on_finished(self, qt_result):
         """ The event handler for the closed event.
 
         """
@@ -62,20 +65,17 @@ class QtDialog(QtWindow):
             result = 'accepted'
         else:
             result = 'rejected'
-
-        self.send({'action':'closed','result':result})
+        self.send_message({'action': 'event-closed', 'result':result})
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
     def set_visible(self, visible):
-        """ Override the parent's set_visible method so that the dialog launches
-        correctly with the specified modality
+        """ Override the parent's set_visible method so that the dialog 
+        launches correctly with the specified modality
 
         """
         if visible:
-            self.send({'action':'set_active','value':True})
-            self.send({'action':'opened'})
             self.widget.exec_()
         else:
             self.reject()
@@ -87,13 +87,14 @@ class QtDialog(QtWindow):
         self.widget.setWindowModality(QT_MODALITY[modality])
 
     def accept(self):
-        """ Accept and close the dialog
+        """ Accept and close the dialog.
 
         """
         self.widget.accept()
 
     def reject(self):
-        """ Reject and close the dialog
+        """ Reject and close the dialog.
 
         """
         self.widget.reject()
+
