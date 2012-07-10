@@ -2,198 +2,170 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import re
-
-from .qt.QtGui import QSpinBox, QValidator
+from .qt.QtGui import QSpinBox
 from .qt_constraints_widget import QtConstraintsWidget
 
-class EnamlQSpinBox(QSpinBox):
-    """ A QSpinBox sublcass with hooks for user supplied validation.
-
-    """
-    #: The internal storage for the Enaml validator object. 
-    _validator = None
-
-    def validator(self):
-        """ Returns the Enaml validator assigned to this spin box.
-
-        """
-        return self._validator
     
-    def setValidator(self, validator):
-        """ Set the validator for this spin box.
-
-        """
-        self._validator = validator
-        self.interpretText()
-
-    def textFromValue(self, value):
-        """ Converts the given integer to a string for display using the 
-        user supplied validator object. 
-
-        If the conversion fails due to the converter raising a ValueError
-        then simple unicode(...) conversion is used.
-
-        """
-        if self.validator():
-            # XXX needs to be actually implemented
-            text = unicode(value)
-            return text
-
-    def valueFromText(self, text):
-        """ Converts the user typed string into an integer for the
-        control using the user supplied validator.
-
-        """
-        # XXX needs to be actually implemented
-        return int(text)
-
-    def validate(self, text, pos):
-        """ Validates whether or not the given text can be converted
-        to an integer.
-
-        """
-        valid = re.match(self.validator(), text)
-        if valid is not None:
-            res = QValidator.Acceptable
-        else:
-            res = QValidator.Invalid
-        return (res, text, pos)
-    
-
 class QtSpinBox(QtConstraintsWidget):
-    """ A Qt4 implementation of a SpinBox
+    """ A Qt4 implementation of an Enaml SpinBox.
 
     """
     def create(self):
-        """ Create the underlying widget
+        """ Create the underlying QSpinBox widget.
 
         """
-        self.widget = EnamlQSpinBox(self.parent_widget)
+        self.widget = QSpinBox(self.parent_widget)
+        self.widget.setKeyboardTracking(False)
 
-    def initialize(self, init_attrs):
-        """ Initialize the widget's attributes
-
-        """
-        super(QtSpinBox, self).initialize(init_attrs)
-        self.set_validator(init_attrs.get('validator', '^[0-9]+$'))
-        self.set_maximum(init_attrs.get('maximum', 100))
-        self.set_minimum(init_attrs.get('minimum', 0))
-        self.set_single_step(init_attrs.get('single_step', 1))
-        self.set_tracking(init_attrs.get('tracking', True))
-        self.set_value(init_attrs.get('value', 0))
-        self.set_wrap(init_attrs.get('wrap', False))
-
-    def bind(self):
-        """ Bind the widget's events
+    def initialize(self, attrs):
+        """ Initialize the widget's attributes.
 
         """
-        super(QtSpinBox, self).bind()
+        super(QtSpinBox, self).initialize(attrs)
+        self.set_maximum(attrs['maximum'])
+        self.set_minimum(attrs['minimum'])
+        self.set_value(attrs['value'])
+        self.set_prefix(attrs['prefix'])
+        self.set_suffix(attrs['suffix'])
+        self.set_special_value_text(attrs['special_value_text'])
+        self.set_single_step(attrs['single_step'])
+        self.set_read_only(attrs['read_only'])
+        self.set_wrapping(attrs['wrapping'])
         self.widget.valueChanged.connect(self.on_value_changed)
 
     #--------------------------------------------------------------------------
-    # Event Handlers
+    # Signal Handler
     #--------------------------------------------------------------------------
     def on_value_changed(self):
-        """ Event handler for value_changed
+        """ The signal handler for the 'valueChanged' signal.
 
         """
-        self.send({'action':'set_value','value':self.widget.value()})
+        # Guard against loopback recursion since Qt will emit the 
+        # valueChanged signal when programatically setting the value.
+        if 'value' in self.loopback_guard:
+            return
+        payload = {'action': 'event-changed', 'value': self.widget.value()}
+        self.send_message(payload)
         
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
-    def receive_set_maximum(self, ctxt):
-        """ Message handler for set_maximum
+    def on_message_set_maximum(self, payload):
+        """ Handler for the 'set-maximum' action from the Enaml widget.
 
         """
-        return self.set_maximum(ctxt['maximum'])
+        self.set_maximum(payload['maximum'])
 
-    def receive_set_minimum(self, ctxt):
-        """ Message handler for set_minimum
-
-        """
-        return self.set_minimum(ctxt['minimum'])
-
-    def receive_set_single_step(self, ctxt):
-        """ Message handler for set_single_step
+    def on_message_set_minimum(self, payload):
+        """ Handler for the 'set-minimum' action from the Enaml widget.
 
         """
-        return self.set_single_step(ctxt['single_step'])
+        self.set_minimum(payload['minimum'])
 
-    def receive_set_tracking(self, ctxt):
-        """ Message handler for set_tracking
-
-        """
-        self.set_tracking(ctxt['tracking'])
-
-    def receive_set_validator(self, ctxt):
-        """ Message handler for set_validator
+    def on_message_set_value(self, payload):
+        """ Handler for the 'set-value' action from the Enaml widget.
 
         """
-        return self.set_validator(ctxt['validator'])
+        self.set_value(payload['value'])
 
-    def receive_set_value(self, ctxt):
-        """ Message handler for set_value
-
-        """
-        return self.set_value(ctxt['value'])
-
-    def receive_set_wrap(self, ctxt):
-        """ Message handler for set_wrap
+    def on_message_set_prefix(self, payload):
+        """ Handler for the 'set-prefix' action from the Enaml widget.
 
         """
-        return self.set_wrap(ctxt['wrap'])
+        self.set_prefix(payload['prefix'])
+
+    def on_message_set_suffix(self, payload):
+        """ Handler for the 'set-suffix' action from the Enaml widget.
+
+        """
+        self.set_suffix(payload['suffix'])
+
+    def on_message_set_special_value_text(self, payload):
+        """ Handler for the 'set-special_value_text' message from the
+        Enaml widget.
+
+        """
+        self.set_special_value_text(payload['special_value_text'])
+
+    def on_message_set_single_step(self, payload):
+        """ Handler for the 'set-single_step' action from the Enaml
+        widget.
+
+        """
+        self.set_single_step(payload['single_step'])
+
+    def on_message_set_read_only(self, payload):
+        """ Handler for the 'set-read_only' action from the Enaml
+        widget.
+
+        """
+        self.set_read_only(payload['read_only'])
+
+    def on_message_set_wrapping(self, payload):
+        """ Handler for the 'set-wrapping' action from the Enaml 
+        widget.
+
+        """
+        self.set_wrapping(payload['wrapping'])
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
     def set_maximum(self, maximum):
-        """ Set the widget's maximum value
+        """ Set the widget's maximum value.
 
         """
         self.widget.setMaximum(maximum)
-        return True
 
     def set_minimum(self, minimum):
-        """ Set the widget's minimum value
+        """ Set the widget's minimum value.
 
         """
         self.widget.setMinimum(minimum)
-        return True
+
+    def set_value(self, value):
+        """ Set the spin box's value.
+
+        """
+        # The setValue will emit a changed signal. Since this will only
+        # be called as a result of an Enaml message, we guard against 
+        # the loopback
+        with self.loopback_guard('value'):
+            self.widget.setValue(value)
+
+    def set_prefix(self, prefix):
+        """ Set the prefix for the spin box.
+
+        """
+        self.widget.setPrefix(prefix)
+
+    def set_suffix(self, suffix):
+        """ Set the suffix for the spin box.
+
+        """
+        self.widget.setSuffix(suffix)
+
+    def set_special_value_text(self, text):
+        """ Set the special value text for the spin box.
+
+        """
+        self.widget.setSpecialValueText(text)
 
     def set_single_step(self, step):
-        """ Set the widget's single step value
+        """ Set the widget's single step value.
 
         """
         self.widget.setSingleStep(step)
-        return True
 
-    def set_tracking(self, tracking):
-        """ Set the keyboard tracking of the widget
-
-        """
-        self.widget.setKeyboardTracking(tracking)
-        return True
-
-    def set_validator(self, validator):
-        """ Set the validator for the spin box
+    def set_read_only(self, read_only):
+        """ Set the widget's read only flag.
 
         """
-        self.widget.setValidator(validator)
-        return True
+        self.widget.setReadOnly(read_only)
 
-    def set_value(self, value):
-        """ Set the spin box's value
-
-        """
-        self.widget.setValue(value)
-        return True
-
-    def set_wrap(self, wrap):
-        """ Set whether or not to allow the spin box to wrap at its
-        extreme values
+    def set_wrapping(self, wrapping):
+        """ Set the widget's wrapping flag.
 
         """
-        self.widget.setWrapping(wrap)
-        return True
+        self.widget.setWrapping(wrapping)
+

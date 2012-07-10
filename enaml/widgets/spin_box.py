@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Int, Bool, Range
+from traits.api import Int, Bool, Range, Unicode
 
 from .constraints_widget import ConstraintsWidget
 
@@ -17,21 +17,32 @@ class SpinBox(ConstraintsWidget):
     #: The maximum value for the spin box. Defaults to 100.
     maximum = Int(100)
 
-    #: The step size for the spin box. Defaults to 1.
-    single_step = Int(1)
-
     #: The current integer value for the spin box, constrained to
     #: minimum <= value <= maximum.
     value = Range('minimum', 'maximum')
 
+    #: An optional prefix to include in the displayed text.
+    prefix = Unicode
+
+    #: An optional suffix to include in the displayed text.
+    suffix = Unicode
+
+    #: Optional text to display when the spin box is at its minimum.
+    #: This allows the developer to indicate to the user a special
+    #: significance to the minimum value e.g. "Auto"
+    special_value_text = Unicode
+
+    #: The step size for the spin box. Defaults to 1.
+    single_step = Range(low=1)
+
+    #: Whether or not the spin box is read-only. If True, the user
+    #: will not be able to edit the values in the spin box, but they
+    #: will still be able to copy the text to the clipboard.
+    read_only = Bool(False)
+
     #: Whether or not the spin box will wrap around at its extremes. 
     #: Defaults to False.
-    wrap = Bool(False)
-    
-    #: Whether the spin box will update on every key press (True), or
-    #: only when enter is pressed or the widget loses focus (False).
-    #: Defaults to False.
-    tracking = Bool(False)
+    wrapping = Bool(False)
 
     #: How strongly a component hugs it's contents' width. SpinBoxes 
     #: ignore the width hug by default, so they expand freely in width.
@@ -48,10 +59,13 @@ class SpinBox(ConstraintsWidget):
         attrs = {
             'maximum' : self.maximum,
             'minimum' : self.minimum,
-            'single_step' : self.single_step,
-            'tracking' : self.tracking,
             'value' : self.value,
-            'wrap' : self.wrap
+            'prefix': self.prefix,
+            'suffix': self.suffix,
+            'special_value_text': self.special_value_text,
+            'single_step' : self.single_step,
+            'read_only': self.read_only,
+            'wrapping' : self.wrapping,
         }
         super_attrs.update(attrs)
         return super_attrs
@@ -63,8 +77,8 @@ class SpinBox(ConstraintsWidget):
         """
         super(SpinBox, self).bind()
         attrs = (
-            'maximum', 'minimum', 'single_step', 'tracking', 'validator',
-            'value', 'wrap'
+            'maximum', 'minimum', 'value', 'prefix', 'suffix', 
+            'special_value_text', 'single_step', 'read_only', 'wrapping',
         )
         self.publish_attributes(*attrs)
 
