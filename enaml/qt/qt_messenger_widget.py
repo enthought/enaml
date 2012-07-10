@@ -5,7 +5,7 @@
 from weakref import ref
 
 from enaml.async.messenger_mixin import MessengerMixin
-from enaml.utils import WeakMethod
+from enaml.utils import WeakMethod, LoopbackGuard
 
 
 class QtMessengerWidget(MessengerMixin):
@@ -59,6 +59,18 @@ class QtMessengerWidget(MessengerMixin):
         if parent is None:
             return None
         return parent.widget
+
+    @property
+    def loopback_guard(self):
+        """ Lazily creates and returns a LoopbackGuard for convenient 
+        use by subclasses.
+
+        """
+        try:
+            guard = self._loopback_guard
+        except AttributeError:
+            guard = self._loopback_guard = LoopbackGuard()
+        return guard
 
     #--------------------------------------------------------------------------
     # Public API
