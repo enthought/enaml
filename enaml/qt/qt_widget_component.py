@@ -65,7 +65,7 @@ class QtWidgetComponent(QtMessengerWidget):
         """ Process the 'set-visible' message from Enaml.
         
         """
-        self.set_visible(payload['visble'])
+        self.set_visible(payload['visible'])
 
     def on_message_set_bgcolor(self, payload):
         """ Process the 'set-bgcolor' message from Enaml.
