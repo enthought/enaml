@@ -9,7 +9,7 @@ from traits.api import Bool, Unicode, Tuple, Instance
 from enaml.core.trait_types import EnamlEvent
 
 from .constraints_widget import ConstraintsWidget
-from .icon import Icon
+from ..noncomponents.image.abstract_image import AbstractImage
 
 
 class AbstractButton(ConstraintsWidget):
@@ -21,7 +21,7 @@ class AbstractButton(ConstraintsWidget):
     text = Unicode
 
     #: The icon to use for the button.
-    icon = Instance(Icon)
+    icon = Instance(AbstractImage)
 
     #: The size to use for the icon.
     icon_size = Tuple
@@ -56,8 +56,7 @@ class AbstractButton(ConstraintsWidget):
         super_attrs['checkable'] = self.checkable
         super_attrs['checked'] = self.checked
         super_attrs['icon_size'] = self.icon_size
-        icon = self.icon
-        super_attrs['icon'] = b64encode(icon.data()) if icon else None
+        super_attrs['icon'] = self.icon.as_dict()
         return super_attrs
 
     def bind(self):

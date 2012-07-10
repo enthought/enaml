@@ -14,8 +14,6 @@ from .datetime_edit import DatetimeEdit
 from .dialog import Dialog
 from .field import Field
 from .html import Html
-from .icon import Icon
-from .image import Image
 from .image_view import ImageView
 from .label import Label
 from .progress_bar import ProgressBar

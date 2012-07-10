@@ -94,4 +94,4 @@ class QtImage(object):
         """ Return the image as a QIcon
 
         """
-        return QIcon(self._pixmap)
+        return QIcon(self.as_QPixmap())
