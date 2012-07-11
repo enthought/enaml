@@ -105,7 +105,7 @@ class Window(WidgetComponent):
         while stack:
             widget = stack.pop()
             widgets.append(widget)
-            stack.extend(widget.children)
+            stack.extend(reversed(widget.children))
 
         targets = []
         for widget in widgets:
