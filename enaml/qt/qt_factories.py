@@ -82,6 +82,11 @@ def spin_box_factory():
     return QtSpinBox
 
 
+def splitter_factory():
+    from .qt_splitter import QtSplitter
+    return QtSplitter
+
+
 def window_factory():
     from .qt_window import QtWindow
     return QtWindow
@@ -104,6 +109,7 @@ QT_FACTORIES = {
     'RadioButton': radio_button_factory,
     'Slider': slider_factory,
     'SpinBox': spin_box_factory,
+    'Splitter': splitter_factory,
     'Window': window_factory,
 }
 

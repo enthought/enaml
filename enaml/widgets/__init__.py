@@ -21,4 +21,5 @@ from .push_button import PushButton
 from .radio_button import RadioButton
 from .slider import Slider
 from .spin_box import SpinBox
+from .splitter import Splitter
 from .window import Window

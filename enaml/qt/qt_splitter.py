@@ -14,7 +14,7 @@ _ORIENTATION_MAP = {
 
 
 class QtSplitter(QtConstraintsWidget):
-    """ A Qt implementation of a Splitter.
+    """ A Qt4 implementation of an Enaml Splitter.
 
     """
     #--------------------------------------------------------------------------
@@ -75,6 +75,17 @@ class QtSplitter(QtConstraintsWidget):
     def set_preferred_sizes(self, sizes):
         """ Set the preferred sizes for the children.
 
+        For sizes not supplied by the user, either via None values or 
+        a list which is too short, the current size for that element
+        will be used in its place.
+
         """
-        self.widget.setSizes(sizes)
+        widget = self.widget
+        curr_sizes = widget.sizes()[:]
+        max_idx = min(len(curr_sizes), len(sizes))
+        for idx in xrange(max_idx):
+            size = sizes[idx]
+            if size is not None:
+                curr_sizes[idx] = size
+        self.widget.setSizes(curr_sizes)
 
