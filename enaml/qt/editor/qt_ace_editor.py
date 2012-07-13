@@ -5,7 +5,7 @@ import os
 HTML_TEMPLATE = Template("""
 <html>
 <head>
-  <script src="${resource_path}/ace.js" type="text/javascript"></script>
+  <script src="${resource_path}ace.js" type="text/javascript"></script>
   <style type="text/css" media="screen">
     body {
         overflow: hidden;
@@ -24,11 +24,9 @@ HTML_TEMPLATE = Template("""
 <body>
 
 <div id="editor">${text}</div>
-    
+
 <script>
     var ace_editor = ace.edit("editor");
-    ace_editor.getSession().setMode('${mode}');
-    ace_editor.setTheme('${theme}')
     ${events}
     ${bindings}
 </script>
@@ -49,27 +47,35 @@ BINDING_TEMPLATE = Template("""
     py_ace_editor.${signal}.connect(${target}, "${func}")
 """)
 
-class AceTextEditor(QObject):
+class QtAceEditor(QObject):
 
     text_changed = Signal(unicode)
     mode_changed = Signal(unicode)
     theme_changed = Signal(unicode)
     document_changed = Signal(unicode, unicode)
     
-    def __init__(self, text="", mode="text", theme="textmate"):
+    def __init__(self):
         """ Initialize the editor
 
         """
-        super(AceTextEditor, self).__init__()
-        self.set_text(text)
-        self.set_mode(mode)
-        self.set_theme(theme)
+        super(QtAceEditor, self).__init__()
+        self._text = ""
+        self._mode = ""
+        self._theme = ""
         self._events = []
         self._bindings = []
 
-    @Slot(unicode)
     def set_text(self, text):
         """ Set the text of the editor
+
+        """
+        self._text = text
+        self.text_changed.emit(text)
+
+    @Slot(unicode)
+    def set_text_from_js(self, text):
+        """ Set the text from the javascript editor. This method is required
+        because set_text emits the signal to update the text again.
 
         """
         self._text = text
@@ -84,7 +90,7 @@ class AceTextEditor(QObject):
         """ Set the mode of the editor
 
         """
-        if mode.startswith('ace/mode'):
+        if mode.startswith('ace/mode/'):
             self._mode = mode
         else:
             self._mode = 'ace/mode/'+mode
@@ -100,7 +106,7 @@ class AceTextEditor(QObject):
         """ Set the theme of the editor
 
         """
-        if theme.startswith('ace/theme'):
+        if theme.startswith('ace/theme/'):
             self._theme = theme
         else:
             self._theme = "ace/theme/"+theme
@@ -162,9 +168,10 @@ class AceTextEditor(QObject):
         _text = self.text()
         _mode = self.mode()
         _theme = self.theme()
-        _r_path = "file://" + os.path.abspath('ace/')
+        p = os.path
+        _r_path = "file://" + p.join(p.dirname(p.abspath(__file__)), 'ace/')
         _events = '\n'.join(self._events)
         _bindings = '\n'.join(self._bindings)
         return HTML_TEMPLATE.substitute(text=_text, mode=_mode, theme=_theme,
-                                        resource_path=_r_path, events=_events,
+                                        events=_events, resource_path=_r_path,
                                         bindings=_bindings)
