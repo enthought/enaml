@@ -27,6 +27,10 @@ HTML_TEMPLATE = Template("""
 
 <script>
     var ace_editor = ace.edit("editor");
+    //ace_editor.setShowPrintMargin(false)   n-char line
+    //ace_editor.setPrintMarginColumn(80)
+    //ace_editor.setFontSize(12)
+    //ace_editor.setBehavioursEnabled(true)
     ${events}
     ${bindings}
 </script>
@@ -52,16 +56,25 @@ class QtAceEditor(QObject):
     text_changed = Signal(unicode)
     mode_changed = Signal(unicode)
     theme_changed = Signal(unicode)
-    document_changed = Signal(unicode, unicode)
+    auto_pair_changed = Signal(bool)
+    font_size_changed = Signal(int)
+    margin_line_changed = Signal(bool)
+    margin_line_column_changed = Signal(int)
     
     def __init__(self):
         """ Initialize the editor
 
         """
         super(QtAceEditor, self).__init__()
+
         self._text = ""
         self._mode = ""
         self._theme = ""
+        self._auto_pair = True
+        self._font_size = 12
+        self._margin_line = True
+        self._margin_line_column = 80
+        
         self._events = []
         self._bindings = []
 
@@ -118,6 +131,34 @@ class QtAceEditor(QObject):
         """
         return self._theme
 
+    def set_auto_pair(self, auto_pair):
+        """ Set the auto_pair behavior of the editor
+
+        """
+        self._auto_pair = auto_pair
+        self.auto_pair_changed.emit(auto_pair)
+
+    def set_font_size(self, font_size):
+        """ Set the font size of the editor
+
+        """
+        self._font_size = font_size
+        self.font_size_changed.emit(font_size)
+
+    def show_margin_line(self, margin_line):
+        """ Set the margin line of the editor
+
+        """
+        self._margin_line = margin_line
+        self.margin_line_changed.emit(margin_line)
+
+    def set_margin_line_column(self, margin_line_col):
+        """ Set the margin line column of the editor
+
+        """
+        self._margin_line_column = margin_line_col
+        self.margin_line_column_changed.emit(margin_line_col)
+
     def generate_ace_event(self, _func, _target, _args, _event_name):
         """ Generate a Javascript ace editor event handler.
 
@@ -169,6 +210,7 @@ class QtAceEditor(QObject):
         _mode = self.mode()
         _theme = self.theme()
         p = os.path
+        # XXX better way to access this directory?
         _r_path = "file://" + p.join(p.dirname(p.abspath(__file__)), 'ace/')
         _events = '\n'.join(self._events)
         _bindings = '\n'.join(self._bindings)

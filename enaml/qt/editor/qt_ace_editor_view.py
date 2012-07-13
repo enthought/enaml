@@ -24,6 +24,14 @@ class QtAceEditorView(QWebView):
              'ace_editor.getSession()', 'setMode')
         self.ace_editor.generate_binding('text_changed',
              'ace_editor.getSession().doc', 'setValue')
+        self.ace_editor.generate_binding('auto_pair_changed', 'ace_editor',
+                                         'setBehavioursEnabled')
+        self.ace_editor.generate_binding('font_size_changed', 'ace_editor',
+                                         'setFontSize')
+        self.ace_editor.generate_binding('margin_line_changed', 'ace_editor',
+                                         'setShowPrintMargin')
+        self.ace_editor.generate_binding('margin_line_column_changed',
+                                         'ace_editor', 'setPrintMarginColumn')
                 
         html = self.ace_editor.generate_html()
         self.setHtml(html)

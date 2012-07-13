@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Unicode
+from traits.api import Unicode, Bool, Int
 
 from .constraints_widget import ConstraintsWidget
 
@@ -20,6 +20,18 @@ class TextEditor(ConstraintsWidget):
     #: The theme for the editor
     theme = Unicode
 
+    #: Auto pair's parentheses, braces, etc
+    auto_pair = Bool(True)
+
+    #: The editor's font size
+    font_size = Int(12)
+
+    #: Display the margin line
+    margin_line = Bool(True)
+
+    #: The column number for the margin line
+    margin_line_column = Int(80)
+
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
@@ -31,6 +43,10 @@ class TextEditor(ConstraintsWidget):
         super_attrs['text'] = self.text
         super_attrs['mode'] = self.mode
         super_attrs['theme'] = self.theme
+        super_attrs['auto_pair'] = self.auto_pair
+        super_attrs['font_size'] = self.font_size
+        super_attrs['margin_line'] = self.margin_line
+        super_attrs['margin_line_column'] = self.margin_line_column
         return super_attrs
 
     def bind(self):
@@ -39,5 +55,6 @@ class TextEditor(ConstraintsWidget):
 
         """
         super(TextEditor, self).bind()
-        self.publish_attributes('text', 'mode', 'theme')
+        self.publish_attributes('text', 'mode', 'theme', 'auto_pair',
+            'font_size', 'margin_line', 'margin_line_column')
 

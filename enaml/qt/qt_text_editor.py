@@ -32,6 +32,10 @@ class QtTextEditor(QtConstraintsWidget):
         self.set_text(self.attrs['text'])
         self.set_theme(self.attrs['theme'])
         self.set_mode(self.attrs['mode'])
+        self.set_auto_pair(self.attrs['auto_pair'])
+        self.set_font_size(self.attrs['font_size'])
+        self.show_margin_line(self.attrs['margin_line'])
+        self.set_margin_line_column(self.attrs['margin_line_column'])
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -54,6 +58,30 @@ class QtTextEditor(QtConstraintsWidget):
         """
         self.set_mode(payload['mode'])
 
+    def on_message_set_auto_pair(self, payload):
+        """ Handle the 'set-auto_pair' action from the Enaml widget.
+
+        """
+        self.set_auto_pair(payload['auto_pair'])
+
+    def on_message_set_font_size(self, payload):
+        """ Handle the 'set-font_size' action from the Enaml widget.
+
+        """
+        self.set_font_size(payload['font_size'])
+
+    def on_message_show_margin_line(self, payload):
+        """ Handle the 'show-margin_line' action from the Enaml widget.
+
+        """
+        self.show_margin_line(payload['margin_line'])
+
+    def on_message_set_margin_line_column(self, payload):
+        """ Handle the 'set-margin_line_column' action from the Enaml widget.
+
+        """
+        self.set_margin_line_column(payload['margin_line_column'])
+
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
@@ -74,3 +102,27 @@ class QtTextEditor(QtConstraintsWidget):
 
         """
         self.widget.editor().set_mode(mode)
+
+    def set_auto_pair(self, auto_pair):
+        """ Set whether or not to pair parentheses, braces, etc in the editor
+
+        """
+        self.widget.editor().set_auto_pair(auto_pair)
+
+    def set_font_size(self, font_size):
+        """ Set the font size of the editor
+
+        """
+        self.widget.editor().set_font_size(font_size)
+
+    def show_margin_line(self, margin_line):
+        """ Set whether or not to display the margin line in the editor
+
+        """
+        self.widget.editor().show_margin_line(margin_line)
+
+    def set_margin_line_column(self, margin_line_col):
+        """ Set the column number for the margin line
+
+        """
+        self.widget.editor().set_margin_line_column(margin_line_col)
