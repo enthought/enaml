@@ -129,6 +129,7 @@ class Container(ConstraintsWidget):
         """ Bind the necessary change handlers for the control.
 
         """
+        super(Container, self).bind()
         self.on_trait_change(self._send_relayout, 'share_layout')
 
     #--------------------------------------------------------------------------
