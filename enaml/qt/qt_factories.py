@@ -97,6 +97,11 @@ def splitter_factory():
     return QtSplitter
 
 
+def text_editor_factory():
+    from .qt_text_editor import QtTextEditor
+    return QtTextEditor
+
+
 def window_factory():
     from .qt_window import QtWindow
     return QtWindow
@@ -122,6 +127,7 @@ QT_FACTORIES = {
     'Slider': slider_factory,
     'SpinBox': spin_box_factory,
     'Splitter': splitter_factory,
+    'TextEditor': text_editor_factory,
     'Window': window_factory,
 }
 
