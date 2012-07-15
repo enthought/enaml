@@ -57,6 +57,16 @@ def label_factory():
     return QtLabel
 
 
+def notebook_factory():
+    from .qt_notebook import QtNotebook
+    return QtNotebook
+
+
+def page_factory():
+    from .qt_page import QtPage
+    return QtPage
+
+
 def push_button_factory():
     from .qt_push_button import QtPushButton
     return QtPushButton
@@ -104,6 +114,8 @@ QT_FACTORIES = {
     'Html': html_factory,
     'ImageView': image_view_factory,
     'Label': label_factory,
+    'Notebook': notebook_factory,
+    'Page': page_factory,
     'PushButton': push_button_factory,
     'ProgressBar': progress_bar_factory,
     'RadioButton': radio_button_factory,

@@ -9,7 +9,7 @@ from .qt_constraints_widget import QtConstraintsWidget, LayoutBox
 from .qt_resizing_widgets import QResizingFrame, QResizingWidget
 
 
-class _QResizingFrame(QResizingFrame):
+class QContainer(QResizingFrame):
     """ A subclass of QResizingFrame which allows the default sizeHint
     to be overridden by calling 'setSizeHint'.
 
@@ -29,7 +29,7 @@ class _QResizingFrame(QResizingFrame):
         """
         hint = self._size_hint
         if not hint.isValid():
-            hint = super(_QResizingFrame, self).sizeHint()
+            hint = super(QResizingFrame, self).sizeHint()
         return hint
 
     def setSizeHint(self, hint):
@@ -118,7 +118,7 @@ class QtContainer(QtConstraintsWidget):
         """ Creates the underlying QResizingFrame widget.
 
         """
-        self.widget = _QResizingFrame(self.parent_widget)
+        self.widget = QContainer(self.parent_widget)
 
     def initialize(self, attrs):
         """ Initialize the attributes of the widget.
@@ -149,7 +149,8 @@ class QtContainer(QtConstraintsWidget):
         resized.
 
         """
-        self.refresh()
+        if self._layout_manager is not None:
+            self.refresh()
 
     #--------------------------------------------------------------------------
     # Layout Handling
