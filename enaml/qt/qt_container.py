@@ -38,6 +38,17 @@ class QContainer(QResizingFrame):
         """
         self._size_hint = hint
 
+    def minimumSizeHint(self):
+        """ Returns the minimum size hint of the container.
+
+        The minimum size hint for a QContainer is conceptually the
+        same as its size hint, so we just return that value. Overriding
+        this method allows QContainers to function properly as children
+        of scroll areas and splitters.
+
+        """
+        return self.sizeHint()
+
 
 def _convert_cn_info(info, owners):
     """ Converts the lhs or rhs of a linear constraint info dict into 
