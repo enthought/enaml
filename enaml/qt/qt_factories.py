@@ -82,6 +82,11 @@ def radio_button_factory():
     return QtRadioButton
 
 
+def scroll_area_factory():
+    from .qt_scroll_area import QtScrollArea
+    return QtScrollArea
+
+
 def slider_factory():
     from .qt_slider import QtSlider
     return QtSlider
@@ -124,6 +129,7 @@ QT_FACTORIES = {
     'PushButton': push_button_factory,
     'ProgressBar': progress_bar_factory,
     'RadioButton': radio_button_factory,
+    'ScrollArea': scroll_area_factory,
     'Slider': slider_factory,
     'SpinBox': spin_box_factory,
     'Splitter': splitter_factory,

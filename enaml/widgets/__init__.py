@@ -21,6 +21,7 @@ from .page import Page
 from .progress_bar import ProgressBar
 from .push_button import PushButton
 from .radio_button import RadioButton
+from .scroll_area import ScrollArea
 from .slider import Slider
 from .spin_box import SpinBox
 from .splitter import Splitter

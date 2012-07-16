@@ -2,103 +2,83 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt.QtGui import QScrollArea, QWidget
+from .qt.QtGui import QScrollArea
 from .qt.QtCore import Qt
 from .qt_constraints_widget import QtConstraintsWidget
 
-_SCROLLBAR_POLICY_MAP = {
+
+SCROLLBAR_MAP = {
     'as_needed' : Qt.ScrollBarAsNeeded,
     'always_off' : Qt.ScrollBarAlwaysOff,
     'always_on' : Qt.ScrollBarAlwaysOn
 }
 
+
 class QtScrollArea(QtConstraintsWidget):
-    """ A Qt implementation of a scroll area
+    """ A Qt4 implementation of an Enaml ScrollArea.
 
     """
     def create(self):
-        """ Create the underlying widget.
+        """ Create the underlying QScrollArea widget.
 
         """
         self.widget = QScrollArea(self.parent_widget)
+        # XXX we may want to make this an option in the future.
+        # For now, it's hard coded since the most common child
+        # of a scroll area is a Container, which should be resized.
+        self.widget.setWidgetResizable(True)
 
     def initialize(self, attrs):
         """ Initialize the widget attributes
 
         """
         super(QtScrollArea, self).initialize(attrs)
-        self.set_horizontal_scroll_policy(attrs['horizontal_scroll_policy'])
-        self.set_preferred_size(attrs['preferred_size'])
-        self.set_scroll_position(attrs['scroll_position'])
-        self.set_scrolled_component(attrs['scrolled_component'])
-        self.set_vertical_scroll_policy(attrs['vertical_scroll_policy'])
-    
+        self.set_horizontal_scrollbar(attrs['horizontal_scrollbar'])
+        self.set_vertical_scrollbar(attrs['vertical_scrollbar'])
+
+    def post_initialize(self):
+        """ Handle post initialization for the scroll area.
+
+        This methods adds the first child as the scrolled widget.
+        Specifying more than one child of a scroll area will result
+        in undefined behavior.
+
+        """
+        children = self.children
+        if children:
+            self.widget.setWidget(children[0].widget)
+
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
-    def on_message_set_horizontal_scroll_policy(self, payload):
-        """ Message handler for set_horizontal_scroll_policy
+    def on_message_set_horizontal_scrollbar(self, payload):
+        """ Handle the 'set-horizontal_scrollbar' action from the Enaml
+        widget.
 
         """
-        self.set_horizontal_scroll_policy(
-            payload['horizontal_scroll_policy'])
+        policy = payload['horizontal_scrollbar']
+        self.set_horizontal_scrollbar(policy)
 
-    def on_message_set_preferred_size(self, payload):
-        """ Message handler for set_preferred_size
-
-        """
-        self.set_preferred_size(payload['preferred_size'])
-
-    def on_message_set_scroll_position(self, payload):
-        """ Message handler for set_scroll_position
+    def on_message_set_vertical_scrollbar(self, payload):
+        """ Handle the 'set-vertical_scrollbar' action from the Enaml
+        widget.
 
         """
-        self.set_scroll_position(payload['scroll_position'])
+        policy = payload['vertical_scrollbar']
+        self.set_vertical_scrollbar(policy)
 
-    def on_message_set_scrolled_component(self, payload):
-        """ Message handler for set_scrolled_component
-
-        """
-        self.set_scrolled_component(payload['scrolled_component'])
-
-    def on_message_set_vertical_scroll_policy(self, payload):
-        """ Message handler for set_vertical_scroll_policy
-
-        """
-        self.set_vertical_scroll_policy(payload['vertical_scroll_policy'])
-        
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
-    def set_horizontal_scroll_policy(self, policy):
-        """ Set the horizontal scroll policy of the widget
+    def set_horizontal_scrollbar(self, policy):
+        """ Set the horizontal scrollbar policy of the widget.
 
         """
-        self.widget.setHorizontalScrollBarPolicy(_SCROLLBAR_POLICY_MAP[policy])
+        self.widget.setHorizontalScrollBarPolicy(SCROLLBAR_MAP[policy])
 
-    def set_preferred_size(self, size):
-        """ Set the preferred size of the widget
-
-        """
-        # XXX
-        pass
-    
-    def set_scroll_position(self, pos):
-        """ Set the scroll position of the widget
+    def set_vertical_scrollbar(self, policy):
+        """ Set the vertical scrollbar policy of the widget.
 
         """
-        horizontal_pos, vertical_pos = pos
-        self.widget.horizontalScrollBar().setValue(horizontal_pos)
-        self.widget.verticalScrollBar().setValue(vertical_pos)
+        self.widget.setVerticalScrollBarPolicy(SCROLLBAR_MAP[policy])
 
-    def set_scrolled_component(self, comp):
-        """ Set the component to be scrolled of the widget
-
-        """
-        self.widget.setViewport(comp)
-
-    def set_vertical_scroll_policy(self, policy):
-        """ Set the vertical scroll policy of the widget
-
-        """
-        self.widget.setVerticalScrollBarPolicy(_SCROLLBAR_POLICY_MAP[policy])
