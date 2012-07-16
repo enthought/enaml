@@ -27,9 +27,14 @@ class Page(Container):
     #: page itself as opposed to the tab for the page.
     tab_enabled = Bool(True)
 
+    #: Whether or not this individual page is closable. Note that the
+    #: 'tabs_closable' flag on the parent Notebook must be set to True
+    #: for this to have any effect.
+    closable = Bool(True)
+
     #: An event fired when the user closes the page by clicking on 
     #: the tab's close button. This event is fired by the parent 
-    #: Notebook with no payload.
+    #: Notebook when the tab is closed. This event has no payload.
     closed = EnamlEvent
 
     #--------------------------------------------------------------------------
@@ -43,6 +48,7 @@ class Page(Container):
         super_attrs['title'] = self.title
         super_attrs['tool_tip'] = self.tool_tip
         super_attrs['tab_enabled'] = self.tab_enabled
+        super_attrs['closable'] = self.closable
         return super_attrs
 
     def bind(self):
@@ -50,7 +56,7 @@ class Page(Container):
 
         """
         super(Page, self).bind()
-        self.publish_attributes('title', 'tool_tip', 'tab_enabled')
+        self.publish_attributes('title', 'tool_tip', 'tab_enabled', 'closable')
 
     #--------------------------------------------------------------------------
     # Public API
