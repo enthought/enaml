@@ -27,16 +27,9 @@ class Page(Container):
     #: page itself as opposed to the tab for the page.
     tab_enabled = Bool(True)
 
-    #: Whether or not this particular tab is closable through user
-    #: interaction. Note that the 'tabs_closable' attribute on the
-    #: parent Notebook must be set to True for this to have any 
-    #: affect. Also note that whether or not to draw a close button
-    #: for a non-closable Page in a Notebook where tabs are closable
-    #: is left up to the client implementation.
-    closable = Bool(True)
-
     #: An event fired when the user closes the page by clicking on 
-    #: the tab's close button.
+    #: the tab's close button. This event is fired by the parent 
+    #: Notebook with no payload.
     closed = EnamlEvent
 
     #--------------------------------------------------------------------------
@@ -50,7 +43,6 @@ class Page(Container):
         super_attrs['title'] = self.title
         super_attrs['tool_tip'] = self.tool_tip
         super_attrs['tab_enabled'] = self.tab_enabled
-        super_attrs['closable'] = self.closable
         return super_attrs
 
     def bind(self):
@@ -58,31 +50,26 @@ class Page(Container):
 
         """
         super(Page, self).bind()
-        self.publish_attributes('title', 'tool_tip', 'tab_enabled', 'closable')
-
-    #--------------------------------------------------------------------------
-    # Message Handling
-    #--------------------------------------------------------------------------
-    def on_message_closed(self, payload):
-        """ Handle the 'closed' action from the client widget.
-
-        """
-        self.closed()
+        self.publish_attributes('title', 'tool_tip', 'tab_enabled')
 
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
     def open(self):
-        """ Open the tab for this page, if it isn't already open.
+        """ A convenience method for calling 'open_tab' on the parent
+        Notebook, passing this page as an argument.
 
         """
-        payload = {'action': 'open'} 
-        self.send_message(payload)
+        parent = self.parent
+        if parent is not None:
+            parent.open_tab(self)
 
     def close(self):
-        """ Close the tab for this page, if it isn't already closed.
+        """ A convenience method for calling 'close_tab' on the parent
+        Notebook, passing this page as an argument.
 
-        """
-        payload = {'action': 'close'}
-        self.send_message(payload)
+        """ 
+        parent = self.parent
+        if parent is not None:
+            parent.close_tab(self)
 
