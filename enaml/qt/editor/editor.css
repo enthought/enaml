@@ -1,0 +1,31 @@
+#editor { 
+    margin: 0;
+    position: relative;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+#tab_list {
+	margin: 0;
+	padding: 0;
+}
+
+#tab_list li {
+	float: left;
+	border: 1px solid #000;
+	background-color: gray;
+	border-radius: 10px;
+	padding: 20px;
+}
+
+#tab_list li:hover {
+	cursor: default;
+}
+
+#tabs {
+	border: 1px solid #000;
+	float: left;
+	width: 100%;
+}

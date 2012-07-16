@@ -27,10 +27,6 @@ HTML_TEMPLATE = Template("""
 
 <script>
     var ace_editor = ace.edit("editor");
-    //ace_editor.setShowPrintMargin(false)   n-char line
-    //ace_editor.setPrintMarginColumn(80)
-    //ace_editor.setFontSize(12)
-    //ace_editor.setBehavioursEnabled(true)
     ${events}
     ${bindings}
 </script>
