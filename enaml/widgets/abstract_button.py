@@ -10,6 +10,7 @@ from enaml.core.trait_types import EnamlEvent
 
 from .constraints_widget import ConstraintsWidget
 from ..noncomponents.image.abstract_image import AbstractImage
+from ..noncomponents.image import ImageFromFile
 
 
 class AbstractButton(ConstraintsWidget):
@@ -21,7 +22,7 @@ class AbstractButton(ConstraintsWidget):
     text = Unicode
 
     #: The icon to use for the button.
-    icon = Instance(AbstractImage)
+    icon = Instance(AbstractImage, ImageFromFile(''))
 
     #: The size to use for the icon.
     icon_size = Tuple
