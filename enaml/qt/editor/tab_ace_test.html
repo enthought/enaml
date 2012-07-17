@@ -106,6 +106,7 @@
 		}
 
 		tab_list.current_tab = jQuery('li', tab_list)[0];
+		tab_list._old_tab = tab_list._current_tab
 		jQuery('#add_button').click(addTabItem);
 
 		editor.setSession(sessions[0]);
