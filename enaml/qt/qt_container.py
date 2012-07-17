@@ -194,6 +194,7 @@ class QtContainer(QtConstraintsWidget):
             mgr = self._layout_manager = LayoutManager()
             mgr.initialize(self._generate_constraints())
             self.widget.setSizeHint(self.compute_min_size())
+            self.widget.setMaximumSize(self.compute_max_size())
 
     def relayout(self):
         """ Rebuilds the constraints layout for this widget if it owns
@@ -388,5 +389,9 @@ class QtContainer(QtConstraintsWidget):
             res = QSize(int(round(w)), int(round(h)))
         else:
             res = QSize()
+        if res.width() == -1:
+            res.setWidth(16777215)
+        if res.height() == -1:
+            res.setHeight(16777215)
         return res
 
