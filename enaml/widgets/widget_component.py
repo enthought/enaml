@@ -14,8 +14,8 @@ SizeTuple = Tuple(Range(low=-1, value=-1), Range(low=-1, value=-1))
 
 #: The standard attributes to proxy for a widget component.
 _WIDGET_ATTRS = [
-    'enabled', 'visible', 'bgcolor', 'fgcolor', 'font', 'min_size', 
-    'max_size', 'show_focus_rect'
+    'enabled', 'visible', 'bgcolor', 'fgcolor', 'font', 'minimum_size', 
+    'maximum_size', 'show_focus_rect'
 ]
 
 
@@ -47,11 +47,11 @@ class WidgetComponent(MessengerWidget):
 
     #: The minimum size for the widget. The default means that the
     #: client should determine an intelligent minimum size.
-    min_size = SizeTuple
+    minimum_size = SizeTuple
 
     #: The maximum size for the widget. The default means that the
     #: client should determine and inteliigent maximum size.
-    max_size = SizeTuple
+    maximum_size = SizeTuple
 
     #--------------------------------------------------------------------------
     # Initialization
