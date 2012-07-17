@@ -13,8 +13,8 @@ BINDING_TEMPLATE = Template("""
     py_ace_editor.${signal}.connect(${target}, "${func}")
 """)
 
-class QtAceEditor(QObject):
 
+class QtAceEditor(QObject):
     text_changed = Signal(unicode)
     mode_changed = Signal(unicode)
     theme_changed = Signal(unicode)
@@ -22,13 +22,12 @@ class QtAceEditor(QObject):
     font_size_changed = Signal(int)
     margin_line_changed = Signal(bool)
     margin_line_column_changed = Signal(int)
-    
+
     def __init__(self):
         """ Initialize the editor
 
         """
         super(QtAceEditor, self).__init__()
-
         self._text = ""
         self._mode = ""
         self._theme = ""
@@ -36,7 +35,7 @@ class QtAceEditor(QObject):
         self._font_size = 12
         self._margin_line = True
         self._margin_line_column = 80
-        
+
         self._events = []
         self._bindings = []
 
@@ -68,7 +67,7 @@ class QtAceEditor(QObject):
         if mode.startswith('ace/mode/'):
             self._mode = mode
         else:
-            self._mode = 'ace/mode/'+mode
+            self._mode = 'ace/mode/' + mode
         self.mode_changed.emit(self._mode)
 
     def mode(self):
@@ -84,7 +83,7 @@ class QtAceEditor(QObject):
         if theme.startswith('ace/theme/'):
             self._theme = theme
         else:
-            self._theme = "ace/theme/"+theme
+            self._theme = "ace/theme/" + theme
         self.theme_changed.emit(self._theme)
 
     def theme(self):
@@ -158,7 +157,7 @@ class QtAceEditor(QObject):
 
         _func : string
             The name of the function to call on the target object
-        
+
         """
         binding = BINDING_TEMPLATE.substitute(signal=_signal, target=_target,
                                               func=_func)
@@ -170,7 +169,7 @@ class QtAceEditor(QObject):
         """
         # XXX better way to access files here?
         p = os.path
-        template_path = p.join(p.dirname(p.abspath(__file__)),'tab_ace_test.html')
+        template_path = p.join(p.dirname(p.abspath(__file__)), 'tab_ace_test.html')
         template = Template(open(template_path, 'r').read())
         _text = self.text()
         _mode = self.mode()
@@ -178,6 +177,6 @@ class QtAceEditor(QObject):
         _r_path = "file://" + p.join(p.dirname(p.abspath(__file__)))
         _events = '\n'.join(self._events)
         _bindings = '\n'.join(self._bindings)
-        return template.substitute(text=_text, mode=_mode, theme=_theme,
-                                   events=_events, resource_path=_r_path,
-                                   bindings=_bindings)
+        return template.substitute(text=_text, mode=_mode,
+                                   theme=_theme, events=_events,
+                                   resource_path=_r_path, bindings=_bindings)

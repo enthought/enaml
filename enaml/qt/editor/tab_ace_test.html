@@ -9,7 +9,7 @@
 <body>
 	<div id="tabs">
 		<ul id="tab_list">
-			<li data-sessionid="0">Untitled</li>
+			<li data-sessionid="initial">Untitled</li>
 		</ul>
 		<button id="add_button">+</button>
 	</div>
@@ -25,7 +25,7 @@
 		});
 
 		var sessions = {
-			'0' : new EditSession('${text}', '${mode}')
+			'initial' : new EditSession('${text}', '${mode}')
 		}
 
 		tab_list.__defineSetter__("current_tab", function(tab) {
@@ -35,13 +35,24 @@
 			this._current_tab = tab
 		});
 
+		tab_list.__defineGetter__("current_tab", function() {
+			return this._current_tab
+		});
+
 		tab_list.__defineSetter__("old_tab", function(tab) {
 			jQuery(tab).css('background-color', 'gray');
 			jQuery(tab).css('color', '#000');
 			jQuery('button', tab).css('color', '#000');
 		});
 
+		tab_list.__defineGetter__("old_tab", function() {
+			return this._old_tab
+		});
+
 		var removeTabItem = function() {
+			/* handler for when the 'x' on a tab is clicked
+
+			*/
 			li_list = jQuery('li', tab_list);
 			item = jQuery(this).parent();
 			if (li_list.index(item) == li_list.length-1) {
@@ -50,7 +61,7 @@
 			else
 				tab_list.current_tab = item.next();
 
-			s = sessions[jQuery(tab_list._current_tab).attr('data-sessionid')]
+			s = sessions[jQuery(tab_list.current_tab).attr('data-sessionid')]
 			editor.setSession(s);
 
 			jQuery(this).parent().remove();
@@ -65,25 +76,28 @@
 		}
 
 		var addTabItem = function() {
+			/* Handler for when the '+' button is clicked
+
+			*/
 			li_list = jQuery('li', tab_list);
 			if (li_list.length == 1) {
 				jQuery('button', li_list[0]).show();
 			}
 			li = document.createElement('li');
 			li.innerHTML = 'Untitled'
-			jQuery(li).attr('data-sessionid', '3');
+			jQuery(li).attr('data-sessionid', 'untitled-id');
 			last_li = li_list[li_list.length-1]
 			jQuery(li).insertAfter(last_li);
 			setupTab(li);
-			sessions['3'] = new EditSession('')
+			sessions['untitled-id'] = new EditSession('')
 		}
 
 		var clickTabItem = function() {
 			var id = jQuery(this).attr("data-sessionid");
 			var session = sessions[id];
-			if (jQuery(this) != tab_list._current_tab) {
+			if (jQuery(this) != tab_list.current_tab) {
 				editor.setSession(session);
-				tab_list.old_tab = tab_list._current_tab
+				tab_list.old_tab = tab_list.current_tab
 				tab_list.current_tab = jQuery(this);
 			}
 		}
@@ -106,7 +120,7 @@
 		}
 
 		tab_list.current_tab = jQuery('li', tab_list)[0];
-		tab_list._old_tab = tab_list._current_tab
+		tab_list._old_tab = tab_list.current_tab
 		jQuery('#add_button').click(addTabItem);
 
 		editor.setSession(sessions[0]);

@@ -1,6 +1,7 @@
 from ..qt.QtWebKit import QWebView, QWebSettings
 from qt_ace_editor import QtAceEditor
 
+
 class QtAceEditorView(QWebView):
     def __init__(self, parent=None):
         """ Initialize the editor window
@@ -14,10 +15,10 @@ class QtAceEditorView(QWebView):
 
         self.main_frame = self.page().mainFrame()
         self.main_frame.addToJavaScriptWindowObject('py_ace_editor', self.ace_editor)
-            
+
         self.ace_editor.generate_ace_event('set_text_from_js', 'getSession()',
             'editor.getSession().getDocument().getValue()', 'change')
-        
+
         self.ace_editor.generate_binding('theme_changed', 'editor',
              'setTheme')
         self.ace_editor.generate_binding('mode_changed',
@@ -32,13 +33,12 @@ class QtAceEditorView(QWebView):
                                          'setShowPrintMargin')
         self.ace_editor.generate_binding('margin_line_column_changed',
                                          'editor', 'setPrintMarginColumn')
-                
+
         html = self.ace_editor.generate_html()
         self.setHtml(html)
-            
+
     def editor(self):
         """ Return the ace editor
 
         """
         return self.ace_editor
-

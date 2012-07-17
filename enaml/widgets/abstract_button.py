@@ -40,7 +40,7 @@ class AbstractButton(ConstraintsWidget):
     #: Fired when a checkable button is toggled. The payload will be
     #: the current checked state.
     toggled = EnamlEvent
-    
+
     #: How strongly a component hugs it's contents' width. Buttons hug
     #: their contents' width weakly by default.
     hug_width = 'weak'
@@ -72,7 +72,7 @@ class AbstractButton(ConstraintsWidget):
     # Message Handling
     #--------------------------------------------------------------------------
     def on_message_event_clicked(self, payload):
-        """ Handle the 'event-clicked' action from the UI widget. The 
+        """ Handle the 'event-clicked' action from the UI widget. The
         payload will contain the current checked state.
 
         """
