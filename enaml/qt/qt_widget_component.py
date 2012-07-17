@@ -5,7 +5,7 @@
 import sys
 
 from .qt.QtGui import QWidget, QWidgetItem
-from .qt.QtCore import Qt
+from .qt.QtCore import Qt, QSize
 from .qt_messenger_widget import QtMessengerWidget
 
 
@@ -27,15 +27,15 @@ class QtWidgetComponent(QtMessengerWidget):
         """ Initialize the attributes of the underlying QWidget.
 
         """
-        get = attrs.get
-        self.set_min_size(get('min_size', (-1, -1)))
-        self.set_max_size(get('max_size', (-1, -1)))
-        self.set_bgcolor(get('bgcolor', ''))
-        self.set_fgcolor(get('fgcolor', ''))
-        self.set_font(get('font', ''))
-        self.set_enabled(get('enabled', True))
-        self.set_visible(get('visible', True))
-        self.set_show_focus_rect(get('show_focus_rect', None))
+        super(QtWidgetComponent, self).initialize(attrs)
+        self.set_minimum_size(attrs['minimum_size'])
+        self.set_maximum_size(attrs['maximum_size'])
+        self.set_bgcolor(attrs['bgcolor'])
+        self.set_fgcolor(attrs['fgcolor'])
+        self.set_font(attrs['font'])
+        self.set_enabled(attrs['enabled'])
+        self.set_visible(attrs['visible'])
+        self.set_show_focus_rect(attrs['show_focus_rect'])
 
     #--------------------------------------------------------------------------
     # Properties
@@ -85,17 +85,17 @@ class QtWidgetComponent(QtMessengerWidget):
         """
         self.set_font(payload['font'])
 
-    def on_message_set_min_size(self, payload):
-        """ Process the 'set-min_size' message from Enaml.
+    def on_message_set_minimum_size(self, payload):
+        """ Process the 'set-minimum_size' message from Enaml.
 
         """
-        self.set_min_size(payload['min_size'])
+        self.set_minimum_size(payload['minimum_size'])
 
-    def on_message_set_max_size(self, payload):
-        """ Process the 'set-max_size' message from Enaml.
+    def on_message_set_maximum_size(self, payload):
+        """ Process the 'set-maximum_size' message from Enaml.
 
         """
-        self.set_max_size(payload['max_size'])
+        self.set_maximum_size(payload['maximum_size'])
 
     def on_message_set_show_focus_rect(self, payload):
         """ Process the 'set-show_focus_rect' message from Enaml.
@@ -106,7 +106,7 @@ class QtWidgetComponent(QtMessengerWidget):
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
-    def set_min_size(self, min_size):
+    def set_minimum_size(self, min_size):
         """ Sets the minimum size on the underlying widget.
 
         Parameters
@@ -119,9 +119,9 @@ class QtWidgetComponent(QtMessengerWidget):
         # QWidget uses (0, 0) as the minimum size.
         if -1 in min_size:
             min_size = (0, 0)
-        self.widget.setMinimumSize(*min_size)
+        self.widget.setMinimumSize(QSize(*min_size))
 
-    def set_max_size(self, max_size):
+    def set_maximum_size(self, max_size):
         """ Sets the maximum size on the underlying widget.
 
         Parameters
@@ -134,7 +134,7 @@ class QtWidgetComponent(QtMessengerWidget):
         # QWidget uses 16777215 as the max size
         if -1 in max_size:
             max_size = (16777215, 16777215)
-        self.widget.setMaximumSize(*max_size)
+        self.widget.setMaximumSize(QSize(*max_size))
 
     def set_enabled(self, enabled):
         """ Set the enabled state on the underlying widget.
