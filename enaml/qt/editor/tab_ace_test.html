@@ -21,7 +21,6 @@
 	    var EditSession = require('ace/edit_session').EditSession
 		var editor = ace.edit("editor");
 		var tab_list = jQuery('#tab_list');
-		var untitled_counter = 1
 		tab_list.sortable({
 			//containment: '#tabs',
 			tolerance: 'pointer',
@@ -29,13 +28,11 @@
 		});
 
 		var sessions = {
-			'initial' : new EditSession('${text}', '${mode}')
+			'initial' : new EditSession("${text}", "${mode}")
 		}
 
 		tab_list.__defineSetter__("current_tab", function(tab) {
-			jQuery(tab).css('background-color', '#000');
-			jQuery(tab).css('color', '#fff');
-			jQuery('button', tab).css('color', '#fff');
+			jQuery(tab).addClass('current');
 			this._current_tab = tab
 		});
 
@@ -43,10 +40,8 @@
 			return this._current_tab
 		});
 
-		tab_list.__defineSetter__("old_tab", function(tab) { 
-			jQuery(tab).css('background-color', 'gray');
-			jQuery(tab).css('color', '#000');
-			jQuery('button', tab).css('color', '#000');
+		tab_list.__defineSetter__("old_tab", function(tab) {
+			jQuery(tab).removeClass('current');
 			this._old_tab = tab
 		});
 
