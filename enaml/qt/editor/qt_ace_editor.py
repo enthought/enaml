@@ -2,45 +2,11 @@ from PySide.QtCore import QObject, Signal, Slot
 from string import Template
 import os
 
-HTML_TEMPLATE = Template("""
-<html>
-<head>
-  <script src="${resource_path}ace.js" type="text/javascript"></script>
-  <style type="text/css" media="screen">
-    body {
-        overflow: hidden;
-    }
-    
-    #editor { 
-        margin: 0;
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-    }
-  </style>
-</head>
-<body>
-
-<div id="editor">${text}</div>
-
-<script>
-    var ace_editor = ace.edit("editor");
-    ${events}
-    ${bindings}
-</script>
-
-</body>
-</html>
-""")
-
-
 EVENT_TEMPLATE = Template("""
     py_${func} = function() {
         py_ace_editor.${func}(${args});
     }
-    ace_editor.${target}.on("${event_name}", py_${func});
+    editor.${target}.on("${event_name}", py_${func});
 """)
 
 BINDING_TEMPLATE = Template("""
@@ -202,14 +168,16 @@ class QtAceEditor(QObject):
         """ Generate the html code for the ace editor
 
         """
+        # XXX better way to access files here?
+        p = os.path
+        template_path = p.join(p.dirname(p.abspath(__file__)),'tab_ace_test.html')
+        template = Template(open(template_path, 'r').read())
         _text = self.text()
         _mode = self.mode()
         _theme = self.theme()
-        p = os.path
-        # XXX better way to access this directory?
-        _r_path = "file://" + p.join(p.dirname(p.abspath(__file__)), 'ace/')
+        _r_path = "file://" + p.join(p.dirname(p.abspath(__file__)))
         _events = '\n'.join(self._events)
         _bindings = '\n'.join(self._bindings)
-        return HTML_TEMPLATE.substitute(text=_text, mode=_mode, theme=_theme,
-                                        events=_events, resource_path=_r_path,
-                                        bindings=_bindings)
+        return template.substitute(text=_text, mode=_mode, theme=_theme,
+                                   events=_events, resource_path=_r_path,
+                                   bindings=_bindings)

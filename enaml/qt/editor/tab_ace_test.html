@@ -1,9 +1,9 @@
 <html>
 <head>
-	<script src="ace/ace.js" type="text/javascript"></script>
-	<script src="jquery-1.7.2.min.js" type="text/javascript"></script>
-	<script src="jquery-ui-1.8.21.custom.min.js" type="text/javascript"></script>
-	<link rel="stylesheet" href="editor.css" />
+	<script src="${resource_path}/ace/ace.js" type="text/javascript"></script>
+	<script src="${resource_path}/jquery-1.7.2.min.js" type="text/javascript"></script>
+	<script src="${resource_path}/jquery-ui-1.8.21.custom.min.js" type="text/javascript"></script>
+	<link rel="stylesheet" href="${resource_path}/editor.css" />
 	<title>ACE</title>
 </head>
 <body>
@@ -19,67 +19,70 @@
 	<script type="text/javascript">
 	    var EditSession = require('ace/edit_session').EditSession
 		var editor = ace.edit("editor");
-		var tab_list = $('#tab_list');
+		var tab_list = jQuery('#tab_list');
 		tab_list.sortable({
 			containment: 'parent',
 			tolerance: 'pointer'
 		});
-		var sessions = [new EditSession('hello'), new EditSession('goodbye'), new EditSession('hello again')]
+		var sessions = [new EditSession('${text}'), new EditSession('goodbye'), new EditSession('hello again')]
 
 		tab_list.__defineSetter__("current_tab", function(tab) {
-			$(tab).css('background-color', '#000');
-			$(tab).css('color', '#fff');
-			$('button', tab).css('color', '#fff');
+			jQuery(tab).css('background-color', '#000');
+			jQuery(tab).css('color', '#fff');
+			jQuery('button', tab).css('color', '#fff');
 			this._current_tab = tab
 		});
 
 		tab_list.__defineSetter__("old_tab", function(tab) {
-			$(tab).css('background-color', 'gray');
-			$(tab).css('color', '#000');
-			$('button', tab).css('color', '#000');
+			jQuery(tab).css('background-color', 'gray');
+			jQuery(tab).css('color', '#000');
+			jQuery('button', tab).css('color', '#000');
 		});
 
 		var removeTabItem = function() {
-			li_list = $('li', tab_list);
-			item = $(this).parent();
+			li_list = jQuery('li', tab_list);
+			item = jQuery(this).parent();
 			if (li_list.index(item) == li_list.length-1) {
-				tab_list.current_tab = $(this).parent().prev();
+				tab_list.current_tab = jQuery(this).parent().prev();
 			}
 			else
-				tab_list.current_tab = $(this).parent().next();
+				tab_list.current_tab = jQuery(this).parent().next();
 
-			$(this).parent().remove();
-			li_list = $('li', tab_list);
+			jQuery(this).parent().remove();
+			li_list = jQuery('li', tab_list);
 
 			if (li_list.length == 1) {
-				$('#tabs').hide();
+				jQuery('#tabs').hide();
 			}
 		}
 		var clickTabItem = function() {
-			var id = $(this).attr("data-sessionid");
+			var id = jQuery(this).attr("data-sessionid");
 			var session = sessions[parseInt(id)];
 			if (editor.getSession() != session) {
 				editor.setSession(session);
 				tab_list.old_tab = tab_list._current_tab
-				tab_list.current_tab = $(this);
+				tab_list.current_tab = jQuery(this);
 			}
 		}
 
-		$('li', tab_list).click(clickTabItem);
+		jQuery('li', tab_list).click(clickTabItem);
 
-		var item_list  = $('li', tab_list);
+		var item_list  = jQuery('li', tab_list);
 		for (var i=0; i<item_list.length; i++) {
 			var span = document.createElement('span');
-			$(item_list[i]).wrapInner(span);
+			jQuery(item_list[i]).wrapInner(span);
 			var button = document.createElement('button');
 			button.innerHTML = "X";
-			$(button).insertAfter($('span', item_list[i])[0]);
-			$(button).click(removeTabItem);
+			jQuery(button).insertAfter(jQuery('span', item_list[i])[0]);
+			jQuery(button).click(removeTabItem);
 		}
 
-		tab_list.current_tab = $('li', tab_list)[0];
+		tab_list.current_tab = jQuery('li', tab_list)[0];
 
 		editor.setSession(sessions[0]);
+
+		${events}
+		${bindings}
 
 	</script>
 </body>
