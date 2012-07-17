@@ -34,7 +34,6 @@ class QtAceEditorView(QWebView):
                                          'editor', 'setPrintMarginColumn')
                 
         html = self.ace_editor.generate_html()
-        print html
         self.setHtml(html)
             
     def editor(self):

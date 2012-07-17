@@ -9,10 +9,9 @@
 <body>
 	<div id="tabs">
 		<ul id="tab_list">
-			<li data-sessionid="0">Tab 1</li>
-			<li data-sessionid="1">Tab 2</li>
-			<li data-sessionid="2">Tab 3</li>
+			<li data-sessionid="0">Untitled</li>
 		</ul>
+		<button id="add_button">+</button>
 	</div>
 	<div id="editor"></div>
 
@@ -21,10 +20,13 @@
 		var editor = ace.edit("editor");
 		var tab_list = jQuery('#tab_list');
 		tab_list.sortable({
-			containment: 'parent',
+			//containment: 'parent',
 			tolerance: 'pointer'
 		});
-		var sessions = [new EditSession('${text}'), new EditSession('goodbye'), new EditSession('hello again')]
+
+		var sessions = {
+			'0' : new EditSession('${text}', '${mode}')
+		}
 
 		tab_list.__defineSetter__("current_tab", function(tab) {
 			jQuery(tab).css('background-color', '#000');
@@ -43,41 +45,68 @@
 			li_list = jQuery('li', tab_list);
 			item = jQuery(this).parent();
 			if (li_list.index(item) == li_list.length-1) {
-				tab_list.current_tab = jQuery(this).parent().prev();
+				tab_list.current_tab = item.prev();
 			}
 			else
-				tab_list.current_tab = jQuery(this).parent().next();
+				tab_list.current_tab = item.next();
+
+			s = sessions[jQuery(tab_list._current_tab).attr('data-sessionid')]
+			editor.setSession(s);
 
 			jQuery(this).parent().remove();
-			li_list = jQuery('li', tab_list);
+			delete sessions[item.attr('data-sessionid')];
+
+			li_list = jQuery("li", tab_list);
 
 			if (li_list.length == 1) {
-				jQuery('#tabs').hide();
+				jQuery('button', li_list).hide();
+				tab_list.sortable('disable');
 			}
 		}
+
+		var addTabItem = function() {
+			li_list = jQuery('li', tab_list);
+			if (li_list.length == 1) {
+				jQuery('button', li_list[0]).show();
+			}
+			li = document.createElement('li');
+			li.innerHTML = 'Untitled'
+			jQuery(li).attr('data-sessionid', '3');
+			last_li = li_list[li_list.length-1]
+			jQuery(li).insertAfter(last_li);
+			setupTab(li);
+			sessions['3'] = new EditSession('')
+		}
+
 		var clickTabItem = function() {
 			var id = jQuery(this).attr("data-sessionid");
-			var session = sessions[parseInt(id)];
-			if (editor.getSession() != session) {
+			var session = sessions[id];
+			if (jQuery(this) != tab_list._current_tab) {
 				editor.setSession(session);
 				tab_list.old_tab = tab_list._current_tab
 				tab_list.current_tab = jQuery(this);
 			}
 		}
 
-		jQuery('li', tab_list).click(clickTabItem);
-
-		var item_list  = jQuery('li', tab_list);
-		for (var i=0; i<item_list.length; i++) {
+		var setupTab = function(tab) {
+			jQuery(tab).click(clickTabItem);
 			var span = document.createElement('span');
-			jQuery(item_list[i]).wrapInner(span);
+			jQuery(tab).wrapInner(span);
 			var button = document.createElement('button');
 			button.innerHTML = "X";
-			jQuery(button).insertAfter(jQuery('span', item_list[i])[0]);
+			if (jQuery('li', tab_list).length == 1)
+				jQuery(button).hide();
+			jQuery(button).insertAfter(jQuery('span', tab)[0]);
 			jQuery(button).click(removeTabItem);
 		}
 
+		var item_list  = jQuery('li', tab_list);
+		for (var i=0; i<item_list.length; i++) {
+			setupTab(item_list[i]);
+		}
+
 		tab_list.current_tab = jQuery('li', tab_list)[0];
+		jQuery('#add_button').click(addTabItem);
 
 		editor.setSession(sessions[0]);
 
