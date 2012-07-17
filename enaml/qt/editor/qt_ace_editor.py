@@ -29,8 +29,8 @@ class QtAceEditor(QObject):
         """
         super(QtAceEditor, self).__init__()
         self._text = ""
-        self._mode = ""
-        self._theme = ""
+        self._mode = "ace/mode/text"
+        self._theme = "ace/theme/textmate"
         self._auto_pair = True
         self._font_size = 12
         self._margin_line = True

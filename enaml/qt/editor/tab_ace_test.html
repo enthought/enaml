@@ -19,8 +19,9 @@
 	    var EditSession = require('ace/edit_session').EditSession
 		var editor = ace.edit("editor");
 		var tab_list = jQuery('#tab_list');
+		var untitled_counter = 1
 		tab_list.sortable({
-			//containment: 'parent',
+			//containment: '#tabs',
 			tolerance: 'pointer'
 		});
 
@@ -39,28 +40,31 @@
 			return this._current_tab
 		});
 
-		tab_list.__defineSetter__("old_tab", function(tab) {
+		tab_list.__defineSetter__("old_tab", function(tab) { 
 			jQuery(tab).css('background-color', 'gray');
 			jQuery(tab).css('color', '#000');
 			jQuery('button', tab).css('color', '#000');
+			this._old_tab = tab
 		});
 
 		tab_list.__defineGetter__("old_tab", function() {
 			return this._old_tab
 		});
 
-		var removeTabItem = function() {
+		function removeTabItem() {
 			/* handler for when the 'x' on a tab is clicked
 
 			*/
 			li_list = jQuery('li', tab_list);
 			item = jQuery(this).parent();
-			if (li_list.index(item) == li_list.length-1) {
-				tab_list.current_tab = item.prev();
+			if (item.attr('data-sessionid') == tab_list.current_tab.attr('data-sessionid')) {
+				console.log('current');
+				if (li_list.index(item) == li_list.length-1) {
+					tab_list.current_tab = item.prev();
+				}
+				else
+					tab_list.current_tab = item.next();
 			}
-			else
-				tab_list.current_tab = item.next();
-
 			s = sessions[jQuery(tab_list.current_tab).attr('data-sessionid')]
 			editor.setSession(s);
 
@@ -75,7 +79,19 @@
 			}
 		}
 
-		var addTabItem = function() {
+		function generateId() {
+			/* Generate a random 32 character id
+
+			*/
+			var result = '';
+			for(var j=0; j<32; j++) {
+				var i = Math.floor(Math.random()*16).toString(16).toUpperCase();
+				result = result + i;
+			}
+			return result
+		}
+
+		function addTabItem() {
 			/* Handler for when the '+' button is clicked
 
 			*/
@@ -85,14 +101,18 @@
 			}
 			li = document.createElement('li');
 			li.innerHTML = 'Untitled'
-			jQuery(li).attr('data-sessionid', 'untitled-id');
+			var id = generateId();
+			jQuery(li).attr('data-sessionid', id);
 			last_li = li_list[li_list.length-1]
 			jQuery(li).insertAfter(last_li);
 			setupTab(li);
-			sessions['untitled-id'] = new EditSession('')
+			sessions[id] = new EditSession('')
 		}
 
-		var clickTabItem = function() {
+		function clickTabItem() {
+			/* Handler for when a tab is clicked
+
+			*/
 			var id = jQuery(this).attr("data-sessionid");
 			var session = sessions[id];
 			if (jQuery(this) != tab_list.current_tab) {
@@ -102,7 +122,11 @@
 			}
 		}
 
-		var setupTab = function(tab) {
+		function setupTab(tab) {
+			/* Sets up a tab by wrapping the text in a span and
+			adding the close button
+
+			*/
 			jQuery(tab).click(clickTabItem);
 			var span = document.createElement('span');
 			jQuery(tab).wrapInner(span);
@@ -123,7 +147,7 @@
 		tab_list._old_tab = tab_list.current_tab
 		jQuery('#add_button').click(addTabItem);
 
-		editor.setSession(sessions[0]);
+		editor.setSession(sessions['initial']);
 
 		${events}
 		${bindings}
