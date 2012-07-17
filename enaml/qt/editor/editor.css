@@ -1,31 +1,56 @@
+body {
+	background-color: #D8D8D8;
+}
+
 #editor { 
+	float: left;
     margin: 0;
     position: relative;
     top: 0;
     bottom: 0;
     left: 0;
     right: 0;
+    height: 97%;
+    width: 100%;
+    background-color: #fff;
+}
+
+#tabs {
+	width: 100%;
+	margin: 0;
 }
 
 #tab_list {
 	margin: 0;
 	padding: 0;
+	width: 100%;
+	list-style-type: none;
+	display: table;
 }
 
 #tab_list li {
-	float: left;
+	display: table-cell;
 	border: 1px solid #000;
+	border-bottom: none;
 	background-color: gray;
-	border-radius: 10px;
-	padding: 20px;
+	border-radius: 10px 10px 0 0;
+	padding: 5px 10px 5px 10px;
+	margin: 0 1px 0 0;
+}
+
+#tab_list li:last_child {
+	margin: 0 0 0 0;
 }
 
 #tab_list li:hover {
 	cursor: default;
 }
 
-#tabs {
-	border: 1px solid #000;
-	float: left;
-	width: 100%;
+#tab_list li button {
+	text-shadow:0 -1px 1px rgba(0,0,0,0.5);
+	background: none;
+	border: none;
+	margin: 0 0 0 5px;
+	padding: 0;
+	float: right;
 }

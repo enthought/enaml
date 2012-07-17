@@ -9,23 +9,78 @@
 <body>
 	<div id="tabs">
 		<ul id="tab_list">
-			<li>Tab 1</li>
-			<li>Tab 2</li>
+			<li data-sessionid="0">Tab 1</li>
+			<li data-sessionid="1">Tab 2</li>
+			<li data-sessionid="2">Tab 3</li>
 		</ul>
 	</div>
 	<div id="editor"></div>
 
-	
-
 	<script type="text/javascript">
+	    var EditSession = require('ace/edit_session').EditSession
 		var editor = ace.edit("editor");
 		var tab_list = $('#tab_list');
-		tab_list.sortable();
+		tab_list.sortable({
+			containment: 'parent',
+			tolerance: 'pointer'
+		});
+		var sessions = [new EditSession('hello'), new EditSession('goodbye'), new EditSession('hello again')]
 
-		var removeItem = function(item) {
-			$(this).remove();
+		tab_list.__defineSetter__("current_tab", function(tab) {
+			$(tab).css('background-color', '#000');
+			$(tab).css('color', '#fff');
+			$('button', tab).css('color', '#fff');
+			this._current_tab = tab
+		});
+
+		tab_list.__defineSetter__("old_tab", function(tab) {
+			$(tab).css('background-color', 'gray');
+			$(tab).css('color', '#000');
+			$('button', tab).css('color', '#000');
+		});
+
+		var removeTabItem = function() {
+			li_list = $('li', tab_list);
+			item = $(this).parent();
+			if (li_list.index(item) == li_list.length-1) {
+				tab_list.current_tab = $(this).parent().prev();
+			}
+			else
+				tab_list.current_tab = $(this).parent().next();
+
+			$(this).parent().remove();
+			li_list = $('li', tab_list);
+
+			if (li_list.length == 1) {
+				$('#tabs').hide();
+			}
 		}
-		$('li', tab_list).dblclick(removeItem);
+		var clickTabItem = function() {
+			var id = $(this).attr("data-sessionid");
+			var session = sessions[parseInt(id)];
+			if (editor.getSession() != session) {
+				editor.setSession(session);
+				tab_list.old_tab = tab_list._current_tab
+				tab_list.current_tab = $(this);
+			}
+		}
+
+		$('li', tab_list).click(clickTabItem);
+
+		var item_list  = $('li', tab_list);
+		for (var i=0; i<item_list.length; i++) {
+			var span = document.createElement('span');
+			$(item_list[i]).wrapInner(span);
+			var button = document.createElement('button');
+			button.innerHTML = "X";
+			$(button).insertAfter($('span', item_list[i])[0]);
+			$(button).click(removeTabItem);
+		}
+
+		tab_list.current_tab = $('li', tab_list)[0];
+
+		editor.setSession(sessions[0]);
+
 	</script>
 </body>
 
