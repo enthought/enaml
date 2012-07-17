@@ -14,7 +14,8 @@ class QtAceEditorView(QWebView):
         self.settings().setAttribute(QWebSettings.DeveloperExtrasEnabled, True)
 
         self.main_frame = self.page().mainFrame()
-        self.main_frame.addToJavaScriptWindowObject('py_ace_editor', self.ace_editor)
+        self.main_frame.addToJavaScriptWindowObject('py_ace_editor',
+                                                    self.ace_editor)
 
         self.ace_editor.generate_ace_event('set_text_from_js', 'getSession()',
             'editor.getSession().getDocument().getValue()', 'change')

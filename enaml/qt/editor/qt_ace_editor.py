@@ -138,7 +138,8 @@ class QtAceEditor(QObject):
             The name of the AceEditor event
 
         """
-        event = EVENT_TEMPLATE.substitute(func=_func, args=_args, target=_target,
+        event = EVENT_TEMPLATE.substitute(func=_func, args=_args,
+                                          target=_target,
                                           event_name=_event_name)
         self._events.append(event)
 
@@ -169,7 +170,8 @@ class QtAceEditor(QObject):
         """
         # XXX better way to access files here?
         p = os.path
-        template_path = p.join(p.dirname(p.abspath(__file__)), 'tab_ace_test.html')
+        template_path = p.join(p.dirname(p.abspath(__file__)),
+            'tab_ace_test.html')
         template = Template(open(template_path, 'r').read())
         _text = self.text()
         _mode = self.mode()

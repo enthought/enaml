@@ -1,8 +1,10 @@
 <html>
 <head>
 	<script src="${resource_path}/ace/ace.js" type="text/javascript"></script>
-	<script src="${resource_path}/jquery-1.7.2.min.js" type="text/javascript"></script>
-	<script src="${resource_path}/jquery-ui-1.8.21.custom.min.js" type="text/javascript"></script>
+	<script src="${resource_path}/jquery-1.7.2.min.js" 
+		type="text/javascript"></script>
+	<script src="${resource_path}/jquery-ui-1.8.21.custom.min.js" 
+		type="text/javascript"></script>
 	<link rel="stylesheet" href="${resource_path}/editor.css" />
 	<title>ACE</title>
 </head>
@@ -22,7 +24,8 @@
 		var untitled_counter = 1
 		tab_list.sortable({
 			//containment: '#tabs',
-			tolerance: 'pointer'
+			tolerance: 'pointer',
+			helper: 'clone'
 		});
 
 		var sessions = {
@@ -57,8 +60,8 @@
 			*/
 			li_list = jQuery('li', tab_list);
 			item = jQuery(this).parent();
-			if (item.attr('data-sessionid') == tab_list.current_tab.attr('data-sessionid')) {
-				console.log('current');
+			if (item.attr('data-sessionid') == 
+				jQuery(tab_list.current_tab).attr('data-sessionid')) {
 				if (li_list.index(item) == li_list.length-1) {
 					tab_list.current_tab = item.prev();
 				}
@@ -131,7 +134,7 @@
 			var span = document.createElement('span');
 			jQuery(tab).wrapInner(span);
 			var button = document.createElement('button');
-			button.innerHTML = "X";
+			button.innerHTML = "x";
 			if (jQuery('li', tab_list).length == 1)
 				jQuery(button).hide();
 			jQuery(button).insertAfter(jQuery('span', tab)[0]);
@@ -151,7 +154,6 @@
 
 		${events}
 		${bindings}
-
 	</script>
 </body>
 
