@@ -2,53 +2,19 @@ from PySide.QtCore import QObject, Signal, Slot
 from string import Template
 import os
 
-HTML_TEMPLATE = Template("""
-<html>
-<head>
-  <script src="${resource_path}ace.js" type="text/javascript"></script>
-  <style type="text/css" media="screen">
-    body {
-        overflow: hidden;
-    }
-    
-    #editor { 
-        margin: 0;
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-    }
-  </style>
-</head>
-<body>
-
-<div id="editor">${text}</div>
-
-<script>
-    var ace_editor = ace.edit("editor");
-    ${events}
-    ${bindings}
-</script>
-
-</body>
-</html>
-""")
-
-
 EVENT_TEMPLATE = Template("""
     py_${func} = function() {
         py_ace_editor.${func}(${args});
     }
-    ace_editor.${target}.on("${event_name}", py_${func});
+    editor.${target}.on("${event_name}", py_${func});
 """)
 
 BINDING_TEMPLATE = Template("""
     py_ace_editor.${signal}.connect(${target}, "${func}")
 """)
 
-class QtAceEditor(QObject):
 
+class QtAceEditor(QObject):
     text_changed = Signal(unicode)
     mode_changed = Signal(unicode)
     theme_changed = Signal(unicode)
@@ -56,21 +22,20 @@ class QtAceEditor(QObject):
     font_size_changed = Signal(int)
     margin_line_changed = Signal(bool)
     margin_line_column_changed = Signal(int)
-    
+
     def __init__(self):
         """ Initialize the editor
 
         """
         super(QtAceEditor, self).__init__()
-
         self._text = ""
-        self._mode = ""
-        self._theme = ""
+        self._mode = "ace/mode/text"
+        self._theme = "ace/theme/textmate"
         self._auto_pair = True
         self._font_size = 12
         self._margin_line = True
         self._margin_line_column = 80
-        
+
         self._events = []
         self._bindings = []
 
@@ -102,7 +67,7 @@ class QtAceEditor(QObject):
         if mode.startswith('ace/mode/'):
             self._mode = mode
         else:
-            self._mode = 'ace/mode/'+mode
+            self._mode = 'ace/mode/' + mode
         self.mode_changed.emit(self._mode)
 
     def mode(self):
@@ -118,7 +83,7 @@ class QtAceEditor(QObject):
         if theme.startswith('ace/theme/'):
             self._theme = theme
         else:
-            self._theme = "ace/theme/"+theme
+            self._theme = "ace/theme/" + theme
         self.theme_changed.emit(self._theme)
 
     def theme(self):
@@ -173,7 +138,8 @@ class QtAceEditor(QObject):
             The name of the AceEditor event
 
         """
-        event = EVENT_TEMPLATE.substitute(func=_func, args=_args, target=_target,
+        event = EVENT_TEMPLATE.substitute(func=_func, args=_args,
+                                          target=_target,
                                           event_name=_event_name)
         self._events.append(event)
 
@@ -192,7 +158,7 @@ class QtAceEditor(QObject):
 
         _func : string
             The name of the function to call on the target object
-        
+
         """
         binding = BINDING_TEMPLATE.substitute(signal=_signal, target=_target,
                                               func=_func)
@@ -202,14 +168,17 @@ class QtAceEditor(QObject):
         """ Generate the html code for the ace editor
 
         """
+        # XXX better way to access files here?
+        p = os.path
+        template_path = p.join(p.dirname(p.abspath(__file__)),
+            'tab_ace_test.html')
+        template = Template(open(template_path, 'r').read())
         _text = self.text()
         _mode = self.mode()
         _theme = self.theme()
-        p = os.path
-        # XXX better way to access this directory?
-        _r_path = "file://" + p.join(p.dirname(p.abspath(__file__)), 'ace/')
+        _r_path = "file://" + p.join(p.dirname(p.abspath(__file__)))
         _events = '\n'.join(self._events)
         _bindings = '\n'.join(self._bindings)
-        return HTML_TEMPLATE.substitute(text=_text, mode=_mode, theme=_theme,
-                                        events=_events, resource_path=_r_path,
-                                        bindings=_bindings)
+        return template.substitute(text=_text, mode=_mode,
+                                   theme=_theme, events=_events,
+                                   resource_path=_r_path, bindings=_bindings)
