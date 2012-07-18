@@ -4,14 +4,13 @@
 #------------------------------------------------------------------------------
 from traits.api import Instance, ReadOnly, Str
 
-from enaml.async.async_application import AsyncApplication, AsyncApplicationError
-from enaml.async.async_messenger import AsyncMessenger
-from enaml.async.messenger_mixin import MessengerMixin
 from enaml.core.base_component import BaseComponent
-from enaml.utils import WeakMethod, LoopbackGuard
+from enaml.messaging.hub import message_hub
+from enaml.messaging.registry import register
+from enaml.utils import LoopbackGuard
 
 
-class MessengerWidget(MessengerMixin, BaseComponent):
+class MessengerWidget(BaseComponent):
     """ The base class of all widget classes in Enaml.
 
     This extends BaseComponent with the ability to send and receive
@@ -20,6 +19,9 @@ class MessengerWidget(MessengerMixin, BaseComponent):
     required to initialize the client widget.
 
     """
+    #: The storage for the widget target id.
+    target_id = ReadOnly
+
     #: A loopback guard which can be used to prevent a loopback cycle
     #: of messages when setting attributes from within a handler.
     loopback_guard = Instance(LoopbackGuard, ())
@@ -31,80 +33,38 @@ class MessengerWidget(MessengerMixin, BaseComponent):
     widget_type = Str
     def _widget_type_default(self):
         return type(self).__name__
-    
-    #: The internal storage for the target_id property.
-    _target_id = ReadOnly
-
-    #: The internal storage for the async_pipe property.
-    _async_pipe = ReadOnly
 
     def __new__(cls, *args, **kwargs):
-        """ Create a new AsyncMessenger instance.
+        self = super(MessengerWidget, cls).__new__(cls, *args, **kwargs)
+        self.target_id = register(self)
+        return self
 
-        New instances cannot be created unless an AsyncApplication 
-        instance is available.
-
-        Parameters
-        ----------
-        *args, **kwargs
-            Any required position and keyword arguments to pass to the
-            superclass.
-
-        """
-        app = AsyncApplication.instance()
-        if app is None:
-            msg = 'An async application instance must be created before '
-            msg += 'creating any AsyncMessenger instances.'
-            raise AsyncApplicationError(msg)
-        instance = super(MessengerWidget, cls).__new__(cls, *args, **kwargs)
-        app.register(instance)
-        return instance
+    def traits_init(self):
+        super(MessengerWidget, self).traits_init()
+        self.bind()
 
     #--------------------------------------------------------------------------
-    # AsyncMessenger Interface
+    # Signal Handlers
     #--------------------------------------------------------------------------
-    def target_id():
-        """ The property get/set pair for the 'target_id' attribute.
+    def receive(self, message):
+        if message['type'] == 'message':
+            self.receive_message(message)
 
-        """
-        def getter(self):
-            return self._target_id
-        def setter(self, target_id):
-            self._target_id = target_id
-        return property(getter, setter)
+    def receive_message(self, message):
+        payload = message['payload']
+        handler_name = 'on_message_' + payload['action'].replace('-', '_')
+        handler = getattr(self, handler_name, None)
+        if handler is not None:
+            handler(payload)
 
-    target_id = target_id()
-    
-    def async_pipe():
-        """ The property get/set pair for the 'async_pipe' attribute.
-
-        """
-        def getter(self):
-            return self._async_pipe
-        def setter(self, pipe):
-            self._async_pipe = pipe
-            pipe.set_message_callback(self.target_id, WeakMethod(self.recv_message))
-            pipe.set_request_callback(self.target_id, WeakMethod(self.recv_request))
-        return property(getter, setter)
-
-    async_pipe = async_pipe()
-
-    def creation_payload(self):
-        """ Returns the payload dict for the 'create' action for the
-        messenger.
-
-        Returns
-        -------
-        results : dict
-            The creation payload dict for the messenger widget.
-
-        """
-        payload = {}
-        payload['action'] = 'create'
-        payload['type'] = self.widget_type
-        payload['parent_id'] = self.parent_id
-        payload['attributes'] = self.creation_attributes()
-        return payload
+    def send_message(self, payload):
+        msg = {
+            'target_id': self.target_id,
+            'operation_id': None,
+            'type': 'message',
+            'payload': payload,
+        }
+        message_hub.post_message(msg)
 
     #--------------------------------------------------------------------------
     # Public API
@@ -124,6 +84,30 @@ class MessengerWidget(MessengerMixin, BaseComponent):
         parent = self.parent
         if isinstance(parent, MessengerWidget):
             return parent.target_id
+
+    def creation_tree(self):
+        tree = self.creation_payload()
+        children = [c.creation_tree() for c in self.children]
+        tree['children'] = children
+        return tree
+
+    def creation_payload(self):
+        """ Returns the payload dict for the 'create' action for the
+        messenger.
+
+        Returns
+        -------
+        results : dict
+            The creation payload dict for the messenger widget.
+
+        """
+        payload = {}
+        payload['target_id'] = self.target_id
+        payload['action'] = 'create'
+        payload['type'] = self.widget_type
+        payload['parent_id'] = self.parent_id
+        payload['attributes'] = self.creation_attributes()
+        return payload
 
     def creation_attributes(self):
         """ Returns a dictionary of attributes to initialize the state
@@ -213,10 +197,4 @@ class MessengerWidget(MessengerMixin, BaseComponent):
             action = 'set-' + name
             payload = {'action': action, name: new}
             self.send_message(payload)
-
-
-#: Registers the MessengerWidget as an instance of AsyncMessenger.
-#: This is done in lieu of inheritence due to metaclass conflicts 
-#: with HasTraits classes.
-AsyncMessenger.register(MessengerWidget)
 
