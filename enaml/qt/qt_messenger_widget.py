@@ -4,15 +4,16 @@
 #------------------------------------------------------------------------------
 from weakref import ref
 
-from enaml.async.messenger_mixin import MessengerMixin
-from enaml.utils import WeakMethod, LoopbackGuard
+from enaml.utils import LoopbackGuard
+
+from .qt_hub import qt_message_hub
 
 
-class QtMessengerWidget(MessengerMixin):
+class QtMessengerWidget(object):
     """ The base class of the Qt widgets wrappers for a Qt Enaml client.
 
     """
-    def __init__(self, parent, target_id, async_pipe):
+    def __init__(self, parent, target_id):
         """ Initialize a QtClientWidget
 
         Parameters
@@ -33,11 +34,31 @@ class QtMessengerWidget(MessengerMixin):
         self.widget = None
         self.children = []
         self.target_id = target_id
-        self.async_pipe = async_pipe
-        async_pipe.set_message_callback(target_id, WeakMethod(self.recv_message))
-        async_pipe.set_request_callback(target_id, WeakMethod(self.recv_request))
         if parent is not None:
             parent.children.append(self)
+
+    #--------------------------------------------------------------------------
+    # Signal Handlers
+    #--------------------------------------------------------------------------
+    def receive(self, message):
+        if message['type'] == 'message':
+            self.receive_message(message)
+
+    def receive_message(self, message):
+        payload = message['payload']
+        handler_name = 'on_message_' + payload['action'].replace('-', '_')
+        handler = getattr(self, handler_name, None)
+        if handler is not None:
+            handler(payload)
+
+    def send_message(self, payload):
+        msg = {
+            'target_id': self.target_id,
+            'operation_id': None,
+            'type': 'message',
+            'payload': payload,
+        }
+        qt_message_hub.post_message.emit(msg)
 
     #--------------------------------------------------------------------------
     # Properties
