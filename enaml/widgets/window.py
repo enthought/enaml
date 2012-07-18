@@ -4,7 +4,6 @@
 #------------------------------------------------------------------------------
 from traits.api import Unicode
 
-from enaml.async.async_application import AsyncApplication
 from enaml.core.trait_types import EnamlEvent
 
 from .widget_component import WidgetComponent, SizeTuple
@@ -88,32 +87,4 @@ class Window(WidgetComponent):
 
         """
         self.send_message({'action': 'restore'})
-
-    def publish(self):
-        """ Publish this Window with the application. 
-
-        This method takes care of ensuring that all the child widgets
-        are also published and that all of the binding/initialization
-        handlers are called.
-        
-        """
-        # XXX We are currently assuming all children will be messenger 
-        # widgets. This will probably need to be updated at some
-        # point in the future. Use cases will be the deciders.
-        widgets = []
-        stack = [self]
-        while stack:
-            widget = stack.pop()
-            widgets.append(widget)
-            stack.extend(reversed(widget.children))
-
-        targets = []
-        for widget in widgets:
-            targets.append(widget.target_id)
-        
-        app = AsyncApplication.instance()
-        app.publish(targets)
-        
-        for widget in widgets:
-            widget.bind()
 
