@@ -6,8 +6,24 @@
 
 """
 from collections import defaultdict
+from itertools import count
 from types import MethodType
 from weakref import ref
+
+
+def id_generator(stem):
+    """ An identifier generator.
+
+    Parameters
+    ----------
+    stem : str
+        A string stem to prepend to a incrementing integer value.
+
+    """
+    counter = count()
+    str_ = str
+    while True:
+        yield stem + str_(counter.next())
 
 
 class abstractclassmethod(classmethod):
