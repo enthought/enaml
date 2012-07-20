@@ -2,8 +2,12 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from phone_validator import PhoneNumberValidator
 
+#from phone_validator import PhoneNumberValidator
+
+from enaml.widgets import Window, Label, Field, Form, DateEdit, \
+                            CheckBox, GroupBox, Container, PushButton
+from enaml.layout import vertical, horizontal, align, spacer
 
 enamldef EmployeeForm(Form):
     attr employee
@@ -11,17 +15,18 @@ enamldef EmployeeForm(Form):
     Label:
         text = "First name:"
     Field:
-        value := employee.first_name
+        text := employee.first_name
     Label:
         text = "Last name:"
     Field:
-        value := employee.last_name
+        text := employee.last_name
     Label:
         text = "Home phone:"
     Field:
-        value := employee.phone
-        validator = PhoneNumberValidator()
-        bgcolor << 'unacceptable' if not acceptable else 'none'
+        #text := employee.phone
+        text << str(employee.phone)
+        #validator = PhoneNumberValidator()
+        #bgcolor << 'unacceptable' if not acceptable else 'none'
     Label:
         text = 'Date of Birth:'
     DateEdit:
@@ -33,15 +38,16 @@ enamldef EmployeeForm(Form):
     Label:
         text = 'Password'
     Field:
-        password_mode << 'password' if not pw_cb.checked else 'normal'
-        value :: print 'Password:', value
+        #password_mode << 'password' if not pw_cb.checked else 'normal'
+        text :: print 'Password:', text
     Label:
         text = 'Show Password:'
     CheckBox:
         id: pw_cb
         checked = False
-    ToggleButton:
+    PushButton:
         checked := show_employer
+        checkable = True
         text << ('Hide' if show_employer else 'Show') + ' Employer Details'
 
 
@@ -50,12 +56,12 @@ enamldef EmployerForm(Form):
     Label:
         text = "Company:"
     Field:
-        value << employer.company_name
+        text << employer.company_name
         enabled << en_cb.checked
     Label:
         text = "Reporting Manager:"
     Field:
-        value << "%s %s" % (employer.first_name, employer.last_name)
+        text << "%s %s" % (employer.first_name, employer.last_name)
         enabled << en_cb.checked
     Label:
         text = "Allow Editing:"
@@ -64,7 +70,7 @@ enamldef EmployerForm(Form):
         checked = True
 
 
-enamldef EmployeeView(MainWindow):
+enamldef EmployeeView(Window):
     id: main
     attr employee
 

@@ -6,6 +6,7 @@ import datetime
 
 from traits.api import HasTraits, Str, Int, Instance, Tuple, Date, Property
 
+from enaml.qt.qt_local_application import QtLocalApplication
 
 class Person(HasTraits):
     """ A simple class representing a person object.
@@ -78,5 +79,10 @@ if __name__ == '__main__':
     
     # Create a view and show it.
     view = EmployeeView(employee=employee_mary)
-    view.show()
+
+
+    app = QtLocalApplication()
+    app.serve('main', view)
+
+    app.mainloop()
 
