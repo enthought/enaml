@@ -11,19 +11,10 @@ import sys
 import types
 import warnings
 
-from enaml import imports, default_toolkit, wx_toolkit, qt_toolkit
+from enaml import imports
 from enaml.core.parser import parse
 from enaml.core.enaml_compiler import EnamlCompiler
-
-
-# Acceptable enaml toolkit options for enaml-run
-ENAML_TOOLKITS = {
-    'default': default_toolkit, 'wx': wx_toolkit, 'qt': qt_toolkit
-}
-
-
-# Mapping of the --toolkit option to the ETS_TOOLKIT value
-OPTION_TO_ETS = {'default': 'qt4', 'wx': 'wx', 'qt': 'qt4'}
+from enaml.qt.qt_local_application import QtLocalApplication
 
 
 def prepare_toolkit(toolkit_option):
@@ -49,6 +40,24 @@ def prepare_toolkit(toolkit_option):
        The enaml toolkit object to be used.
 
     """
+
+    # NOTE: This function is not currently used
+    # the toolkit is assumed to be Qt for the time being
+
+    # TODO: These two defines have been moved here from global scope
+    # since the imports do not currently work. They will need to be
+    # restored when more than just Qt is supported
+    from enaml import default_toolkit, wx_toolkit, qt_toolkit
+    # Acceptable enaml toolkit options for enaml-run
+    ENAML_TOOLKITS = {
+        'default': default_toolkit, 'wx': wx_toolkit, 'qt': qt_toolkit
+    }
+
+    # Mapping of the --toolkit option to the ETS_TOOLKIT value
+    OPTION_TO_ETS = {'default': 'qt4', 'wx': 'wx', 'qt': 'qt4'}
+
+
+
     enaml_toolkit = ENAML_TOOLKITS[toolkit_option]
 
     try:
@@ -76,14 +85,8 @@ def main():
     parser.allow_interspersed_args = False
     parser.add_option('-c', '--component', default='Main',
                       help='The component to view')
-    parser.add_option('-t', '--toolkit', default='default',
-                      choices=['default', 'wx', 'qt'],
-                      help='The toolkit backend to use')
 
     options, args = parser.parse_args()
-
-    # Preapare the toolkit
-    toolkit = prepare_toolkit(options.toolkit)
 
     if len(args) == 0:
         print 'No .enaml file specified'
@@ -113,17 +116,20 @@ def main():
     with imports():
         exec code in ns
 
-    with toolkit:
-        requested = options.component
-        if requested in ns:
-            component = ns[requested]
-            window = component()
-            window.show()
-        elif 'main' in ns:
-            ns['main']()
-        else:
-            msg = "Could not find component '%s'" % options.component
-            print msg
+    requested = options.component
+    if requested in ns:
+        component = ns[requested]
+        window = component()
+
+        app = QtLocalApplication()
+        app.serve('main', window)
+
+        app.mainloop()
+    elif 'main' in ns:
+        ns['main']()
+    else:
+        msg = "Could not find component '%s'" % options.component
+        print msg
 
 
 if __name__ == '__main__':

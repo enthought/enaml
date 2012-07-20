@@ -38,7 +38,7 @@ component, ``Main``, which derives from ``MainWindow``, a component in the
 
 ::
 
-    enamldef Main(MainWindow):
+    enamldef Main(Window):
 
 With the this line of code, we have defined the start of a *definition
 block*.
@@ -61,18 +61,22 @@ beginning at a certain indentation level refer to the header line at the next
 lower indentation level. So in our simple example, the ``Container:`` belongs to
 ``Main`` and the ``Label:`` belongs to ``Container``::
 
-    enamldef Main(MainWindow):
+    enamldef Main(Window):
         attr message = "Hello, world!"
         Container:
             Label:
                 text = message
 
 
-Our view is made up of a ``MainWindow`` containing a ``Container`` which in
+Our view is made up of a ``Window`` containing a ``Container`` which in
 turn contains a ``Label``, whose ``text`` attribute we set equal to ``message``
 attribute of ``Main``, which can be passed in by the
 calling function, but which has a default of ``Hello, world!``.  (We'll discuss
 this in more detail in the :ref:`next tutorial <john-doe>` .)
+
+Just like regular Python objects, you need to import any Enaml widgets that
+you are using from the enaml.widgets module.
+
 
 Using the |Enaml| view in Python
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -80,24 +84,35 @@ Using the |Enaml| view in Python
 Now we'll take a look at how to use the view in Python code. First, we import
 |Enaml|::
 
- import enaml
+    import enaml
 
 Then we use ``enaml.imports()`` as a `context manager
 <http://docs.python.org/release/2.5.2/ref/context-managers.html>`_ for importing
 the |Enaml| view.
 ::
 
- with enaml.imports():
-     from hello_world_view import Main
+    with enaml.imports():
+        from hello_world_view import Main
 
-Then, we instantiate the view, passing the message to be displayed::
+Then, we instantiate the view, passing the message to be displayed.  Passing
+an explicit message overrides the default message that ``Main`` provides::
 
- view = Main(message="Hello, world, from Python!")
+    view = Main(message="Hello, world, from Python!")
 
-The ``show()`` method on ``view`` displays the window and starts the application
-mainloop::
+We then need to create an application object, in this case a local application
+using Qt to display the UI::
 
- view.show()
+    app = QtLocalApplication()
+    
+We need to serve the view via the application, which makes our view available to
+the UI with he name 'main'::
+    
+    app.serve('main', view)
+
+Finally, we start the mainloop of the application which takes control of the
+program flow until the user closes the window::
+
+    app.mainloop()
 
 
 .. image:: images/hello_world_python.png
