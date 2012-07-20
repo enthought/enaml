@@ -94,11 +94,6 @@
   // the message in an Enaml application.
   "target_id": "<string>",
 
-  // The requestor of the message. This uniquely identifies the object
-  // which originated the action. This value must be used as the "target_id"
-  // in the content of the corresponding "enaml_reply" message.
-  "originator_id": "<string>",
-
   // The action that should be performed by the receiver the target.
   // The types of actions supported are defined by a given receiver.
   "action": "<string>",
@@ -115,7 +110,7 @@
 // The "metadata" of this message type is as follows:
 {
   // The target of the message. This will be the same as the value for
-  // "originator_id" in the associated "enaml_request" message.
+  // "target_id" in the associated "enaml_request" message.
   "target_id": "<string>",
 
   // This will be the same value as the "action" field in the
