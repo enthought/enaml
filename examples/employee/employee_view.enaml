@@ -11,7 +11,7 @@ from enaml.layout import vertical, horizontal, align, spacer
 
 enamldef EmployeeForm(Form):
     attr employee
-    attr show_employer: bool = False
+    attr show_employer: bool = True
     Label:
         text = "First name:"
     Field:
