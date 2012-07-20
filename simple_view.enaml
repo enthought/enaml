@@ -1,0 +1,23 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2012, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+from enaml.widgets import Window, Container, PushButton, Html
+from enaml.layout import hbox, vbox, spacer
+
+
+enamldef MainView(Window):
+    Container:
+        constraints = [vbox(html, hbox(foo, bar, spacer, baz))]
+        Html:
+            id: html
+            source = "<center><h1>Hello World!</h1></center>"
+        PushButton:
+            id: foo
+            text = 'foo'
+        PushButton:
+            id: bar
+            text = 'bar'
+        PushButton:
+            id: baz
+            text = 'baz'
