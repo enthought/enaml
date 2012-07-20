@@ -51,8 +51,9 @@
   "metadata": null,
 
   // The content of the message. What exists in the content will be
-  // dependent upon the "msg_type". The supported message types,
-  // listed below, describe what will be included in the content.
+  // dependent upon the "msg_type" and "metadata". The supported message
+  // types are listed below and describe what will be included in their
+  // metadata.
   "content": {},
 }
 
@@ -70,7 +71,7 @@
 // It is used to post and action and or data to a specific receiver. The
 // originator of the message does not expect a reply.
 //
-// The "content" of this message type is as follows:
+// The "metadata" of this message type is as follows:
 {
   // The target of the message. This uniquely identifies the receiver of
   // the message in an Enaml application.
@@ -79,9 +80,6 @@
   // The action that should be performed by the receiver the target.
   // The types of actions supported are defined by a given receiver.
   "action": "<string>",
-
-  // Additional keys can be present in this content dict, and will
-  // be defined by the given action and receiver.
 }
 
 // "enaml_request"
@@ -90,7 +88,7 @@
 // from another object. The originator of the message expects to receive
 // an "enaml_reply" message at some point in the future. 
 //
-// The "content" of this message type is as follows.
+// The "metadata" of this message type is as follows.
 {
   // The target of the message. This uniquely identifies the receiver of
   // the message in an Enaml application.
@@ -104,9 +102,6 @@
   // The action that should be performed by the receiver the target.
   // The types of actions supported are defined by a given receiver.
   "action": "<string>",
-
-  // Additional keys can be present in this content dict, and will
-  // be defined by the given action and receiver.
 }
 
 
@@ -117,7 +112,7 @@
 // request. The order in which messages of this type are generated is
 // not guaranteed.
 //
-// The "content" of this message type is as follows:
+// The "metadata" of this message type is as follows:
 {
   // The target of the message. This will be the same as the value for
   // "originator_id" in the associated "enaml_request" message.
@@ -126,9 +121,5 @@
   // This will be the same value as the "action" field in the
   // associated "enaml_request".
   "action": "<string>",
-  
-  // Additional keys can be present in this content dict, and will
-  // be defined by the reciever and action in the associated
-  // "enaml_request" which generated this reply.
 }
 
