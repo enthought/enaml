@@ -2,12 +2,10 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-""" A module for registering message receivers for an Enaml application.
+""" A module for registering receivers and delivering messages in an
+Enaml application.
 
 """
-from enaml.utils import id_generator
-
-
 #: The process-wide registry of message handlers for the application.
 _REGISTRY = {}
 
@@ -16,84 +14,78 @@ _REGISTRY = {}
 _YRTSIGER = {}
 
 
-def register(messenger, id_gen=id_generator('msgr')):
-    """ Register the messenger for receiving messages delivered via
-    the messaging hub.
+def register(target_id, receiver):
+    """ Register the receiver for handling messages delivered by 
+    the application.
 
-    Calling this method multiple times with the same messenger will
-    return the same value until the messenger is unregistered.
+    If a different receiver is already registered with the given
+    target id, a ValueError will be raised. Registering the same
+    receiver multiple times will raise a ValueError.
 
     Parameters
     ----------
-    messenger : object
-        An object that will receive messages from the messaging hub.
-        It must have a method named 'receive', which accepts a single
-        argument which is the message dictionary.
+    target_id : str
+        The unique target id for this receiver. Enaml messages can
+        be delivered to this receiver at a later time by calling
+        the 'deliver' function of the registry.
 
-    id_gen : generator, optional
-        A generator whose 'next()' method will be called to generate
-        the messaging identifer for the messenger. The default will
-        create monontonically increasing identifiers. If the default
-        is overridden, it should ensure the uniqueness of its values.
-
-    Returns
-    -------
-    result : str
-        The identifier string to use when sending messages to and from
-        the messenger.
+    receiver : object
+        An object that will receive messages. It must have a method 
+        named 'receive', which accepts a single argument which is the 
+        message dict.
 
     """
-    if messenger in _YRTSIGER:
-        return _YRTSIGER[messenger]
-    msgr_id = id_gen.next()
-    _REGISTRY[msgr_id] = messenger
-    _YRTSIGER[messenger] = msgr_id
-    return msgr_id
+    if receiver in _YRTSIGER:
+        raise ValueError("Receiver already registered.")
+    if target_id in _REGISTRY:
+        raise ValueError("Target id already in use.")
+    _REGISTRY[target_id] = receiver
+    _YRTSIGER[receiver] = target_id
 
 
-def unregister(messenger):
-    """ Unregister a previously registered messenger. The messenger
-    will no longer receive messages from the messaging hub.
+def unregister(receiver):
+    """ Unregister a previously registered receiver. The receiver
+    will no longer receive messages from the application.
 
     Parameters
     ----------
-    messenger : object
+    receiver : object
         An object that was previously registered via a call to the
-        'register' method. If the messenger was not previously 
+        'register' method. If the receiver was not previously 
         registered, this is a no-op.
 
     """
-    if messenger in _YRTSIGER:
-        msgr_id = _YRTSIGER.pop(messenger)
-        _REGISTRY.pop(msgr_id, None)
+    if receiver in _YRTSIGER:
+        target_id = _YRTSIGER.pop(receiver)
+        _REGISTRY.pop(target_id, None)
 
 
-def lookup(messenger_id):
-    """ Return the messenger object for the given messenger id.
+def lookup(target_id):
+    """ Return the receiver object for the given target id.
 
     Parameters
     ----------
-    messenger_id : str
-        The identifier for a previously registered messenger.
+    target_id : str
+        The identifier for a previously registered receiver.
 
     Returns
     -------
     result : object
-        The messenger object for the identifier, or None if there is
-        no registered messenger for the identifier.
+        The receiver object for the identifier, or None if there is
+        no registered receiver for the identifier.
 
     """
-    return _REGISTRY.get(messenger_id)
+    return _REGISTRY.get(target_id)
 
 
-def all_messengers():
-    """ Get all the current messengers in the registry.
+def all_receivers():
+    """ Return all of the current receivers in the registry.
 
     Returns
     -------
     results : list of tuples
-        A list of (messenger_id, messenger) for all of the registered
-        messengers in the application. The order of the list is 
+        A list of (target_id, receiver) for all of the registered
+        receivers in the application. The order of the list is 
         undefined.
 
     """

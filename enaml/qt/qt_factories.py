@@ -47,6 +47,11 @@ def form_factory():
     return QtForm
 
 
+def group_box_factor():
+    from .qt_group_box import QtGroupBox
+    return QtGroupBox
+
+
 def html_factory():
     from .qt_html import QtHtml
     return QtHtml
@@ -127,6 +132,7 @@ QT_FACTORIES = {
     'Dialog': dialog_factory,
     'Field': field_factory,
     'Form': form_factory,
+    'GroupBox': group_box_factor,
     'Html': html_factory,
     'ImageView': image_view_factory,
     'Label': label_factory,

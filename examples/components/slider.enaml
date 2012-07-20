@@ -9,15 +9,15 @@ a range of integer values into values on a log scale.
 
 """
 import math
+from enaml.widgets import Window, Form, Label, Field, Slider
 
-
-enamldef Main(MainWindow):
+enamldef Main(Window):
     title = 'Slider Example'
     Form:
         Label:
             text = 'Log Value'
         Field:
-            value << math.log(val_slider.value)
+            text << u'{}'.format(math.log(val_slider.value))
             read_only = True
         Slider:
             id: val_slider

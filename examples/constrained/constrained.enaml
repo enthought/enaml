@@ -21,7 +21,11 @@ Pressing the Share PushButton will add a new constraint that forces the width
 of that PushButton to increase to 200.
 
 """
-enamldef Main(MainWindow):
+from enaml.widgets import Window, Html, Container, PushButton
+from enaml.layout import hbox, vbox, spacer, align
+
+
+enamldef Main(Window):
     Container:
         constraints = [
             # Arrange the Html Frame above the horizontal row of butttons

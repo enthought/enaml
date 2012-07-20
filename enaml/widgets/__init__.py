@@ -14,6 +14,7 @@ from .datetime_edit import DatetimeEdit
 from .dialog import Dialog
 from .field import Field
 from .form import Form
+from .group_box import GroupBox
 from .html import Html
 from .image_view import ImageView
 from .label import Label

@@ -9,71 +9,112 @@
 //-----------------------------------------------------------------------------
 // Message Format
 //-----------------------------------------------------------------------------
-// This describes the top-level message object that is send across the
-// wire between application objects. The message structure is designed
-// to be flexible in the fashion the sub-parts of the message contain
-// enough contextual information that they can be unpacked and passed
-// directly to handler components, without the need for the handler to 
-// re-parse the entire message.
+// This describes the message object that is used to communicate between
+// objects in an Enaml application. This message format is the same as
+// that used by the most recent version of IPython.
 //
+// The basic requirement of message is that be serializable to JSON. 
 // For applications which operate locally, they may choose to omit
-// the top-level portion of the message protocol and dispatch the
-// operations to their targets directly. This concession is in the
-// interest of performance and practicality, and also the fact that
-// local applications will typically have a single application object
-// which handles routing, and the top-level data is not needed.
+// the serialization step, since it would be unnecessary.
+//
+// Once messages are created and posted to the dispatcher, they should
+// be treated as read-only. Thus, it is safe for applications to read
+// messages from mutiple threads without locking.
 {
-  // The id of the application instance for the message. This should
-  // be unique among all other instances currently in use.
-  "application_id": "<string>",
+  // The header of the message. The header contains information about
+  // the message sender, and the type of the message. The header is
+  // mainly useful for application level objects.
+  "header":
+    {
+      // A unique identifier for the session which created the message.
+      "session": "<string>",
 
-  // The id of the client which is sending/receiving the message. This
-  // should be unique among all other clients currently in use.
-  "client_id": "<string>",
+      // The username for the originator of the message.
+      "username": "<string>",
+      
+      // A unique identifier for this message.
+      "msg_id": "<string>",
+      
+      // The type of this message. Supported message types are 
+      // enumerated below.
+      "msg_type": "<string>",
+    }
+
+  // The parent header for this message. This may be null for an 
+  // original message. For a response message, this will be the
+  // header of the original message.
+  "parent_header": null,
 
   // The metadata supplied by the implementations. There is formally
   // no requirement for what must be placed in this object. It is 
   // entirely implementation defined and may be null.
   "metadata": null,
 
-  // The array of operations to execute by the peer. The operations
-  // must be executed in order.
-  "operations": [
-    {
-      // The type of the operation. Will always be one of "message", 
-      // "request", "response".
-      "type": "<message | request | reply>",
-      
-      // The target of the operation is the identifier of the handler 
-      // on the peer that should process the operation. These 
-      // identifiers are unique and implementation depenent. They are 
-      // generated as peers are created.
-      "target_id": "<string>",
-        
-      // An identifier which uniquely defines this operation. For
-      // operations of type "message", this will be null. For 
-      // "request" and "reply" this will be a string which identifies
-      // a "request"/"reply" pair, and can be used by an application
-      // to route the operation to the proper handler.
-      "operation_id": null,
+  // The content of the message. What exists in the content will be
+  // dependent upon the "msg_type" and "metadata". The supported message
+  // types are listed below and describe what will be included in their
+  // metadata.
+  "content": {},
+}
 
-      // The payload of an operation is the information required by
-      // the target handler to process the operation. The payload
-      // contents are partially dependent on the type of the 
-      // operation.
-      "payload": {
-        // The action associate with this operation. The available
-        // actions for a peer are dependent on the type of that
-        // peer and the type of the operation. See the specification 
-        // for actions for further info. (this spec is not yet defined)
-        "action": "<string>",
 
-        // The remaining properties of the payload depend on the 
-        // action. See the specification for actions for further 
-        // info. (this spec is not yet defined)
+//-----------------------------------------------------------------------------
+// Supported Message Types
+//-----------------------------------------------------------------------------
+//
+// These are the message types currently supported by an Enaml application
+//
+//
+// "enaml_message"
+// ---------------
+// This is the most common message type passed around in Enaml applications.
+// It is used to post and action and or data to a specific receiver. The
+// originator of the message does not expect a reply.
+//
+// The "metadata" of this message type is as follows:
+{
+  // The target of the message. This uniquely identifies the receiver of
+  // the message in an Enaml application.
+  "target_id": "<string>",
 
-      }
-    }
-  ]
+  // The action that should be performed by the receiver the target.
+  // The types of actions supported are defined by a given receiver.
+  "action": "<string>",
+}
+
+// "enaml_request"
+// ---------------
+// This type of message is created when an object needs to request data
+// from another object. The originator of the message expects to receive
+// an "enaml_reply" message at some point in the future. 
+//
+// The "metadata" of this message type is as follows.
+{
+  // The target of the message. This uniquely identifies the receiver of
+  // the message in an Enaml application.
+  "target_id": "<string>",
+
+  // The action that should be performed by the receiver the target.
+  // The types of actions supported are defined by a given receiver.
+  "action": "<string>",
+}
+
+
+// "enaml_reply"
+// -------------
+// This type of message is created in response to an "enaml_request". It
+// is used to deliver a response to the object which made the original
+// request. The order in which messages of this type are generated is
+// not guaranteed.
+//
+// The "metadata" of this message type is as follows:
+{
+  // The target of the message. This will be the same as the value for
+  // "target_id" in the associated "enaml_request" message.
+  "target_id": "<string>",
+
+  // This will be the same value as the "action" field in the
+  // associated "enaml_request".
+  "action": "<string>",
 }
 

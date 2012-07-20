@@ -4,6 +4,8 @@
 #------------------------------------------------------------------------------
 from traits.api import HasTraits, Str, Range, on_trait_change
 
+from enaml.qt.qt_local_application import QtLocalApplication
+
 
 class Person(HasTraits):
     """ A simple class representing a person object.
@@ -34,5 +36,9 @@ if __name__ == '__main__':
     john = Person(first_name='John', last_name='Doe', age=42)
     
     view = PersonView(person=john)
-    view.show()
+
+    app = QtLocalApplication()
+    app.serve('main', view)
+
+    app.mainloop()
 

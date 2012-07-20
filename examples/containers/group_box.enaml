@@ -10,7 +10,10 @@ toggle the presence of the titles and whether they should be shown in a
 "flat" style or the default style.
 
 """
-enamldef Main(MainWindow):
+from enaml.widgets import Window, Container, GroupBox, Form, \
+                            Label, Field, CheckBox
+from enaml.layout import vbox, hbox, align, spacer
+enamldef Main(Window):
     title = "Group Boxes"
     Container:
         constraints = [
