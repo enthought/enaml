@@ -217,7 +217,7 @@ class ConstraintsWidget(WidgetComponent):
         cns = self.constraints
         if not cns:
             cns = self._default_constraints()
-        return cns + self._hard_constraints()
+        return cns + self._component_constraints() + self._hard_constraints()
 
     def _hard_constraints(self):
         """ Creates the list of required symbolic constraints.
@@ -242,6 +242,16 @@ class ConstraintsWidget(WidgetComponent):
         ]
         return cns 
 
+    def _component_constraints(self):
+        """ Returns a list of constraints which should be applied on
+        top of any additional user-supplied constraints and hard
+        constraints.
+
+        The default implementation returns an empty list.
+
+        """
+        return []
+        
     def _default_constraints(self):
         """ Returns a list of constraints to include if the user has
         not specified their own in the 'constraints' list. 

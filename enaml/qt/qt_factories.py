@@ -42,6 +42,11 @@ def field_factory():
     return QtField
 
 
+def form_factory():
+    from .qt_form import QtForm
+    return QtForm
+
+
 def html_factory():
     from .qt_html import QtHtml
     return QtHtml
@@ -121,6 +126,7 @@ QT_FACTORIES = {
     'DatetimeEdit': datetime_edit_factory,
     'Dialog': dialog_factory,
     'Field': field_factory,
+    'Form': form_factory,
     'Html': html_factory,
     'ImageView': image_view_factory,
     'Label': label_factory,
