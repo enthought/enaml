@@ -2,7 +2,8 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from enaml.messaging.hub import message_hub
+from enaml.messaging import hub
+from enaml.messaging import registry
 
 from .qt.QtGui import QApplication
 from .qt_factories import QT_FACTORIES
@@ -36,13 +37,16 @@ class QtLocalApplication(object):
         self._views = {}
 
         qt_message_hub.post_message.connect(self._on_qt_posted_message)
-        message_hub.post_message.connect(self._on_posted_message)
+        hub.connect(self._on_posted_message)
 
     #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
     def _on_qt_posted_message(self, message):
-        message_hub.deliver_message(message)
+        target_id = message['target_id']
+        receiver = registry.lookup(target_id)
+        if receiver is not None:
+            receiver.receive(message)
 
     def _on_posted_message(self, message):
         qt_message_hub.deliver_message.emit(message)
