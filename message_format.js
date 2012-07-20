@@ -38,6 +38,9 @@
       // The type of this message. Supported message types are 
       // enumerated below.
       "msg_type": "<string>",
+
+      // The version of the message structure in use.
+      "version": "<string>",
     }
 
   // The parent header for this message. This may be null for an 
@@ -55,6 +58,19 @@
   // types are listed below and describe what will be included in their
   // metadata.
   "content": {},
+}
+
+
+// For every request made by a client to the server. The server will
+// respond with a standard reply message where the "msg_type" is the
+// same as the original message and the content is as follows:
+{
+  // The status of the request, either "ok" or "error"
+  "status": "<ok | error",
+
+  // The error message if the status is "error". If the status is
+  // "ok", the message will be an empty string.
+  "message": "<string>",
 }
 
 
@@ -117,4 +133,27 @@
   // associated "enaml_request".
   "action": "<string>",
 }
+
+
+// "enaml_begin_session"
+// ---------------------
+// This message is used by a client to start an Enaml session. This is
+// the only message type in which the "session" field of the header
+// may be null. The standard reply for this message type will have 
+// a populated "session" field for the client.
+//
+// The "metadata" for this message type is null. 
+//
+// The content for this message type is as follows:
+{
+  // The version of the Enaml protocol to be used by the session.
+  "version": "<string>",
+}
+
+
+// "enaml_end_session"
+// -------------------
+// This message is used by a client to end its session.
+// 
+// Both the "metadata" and the "content" are null.
 
