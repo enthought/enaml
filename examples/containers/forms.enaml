@@ -9,7 +9,11 @@ Note:
    cross most Container boundaries.
 
 """
-enamldef Main(MainWindow):
+from enaml.widgets import Window, Label, Container, Form, Field
+from enaml.layout import hbox, vbox, spacer
+
+
+enamldef Main(Window):
     title = "Form Layout"
     Container:
         constraints = [

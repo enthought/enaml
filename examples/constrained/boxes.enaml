@@ -7,7 +7,11 @@
 FIXME: this is a dumb example.
 
 """
-enamldef Main(MainWindow):
+from enaml.widgets import Window, Html, Container, PushButton, Label
+from enaml.layout import hbox, vbox, spacer, align
+
+
+enamldef Main(Window):
     Container:
         id: main_window
         constraints = [
