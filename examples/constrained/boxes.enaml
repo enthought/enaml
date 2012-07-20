@@ -7,9 +7,8 @@
 FIXME: this is a dumb example.
 
 """
-from enaml.widgets import Window, Html, Container, PushButton, Label
-from enaml.layout import hbox, vbox, spacer, align
-
+from enaml.widgets import Window, Container, Label, PushButton
+from enaml.layout import vbox, hbox, align, spacer
 
 enamldef Main(Window):
     Container:
