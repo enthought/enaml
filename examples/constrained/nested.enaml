@@ -17,6 +17,9 @@ FIXME: Occasionally, this example fails with a solver error stating that
 the objective function is unbounded.
 
 """
+from enaml.widgets import Window, Html, Container, PushButton, Label, Field
+from enaml.layout import hbox, vbox, spacer, align
+
 enamldef LabeledField(Container):
     attr label_text: str = 'Label'
     constraints = [
@@ -31,7 +34,7 @@ enamldef LabeledField(Container):
         resist_clip_width = 'weak'
 
 
-enamldef Main(MainWindow):
+enamldef Main(Window):
     title = "Nested Containers"
     Container:
         constraints = [
