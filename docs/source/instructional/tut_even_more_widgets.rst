@@ -28,7 +28,7 @@ and one for an employer (abbreviated here for succinctness)::
         Label:
             text = "First name:"
         Field:
-            value := employee.first_name
+            text := employee.first_name
             
         # ... etc
         
@@ -41,7 +41,7 @@ and one for an employer (abbreviated here for succinctness)::
         Label:
             text = "Company:"
         Field:
-            value << employer.company_name
+            text << employer.company_name
             enabled << en_cb.checked
         # ... etc    
 
