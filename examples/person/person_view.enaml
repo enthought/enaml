@@ -18,10 +18,8 @@ enamldef PersonForm(Form):
         text := person.last_name
     Label:
         text = 'Age'
-    Field:
-        text ::
-            person.age = int(text)
-        text << str(person.age)
+    IntField:
+        value := person.age
 
 
 enamldef PersonView(Window):
