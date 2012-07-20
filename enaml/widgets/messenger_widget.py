@@ -5,9 +5,12 @@
 from traits.api import Instance, ReadOnly, Str
 
 from enaml.core.base_component import BaseComponent
-from enaml.messaging.hub import message_hub
+from enaml.messaging import hub
 from enaml.messaging.registry import register
-from enaml.utils import LoopbackGuard
+from enaml.utils import LoopbackGuard, id_generator
+
+
+id_gen = id_generator('w')
 
 
 class MessengerWidget(BaseComponent):
@@ -36,7 +39,8 @@ class MessengerWidget(BaseComponent):
 
     def __new__(cls, *args, **kwargs):
         self = super(MessengerWidget, cls).__new__(cls, *args, **kwargs)
-        self.target_id = register(self)
+        self.target_id = id_gen.next()
+        register(self.target_id, self)
         return self
 
     def traits_init(self):
@@ -64,7 +68,7 @@ class MessengerWidget(BaseComponent):
             'type': 'message',
             'payload': payload,
         }
-        message_hub.post_message(msg)
+        hub.post(msg)
 
     #--------------------------------------------------------------------------
     # Public API
