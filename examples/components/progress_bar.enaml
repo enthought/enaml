@@ -12,6 +12,8 @@ as work is accomplished.
 
 """
 import random
+from enaml.widgets import Window, Container, ProgressBar, Label, PushButton
+from enaml.layout import hbox, vbox, spacer, align
 
 from traits.api import HasTraits, Int
 
@@ -41,7 +43,7 @@ class ProgressModel(HasTraits):
         self.units_done = 0
 
 
-enamldef Main(MainWindow):
+enamldef Main(Window):
     attr model: ProgressModel = ProgressModel()
     title = 'Progress Bar'
     Container:
