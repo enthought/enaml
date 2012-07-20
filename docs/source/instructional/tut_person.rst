@@ -56,15 +56,15 @@ from other components.
         Label:
             text = 'First Name'
         Field:
-            value := person.first_name
+            text := person.first_name
         Label:
             text = 'Last Name'
         Field:
-            value := person.last_name
+            text := person.last_name
         Label:
             text = 'Age'
         IntField:
-            value := person.age 
+            text := person.age 
 
 A component definition block header line begins with ``enamldef`` followed by
 the name of the component followed by the base component or widget it inherits
@@ -127,7 +127,7 @@ simple. Note that we will pass a ``person`` object to the view.
 
 ::
 
-    enamldef PersonView(MainWindow):
+    enamldef PersonView(Window):
         attr person
         PersonForm:
             person = parent.person
@@ -182,7 +182,12 @@ Person object and pass it to ``PersonView``::
         john = Person(first_name='John', last_name='Doe', age=42)
         
         view = PersonView(john)
-        view.show()
+        
+        app =  QtLocalApplication()
+        app.serve('main', view)
+
+        app.mainloop()
+
 
 Running it from the command line, we see::
 
