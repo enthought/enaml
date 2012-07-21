@@ -13,16 +13,7 @@ Qt
 ^^
 
 .. inheritance-diagram::
-    enaml.backends.qt.qt_list_view.QtListView
+    enaml.components.list_view.QtListView
     :parts: 1
 
-.. autoclass:: enaml.backends.qt.qt_list_view.QtListView
-
-Wx
-^^
-
-.. inheritance-diagram::
-    enaml.backends.wx.wx_list_view.WXListView
-    :parts: 1
-
-.. autoclass:: enaml.backends.wx.wx_list_view.WXListView
+.. autoclass:: enaml.components.list_view.QtListView
