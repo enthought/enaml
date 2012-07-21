@@ -9,10 +9,16 @@ with a limited vertical extent, but gets its initial width from the contained
 widget.
 
 """
-enamldef Main(MainWindow):
+from enaml.widgets import Window, ScrollArea, Form, Label, Field
+from enaml.layout import hbox, vbox, spacer, align
+
+
+enamldef Main(Window):
     title = "Scroll Area"
     ScrollArea:
-        preferred_size = (None, 200)
+        constraints = [
+            self.width >= 200,
+        ]
         Form:
             Label:
                 text = "First name:"
