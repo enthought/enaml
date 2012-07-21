@@ -196,7 +196,7 @@ the center of the container.
 
 The objects ``vbox``, ``hbox``, ``align`` and ``spacer`` are conveniences that
 simplify layout.  They all evaluate down to a series of linear inequalities
-which are solved by the `casuarius <https://github.enthought.com/casuarius>`_
+which are solved by the `casuarius <https://github.com/enthought/casuarius>`_
 linear constraint solver.  These and other layout helpers can be found in the
 ``enaml.layout`` module.
 
