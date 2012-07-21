@@ -121,6 +121,7 @@ Container and Layout widgets
     enaml.widgets.group_box.GroupBox
     enaml.widgets.notebook.Notebook
     enaml.widgets.page.Page
+    enaml.widgets.scroll_area.ScrollArea
 
 
 Item views
