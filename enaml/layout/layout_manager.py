@@ -4,8 +4,6 @@
 #------------------------------------------------------------------------------
 from casuarius import Solver, medium
 
-from enaml.guard import guard
-
 
 class LayoutManager(object):
     """ A class which uses a casuarius solver to manage a system 
@@ -15,6 +13,7 @@ class LayoutManager(object):
     def __init__(self):
         self._solver = Solver(autosolve=False)
         self._initialized = False
+        self._running = False
 
     def initialize(self, constraints):
         """ Initialize the solver with the given constraints.
@@ -71,12 +70,16 @@ class LayoutManager(object):
         """
         if not self._initialized:
             raise RuntimeError('Layout with uninitialized solver')
-        if not guard.guarded(self, 'layout'):
-            with guard(self, 'layout'):
-                w, h = size
-                values = [(width, w), (height, h)]
-                with self._solver.suggest_values(values, strength, weight):
-                    cb()
+        if self._running:
+            return
+        try:
+            self._running = True
+            w, h = size
+            values = [(width, w), (height, h)]
+            with self._solver.suggest_values(values, strength, weight):
+                cb()
+        finally:
+            self._running = False
 
     def get_min_size(self, width, height, strength=medium, weight=0.1):
         """ Run an iteration of the solver with the suggested size of the
