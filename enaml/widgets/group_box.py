@@ -2,12 +2,10 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-
-from traits.api import Bool, Str
+from traits.api import Bool, Str, Enum
 
 from .container import Container
 
-from ..enums import HorizontalAlign
 from ..layout.geometry import Box
 
 
@@ -25,7 +23,7 @@ class GroupBox(Container):
     flat = Bool(False)
 
     #: The alignment of the title text.
-    title_align = HorizontalAlign
+    title_align = Enum('left', 'right', 'center')
 
     def creation_attributes(self):
         """ Populates the initial attributes dict for the component.
