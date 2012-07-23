@@ -29,34 +29,26 @@ class QtTextEditor(QtConstraintsWidget):
         has finished loading, so this function is delayed
 
         """
-        self.set_text(self.attrs['text'])
+        self.set_document(self.attrs['document'])
         self.set_theme(self.attrs['theme'])
-        self.set_mode(self.attrs['mode'])
         self.set_auto_pair(self.attrs['auto_pair'])
         self.set_font_size(self.attrs['font_size'])
-        self.show_margin_line(self.attrs['margin_line'])
-        self.set_margin_line_column(self.attrs['margin_line_column'])
+        self.set_margin_line(self.attrs['margin_line'])
 
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
-    def on_message_set_text(self, payload):
-        """ Handle the 'set-text' action from the Enaml widget.
+    def on_message_set_document(self, payload):
+        """ Handle the 'set-document' action from the Enaml widget.
 
         """
-        self.set_text(payload['text'])
+        self.set_document(payload['document'])
 
     def on_message_set_theme(self, payload):
         """ Handle the 'set-theme' action from the Enaml widget.
 
         """
         self.set_theme(payload['theme'])
-
-    def on_message_set_mode(self, payload):
-        """ Handle the 'set-mode' action from the Enaml widget.
-
-        """
-        self.set_mode(payload['mode'])
 
     def on_message_set_auto_pair(self, payload):
         """ Handle the 'set-auto_pair' action from the Enaml widget.
@@ -70,38 +62,27 @@ class QtTextEditor(QtConstraintsWidget):
         """
         self.set_font_size(payload['font_size'])
 
-    def on_message_show_margin_line(self, payload):
-        """ Handle the 'show-margin_line' action from the Enaml widget.
+    def on_message_set_margin_line(self, payload):
+        """ Handle the 'set-margin_line' action from the Enaml widget.
 
         """
-        self.show_margin_line(payload['margin_line'])
-
-    def on_message_set_margin_line_column(self, payload):
-        """ Handle the 'set-margin_line_column' action from the Enaml widget.
-
-        """
-        self.set_margin_line_column(payload['margin_line_column'])
+        self.set_margin_line(payload['margin_line'])
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
-    def set_text(self, text):
-        """ Set the text in the underlying widget.
+    def set_document(self, document):
+        """ Set the document in the underlying widget.
 
         """
-        self.widget.editor().set_text(text)
+        self.widget.editor().set_text(document.text)
+        self.widget.editor().set_mode(document.mode)
 
     def set_theme(self, theme):
-        """ Set the theme of the underlying editor.
+        """ Set the theme of the editor
 
         """
         self.widget.editor().set_theme(theme)
-
-    def set_mode(self, mode):
-        """ Set the mode of the underlying editor.
-
-        """
-        self.widget.editor().set_mode(mode)
 
     def set_auto_pair(self, auto_pair):
         """ Set whether or not to pair parentheses, braces, etc in the editor
@@ -115,14 +96,12 @@ class QtTextEditor(QtConstraintsWidget):
         """
         self.widget.editor().set_font_size(font_size)
 
-    def show_margin_line(self, margin_line):
+    def set_margin_line(self, margin_line):
         """ Set whether or not to display the margin line in the editor
 
         """
-        self.widget.editor().show_margin_line(margin_line)
-
-    def set_margin_line_column(self, margin_line_col):
-        """ Set the column number for the margin line
-
-        """
-        self.widget.editor().set_margin_line_column(margin_line_col)
+        if type(margin_line) == bool:
+            self.widget.editor().show_margin_line(margin_line)
+        else:
+            self.widget.editor().set_margin_line_column(margin_line)
+            self.widget.editor().show_margin_line(True)
