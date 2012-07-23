@@ -23,19 +23,11 @@ class QtAceEditor(QObject):
     margin_line_changed = Signal(bool)
     margin_line_column_changed = Signal(int)
 
-    def __init__(self):
+    def __init__(self, parent=None):
         """ Initialize the editor
 
         """
-        super(QtAceEditor, self).__init__()
-        self._text = ""
-        self._mode = "ace/mode/text"
-        self._theme = "ace/theme/textmate"
-        self._auto_pair = True
-        self._font_size = 12
-        self._margin_line = True
-        self._margin_line_column = 80
-
+        super(QtAceEditor, self).__init__(parent)
         self._events = []
         self._bindings = []
 
@@ -173,12 +165,8 @@ class QtAceEditor(QObject):
         template_path = p.join(p.dirname(p.abspath(__file__)),
             'tab_ace_test.html')
         template = Template(open(template_path, 'r').read())
-        _text = self.text()
-        _mode = self.mode()
-        _theme = self.theme()
         _r_path = "file://" + p.join(p.dirname(p.abspath(__file__)))
         _events = '\n'.join(self._events)
         _bindings = '\n'.join(self._bindings)
-        return template.substitute(text=_text, mode=_mode,
-                                   theme=_theme, events=_events,
-                                   resource_path=_r_path, bindings=_bindings)
+        return template.substitute(events=_events, resource_path=_r_path,
+                                   bindings=_bindings)

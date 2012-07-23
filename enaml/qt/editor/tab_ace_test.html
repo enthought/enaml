@@ -22,13 +22,14 @@
 		var editor = ace.edit("editor");
 		var tab_list = jQuery('#tab_list');
 		tab_list.sortable({
-			//containment: '#tabs',
-			tolerance: 'pointer',
-			helper: 'clone'
+			helper: 'clone',
+			scroll: false,
+			distance: 15,
+			axis: 'x'
 		});
 
 		var sessions = {
-			'initial' : new EditSession("${text}", "${mode}")
+			'initial' : new EditSession("")
 		}
 
 		tab_list.__defineSetter__("current_tab", function(tab) {
@@ -96,6 +97,7 @@
 			li_list = jQuery('li', tab_list);
 			if (li_list.length == 1) {
 				jQuery('button', li_list[0]).show();
+				tab_list.sortable('enable');
 			}
 			li = document.createElement('li');
 			li.innerHTML = 'Untitled'

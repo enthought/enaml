@@ -12,15 +12,15 @@ class TextEditor(ConstraintsWidget):
 
     """
     #: The text for the text editor
-    text = Unicode
+    text = Unicode("")
 
     #: The editing mode for the editor
-    mode = Unicode
+    mode = Unicode("ace/mode/text")
 
     #: The theme for the editor
-    theme = Unicode
+    theme = Unicode("ace/theme/textmate")
 
-    #: Auto pair's parentheses, braces, etc
+    #: Auto pairs parentheses, braces, etc
     auto_pair = Bool(True)
 
     #: The editor's font size
