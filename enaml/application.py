@@ -22,33 +22,18 @@ class Application(object):
         'enaml_discover', 'enaml_begin_session', 'enaml_end_session',
     ])
 
-    def __init__(self, session_handlers):
+    def __init__(self, handlers):
         """ Initialize an Enaml Application.
 
         Parameters
         ----------
-        handlers : list of tuples
+        handlers : iterable of tuples
 
         """
-        all_handlers = []
-        named_handlers = {}
-        for handler in session_handlers:
-            if len(handler) == 3:
-                name, description, session_class = handler
-                kwargs = None
-            else:
-                name, description, session_class, kwargs = handler
-            if name in named_handlers:
-                msg = 'Multiple session handlers named `%s`; ' % name
-                msg += 'replacing previous value.'
-                logging.warn(msg)
-            spec = SessionSpec(name, description, session_class, kwargs)
-            all_handlers.append(spec)
-            named_handlers[name] = spec
-
-        self._all_handlers = all_handlers
-        self._named_handlers = named_handlers
+        self._all_handlers = []
+        self._named_handlers = {}
         self._sessions = {}
+        self.add_handlers(handlers)
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -79,7 +64,7 @@ class Application(object):
             session = session_cls(push_handler, username, kwargs=session_kwargs)
             session_id = session.session_id
             self._sessions[session_id] = session
-            session.do_open()
+            session.open()
             request.reply(session=session_id)
 
     def _on_enaml_end_session(self, request):
@@ -92,12 +77,38 @@ class Application(object):
             request.reply('error', msg)
         else:
             session = self._sessions.pop(session_id)
-            session.do_close()
+            session.close()
             request.reply()
 
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
+    def add_handlers(self, handlers):
+        """ Add session handlers to the application.
+
+        Parameters
+        ----------
+        handlers : iterable of tuples
+
+        """
+        all_handlers = self._all_handlers
+        named_handlers = self._named_handlers
+        for handler in handlers:
+            if len(handler) == 3:
+                name, description, session_class = handler
+                kwargs = None
+            else:
+                name, description, session_class, kwargs = handler
+            if name in named_handlers:
+                msg = 'Multiple session handlers named `%s`; ' % name
+                msg += 'replacing previous value.'
+                logging.warn(msg)
+                handler = named_handlers.pop(name)
+                all_handlers.remove(handler)
+            spec = SessionSpec(name, description, session_class, kwargs)
+            all_handlers.append(spec)
+            named_handlers[name] = spec
+
     def handle_request(self, request):
         """ Route and process a message for the Enaml application.
 
