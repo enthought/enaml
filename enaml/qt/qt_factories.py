@@ -150,6 +150,7 @@ QT_FACTORIES = {
     'Slider': slider_factory,
     'SpinBox': spin_box_factory,
     'Splitter': splitter_factory,
+    'TabBar': tab_bar_factory,
     'TextEditor': text_editor_factory,
     'Window': window_factory,
 }
