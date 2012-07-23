@@ -2,45 +2,16 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Enum, Bool
-
-from enaml.core.trait_types import EnamlEvent
-
-from .constraints_widget import ConstraintsWidget
+from traits.api import Enum
+from .tab_bar import TabBar
 
 
-class Notebook(ConstraintsWidget):
+class Notebook(TabBar):
     """ A component which displays its children as tabbed pages.
 
     """
     #: The position of tabs in the notebook.
     tab_position = Enum('top', 'bottom', 'left', 'right')
-
-    #: The style of the tabs to use in the notebook. This may not
-    #: be supported on all platforms. The 'document' style is used
-    #: when displaying many pages in an editing context such as in
-    #: an IDE. The 'preferences' style is used to display tabs in
-    #: a style that is appropriate for a preferences dialog. Such
-    #: as used in OSX.
-    tab_style = Enum('document', 'preferences')
-
-    #: Whether or not the tabs in the notebook should be closable.
-    tabs_closable = Bool(True)
-
-    #: Whether or not the tabs in the notebook should be movable.
-    tabs_movable = Bool(True)
-
-    #: An event fired when the user closes a tab by clicking on its
-    #: close button. The payload will be the page object.
-    tab_closed = EnamlEvent
-
-    #: How strongly a component hugs it's contents' width. A TabGroup
-    #: ignores its width hug by default, so it expands freely in width.
-    hug_width = 'ignore'
-
-    #: How strongly a component hugs it's contents' height. A TabGroup
-    #: ignores its height hug by default, so it expands freely in height.
-    hug_height = 'ignore'
 
     #--------------------------------------------------------------------------
     # Initialization
@@ -51,10 +22,7 @@ class Notebook(ConstraintsWidget):
         """
         super_attrs = super(Notebook, self).creation_attributes()
         attrs = {
-            'tab_position': self.tab_position,
-            'tab_style': self.tab_style,
-            'tabs_closable': self.tabs_closable,
-            'tabs_movable': self.tabs_movable,
+            'tab_position': self.tab_position
         }
         super_attrs.update(attrs)
         return super_attrs
@@ -64,7 +32,7 @@ class Notebook(ConstraintsWidget):
 
         """
         super(Notebook, self).bind()
-        attrs = ('tab_position', 'tab_style', 'tabs_closable', 'tabs_movable')
+        attrs = ('tab_position')
         self.publish_attributes(*attrs)
 
     #--------------------------------------------------------------------------
@@ -90,7 +58,7 @@ class Notebook(ConstraintsWidget):
         Parameters
         ----------
         page : Page
-            The page instance to open. It must be a child of this 
+            The page instance to open. It must be a child of this
             Notebook.
 
         """
@@ -104,7 +72,7 @@ class Notebook(ConstraintsWidget):
         Parameters
         ----------
         page : Page
-            The page instance to close. It must be a child of this 
+            The page instance to close. It must be a child of this
             Notebook.
 
         """

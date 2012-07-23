@@ -112,6 +112,11 @@ def splitter_factory():
     return QtSplitter
 
 
+def tab_bar_factory():
+    from .qt_tab_bar import QtTabBar
+    return QtTabBar
+
+
 def text_editor_factory():
     from .qt_text_editor import QtTextEditor
     return QtTextEditor
