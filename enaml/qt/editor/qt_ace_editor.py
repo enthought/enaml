@@ -8,11 +8,9 @@ HTML_TEMPLATE = Template("""
         <script src="${resource_path}/ace/ace.js" type="text/javascript"></script>
         <style>
             #editor {
-                float: left;
-                position: relative;
-                height: 96%;
+                position: absolute;
+                height: 100%;
                 width: 100%;
-                background-color: #fff;
             }
         </style>
     </head>
