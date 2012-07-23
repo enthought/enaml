@@ -5,8 +5,8 @@
 from traits.api import Instance, ReadOnly, Str
 
 from enaml.core.base_component import BaseComponent
-from enaml.messaging import hub
-from enaml.messaging.registry import register
+from enaml.registry import register
+from enaml.session import Session
 from enaml.utils import LoopbackGuard, id_generator
 
 
@@ -22,7 +22,10 @@ class MessengerWidget(BaseComponent):
     required to initialize the client widget.
 
     """
-    #: The storage for the widget target id.
+    #: The session to use for sending messages.
+    session = Instance(Session)
+    
+    #: The unique messaging identifier for this widget.
     target_id = ReadOnly
 
     #: A loopback guard which can be used to prevent a loopback cycle
@@ -73,29 +76,22 @@ class MessengerWidget(BaseComponent):
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
-    @property
-    def parent_id(self):
-        """ A read only property which returns the target id of the 
-        parent of this messenger.
+    def snapshot(self):
+        """ Create a snapshot of the tree starting from this component.
 
         Returns
         -------
-        result : str or None
-            The target id of the parent messenger, or None if the parent
-            is not an instance of MessengerWidget.
+        result : dict
+            A dictionary snapshot of the component tree, from this
+            component downward.
 
         """
-        parent = self.parent
-        if isinstance(parent, MessengerWidget):
-            return parent.target_id
+        snap = self.snapshot_payload()
+        children = [child.snapshot() for child in self.children]
+        snap['children'] = children
+        return snap
 
-    def creation_tree(self):
-        tree = self.creation_payload()
-        children = [c.creation_tree() for c in self.children]
-        tree['children'] = children
-        return tree
-
-    def creation_payload(self):
+    def snapshot_payload(self):
         """ Returns the payload dict for the 'create' action for the
         messenger.
 
@@ -107,9 +103,7 @@ class MessengerWidget(BaseComponent):
         """
         payload = {}
         payload['target_id'] = self.target_id
-        payload['action'] = 'create'
         payload['type'] = self.widget_type
-        payload['parent_id'] = self.parent_id
         payload['attributes'] = self.creation_attributes()
         return payload
 
