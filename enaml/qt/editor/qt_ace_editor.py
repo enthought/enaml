@@ -2,6 +2,32 @@ from PySide.QtCore import QObject, Signal, Slot
 from string import Template
 import os
 
+HTML_TEMPLATE = Template("""
+    <html>
+    <head>
+        <script src="${resource_path}/ace/ace.js" type="text/javascript"></script>
+        <style>
+            #editor {
+                float: left;
+                position: relative;
+                height: 96%;
+                width: 100%;
+                background-color: #fff;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="editor"></div>
+
+        <script type="text/javascript">
+            var editor = ace.edit("editor");
+            ${events}
+            ${bindings}
+        </script>
+    </body>
+    </html>
+""")
+
 EVENT_TEMPLATE = Template("""
     py_${func} = function() {
         py_ace_editor.${func}(${args});
@@ -162,11 +188,8 @@ class QtAceEditor(QObject):
         """
         # XXX better way to access files here?
         p = os.path
-        template_path = p.join(p.dirname(p.abspath(__file__)),
-            'tab_ace_test.html')
-        template = Template(open(template_path, 'r').read())
         _r_path = "file://" + p.join(p.dirname(p.abspath(__file__)))
         _events = '\n'.join(self._events)
         _bindings = '\n'.join(self._bindings)
-        return template.substitute(events=_events, resource_path=_r_path,
-                                   bindings=_bindings)
+        return HTML_TEMPLATE.substitute(events=_events, resource_path=_r_path,
+                                        bindings=_bindings)
