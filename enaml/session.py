@@ -151,14 +151,14 @@ class Session(object):
     #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
-    def do_open(self):
+    def open(self):
         """ Called by the application when the session is opened.
 
         """
         view = self.on_open(**self._kwargs)
         self._session_view = view
 
-    def do_close(self):
+    def close(self):
         """ Called by the application when the session is closed.
 
         """
