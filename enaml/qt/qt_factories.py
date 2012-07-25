@@ -154,4 +154,3 @@ QT_FACTORIES = {
     'TextEditor': text_editor_factory,
     'Window': window_factory,
 }
-

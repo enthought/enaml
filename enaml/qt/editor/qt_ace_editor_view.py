@@ -18,7 +18,7 @@ class QtAceEditorView(QWebView):
                                                     self.ace_editor)
 
         self.ace_editor.generate_ace_event('set_text_from_js', 'getSession()',
-            'editor.getSession().getDocument().getValue()', 'change')
+             'editor.getSession().getDocument().getValue()', 'change')
 
         self.ace_editor.generate_binding('theme_changed', 'editor',
              'setTheme')
@@ -27,13 +27,13 @@ class QtAceEditorView(QWebView):
         self.ace_editor.generate_binding('text_changed',
              'editor.getSession().doc', 'setValue')
         self.ace_editor.generate_binding('auto_pair_changed', 'editor',
-                                         'setBehavioursEnabled')
+             'setBehavioursEnabled')
         self.ace_editor.generate_binding('font_size_changed', 'editor',
-                                         'setFontSize')
+             'setFontSize')
         self.ace_editor.generate_binding('margin_line_changed', 'editor',
-                                         'setShowPrintMargin')
+             'setShowPrintMargin')
         self.ace_editor.generate_binding('margin_line_column_changed',
-                                         'editor', 'setPrintMarginColumn')
+             'editor', 'setPrintMarginColumn')
 
         html = self.ace_editor.generate_html()
         self.setHtml(html)

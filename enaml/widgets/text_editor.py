@@ -49,3 +49,28 @@ class TextEditor(ConstraintsWidget):
         super(TextEditor, self).bind()
         self.publish_attributes('document', 'theme', 'auto_pair', 'font_size',
             'margin_line')
+
+    #--------------------------------------------------------------------------
+    # Message Handlers
+    #--------------------------------------------------------------------------
+    def on_message_set_document(self, payload):
+        """ Message handler for the 'set-document' action
+
+        XXX Confusing as this handler does not correspond to the
+        set_document method below
+
+        """
+        self.document = payload['document']
+
+    #--------------------------------------------------------------------------
+    # Public API
+    #--------------------------------------------------------------------------
+    def set_document(self, document):
+        """ Set the current document of the text editor
+
+        """
+        payload = {
+            'action': 'set-document',
+            'document': document
+        }
+        self.send_message(payload)

@@ -8,7 +8,7 @@ HTML_TEMPLATE = Template("""
         <script src="${resource_path}/ace/ace.js" type="text/javascript"></script>
         <style>
             #editor {
-                position: absolute;
+                position: relative;
                 height: 100%;
                 width: 100%;
                 top: 0;
@@ -18,7 +18,6 @@ HTML_TEMPLATE = Template("""
     </head>
     <body>
         <div id="editor"></div>
-
         <script type="text/javascript">
             var editor = ace.edit("editor");
             ${events}
@@ -44,10 +43,12 @@ class QtAceEditor(QObject):
     text_changed = Signal(unicode)
     mode_changed = Signal(unicode)
     theme_changed = Signal(unicode)
+    document_changed = Signal(unicode, unicode)
     auto_pair_changed = Signal(bool)
     font_size_changed = Signal(int)
     margin_line_changed = Signal(bool)
     margin_line_column_changed = Signal(int)
+    document_changed = Signal(unicode)
 
     def __init__(self, parent=None):
         """ Initialize the editor
@@ -57,6 +58,7 @@ class QtAceEditor(QObject):
         self._events = []
         self._bindings = []
 
+    @Slot(unicode)
     def set_text(self, text):
         """ Set the text of the editor
 
@@ -71,6 +73,7 @@ class QtAceEditor(QObject):
 
         """
         self._text = text
+        self.document_changed.emit(self._text)
 
     def text(self):
         """ Return the text of the editor
@@ -109,6 +112,14 @@ class QtAceEditor(QObject):
 
         """
         return self._theme
+
+    def set_document(self, document):
+        """ Set the document in the editor
+
+        """
+        self._text = document.text
+        self._mode = document.mode
+        self.document_changed.emit(self._text, self._mode)
 
     def set_auto_pair(self, auto_pair):
         """ Set the auto_pair behavior of the editor

@@ -23,6 +23,7 @@ class QtTextEditor(QtConstraintsWidget):
         super(QtTextEditor, self).initialize(attrs)
         self.attrs = attrs
         self.widget.loadFinished.connect(self.on_load)
+        self.widget.ace_editor.document_changed.connect(self.on_document_changed)
 
     def on_load(self):
         """ The attributes have to be set after the webview
@@ -75,6 +76,7 @@ class QtTextEditor(QtConstraintsWidget):
         """ Set the document in the underlying widget.
 
         """
+        self._document = document
         self.widget.editor().set_text(document.text)
         self.widget.editor().set_mode(document.mode)
 
@@ -105,3 +107,17 @@ class QtTextEditor(QtConstraintsWidget):
         else:
             self.widget.editor().set_margin_line_column(margin_line)
             self.widget.editor().show_margin_line(True)
+
+    #--------------------------------------------------------------------------
+    # Signal Handlers
+    #--------------------------------------------------------------------------
+    def on_document_changed(self, text):
+        """ Signal handler for the 'document_changed' signal.
+
+        """
+        self._document.text = text
+        payload = {
+            'action': 'set-document',
+            'document': self._document
+        }
+        self.send_message(payload)

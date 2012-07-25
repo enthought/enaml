@@ -11,3 +11,6 @@ class Document(HasTraits):
 
     #: The editing mode for the document
     mode = Unicode("text")
+
+    #: The title for the document
+    title = Unicode("Untitled")
