@@ -1,4 +1,4 @@
-from enaml.widgets import Window, Container, TextEditor, TabBar, Notebook, Page, Label
+from enaml.widgets import Window, Container, TextEditor, TabBar
 from enaml.noncomponents.document import Document
 from enaml.layout import vbox
 
@@ -33,6 +33,8 @@ enamldef Main(Window):
             tab_moved ::
                 old, new = event.new
                 self.tabs[new], self.tabs[old] = self.tabs[old], self.tabs[new]
+                if current_index == old:
+                    parent.parent.current_index = new
         TextEditor:
             id: text_edit
             document = tab_dict['First Document']
