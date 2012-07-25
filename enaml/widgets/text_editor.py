@@ -13,6 +13,8 @@ class TextEditor(ConstraintsWidget):
     """
     #: Internal storage for the document that is currently displayed
     _document = Instance(Document, ())
+
+    #: A property for the document that is currently displayed
     document = Property()
 
     #: The theme for the document
@@ -56,9 +58,17 @@ class TextEditor(ConstraintsWidget):
     # Property methods
     #--------------------------------------------------------------------------
     def _get_document(self):
+        """ Get the current document
+
+        """
         return self._document.as_dict()
 
     def _set_document(self, document):
+        """ Set the current document. The if statement is necessary because
+        documents are initially set by the user as a Document class, but are
+        sent in messages as dicts so that they are JSON-serializable
+
+        """
         if type(document) == dict:
             self._document = Document(**document)
         else:
