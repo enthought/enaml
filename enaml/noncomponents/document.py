@@ -14,3 +14,13 @@ class Document(HasTraits):
 
     #: The title for the document
     title = Unicode("Untitled")
+
+    def as_dict(self):
+        """ Return the document as a JSON-serializable dict
+
+        """
+        return {
+            'text': self.text,
+            'mode': self.mode,
+            'title': self.title
+        }

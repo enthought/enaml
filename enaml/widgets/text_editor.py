@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Unicode, Bool, Int, Instance, Either
+from traits.api import Unicode, Bool, Int, Property, Either, Instance
 from ..noncomponents.document import Document
 from .constraints_widget import ConstraintsWidget
 
@@ -11,8 +11,9 @@ class TextEditor(ConstraintsWidget):
     """ A simple control for displaying read-only text.
 
     """
-    #: The document that is currently displayed
-    document = Instance(Document, ())
+    #: Internal storage for the document that is currently displayed
+    _document = Instance(Document, ())
+    document = Property()
 
     #: The theme for the document
     theme = Unicode("textmate")
@@ -47,8 +48,21 @@ class TextEditor(ConstraintsWidget):
 
         """
         super(TextEditor, self).bind()
-        self.publish_attributes('document', 'theme', 'auto_pair', 'font_size',
+        self.publish_attributes('theme', 'auto_pair', 'font_size',
             'margin_line')
+        self.on_trait_change(self.set_document, 'document')
+
+    #--------------------------------------------------------------------------
+    # Property methods
+    #--------------------------------------------------------------------------
+    def _get_document(self):
+        return self._document.as_dict()
+
+    def _set_document(self, document):
+        if type(document) == dict:
+            self._document = Document(**document)
+        else:
+            self._document = document
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -71,6 +85,6 @@ class TextEditor(ConstraintsWidget):
         """
         payload = {
             'action': 'set-document',
-            'document': document
+            'document': document.as_dict()
         }
         self.send_message(payload)

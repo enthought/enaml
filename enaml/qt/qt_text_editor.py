@@ -4,6 +4,7 @@
 #------------------------------------------------------------------------------
 from .editor.qt_ace_editor_view import QtAceEditorView
 from .qt_constraints_widget import QtConstraintsWidget
+from ..noncomponents.document import Document
 
 
 class QtTextEditor(QtConstraintsWidget):
@@ -76,9 +77,9 @@ class QtTextEditor(QtConstraintsWidget):
         """ Set the document in the underlying widget.
 
         """
-        self._document = document
-        self.widget.editor().set_text(document.text)
-        self.widget.editor().set_mode(document.mode)
+        self._document = Document(**document)
+        self.widget.editor().set_text(self._document.text)
+        self.widget.editor().set_mode(self._document.mode)
 
     def set_theme(self, theme):
         """ Set the theme of the editor
@@ -118,6 +119,6 @@ class QtTextEditor(QtConstraintsWidget):
         self._document.text = text
         payload = {
             'action': 'set-document',
-            'document': self._document
+            'document': self._document.as_dict()
         }
         self.send_message(payload)
