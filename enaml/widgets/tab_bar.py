@@ -20,6 +20,9 @@ class TabBar(ConstraintsWidget):
     #: as used in OSX.
     tab_style = Enum('document', 'preferences')
 
+    #: Whether or not the user should be able to add tabs to the tab bar
+    tabs_addable = Bool(False)
+
     #: Whether or not the tabs in the tab bar should be closable.
     tabs_closable = Bool(True)
 
@@ -58,6 +61,7 @@ class TabBar(ConstraintsWidget):
         attrs = {
             'tabs': self.tabs,
             'tab_style': self.tab_style,
+            'tabs_addable': self.tabs_addable,
             'tabs_closable': self.tabs_closable,
             'tabs_movable': self.tabs_movable
         }
@@ -69,7 +73,8 @@ class TabBar(ConstraintsWidget):
 
         """
         super(TabBar, self).bind()
-        attrs = ('tabs', 'tab_style', 'tabs_closable', 'tabs_movable')
+        attrs = ('tabs', 'tab_style', 'tabs_addable', 'tabs_closable',
+                 'tabs_movable')
         self.publish_attributes(*attrs)
 
     #--------------------------------------------------------------------------

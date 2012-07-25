@@ -56,6 +56,7 @@ class QtTabBar(QtConstraintsWidget):
         super(QtTabBar, self).initialize(attrs)
         self.set_tabs(attrs['tabs'])
         self.set_tab_style(attrs['tab_style'])
+        self.set_tabs_addable(attrs['tabs_addable'])
         self.set_tabs_closable(attrs['tabs_closable'])
         self.set_tabs_movable(attrs['tabs_movable'])
 
@@ -73,6 +74,12 @@ class QtTabBar(QtConstraintsWidget):
 
         """
         self.set_tab_style(payload['tab_style'])
+
+    def on_message_set_tabs_addable(self, payload):
+        """ Handle the 'set-tabs_addable' action from the Enaml widget.
+
+        """
+        self.set_tabs_addable(payload['tabs_addable'])
 
     def on_message_set_tabs_closable(self, payload):
         """ Handle the 'set-tabs_closable' action from the Enaml widget.
@@ -115,6 +122,12 @@ class QtTabBar(QtConstraintsWidget):
 
         """
         self.widget.setDocumentMode(DOCUMENT_MODES[style])
+
+    def set_tabs_addable(self, addable):
+        """ Set whether or not the user can add tabs to the tab bar
+
+        """
+        self.widget.add_button.setVisible(addable)
 
     def set_tabs_closable(self, closable):
         """ Set whether or not the tabs are closable.

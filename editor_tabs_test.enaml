@@ -6,20 +6,23 @@ enamldef Main(Window):
     title = 'Test Window'
     attr tab_dict = {
         'First Document': Document(title="First Document", 
-                                   text = "hello", mode = 'javascript')
+                                   text = "hello", mode = 'javascript'),
+        'Second Document': Document()
     }
     attr counter = 1
     attr current_index = 0
     Container:
         TabBar:
             id: tab_bar
-            tabs = tab_dict.keys()
+            tabs = list(reversed(tab_dict.keys()))
+            tabs_addable = True
             tab_changed ::
                 if event.new == -1:
                     self.visible = False
                     text_edit.visible = False
                 else:
-                    tab_dict[self.tabs[current_index]] = text_edit._document
+                    if current_index < len(self.tabs):
+                        tab_dict[self.tabs[current_index]] = text_edit._document
                     parent.parent.current_index = event.new
                     doc = tab_dict[self.tabs[event.new]]
                     text_edit.set_document(doc)
