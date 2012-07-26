@@ -16,7 +16,7 @@ QT_ALIGNMENTS = dict(
 )
 
 class QGroupBox(QResizingGroupBox):
-    """ A subclass of QResizingFrame which allows the default sizeHint
+    """ A subclass of QResizingBox which allows the default sizeHint
     to be overridden by calling 'setSizeHint'.
 
     This functionality is used by the QtContainer to override the 
@@ -85,12 +85,21 @@ class QtGroupBox(QtContainer):
     # Message Handlers
     #--------------------------------------------------------------------------
     def on_message_set_title(self, payload):
+        """ Handle the 'set-title' message from the Enaml widget
+
+        """
         self.set_title(payload["title"])
 
     def on_message_set_title_align(self, payload):
+        """ Handle the 'set-title_align' message from the Enaml widget
+
+        """
         self.set_title_align(payload["title_align"])
 
     def on_message_set_flat(self, payload):
+        """ Handle the 'set-flat' message from the Enaml widget
+
+        """
         self.set_flat(payload["flat"])
 
     #--------------------------------------------------------------------------

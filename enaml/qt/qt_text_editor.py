@@ -22,9 +22,9 @@ class QtTextEditor(QtConstraintsWidget):
         """
         super(QtTextEditor, self).initialize(attrs)
         self.attrs = attrs
-        self.widget.loadFinished.connect(self.set_attrs)
-        
-    def set_attrs(self):
+        self.widget.loadFinished.connect(self.on_load)
+
+    def on_load(self):
         """ The attributes have to be set after the webview
         has finished loading, so this function is delayed
 

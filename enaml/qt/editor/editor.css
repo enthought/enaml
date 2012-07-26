@@ -4,12 +4,7 @@ body {
 
 #editor { 
 	float: left;
-    margin: 0;
     position: relative;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
     height: 96%;
     width: 100%;
     background-color: #fff;
@@ -26,7 +21,7 @@ body {
 }
 
 #add_button {
-	float: right;
+	float: left;
 	background: none;
 	border: none;
 	font-size: 1.2em;

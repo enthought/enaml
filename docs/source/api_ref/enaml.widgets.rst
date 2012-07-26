@@ -17,114 +17,38 @@ user-facing views and the underlying graphical toolkits.
 
 .. inheritance-diagram::
     enaml.core.base_component.BaseComponent
-    enaml.components.abstract_item_view.AbstractItemView
-    enaml.components.action.Action
-    enaml.components.base_selection_model.BaseSelectionModel
-    enaml.components.row_selection_model.RowSelectionModel
-    enaml.components.base_widget_component.BaseWidgetComponent
-    enaml.components.bounded_date.BoundedDate
-    enaml.components.bounded_datetime.BoundedDatetime
-    enaml.components.calendar.Calendar
-    enaml.components.check_box.CheckBox
-    enaml.components.combo_box.ComboBox
-    enaml.components.constraints_widget.ConstraintsWidget
-    enaml.components.control.Control
-    enaml.components.date_edit.DateEdit
-    enaml.components.datetime_edit.DatetimeEdit
-    enaml.components.enable_canvas.EnableCanvas
-    enaml.components.field.Field
-    enaml.components.float_slider.FloatSlider
-    enaml.components.html.Html
-    enaml.components.image_view.ImageView
-    enaml.components.label.Label
-    enaml.components.list_view.ListView
-    enaml.components.progress_bar.ProgressBar
-    enaml.components.push_button.PushButton
-    enaml.components.radio_button.RadioButton
-    enaml.components.slider.Slider
-    enaml.components.spin_box.SpinBox
-    enaml.components.table_view.TableView
-    enaml.components.text_editor.TextEditor
-    enaml.components.toggle_button.ToggleButton
-    enaml.components.toggle_control.ToggleControl
-    enaml.components.traitsui_item.TraitsUIItem
-    enaml.components.tree_view.TreeView
-    enaml.components.container.Container
-    enaml.components.form.Form
-    enaml.components.group_box.GroupBox
-    enaml.components.tab.Tab
-    enaml.components.scroll_area.ScrollArea
-    enaml.components.splitter.Splitter
-    enaml.components.tab_group.TabGroup
-    enaml.components.menu.Menu
-    enaml.components.menu_bar.MenuBar
-    enaml.components.dock_pane.DockPane
-    enaml.components.window.Window
-    enaml.components.main_window.MainWindow
-    enaml.components.dialog.Dialog
-    enaml.components.directory_dialog.DirectoryDialog
-    enaml.components.file_dialog.FileDialog
-    enaml.components.include.Include
-    enaml.components.inline.Inline
+    enaml.widgets.messenger_widget.MessengerWidget
+    enaml.widgets.widget_component.WidgetComponent
+    enaml.widgets.constraints_widget.ConstraintsWidget
+    enaml.widgets.abstract_button.AbstractButton
+    enaml.widgets.container.Container
+    enaml.widgets.dialog.Dialog
+    enaml.widgets.bounded_date.BoundedDate
+    enaml.widgets.bounded_datetime.BoundedDatetime
+    enaml.widgets.calendar.Calendar
+    enaml.widgets.check_box.CheckBox
+    enaml.widgets.combo_box.ComboBox
+    enaml.widgets.date_edit.DateEdit
+    enaml.widgets.datetime_edit.DatetimeEdit
+    enaml.widgets.field.Field
+    enaml.widgets.form.Form
+    enaml.widgets.group_box.GroupBox
+    enaml.widgets.html.Html
+    enaml.widgets.image.Image
+    enaml.widgets.image_view.ImageView
+    enaml.widgets.label.Label
+    enaml.widgets.notebook.Notebook
+    enaml.widgets.page.Page
+    enaml.widgets.progress_bar.ProgressBar
+    enaml.widgets.push_button.PushButton
+    enaml.widgets.radio_button.RadioButton
+    enaml.widgets.scroll_area.ScrollArea
+    enaml.widgets.slider.Slider
+    enaml.widgets.spin_box.SpinBox
+    enaml.widgets.text_editor.TextEditor
+    enaml.widgets.window.Window
     :parts: 1
 
-Implementation
---------------
-
-The available backends provide concrete versions of Enaml widget
-interfaces. An interface utilizes an implementation-specific
-class, which wraps an actual toolkit widget.
-
-
-*Standard Implementations*
-
-.. inheritance-diagram::
-    enaml.components.abstract_application.AbstractTkApplication
-    enaml.components.abstract_item_view.AbstractTkItemView
-    enaml.components.action.AbstractTkAction
-    enaml.components.base_selection_model.AbstractTkBaseSelectionModel
-    enaml.components.base_widget_component.AbstractTkBaseWidgetComponent
-    enaml.components.bounded_date.AbstractTkBoundedDate
-    enaml.components.bounded_datetime.AbstractTkBoundedDatetime
-    enaml.components.calendar.AbstractTkCalendar
-    enaml.components.check_box.AbstractTkCheckBox
-    enaml.components.combo_box.AbstractTkComboBox
-    enaml.components.constraints_widget.AbstractTkConstraintsWidget
-    enaml.components.control.AbstractTkControl
-    enaml.components.date_edit.AbstractTkDateEdit
-    enaml.components.datetime_edit.AbstractTkDatetimeEdit
-    enaml.components.enable_canvas.AbstractTkEnableCanvas
-    enaml.components.field.AbstractTkField
-    enaml.components.float_slider.AbstractTkFloatSlider
-    enaml.components.html.AbstractTkHtml
-    enaml.components.image_view.AbstractTkImageView
-    enaml.components.label.AbstractTkLabel
-    enaml.components.list_view.AbstractTkListView
-    enaml.components.progress_bar.AbstractTkProgressBar
-    enaml.components.push_button.AbstractTkPushButton
-    enaml.components.radio_button.AbstractTkRadioButton
-    enaml.components.slider.AbstractTkSlider
-    enaml.components.spin_box.AbstractTkSpinBox
-    enaml.components.table_view.AbstractTkTableView
-    enaml.components.text_editor.AbstractTkTextEditor
-    enaml.components.toggle_button.AbstractTkToggleButton
-    enaml.components.toggle_control.AbstractTkToggleControl
-    enaml.components.traitsui_item.AbstractTkTraitsUIItem
-    enaml.components.tree_view.AbstractTkTreeView
-    enaml.components.container.AbstractTkContainer
-    enaml.components.form.AbstractTkForm
-    enaml.components.group_box.AbstractTkGroupBox
-    enaml.components.tab.AbstractTkTab
-    enaml.components.scroll_area.AbstractTkScrollArea
-    enaml.components.splitter.AbstractTkSplitter
-    enaml.components.tab_group.AbstractTkTabGroup
-    enaml.components.dock_pane.AbstractTkDockPane
-    enaml.components.window.AbstractTkWindow
-    enaml.components.dialog.AbstractTkDialog
-    enaml.components.main_window.AbstractTkMainWindow
-    enaml.components.directory_dialog.AbstractTkDirectoryDialog
-    enaml.components.file_dialog.AbstractTkFileDialog
-    :parts: 1
 
 Standard Widgets
 ----------------
@@ -137,36 +61,32 @@ Abstract base widgets
     :template: widget.rst
 
     enaml.core.base_component.BaseComponent
-    enaml.components.base_widget_component.BaseWidgetComponent
-    enaml.components.widget_component.WidgetComponent
-    enaml.components.constraints_widget.ConstraintsWidget
-    enaml.components.layout_task_handler.LayoutTaskHandler
-    enaml.components.control.Control
-    enaml.components.toggle_control.ToggleControl
-    enaml.components.bounded_date.BoundedDate
-    enaml.components.abstract_item_view.AbstractItemView
-    enaml.components.base_selection_model.BaseSelectionModel
+    enaml.widgets.messenger_widget.MessengerWidget
+    enaml.widgets.widget_component.WidgetComponent
+    enaml.widgets.constraints_widget.ConstraintsWidget
+    enaml.widgets.abstract_button.AbstractButton
 
-Standard control widgets
-^^^^^^^^^^^^^^^^^^^^^^^^
+Standard widgets
+^^^^^^^^^^^^^^^^
 
 .. autosummary::
     :toctree: widgets
     :template: widget.rst
 
-    enaml.components.calendar.Calendar
-    enaml.components.check_box.CheckBox
-    enaml.components.combo_box.ComboBox
-    enaml.components.push_button.PushButton
-    enaml.components.radio_button.RadioButton
-    enaml.components.field.Field
-    enaml.components.image.Image
-    enaml.components.label.Label
-    enaml.components.slider.Slider
-    enaml.components.spin_box.SpinBox
-    enaml.components.datetime_edit.DatetimeEdit
-    enaml.components.date_edit.DateEdit
-    enaml.components.progress_bar.ProgressBar
+    enaml.widgets.bounded_date.BoundedDate
+    enaml.widgets.bounded_datetime.BoundedDatetime
+    enaml.widgets.calendar.Calendar
+    enaml.widgets.check_box.CheckBox
+    enaml.widgets.combo_box.ComboBox
+    enaml.widgets.date_edit.DateEdit
+    enaml.widgets.datetime_edit.DatetimeEdit
+    enaml.widgets.field.Field
+    enaml.widgets.label.Label
+    enaml.widgets.progress_bar.ProgressBar
+    enaml.widgets.push_button.PushButton
+    enaml.widgets.radio_button.RadioButton
+    enaml.widgets.slider.Slider
+    enaml.widgets.spin_box.SpinBox
 
 Special widgets
 ^^^^^^^^^^^^^^^
@@ -175,11 +95,9 @@ Special widgets
     :toctree: widgets
     :template: widget.rst
 
-    enaml.components.html.Html
-    enaml.components.text_editor.TextEditor
-    enaml.components.image_view.ImageView
-    enaml.components.traitsui_item.TraitsUIItem
-    enaml.components.enable_canvas.EnableCanvas
+    enaml.widgets.html.Html
+    enaml.widgets.text_editor.TextEditor
+    enaml.widgets.image_view.ImageView
     
 Window widgets
 ^^^^^^^^^^^^^^^^^
@@ -188,11 +106,8 @@ Window widgets
     :toctree: widgets
     :template: widget.rst
 
-    enaml.components.window.Window
-    enaml.components.main_window.MainWindow
-    enaml.components.dialog.Dialog
-    enaml.components.directory_dialog.DirectoryDialog
-    enaml.components.file_dialog.FileDialog
+    enaml.widgets.window.Window
+    enaml.widgets.dialog.Dialog
 
 Container and Layout widgets
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -201,14 +116,12 @@ Container and Layout widgets
     :toctree: widgets
     :template: widget.rst
 
-    enaml.components.container.Container
-    enaml.components.form.Form
-    enaml.components.group_box.GroupBox
-    enaml.components.tab.Tab
-    enaml.components.splitter.Splitter
-    enaml.components.scroll_area.ScrollArea
-    enaml.components.tab_group.TabGroup
-    enaml.components.dock_pane.DockPane
+    enaml.widgets.container.Container
+    enaml.widgets.form.Form
+    enaml.widgets.group_box.GroupBox
+    enaml.widgets.notebook.Notebook
+    enaml.widgets.page.Page
+    enaml.widgets.scroll_area.ScrollArea
 
 
 Item views
