@@ -1,0 +1,37 @@
+from enaml.widgets import Window, Html, Container, PushButton
+from enaml.layout import hbox, vbox, spacer, align
+
+
+enamldef Main(Window):
+    Container:
+        constraints = [
+            vbox(
+                html_frame, 
+                hbox(
+                    add_button, remove_button, spacer, 
+                    change_mode_button, spacer, share_button,
+                ),
+            ),
+            align('h_center', html_frame, change_mode_button) | 'weak',
+            html_frame.height >= 150,
+        ]
+        Html:
+            id: html_frame
+            name = 'html'
+            source = '<center><h1>Hello Enaml!</h1></center>'
+        PushButton:
+            id: add_button
+            text = 'Add'
+        PushButton:
+            id: remove_button
+            text = 'Remove'
+        PushButton:
+            id: change_mode_button
+            text = 'Change Mode'
+            clicked :: self.text = text * 2
+        PushButton:
+            id: share_button
+            text = 'Share...'
+            clicked :: print 'foo'
+            name = 'what'
+
