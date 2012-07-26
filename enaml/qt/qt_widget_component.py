@@ -7,6 +7,7 @@ import sys
 from .qt.QtGui import QWidget, QWidgetItem, QDrag, QPixmap
 from .qt.QtCore import Qt, QSize, QMimeData, QByteArray
 from .qt_messenger_widget import QtMessengerWidget
+from ..utils import WeakMethod
 
 
 class QtWidgetComponent(QtMessengerWidget):
@@ -41,10 +42,10 @@ class QtWidgetComponent(QtMessengerWidget):
         self.set_visible(attrs['visible'])
         self.set_show_focus_rect(attrs['show_focus_rect'])
 
-        self.widget.mousePressEvent = self.mousePressEvent
-        self.widget.dragEnterEvent = self.dragEnterEvent
-        self.widget.dragLeaveEvent = self.dragLeaveEvent
-        self.widget.dropEvent = self.dropEvent
+        self.widget.mousePressEvent = WeakMethod(self.mousePressEvent)
+        self.widget.dragEnterEvent = WeakMethod(self.dragEnterEvent)
+        self.widget.dragLeaveEvent = WeakMethod(self.dragLeaveEvent)
+        self.widget.dropEvent = WeakMethod(self.dropEvent)
 
     #--------------------------------------------------------------------------
     # Properties
@@ -327,6 +328,7 @@ class QtWidgetComponent(QtMessengerWidget):
         """ Fired when an object is dropped on the widget
 
         """
+        self.hover_exit()
         payload = {
             'action': 'dropped',
             'data': str(event.mimeData().data(self.selected_type))
