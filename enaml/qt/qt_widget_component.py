@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 import sys
 
-from .qt.QtGui import QWidget, QWidgetItem, QDrag, QPixmap
+from .qt.QtGui import QWidget, QWidgetItem, QDrag, QPixmap, QApplication
 from .qt.QtCore import Qt, QSize, QMimeData, QByteArray
 from .qt_messenger_widget import QtMessengerWidget
 from ..utils import WeakMethod
@@ -43,6 +43,7 @@ class QtWidgetComponent(QtMessengerWidget):
         self.set_show_focus_rect(attrs['show_focus_rect'])
 
         self.widget.mousePressEvent = WeakMethod(self.mousePressEvent)
+        self.widget.mouseMoveEvent = WeakMethod(self.mouseMoveEvent)
         self.widget.dragEnterEvent = WeakMethod(self.dragEnterEvent)
         self.widget.dragLeaveEvent = WeakMethod(self.dragLeaveEvent)
         self.widget.dropEvent = WeakMethod(self.dropEvent)
@@ -301,12 +302,23 @@ class QtWidgetComponent(QtMessengerWidget):
         """
         if self.draggable:
             if event.button() == Qt.LeftButton:
-                drag = QDrag(self.widget)
-                mime_data = QMimeData()
-                mime_data.setData(self.drag_type, QByteArray(self.drag_data()))
-                drag.setMimeData(mime_data)
-                drag.setPixmap(self.drag_repr())
-                drag.exec_(Qt.CopyAction)
+                self.drag_start_pos = event.pos()
+
+    def mouseMoveEvent(self, event):
+        """ Mouse moved handler
+
+        """
+        if self.draggable:
+            if event.buttons() == Qt.LeftButton:
+                distance = (event.pos() - self.drag_start_pos).manhattanLength()
+                if distance >= QApplication.startDragDistance():
+                    drag = QDrag(self.widget)
+                    mime_data = QMimeData()
+                    mime_data.setData(self.drag_type, QByteArray(self.drag_data()))
+                    drag.setMimeData(mime_data)
+                    drag.setPixmap(self.drag_repr())
+                    drag.setHotSpot(event.pos() - self.widget.rect().topLeft())
+                    drag.exec_(Qt.CopyAction)
 
     def dragEnterEvent(self, event):
         """ Fired when a dragged object is hovering over the widget
