@@ -1,0 +1,18 @@
+from enaml.widgets import Window, Label, Container
+from enaml.layout import hbox, spacer
+
+enamldef Main(Window):
+    Container:
+        constraints = [hbox(label1, spacer, label2)]
+        Label:
+            id: label1
+            text="Label 1"
+            draggable = True
+            drag_type = "text/plain"
+        Label:
+            id: label2
+            text="Label 2"
+            accept_drops = True
+            drop_types = ["text/plain"]
+            dropped ::
+                self.text = event.new

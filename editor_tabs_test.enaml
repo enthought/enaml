@@ -3,6 +3,7 @@ from enaml.noncomponents.document import Document
 from enaml.layout import vbox
 
 enamldef Main(Window):
+    id: window
     title = 'Test Window'
     attr tab_dict = {
         'First Document': Document(title="First Document", 
@@ -17,27 +18,27 @@ enamldef Main(Window):
             tabs = list(reversed(tab_dict.keys()))
             tabs_addable = True
             tab_changed ::
+                print type(event)
                 if event.new == -1:
-                    self.visible = False
-                    text_edit.visible = False
+                    window.close()
                 else:
                     if current_index < len(self.tabs):
                         tab_dict[self.tabs[current_index]] = text_edit._document
-                    parent.parent.current_index = event.new
+                    window.current_index = event.new
                     doc = tab_dict[self.tabs[event.new]]
                     text_edit.set_document(doc)
             tab_added ::
                 _title = 'Untitled-' + str(counter)
                 self.add_tab(_title)
                 tab_dict[_title] = Document(title=_title)
-                parent.parent.counter += 1
+                window.counter += 1
             tab_closed ::
                 self.remove_tab(event.new)
             tab_moved ::
                 old, new = event.new
                 self.tabs[new], self.tabs[old] = self.tabs[old], self.tabs[new]
                 if current_index == old:
-                    parent.parent.current_index = new
+                    window.current_index = new
         TextEditor:
             id: text_edit
             document = tab_dict['First Document']

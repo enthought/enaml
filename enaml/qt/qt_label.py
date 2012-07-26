@@ -25,6 +25,15 @@ class QtLabel(QtConstraintsWidget):
         self.set_word_wrap(attrs['word_wrap'])
 
     #--------------------------------------------------------------------------
+    # Drag and drop
+    #--------------------------------------------------------------------------
+    def drag_data(self):
+        """ The data to be dragged
+
+        """
+        return self.widget.text()
+
+    #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
     def on_message_set_text(self, payload):
@@ -34,7 +43,7 @@ class QtLabel(QtConstraintsWidget):
         # XXX trigger a relayout if the size hint has changed.
         self.set_text(payload['text'])
 
-    def on_message_set_word_wrap(self, payload): 
+    def on_message_set_word_wrap(self, payload):
         """ Handle the 'set-word_wrap' action from the Enaml widget.
 
         """
@@ -55,4 +64,3 @@ class QtLabel(QtConstraintsWidget):
 
         """
         self.widget.setWordWrap(wrap)
-

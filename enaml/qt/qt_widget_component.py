@@ -4,8 +4,8 @@
 #------------------------------------------------------------------------------
 import sys
 
-from .qt.QtGui import QWidget, QWidgetItem
-from .qt.QtCore import Qt, QSize
+from .qt.QtGui import QWidget, QWidgetItem, QDrag, QPixmap
+from .qt.QtCore import Qt, QSize, QMimeData, QByteArray
 from .qt_messenger_widget import QtMessengerWidget
 
 
@@ -28,6 +28,10 @@ class QtWidgetComponent(QtMessengerWidget):
 
         """
         super(QtWidgetComponent, self).initialize(attrs)
+        self.set_accepts_drops(attrs['accept_drops'])
+        self.set_draggable(attrs['draggable'])
+        self.set_drag_type(attrs['drag_type'])
+        self.set_drop_types(attrs['drop_types'])
         self.set_minimum_size(attrs['minimum_size'])
         self.set_maximum_size(attrs['maximum_size'])
         self.set_bgcolor(attrs['bgcolor'])
@@ -36,6 +40,11 @@ class QtWidgetComponent(QtMessengerWidget):
         self.set_enabled(attrs['enabled'])
         self.set_visible(attrs['visible'])
         self.set_show_focus_rect(attrs['show_focus_rect'])
+
+        self.widget.mousePressEvent = self.mousePressEvent
+        self.widget.dragEnterEvent = self.dragEnterEvent
+        self.widget.dragLeaveEvent = self.dragLeaveEvent
+        self.widget.dropEvent = self.dropEvent
 
     #--------------------------------------------------------------------------
     # Properties
@@ -55,6 +64,30 @@ class QtWidgetComponent(QtMessengerWidget):
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
+    def on_message_set_accept_drops(self, payload):
+        """ Process the 'set-accept_drops' message from Enaml.
+
+        """
+        self.set_accepts_drops(payload['accept_drops'])
+
+    def on_message_set_draggable(self, payload):
+        """ Process the 'set-draggable' message from Enaml.
+
+        """
+        self.set_draggable(payload['draggable'])
+
+    def on_message_set_drag_type(self, payload):
+        """ Process the 'set-drag_type' message from Enaml.
+
+        """
+        self.set_drag_type(payload['drag_type'])
+
+    def on_message_set_drop_types(self, payload):
+        """ Process the 'set-drop_types' message from Enaml.
+
+        """
+        self.set_drop_types(payload['drop_types'])
+
     def on_message_set_enabled(self, payload):
         """ Process the 'set-enabled' message from Enaml.
 
@@ -63,7 +96,7 @@ class QtWidgetComponent(QtMessengerWidget):
 
     def on_message_set_visible(self, payload):
         """ Process the 'set-visible' message from Enaml.
-        
+
         """
         self.set_visible(payload['visible'])
 
@@ -106,6 +139,30 @@ class QtWidgetComponent(QtMessengerWidget):
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
+    def set_accepts_drops(self, accept_drops):
+        """ Set whether or not the widget accepts drops
+
+        """
+        self.widget.setAcceptDrops(accept_drops)
+
+    def set_draggable(self, draggable):
+        """ Set whether or not the widget is draggable.
+
+        """
+        self.draggable = draggable
+
+    def set_drag_type(self, drag_type):
+        """ Set the mime-type being dragged
+
+        """
+        self.drag_type = drag_type
+
+    def set_drop_types(self, drop_types):
+        """ Set the mime-types that are allowed to be dropped on the widget.
+
+        """
+        self.drop_types = drop_types
+
     def set_minimum_size(self, min_size):
         """ Sets the minimum size on the underlying widget.
 
@@ -190,7 +247,7 @@ class QtWidgetComponent(QtMessengerWidget):
 
         """
         pass
-        
+
     def set_show_focus_rect(self, show):
         """ Sets whether or not to show the focus rectangle around
         the widget. This is currently only supported on OSX.
@@ -206,3 +263,73 @@ class QtWidgetComponent(QtMessengerWidget):
                     self._default_focus_attr = self.widget.testAttribute(attr)
                 self.widget.setAttribute(attr, show)
 
+    #--------------------------------------------------------------------------
+    # Drag and drop
+    #--------------------------------------------------------------------------
+    def drag_repr(self):
+        """ An image representation of the widget. This method can be overridden
+        for custom representations.
+
+        """
+        return QPixmap.grabWidget(self.widget)
+
+    def drag_data(self):
+        """ The data to be dragged. This method should be overriden by any
+        subclasses.
+
+        """
+        raise NotImplementedError("The 'drag_data' method must be implemented.")
+
+    def hover_enter(self):
+        """ Fired when the dragged object enters the widget. This method can be
+        overriden for custom styling.
+
+        """
+        self.widget.setStyleSheet("QWidget{background-color:rgba(0,0,255,25);}")
+
+    def hover_exit(self):
+        """ Fired when the dragged object leaves the widget. This method can be
+        overriden for custom styling.
+
+        """
+        self.widget.setStyleSheet("QWidget { background-color: rgba(0,0,0,0);}")
+
+    def mousePressEvent(self, event):
+        """ Mouse clicked handler
+
+        """
+        if self.draggable:
+            if event.button() == Qt.LeftButton:
+                drag = QDrag(self.widget)
+                mime_data = QMimeData()
+                mime_data.setData(self.drag_type, QByteArray(self.drag_data()))
+                drag.setMimeData(mime_data)
+                drag.setPixmap(self.drag_repr())
+                drag.exec_(Qt.CopyAction)
+
+    def dragEnterEvent(self, event):
+        """ Fired when a dragged object is hovering over the widget
+
+        """
+        self.hover_enter()
+        for format in event.mimeData().formats():
+            if format in self.drop_types:
+                self.selected_type = format
+                event.acceptProposedAction()
+
+    def dragLeaveEvent(self, event):
+        """ Fire when an object is dragged off the widget
+
+        """
+        self.hover_exit()
+
+    def dropEvent(self, event):
+        """ Fired when an object is dropped on the widget
+
+        """
+        payload = {
+            'action': 'dropped',
+            'data': str(event.mimeData().data(self.selected_type))
+        }
+        self.send_message(payload)
+        event.acceptProposedAction()

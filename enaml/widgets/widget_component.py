@@ -2,8 +2,8 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Bool, Str, Tuple, Range, Enum
-
+from traits.api import Bool, Str, Tuple, Range, Enum, List
+from enaml.core.trait_types import EnamlEvent
 from .messenger_widget import MessengerWidget
 
 
@@ -14,8 +14,9 @@ SizeTuple = Tuple(Range(low=-1, value=-1), Range(low=-1, value=-1))
 
 #: The standard attributes to proxy for a widget component.
 _WIDGET_ATTRS = [
-    'enabled', 'visible', 'bgcolor', 'fgcolor', 'font', 'minimum_size', 
-    'maximum_size', 'show_focus_rect'
+    'accept_drops', 'draggable', 'drag_type', 'drop_types', 'enabled',
+    'visible', 'bgcolor', 'fgcolor', 'font', 'minimum_size', 'maximum_size',
+    'show_focus_rect'
 ]
 
 
@@ -24,14 +25,26 @@ class WidgetComponent(MessengerWidget):
     widgets in Enaml.
 
     """
+    #: Whether or not the widget can be dropped on
+    accept_drops = Bool(False)
+
+    #: Whether or not the widget can be dragged
+    draggable = Bool(False)
+
+     #: The mime-type associated with the drag
+    drag_type = Str
+
+    #: The mime types that the widget allows
+    drop_types = List(Str)
+
     #: Whether or not the widget is enabled.
     enabled = Bool(True)
 
     #: Whether or not the widget is visible.
     visible = Bool(True)
 
-    #: A flag indicating whether or not to show the focus rectangle for 
-    #: the given widget. This is not necessarily support by all widgets 
+    #: A flag indicating whether or not to show the focus rectangle for
+    #: the given widget. This is not necessarily support by all widgets
     #: on all clients. A value of None indicates to use the default as
     #: supplied by the client.
     show_focus_rect = Enum(None, True, False)
@@ -53,6 +66,9 @@ class WidgetComponent(MessengerWidget):
     #: client should determine and inteliigent maximum size.
     maximum_size = SizeTuple
 
+    #: The event fired when something is dropped on the widget.
+    dropped = EnamlEvent
+
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
@@ -73,3 +89,11 @@ class WidgetComponent(MessengerWidget):
         super(WidgetComponent, self).bind()
         self.publish_attributes(*_WIDGET_ATTRS)
 
+    #--------------------------------------------------------------------------
+    # Message handlers
+    #--------------------------------------------------------------------------
+    def on_message_dropped(self, payload):
+        """ Handle the 'dropped' message from the client widget.
+
+        """
+        self.dropped(payload["data"])
