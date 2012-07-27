@@ -1,43 +1,15 @@
-from enaml.widgets import Window, Container, TextEditor, TabBar
+from enaml.widgets import Window, Container, TextEditor, PushButton
 from enaml.noncomponents.document import Document
 from enaml.layout import vbox
 
 enamldef Main(Window):
     title = 'Test Window'
-    attr tab_dict = {
-        'First Document': Document(title="First Document", 
-                                   text = "hello", mode = 'javascript'),
-        'Second Document': Document()
-    }
-    attr counter = 1
-    attr current_index = 0
     Container:
-        TabBar:
-            id: tab_bar
-            tabs = list(reversed(tab_dict.keys()))
-            tabs_addable = True
-            tab_changed ::
-                if event.new == -1:
-                    self.visible = False
-                    text_edit.visible = False
-                else:
-                    if current_index < len(self.tabs):
-                        tab_dict[self.tabs[current_index]] = text_edit._document
-                    parent.parent.current_index = event.new
-                    doc = tab_dict[self.tabs[event.new]]
-                    text_edit.set_document(doc)
-            tab_added ::
-                _title = 'Untitled-' + str(counter)
-                self.add_tab(_title)
-                tab_dict[_title] = Document(title=_title)
-                parent.parent.counter += 1
-            tab_closed ::
-                self.remove_tab(event.new)
-            tab_moved ::
-                old, new = event.new
-                self.tabs[new], self.tabs[old] = self.tabs[old], self.tabs[new]
-                if current_index == old:
-                    parent.parent.current_index = new
         TextEditor:
             id: text_edit
-            document = tab_dict['First Document']
+            columns = 2
+            document = Document(title='First Document', text='hello')
+        PushButton:
+            text="Change"
+            clicked ::
+                text_edit.document.title = 'asdf'

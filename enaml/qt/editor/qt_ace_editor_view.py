@@ -17,25 +17,8 @@ class QtAceEditorView(QWebView):
         self.main_frame.addToJavaScriptWindowObject('py_ace_editor',
                                                     self.ace_editor)
 
-        self.ace_editor.generate_ace_event('set_text_from_js', 'getSession()',
-             'editor.getSession().getDocument().getValue()', 'change')
-
-        self.ace_editor.generate_binding('theme_changed', 'editor',
-             'setTheme')
-        self.ace_editor.generate_binding('mode_changed',
-             'editor.getSession()', 'setMode')
-        self.ace_editor.generate_binding('text_changed',
-             'editor.getSession().doc', 'setValue')
-        self.ace_editor.generate_binding('auto_pair_changed', 'editor',
-             'setBehavioursEnabled')
-        self.ace_editor.generate_binding('font_size_changed', 'editor',
-             'setFontSize')
-        self.ace_editor.generate_binding('margin_line_changed', 'editor',
-             'setShowPrintMargin')
-        self.ace_editor.generate_binding('margin_line_column_changed',
-             'editor', 'setPrintMarginColumn')
-
-        html = self.ace_editor.generate_html()
+    def set_columns(self, columns):
+        html = self.ace_editor.generate_html(columns)
         self.setHtml(html)
 
     def editor(self):

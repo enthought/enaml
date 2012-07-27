@@ -4,7 +4,6 @@
 #------------------------------------------------------------------------------
 from .editor.qt_ace_editor_view import QtAceEditorView
 from .qt_constraints_widget import QtConstraintsWidget
-from ..noncomponents.document import Document
 
 
 class QtTextEditor(QtConstraintsWidget):
@@ -23,8 +22,8 @@ class QtTextEditor(QtConstraintsWidget):
         """
         super(QtTextEditor, self).initialize(attrs)
         self.attrs = attrs
+        self.set_columns(attrs['columns'])
         self.widget.loadFinished.connect(self.on_load)
-        self.widget.ace_editor.document_changed.connect(self.on_document_changed)
 
     def on_load(self):
         """ The attributes have to be set after the webview
@@ -40,6 +39,12 @@ class QtTextEditor(QtConstraintsWidget):
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
+    def on_message_set_columns(self, payload):
+        """ Handle the 'set-columns' action from the Enaml widget.
+
+        """
+        self.set_columns(payload['columns'])
+
     def on_message_set_document(self, payload):
         """ Handle the 'set-document' action from the Enaml widget.
 
@@ -73,13 +78,19 @@ class QtTextEditor(QtConstraintsWidget):
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
+    def set_columns(self, columns):
+        """ Set the number of columns in the editor.
+
+        """
+        self.widget.set_columns(columns)
+
     def set_document(self, document):
         """ Set the document in the underlying widget.
 
         """
-        self._document = Document(**document)
-        self.widget.editor().set_text(self._document.text)
-        self.widget.editor().set_mode(self._document.mode)
+        self.widget.editor().set_text(document.text)
+        self.widget.editor().set_mode(document.mode)
+        self.widget.editor().set_title(document.title)
 
     def set_theme(self, theme):
         """ Set the theme of the editor
@@ -108,17 +119,3 @@ class QtTextEditor(QtConstraintsWidget):
         else:
             self.widget.editor().set_margin_line_column(margin_line)
             self.widget.editor().show_margin_line(True)
-
-    #--------------------------------------------------------------------------
-    # Signal Handlers
-    #--------------------------------------------------------------------------
-    def on_document_changed(self, text):
-        """ Signal handler for the 'document_changed' signal.
-
-        """
-        self._document.text = text
-        payload = {
-            'action': 'set-document',
-            'document': self._document.as_dict()
-        }
-        self.send_message(payload)

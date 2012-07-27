@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Unicode, Bool, Int, Property, Either, Instance
+from traits.api import Unicode, Bool, Int, Instance, Either
 from ..noncomponents.document import Document
 from .constraints_widget import ConstraintsWidget
 
@@ -11,11 +11,11 @@ class TextEditor(ConstraintsWidget):
     """ A simple control for displaying read-only text.
 
     """
-    #: Internal storage for the document that is currently displayed
-    _document = Instance(Document, ())
+    #: The number of columns of editors to display
+    columns = Int(1)
 
-    #: A property for the document that is currently displayed
-    document = Property()
+    #: The document that is currently displayed
+    document = Instance(Document, ())
 
     #: The theme for the document
     theme = Unicode("textmate")
@@ -37,6 +37,7 @@ class TextEditor(ConstraintsWidget):
 
         """
         super_attrs = super(TextEditor, self).creation_attributes()
+        super_attrs['columns'] = self.columns
         super_attrs['document'] = self.document
         super_attrs['theme'] = self.theme
         super_attrs['auto_pair'] = self.auto_pair
@@ -50,51 +51,5 @@ class TextEditor(ConstraintsWidget):
 
         """
         super(TextEditor, self).bind()
-        self.publish_attributes('theme', 'auto_pair', 'font_size',
-            'margin_line')
-        self.on_trait_change(self.set_document, 'document')
-
-    #--------------------------------------------------------------------------
-    # Property methods
-    #--------------------------------------------------------------------------
-    def _get_document(self):
-        """ Get the current document
-
-        """
-        return self._document.as_dict()
-
-    def _set_document(self, document):
-        """ Set the current document. The if statement is necessary because
-        documents are initially set by the user as a Document class, but are
-        sent in messages as dicts so that they are JSON-serializable
-
-        """
-        if type(document) == dict:
-            self._document = Document(**document)
-        else:
-            self._document = document
-
-    #--------------------------------------------------------------------------
-    # Message Handlers
-    #--------------------------------------------------------------------------
-    def on_message_set_document(self, payload):
-        """ Message handler for the 'set-document' action
-
-        XXX Confusing as this handler does not correspond to the
-        set_document method below
-
-        """
-        self.document = payload['document']
-
-    #--------------------------------------------------------------------------
-    # Public API
-    #--------------------------------------------------------------------------
-    def set_document(self, document):
-        """ Set the current document of the text editor
-
-        """
-        payload = {
-            'action': 'set-document',
-            'document': document.as_dict()
-        }
-        self.send_message(payload)
+        self.publish_attributes('columns', 'document', 'theme', 'auto_pair',
+            'font_size', 'margin_line')

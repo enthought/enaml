@@ -6,23 +6,14 @@ HTML_TEMPLATE = Template("""
     <html>
     <head>
         <script src="${resource_path}/ace/ace.js" type="text/javascript"></script>
-        <style>
-            #editor {
-                position: relative;
-                height: 100%;
-                width: 100%;
-                top: 0;
-                left: 0;
-            }
-        </style>
+        <script src="${resource_path}/jquery-1.7.2.min.js"
+            type="text/javascript"></script>
+        <script src="${resource_path}/jquery-ui-1.8.21.custom.min.js"
+            type="text/javascript"></script>
+        <link href="${resource_path}/editor.css" rel="stylesheet" />
     </head>
     <body>
-        <div id="editor"></div>
-        <script type="text/javascript">
-            var editor = ace.edit("editor");
-            ${events}
-            ${bindings}
-        </script>
+    ${editors}
     </body>
     </html>
 """)
@@ -40,15 +31,15 @@ BINDING_TEMPLATE = Template("""
 
 
 class QtAceEditor(QObject):
+    columns_changed = Signal(unicode)
+    title_changed = Signal(unicode)
     text_changed = Signal(unicode)
     mode_changed = Signal(unicode)
     theme_changed = Signal(unicode)
-    document_changed = Signal(unicode, unicode)
     auto_pair_changed = Signal(bool)
     font_size_changed = Signal(int)
     margin_line_changed = Signal(bool)
     margin_line_column_changed = Signal(int)
-    document_changed = Signal(unicode)
 
     def __init__(self, parent=None):
         """ Initialize the editor
@@ -58,7 +49,19 @@ class QtAceEditor(QObject):
         self._events = []
         self._bindings = []
 
-    @Slot(unicode)
+    def set_columns(self, columns):
+        """ Set the number of columns in the editor
+
+        """
+        self.columns = columns
+
+    def set_title(self, title):
+        """ Set the title of the current tab in the editor
+
+        """
+        self._title = title
+        self.title_changed.emit(title)
+
     def set_text(self, text):
         """ Set the text of the editor
 
@@ -73,7 +76,6 @@ class QtAceEditor(QObject):
 
         """
         self._text = text
-        self.document_changed.emit(self._text)
 
     def text(self):
         """ Return the text of the editor
@@ -112,14 +114,6 @@ class QtAceEditor(QObject):
 
         """
         return self._theme
-
-    def set_document(self, document):
-        """ Set the document in the editor
-
-        """
-        self._text = document.text
-        self._mode = document.mode
-        self.document_changed.emit(self._text, self._mode)
 
     def set_auto_pair(self, auto_pair):
         """ Set the auto_pair behavior of the editor
@@ -193,14 +187,42 @@ class QtAceEditor(QObject):
                                               func=_func)
         self._bindings.append(binding)
 
-    def generate_html(self):
+    def generate_html(self, columns=1):
         """ Generate the html code for the ace editor
 
         """
         # XXX better way to access files here?
         p = os.path
+        template_path = p.join(p.dirname(p.abspath(__file__)), 'editor.html')
+        editor_template = Template(open(template_path, 'r').read())
+
+        _editors = []
+        for _column in range(columns):
+            self.generate_ace_event('set_text_from_js', 'getSession()',
+                 'editor.getSession().getDocument().getValue()', 'change')
+
+            self.generate_binding('title_changed', 'this', 'setTitle')
+            self.generate_binding('theme_changed', 'editor',
+                 'setTheme')
+            self.generate_binding('mode_changed',
+                 'editor.getSession()', 'setMode')
+            self.generate_binding('text_changed',
+                 'editor.getSession().doc', 'setValue')
+            self.generate_binding('auto_pair_changed', 'editor',
+                 'setBehavioursEnabled')
+            self.generate_binding('font_size_changed', 'editor',
+                 'setFontSize')
+            self.generate_binding('margin_line_changed', 'editor',
+                 'setShowPrintMargin')
+            self.generate_binding('margin_line_column_changed',
+                 'editor', 'setPrintMarginColumn')
+
+            _editors.append(editor_template.substitute(column=_column,
+                events='\n'.join(self._events),
+                bindings='\n'.join(self._bindings)))
+            self._bindings = []
+            self._events = []
+
         _r_path = "file://" + p.join(p.dirname(p.abspath(__file__)))
-        _events = '\n'.join(self._events)
-        _bindings = '\n'.join(self._bindings)
-        return HTML_TEMPLATE.substitute(events=_events, resource_path=_r_path,
-                                        bindings=_bindings)
+        return HTML_TEMPLATE.substitute(resource_path=_r_path,
+                                        editors='\n'.join(_editors))
