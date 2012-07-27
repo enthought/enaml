@@ -18,7 +18,6 @@ enamldef Main(Window):
             tabs = list(reversed(tab_dict.keys()))
             tabs_addable = True
             tab_changed ::
-                print type(event)
                 if event.new == -1:
                     window.close()
                 else:

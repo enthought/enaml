@@ -2,7 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Enum, Bool, List
+from traits.api import Enum, Bool, List, Unicode
 
 from enaml.core.trait_types import EnamlEvent
 
@@ -41,6 +41,12 @@ class TabBar(ConstraintsWidget):
 
     #: An event fired when a tab is moved
     tab_moved = EnamlEvent
+
+    #: TabBar has drag and drop enabled by default
+    draggable = Bool(True)
+    drag_type = Unicode("text/plain")
+    accept_drops = Bool(True)
+    drop_types = Unicode("text/plain")
 
     #: How strongly a component hugs it's contents' width. A TabGroup
     #: ignores its width hug by default, so it expands freely in width.

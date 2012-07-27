@@ -296,6 +296,12 @@ class QtWidgetComponent(QtMessengerWidget):
         """
         self.widget.setStyleSheet("QWidget { background-color: rgba(0,0,0,0);}")
 
+    def hotspot(self, click_pos):
+        """ Return the point where the dragged image should be relative to the cursor.
+
+        """
+        return click_pos - self.widget.rect().topLeft()
+
     def mousePressEvent(self, event):
         """ Mouse clicked handler
 
@@ -314,10 +320,11 @@ class QtWidgetComponent(QtMessengerWidget):
                 if distance >= QApplication.startDragDistance():
                     drag = QDrag(self.widget)
                     mime_data = QMimeData()
-                    mime_data.setData(self.drag_type, QByteArray(self.drag_data()))
+                    mime_data.setData(self.drag_type,
+                        QByteArray(self.drag_data()))
                     drag.setMimeData(mime_data)
                     drag.setPixmap(self.drag_repr())
-                    drag.setHotSpot(event.pos() - self.widget.rect().topLeft())
+                    drag.setHotSpot(self.hotspot(event.pos()))
                     drag.exec_(Qt.CopyAction)
 
     def dragEnterEvent(self, event):

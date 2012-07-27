@@ -3,8 +3,8 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt_constraints_widget import QtConstraintsWidget
-from .qt.QtGui import QTabBar, QPushButton
-from .qt.QtCore import Signal
+from .qt.QtGui import QTabBar, QPushButton, QPixmap, QApplication
+from .qt.QtCore import Signal, Qt
 
 
 DOCUMENT_MODES = {
@@ -195,3 +195,45 @@ class QtTabBar(QtConstraintsWidget):
             'new': new
         }
         self.send_message(payload)
+
+    #--------------------------------------------------------------------------
+    # Drag and drop
+    #--------------------------------------------------------------------------
+    def drag_data(self):
+        """ The data to be dragged
+
+        """
+        return str(self.widget.tabAt(self.drag_start_pos))
+
+    def drag_repr(self):
+        """ An image representation of the tab.
+
+        """
+        index = self.widget.tabAt(self.drag_start_pos)
+        return QPixmap.grabWidget(self.widget, self.widget.tabRect(index))
+
+    def hotspot(self, click_pos):
+        index = self.widget.tabAt(self.drag_start_pos)
+        return click_pos - self.widget.tabRect(index).topLeft()
+
+    def mousePressEvent(self, event):
+        """ Fired when the mouse is pressed.
+
+        """
+        self.widget.setCurrentIndex(self.widget.tabAt(event.pos()))
+        super(QtTabBar, self).mousePressEvent(event)
+
+    def mouseMoveEvent(self, event):
+        """ Fired when the mouse is moved.
+
+        """
+        tab_rect = self.widget.tabRect(self.widget.tabAt(self.drag_start_pos))
+        if self.draggable:
+            if event.buttons() == Qt.LeftButton:
+                distance = (event.pos() - self.drag_start_pos).manhattanLength()
+                if distance >= QApplication.startDragDistance():
+                    x_drag_distance = event.pos().x() - self.drag_start_pos.x()
+                    y_drag_distance = event.pos().y() - self.drag_start_pos.y()
+                    tab_rect.moveLeft(x_drag_distance)
+                    tab_rect.moveTop(y_drag_distance)
+                    print tab_rect
