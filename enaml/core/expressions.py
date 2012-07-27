@@ -713,7 +713,7 @@ class SubscriptionExpression(AbstractExpression):
 
         if different:
             self.old_value = new_value
-            self.expression_changed(self, self.name, new_value)
+            self.expression_changed.emit(self, self.name, new_value)
 
     def eval(self):
         """ Evaluates the expression and returns the result. It also

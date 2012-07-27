@@ -261,7 +261,7 @@ class _TraitNotificationHandler(object):
         """
         parent = self._parent_ref()
         if parent is not None:
-            parent.expression_changed()
+            parent.expression_changed.emit()
 
 
 #------------------------------------------------------------------------------
