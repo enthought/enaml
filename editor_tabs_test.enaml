@@ -7,8 +7,8 @@ enamldef Main(Window):
     Container:
         TextEditor:
             id: text_edit
-            columns = 2
-            document = Document(title='First Document', text='hello')
+            columns = 1
+            document = Document(title='First Document', text='hello', mode='javascript')
         PushButton:
             text="Change"
             clicked ::

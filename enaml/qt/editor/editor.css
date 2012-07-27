@@ -1,35 +1,34 @@
 body {
-	background-color: #D8D8D8;
+    background-color: rgba(0, 0, 0, 0);
 }
 
-.tabs {
-    width: 100%;
+.container {
     margin: 0;
-    float: left;
+    padding: 0;
 }
 
-.tabs button:active {
+.container button:active {
     text-shadow: 0 -1px 1px rgba(0,0,0,0.5);
 }
 
 .add_button {
-    float: left;
+    display: inline-block;
+    margin: 0;
+    padding: 0;
     background: none;
     border: none;
     font-size: 1.2em;
 }
 
-.tab_list {
-    float: left;
+.tabs {
+    overflow: hidden;
     margin: 0;
     padding: 0;
-    width: 96%;
-    list-style-type: none;
-    display: table;
+    width: 94%;
+    display: inline-block;
 }
 
-.tab_list li {
-    display: table-cell;
+.tabs div {
     border-bottom: 1px solid #000;
     border-top: 1px solid #000;
     border-right: 1px solid #000;
@@ -38,34 +37,30 @@ body {
     padding: 5px 10px 5px 10px;
     background-color: gray;
     color: #000;
+    display: inline-block;
 }
 
-.tab_list li:first_child {
-    border-left: 1px solid #000;
-}
-
-.tab_list li:hover {
+.tabs div:hover {
     cursor: default;
 }
 
-.tab_list li.current {
+.tabs div.current {
     background-color: #000;
     color: #fff;
 }
 
-.tab_list li button {
-    background: none;
+.tabs div button {
     border: none;
+    background: none;
     margin: 0 0 0 5px;
     padding: 0;
     float: right;
-    color: #000;
 }
 
-.tab_list li.current button {
-    color: #fff;
+.tabs div.current button {
+    color: #999;
 }
 
-.tab_list li.current button:active {
+.tabs div.current button:active {
     text-shadow: 0 -1px 1px rgba(255,255,255,0.5);
 }

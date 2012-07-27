@@ -8,7 +8,7 @@ class QtAceEditorView(QWebView):
 
         """
         super(QtAceEditorView, self).__init__(parent)
-        self.ace_editor = QtAceEditor()
+        self.ace_editor = QtAceEditor(self)
 
         # XXX this is used for debugging, it should be taken out eventually
         self.settings().setAttribute(QWebSettings.DeveloperExtrasEnabled, True)

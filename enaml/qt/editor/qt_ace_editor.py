@@ -13,7 +13,7 @@ HTML_TEMPLATE = Template("""
         <link href="${resource_path}/editor.css" rel="stylesheet" />
     </head>
     <body>
-    ${editors}
+        ${editors}
     </body>
     </html>
 """)
@@ -22,7 +22,7 @@ EVENT_TEMPLATE = Template("""
     py_${func} = function() {
         py_ace_editor.${func}(${args});
     }
-    editor.${target}.on("${event_name}", py_${func});
+    this.editor.${target}.on("${event_name}", py_${func});
 """)
 
 BINDING_TEMPLATE = Template("""
@@ -199,23 +199,23 @@ class QtAceEditor(QObject):
         _editors = []
         for _column in range(columns):
             self.generate_ace_event('set_text_from_js', 'getSession()',
-                 'editor.getSession().getDocument().getValue()', 'change')
+                 '_this.editor.getSession().getDocument().getValue()', 'change')
 
             self.generate_binding('title_changed', 'this', 'setTitle')
-            self.generate_binding('theme_changed', 'editor',
+            self.generate_binding('theme_changed', 'this.editor',
                  'setTheme')
             self.generate_binding('mode_changed',
-                 'editor.getSession()', 'setMode')
+                 'this.editor.getSession()', 'setMode')
             self.generate_binding('text_changed',
-                 'editor.getSession().doc', 'setValue')
-            self.generate_binding('auto_pair_changed', 'editor',
+                 'this.editor.getSession().doc', 'setValue')
+            self.generate_binding('auto_pair_changed', 'this.editor',
                  'setBehavioursEnabled')
-            self.generate_binding('font_size_changed', 'editor',
+            self.generate_binding('font_size_changed', 'this.editor',
                  'setFontSize')
-            self.generate_binding('margin_line_changed', 'editor',
+            self.generate_binding('margin_line_changed', 'this.editor',
                  'setShowPrintMargin')
             self.generate_binding('margin_line_column_changed',
-                 'editor', 'setPrintMarginColumn')
+                 'this.editor', 'setPrintMarginColumn')
 
             _editors.append(editor_template.substitute(column=_column,
                 events='\n'.join(self._events),
