@@ -446,7 +446,7 @@ class LazyProperty(TraitType):
     """ A trait which behaves like a read-only cached property, but
     which lazily defers binding the dependency notifiers until the
     first time the value is retrieved. It is used to avoid situations
-    where a property dependency in prematurely evaluated during
+    where a property dependency is prematurely evaluated during
     component instantiation.
 
     """
