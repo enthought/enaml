@@ -8,8 +8,8 @@ import types
 
 from .byteplay import (
     Code, LOAD_FAST, CALL_FUNCTION, LOAD_GLOBAL, STORE_FAST, LOAD_CONST,
-    LOAD_ATTR, STORE_SUBSCR, RETURN_VALUE, POP_TOP, MAKE_FUNCTION,
-    STORE_NAME, LOAD_NAME, SetLineno,
+    LOAD_ATTR, STORE_SUBSCR, RETURN_VALUE, POP_TOP, MAKE_FUNCTION, STORE_NAME,
+    LOAD_NAME, DUP_TOP, SetLineno,
 )
 
 
@@ -31,18 +31,25 @@ from .byteplay import (
 #     This updates the compiler for the coming switch to async UI's
 #     which will see the removal of the Toolkit concept. The only
 #     magic scope maintained is for that of operators.
-COMPILER_VERSION = 3
+# 4 : Update component building - 27 July 2012
+#     This updates the compiler to handle the new Enaml creation semantics
+#     that don't rely on __enaml_call__. Instead the parent is passed 
+#     directly to the component cls which is a subclass of Declarative.
+#     That class handles calling the builder functions upon instance
+#     creation. This allows us to get rid of the EnamlDef class and
+#     make enamldef constructs proper subclasses of Declarative.
+COMPILER_VERSION = 4
 
 
 #------------------------------------------------------------------------------
 # Compiler Helpers
 #------------------------------------------------------------------------------
 # Code that will be executed at the top of every enaml module
-STARTUP = ['from enaml.core.enaml_def import EnamlDef']
+STARTUP = ['from enaml.core.compiler_helpers import _make_decl_subclass']
 
 
 # Cleanup code that will be included in every compiled enaml module
-CLEANUP = ['del EnamlDef']
+CLEANUP = ['del _make_decl_subclass']
 
 
 def _var_name_generator():
@@ -118,20 +125,17 @@ class DeclarationCompiler(_NodeVisitor):
         We generate bytecode that would correspond to a Python function that
         looks similar to this::
         
-        def FooWindow(identifiers, operators):
+        def FooWindow(instance, identifiers, operators):
             f_globals = globals()
             eval_ = eval
-            foo_cls = eval('Window', f_globals)
-            foo = foo_cls.__enaml_call__(identifiers, operators)
-            identifiers['foo'] = foo
+            identifiers['foo'] = instance
             op = eval_('__operator_Equal__', operators)
             op(foo, 'a', <ast>, <code>, identifiers, f_globals, operators)
             btn_cls = eval_('PushButton', f_globals)
-            btn = btn_cls.__enaml_call__(None, operators)
+            btn = btn_cls(foo)
             identifiers['btn'] = button
             op = eval_('__operator_Equal__', operators)
             op(item, 'text', <ast>, <code>, identifiers, f_globals, operators)
-            foo.add_subcomponent(button)
             return foo
         
         """
@@ -139,8 +143,8 @@ class DeclarationCompiler(_NodeVisitor):
         compiler.visit(node)
         code_ops = compiler.code_ops
         code = Code(
-            code_ops, [], ['identifiers', 'operators'], False, False, True, 
-            node.name, filename, node.lineno, node.doc,
+            code_ops, [], ['instance', 'identifiers', 'operators'], False, 
+            False, True, node.name, filename, node.lineno, node.doc,
         )
         return code
 
@@ -160,15 +164,17 @@ class DeclarationCompiler(_NodeVisitor):
         return self.name_stack[-1]
 
     def visit_Declaration(self, node):
-        """ Creates the bytecode ops for a declaration node. This visitor
-        handles creating the component instance and storing it's identifer
-        if one is given.
+        """ Creates the bytecode ops for a declaration node. 
+
+        This node visitor pulls the passed in root into a local var
+        and stores it's identifier if one is given. It also loads
+        in commonly used local variables f_globals, and eval_.
 
         """
         name = self.name_gen.next()
         extend_ops = self.extend_ops
         self.push_name(name)
-        base_code = compile(node.base.py_ast, self.filename, mode='eval')
+
         extend_ops([
             # f_globals = globals()
             (LOAD_GLOBAL, 'globals'),
@@ -179,16 +185,8 @@ class DeclarationCompiler(_NodeVisitor):
             (LOAD_GLOBAL, 'eval'),
             (STORE_FAST, 'eval_'),
 
-            # foo_cls = eval('Window', f_globals)
-            # foo = foo_cls.__enaml_call__(identifiers, operators)
-            (LOAD_FAST, 'eval_'),
-            (LOAD_CONST, base_code),
-            (LOAD_FAST, 'f_globals'),
-            (CALL_FUNCTION, 0x0002),
-            (LOAD_ATTR, '__enaml_call__'),
-            (LOAD_FAST, 'identifiers'),
-            (LOAD_FAST, 'operators'),
-            (CALL_FUNCTION, 0x0002),
+            # foo_cls = root
+            (LOAD_FAST, 'instance'),
             (STORE_FAST, name),
         ])
 
@@ -214,66 +212,39 @@ class DeclarationCompiler(_NodeVisitor):
         self.pop_name()
 
     def visit_AttributeDeclaration(self, node):
-        """ Creates the bytecode ops for an attribute declaration. This
-        visitor handles adding a new attribute to a component.
+        """ Creates the bytecode ops for an attribute declaration. 
+
+        The attributes will have already been added to the subclass, so
+        this visitor just dispatches to any default bindings which may
+        exist on the attribute declaration.
 
         """
-        extend_ops = self.extend_ops
-
-        # Load the method that's going to be called and the
-        # name of the attribute being declared.
-        extend_ops([
-            (LOAD_FAST, self.curr_name()),
-            (LOAD_ATTR, 'add_attribute'),
-            (LOAD_CONST, node.name),
-        ])
-
-        # Generate the ops to the load the type (if one was given),
-        # and the call the add_attribute method
-        node_type = node.type
-        if node_type is not None:
-            type_code = compile(node_type.py_ast, self.filename, mode='eval')
-            extend_ops([
-                (LOAD_FAST, 'eval_'),
-                (LOAD_CONST, type_code),
-                (LOAD_FAST, 'f_globals'),
-                (CALL_FUNCTION, 0x0002),
-                (LOAD_CONST, node.is_event),
-                (CALL_FUNCTION, 0x0003),
-                (POP_TOP, None),
-            ])
-        else:
-            extend_ops([
-                (LOAD_CONST, 'is_event'),
-                (LOAD_CONST, node.is_event),
-                (CALL_FUNCTION, 0x0101),
-                (POP_TOP, None),
-            ])
-
         # Visit the default attribute binding if one exists.
         default = node.default
         if default is not None:
             self.visit(node.default)
 
     def visit_AttributeBinding(self, node):
-        """ Creates the bytecode ops for an attribute binding. This
-        visitor handles loading and calling the appropriate operator.
+        """ Creates the bytecode ops for an attribute binding. 
+
+        This visitor handles loading and calling the appropriate operator.
 
         """
         # A binding is accomplished by loading the appropriate binding
-        # operator function and passing it the a number of arguments:
+        # operator function and passing it the operator arguments:
         #
         # op = eval('__operator_Equal__', operators)
         # op(item, 'a', code, identifiers, f_globals, operators)
         fn = self.filename
         op_code = compile(node.binding.op, fn, mode='eval')
+        op_code = update_firstlineno(op_code, node.binding.lineno)
         py_ast = node.binding.expr.py_ast
         if isinstance(py_ast, ast.Module):
             expr_code = compile(py_ast, fn, mode='exec')
         else:
             # When compiling in 'eval' mode, the line number in the ast
             # gets ignored. We need to make new code object from this
-            # on with the proper starting line number so that 
+            # one with the proper starting line number so that 
             # exceptions are properly reported.
             expr_code = compile(py_ast, fn, mode='eval')
             expr_code = update_firstlineno(expr_code, py_ast.lineno)
@@ -299,24 +270,26 @@ class DeclarationCompiler(_NodeVisitor):
         
         """
         extend_ops = self.extend_ops
+        parent_name = self.curr_name()
         name = self.name_gen.next()
         self.push_name(name)
         op_code = compile(node.name, self.filename, mode='eval')
+        # Line numbers are ignored when compiling in 'eval' mode.
+        # This restores the line number information.
+        op_code = update_firstlineno(op_code, node.lineno)
         extend_ops([
             # btn_cls = eval('PushButton', f_globals)
-            # btn = btn_cls.__enaml_call__(None, operators)
+            # btn = btn_cls.(parent)
             # When instantiating a Declaration, it is called without
             # identifiers, so that it creates it's own new identifiers
             # scope. This means that derived declarations share ids,
-            # but the composed children have an isolated id space.
+            # but the composed children have an isolated id namespace.
             (LOAD_FAST, 'eval_'),
             (LOAD_CONST, op_code),
             (LOAD_FAST, 'f_globals'),
             (CALL_FUNCTION, 0x0002),
-            (LOAD_ATTR, '__enaml_call__'),
-            (LOAD_CONST, None),
-            (LOAD_FAST, 'operators'),
-            (CALL_FUNCTION, 0x0002),
+            (LOAD_FAST, parent_name),
+            (CALL_FUNCTION, 0x0001),
             (STORE_FAST, name),
         ])
         
@@ -333,14 +306,6 @@ class DeclarationCompiler(_NodeVisitor):
             visit(item)
         
         self.pop_name()
-        extend_ops([
-            # foo.add_subcomponent(button)
-            (LOAD_FAST, self.curr_name()),
-            (LOAD_ATTR, 'add_subcomponent'),
-            (LOAD_FAST, name),
-            (CALL_FUNCTION, 0x0001),
-            (POP_TOP, None),
-        ])
 
 
 #------------------------------------------------------------------------------
@@ -432,17 +397,70 @@ class EnamlCompiler(_NodeVisitor):
         of EnamlDef to the module.
 
         """
-        # This creates a function from the generated code ops then
-        # wraps that function in an EnamlDeclaration.
-        func_code = DeclarationCompiler.compile(node, self.filename)
         name = node.name
+        extend_ops = self.code_ops.extend
+
+        func_code = DeclarationCompiler.compile(node, self.filename)
+        base_code = compile(node.base.py_ast, self.filename, mode='eval')
+        # Line numbers are ignored when compiling in 'eval' mode.
+        # This restores the line number information.
+        base_code = update_firstlineno(base_code, node.base.lineno)
+
         self.code_ops.extend([
+            (SetLineno, node.lineno),
+            (LOAD_NAME, '_make_decl_subclass'),
+            (LOAD_CONST, name),
+            (LOAD_NAME, 'eval'),
+            (LOAD_CONST, base_code),
+            (LOAD_NAME, 'globals'),
+            (CALL_FUNCTION, 0x0000),
+            (CALL_FUNCTION, 0x0002),
             (LOAD_CONST, func_code),
             (MAKE_FUNCTION, 0),
-            (STORE_NAME, name),
-            (LOAD_NAME, 'EnamlDef'),
-            (LOAD_NAME, name),
-            (CALL_FUNCTION, 0x0001),
+            (CALL_FUNCTION, 0x0003),
             (STORE_NAME, name),
         ])
+
+        # We now have a new Declarative subclass stored at name, which 
+        # we need to use to add the new class attributes.
+        extend_ops([
+            (LOAD_NAME, name),
+            (LOAD_ATTR, '_add_decl_attr'),
+        ])
+
+        # This loop adds the ops to add the attributes to the new subclass
+        for child_node in node.body:
+            if type(child_node).__name__ == 'AttributeDeclaration':
+                extend_ops([
+                    (SetLineno, child_node.lineno),
+                    (DUP_TOP, None),
+                    (LOAD_CONST, child_node.name),
+                ])
+                attr_type = child_node.type
+                if attr_type is not None:
+                    attr_type_code = compile(
+                        attr_type.py_ast, self.filename, mode='eval'
+                    )
+                    attr_type_code = update_firstlineno(
+                        attr_type_code, attr_type.lineno
+                    )
+                    extend_ops([
+                        (LOAD_NAME, 'eval'),
+                        (LOAD_CONST, attr_type_code),
+                        (LOAD_NAME, 'globals'),
+                        (CALL_FUNCTION, 0x0000),
+                        (CALL_FUNCTION, 0x0002),
+                        (LOAD_CONST, child_node.is_event),
+                        (CALL_FUNCTION, 0x0003),
+                        (POP_TOP, None),
+                    ])
+                else:
+                    extend_ops([
+                        (LOAD_NAME, 'object'),
+                        (LOAD_CONST, child_node.is_event),
+                        (CALL_FUNCTION, 0x0003),
+                        (POP_TOP, None),
+                    ])
+
+        extend_ops([(POP_TOP, None)])
 
