@@ -60,7 +60,7 @@ def op_simple(cmpnt, attr, code, identifiers, f_globals, operators):
 
     """
     expr = SimpleExpression(cmpnt, attr, code, identifiers, f_globals, operators)
-    cmpnt.bind_expression(attr, expr)
+    cmpnt._bind_expression(attr, expr)
 
 
 def op_notify(cmpnt, attr, code, identifiers, f_globals, operators):
@@ -69,7 +69,7 @@ def op_notify(cmpnt, attr, code, identifiers, f_globals, operators):
 
     """
     expr = NotificationExpression(cmpnt, attr, code, identifiers, f_globals, operators)
-    cmpnt.bind_expression(attr, expr, notify_only=True)
+    cmpnt._bind_expression(attr, expr, notify_only=True)
 
 
 def op_update(cmpnt, attr, code, identifiers, f_globals, operators):
@@ -79,7 +79,7 @@ def op_update(cmpnt, attr, code, identifiers, f_globals, operators):
     """
     inverters = [GenericAttributeInverter, GetattrInverter, ImplicitAttrInverter]
     expr = UpdateExpression(inverters, cmpnt, attr, code, identifiers, f_globals, operators)
-    cmpnt.bind_expression(attr, expr, notify_only=True)
+    cmpnt._bind_expression(attr, expr, notify_only=True)
 
 
 def op_subscribe(cmpnt, attr, code, identifiers, f_globals, operators):
@@ -91,7 +91,7 @@ def op_subscribe(cmpnt, attr, code, identifiers, f_globals, operators):
     """
     monitors = [TraitAttributeMonitor, TraitGetattrMonitor]
     expr = SubscriptionExpression(monitors, cmpnt, attr, code, identifiers, f_globals, operators)
-    cmpnt.bind_expression(attr, expr)
+    cmpnt._bind_expression(attr, expr)
 
 
 def op_delegate(cmpnt, attr, code, identifiers, f_globals, operators):
@@ -106,7 +106,7 @@ def op_delegate(cmpnt, attr, code, identifiers, f_globals, operators):
     inverters = [GenericAttributeInverter, GetattrInverter, ImplicitAttrInverter]
     monitors = [TraitAttributeMonitor, TraitGetattrMonitor]
     expr = DelegationExpression(inverters, monitors, cmpnt, attr, code, identifiers, f_globals, operators)
-    cmpnt.bind_expression(attr, expr)
+    cmpnt._bind_expression(attr, expr)
 
 
 OPERATORS = {
