@@ -77,7 +77,9 @@ class Declarative(HasStrictTraits):
 
     #: A class attribute used by the Enaml compiler machinery to store
     #: the builder functions on the class. The functions are called
-    #: when a component is created.
+    #: when a component is instantiated and are the mechanism by which
+    #: a component is populated with its declarative children and bound
+    #: expression objects.
     _builders = []
 
     #: The HasTraits class defines a class attribute 'set' which is
@@ -106,15 +108,15 @@ class Declarative(HasStrictTraits):
         super(Declarative, self).__init__()
         # Set the parent reference on the object. We do this quietly
         # so that the _parent_changed handler is not invoked. This 
-        # saves us a linear scan over the parents children since we
+        # saves us a linear scan over the parent's children since we
         # can be reasonably sure that this child has not yet been
-        # added to its parent's list of children.
+        # added as a child of the parent.
         if parent is not None:
             self.trait_setq(parent=parent)
             parent.children.append(self)
 
         # If any builders are present, they need to be invoked before
-        # applying any other keyword arguments so that expressions
+        # applying any other keyword arguments so that bound expressions
         # do not override the keywords. The builders appear and are run
         # in the reverse order of a typical mro. The most base builder
         # gets to add its children and bind its expressions first. 
@@ -136,14 +138,14 @@ class Declarative(HasStrictTraits):
     # Private API
     #--------------------------------------------------------------------------
     @classmethod
-    def _add_decl_attr(cls, name, attr_type, is_event):
+    def _add_user_attribute(cls, name, attr_type, is_event):
         """ A private classmethod used by the Enaml compiler machinery.
 
         This method is used to add user attributes and events to custom
         derived enamldef components. If the attribute already exists on 
-        the class, and is not a user defined attribute, then an exception
-        will be raised. The only way to override standard attributes is 
-        via traditional subclassing.
+        the class and is not a user defined attribute, then an exception
+        will be raised. The only method of overriding standard trait 
+        attributes is through traditional subclassing.
 
         Parameters
         ----------
@@ -166,30 +168,37 @@ class Declarative(HasStrictTraits):
                        "enamldef '%s.%s' already exists.")
                 items = (name, name, cls.__module__, cls.__name__)
                 raise TypeError(msg % items)
+
+        trait_attr_cls = UserEvent if is_event else UserAttribute
         try:
-            if is_event:
-                user_trait = UserEvent(attr_type)
-            else:
-                user_trait = UserAttribute(attr_type)
+            user_trait = trait_attr_cls(attr_type)
         except TypeError:
             msg = ("'%s' is not a valid type for the '%s' attribute "
                    "declaration on enamldef '%s.%s'")
             items = (attr_type, name, cls.__module__, cls.__name__)
             raise TypeError(msg % items)
-        
-        # XXX add them manually until I better understand the
-        # HasTraits.add_class_trait method and see if there is
-        # a formal way to remove a class trait.
-        cls.__base_traits__[name] = user_trait.as_ctrait()
-        cls.__class_traits__[name] = user_trait.as_ctrait()
+
+        # XXX HasTraits.add_class_trait will raise an exception if the
+        # the trait is already defined. There does not appear to be a
+        # way to turn this off, nor does there appear to be a way to 
+        # formally remove a class trait. So, we just do what the traits
+        # metaclass does when adding traits and directly add the ctrait 
+        # to the appropriate class dictionaries. The add_class_trait
+        # classmethod does some extra work to make sure that the trait
+        # is added to all subclasses, but that does not appear to be
+        # needed in this case, since this method will only be called by
+        # the compiler machinery for brand new subclasses.
+        ctrait = user_trait.as_ctrait()
+        cls.__base_traits__[name] = ctrait
+        cls.__class_traits__[name] = ctrait
 
     def _bind_expression(self, name, expression, notify_only=False):
         """ A private method used by the Enaml execution engine.
 
         This method is called by the Enaml operators to bind the given
-        expression object to the attribute 'name'. If the attribute does
-        not exist, an exception is raised. A strong reference to the 
-        expression object is kept internally.
+        expression object to the given attribute name. If the attribute
+        does not exist, an exception is raised. A strong reference to 
+        the expression object is kept internally.
 
         Parameters
         ----------
