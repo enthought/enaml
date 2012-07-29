@@ -382,7 +382,7 @@ class Declarative(HasStrictTraits):
 
         Parameters
         ----------
-        root : BaseComponent, optional
+        root : Declarative, optional
             The component at which to stop the traversal. Defaults
             to None
 
