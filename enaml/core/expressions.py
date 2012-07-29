@@ -62,8 +62,8 @@ class ExecutionScope(object):
 
         Parameters
         ----------
-        obj : BaseComponent
-            The BaseComponent instance on which the expression is bound.
+        obj : Declarative
+            The Declarative instance on which the expression is bound.
 
         identifiers : dict
             The dictionary of identifiers that are available to the
@@ -199,8 +199,8 @@ class NonlocalScope(object):
 
         Parameters
         ----------
-        obj : BaseComponent
-            The BaseComponent instance which forms the first level of
+        obj : Declarative
+            The Declarative instance which forms the first level of
             the scope.
         
         attr_cb : callable or None
@@ -356,7 +356,7 @@ class AbstractExpression(object):
 
         Parameters
         ----------
-        obj : BaseComponent
+        obj : Declarative
             The base component to which this expression is being bound.
 
         name : string
@@ -596,7 +596,7 @@ class _ImplicitAttributeBinder(object):
     """
     # This doesn't need to be provided as a monitor because implicit 
     # attribute lookups, when successful, will always be on an instance
-    # of BaseComponent and should never need to be hooked by an Enaml 
+    # of Declarative and should never need to be hooked by an Enaml 
     # extension.
     def __init__(self, parent):
         """ Initialize an _ImplicitAttributeBinder
@@ -616,8 +616,8 @@ class _ImplicitAttributeBinder(object):
 
         Parameters
         ----------
-        obj : BaseComponent
-            The BaseComponent instance that owns the attribute.
+        obj : Declarative
+            The Declarative instance that owns the attribute.
         
         name : string
             The attribute name of interest
