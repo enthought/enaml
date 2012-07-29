@@ -19,7 +19,7 @@ class Message(tuple):
         Parameters
         ----------
         parts : iterable
-            An iterabled of the four parts to the Enaml message: 
+            An iterable of the four parts to the Enaml message: 
             header, parent_header metadata, and content.
 
         """
