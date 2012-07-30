@@ -104,15 +104,15 @@ class Slider(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
-    def creation_attributes(self):
+    def snapshot(self):
         """ Return a dictionary which contains all the state necessary to
         initialize a client widget.
 
         """
-        super_attrs = super(Slider, self).creation_attributes()
+        snap = super(Slider, self).snapshot()
         for attr in _SLIDER_ATTRS:
-            super_attrs[attr] = getattr(self, attr)
-        return super_attrs
+            snap[attr] = getattr(self, attr)
+        return snap
 
     def bind(self):
         """ A method called after initialization which allows the widget

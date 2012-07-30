@@ -35,19 +35,19 @@ class TextEditor(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
-    def creation_attributes(self):
+    def snapshot(self):
         """ Returns the dict of creation attributes for the control.
 
         """
-        super_attrs = super(TextEditor, self).creation_attributes()
-        super_attrs['text'] = self.text
-        super_attrs['mode'] = self.mode
-        super_attrs['theme'] = self.theme
-        super_attrs['auto_pair'] = self.auto_pair
-        super_attrs['font_size'] = self.font_size
-        super_attrs['margin_line'] = self.margin_line
-        super_attrs['margin_line_column'] = self.margin_line_column
-        return super_attrs
+        snap = super(TextEditor, self).snapshot()
+        snap['text'] = self.text
+        snap['mode'] = self.mode
+        snap['theme'] = self.theme
+        snap['auto_pair'] = self.auto_pair
+        snap['font_size'] = self.font_size
+        snap['margin_line'] = self.margin_line
+        snap['margin_line_column'] = self.margin_line_column
+        return snap
 
     def bind(self):
         """ A method called after initialization which allows the widget

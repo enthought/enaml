@@ -33,16 +33,16 @@ class ImageView(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
-    def creation_attributes(self):
+    def snapshot(self):
         """ Returns the dict of creation attribute for the control.
 
         """
-        super_attrs = super(ImageView, self).creation_attributes()
-        super_attrs['scale_to_fit'] = self.scale_to_fit
-        super_attrs['preserve_aspect_ratio'] = self.preserve_aspect_ratio
-        super_attrs['allow_upscaling'] = self.allow_upscaling
-        super_attrs['image'] = self.image.as_dict()
-        return super_attrs
+        snap = super(ImageView, self).snapshot()
+        snap['scale_to_fit'] = self.scale_to_fit
+        snap['preserve_aspect_ratio'] = self.preserve_aspect_ratio
+        snap['allow_upscaling'] = self.allow_upscaling
+        snap['image'] = self.image.as_dict()
+        return snap
 
     def bind(self):
         """ A method called after initialization which allows the widget

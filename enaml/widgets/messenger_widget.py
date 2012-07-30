@@ -2,128 +2,134 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Instance, ReadOnly, Str
+import logging
 
-from enaml.core.base_component import BaseComponent
-from enaml.registry import register
+from traits.api import Instance, Str, WeakRef, Property
+
+from enaml.core.declarative import Declarative
 from enaml.session import Session
 from enaml.utils import LoopbackGuard, id_generator
 
 
-id_gen = id_generator('w')
+#: The global widget identifier generator
+_widget_id_gen = id_generator('w_')
 
 
-class MessengerWidget(BaseComponent):
+class MessengerWidget(Declarative):
     """ The base class of all widget classes in Enaml.
 
-    This extends BaseComponent with the ability to send and receive
-    commands to and from a target by mixing in the AsyncMessenger
-    class. It aslo provides the necessary data members and methods
-    required to initialize the client widget.
+    This extends Declarative with the ability to send and receive
+    commands to and from a client.
 
     """
-    #: The session to use for sending messages.
-    session = Instance(Session)
+    #: The session object to use for sending messages to the client.
+    #: This will be initially set by the Session object when it takes
+    #: ownership of the view. It should not typically be changed by 
+    #: user code. Only a weakref to the Session object is stored.
+    session = Property(Instance(Session))
     
-    #: The unique messaging identifier for this widget.
-    target_id = ReadOnly
+    #: The unique messaging identifier for this widget. It is generated
+    #: automatically and should not typically be changed by user code.
+    widget_id = Str
+    def _widget_id_default(self):
+        return _widget_id_gen.next()
 
     #: A loopback guard which can be used to prevent a loopback cycle
     #: of messages when setting attributes from within a handler.
     loopback_guard = Instance(LoopbackGuard, ())
 
-    #: A string used to speficy the type of widget which should be 
-    #: created by clients when this widget is published. The default 
-    #: type is computed based on the name of the component class. This 
-    #: may be overridden by users as needed to define custom behavior.
-    widget_type = Str
-    def _widget_type_default(self):
-        return type(self).__name__
-
-    def __new__(cls, *args, **kwargs):
-        self = super(MessengerWidget, cls).__new__(cls, *args, **kwargs)
-        self.target_id = id_gen.next()
-        register(self.target_id, self)
-        return self
-
-    def traits_init(self):
-        super(MessengerWidget, self).traits_init()
-        self.bind()
+    #: The internal storage for the 'session' property. This will be
+    #: updated by calls to the 'set_session' method.
+    _session = WeakRef(Session)
 
     #--------------------------------------------------------------------------
-    # Signal Handlers
+    # Property Handlers
     #--------------------------------------------------------------------------
-    def receive(self, message):
-        if message['type'] == 'message':
-            self.receive_message(message)
+    def _get_session(self):
+        """ The property getter for the 'session' property.
 
-    def receive_message(self, message):
-        payload = message['payload']
-        handler_name = 'on_message_' + payload['action'].replace('-', '_')
+        """
+        return self._session
+
+    #--------------------------------------------------------------------------
+    # Messaging/Session API
+    #--------------------------------------------------------------------------
+    def set_session(self, session):
+        """ Apply the session object to this component and its subtree.
+
+        This method will be called by the Session object when it takes
+        ownership of the view. If may be called later by child change
+        handlers to make sure the whole tree is operating on the same
+        session. This method should not typically be called by user
+        code.
+
+        Parameters
+        ----------
+        session : Session
+            The Session object which should be used by this view.
+
+        """
+        self._session = session
+        session.register_widget(self)
+        for child in self.children:
+            if isinstance(child, MessengerWidget):
+                child.set_session(session)
+
+    def receive_message(self, action, content):
+        """ Receive a message from the client of this widget.
+
+        This is called by the widget's Session object when the client
+        of the widget sends unsolicited message.
+
+        Parameters
+        ----------
+        action : str
+            The action to be performed by the widget.
+
+        content : ObjectDict
+            The content dictionary for the action.
+
+        """
+        handler_name = '_on_message_' + action
         handler = getattr(self, handler_name, None)
         if handler is not None:
-            handler(payload)
+            handler(content)
+        else:
+            msg = "Unhandled action '%s' sent to widget %s:%s"
+            logging.warn(msg % (action, self.class_name, self.widget_id))
 
-    def send_message(self, payload):
-        msg = {
-            'target_id': self.target_id,
-            'operation_id': None,
-            'type': 'message',
-            'payload': payload,
-        }
-        hub.post(msg)
+    def send_message(self, action, content):
+        """ Send a message to the client of this widget.
+
+        This method can be called to send an unsolicited message to the
+        client of this widget.
+
+        Parameters
+        ----------
+        action : str
+            The action for the message.
+
+        content : dict
+            The content of the message.
+
+        """
+        session = self.session
+        if session is None:
+            msg = 'No Session object for widget %s:%s'
+            logging.warn(msg % (self.class_name, self.widget_id))
+        else:
+            session.send_message(self.widget_id, action, content)
 
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
     def snapshot(self):
-        """ Create a snapshot of the tree starting from this component.
-
-        Returns
-        -------
-        result : dict
-            A dictionary snapshot of the component tree, from this
-            component downward.
+        """ An overridden method which updates the superclass snapshot.
 
         """
-        snap = self.snapshot_payload()
-        children = [child.snapshot() for child in self.children]
-        snap['children'] = children
+        snap = super(MessengerWidget, self).snapshot()
+        snap['target_id'] = self.target_id
         return snap
-
-    def snapshot_payload(self):
-        """ Returns the payload dict for the 'create' action for the
-        messenger.
-
-        Returns
-        -------
-        results : dict
-            The creation payload dict for the messenger widget.
-
-        """
-        payload = {}
-        payload['target_id'] = self.target_id
-        payload['type'] = self.widget_type
-        payload['attributes'] = self.creation_attributes()
-        return payload
-
-    def creation_attributes(self):
-        """ Returns a dictionary of attributes to initialize the state
-        of the target widget when it is created. 
-
-        This method is called by 'creation_info' when assembling the
-        dictionary of initial state for creation of the client.
-
-        This method returns a a new empty dictionary which should be 
-        updated in-place by subclasses before being returned to the
-        caller.
-
-        Returns
-        -------
-        results : dict
-
-        """
-        return {}
 
     def bind(self):
         """ A method which should be called when preparing a widget for
@@ -134,28 +140,28 @@ class MessengerWidget(BaseComponent):
         to the client. The default implementation of this method is 
         a no-op, but is provided to be super() friendly. It's assumed
         that this method will only be called once by the object which
-        manages the process of preparing a widget for publishing.
+        manages the process of preparing a widget for communication.
 
         """
         pass
 
     def publish_attributes(self, *attrs):
         """ A convenience method provided for subclasses to use to 
-        publish an arbitrary number of attributes to the target widet.
+        publish an arbitrary number of attributes to the client widet.
 
-        The action generated for the target message is created by 
-        prefixing 'set-' to the name of the changed attribute. This
-        method is not intended to meet the needs of *all* attribute
-        publishing. Rather it is meant to handle the majority of 
-        simple cases. More complex attributes will need to implement
-        their own dispatching handlers.
+        The action for the message is created by prefixing 'set-' to the
+        name of the changed attribute. This method is not intended to 
+        meet the needs of *all* attribute publishing. Rather it is meant
+        to handle most of the simple cases. More complex cases will need
+        to implement their own dispatching handlers.
 
         Parameters
         ----------
         *attrs
             The string names of the attributes to publish to the client.
-            These attributes are expected to be simply serializable.
-            More complex values should use their own dispatch handlers.
+            The values of these attributes are expected to be JSON
+            serializable. More complex values should use their own 
+            dispatch handlers.
 
         """
         otc = self.on_trait_change
@@ -183,16 +189,18 @@ class MessengerWidget(BaseComponent):
     #--------------------------------------------------------------------------
     def _publish_attr_handler(self, name, new):
         """ A trait change handler which will send an attribute change
-        message to a target by prefixe the attr name with 'set-' in 
-        order to creation the action name.
+        message to the client.
 
-        The value of the attribute is expected to be serializable.
-        If the loopback guard is held for the given name, then the 
-        message will no be sent (avoiding potential loopbacks).
+        The message action will be created by prefixing the attribute
+        name with 'set-'. The value of the attribute is expected to be 
+        serializable to JSON. The content of the message will have the
+        name of the attribute as a key, and the value as its value. If
+        the loopback guard is held for the given name, then the message
+        will no be sent (avoiding potential loopbacks).
 
         """
         if name not in self.loopback_guard:
             action = 'set-' + name
-            payload = {'action': action, name: new}
-            self.send_message(payload)
+            content = {name: new}
+            self.send_message(action, content)
 

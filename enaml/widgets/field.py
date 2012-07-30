@@ -54,11 +54,11 @@ class Field(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
-    def creation_attributes(self):
+    def snapshot(self):
         """ Returns the dict of creation attributes for the control.
 
         """
-        super_attrs = super(Field, self).creation_attributes()
+        snap = super(Field, self).snapshot()
         attrs = {
             'text': self.text,
             'validators': self.validators,
@@ -67,8 +67,8 @@ class Field(ConstraintsWidget):
             'max_length': self.max_length,
             'read_only': self.read_only,
         }
-        super_attrs.update(attrs)
-        return super_attrs
+        snap.update(attrs)
+        return snap
 
     def bind(self):
         """ A method called after initialization which allows the widget

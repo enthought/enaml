@@ -41,13 +41,13 @@ class Dialog(Window):
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
-    def creation_attributes(self):
+    def snapshot(self):
         """ Return the creation attributes for a Dialog
 
         """
-        super_attrs = super(Dialog, self).creation_attributes()
-        super_attrs['modality'] = self.modality
-        return super_attrs
+        snap = super(Dialog, self).snapshot()
+        snap['modality'] = self.modality
+        return snap
 
     #--------------------------------------------------------------------------
     # Message Handling

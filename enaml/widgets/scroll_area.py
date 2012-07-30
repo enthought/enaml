@@ -39,15 +39,15 @@ class ScrollArea(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
-    def creation_attributes(self):
+    def snapshot(self):
         """ Return a dictionary which contains all the state necessary to
         initialize a client widget.
 
         """
-        super_attrs = super(ScrollArea, self).creation_attributes()
-        super_attrs['horizontal_scrollbar'] = self.horizontal_scrollbar
-        super_attrs['vertical_scrollbar'] = self.vertical_scrollbar
-        return super_attrs
+        snap = super(ScrollArea, self).snapshot()
+        snap['horizontal_scrollbar'] = self.horizontal_scrollbar
+        snap['vertical_scrollbar'] = self.vertical_scrollbar
+        return snap
 
     def bind(self):
         """ Bind the change handlers for this widget.

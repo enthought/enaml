@@ -56,15 +56,15 @@ class WidgetComponent(MessengerWidget):
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
-    def creation_attributes(self):
+    def snapshot(self):
         """ Return the initial properties for a widget component.
 
         """
-        super_attrs = super(WidgetComponent, self).creation_attributes()
+        snap = super(WidgetComponent, self).snapshot()
         get = getattr
         attrs = dict((attr, get(self, attr)) for attr in _WIDGET_ATTRS)
-        super_attrs.update(attrs)
-        return super_attrs
+        snap.update(attrs)
+        return snap
 
     def bind(self):
         """ Bind the change handlers for a widget component.

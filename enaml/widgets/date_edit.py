@@ -27,14 +27,14 @@ class DateEdit(BoundedDate):
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
-    def creation_attributes(self):
+    def snapshot(self):
         """ Return a dictionary which contains all the state necessary to
         initialize a client widget.
 
         """
-        super_attrs = super(DateEdit, self).creation_attributes()
-        super_attrs['date_format'] = self.date_format
-        return super_attrs
+        snap = super(DateEdit, self).snapshot()
+        snap['date_format'] = self.date_format
+        return snap
 
     def bind(self):
         """ A method called after initialization which allows the widget

@@ -40,16 +40,16 @@ class BoundedDate(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
-    def creation_attributes(self):
+    def snapshot(self):
         """ Return a dictionary which contains all the state necessary to
         initialize a client widget.
 
         """
-        super_attrs = super(BoundedDate, self).creation_attributes()
-        super_attrs['minimum'] = self.minimum.isoformat()
-        super_attrs['maximum'] = self.maximum.isoformat()
-        super_attrs['date'] = self.date.isoformat()
-        return super_attrs
+        snap = super(BoundedDate, self).snapshot()
+        snap['minimum'] = self.minimum.isoformat()
+        snap['maximum'] = self.maximum.isoformat()
+        snap['date'] = self.date.isoformat()
+        return snap
 
     def bind(self):
         """ A method called after initialization which allows the widget

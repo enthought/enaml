@@ -48,17 +48,17 @@ class AbstractButton(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
-    def creation_attributes(self):
-        """ Returns the creation attributes for an abstract button.
+    def snapshot(self):
+        """ Returns the snapshot for an abstract button.
 
         """
-        super_attrs = super(AbstractButton, self).creation_attributes()
-        super_attrs['text'] = self.text
-        super_attrs['checkable'] = self.checkable
-        super_attrs['checked'] = self.checked
-        super_attrs['icon_size'] = self.icon_size
-        super_attrs['icon'] = self.icon.as_dict()
-        return super_attrs
+        snap = super(AbstractButton, self).snapshot()
+        snap['text'] = self.text
+        snap['checkable'] = self.checkable
+        snap['checked'] = self.checked
+        snap['icon_size'] = self.icon_size
+        snap['icon'] = self.icon.as_dict()
+        return snap
 
     def bind(self):
         """ Bind the change handlers for an abstract button.

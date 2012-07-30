@@ -51,11 +51,11 @@ class SpinBox(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
-    def creation_attributes(self):
+    def snapshot(self):
         """ Return the dict of creation attributes for the control.
 
         """
-        super_attrs = super(SpinBox, self).creation_attributes()
+        snap = super(SpinBox, self).snapshot()
         attrs = {
             'maximum' : self.maximum,
             'minimum' : self.minimum,
@@ -67,8 +67,8 @@ class SpinBox(ConstraintsWidget):
             'read_only': self.read_only,
             'wrapping' : self.wrapping,
         }
-        super_attrs.update(attrs)
-        return super_attrs
+        snap.update(attrs)
+        return snap
 
     def bind(self):
         """ A method called after initialization which allows the widget

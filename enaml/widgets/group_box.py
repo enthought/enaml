@@ -25,15 +25,15 @@ class GroupBox(Container):
     #: The alignment of the title text.
     title_align = Enum('left', 'right', 'center')
 
-    def creation_attributes(self):
+    def snapshot(self):
         """ Populates the initial attributes dict for the component.
 
         """
-        super_attrs = super(GroupBox, self).creation_attributes()
-        super_attrs['title'] = self.title
-        super_attrs['flat'] = self.flat
-        super_attrs['title_align'] = self.title_align
-        return super_attrs
+        snap = super(GroupBox, self).snapshot()
+        snap['title'] = self.title
+        snap['flat'] = self.flat
+        snap['title_align'] = self.title_align
+        return snap
 
     def _padding_constraints(self):
         """ Overriden padding constraints method to add the contents 

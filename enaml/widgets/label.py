@@ -24,14 +24,14 @@ class Label(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
-    def creation_attributes(self):
+    def snapshot(self):
         """ Returns the dict of creation attributes for the control.
 
         """
-        super_attrs = super(Label, self).creation_attributes()
-        super_attrs['text'] = self.text
-        super_attrs['word_wrap'] = self.word_wrap
-        return super_attrs
+        snap = super(Label, self).snapshot()
+        snap['text'] = self.text
+        snap['word_wrap'] = self.word_wrap
+        return snap
 
     def bind(self):
         """ A method called after initialization which allows the widget

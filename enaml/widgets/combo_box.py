@@ -33,14 +33,14 @@ class ComboBox(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
-    def creation_attributes(self):
+    def snapshot(self):
         """ Returns the dict of creation attributes for the combo box.
 
         """
-        super_attrs = super(ComboBox, self).creation_attributes()
-        super_attrs['items'] = self.items
-        super_attrs['index'] = self.index
-        return super_attrs
+        snap = super(ComboBox, self).snapshot()
+        snap['items'] = self.items
+        snap['index'] = self.index
+        return snap
 
     def bind(self):
         """ A method called after initialization which allows the widget

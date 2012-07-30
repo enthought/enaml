@@ -45,19 +45,19 @@ class Notebook(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
-    def creation_attributes(self):
+    def snapshot(self):
         """ Return the dict of creation attributes for the control.
 
         """
-        super_attrs = super(Notebook, self).creation_attributes()
+        snap = super(Notebook, self).snapshot()
         attrs = {
             'tab_position': self.tab_position,
             'tab_style': self.tab_style,
             'tabs_closable': self.tabs_closable,
             'tabs_movable': self.tabs_movable,
         }
-        super_attrs.update(attrs)
-        return super_attrs
+        snap.update(attrs)
+        return snap
 
     def bind(self):
         """ Bind the change handlers for the control.

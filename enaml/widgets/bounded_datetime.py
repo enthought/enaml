@@ -44,16 +44,16 @@ class BoundedDatetime(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
-    def creation_attributes(self):
+    def snapshot(self):
         """ Return a dictionary which contains all the state necessary to
         initialize a client widget.
 
         """
-        super_attrs = super(BoundedDatetime, self).creation_attributes()
-        super_attrs['minimum'] = self.minimum.isoformat()
-        super_attrs['maximum'] = self.maximum.isoformat()
-        super_attrs['datetime'] = self.datetime.isoformat()
-        return super_attrs
+        snap = super(BoundedDatetime, self).snapshot()
+        snap['minimum'] = self.minimum.isoformat()
+        snap['maximum'] = self.maximum.isoformat()
+        snap['datetime'] = self.datetime.isoformat()
+        return snap
 
     def bind(self):
         """ A method called after initialization which allows the widget

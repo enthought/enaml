@@ -38,15 +38,15 @@ class Splitter(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
-    def creation_attributes(self):
+    def snapshot(self):
         """ Return the dict of creation attributes for the control.
 
         """
-        super_attrs = super(Splitter, self).creation_attributes()
-        super_attrs['orientation'] = self.orientation
-        super_attrs['live_drag'] = self.live_drag
-        super_attrs['preferred_sizes'] = self.preferred_sizes
-        return super_attrs
+        snap = super(Splitter, self).snapshot()
+        snap['orientation'] = self.orientation
+        snap['live_drag'] = self.live_drag
+        snap['preferred_sizes'] = self.preferred_sizes
+        return snap
 
     def bind(self):
         """ Bind the change handlers for the widget.
