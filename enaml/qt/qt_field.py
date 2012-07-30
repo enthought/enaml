@@ -24,13 +24,13 @@ def null_validator(text):
     return text
 
 
-def regexp_validator(regexp):
+def regex_validator(regex):
     """ Creates a callable which will validate text input against the
     provided regex string.
 
     Parameters
     ----------
-    regexp : string
+    regex : string
         A regular expression string to use for matching.
 
     Returns
@@ -40,9 +40,9 @@ def regexp_validator(regexp):
         regex, or raises a ValueError if it doesn't.
 
     """
-    regexp = re.compile(regexp, re.UNICODE)
+    regex = re.compile(regex, re.UNICODE)
     def validator(text):
-        if regexp.match(text):
+        if regex.match(text):
             return text
         raise ValueError
     return validator
@@ -50,7 +50,7 @@ def regexp_validator(regexp):
 
 validator_factories = {
     'null': lambda: null_validator,
-    'regex_validator': regexp_validator,
+    'regex_validator': regex_validator,
 }
 
 
