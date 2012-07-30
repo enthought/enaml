@@ -9,8 +9,7 @@ from .constraints_widget import ConstraintsWidget
 
 #: The default validators to use in a Field.
 DEFAULT_FIELD_VALIDATORS = [
-    {'type': 'null',
-     'triggers': ['return-pressed', 'lost-focus']},
+    {'type': 'null'},
 ]
 
 
@@ -25,10 +24,12 @@ class Field(ConstraintsWidget):
     #: on the field. Validators will be executed in order and will 
     #: stop at the first failing validator. The client will only
     #: send a text update if all validators pass. The validator format 
-    #: is specified in the file validator_format.js. The default 
-    #: validator accepts all input and triggers on 'lost-focus' and 
-    #: 'return-pressed'.
+    #: is specified in the file validator_format.js.
     validators = List(Dict, value=DEFAULT_FIELD_VALIDATORS)
+    
+    #: The behaviors which should cause the control to run the validators.
+    triggers = List(Enum('lost-focus', 'return-pressed'),
+                    ['lost-focus', 'return-pressed'])
 
     #: The grayed-out text to display if the field is empty and the
     #: widget doesn't have focus. Defaults to the empty string.
@@ -81,6 +82,7 @@ class Field(ConstraintsWidget):
         )
         self.publish_attributes(*attrs)
         self.on_trait_change(self._send_validators, 'validators[]')
+        self.on_trait_change(self._send_triggers, 'triggers[]')
 
     #--------------------------------------------------------------------------
     # Message Handling
@@ -97,6 +99,13 @@ class Field(ConstraintsWidget):
 
         """
         payload = {'action': 'set-validators', 'validators': self.validators}
+        self.send_message(payload)
+
+    def _send_triggers(self):
+        """ Send the new validators to the client widget.
+
+        """
+        payload = {'action': 'set-trigers', 'triggers': self.triggers}
         self.send_message(payload)
 
     #--------------------------------------------------------------------------

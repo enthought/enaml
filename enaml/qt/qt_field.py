@@ -16,6 +16,7 @@ ECHO_MODES = {
 }
 
 
+# XXX these will likely be common to all Python clients
 def null_validator(text):
     """ A validator which validates all input as acceptable.
 
@@ -23,7 +24,7 @@ def null_validator(text):
     return text
 
 
-def regexp_validator(regexp):
+def regexp_validator(regexp, **kwargs):
     """ Creates a callable which will validate text input against the
     provided regex string.
 
@@ -47,30 +48,25 @@ def regexp_validator(regexp):
     return validator
 
 
+validator_factories = {
+    'null': lambda **kwargs: null_validator,
+    'regex_validator': regexp_validator,
+}
+
+
 def parse_validators(validators):
-    """ Parses a list of validator dicts into a dict of tuples keyed
-    on the trigger type. This is used internally by the QtField to
-    dispatch its validation behaviors.
+    """ Parses a list of validator dicts into a list of tuples.
+    This is used internally by the QtField to dispatch its
+    validation behaviors.
     
     """
-    res = {'all': []}
+    res = []
     for info in validators:
         vtype = info['type']
-        if vtype == 'null':
-            vldr = null_validator
-        elif vtype == 'regexp':
-            vldr = regexp_validator(info['regexp'])
-        else:
-            vldr = None 
+        vldr = validator_factories.get(vtype, None)
         if vldr is not None:
             item = (info, vldr)
-            res['all'].append(item)
-            triggers = info.get('triggers')
-            if triggers:
-                for trigger in triggers:
-                    if trigger not in res:
-                        res[trigger] = []
-                    res[trigger].append(item)
+            res.append(item)
     return res
 
 
@@ -107,7 +103,9 @@ class QtField(QtConstraintsWidget):
         self.set_max_length(attrs['max_length'])
         self.set_read_only(attrs['read_only'])
         self.validators = parse_validators(attrs['validators'])
+        self.triggers = attrs['triggers']
         self.dirty = False
+        self.valid = True # hook for stylesheets (XXX validate on initialization?)
         self.widget.lostFocus.connect(self.on_lost_focus)
         self.widget.returnPressed.connect(self.on_return_pressed)
         self.widget.textEdited.connect(self.on_text_edited)
@@ -119,8 +117,8 @@ class QtField(QtConstraintsWidget):
         """ Event handler for lost_focus
 
         """
-        if self.dirty:
-            validators = self.validators.get('lost-focus')
+        if self.dirty and 'lost-focus' in self.triggers:
+            validators = self.validators
             if validators:
                 self._run_validators(validators)
 
@@ -128,8 +126,8 @@ class QtField(QtConstraintsWidget):
         """ Event handler for return_pressed
 
         """
-        if self.dirty:
-            validators = self.validators.get('return-pressed')
+        if self.dirty and 'return-pressed' in self.triggers:
+            validators = self.validators
             if validators:
                 self._run_validators(validators)
 
@@ -153,6 +151,12 @@ class QtField(QtConstraintsWidget):
 
         """
         self.validators = parse_validators(payload['validators'])
+
+    def on_message_set_triggers(self, payload):
+        """ Handle the 'set-validators' action from the Enaml widget.
+
+        """
+        self.triggers = payload['triggers']
 
     def on_message_set_placeholder(self, payload):
         """ Hanlde the 'set-placeholder' action from the Enaml widget.
@@ -183,7 +187,7 @@ class QtField(QtConstraintsWidget):
 
         """
         if self.dirty:
-            validators = self.validators.get('all')
+            validators = self.validators
             if validators:
                 self._run_validators(validators)
     
@@ -234,6 +238,7 @@ class QtField(QtConstraintsWidget):
             try:
                 text = validator(text)
             except ValueError:
+                self.valid = False
                 self._validation_failure(orig, text, info)
                 return
 
@@ -247,6 +252,8 @@ class QtField(QtConstraintsWidget):
 
         payload = {'action': 'event-changed', 'text': text}
         self.send_message(payload)
+        
+        self.valid = True
         self.dirty = False
 
     def _validation_failure(self, orig, text, info):
