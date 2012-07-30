@@ -15,14 +15,12 @@ int_validator = {
     "type": "regexp",
     "regexp": r"^-?\d+$",
     "message": 'value must be an integer',
-    "triggers": ["return-pressed"],
 }
 
 float_validator = {
     "type": "regexp",
     "regexp": r"^(+|-)?\d+(\.\d*)?((e|E)(+|-)?\d+(\.\d*)$",
     "message": 'value must be a float',
-    "triggers": ["return-pressed"],
 }
 
 enamldef IntField(Field):
@@ -37,7 +35,7 @@ enamldef FloatField(Field):
     text << str(value)
     text ::
         self.value = float(self.text)
-    validators = [int_validator]
+    validators = [float_validator]
 
 enamldef PasswordField(Field):
     password_mode = 'password'

@@ -24,26 +24,15 @@
   // This field is optional. If a message is provided, it must be a 
   // string.
   "message": "<string>",
-
-  // The behaviors which should cause the control to run the validator.
-  // This field is optional. If triggers are provided, they should be
-  // an array of strings. The acceptable trigger strings are defined by
-  // a given control. If no triggers are provided, it is assumed that 
-  // the control has provided another method of running the validator.
-  "triggers": ["<string>"],
-
-  // XXX calling it a stylesheet for now, unless we decide against them.
-  // The style overrides to apply to the control when validation fails.
-  // This field is optional. If a stylesheet is provided, it must be
-  // a string. 
-  "stylesheet": "<string>",
-
-  // XXX calling it a stylesheet for now, unless we decide against them.
-  // The style to apply to the failure message display. The styles 
-  // supported by the message are control and implementation defined.
-  // This field is optional. If a stylesheet is provided, it must be
-  // a string.
-  "message_stylesheet": "<string>",
+  
+  // Different types of validators may require arguments to be
+  // supplied to the toolkit validator object.  These values are
+  // specified in this field as a dictionary of argument, value pairs
+  "arguments": {},
+  
+  // Styling for invalid entries and the associated messages will be
+  // specified by virtual states in the widget stylesheet, once they
+  // are implemented.
 }
 
 
@@ -58,11 +47,13 @@
 
 {
   // The regexp validator uses a regex for validation.
-  "type": "regexp",
+  "type": "regex",
 
   // The regex string to use for validating the text. The regex format
   // follows Python's regex rules. Only text which matches the regex
   // is considered valid. This field is required.
-  "regexp": "<string>",
+  "arguments": {
+    "regex": "<string>",
+  }
 }
 
