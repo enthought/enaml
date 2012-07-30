@@ -50,7 +50,7 @@ def regex_validator(regex):
 
 validator_factories = {
     'null': lambda: null_validator,
-    'regex_validator': regex_validator,
+    'regex': regex_validator,
 }
 
 
