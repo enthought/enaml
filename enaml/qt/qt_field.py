@@ -24,7 +24,7 @@ def null_validator(text):
     return text
 
 
-def regexp_validator(regexp, **kwargs):
+def regexp_validator(regexp):
     """ Creates a callable which will validate text input against the
     provided regex string.
 
@@ -49,7 +49,7 @@ def regexp_validator(regexp, **kwargs):
 
 
 validator_factories = {
-    'null': lambda **kwargs: null_validator,
+    'null': lambda: null_validator,
     'regex_validator': regexp_validator,
 }
 
@@ -63,8 +63,9 @@ def parse_validators(validators):
     res = []
     for info in validators:
         vtype = info['type']
-        vldr = validator_factories.get(vtype, None)
-        if vldr is not None:
+        factory = validator_factories.get(vtype, None)
+        if factory is not None:
+            vldr = factory(**info['arguments'])
             item = (info, vldr)
             res.append(item)
     return res

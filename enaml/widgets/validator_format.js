@@ -25,8 +25,10 @@
   // string.
   "message": "<string>",
   
-  // Different types of validators may require additional items to
-  // be provided beyond these two.
+  // Different types of validators may require arguments to be
+  // supplied to the toolkit validator object.  These values are
+  // specified in this field as a dictionary of argument, value pairs
+  "arguments": {},
   
   // Styling for invalid entries and the associated messages will be
   // specified by virtual states in the widget stylesheet, once they
@@ -50,6 +52,8 @@
   // The regex string to use for validating the text. The regex format
   // follows Python's regex rules. Only text which matches the regex
   // is considered valid. This field is required.
-  "regex": "<string>",
+  "arguments": {
+    "regex": "<string>",
+  }
 }
 
