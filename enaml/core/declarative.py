@@ -34,6 +34,9 @@ class Declarative(HasStrictTraits):
     #: it in the tree. See e.g. the 'find' method.
     name = Str
 
+    #: A readonly property which returns the instance's class name.
+    class_name = Property(fget=lambda self: type(self).__name__)
+
     #: A readonly property which returns the current instance of the
     #: component. This allows declarative Enaml expressions to access
     #: 'self' according to Enaml's dynamic scoping rules.
@@ -48,7 +51,7 @@ class Declarative(HasStrictTraits):
     #: The list of children for this component. 
     children = List(Instance('Declarative'))
 
-    #: A read-only property which returns the list of 'effective'
+    #: A readonly property which returns the list of 'effective'
     #: children. This list is constructed by calling contribute()
     #: each child in 'children' and flattening the resulting list of
     #: lists. This mechanism allows children to contribute different
@@ -352,6 +355,22 @@ class Declarative(HasStrictTraits):
 
         """
         return [self]
+
+    def snapshot(self):
+        """ Create a snapshot of the tree starting from this component.
+
+        Returns
+        -------
+        result : dict
+            A dictionary snapshot of the declarative component tree, 
+            from this component downward.
+
+        """
+        snap = {}
+        snap['class'] = self.class_name
+        snap['name'] = self.name
+        snap['children'] = [child.snapshot() for child in self.children]
+        return snap
 
     def traverse(self, depth_first=False):
         """ Yields all of the nodes in the tree, from this node downward.
