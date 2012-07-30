@@ -128,7 +128,7 @@ class MessengerWidget(Declarative):
 
         """
         snap = super(MessengerWidget, self).snapshot()
-        snap['target_id'] = self.target_id
+        snap['widget_id'] = self.widget_id
         return snap
 
     def bind(self):

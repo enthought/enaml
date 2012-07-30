@@ -74,9 +74,9 @@ class Notebook(ConstraintsWidget):
         """ Handle the 'tab-closed' action from the client widget.
 
         """
-        target_id = payload['target_id']
+        widget_id = payload['widget_id']
         for child in self.children:
-            if child.target_id == target_id:
+            if child.widget_id == widget_id:
                 self.tab_closed(child)
                 child.closed()
                 return
@@ -95,7 +95,7 @@ class Notebook(ConstraintsWidget):
 
         """
         assert page in self.children, "Page is not a child of the Notebook"
-        payload = {'action': 'open-tab', 'target_id': page.target_id}
+        payload = {'action': 'open-tab', 'widget_id': page.widget_id}
         self.send_message(payload)
 
     def close_tab(self, page):
@@ -109,6 +109,6 @@ class Notebook(ConstraintsWidget):
 
         """
         assert page in self.children, "Page is not a child of the Notebook"
-        payload = {'action': 'close-tab', 'target_id': page.target_id}
+        payload = {'action': 'close-tab', 'widget_id': page.widget_id}
         self.send_message(payload)
 
