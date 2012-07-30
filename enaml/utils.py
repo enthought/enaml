@@ -6,13 +6,20 @@
 
 """
 from collections import defaultdict
-from itertools import count
+from random import shuffle
+from string import letters, digits
 from types import MethodType
 from weakref import ref
 
 
 def id_generator(stem):
-    """ An identifier generator.
+    """ A unique identifier generator.
+
+    For a given stem, the returned generator is guaranteed to yield
+    consecutively increasing identifiers using a randomly ordered
+    base 62 charset. The identifiers are only guaranteed unique for a
+    given instance of the generator. The randomness is employed to 
+    improve the hashing characteristics of the returned identifiers.
 
     Parameters
     ----------
@@ -20,10 +27,25 @@ def id_generator(stem):
         A string stem to prepend to a incrementing integer value.
 
     """
-    counter = count()
-    str_ = str
+    charset = list(digits + letters)
+    shuffle(charset)
+    charset = ''.join(charset)
+    charsetlen = len(charset)
+    places = [0]
+    push = places.append
+    enumerate_ = enumerate
+    join = ''.join
     while True:
-        yield stem + str_(counter.next())
+        yield stem + join(charset[digit] for digit in places)
+        for idx, digit in enumerate_(places):
+            digit += 1 
+            if digit == charsetlen:
+                places[idx] = 0
+            else:
+                places[idx] = digit
+                break 
+        if places[-1] == 0:
+            push(1)
 
 
 class abstractclassmethod(classmethod):
