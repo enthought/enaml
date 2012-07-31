@@ -22,14 +22,14 @@ def container_factory():
     return QtContainer
 
 
-def date_edit_factory():
-    from .qt_date_edit import QtDateEdit
-    return QtDateEdit
+def date_selector_factory():
+    from .qt_date_selector import QtDateSelector
+    return QtDateSelector
 
 
-def datetime_edit_factory():
-    from .qt_datetime_edit import QtDatetimeEdit
-    return QtDatetimeEdit
+def datetime_selector_factory():
+    from .qt_datetime_selector import QtDatetimeSelector
+    return QtDatetimeSelector
 
 
 def dialog_factory():
