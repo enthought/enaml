@@ -6,6 +6,7 @@ from collections import namedtuple
 import logging
 
 
+#: A namedtuple used for storing session specification info
 SessionSpec = namedtuple(
     'SessionSpec', 'name description session_class kwargs'
 )
@@ -16,11 +17,15 @@ class Application(object):
     protocol for serving Enaml applications.
 
     """
-    #: The message types handled by the application. This is used
-    #: to speed up message routing and dispatching.
-    _app_message_types = set([
-        'enaml_discover', 'enaml_begin_session', 'enaml_end_session',
-    ])
+    #: A message dispatch table used to speed up message routing
+    _message_routes = {
+        'discover': '_on_message_discover',
+        'start_session': '_on_message_start_session',
+        'end_session': '_on_message_end_session',
+        'snapshot': '_dispatch_session_message',
+        'widget_action': '_dispatch_session_message',
+        'widget_action_response': '_dispatch_session_message',
+    }
 
     def __init__(self, handlers):
         """ Initialize an Enaml Application.
@@ -36,49 +41,99 @@ class Application(object):
         self.add_handlers(handlers)
 
     #--------------------------------------------------------------------------
-    # Message Handlers
+    # Message Handling
     #--------------------------------------------------------------------------
-    def _on_enaml_discover(self, request):
-        """ Handle the 'enaml_discover' message type.
+    def _on_message_discover(self, request):
+        """ Handle the 'discover' message type.
+
+        This handler will create the list of session info objects and
+        send the reponse to the client.
+
+        Parameters
+        ----------
+        request : BaseRequest
+            The request object containing the message sent by client.
 
         """
-        sessions = [dict(name=spec.name, description=spec.description) 
-                    for spec in self._all_handlers]
-        request.reply(sessions=sessions)
+        sessions = [
+            {'name': spec.name, 'description': spec.description} 
+            for spec in self._all_handlers
+        ]
+        content = {'sessions': sessions}
+        request.send_ok_response(content=content)
 
-    def _on_enaml_begin_session(self, request):
-        """ Handle the 'enaml_begin_session' message type.
+    def _on_message_start_session(self, request):
+        """ Handle the 'start_session' message type.
+
+        This handler will create a new session object for the requested
+        session type and respond to the client with the new session id.
+        If the session type is invalid, the handler will reply with an
+        appropriate error message.
+
+        Parameters
+        ----------
+        request : BaseRequest
+            The request object containing the message sent by client.
 
         """
         message = request.message
         name = message.content.name
         if name not in self._named_handlers:
-            msg = 'Invalid session name: %s' % name
-            request.reply('error', msg)
+            request.send_error_response('Invalid session name')
         else:
+            # XXX Do we want to move this to a call later, and do some
+            # checking on the number of open sessions etc?
             handler = self._named_handlers[name]
             session_cls = handler.session_class
-            session_kwargs = handler.kwargs
             push_handler = request.push_handler()
             username = message.header.username
-            session = session_cls(push_handler, username, kwargs=session_kwargs)
+            session = session_cls(push_handler, username, handler.kwargs)
             session_id = session.session_id
             self._sessions[session_id] = session
             session.open()
-            request.reply(session=session_id)
+            content = {'session': session_id}
+            request.send_ok_response(content=content)
 
-    def _on_enaml_end_session(self, request):
-        """ Handle the 'enaml_end_session' message type.
+    def _on_message_end_session(self, request):
+        """ Handle the 'end_session' message type.
+
+        This handler will close down the existing session and send a
+        reponse to the client. If the session id is not valid, an
+        appropriate error message will be sent back to the client.
+
+        Parameters
+        ----------
+        request : BaseRequest
+            The request object containing the message sent by client.
 
         """
         session_id = request.message.header.session
         if session_id not in self._sessions:
-            msg = 'Invalid session id'
-            request.reply('error', msg)
+            request.send_error_response('Invalid session id')
         else:
             session = self._sessions.pop(session_id)
             session.close()
-            request.reply()
+            request.send_ok_response()
+
+    def _dispatch_session_message(self, request):
+        """ Handle a message type that should be routed to a session.
+
+        This handler will lookup the session for the given session id
+        and route the message to that object. If the id is invalid, 
+        then an appropriate error message will be sent to the client.
+
+        Parameters
+        ----------
+        request : BaseRequest
+            The request object containing the message sent by client.
+
+        """
+        session_id = request.message.header.session
+        if session_id not in self._sessions:
+            request.send_error_response('Invalid session id')
+        else:
+            session = self._sessions[session_id]
+            session.handle_request(request)
 
     #--------------------------------------------------------------------------
     # Public API
@@ -112,28 +167,21 @@ class Application(object):
     def handle_request(self, request):
         """ Route and process a message for the Enaml application.
 
-        This method should be called by the running event loop when
-        it receives a message from a client. The event loop should
-        guard this call in a try-except block. Any exceptions raised
-        should be considered as total failures in the structure of
-        the message, and a reply should not be sent to the client.
+        This method should be called by the running event loop when it
+        receives a message from a client. The event loop should guard 
+        this call in a try-except block. Any exceptions raised should 
+        be considered as failures in the structure of the message and
+        handled appropriately.
 
         Parameters
         ----------
         request : BaseRequest
 
         """
-        header = request.message.header
-        msg_type = header.msg_type
-        if msg_type in self._app_message_types:
-            handler_name = '_on_' + msg_type
-            getattr(self, handler_name)(request)
+        msg_type = request.message.header.msg_type
+        route = self._message_routes.get(msg_type)
+        if route is not None:
+            getattr(self, route)(request)
         else:
-            session_id = header.session
-            if session_id not in self._sessions:
-                msg = 'Invalid session id'
-                request.reply('error', msg)
-            else:
-                session = self._sessions[session_id]
-                session.handle_request(request)
+            self._send_error_response(request, 'Invalid message type')
 
