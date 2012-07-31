@@ -1,12 +1,14 @@
-from enaml.widgets import Window, Html, Container, PushButton
+from enaml.widgets import Window, Html, Container, PushButton, Slider
 from enaml.layout import hbox, vbox, spacer, align
 
 
 enamldef Main(Window):
+    attr model
     Container:
         constraints = [
             vbox(
                 html_frame, 
+                slider,
                 hbox(
                     add_button, remove_button, spacer, 
                     change_mode_button, spacer, share_button,
@@ -18,7 +20,12 @@ enamldef Main(Window):
         Html:
             id: html_frame
             name = 'html'
-            source = '<center><h1>Hello Enaml!</h1></center>'
+            source << model.html
+        Slider:
+            id: slider
+            value := model.value
+            maximum = 1000
+            tick_position = 'no_ticks'
         PushButton:
             id: add_button
             text = 'Add'
