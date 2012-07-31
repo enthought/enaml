@@ -125,12 +125,13 @@ class Slider(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Message Handling
     #--------------------------------------------------------------------------
-    def on_message_event_changed(self, payload):
-        """ Handle the 'event-changed' action from the client widget.
-        The payload will contain the 'value' of the slider.
+    def on_action_value_changed(self, content):
+        """ Handle the 'value_changed' action from the client widget.
+        
+        The content will contain the 'value' of the slider.
 
         """
-        self.set_guarded(value=payload['value'])
+        self.set_guarded(value=content['value'])
 
     #--------------------------------------------------------------------------
     # Property Methods
