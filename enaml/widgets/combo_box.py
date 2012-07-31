@@ -53,12 +53,12 @@ class ComboBox(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Message Handling
     #--------------------------------------------------------------------------
-    def on_message_event_changed(self, payload):
-        """ The message handler for the 'event-changed' action from the 
-        client widget. The payload will contain the selected 'index'.
+    def on_action_index_changed(self, content):
+        """ The message handler for the 'index_changed' action from the 
+        client widget. The content will contain the selected 'index'.
 
         """
-        index = payload['index']
+        index = content['index']
         self.set_guarded(index=index)
 
     #--------------------------------------------------------------------------

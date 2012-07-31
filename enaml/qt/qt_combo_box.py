@@ -28,17 +28,17 @@ class QtComboBox(QtConstraintsWidget):
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
-    def on_message_set_index(self, payload):
-        """ Handle the 'set-index' action from the Enaml widget.
+    def on_action_set_index(self, content):
+        """ Handle the 'set_index' action from the Enaml widget.
 
         """
-        self.set_index(payload['index'])
+        self.set_index(content['index'])
 
-    def on_message_set_items(self, payload):
-        """ Handle the 'set-items' action from the Enaml widget.
+    def on_action_set_items(self, content):
+        """ Handle the 'set_items' action from the Enaml widget.
 
         """
-        self.set_items(payload['items'])
+        self.set_items(content['items'])
 
     #--------------------------------------------------------------------------
     # Signal Handlers
@@ -47,10 +47,8 @@ class QtComboBox(QtConstraintsWidget):
         """ The signal handler for the index changed signal.
 
         """
-        payload = {
-            'action': 'event-changed', 'index': self.widget.currentIndex(),
-        }
-        self.send_message(payload)
+        content = {'index': self.widget.currentIndex()}
+        self.send_action('index_changed', content)
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
