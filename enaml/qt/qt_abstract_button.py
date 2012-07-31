@@ -41,51 +41,41 @@ class QtAbstractButton(QtConstraintsWidget):
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
-    def on_message_set_checked(self, payload):
-        """ Handle the 'set-checked' action from the Enaml widget.
+    def on_action_set_checked(self, content):
+        """ Handle the 'set_checked' action from the Enaml widget.
 
         """
-        self.set_checked(payload['checked'])
+        self.set_checked(content['checked'])
 
-    def on_message_set_text(self, payload):
-        """ Handle the 'set-text' message from the Enaml widget.
+    def on_action_set_text(self, content):
+        """ Handle the 'set_text' action from the Enaml widget.
 
         """
-        self.set_text(payload['text'])
+        self.set_text(content['text'])
         # Trigger a relayout since the size hint likely changed
 
-    def on_message_set_icon(self, payload):
-        """ Handle the 'set-icon' message from the Enaml widget.
+    def on_action_set_icon_size(self, content):
+        """ Handle the 'set_icon_size' action from the Enaml widget.
 
         """
-        self.set_icon(payload['icon'])
-
-    def on_message_set_icon_size(self, payload):
-        """ Handle the 'set-icon_size' message from the Enaml widget.
-
-        """
-        self.set_icon_size(payload['icon_size'])
+        self.set_icon_size(content['icon_size'])
 
     #--------------------------------------------------------------------------
     # Signal Handlers
     #--------------------------------------------------------------------------
     def on_clicked(self):
-        """ The event handler fo the clicked event.
+        """ The event handler for the clicked event.
 
         """
-        payload = {
-            'action': 'event-clicked', 'checked': self.widget.isChecked(),
-        }
-        self.send_message(payload)
+        content = {'checked': self.widget.isChecked()}
+        self.send_action('clicked', content)
 
     def on_toggled(self):
         """ The event handler for the toggled event.
 
         """
-        payload = {
-            'action': 'event-toggled', 'checked': self.widget.isChecked(),
-        }
-        self.send_message(payload)
+        content = {'checked': self.widget.isChecked()}
+        self.send_action('toggled', content)
 
     #--------------------------------------------------------------------------
     # Widget update methods
