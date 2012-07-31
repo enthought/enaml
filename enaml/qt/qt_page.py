@@ -193,29 +193,29 @@ class QtPage(QtContainer):
     #--------------------------------------------------------------------------
     # Message Handling
     #--------------------------------------------------------------------------
-    def on_message_set_title(self, payload):
-        """ Handle the 'set-title' action from the Enaml widget.
+    def on_action_set_title(self, content):
+        """ Handle the 'set_title' action from the Enaml widget.
 
         """
-        self.set_title(payload['title'])
+        self.set_title(content['title'])
 
-    def on_message_set_tool_tip(self, payload):
-        """ Handle the 'set-tool_tip' action from the Enaml widget.
-
-        """
-        self.set_tool_tip(payload['tool_tip'])
-
-    def on_message_set_tab_enabled(self, payload):
-        """ Handle the 'set-tab_enabled' action from the Enaml widget.
+    def on_action_set_tool_tip(self, content):
+        """ Handle the 'set_tool_tip' action from the Enaml widget.
 
         """
-        self.set_tab_enabled(payload['tab_enabled'])
+        self.set_tool_tip(content['tool_tip'])
 
-    def on_message_set_closable(self, payload):
-        """ Handle the 'set-closable' action from the Enaml widget.
+    def on_action_set_tab_enabled(self, content):
+        """ Handle the 'set_tab_enabled' action from the Enaml widget.
 
         """
-        self.set_closable(payload['closable'])
+        self.set_tab_enabled(content['tab_enabled'])
+
+    def on_action_set_closable(self, content):
+        """ Handle the 'set_closable' action from the Enaml widget.
+
+        """
+        self.set_closable(content['closable'])
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
