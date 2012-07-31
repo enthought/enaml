@@ -3,7 +3,17 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from abc import ABCMeta, abstractmethod
-from uuid import uuid4
+
+from enaml.message import Message
+from enaml.utils import id_generator
+
+
+#: The global message id generator for Session objects.
+_session_message_id_gen = id_generator('smsg_')
+
+
+#: The global session id generator for Session objects.
+_session_id_gen = id_generator('sid_')
 
 
 class Session(object):
@@ -22,24 +32,27 @@ class Session(object):
     """
     __metaclass__ = ABCMeta
 
-    def __init__(self, push_handler, username, session_id=None, kwargs=None):
+    #: A message dispatch table used to speed up message routing
+    _message_routes = {
+        'snapshot': '_on_message_snapshot',
+        'widget_action': '_dispatch_widget_message',
+        'widget_action_response': '_dispatch_widget_message',
+    }
+
+    def __init__(self, push_handler, username, kwargs=None):
         """ Initialize a Session.
 
-        This should not normally be overridden by users. Instead,
+        This __init__ method should be overridden by users. Instead,
         override the `on_open(...)` method in a subclass.
 
         Parameters
         ----------
         push_handler : BasePushHandler
-            The push handler to use when sending messages from a server
+            The push handler to use when pushing messages from a server
             widget back to the client.
 
         username : str
             The username associated with this session.
-
-        session_id : str, optional
-            The unique session id for this session. If not provided,
-            a new one will be created with a uuid.
 
         kwargs : dict, optional
             The dict of keyword arguments to pass to the on_open()
@@ -50,10 +63,58 @@ class Session(object):
         """
         self._push_handler = push_handler
         self._username = username
-        self._session_id = session_id or uuid4().hex
+        self._session_id = _session_id_gen.next()
         self._kwargs = kwargs or {}
-        self._session_view = None
+        self._session_views = []
+        self._widgets = {}
+
+    #--------------------------------------------------------------------------
+    # Message Handling
+    #--------------------------------------------------------------------------
+    def _on_message_snapshot(self, request):
+        """ Handle the 'snapshot' message type.
+
+        This handler will create the list of snapshot objects for the
+        current views being managed by the session and send an a
+        response to the client.
+
+        Parameters
+        ----------
+        request : BaseRequest
+            The request object containing the message sent by client.
+
+        """
+        snapshot = [view.snapshot() for view in self._session_views]
+        content = {'snapshot': snapshot}
+        request.send_ok_response(content=content)
+
+    def _dispatch_widget_message(self, request):
+        """ Route a 'widget_action' message to the target widget.
+
+        This handler will lookup the widget using the given widget
+        id and pass the action and message content to the action
+        handler on the widget. If the widget does not exist, then
+        an error response will be sent to the client.
+
+        TODO - handle the "widget_action_response" message type.
         
+        Parameters
+        ----------
+        request : BaseRequest
+            The request object containing the message sent by client.
+
+        """
+        message = request.message
+        if message.header.msg_type == 'widget_action':
+            widget_id = message.metadata.widget_id
+            if widget_id not in self._widgets:
+                request.send_error_response('Invalid widget id')
+                return
+            widget = self._widgets[widget_id]
+            widget.handle_action(message.metadata.action, message.content)
+            request.send_ok_response()
+        # XXX handle msg_type 'widget_action_response'
+
     #--------------------------------------------------------------------------
     # Abstract API
     #--------------------------------------------------------------------------
@@ -109,32 +170,41 @@ class Session(object):
         return self._username
 
     @property
-    def session_view(self):
-        """ The Enaml view being managed by this session.
+    def session_views(self):
+        """ The Enaml views being managed by this session.
 
         Returns
         -------
-        result : view
-            The Enaml view for the session, or None if it has not yet
-            been created.
+        result : list
+            The Enaml views for the session.
 
         """
-        return self._session_view
+        return self._session_views
 
-    def send(self, message):
-        """ Send an unsolicited message to the client of this session. 
+    def send_message(self, widget_id, action, content):
+        """ Send an unsolicited message of type 'enaml_message' to a
+        client widget of this session. 
 
         Parameters
         ----------
-        message : Message 
-            The message object to send to the client. The session
-            id and username in the header will be filled in by
-            the session.
+        widget_id : str
+            The widget identifier for the widget sending the message.
+
+        action : str
+            The action to be performed by the client widget.
+
+        content : dict
+            The content dictionary for the action.
 
         """
-        header = message.header
-        header.session = self._session_id
-        header.username = self._username
+        header = {
+            'session': self._session_id,
+            'username': self._username,
+            'msg_type': 'widget_action',
+            'msg_id': _session_message_id_gen.next()
+        }
+        metadata = {'widget_id': widget_id, 'action': action}
+        message = Message((header, {}, metadata, content))
         self._push_handler.push_message(message)
 
     def on_close(self):
@@ -148,26 +218,45 @@ class Session(object):
         """
         pass
 
-    #--------------------------------------------------------------------------
-    # Private API
-    #--------------------------------------------------------------------------
     def open(self):
         """ Called by the application when the session is opened.
 
         """
-        view = self.on_open(**self._kwargs)
-        self._session_view = view
+        views = self.on_open(**self._kwargs)
+        if not isinstance(views, list):
+            views = [views]
+        self._session_views = views
+        for view in views:
+            view.set_session(self)
 
     def close(self):
         """ Called by the application when the session is closed.
 
         """
         self.on_close()
-        self._session_view = None
+        self._session_views = []
+
+    def register_widget(self, widget):
+        """ A method called by a MessengerWidget when the Session is
+        assigned to the widget.
+
+        This allows the Session object to build a mapping of widget
+        identifiers to widgets for dispatching messages. This should
+        not normally be called by user code.
+
+        Parameters
+        ----------
+        widget : MessengerWidget
+            The widget to which this session was applied.
+
+        """
+        self._widgets[widget.widget_id] = widget
 
     def handle_request(self, request):
         """ A method called by the application when the client sends
         a request to the session.
+
+        This method should not normally be called by user code.
 
         Parameters
         ----------
@@ -175,18 +264,10 @@ class Session(object):
             The request object generated by the client.
 
         """
+        # The application has already verified that the msg_type is a 
+        # supported message type of the session. So if this results in
+        # a KeyError, then it's a problem with the server.
         msg_type = request.message.header.msg_type
-        handler_name = '_on_' + msg_type
-        handler = getattr(self, handler_name, None)
-        if handler is not None:
-            handler(request)
-        else:
-            request.reply('error', 'Unhandled message type')
-
-    #--------------------------------------------------------------------------
-    # Request Handlers
-    #--------------------------------------------------------------------------
-    def _on_enaml_snapshot(self, request):
-        snapshot = self.session_view.snapshot()
-        request.reply(snapshot=snapshot)
+        route = self._message_routes[msg_type]
+        getattr(self, route)(request)
 
