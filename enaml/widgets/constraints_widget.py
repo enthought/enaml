@@ -151,12 +151,10 @@ class ConstraintsWidget(WidgetComponent):
     # Message Handling
     #--------------------------------------------------------------------------
     def _send_relayout(self):
-        """ Send the 'relayout' message to the client widget.
+        """ Send the 'relayout' action to the client widget.
 
         """
-        payload = {'action': 'relayout'}
-        payload.update(self._layout_info())
-        self.send_message(payload)
+        self.send_action('relayout', self._layout_info())
 
     #--------------------------------------------------------------------------
     # Constraints Generation

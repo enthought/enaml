@@ -86,13 +86,13 @@ class QtConstraintsWidget(QtWidgetComponent):
         self.hug = layout['hug']
         self.resist_clip = layout['resist_clip']
         self.constraints = layout['constraints']
-        self.layout_box = LayoutBox(type(self).__name__, self.target_id)
-
+        self.layout_box = LayoutBox(type(self).__name__, self.widget_id)
+        
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
-    def receive_relayout(self, ctxt):
-        """ Handle the 'relayout' message from the Enaml widget.
+    def on_action_relayout(self, content):
+        """ Handle the 'relayout' action from the Enaml widget.
 
         """
         print 'relayout!'
