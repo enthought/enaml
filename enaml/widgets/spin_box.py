@@ -85,9 +85,9 @@ class SpinBox(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Message Handling
     #--------------------------------------------------------------------------
-    def on_message_event_changed(self, payload):
-        """ Handle the 'event-changed' action from the client widget.
+    def on_action_value_changed(self, content):
+        """ Handle the 'value_changed' action from the client widget.
 
         """
-        self.set_guarded(value=payload['value'])
+        self.set_guarded(value=content['value'])
 

@@ -44,69 +44,69 @@ class QtSpinBox(QtConstraintsWidget):
         # valueChanged signal when programatically setting the value.
         if 'value' in self.loopback_guard:
             return
-        payload = {'action': 'event-changed', 'value': self.widget.value()}
-        self.send_message(payload)
+        content = {'value': self.widget.value()}
+        self.send_action('value_changed', content)
         
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
-    def on_message_set_maximum(self, payload):
-        """ Handler for the 'set-maximum' action from the Enaml widget.
+    def on_action_set_maximum(self, content):
+        """ Handler for the 'set_maximum' action from the Enaml widget.
 
         """
-        self.set_maximum(payload['maximum'])
+        self.set_maximum(content['maximum'])
 
-    def on_message_set_minimum(self, payload):
-        """ Handler for the 'set-minimum' action from the Enaml widget.
-
-        """
-        self.set_minimum(payload['minimum'])
-
-    def on_message_set_value(self, payload):
-        """ Handler for the 'set-value' action from the Enaml widget.
+    def on_action_set_minimum(self, content):
+        """ Handler for the 'set_minimum' action from the Enaml widget.
 
         """
-        self.set_value(payload['value'])
+        self.set_minimum(content['minimum'])
 
-    def on_message_set_prefix(self, payload):
-        """ Handler for the 'set-prefix' action from the Enaml widget.
-
-        """
-        self.set_prefix(payload['prefix'])
-
-    def on_message_set_suffix(self, payload):
-        """ Handler for the 'set-suffix' action from the Enaml widget.
+    def on_action_set_value(self, content):
+        """ Handler for the 'set_value' action from the Enaml widget.
 
         """
-        self.set_suffix(payload['suffix'])
+        self.set_value(content['value'])
 
-    def on_message_set_special_value_text(self, payload):
-        """ Handler for the 'set-special_value_text' message from the
+    def on_action_set_prefix(self, content):
+        """ Handler for the 'set_prefix' action from the Enaml widget.
+
+        """
+        self.set_prefix(content['prefix'])
+
+    def on_action_set_suffix(self, content):
+        """ Handler for the 'set_suffix' action from the Enaml widget.
+
+        """
+        self.set_suffix(content['suffix'])
+
+    def on_action_set_special_value_text(self, content):
+        """ Handler for the 'set_special_value_text' action from the
         Enaml widget.
 
         """
-        self.set_special_value_text(payload['special_value_text'])
+        self.set_special_value_text(content['special_value_text'])
 
-    def on_message_set_single_step(self, payload):
-        """ Handler for the 'set-single_step' action from the Enaml
+    def on_action_set_single_step(self, content):
+        """ Handler for the 'set_single_step' action from the Enaml
         widget.
 
         """
-        self.set_single_step(payload['single_step'])
+        self.set_single_step(content['single_step'])
 
-    def on_message_set_read_only(self, payload):
-        """ Handler for the 'set-read_only' action from the Enaml
+    def on_action_set_read_only(self, content):
+        """ Handler for the 'set_read_only' action from the Enaml
         widget.
 
         """
-        self.set_read_only(payload['read_only'])
+        self.set_read_only(content['read_only'])
 
-    def on_message_set_wrapping(self, payload):
-        """ Handler for the 'set-wrapping' action from the Enaml 
+    def on_action_set_wrapping(self, content):
+        """ Handler for the 'set_wrapping' action from the Enaml 
         widget.
 
         """
-        self.set_wrapping(payload['wrapping'])
+        self.set_wrapping(content['wrapping'])
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -128,7 +128,7 @@ class QtSpinBox(QtConstraintsWidget):
 
         """
         # The setValue will emit a changed signal. Since this will only
-        # be called as a result of an Enaml message, we guard against 
+        # be called as a result of an Enaml action, we guard against 
         # the loopback
         with self.loopback_guard('value'):
             self.widget.setValue(value)
