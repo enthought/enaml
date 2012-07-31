@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 import logging
 
-from traits.api import Instance, Str, WeakRef, Property
+from traits.api import Instance, Str, WeakRef, Property, Bool
 
 from enaml.core.declarative import Declarative
 from enaml.session import Session
@@ -42,14 +42,46 @@ class MessengerWidget(Declarative):
     #: updated by calls to the 'set_session' method.
     _session = WeakRef(Session)
 
+    #: An internal flag indicating whether or not the change handlers
+    #: for the widget have been bound.
+    _bound = Bool(False)
+
     #--------------------------------------------------------------------------
-    # Property Handlers
+    # Private API
     #--------------------------------------------------------------------------
     def _get_session(self):
         """ The property getter for the 'session' property.
 
         """
         return self._session
+
+    def _publish_attr_handler(self, name, new):
+        """ A trait change handler which will send an attribute change
+        message to the client.
+
+        The message action will be created by prefixing the attribute
+        name with 'set-'. The value of the attribute is expected to be 
+        serializable to JSON. The content of the message will have the
+        name of the attribute as a key, and the value as its value. If
+        the loopback guard is held for the given name, then the message
+        will no be sent (avoiding potential loopbacks).
+
+        """
+        if name not in self.loopback_guard:
+            action = 'set-' + name
+            content = {name: new}
+            self.send_message(action, content)
+
+    def _bind(self):
+        """ A private method for triggering the bind() call.
+
+        This method will only call the public bind() the first time
+        this method is called. All other calls will be ignored.
+
+        """
+        if not self._bound:
+            self.bind()
+            self._bound = True
 
     #--------------------------------------------------------------------------
     # Messaging/Session API
@@ -71,15 +103,16 @@ class MessengerWidget(Declarative):
         """
         self._session = session
         session.register_widget(self)
+        self._bind()
         for child in self.children:
             if isinstance(child, MessengerWidget):
                 child.set_session(session)
 
-    def receive_message(self, action, content):
-        """ Receive a message from the client of this widget.
+    def handle_action(self, action, content):
+        """ Handle an action sent from the client of this widget.
 
         This is called by the widget's Session object when the client
-        of the widget sends unsolicited message.
+        of the widget sends an unsolicited message.
 
         Parameters
         ----------
@@ -90,7 +123,7 @@ class MessengerWidget(Declarative):
             The content dictionary for the action.
 
         """
-        handler_name = '_on_message_' + action
+        handler_name = 'on_message_' + action
         handler = getattr(self, handler_name, None)
         if handler is not None:
             handler(content)
@@ -184,23 +217,5 @@ class MessengerWidget(Declarative):
             for name, value in attrs.iteritems():
                 setattr(self, name, value)
 
-    #--------------------------------------------------------------------------
-    # Private API
-    #--------------------------------------------------------------------------
-    def _publish_attr_handler(self, name, new):
-        """ A trait change handler which will send an attribute change
-        message to the client.
-
-        The message action will be created by prefixing the attribute
-        name with 'set-'. The value of the attribute is expected to be 
-        serializable to JSON. The content of the message will have the
-        name of the attribute as a key, and the value as its value. If
-        the loopback guard is held for the given name, then the message
-        will no be sent (avoiding potential loopbacks).
-
-        """
-        if name not in self.loopback_guard:
-            action = 'set-' + name
-            content = {name: new}
-            self.send_message(action, content)
+    
 
