@@ -5,7 +5,11 @@
 from abc import ABCMeta, abstractmethod, abstractproperty
 
 from .message import Message
-from .utils import ObjectDict
+from .utils import id_generator
+
+
+#: The global id generation for repsonse messages.
+_response_id_gen = id_generator('rmsg_')
 
 
 class BaseRequest(object):
@@ -52,7 +56,7 @@ class BaseRequest(object):
         raise NotImplementedError
 
     @abstractmethod
-    def send_reply(self, message):
+    def send_response(self, message):
         """ Send the given message to the client as a reply.
 
         Parameters
@@ -63,8 +67,6 @@ class BaseRequest(object):
 
         Notes
         -----
-        * Users should not usually call this method directly. Instead,
-          users should call the 'reply' convenience method. 
         * Calling this method effectively closes the request and further 
           calls to this method will raise an error.
 
@@ -86,35 +88,66 @@ class BaseRequest(object):
         raise NotImplementedError
 
     #--------------------------------------------------------------------------
-    # Public API
+    # Convenience API
     #--------------------------------------------------------------------------
-    def reply(self, status='ok', status_msg='', **content):
-        """ Create and send a response message to the client.
+    def send_ok_response(self, metadata=None, content=None):
+        """ A convenience method to send an "ok" message reponse for 
+        this given request.
 
         Parameters
         ----------
-        status : str, optional
-            The status of the request. Either 'ok' or 'error'. The
-            default is 'ok'.
+        metadata : dict, optional
+            Any metadata to send with the response.
 
-        status_msg : str, optional
-            The status message. This is typically only supplied if
-            the status is 'error', and will be a short explanation
-            of what went wrong.
-
-        **content
-            Other items to add to the 'content' portion of the 
-            response message.
+        content : dict, optional
+            Additional content to send with the response.
 
         """
         parent_header = self.message.header
-        reply_header = ObjectDict(parent_header)
-        reply_header.msg_id += '_reply' # XXX do we like this, or should we make a new uuid?
-        content = ObjectDict(content)
-        content.status = status
-        content.status_msg = status_msg
-        reply = Message((reply_header, parent_header, ObjectDict(), content))
-        self.send_reply(reply)
+        header = {
+            'session': parent_header.session,
+            'username': parent_header.username,
+            'msg_id': _response_id_gen.next(),
+            'msg_type': parent_header.msg_type + '_response',
+            'version': parent_header.version,
+        }
+        metadata = metadata or {}
+        content = content or {}
+        content['status'] = 'ok'
+        content['status_msg'] = ''
+        message = Message((header, parent_header, metadata, content))
+        self.send_response(message)
+
+    def send_error_response(self, status_msg, metadata=None, content=None):
+        """A convenience method to send an "error" message response for 
+        this request.
+
+        Parameters
+        ----------
+        status_msg : str
+            The status message to use in the error response.
+
+        metadata : dict, optional
+            Any metadata to send with the response.
+
+        content : dict, optional
+            Additional content to send with the response.
+
+        """
+        parent_header = self.message.header
+        header = {
+            'session': parent_header.session,
+            'username': parent_header.username,
+            'msg_id': _response_id_gen.next(),
+            'msg_type': parent_header.msg_type + '_response',
+            'version': parent_header.version,
+        }
+        metadata = metadata or {}
+        content = content or {}
+        content['status'] = 'error'
+        content['status_msg'] = status_msg
+        message = Message((header, parent_header, metadata, content))
+        self.send_response(message)
 
 
 class BasePushHandler(object):
