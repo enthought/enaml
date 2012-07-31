@@ -27,11 +27,11 @@ class QtDateSelector(QtBoundedDate):
     #--------------------------------------------------------------------------
     # Message Handling
     #--------------------------------------------------------------------------
-    def on_action_set_date_format(self, payload):
+    def on_action_set_date_format(self, content):
         """ Handle the 'set_date_format' action from the Enaml widget.
 
         """
-        self.set_date_format(payload['date_format'])
+        self.set_date_format(content['date_format'])
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
