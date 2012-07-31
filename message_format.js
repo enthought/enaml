@@ -26,7 +26,7 @@
   // contains information necessary for routing the message to the 
   // appropriate session object. The header of the message can never 
   // be null, and all keys are required. However, certain keys may be
-  // null depending on the 'msg_type'.
+  // null depending on the "msg_type".
   {
     // A unique identifier for the session which created the message.
     // This will be null when the client is establishing a session.
@@ -65,150 +65,290 @@
 ]
 
 
-// For every request made by a client to the server. The server will
-// respond with a standard reply message where the "msg_type" is the
-// same as the original message and the content is as follows:
-
+//-----------------------------------------------------------------------------
+// discover 
+//-----------------------------------------------------------------------------
+// This type of message is used to discover the available server sessions,
+// which represent the various views that can be run on the client.
+[ 
+  // Header
+  {
+    "msg_type": "discover"
+    "session": null,
+    // ...
+  },
+  // Parent Header
+  {},
+  // Metadata
+  {},
+  // Content
+  {}
+]
 
 
 //-----------------------------------------------------------------------------
-// Supported Message Types
+// discover_response 
 //-----------------------------------------------------------------------------
+// This is the server"s response to a message of type "discover"
+[
+  // Header
+  {
+    "msg_type": "discover_response",
+    "session": null,
+    // ...
+  },
+  // Parent Header
+  {
+    // The original header for the "discover" message
+  },
+  // Metadata
+  {},
+  // Content
+  {
+    // The status of the request, either "ok" or "error"
+    "status": "<ok | error",
+    // The status message if the status is "error". If the status is
+    // "ok", the status message will be an empty string.
+    "status_msg": "<string>",
+    // The available sessions that the client may run. This will only
+    // be provided if the status is "ok".
+    "sessions": [
+      {
+        // The name of the session. This will be unique amongst all 
+        // available sessions.
+        "name": "<string>",
+        // The description of the session. This is a brief description
+        // of what the session will peform when launched.
+        "description": "<string>",
+      }
+    ]
+  }
+]
 
 
-// "enaml_message"
-// ---------------
-// This is the most common message type passed around in Enaml applications.
-// It is used to post and action and or data to a specific receiver. The
-// originator of the message does not expect a reply.
-//
-// The "metadata" of this message type is as follows:
-{
-  // The target of the message. This uniquely identifies the receiver of
-  // the message in an Enaml application.
-  "target_id": "<string>",
-
-  // The action that should be performed by the receiver the target.
-  // The types of actions supported are defined by a given receiver.
-  "action": "<string>",
-}
-
-
-// "enaml_request"
-// ---------------
-// This type of message is created when an object needs to request data
-// from another object. The originator of the message expects to receive
-// an "enaml_reply" message at some point in the future. 
-//
-// The "metadata" of this message type is as follows.
-{
-  // The target of the message. This uniquely identifies the receiver of
-  // the message in an Enaml application.
-  "target_id": "<string>",
-
-  // The action that should be performed by the receiver the target.
-  // The types of actions supported are defined by a given receiver.
-  "action": "<string>",
-}
+//-----------------------------------------------------------------------------
+// start_session
+//-----------------------------------------------------------------------------
+// This message is used by a client to start an Enaml session.
+[
+  // Header
+  {
+    "msg_type": "start_session",
+    "session": null,
+    //...
+  },
+  // Parent Header
+  {},
+  // Metadata
+  {},
+  // Content
+  {
+    // The name of the session to start for this client. This must be
+    // equal to one of the session names provided by "discover_response".
+    "name": "<string>"
+  }
+]
 
 
-// "enaml_reply"
-// -------------
-// This type of message is created in response to an "enaml_request". It
-// is used to deliver a response to the object which made the original
-// request. The order in which messages of this type are generated is
-// not guaranteed.
-//
-// The "metadata" of this message type is as follows:
-{
-  // The target of the message. This will be the same as the value for
-  // "target_id" in the associated "enaml_request" message.
-  "target_id": "<string>",
-
-  // This will be the same value as the "action" field in the
-  // associated "enaml_request".
-  "action": "<string>",
-}
-
-
-// "enaml_discover"
-// ----------------
-// This type of message is used to discover what views are available
-// on the server. The session field of the header for this type of
-// message may be null.
-//
-// The metadata and content of this message should be null.
-//
-// The content of the reponse to this message is as follows:
-{
-  // The status of the request, either "ok" or "error"
-  "status": "<ok | error",
-
-  // The error message if the status is "error". If the status is
-  // "ok", the message will be an empty string.
-  "message": "<string>",
-
-  // The available sessions that the client may run. This will only
-  // be provided if the status is 'ok'.
-  "sessions": [
-    {
-      // The name of the session. This will be unique amongst all 
-      // available sessions.
-      "name": "<string>",
-
-      // The description of the session. This is a brief description
-      // of what the session will peform when launched.
-      "description": "<string>",
-    }
-  ]
-}
+//-----------------------------------------------------------------------------
+// start_session_response
+//-----------------------------------------------------------------------------
+// This is the server"s response to a message of type "start_session".
+[
+  // Header
+  {
+    "msg_type": "start_session_response",
+    "session": null,
+    // ...
+  },
+  // Parent Header
+  {
+    // The original header for the "start_session" message.
+  },
+  // Metadata
+  {},
+  // Content
+  {
+    // The status of the start_session request, either "ok" or "error"
+    "status": "<ok | error",
+    // The error message if the status is "error". If the status is
+    // "ok", the message will be an empty string.
+    "status_msg": "<string>",
+    // The session identifier to use for communicating with the 
+    // session object on the server. This will only be provided if
+    // the status is "ok".
+    "session": "<string>",
+  }
+]
 
 
-// "enaml_begin_session"
-// ---------------------
-// This message is used by a client to start an Enaml session. This is
-// the only message type in which the "session" field of the header
-// may be null. The standard reply for this message type will have 
-// a populated "session" field for the client.
-//
-// The "metadata" for this message type is null. 
-//
-// The content for this message type is as follows:
-{
-  // The name of the session to start for this client. This must be
-  // equal to one of the session names provided by 'enaml_discover'.
-  "name": "<string>"
-}
-//
-// The content of the response to this message is as follows
-{
-  // The status of the request, either "ok" or "error"
-  "status": "<ok | error",
-
-  // The error message if the status is "error". If the status is
-  // "ok", the message will be an empty string.
-  "message": "<string>",
-
-  // The session identifier to use for communicating with the 
-  // session object on the server. This will only be provided if
-  // the status is 'ok'.
-  "session": "<string>",
-}
+//-----------------------------------------------------------------------------
+// end_session
+//-----------------------------------------------------------------------------
+// This message is used by a client to terminate a session.
+[
+  // Header
+  {
+    "msg_type": "end_session",
+    // The identifier for the session
+    "session": "<string>",
+    // ...
+  }
+  // Parent Header
+  {},
+  // Metadata
+  {},
+  // Content
+  {}
+]
 
 
-// "enaml_end_session"
-// -------------------
-// This message is used by a client to end its session.
-// 
-// Both the "metadata" and the "content" are null.
-//
-// The content of the response to this message is as follows;
-{
-  // The status of the request, either "ok" or "error"
-  "status": "<ok | error",
+//-----------------------------------------------------------------------------
+// end_session_response
+//-----------------------------------------------------------------------------
+// This is server"s reponse to a message of type "end_session". After this
+// message is sent by the server, the session id will no longer be valid.
+[
+  // Header
+  {
+    "msg_type": "end_session_response",
+    // The identifier for the session
+    "session": "<string>",
+  }
+  // Parent Header
+  {
+    // The original header for the "end_session" message.
+  },
+  // Metadata
+  {},
+  // Content
+  {
+    // The status of the request, either "ok" or "error"
+    "status": "<ok | error",
+    // The error message if the status is "error". If the status is
+    // "ok", the message will be an empty string.
+    "status_msg": "<string>",
+  }
+]
 
-  // The error message if the status is "error". If the status is
-  // "ok", the message will be an empty string.
-  "message": "<string>",
-}
+
+//-----------------------------------------------------------------------------
+// "snapshot"
+//-----------------------------------------------------------------------------
+// This message is used by a client to request a snapshot of the session. 
+// A snap is serialized version of the entire UI tree and is used for 
+// assembling the UI on the client side.
+[
+  // Header
+  {
+    "msg_type": "snapshot",
+    // The session identifier
+    "session": "<string>",
+    // ...
+  },
+  // Parent Header
+  {},
+  // Metadata
+  {},
+  // Content
+  {},
+]
+
+
+//-----------------------------------------------------------------------------
+// "snapshot_response"
+//-----------------------------------------------------------------------------
+// This is the server's response to a message of type "snapshot".
+[
+  // Header
+  {
+    "msg_type": "snapshot_response",
+    // The session identifier
+    "session": "<string>",
+    // ...
+  },
+  // Parent Header
+  {
+    // The original header for the "snapshot" message.
+  },
+  // Metadata
+  {},
+  // Content
+  {
+    // The status of the request, either "ok" or "error"
+    "status": "<ok | error",
+    // The error message if the status is "error". If the status is
+    // "ok", the message will be an empty string.
+    "status_msg": "<string>",
+    // The snapshot of the session state. This is only provided if
+    // the "status" is "ok". This will be an array of objects, with
+    // each object representing a UI tree belonging to the session.
+    "snapshot": ["<object>"]
+  }
+]
+
+
+//-----------------------------------------------------------------------------
+// "widget_action"
+//-----------------------------------------------------------------------------
+// This message is used by both the client and server to request an action
+// to be performed by the other part. This is the most common message type
+// used in Enaml applications and is chief means of synchronizing widget
+// state and sharing widget data between the client and server.
+[
+  // Header
+  {
+    "msg_type": "widget_action",
+    // The identifier for the session
+    "session": "<string>",
+    // ...
+  },
+  // Parent Header
+  {},
+  // Metadata
+  {
+    // The identifier of the widget that should perform the action.
+    "widget_id": "<string>".
+    // The action that the widget should perform.
+    "action": "<string>"
+  },
+  // Content
+  {
+    // The data required to perform the action. It is dependent upon
+    // the "action" being performed by the widget.
+  }
+]
+
+
+//-----------------------------------------------------------------------------
+// "widget_action_response"
+//-----------------------------------------------------------------------------
+// This message is the reponse the "widget_action" message type. It it used
+// by both the client and the server.
+[
+  // Header
+  {
+    "msg_type": "widget_action_response",
+    // The identifier for the session
+    "session": "<string>"
+  },
+  // Parent Header
+  {
+    // The original header for the "widget_action" message.
+  },
+  // Metadata
+  {
+    // The original Metadata for the "widget_action" message.
+  },
+  // Content
+  {
+    // The status of the request, either "ok" or "error"
+    "status": "<ok | error",
+    // The error message if the status is "error". If the status is
+    // "ok", the message will be an empty string.
+    "message": "<string>",
+    // Other content related to the response of the action. This is 
+    // dependent upon the "action" that was requested of the widget.
+  }
+]
 
