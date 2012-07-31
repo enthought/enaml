@@ -6,8 +6,8 @@ from .qt.QtGui import QDateEdit
 from .qt_bounded_date import QtBoundedDate
 
 
-class QtDateEdit(QtBoundedDate):
-    """ A Qt4 implementation of an Enaml DateEdit.
+class QtDateSelector(QtBoundedDate):
+    """ A Qt4 implementation of an Enaml DateSelector.
 
     """
     def create(self):
@@ -20,15 +20,15 @@ class QtDateEdit(QtBoundedDate):
         """ Initialize the widget's attributes.
 
         """
-        super(QtDateEdit, self).initialize(attrs)
+        super(QtDateSelector, self).initialize(attrs)
         self.set_date_format(attrs['date_format'])
         self.widget.dateChanged.connect(self.on_date_changed)
 
     #--------------------------------------------------------------------------
     # Message Handling
     #--------------------------------------------------------------------------
-    def on_message_set_date_format(self, payload):
-        """ Handle the 'set-date_format action from the Enaml widget.'
+    def on_action_set_date_format(self, payload):
+        """ Handle the 'set_date_format' action from the Enaml widget.
 
         """
         self.set_date_format(payload['date_format'])

@@ -7,10 +7,10 @@ from traits.api import Str
 from .bounded_date import BoundedDate
 
 
-class DateEdit(BoundedDate):
+class DateSelector(BoundedDate):
     """ A widget to edit a Python datetime.date object.
 
-    A DateEdit displays a Python datetime.date using an appropriate
+    A DateSelector displays a Python datetime.date using an appropriate
     toolkit specific control. This is a geometrically smaller control 
     than what is provided by Calendar.
 
@@ -32,7 +32,7 @@ class DateEdit(BoundedDate):
         initialize a client widget.
 
         """
-        snap = super(DateEdit, self).snapshot()
+        snap = super(DateSelector, self).snapshot()
         snap['date_format'] = self.date_format
         return snap
 
@@ -41,6 +41,6 @@ class DateEdit(BoundedDate):
         to bind any event handlers necessary.
 
         """
-        super(DateEdit, self).bind()
+        super(DateSelector, self).bind()
         self.publish_attributes('date_format')
 
