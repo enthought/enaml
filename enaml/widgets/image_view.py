@@ -4,8 +4,9 @@
 #------------------------------------------------------------------------------
 from traits.api import Bool, Instance
 
+from enaml.noncomponents.image.abstract_image import AbstractImage
+
 from .constraints_widget import ConstraintsWidget
-from ..noncomponents.image.abstract_image import AbstractImage
 
 
 class ImageView(ConstraintsWidget):
@@ -62,5 +63,5 @@ class ImageView(ConstraintsWidget):
         """ Sends the image data, encoded in a base64 format
 
         """
-        self.send({'action': 'set-image', 'image':self.image.as_dict()})
+        return
 
