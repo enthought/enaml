@@ -37,6 +37,10 @@ class Declarative(HasStrictTraits):
     #: A readonly property which returns the instance's class name.
     class_name = Property(fget=lambda self: type(self).__name__)
 
+    #: A readonly property which returns the names of the instances
+    #: base classes, stopping at Declarative.
+    base_names = Property
+
     #: A readonly property which returns the current instance of the
     #: component. This allows declarative Enaml expressions to access
     #: 'self' according to Enaml's dynamic scoping rules.
@@ -303,6 +307,21 @@ class Declarative(HasStrictTraits):
             if child.parent != self:
                 child.parent = self
 
+    def _get_base_names(self):
+        """ The property getter for the 'base_names' attribute.
+
+        This property getter returns the list of names for all base
+        classes in the instance type's mro, starting with its current
+        type and stopping with Declarative.
+
+        """
+        base_names = []
+        for base in type(self).mro():
+            base_names.append(base.__name__)
+            if base is Declarative:
+                break
+        return base_names
+
     @cached_property
     def _get_effective_children(self):
         """ The property getter for the 'effective_children' attribute.
@@ -368,6 +387,7 @@ class Declarative(HasStrictTraits):
         """
         snap = {}
         snap['class'] = self.class_name
+        snap['bases'] = self.base_names
         snap['name'] = self.name
         snap['children'] = [child.snapshot() for child in self.children]
         return snap
