@@ -28,23 +28,23 @@ class QtProgressBar(QtConstraintsWidget):
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
-    def on_message_set_minimum(self, payload):
-        """ Handle the 'set-minimum' action from the Enaml widget.
+    def on_action_set_minimum(self, content):
+        """ Handle the 'set_minimum' action from the Enaml widget.
 
         """
-        self.set_minimum(payload['minimum'])
+        self.set_minimum(content['minimum'])
 
-    def on_message_set_maximum(self, payload):
-        """ Handle the 'set-maximum' action from the Enaml widget.
-
-        """
-        self.set_maximum(payload['maximum'])
-
-    def on_message_set_value(self, payload):
-        """ Handle the 'set-value' action from the Enaml widget.
+    def on_action_set_maximum(self, content):
+        """ Handle the 'set_maximum' action from the Enaml widget.
 
         """
-        self.set_value(payload['value'])
+        self.set_maximum(content['maximum'])
+
+    def on_action_set_value(self, content):
+        """ Handle the 'set_value' action from the Enaml widget.
+
+        """
+        self.set_value(content['value'])
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
