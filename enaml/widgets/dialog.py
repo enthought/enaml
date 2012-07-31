@@ -42,7 +42,7 @@ class Dialog(Window):
     # Initialization
     #--------------------------------------------------------------------------
     def snapshot(self):
-        """ Return the creation attributes for a Dialog
+        """ Return the snapshot for a Dialog.
 
         """
         snap = super(Dialog, self).snapshot()
@@ -52,12 +52,11 @@ class Dialog(Window):
     #--------------------------------------------------------------------------
     # Message Handling
     #--------------------------------------------------------------------------
-    def on_message_event_closed(self, payload):
-        """ An overridden handler for the 'event-closed' message from 
-        the client. The pulls the dialog result out of the payload. 
+    def on_action_closed(self, content):
+        """ Handle the 'closed' action from the client widget.
 
         """
-        result = payload['result']
+        result = content['result']
         self._result = result
         self.closed(result)
 
@@ -71,7 +70,7 @@ class Dialog(Window):
         Ok button.
 
         """
-        self.send_message({'action': 'accept'})
+        self.send_action('accept', {})
 
     def reject(self):
         """ Close the dialog and set the result to `rejected`.
@@ -80,5 +79,5 @@ class Dialog(Window):
         Cancel button.
 
         """
-        self.send_message({'action': 'reject'})
+        self.send_action('reject', {})
 
