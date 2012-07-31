@@ -7,7 +7,7 @@ from traits.api import Str
 from .bounded_datetime import BoundedDatetime
 
 
-class DatetimeEdit(BoundedDatetime):
+class DatetimeSelector(BoundedDatetime):
     """ A datetime widget that displays a Python datetime.datetime 
     object using an appropriate toolkit specific control.
 
@@ -29,7 +29,7 @@ class DatetimeEdit(BoundedDatetime):
         initialize a client widget.
 
         """
-        snap = super(DatetimeEdit, self).snapshot()
+        snap = super(DatetimeSelector, self).snapshot()
         snap['datetime_format'] = self.datetime_format
         return snap
 
@@ -38,6 +38,6 @@ class DatetimeEdit(BoundedDatetime):
         to bind any event handlers necessary.
 
         """
-        super(DatetimeEdit, self).bind()
+        super(DatetimeSelector, self).bind()
         self.publish_attributes('datetime_format')
 

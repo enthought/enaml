@@ -6,7 +6,7 @@ from .qt.QtGui import QDateTimeEdit
 from .qt_bounded_datetime import QtBoundedDatetime
 
 
-class QtDatetimeEdit(QtBoundedDatetime):
+class QtDatetimeSelector(QtBoundedDatetime):
     """ A Qt implementation of a datetime edit
 
     """
@@ -20,19 +20,19 @@ class QtDatetimeEdit(QtBoundedDatetime):
         """ Initialize the widget's attributes
 
         """
-        super(QtDatetimeEdit, self).initialize(attrs)
+        super(QtDatetimeSelector, self).initialize(attrs)
         self.set_datetime_format(attrs['datetime_format'])
         self.widget.dateTimeChanged.connect(self.on_datetime_changed)
 
     #--------------------------------------------------------------------------
     # Message Handling
     #--------------------------------------------------------------------------
-    def on_message_set_datetime_format(self, payload):
-        """ Handle the 'set-datetime_format' action from the Enaml
+    def on_action_set_datetime_format(self, content):
+        """ Handle the 'set_datetime_format' action from the Enaml
         widget.
 
         """
-        self.set_datetime_format(payload['datetime_format'])
+        self.set_datetime_format(content['datetime_format'])
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
