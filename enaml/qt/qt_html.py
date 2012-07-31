@@ -27,11 +27,11 @@ class QtHtml(QtConstraintsWidget):
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
-    def on_message_set_source(self, payload):
-        """ Handle the 'set-source' action from the Enaml widget.
+    def on_action_set_source(self, content):
+        """ Handle the 'set_source' action from the Enaml widget.
 
         """
-        self.set_source(payload['source'])
+        self.set_source(content['source'])
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
