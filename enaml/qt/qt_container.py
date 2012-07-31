@@ -257,7 +257,7 @@ class QtContainer(QtConstraintsWidget):
         # The mapping of constraint owners and the list of constraint
         # info dictionaries provided by the Enaml widgets.
         box = self.layout_box
-        cn_owners = {self.target_id: box}
+        cn_owners = {self.widget_id: box}
         cn_dicts = list(self.constraints)
         cn_dicts_extend = cn_dicts.extend
 
@@ -282,7 +282,7 @@ class QtContainer(QtConstraintsWidget):
             child = stack_pop()
             if isinstance(child, QtConstraintsWidget):
                 child_box = child.layout_box
-                cn_owners[child.target_id] = child_box
+                cn_owners[child.widget_id] = child_box
                 if isinstance(child, QtContainer):
                     if child.transfer_layout_ownership(self):
                         cn_dicts_extend(child.constraints)
