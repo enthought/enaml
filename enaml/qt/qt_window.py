@@ -262,41 +262,41 @@ class QtWindow(QtWidgetComponent):
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
-    def on_message_close(self, payload):
-        """ Message handler for the 'close' action.
+    def on_action_close(self, content):
+        """ Handle the 'close' action from the Enaml widget. 
 
         """
         self.close()
 
-    def on_message_maximize(self, payload):
-        """ Message handler for the 'maximize' action.
+    def on_action_maximize(self, content):
+        """ Handle the 'maximize' action from the Enaml widget. 
 
         """
         self.maximize()
 
-    def on_message_minimize(self, payload):
-        """ Message handler for the 'minimize' action.
+    def on_action_minimize(self, content):
+        """ Handle the 'minimize' action from the Enaml widget. 
 
         """
         self.minimize()
 
-    def on_message_restore(self, payload):
-        """ Message handler for the 'restore' action.
+    def on_action_restore(self, content):
+        """ Handle the 'restore' action from the Enaml widget. 
 
         """
         self.restore()
 
-    def on_message_set_icon(self, payload):
-        """ Message handler for the 'set-icon' action.
+    def on_action_set_icon(self, content):
+        """ Handle the 'set-icon' action from the Enaml widget. 
 
         """
         pass
 
-    def on_message_set_title(self, payload):
-        """ Message handler for the 'set-title' action.
+    def on_action_set_title(self, content):
+        """ Handle the 'set-title' action from the Enaml widget. 
 
         """
-        self.set_title(payload['title'])
+        self.set_title(content['title'])
     
     #--------------------------------------------------------------------------
     # Widget Update Methods

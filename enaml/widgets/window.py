@@ -55,8 +55,8 @@ class Window(WidgetComponent):
     #--------------------------------------------------------------------------
     # Message Handling
     #--------------------------------------------------------------------------
-    def on_message_event_closed(self, payload):
-        """ The handler for the 'event-closed' message from the client. 
+    def on_action_closed(self, content):
+        """ Handle the 'closed' action from the client widget.
 
         """
         self.closed()
@@ -65,26 +65,26 @@ class Window(WidgetComponent):
     # Public API
     #--------------------------------------------------------------------------
     def close(self):
-        """ Send a 'close' command to the client UI
+        """ Send the 'close' action to the client widget.
 
         """
-        self.send_message({'action': 'close'})
+        self.send_action('close', {})
 
     def maximize(self):
-        """ Send a 'maximize' command to the client UI.
+        """ Send the 'maximize' action to the client widget.
 
         """
-        self.send_message({'action': 'maximize'})
+        self.send_action('maximize', {})
 
     def minimize(self):
-        """ Send a 'minimize' command to the client UI.
+        """ Send the 'minimize' action to the client widget.
 
         """
-        self.send_message({'action': 'minimize'})
+        self.send_action('minimize', {})
 
     def restore(self):
-        """ Send a 'restore' command to the client UI.
+        """ Send the 'restore' action to the client widget.
 
         """
-        self.send_message({'action': 'restore'})
+        self.send_action('restore', {})
 
