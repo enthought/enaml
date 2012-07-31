@@ -39,7 +39,7 @@ class BaseRequest(object):
         raise NotImplementedError
 
     @abstractmethod
-    def add_callback(self, callback):
+    def add_callback(self, callback, *args, **kwargs):
         """ Add a callback to the event queue to be called later.
 
         This is used by the request handlers to defer long running 
@@ -51,6 +51,10 @@ class BaseRequest(object):
         callback : callable
             A callable which should be invoked by the event loop at 
             some future time. This method must return immediately.
+
+        *args, **kwargs
+            The positional and keyword arguments to pass to the 
+            callable when it is invoked.
 
         """
         raise NotImplementedError
@@ -172,7 +176,7 @@ class BasePushHandler(object):
         raise NotImplementedError
 
     @abstractmethod
-    def add_callback(self, callback):
+    def add_callback(self, callback, *args, **kwargs):
         """ Add a callback to the event queue to be called later.
 
         This is used as a convenience for Session objects to provide
@@ -187,6 +191,10 @@ class BasePushHandler(object):
         callback : callable
             A callable which should be invoked by the event loop at 
             some future time. This method must return immediately.
+
+        *args, **kwargs
+            The positional and keyword arguments to pass to the 
+            callable when it is invoked.
 
         """
         raise NotImplementedError
