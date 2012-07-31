@@ -39,23 +39,23 @@ class QtBoundedDate(QtConstraintsWidget):
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
-    def on_message_set_date(self, payload):
-        """ Handle the 'set-date' action from the Enaml widget.
+    def on_action_set_date(self, content):
+        """ Handle the 'set_date' action from the Enaml widget.
     
         """
-        self.set_date(as_qdate(payload['date']))
+        self.set_date(as_qdate(content['date']))
 
-    def on_message_set_minimum(self, payload):
-        """ Hanlde the 'set-minimum' action from the Enaml widget.
-
-        """
-        self.set_min_date(as_qdate(payload['minimum']))
-
-    def on_message_set_maximum(self, payload):
-        """ Handle the 'set-maximum' action from the Enaml widget.
+    def on_action_set_minimum(self, content):
+        """ Hanlde the 'set_minimum' action from the Enaml widget.
 
         """
-        self.set_max_date(as_qdate(payload['maximum']))
+        self.set_min_date(as_qdate(content['minimum']))
+
+    def on_action_set_maximum(self, content):
+        """ Handle the 'set_maximum' action from the Enaml widget.
+
+        """
+        self.set_max_date(as_qdate(content['maximum']))
 
     #--------------------------------------------------------------------------
     # Signal Handlers
@@ -69,10 +69,8 @@ class QtBoundedDate(QtConstraintsWidget):
 
         """
         qdate = self.get_date()
-        payload = {
-            'action': 'event-changed', 'date': as_iso_date(qdate),
-        }
-        self.send_message(payload)
+        content = {'date': as_iso_date(qdate)}
+        self.send_action('date_changed', content)
 
     #--------------------------------------------------------------------------
     # Abstract Methods

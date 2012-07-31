@@ -65,38 +65,34 @@ class BoundedDate(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Message Handling
     #--------------------------------------------------------------------------
-    def on_message_event_changed(self, payload):
-        """ Handle the 'event-changed' message from the UI control.
+    def on_action_date_changed(self, content):
+        """ Handle the 'date_changed' action from the UI control.
 
         """
-        date = parse_iso_dt(payload['date']).date()
+        date = parse_iso_dt(content['date']).date()
         self.set_guarded(date=date)
 
     def _send_minimum(self):
         """ Send the minimum date to the client widget.
 
         """
-        payload = {
-            'action': 'set-minimum', 'minimum': self.minimum.isoformat(),
-        }
-        self.send_message(payload)
+        content = {'minimum': self.minimum.isoformat()}
+        self.send_action('set_minimum', content)
 
     def _send_maximum(self):
         """ Send the maximum date to the client widget.
 
         """
-        payload = {
-            'action': 'set-maximum', 'maximum': self.maximum.isoformat(),
-        }
-        self.send_message(payload)
+        content = {'maximum': self.maximum.isoformat()}
+        self.send_action('set_maximum', content)
 
     def _send_date(self):
         """ Send the current date to the client widget.
 
         """
         if 'date' not in self.loopback_guard:
-            payload = {'action': 'set-date', 'date': self.date.isoformat()}
-            self.send_message(payload)
+            content = {'date': self.date.isoformat()}
+            self.send_action('set_date', content)
 
     #--------------------------------------------------------------------------
     # Property methods
