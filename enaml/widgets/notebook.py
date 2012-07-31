@@ -31,7 +31,7 @@ class Notebook(ConstraintsWidget):
     tabs_movable = Bool(True)
 
     #: An event fired when the user closes a tab by clicking on its
-    #: close button. The payload will be the page object.
+    #: close button. The content will be the page object.
     tab_closed = EnamlEvent
 
     #: How strongly a component hugs it's contents' width. A TabGroup
@@ -70,11 +70,11 @@ class Notebook(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Message Handling
     #--------------------------------------------------------------------------
-    def on_message_tab_closed(self, payload):
-        """ Handle the 'tab-closed' action from the client widget.
+    def on_action_tab_closed(self, content):
+        """ Handle the 'tab_closed' action from the client widget.
 
         """
-        widget_id = payload['widget_id']
+        widget_id = content['widget_id']
         for child in self.children:
             if child.widget_id == widget_id:
                 self.tab_closed(child)
@@ -95,8 +95,8 @@ class Notebook(ConstraintsWidget):
 
         """
         assert page in self.children, "Page is not a child of the Notebook"
-        payload = {'action': 'open-tab', 'widget_id': page.widget_id}
-        self.send_message(payload)
+        content = {'widget_id': page.widget_id}
+        self.send_action('open_tab', content)
 
     def close_tab(self, page):
         """ Close the tab for the given page, if it isn't already closed.
@@ -109,6 +109,6 @@ class Notebook(ConstraintsWidget):
 
         """
         assert page in self.children, "Page is not a child of the Notebook"
-        payload = {'action': 'close-tab', 'widget_id': page.widget_id}
-        self.send_message(payload)
+        content = {'widget_id': page.widget_id}
+        self.send_action('close_tab', content)
 

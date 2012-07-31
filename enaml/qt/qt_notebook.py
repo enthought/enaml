@@ -177,47 +177,47 @@ class QtNotebook(QtConstraintsWidget):
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
-    def on_message_set_tab_position(self, payload):
-        """ Handle the 'set-tab_position' action from the Enaml widget.
+    def on_action_set_tab_position(self, content):
+        """ Handle the 'set_tab_position' action from the Enaml widget.
 
         """
-        self.set_tab_position(payload['tab_position'])
+        self.set_tab_position(content['tab_position'])
         
-    def on_message_set_tab_style(self, payload):
-        """ Handle the 'set-tab_style' action from the Enaml widget.
+    def on_action_set_tab_style(self, content):
+        """ Handle the 'set_tab_style' action from the Enaml widget.
 
         """
-        self.set_tab_style(payload['tab_style'])
+        self.set_tab_style(content['tab_style'])
 
-    def on_message_set_tabs_closable(self, payload):
-        """ Handle the 'set-tabs_closable' action from the Enaml widget.
-
-        """
-        self.set_tabs_closable(payload['tabs_closable'])
-
-    def on_message_set_tabs_movable(self, payload):
-        """ Handle the 'set-tabs_movable' action from the Enaml widget.
+    def on_action_set_tabs_closable(self, content):
+        """ Handle the 'set_tabs_closable' action from the Enaml widget.
 
         """
-        self.set_tabs_movable(payload['tabs_movable'])
+        self.set_tabs_closable(content['tabs_closable'])
 
-    def on_message_open_tab(self, payload):
-        """ Handle the 'open-tab' action from the Enaml widget.
+    def on_action_set_tabs_movable(self, content):
+        """ Handle the 'set_tabs_movable' action from the Enaml widget.
 
         """
-        target_id = payload['target_id']
+        self.set_tabs_movable(content['tabs_movable'])
+
+    def on_action_open_tab(self, content):
+        """ Handle the 'open_tab' action from the Enaml widget.
+
+        """
+        widget_id = content['widget_id']
         for child in self.children:
-            if child.target_id == target_id:
+            if child.widget_id == widget_id:
                 self.widget.addPage(child.widget)
                 return
 
-    def on_message_close_tab(self, payload):
-        """ Handle the 'close-page' action from the Enaml widget.
+    def on_action_close_tab(self, content):
+        """ Handle the 'close_tab' action from the Enaml widget.
 
         """
-        target_id = payload['target_id']
+        widget_id = content['widget_id']
         for child in self.children:
-            if child.target_id == target_id:
+            if child.widget_id == widget_id:
                 widget = self.widget
                 widget.removePage(widget.indexOf(child.widget))
                 return
@@ -233,9 +233,9 @@ class QtNotebook(QtConstraintsWidget):
         self.widget.removePage(index)
         for child in self.children:
             if page == child.widget:
-                target_id = child.target_id
-                payload = {'action': 'tab-closed', 'target_id': target_id}
-                self.send_message(payload)
+                widget_id = child.widget_id
+                content = {'widget_id': widget_id}
+                self.send_action('tab_closed', content)
                 return
 
     #--------------------------------------------------------------------------
