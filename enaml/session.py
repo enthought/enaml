@@ -181,10 +181,14 @@ class Session(object):
         """
         return self._session_views
 
-    def send_message(self, widget_id, action, content):
-        """ Send an unsolicited message of type 'enaml_message' to a
+    def send_action(self, widget_id, action, content):
+        """ Send an unsolicited message of type 'widget_action' to a
         client widget of this session. 
 
+        This method is normally only called by the MessengerWidget's
+        which are owned by this Session object. This should not be
+        called directly by user code.
+        
         Parameters
         ----------
         widget_id : str

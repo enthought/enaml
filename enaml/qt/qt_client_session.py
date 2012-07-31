@@ -97,7 +97,7 @@ class QtClientSession(object):
                 logging.error(msg % widget_id)
                 return
             widget = self._widgets[widget_id]
-            widget.receive_message(message.metadata.action, message.content)
+            widget.handle_action(message.metadata.action, message.content)
         # XXX handle msg_type 'widget_action_response'
 
     #--------------------------------------------------------------------------
@@ -188,16 +188,21 @@ class QtClientSession(object):
         message = Message((header, {}, {}, {}))
         self._router.appMessagePosted.emit(message)
 
-    def send_message(self, widget_id, action, content):
-        """ Send an unsolicited message to a server widget.
+    def send_action(self, widget_id, action, content):
+        """ Send an unsolicited message of type 'widget_action' to a
+        server widget for this session.
 
+        This method is normally only called by the QtMessengerWidget's
+        which are owned by this QtClientSession object. This should not 
+        be called directly by user code.
+        
         Parameters
         ----------
         widget_id : str
             The widget identifier for the widget sending the message.
 
         action : str
-            The action to be performed by the server widget.
+            The action to be performed by the client widget.
 
         content : dict
             The content dictionary for the action.
