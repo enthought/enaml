@@ -27,19 +27,19 @@ class QtLabel(QtConstraintsWidget):
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
-    def on_message_set_text(self, payload):
-        """ Handle the 'set-text' action from the Enaml widget.
+    def on_action_set_text(self, content):
+        """ Handle the 'set_text' action from the Enaml widget.
 
         """
         # XXX trigger a relayout if the size hint has changed.
-        self.set_text(payload['text'])
+        self.set_text(content['text'])
 
-    def on_message_set_word_wrap(self, payload): 
-        """ Handle the 'set-word_wrap' action from the Enaml widget.
+    def on_action_set_word_wrap(self, content): 
+        """ Handle the 'set_word_wrap' action from the Enaml widget.
 
         """
         # XXX trigger a relayout if the size hint has changed.
-        self.set_word_wrap(payload['word_wrap'])
+        self.set_word_wrap(content['word_wrap'])
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
