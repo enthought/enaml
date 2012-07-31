@@ -60,7 +60,7 @@ class MessengerWidget(Declarative):
         message to the client.
 
         The message action will be created by prefixing the attribute
-        name with 'set-'. The value of the attribute is expected to be 
+        name with 'set_'. The value of the attribute is expected to be 
         serializable to JSON. The content of the message will have the
         name of the attribute as a key, and the value as its value. If
         the loopback guard is held for the given name, then the message
@@ -68,9 +68,9 @@ class MessengerWidget(Declarative):
 
         """
         if name not in self.loopback_guard:
-            action = 'set-' + name
+            action = 'set_' + name
             content = {name: new}
-            self.send_message(action, content)
+            self.send_action(action, content)
 
     def _bind(self):
         """ A private method for triggering the bind() call.
@@ -112,7 +112,7 @@ class MessengerWidget(Declarative):
         """ Handle an action sent from the client of this widget.
 
         This is called by the widget's Session object when the client
-        of the widget sends an unsolicited message.
+        of the widget sends a message to this widget.
 
         Parameters
         ----------
@@ -123,19 +123,21 @@ class MessengerWidget(Declarative):
             The content dictionary for the action.
 
         """
-        handler_name = 'on_message_' + action
+        handler_name = 'on_action_' + action
         handler = getattr(self, handler_name, None)
         if handler is not None:
             handler(content)
         else:
+            # XXX probably want to raise an exception so the Session
+            # can convert it into an error response.
             msg = "Unhandled action '%s' sent to widget %s:%s"
             logging.warn(msg % (action, self.class_name, self.widget_id))
 
-    def send_message(self, action, content):
-        """ Send a message to the client of this widget.
+    def send_action(self, action, content):
+        """ Send an action to the client of this widget.
 
-        This method can be called to send an unsolicited message to the
-        client of this widget.
+        This method can be called to send an unsolicited message of
+        type 'widget_action' to the client of this widget.
 
         Parameters
         ----------
@@ -151,7 +153,7 @@ class MessengerWidget(Declarative):
             msg = 'No Session object for widget %s:%s'
             logging.warn(msg % (self.class_name, self.widget_id))
         else:
-            session.send_message(self.widget_id, action, content)
+            session.send_action(self.widget_id, action, content)
 
     #--------------------------------------------------------------------------
     # Public API
@@ -216,6 +218,4 @@ class MessengerWidget(Declarative):
         with self.loopback_guard(*attrs):
             for name, value in attrs.iteritems():
                 setattr(self, name, value)
-
-    
 
