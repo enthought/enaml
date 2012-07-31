@@ -33,7 +33,7 @@ class QtAbstractButton(QtConstraintsWidget):
         self.set_checkable(attrs['checkable'])
         self.set_checked(attrs['checked'])
         self.set_text(attrs['text'])
-        self.set_icon(attrs['icon'])
+        #self.set_icon(attrs['icon'])
         self.set_icon_size(attrs['icon_size'])
         self.widget.clicked.connect(self.on_clicked)
         self.widget.toggled.connect(self.on_toggled)
