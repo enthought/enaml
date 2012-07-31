@@ -6,8 +6,11 @@
 
 """
 from collections import defaultdict
+from functools import wraps
+import logging
 from random import shuffle
 from string import letters, digits
+import traceback
 from types import MethodType
 from weakref import ref
 
@@ -261,4 +264,25 @@ class ObjectDict(dict):
 
     def __setattr__(self, name, value):
         self[name] = value
+
+
+def log_exceptions(func):
+    """ A decorator which will catch errors raised by a function and
+    convert them into log error messages.
+
+    When a decorated function raises an Exception, the return value
+    will be None.
+
+    """
+    @wraps(func)
+    def closure(*args, **kwargs):
+        try:
+            res = func(*args, **kwargs)
+        except Exception:
+            tb = traceback.format_exc()
+            message = 'Exception occured in `%s`:\n%s' % (func.__name__, tb)
+            logging.error(message)
+            res = None
+        return res
+    return closure
 

@@ -2,17 +2,15 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import functools
 import json
-import logging
-import traceback
 
 import zmq
 from zmq.eventloop.ioloop import IOLoop
 from zmq.eventloop.zmqstream import ZMQStream
 
-from .message import Message
-from .request import BaseRequest, BasePushHandler
+from enaml.message import Message
+from enaml.request import BaseRequest, BasePushHandler
+from enaml.utils import log_exceptions
 
 
 def pack_message(routing_id, message):
@@ -53,24 +51,6 @@ def unpack_message(multipart):
     routing_id = multipart[0]
     loads = json.loads
     return routing_id, Message(loads(part) for part in multipart[1:])
-
-
-def log_exceptions(func):
-    """ A decorator which will catch errors raised by a function and
-    convert them into log error messages.
-
-    """
-    @functools.wraps(func)
-    def closure(*args, **kwargs):
-        try:
-            res = func(*args, **kwargs)
-        except Exception:
-            tb = traceback.format_exc()
-            message = 'Exception occured in `%s`:\n%s' % (func.__name__, tb)
-            logging.error(message)
-            res = None
-        return res
-    return closure
 
 
 class ZMQRequest(BaseRequest):
