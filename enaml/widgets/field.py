@@ -85,19 +85,19 @@ class Field(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Message Handling
     #--------------------------------------------------------------------------
-    def on_message_event_changed(self, payload):
-        """ Handle the 'event-changed' action from the client widget.
+    def on_action_text_changed(self, content):
+        """ Handle the 'text_changed' action from the client widget.
 
         """
-        text = payload['text']
+        text = content['text']
         self.set_guarded(text=text)
 
     def _send_validators(self):
         """ Send the new validators to the client widget.
 
         """
-        payload = {'action': 'set-validators', 'validators': self.validators}
-        self.send_message(payload)
+        content = {'validators': self.validators}
+        self.send_action('set_validators', content)
 
     #--------------------------------------------------------------------------
     # Public API
@@ -107,5 +107,5 @@ class Field(ConstraintsWidget):
         in the field.
 
         """
-        self.send_message({'action': 'validate'})
+        self.send_action('validate', {})
 

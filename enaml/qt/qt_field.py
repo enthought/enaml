@@ -142,43 +142,43 @@ class QtField(QtConstraintsWidget):
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
-    def on_message_set_text(self, payload):
-        """ Handle the 'set-text' action from the Enaml widget.
+    def on_action_set_text(self, content):
+        """ Handle the 'set_text' action from the Enaml widget.
 
         """
-        self.set_text(payload['text'])
+        self.set_text(content['text'])
 
-    def on_message_set_validators(self, payload):
-        """ Handle the 'set-validators' action from the Enaml widget.
-
-        """
-        self.validators = parse_validators(payload['validators'])
-
-    def on_message_set_placeholder(self, payload):
-        """ Hanlde the 'set-placeholder' action from the Enaml widget.
+    def on_action_set_validators(self, content):
+        """ Handle the 'set_validators' action from the Enaml widget.
 
         """
-        self.set_placeholder(payload['placeholder'])
+        self.validators = parse_validators(content['validators'])
 
-    def on_message_set_echo_mode(self, payload):
-        """ Handle the 'set-echo_mode' action from the Enaml widget.
-
-        """
-        self.set_echo_mode(payload['echo_mode'])
-
-    def on_message_set_max_length(self, payload):
-        """ Handle the 'set-max_length' action from the Enaml widget.
+    def on_action_set_placeholder(self, content):
+        """ Hanlde the 'set_placeholder' action from the Enaml widget.
 
         """
-        self.set_max_length(payload['max_length'])
+        self.set_placeholder(content['placeholder'])
 
-    def on_message_set_read_only(self, payload):
-        """ Handle the 'set-read_only' action from the Enaml widget.
+    def on_action_set_echo_mode(self, content):
+        """ Handle the 'set_echo_mode' action from the Enaml widget.
 
         """
-        self.set_read_only(payload['read_only'])
+        self.set_echo_mode(content['echo_mode'])
 
-    def on_message_validate(self, payload):
+    def on_action_set_max_length(self, content):
+        """ Handle the 'set_max_length' action from the Enaml widget.
+
+        """
+        self.set_max_length(content['max_length'])
+
+    def on_action_set_read_only(self, content):
+        """ Handle the 'set_read_only' action from the Enaml widget.
+
+        """
+        self.set_read_only(content['read_only'])
+
+    def on_action_validate(self, content):
         """ Handle the 'validate' action from the Enaml widget.
 
         """
@@ -245,8 +245,8 @@ class QtField(QtConstraintsWidget):
             self.widget.setText(text)
             self.widget.setCursorPosition(pos)
 
-        payload = {'action': 'event-changed', 'text': text}
-        self.send_message(payload)
+        content = {'text': text}
+        self.send_action('text_changed', content)
         self.dirty = False
 
     def _validation_failure(self, orig, text, info):
@@ -255,7 +255,7 @@ class QtField(QtConstraintsWidget):
         """
         # This is just a temporary popup hack for now until we get 
         # Naveen's pretty popup widget in place.
-        msg = info.get('message', '')
+        msg = info.get('action', '')
         msg = 'Validation Failure: %s' % msg
         widget = self.widget
         globalPos = widget.mapToGlobal(widget.pos())
