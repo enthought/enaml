@@ -26,9 +26,7 @@ class WxPushButton(WxAbstractButton):
         
         """
         super(WxPushButton, self).initialize(attrs)
-        self.set_text(self.shell_obj.text)
-        widget = self.widget
-        widget.Bind(wx.EVT_BUTTON, self.on_clicked)
+        self.widget.Bind(wx.EVT_BUTTON, self.on_clicked)
 
     #--------------------------------------------------------------------------
     # Abstract API Implementation 
