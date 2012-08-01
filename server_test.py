@@ -3,6 +3,7 @@ import copy
 import enaml
 from enaml.application import Application
 from enaml.session import Session
+from enaml.wx.wx_local_server import WxLocalServer
 from enaml.qt.qt_local_server import QtLocalServer
 
 
@@ -31,16 +32,14 @@ class SampleView(Session):
 
 if __name__ == '__main__':
     app_model = Model(text='Foo')
-    kwargs = {
-        'model': app_model,
-        'share_model': True, # Set this to False to unlink the views
-    }
+    args = (app_model, True)
 
     app = Application([
-        ('test-view', 'A simple test view', SampleView, kwargs)
+        ('test-view', 'A simple test view', SampleView, args)
     ])
 
-    server = QtLocalServer(app)
+    server = WxLocalServer(app)
+    #server = QtLocalServer(app)
 
     client = server.local_client()
 
