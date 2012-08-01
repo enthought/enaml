@@ -129,7 +129,7 @@ class QtWidgetComponent(QtMessengerWidget):
         ----------
         max_size : (int, int)
             The minimum size allowable for the widget. A value of
-            (-1, -1) indicates the default min size.
+            (-1, -1) indicates the default max size.
 
         """
         # QWidget uses 16777215 as the max size

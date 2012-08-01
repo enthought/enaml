@@ -22,9 +22,8 @@ class QContainer(QResizingFrame):
     _size_hint = QSize()
 
     def sizeHint(self):
-        """ Computes the size hint from the given QtContainer using the
-        containers minimimum computed size. If the container returns an
-        invalid size, the superclass' sizeHint will be used.
+        """ Returns the previously set size hint. If that size hint is
+        invalid, the superclass' sizeHint will be used.
 
         """
         hint = self._size_hint
@@ -33,7 +32,7 @@ class QContainer(QResizingFrame):
         return hint
 
     def setSizeHint(self, hint):
-        """ Sets the size hint to use for this resizing frame.
+        """ Sets the size hint to use for this container.
 
         """
         self._size_hint = hint

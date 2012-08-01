@@ -35,14 +35,14 @@ class Window(WidgetComponent):
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
-    def creation_attributes(self):
-        """ Return the attr initialization dict for a window.
+    def snapshot(self):
+        """ Return the snapshot for a Window.
 
         """
-        super_attrs = super(Window, self).creation_attributes()
-        super_attrs['title'] = self.title
-        super_attrs['initial_size'] = self.initial_size
-        return super_attrs
+        snap = super(Window, self).snapshot()
+        snap['title'] = self.title
+        snap['initial_size'] = self.initial_size
+        return snap
 
     def bind(self):
         """ A method called after initialization which allows the widget

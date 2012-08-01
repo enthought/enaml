@@ -13,13 +13,13 @@ class QtMessengerWidget(object):
 
     """
     def __init__(self, parent, widget_id, session):
-        """ Initialize a QtClientWidget
+        """ Initialize a QtMessengerWidget
 
         Parameters
         ----------
         parent : QtMessengerWidget or None
-            The parent client widget of this widget, or None if this
-            client widget has no parent.
+            The parent widget of this widget, or None if this widget has
+            no parent.
 
         widget_id : str
             The identifier string for this widget.

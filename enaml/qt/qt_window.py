@@ -245,8 +245,8 @@ class QtWindow(QtWidgetComponent):
 
         """
         super(QtWindow, self).initialize(attrs)
-        self.set_title(attrs.get('title', ''))
-        self.set_initial_size(attrs.get('initial_size', (-1, -1)))
+        self.set_title(attrs['title'])
+        self.set_initial_size(attrs['initial_size'])
 
     def post_initialize(self):
         """ Perform the post initialization work.
