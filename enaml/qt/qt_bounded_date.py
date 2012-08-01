@@ -65,7 +65,7 @@ class QtBoundedDate(QtConstraintsWidget):
         the underlying widget.
 
         This will convert the QDate to iso format and send the Enaml
-        widget the 'event-changed' action.
+        widget the 'date_changed' action.
 
         """
         qdate = self.get_date()
