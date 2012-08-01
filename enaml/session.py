@@ -39,7 +39,7 @@ class Session(object):
         'widget_action_response': '_dispatch_widget_message',
     }
 
-    def __init__(self, push_handler, username, kwargs=None):
+    def __init__(self, push_handler, username):
         """ Initialize a Session.
 
         This __init__ method should be overridden by users. Instead,
@@ -54,17 +54,10 @@ class Session(object):
         username : str
             The username associated with this session.
 
-        kwargs : dict, optional
-            The dict of keyword arguments to pass to the on_open()
-            method. These arguments will have been provided by the
-            user as an item in the handler tuple given to the 
-            Application instance.
-
         """
         self._push_handler = push_handler
         self._username = username
         self._session_id = _session_id_gen.next()
-        self._kwargs = kwargs or {}
         self._session_views = []
         self._widgets = {}
 
@@ -222,11 +215,17 @@ class Session(object):
         """
         pass
 
-    def open(self):
+    def open(self, *args, **kwargs):
         """ Called by the application when the session is opened.
 
+        Parameters
+        ----------
+        *args, **kwargs 
+            Positional and keyword arguments to pass to the session's
+            'on_open' method.
+        
         """
-        views = self.on_open(**self._kwargs)
+        views = self.on_open(*args, **kwargs)
         if not isinstance(views, list):
             views = [views]
         self._session_views = views

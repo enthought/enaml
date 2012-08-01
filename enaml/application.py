@@ -8,7 +8,7 @@ import logging
 
 #: A namedtuple used for storing session specification info
 SessionSpec = namedtuple(
-    'SessionSpec', 'name description session_class kwargs'
+    'SessionSpec', 'name description factory args kwargs'
 )
 
 
@@ -84,13 +84,13 @@ class Application(object):
             # XXX Do we want to move this to a call later, and do some
             # checking on the number of open sessions etc?
             handler = self._named_handlers[name]
-            session_cls = handler.session_class
+            factory = handler.factory
             push_handler = request.push_handler()
             username = message.header.username
-            session = session_cls(push_handler, username, handler.kwargs)
+            session = factory(push_handler, username)
             session_id = session.session_id
             self._sessions[session_id] = session
-            session.open()
+            session.open(*handler.args, **handler.kwargs)
             content = {'session': session_id}
             request.send_ok_response(content=content)
 
@@ -148,19 +148,32 @@ class Application(object):
         """
         all_handlers = self._all_handlers
         named_handlers = self._named_handlers
+        lens = (3, 4, 5)
         for handler in handlers:
-            if len(handler) == 3:
-                name, description, session_class = handler
-                kwargs = None
+            n = len(handler)
+            if n not in lens:
+                raise ValueError('Invalid handler description %s' % handler)
+            if n == 3:
+                name, description, factory = handler
+                args = ()
+                kwargs = {}
+            elif n == 4:
+                name, description, factory, args_or_kwargs = handler
+                if isinstance(args_or_kwargs, tuple):
+                    args = args_or_kwargs
+                    kwargs = {}
+                else:
+                    args = ()
+                    kwargs = args_or_kwargs
             else:
-                name, description, session_class, kwargs = handler
+                name, description, factory, args, kwargs = handler
             if name in named_handlers:
                 msg = 'Multiple session handlers named `%s`; ' % name
                 msg += 'replacing previous value.'
                 logging.warn(msg)
                 handler = named_handlers.pop(name)
                 all_handlers.remove(handler)
-            spec = SessionSpec(name, description, session_class, kwargs)
+            spec = SessionSpec(name, description, factory, args, kwargs)
             all_handlers.append(spec)
             named_handlers[name] = spec
 
