@@ -1,4 +1,4 @@
-from enaml.widgets import Window, Html, Container, PushButton, Slider
+from enaml.widgets import Window, Html, Container, PushButton, Slider, ComboBox
 from enaml.layout import hbox, vbox, spacer, align
 
 
@@ -8,6 +8,7 @@ enamldef Main(Window):
         constraints = [
             vbox(
                 html_frame, 
+                combo,
                 hbox(
                     add_button, remove_button, spacer, 
                     change_mode_button, spacer, share_button,
@@ -20,6 +21,11 @@ enamldef Main(Window):
             id: html_frame
             name = 'html'
             source << model.html
+        ComboBox:
+            id: combo
+            items = ['foo', 'bar', 'baz', 'spam', 'ham', 'eggs']
+            index = 4
+            index :: print items[index]
         PushButton:
             id: add_button
             text = 'Add'
