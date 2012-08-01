@@ -44,7 +44,7 @@ class WxComboBox(WxConstraintsWidget):
     #--------------------------------------------------------------------------
     # Signal Handlers
     #--------------------------------------------------------------------------
-    def on_index_changed(self):
+    def on_index_changed(self, event):
         """ The signal handler for the index changed signal.
 
         """
