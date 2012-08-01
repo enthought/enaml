@@ -12,9 +12,11 @@ import types
 import warnings
 
 from enaml import imports
+from enaml.application import Application
+from enaml.session import Session
 from enaml.core.parser import parse
 from enaml.core.enaml_compiler import EnamlCompiler
-from enaml.qt.qt_local_application import QtLocalApplication
+from enaml.qt.qt_local_server import QtLocalServer
 
 
 def prepare_toolkit(toolkit_option):
@@ -78,6 +80,11 @@ def prepare_toolkit(toolkit_option):
 
     return enaml_toolkit()
 
+class MainSession(Session):
+
+    def on_open(self, component):
+        return component()
+
 
 def main():
     usage = 'usage: %prog [options] enaml_file [script arguments]'
@@ -119,12 +126,18 @@ def main():
     requested = options.component
     if requested in ns:
         component = ns[requested]
-        window = component()
 
-        app = QtLocalApplication()
-        app.serve('main', window)
-
-        app.mainloop()
+        app = Application([
+            (requested, 'Enaml-run "%s" view' % requested, MainSession,
+                {'component': component})
+        ])
+        
+        server = QtLocalServer(app)
+        client = server.local_client()
+        
+        client.start_session(requested)
+        server.start()
+        
     elif 'main' in ns:
         ns['main']()
     else:
