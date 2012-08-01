@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from .qt.QtCore import QSize
 from .qt_constraints_widget import QtConstraintsWidget
-from .qt_image import QtImage
+#from .qt_image import QtImage
 
 
 class QtAbstractButton(QtConstraintsWidget):
@@ -112,8 +112,9 @@ class QtAbstractButton(QtConstraintsWidget):
         """ Sets the widget's icon to the provided image
 
         """
-        self._icon = QtImage(icon)
-        self.widget.setIcon(self._icon.as_QIcon())
+        return
+        #self._icon = QtImage(icon)
+        #self.widget.setIcon(self._icon.as_QIcon())
 
     def set_icon_size(self, icon_size):
         """ Sets the widget's icon size to the provided tuple
