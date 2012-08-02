@@ -68,7 +68,7 @@ class Session(object):
         self._widgets = {}
         self.initialize(*args, **kwargs)
     
-    def initialize(self, *args, **kwargs):
+    def initialize(self):
         """ Subclass-specific initialization
         
         This method provides an opportunity for subclasses to be initialized

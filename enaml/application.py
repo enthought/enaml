@@ -2,14 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from collections import namedtuple
 import logging
-
-
-#: A namedtuple used for storing session specification info
-SessionSpec = namedtuple(
-    'SessionSpec', 'name description factory args kwargs'
-)
 
 
 class Application(object):
@@ -32,7 +25,7 @@ class Application(object):
 
         Parameters
         ----------
-        handlers : iterable of tuples
+        factories : iterable of Session factories
 
         """
         self._all_handlers = []
@@ -56,8 +49,8 @@ class Application(object):
 
         """
         sessions = [
-            {'name': spec.name, 'description': spec.description} 
-            for spec in self._all_handlers
+            {'name': handler.name, 'description': handler.description} 
+            for handler in self._all_handlers
         ]
         content = {'sessions': sessions}
         request.send_ok_response(content=content)
@@ -84,10 +77,7 @@ class Application(object):
             # XXX Do we want to move this to a call later, and do some
             # checking on the number of open sessions etc?
             handler = self._named_handlers[name]
-            factory = handler.factory
-            push_handler = request.push_handler()
-            username = message.header.username
-            session = factory(push_handler, username, handler.args, handler.kwargs)
+            session = handler(request)
             session_id = session.session_id
             self._sessions[session_id] = session
             session.open()
@@ -148,34 +138,16 @@ class Application(object):
         """
         all_handlers = self._all_handlers
         named_handlers = self._named_handlers
-        lens = (3, 4, 5)
         for handler in handlers:
-            n = len(handler)
-            if n not in lens:
-                raise ValueError('Invalid handler description %s' % handler)
-            if n == 3:
-                name, description, factory = handler
-                args = ()
-                kwargs = {}
-            elif n == 4:
-                name, description, factory, args_or_kwargs = handler
-                if isinstance(args_or_kwargs, tuple):
-                    args = args_or_kwargs
-                    kwargs = {}
-                else:
-                    args = ()
-                    kwargs = args_or_kwargs
-            else:
-                name, description, factory, args, kwargs = handler
+            name = handler.name
             if name in named_handlers:
                 msg = 'Multiple session handlers named `%s`; ' % name
                 msg += 'replacing previous value.'
                 logging.warn(msg)
-                handler = named_handlers.pop(name)
-                all_handlers.remove(handler)
-            spec = SessionSpec(name, description, factory, args, kwargs)
-            all_handlers.append(spec)
-            named_handlers[name] = spec
+                old_handler = named_handlers.pop(name)
+                all_handlers.remove(old_handler)
+            all_handlers.append(handler)
+            named_handlers[name] = handler
 
     def handle_request(self, request):
         """ Route and process a message for the Enaml application.

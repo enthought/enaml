@@ -3,9 +3,8 @@ import copy
 import enaml
 from enaml.application import Application
 from enaml.session import Session
+from enaml.session_handler import SessionHandler
 from enaml.wx.wx_local_server import WxLocalServer
-from enaml.qt.qt_local_server import QtLocalServer
-
 
 class Model(HasTraits):
     
@@ -35,11 +34,12 @@ class SampleView(Session):
 
 if __name__ == '__main__':
     app_model = Model(text='Foo')
-    args = (app_model, True)
+    handler = SessionHandler('test-view', 'A simple test view', SampleView,
+        model=app_model,
+        share_model=True, # Set this to False to unlink the views
+    )
 
-    app = Application([
-        ('test-view', 'A simple test view', SampleView, args)
-    ])
+    app = Application([handler])
 
     server = WxLocalServer(app)
     #server = QtLocalServer(app)
