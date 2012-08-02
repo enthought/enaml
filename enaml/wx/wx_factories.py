@@ -47,9 +47,9 @@ def date_selector_factory():
 #     return WxForm
 
 
-# def group_box_factor():
-#     from .wx_group_box import WxGroupBox
-#     return WxGroupBox
+def group_box_factory():
+    from .wx_group_box import WxGroupBox
+    return WxGroupBox
 
 
 def html_factory():
@@ -132,7 +132,7 @@ WX_FACTORIES = {
     #'Dialog': dialog_factory,
     #'Field': field_factory,
     #'Form': form_factory,
-    #'GroupBox': group_box_factor,
+    'GroupBox': group_box_factory,
     'Html': html_factory,
     #'ImageView': image_view_factory,
     #'Label': label_factory,
