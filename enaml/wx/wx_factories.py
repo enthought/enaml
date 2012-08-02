@@ -42,9 +42,9 @@ def date_selector_factory():
 #     return WxField
 
 
-# def form_factory():
-#     from .wx_form import WxForm
-#     return WxForm
+def form_factory():
+    from .wx_form import WxForm
+    return WxForm
 
 
 def group_box_factory():
@@ -131,7 +131,7 @@ WX_FACTORIES = {
     #'DatetimeSelector': datetime_selector_factory,
     #'Dialog': dialog_factory,
     #'Field': field_factory,
-    #'Form': form_factory,
+    'Form': form_factory,
     'GroupBox': group_box_factory,
     'Html': html_factory,
     #'ImageView': image_view_factory,
