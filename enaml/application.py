@@ -25,7 +25,7 @@ class Application(object):
 
         Parameters
         ----------
-        handlers : iterable of Session factories
+        handlers : iterable of session handlers
 
         """
         self._all_handlers = []
