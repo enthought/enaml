@@ -140,7 +140,8 @@ class Session(object):
     # Public API
     #--------------------------------------------------------------------------
     @classmethod
-    def create_handler(cls, *args, **kwargs):
+    def create_handler(cls, session_name=None, session_description=None,
+            *args, **kwargs):
         """ Utiltiy class method that creates a SessionHandler for a Session
         
         This method infers the name and description by looking for either
@@ -150,6 +151,12 @@ class Session(object):
 
         Parameters
         ----------
+        session_name : string
+            A unique, human-friendly name.
+        
+        session_description : string
+            A brief description of the session.
+        
         args : tuple
             Optional positional arguments to be passed to the Session's
             initialize() method
@@ -160,13 +167,15 @@ class Session(object):
         
         """
         from .session_handler import SessionHandler
-        name = getattr(cls, 'name', cls.__name__)
-        description = getattr(cls, 'description', cls.__doc__)
-        if not description:
-            raise AttributeError('Session class must have "description" class '
-                'attribute or docstring to use create_handler')
-        
-        handler = SessionHandler(name, description, cls, args, kwargs)
+        if session_name is None:
+            session_name = getattr(cls, 'name', cls.__name__)
+        if session_description is None:
+            session_description = getattr(cls, 'description', cls.__doc__)
+            if session_description is None:
+                raise AttributeError('Session class must have "description" '
+                    'class attribute or docstring to use create_handler')
+        handler = SessionHandler(session_name, session_description, cls, *args,
+            **kwargs)
         return handler
         
     

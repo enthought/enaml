@@ -48,9 +48,8 @@ class Application(object):
             The request object containing the message sent by client.
 
         """
-        sessions = [
-            {'name': handler.name, 'description': handler.description} 
-            for handler in self._all_handlers
+        sessions = [{'name': h.session_name, 'description': h.session_description} 
+            for h in self._all_handlers
         ]
         content = {'sessions': sessions}
         request.send_ok_response(content=content)
@@ -139,7 +138,7 @@ class Application(object):
         all_handlers = self._all_handlers
         named_handlers = self._named_handlers
         for handler in handlers:
-            name = handler.name
+            name = handler.session_name
             if name in named_handlers:
                 msg = 'Multiple session handlers named `%s`; ' % name
                 msg += 'replacing previous value.'

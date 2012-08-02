@@ -21,8 +21,6 @@ class Model(HasTraits):
 
 
 class SampleView(Session):
-    name = 'test-view'
-    description = 'A simple test view'
     
     def initialize(self, model, share_model):
         if not share_model:
@@ -37,22 +35,31 @@ class SampleView(Session):
 
 if __name__ == '__main__':
     app_model = Model(text='Foo')
-    handler = SampleView.create_handler(
+    shared_handler = SampleView.create_handler(
+        session_name='test-view-shared',
+        session_description="A simple test view which shares the model",
         model=app_model,
-        share_model=True, # Set this to False to unlink the views
+        share_model=True,
+    )
+    unshared_handler = SampleView.create_handler(
+        session_name='test-view-unshared',
+        session_description="A simple test view which doesn't share the model",
+        model=app_model,
+        share_model=False,
     )
 
-    app = Application([handler])
+    app = Application([shared_handler, unshared_handler])
 
     server = WxLocalServer(app)
     #server = QtLocalServer(app)
 
     client = server.local_client()
 
-    # Bring up two ui's, to show how we can link the views with a 
-    # common model
-    client.start_session('test-view')
-    client.start_session('test-view')
+    # Bring up three ui's, to show how we can link the views with a 
+    # common model or not
+    client.start_session('test-view-shared')
+    client.start_session('test-view-shared')
+    client.start_session('test-view-unshared')
     
     server.start()
 

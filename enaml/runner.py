@@ -13,7 +13,7 @@ import warnings
 
 from enaml import imports
 from enaml.application import Application
-from enaml.session import Session
+from enaml.stdlib.sessions import ComponentSession
 from enaml.core.parser import parse
 from enaml.core.enaml_compiler import EnamlCompiler
 from enaml.qt.qt_local_server import QtLocalServer
@@ -80,18 +80,6 @@ def prepare_toolkit(toolkit_option):
 
     return enaml_toolkit()
 
-class MainSession(Session):
-    """ Create a session using the provided component as the view
-    
-    """
-    
-    def initialize(self, component):
-        self.component = component
-
-    def on_open(self):
-        return self.component()
-
-
 def main():
     usage = 'usage: %prog [options] enaml_file [script arguments]'
     parser = optparse.OptionParser(usage=usage, description=__doc__)
@@ -132,13 +120,10 @@ def main():
     requested = options.component
     if requested in ns:
         component = ns[requested]
-        handler = MainSession.create_handler(
-            name=requested,
-            description='Enaml-run "%s" view' % requested,
-            component=component,
-        )
+        Session = ComponentSession(component, requested, 'Enaml-run "%s" view' %
+            requested)
 
-        app = Application([handler])
+        app = Application([Session.create_handler()])
         
         server = QtLocalServer(app)
         client = server.local_client()

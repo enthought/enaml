@@ -9,10 +9,10 @@ Session Handler
 The application object expects session handlers to have the
 following attributes:
 
-name : string
+session_name : string
     A unique, human-friendly name.
 
-description : string
+session_description : string
     A brief description of the session.
 
 The session handler should also be callable, where the call is given
@@ -29,15 +29,15 @@ class SessionHandler(object):
     
     """
     
-    def __init__(self, name, description, session_class, args, kwargs):
+    def __init__(self, session_name, session_description, session_class, *args, **kwargs):
         """ Initialize a SessionHandler
         
         Parameters
         ----------
-        name : string
+        session_name : string
             A unique, human-friendly name.
         
-        description : string
+        session_description : string
             A brief description of the session.
         
         session_class : Session subclass object
@@ -52,8 +52,8 @@ class SessionHandler(object):
             initialize() method
         
         """
-        self.name = name
-        self.description = description
+        self.session_name = session_name
+        self.session_description = session_description
         self.session_class = session_class
         self.args = args
         self.kwargs = kwargs
