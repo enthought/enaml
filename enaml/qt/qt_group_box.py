@@ -2,19 +2,17 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt import QtCore
+from .qt.QtCore import Qt
 from .qt_container import QtContainer
 from .qt_resizing_widgets import QResizingGroupBox
 from .qt.QtCore import QSize
 
-from ..layout.geometry import Box
 
-
-QT_ALIGNMENTS = dict(
-    left=QtCore.Qt.AlignLeft,
-    right=QtCore.Qt.AlignRight,
-    center=QtCore.Qt.AlignHCenter,
-)
+QT_ALIGNMENTS = { 
+    'left': Qt.AlignLeft,
+    'right': Qt.AlignRight,
+    'center': Qt.AlignHCenter,
+}
 
 
 class QGroupBox(QResizingGroupBox):
@@ -104,17 +102,6 @@ class QtGroupBox(QtContainer):
 
         """
         self.set_flat(content['flat'])
-
-    #--------------------------------------------------------------------------
-    # Implementation
-    #--------------------------------------------------------------------------
-    def get_contents_margins(self):
-        """ Return the (top, left, right, bottom) margin values for the
-        widget.
-
-        """
-        m = self.widget.contentsMargins()
-        return Box(m.top(), m.right(), m.bottom(), m.left())
 
     #--------------------------------------------------------------------------
     # Widget Update methods 
