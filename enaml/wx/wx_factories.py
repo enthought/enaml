@@ -97,9 +97,9 @@ def radio_button_factory():
 #     return WxScrollArea
 
 
-# def slider_factory():
-#     from .wx_slider import WxSlider
-#     return WxSlider
+def slider_factory():
+    from .wx_slider import WxSlider
+    return WxSlider
 
 
 # def spin_box_factory():
@@ -142,7 +142,7 @@ WX_FACTORIES = {
     #'ProgressBar': progress_bar_factory,
     'RadioButton': radio_button_factory,
     #'ScrollArea': scroll_area_factory,
-    #'Slider': slider_factory,
+    'Slider': slider_factory,
     #'SpinBox': spin_box_factory,
     #'Splitter': splitter_factory,
     #'TextEditor': text_editor_factory,
