@@ -67,18 +67,6 @@ class Session(object):
         self._session_views = []
         self._widgets = {}
         self.initialize(*args, **kwargs)
-    
-    def initialize(self):
-        """ Subclass-specific initialization
-        
-        This method provides an opportunity for subclasses to be initialized
-        with arguments passed to the SessionSpec.
-        
-        By default it does nothing, but subclasses should use this to store
-        or create any additional state that is required by the session.
-        
-        """
-        pass
 
     #--------------------------------------------------------------------------
     # Message Handling
@@ -151,6 +139,32 @@ class Session(object):
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
+    @classmethod
+    def create_handler(cls, name, description, *args, **kwargs):
+        """ Utiltiy class method that creates a SessionHandler for a Session
+
+        Parameters
+        ----------
+        name : string
+            A unique, human-friendly name.
+        
+        description : string
+            A brief description of the session.
+        
+        args : tuple
+            Optional positional arguments to be passed to the Session's
+            initialize() method
+        
+        kwargs : dict
+            Optional keyword arguments to be passed to the Session's
+            initialize() method
+        
+        """
+        from .session_handler import SessionHandler
+        handler = SessionHandler(name, description, cls, *args, **kwargs)
+        return handler
+        
+    
     @property
     def session_id(self):
         """ The unique identifier for this session.
@@ -186,6 +200,20 @@ class Session(object):
 
         """
         return self._session_views
+    
+    def initialize(self):
+        """ Subclass-specific initialization
+        
+        This method provides an opportunity for subclasses to be initialized
+        with arguments passed to the SessionSpec.
+        
+        By default it does nothing, but subclasses should use this to store
+        or create any additional state that is required by the session.
+        
+        This method is called by __init__().
+        
+        """
+        pass
 
     def send_action(self, widget_id, action, content):
         """ Send an unsolicited message of type 'widget_action' to a
