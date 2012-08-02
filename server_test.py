@@ -21,6 +21,8 @@ class Model(HasTraits):
 
 
 class SampleView(Session):
+    name = 'test-view'
+    description = 'A simple test view'
     
     def initialize(self, model, share_model):
         if not share_model:
@@ -35,7 +37,7 @@ class SampleView(Session):
 
 if __name__ == '__main__':
     app_model = Model(text='Foo')
-    handler = SampleView.create_handler('test-view', 'A simple test view',
+    handler = SampleView.create_handler(
         model=app_model,
         share_model=True, # Set this to False to unlink the views
     )

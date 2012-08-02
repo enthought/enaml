@@ -29,7 +29,7 @@ class SessionHandler(object):
     
     """
     
-    def __init__(self, name, description, session_class, *args, **kwargs):
+    def __init__(self, name, description, session_class, args, kwargs):
         """ Initialize a SessionHandler
         
         Parameters
