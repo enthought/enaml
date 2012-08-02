@@ -3,8 +3,8 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt.QtGui import QWidget, QPainter
-from .qt_constraints_widget import QtContraintsWidget
-
+from .qt_constraints_widget import QtConstraintsWidget
+from .qt_image import QtImage
 
 class QImageView(QWidget):
     """ A custom QWidget that will paint a QPixmap as an image. The
@@ -190,7 +190,7 @@ class QImageView(QWidget):
         self.update()
 
 
-class QtImageView(QtContraintsWidget):
+class QtImageView(QtConstraintsWidget):
     """ A Qt4 implementation of an Enaml ImageView widget.
 
     """
@@ -212,11 +212,11 @@ class QtImageView(QtContraintsWidget):
         """ Initializes the attributes on the underlying control.
 
         """
-        super(QtImageView, self).initialize()
+        super(QtImageView, self).initialize(attrs)
         self.set_scale_to_fit(attrs['scale_to_fit'])
         self.set_preserve_aspect_ratio(attrs['preserve_aspect_ratio'])
         self.set_allow_upscaling(attrs['allow_upscaling'])
-        #self.set_image(shell.image)
+        self.set_image(attrs['image'])
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -275,5 +275,5 @@ class QtImageView(QtContraintsWidget):
         """ Sets the image on the underlying QLabel.
 
         """
-        return
-
+        self._image = QtImage(image)
+        self.widget.setPixmap(self._image.as_QPixmap())
