@@ -81,9 +81,15 @@ def prepare_toolkit(toolkit_option):
     return enaml_toolkit()
 
 class MainSession(Session):
+    """ Create a session using the provided component as the view
+    
+    """
+    
+    def initialize(self, component):
+        self.component = component
 
-    def on_open(self, component):
-        return component()
+    def on_open(self):
+        return self.component()
 
 
 def main():
