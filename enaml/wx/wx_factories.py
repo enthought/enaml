@@ -62,9 +62,9 @@ def html_factory():
 #     return WxImageView
 
 
-# def label_factory():
-#     from .wx_label import WxLabel
-#     return WxLabel
+def label_factory():
+    from .wx_label import WxLabel
+    return WxLabel
 
 
 # def notebook_factory():
@@ -135,7 +135,7 @@ WX_FACTORIES = {
     'GroupBox': group_box_factory,
     'Html': html_factory,
     #'ImageView': image_view_factory,
-    #'Label': label_factory,
+    'Label': label_factory,
     #'Notebook': notebook_factory,
     #'Page': page_factory,
     'PushButton': push_button_factory,
