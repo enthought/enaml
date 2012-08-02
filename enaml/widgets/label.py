@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Unicode, Bool
+from traits.api import Unicode
 
 from .constraints_widget import ConstraintsWidget
 
@@ -13,9 +13,6 @@ class Label(ConstraintsWidget):
     """
     #: The text for the label.
     text = Unicode
-
-    #: Whether or not the label should wrap around on long lines.
-    word_wrap = Bool(False)
 
     #: How strongly a component hugs it's content. Labels hug their
     #: contents' width weakly by default.
@@ -30,7 +27,6 @@ class Label(ConstraintsWidget):
         """
         snap = super(Label, self).snapshot()
         snap['text'] = self.text
-        snap['word_wrap'] = self.word_wrap
         return snap
 
     def bind(self):
@@ -39,5 +35,5 @@ class Label(ConstraintsWidget):
 
         """
         super(Label, self).bind()
-        self.publish_attributes('text', 'word_wrap')
+        self.publish_attributes('text')
 
