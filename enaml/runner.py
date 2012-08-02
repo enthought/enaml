@@ -132,11 +132,13 @@ def main():
     requested = options.component
     if requested in ns:
         component = ns[requested]
+        handler = MainSession.create_handler(
+            name=requested,
+            description='Enaml-run "%s" view' % requested,
+            component=component,
+        )
 
-        app = Application([
-            (requested, 'Enaml-run "%s" view' % requested, MainSession,
-                {'component': component})
-        ])
+        app = Application([handler])
         
         server = QtLocalServer(app)
         client = server.local_client()
