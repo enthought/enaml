@@ -3,6 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import wx
+import wx.lib.newevent
 
 from .wx_constraints_widget import WxConstraintsWidget
 
@@ -54,23 +55,102 @@ _ORIENTATION_MAP = {
 _ORIENTATION_MASK = wx.SL_HORIZONTAL | wx.SL_VERTICAL
 
 
+#: A new event emitted by the custom slider control
+wxSliderEvent, EVT_SLIDER = wx.lib.newevent.NewEvent()
+
+
+class wxProperSlider(wx.Slider):
+    """ A wx.Slider subclass which supports tracking.
+
+    """
+    #: The event types for the frequent thumb track event
+    _tracking_evt = wx.EVT_SCROLL_THUMBTRACK.evtType[0]
+
+    #: The event type for the thumb release event.
+    _release_evt = wx.EVT_SCROLL_THUMBRELEASE.evtType[0]
+
+    #: The event type for the scroll end event.
+    _end_evt = wx.EVT_SCROLL_CHANGED.evtType[0]
+
+    def __init__(self, *args, **kwargs):
+        """ Initialize a wxProperSlider.
+
+        Parameters
+        ----------
+        *args, **kwargs
+            The positional and keyword arguments for initializing a
+            wx.Slider.
+
+        """
+        super(wxProperSlider, self).__init__(*args, **kwargs)
+        self._tracking = True
+        self.Bind(wx.EVT_SCROLL, self.OnScroll)
+
+    def OnScroll(self, event):
+        """ An event handler which handles all scroll events. 
+
+        This handler determines whether or not a slider event sould be
+        emitted for the scroll changed, based on whether tracking is
+        enabled for the slider.
+
+        """
+        evt_type = event.EventType
+
+        # We never emit on the _end_event since that is windows-only
+        if evt_type == self._end_evt:
+            return
+        
+        if self._tracking:
+            if evt_type != self._release_evt:
+                emit = True
+            else:
+                emit = False
+        else:
+            emit = evt_type != self._tracking_evt
+        
+        if emit:
+            evt = wxSliderEvent()
+            wx.PostEvent(self, evt)
+
+    def GetTracking(self):
+        """ Whether or not tracking is enabled for the slider.
+
+        Returns
+        -------
+        result : bool
+            True if tracking is enabled for the slider, False otherwise.
+
+        """
+        return self._tracking
+
+    def SetTracking(self, tracking):
+        """ Set whether tracking is enabled for the slider.
+
+        Parameters
+        ----------
+        tracking : bool
+            True if tracking should be enabled, False otherwise.
+
+        """
+        self._tracking = tracking
+
+
 class WxSlider(WxConstraintsWidget):
     """ A Wx implementation of an Enaml Slider.
 
     """
-    #: The internal tracking flag, since the wxSlider doesn't support it.
-    _tracking = True
-
     def create(self):
         """ Create the underlying wx.Slider widget.
 
         """
-        self.widget = wx.Slider(self.parent_widget)
+        self.widget = wxProperSlider(self.parent_widget)
 
     def initialize(self, attrs):
         """ Initialize the widget's attributes.
 
         """
+        # NOTE: The tick interval must be set *after* the tick position
+        # or Wx will ignore the tick interval. grrr...
         super(WxSlider, self).initialize(attrs)
         self.set_value(attrs['value'])
         self.set_maximum(attrs['maximum'])
@@ -78,10 +158,10 @@ class WxSlider(WxConstraintsWidget):
         self.set_orientation(attrs['orientation'])
         self.set_page_step(attrs['page_step'])
         self.set_single_step(attrs['single_step'])
-        self.set_tick_interval(attrs['tick_interval'])
         self.set_tick_position(attrs['tick_position'])
+        self.set_tick_interval(attrs['tick_interval'])
         self.set_tracking(attrs['tracking'])
-        self.widget.Bind(wx.EVT_SCROLL, self.on_value_changed)
+        self.widget.Bind(EVT_SLIDER, self.on_value_changed)
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -143,15 +223,13 @@ class WxSlider(WxConstraintsWidget):
     #--------------------------------------------------------------------------
     # Signal Handlers
     #--------------------------------------------------------------------------
-    def on_value_changed(self, value):
+    def on_value_changed(self, event):
         """ Send the 'value_changed' action to the Enaml widget when the 
         slider value has changed.
 
         """
-        # wx doesn't support tracking, so we have to fake it.
-        if self._tracking:
-            content = {'value': self.widget.GetValue()}
-            self.send_action('value_changed', content)
+        content = {'value': self.widget.GetValue()}
+        self.send_action('value_changed', content)
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -201,7 +279,6 @@ class WxSlider(WxConstraintsWidget):
         """ Set the tick interval of the underlying widget.
 
         """
-        return
         self.widget.SetTickFreq(interval)
 
     def set_tick_position(self, tick_position):
@@ -221,5 +298,5 @@ class WxSlider(WxConstraintsWidget):
         """ Set the tracking of the underlying widget.
 
         """
-        pass
+        self.widget.SetTracking(tracking)
 
