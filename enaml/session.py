@@ -39,7 +39,7 @@ class Session(object):
         'widget_action_response': '_dispatch_widget_message',
     }
 
-    def __init__(self, push_handler, username):
+    def __init__(self, push_handler, username, args, kwargs):
         """ Initialize a Session.
 
         This __init__ method should be overridden by users. Instead,
@@ -53,6 +53,12 @@ class Session(object):
 
         username : str
             The username associated with this session.
+        
+        args : tuple
+            Additional arguments passed to the session spec.
+        
+        kwargs : tuple
+            Additional keyword arguments passed to the session spec.
 
         """
         self._push_handler = push_handler
@@ -60,6 +66,19 @@ class Session(object):
         self._session_id = _session_id_gen.next()
         self._session_views = []
         self._widgets = {}
+        self.initialize(*args, **kwargs)
+    
+    def initialize(self, *args, **kwargs):
+        """ Subclass-specific initialization
+        
+        This method provides an opportunity for subclasses to be initialized
+        with arguments passed to the SessionSpec.
+        
+        By default it does nothing, but subclasses should use this to store
+        or create any additional state that is required by the session.
+        
+        """
+        pass
 
     #--------------------------------------------------------------------------
     # Message Handling
@@ -112,25 +131,19 @@ class Session(object):
     # Abstract API
     #--------------------------------------------------------------------------
     @abstractmethod
-    def on_open(self, **kwargs):
+    def on_open(self):
         """ Called by the application when the session is opened.
 
         Use this method to initialize any models or state that should
         persist for the duration of the session. This method must also
         create the Enaml view object for the session. This method will
          only be called once during the session lifetime.
-
-        Parameters
-        ----------
-        **kwargs
-            The keyword arguments that were provided as the last
-            item in the handler tuple given to the Application.
         
         Returns
         -------
-        result : view
+        result : view or list of views
             The Enaml component tree comprising the view for this
-            session.
+            session, or a list of these views.
 
         """
         raise NotImplementedError

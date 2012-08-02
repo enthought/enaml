@@ -87,10 +87,10 @@ class Application(object):
             factory = handler.factory
             push_handler = request.push_handler()
             username = message.header.username
-            session = factory(push_handler, username)
+            session = factory(push_handler, username, handler.args, handler.kwargs)
             session_id = session.session_id
             self._sessions[session_id] = session
-            session.open(*handler.args, **handler.kwargs)
+            session.open()
             content = {'session': session_id}
             request.send_ok_response(content=content)
 

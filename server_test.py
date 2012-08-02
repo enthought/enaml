@@ -21,13 +21,16 @@ class Model(HasTraits):
 
 
 class SampleView(Session):
-
-    def on_open(self, model, share_model):
-        with enaml.imports():
-            from server_test_view import Main
+    
+    def initialize(self, model, share_model):
         if not share_model:
             model = copy.copy(model)
-        return Main(model=model)
+        self.model = model
+
+    def on_open(self):
+        with enaml.imports():
+            from server_test_view import Main
+        return Main(model=self.model)
 
 
 if __name__ == '__main__':
