@@ -233,6 +233,5 @@ class Slider(ConstraintsWidget):
         """ Adapt the value to the min/max boundaries.
 
         """
-        if self.initialized:
-            self.value = min(max(self.value, self.minimum), self.maximum)
+        self.value = min(max(self.value, self.minimum), self.maximum)
 
