@@ -15,7 +15,8 @@ class QtProgressBar(QtConstraintsWidget):
 
         """
         self.widget = QProgressBar(self.parent_widget)
-
+        self.widget.setTextVisible(False)
+        
     def initialize(self, attrs):
         """ Initialize the widget's attributes.
 
