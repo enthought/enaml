@@ -6,7 +6,7 @@ from collections import deque
 import re
 
 from traits.api import (
-    HasStrictTraits, Instance, List, Property, Str, Dict, Disallow,
+    HasStrictTraits, Instance, List, Property, Str, Dict, Disallow, Bool,
     Undefined, cached_property
 )
 
@@ -54,6 +54,11 @@ class Declarative(HasStrictTraits):
 
     #: The list of children for this component. 
     children = List(Instance('Declarative'))
+
+    #: A boolean flag flipped from False to True at the very end of the 
+    #: __init__ method, after the keyword arguments have been applied 
+    #: to the instance. This should not be manipulated by user code.
+    initialized = Bool(False)
 
     #: A readonly property which returns the list of 'effective'
     #: children. This list is constructed by calling contribute()
@@ -141,6 +146,10 @@ class Declarative(HasStrictTraits):
         # user are not overridden by default expression bindings.
         self.trait_set(**kwargs)
 
+        # Flip the initialized flag to True after all the keyword arguments
+        # are applied.
+        self.initialized = True
+    
     #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
@@ -525,4 +534,36 @@ class Declarative(HasStrictTraits):
         """
         if switch:
             return self
+
+    #--------------------------------------------------------------------------
+    # Overrides
+    #--------------------------------------------------------------------------
+    _trait_change_notify_flag = Bool(True)
+    def trait_set(self, trait_change_notify=True, **traits):
+        """ An overridden HasTraits method which keeps track of the
+        trait change notify flag.
+
+        The default implementation of trait_set has side effects if a
+        call to setattr(...) causes a recurse into trait_set in that
+        the notification context of the original call will be reset.
+
+        This reimplemented method will make sure that context is reset
+        appropriately for each call. This is required for Enaml since
+        bound attributes are lazily computed and set quitely on the
+        fly. 
+
+        A ticket has been filed against traits trunk:
+            https://github.com/enthought/traits/issues/26
+            
+        """
+        last = self._trait_change_notify_flag
+        self._trait_change_notify_flag = trait_change_notify
+        self._trait_change_notify(trait_change_notify)
+        try:
+            for name, value in traits.iteritems():
+                setattr(self, name, value)
+        finally:
+            self._trait_change_notify_flag = last
+            self._trait_change_notify(last)
+        return self
 
