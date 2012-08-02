@@ -82,9 +82,9 @@ def push_button_factory():
     return WxPushButton
 
 
-# def progress_bar_factory():
-#     from .wx_progress_bar import WxProgressBar
-#     return WxProgressBar
+def progress_bar_factory():
+    from .wx_progress_bar import WxProgressBar
+    return WxProgressBar
 
 
 def radio_button_factory():
@@ -139,7 +139,7 @@ WX_FACTORIES = {
     #'Notebook': notebook_factory,
     #'Page': page_factory,
     'PushButton': push_button_factory,
-    #'ProgressBar': progress_bar_factory,
+    'ProgressBar': progress_bar_factory,
     'RadioButton': radio_button_factory,
     #'ScrollArea': scroll_area_factory,
     'Slider': slider_factory,
