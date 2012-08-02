@@ -25,11 +25,8 @@ class wxProperSpinBox(wx.SpinCtrl):
 
     See the method docstrings for supported functionality.
     
-    This custom control does not support the tracking mode that is
-    available in the Qt version. It's infeasible to implement this
-    using a subclass of wx.SpinCtrl. Implementing this would
-    require create a custom wx.PyControl that combines a wx.TextCtrl
-    and wx.SpinButton into a single control.
+    This control is really a god awful hack and needs to be rewritten
+    using a combination wx.SpinButton and wx.TextCtrl. 
 
     """
     def __init__(self, *args, **kwargs):
@@ -99,7 +96,6 @@ class wxProperSpinBox(wx.SpinCtrl):
         loses focus. 
 
         """
-        event.Skip()
         # The spin control doesn't emit a spin event when losing focus
         # to process typed input change unless it results in a different
         # value, so we have to handle it manually and update the control
