@@ -17,6 +17,11 @@ def calendar_factory():
     return QtCalendar
 
 
+def canvas_factory():
+    from .qt_canvas import QtCanvas
+    return QtCanvas
+
+
 def check_box_factory():
     from .qt_check_box import QtCheckBox
     return QtCheckBox
@@ -127,6 +132,11 @@ def radio_button_factory():
     return QtRadioButton
 
 
+def remote_canvas_factory():
+    from .qt_remote_canvas import QtRemoteCanvas
+    return QtRemoteCanvas
+
+
 def scroll_area_factory():
     from .qt_scroll_area import QtScrollArea
     return QtScrollArea
@@ -176,6 +186,7 @@ QT_FACTORIES = {
     'Action': action_factory,
     'ActionGroup': action_group_factory,
     'Calendar': calendar_factory,
+    'Canvas': canvas_factory,
     'CheckBox': check_box_factory,
     'ComboBox': combo_box_factory,
     'Container': container_factory,
@@ -198,6 +209,7 @@ QT_FACTORIES = {
     'PushButton': push_button_factory,
     'ProgressBar': progress_bar_factory,
     'RadioButton': radio_button_factory,
+    'RemoteCanvas': remote_canvas_factory,
     'ScrollArea': scroll_area_factory,
     'Slider': slider_factory,
     'SpinBox': spin_box_factory,

@@ -5,7 +5,7 @@
 from abstract_image import AbstractImage
 from base64 import b64encode, b64decode
 
-_FORMATS = ['indexed8', 'rgba32', 'rgb32']
+_FORMATS = ['indexed8', 'rgba32', 'rgb32', 'bgra32']
 
 class ImageFromArray(AbstractImage):
     """ A subclass of AbstractImage that allows the user to read in an image
