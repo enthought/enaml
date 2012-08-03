@@ -26,7 +26,7 @@ from enaml_domain import EnamlDomain
 from enaml.core.import_hooks import EnamlImporter
 EnamlImporter.install()
 
-from enaml.core.factory import EnamlDeclaration
+from enaml.core.declarative import Declarative
 
 class EnamlComponentDocumenter(ModuleLevelDocumenter):
     """ Enaml component documenter class
@@ -82,7 +82,7 @@ class EnamlDocstringSignatureMixin(DocstringSignatureMixin):
     pass
 
 
-class EnamlDeclarationDocumenter(EnamlDocstringSignatureMixin,
+class DeclarativeDocumenter(EnamlDocstringSignatureMixin,
                                  EnamlComponentDocumenter):
     """ Specialized Documenter subclass for Enaml declarations.
 
@@ -93,7 +93,7 @@ class EnamlDeclarationDocumenter(EnamlDocstringSignatureMixin,
 
     @classmethod
     def can_document_member(cls, member, membername, isattr, parent):
-        return isinstance(member, EnamlDeclaration)
+        return isinstance(member, Declarative)
 
     def format_args(self):
         """ Derivation is shown where normally arguments are shown in a
@@ -202,7 +202,7 @@ def setup(app):
     """
 
     app.add_autodocumenter(EnamlModuleDocumenter)
-    app.add_autodocumenter(EnamlDeclarationDocumenter)
+    app.add_autodocumenter(DeclarativeDocumenter)
     ## app.add_autodocumenter(EnamlDefnDocumenter)
 
     # import the Enaml domain into the sphinx app

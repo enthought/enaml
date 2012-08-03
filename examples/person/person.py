@@ -4,7 +4,8 @@
 #------------------------------------------------------------------------------
 from traits.api import HasTraits, Str, Range, on_trait_change
 
-from enaml.qt.qt_local_application import QtLocalApplication
+from enaml.stdlib.sessions import simple_app
+from enaml.qt.qt_local_server import QtLocalServer
 
 
 class Person(HasTraits):
@@ -34,11 +35,11 @@ if __name__ == '__main__':
         from person_view import PersonView
     
     john = Person(first_name='John', last_name='Doe', age=42)
-    
-    view = PersonView(person=john)
+    app = simple_app('john', 'A view of the Person john', PersonView, 
+       person=john) 
 
-    app = QtLocalApplication()
-    app.serve('main', view)
-
-    app.mainloop()
+    server = QtLocalServer(app)
+    client = server.local_client()
+    client.start_session('john')
+    server.start()
 

@@ -94,25 +94,39 @@ the |Enaml| view.
     with enaml.imports():
         from hello_world_view import Main
 
-Then, we instantiate the view, passing the message to be displayed.  Passing
-an explicit message overrides the default message that ``Main`` provides::
+Enaml is an inherently asynchronous toolkit, with a server running an
+application which offers UI sessions that a client can view.  For this simple
+example, we'll be working with the client and server both running locally and
+in the same process.  Enaml has some utility methods to help with common
+situations.
 
-    view = Main(message="Hello, world, from Python!")
+The first thing we do is create the application which offers the ``Main`` view
+as a session::
 
-We then need to create an application object, in this case a local application
-using Qt to display the UI::
+    app = simple_app('main', 'A customized hello world example', Main,
+        message="Hello, world, from Python!")
 
-    app = QtLocalApplication()
-    
-We need to serve the view via the application, which makes our view available to
-the UI with he name 'main'::
-    
-    app.serve('main', view)
+The first two arguments are a name and brief description of the session offered
+by the application.  The third is the view that we want to use to create this
+session, in this case ``Main``.  Everything beyond this is optional, but we want
+to override the default message for the view with a customized one.
 
-Finally, we start the mainloop of the application which takes control of the
-program flow until the user closes the window::
+For writing traditional single-process GUI applications, this pattern will
+satisfy the majority of your use-cases.
 
-    app.mainloop()
+Now that we have an application, we need a server object to serve it, and a
+client to display it.  In this case we use the Qt local server and client::
 
+    server = QtLocalServer(app)
+    client = server.local_client()
+
+We need to start the client sessions we are interested on the client::
+
+    client.start_session('main')
+
+The client has to wait for the server to be available before actually bringing
+up a GUI, so the last step is to start the server::
+
+    server.start()
 
 .. image:: images/hello_world_python.png
