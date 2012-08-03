@@ -100,7 +100,7 @@ def view_factory(sess_name=None, sess_descr=None):
     return _wrapper
 
 
-def single_view_app(sess_name, sess_descr, sess_callable, *args, **kwargs):
+def simple_app(sess_name, sess_descr, sess_callable, *args, **kwargs):
     """ Utility function which creates an application from a component.
     
     This is suitable for use in simple applications, particularly 

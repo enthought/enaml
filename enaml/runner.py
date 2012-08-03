@@ -12,7 +12,7 @@ import types
 import warnings
 
 from enaml import imports
-from enaml.stdlib.sessions import single_view_app
+from enaml.stdlib.sessions import simple_app
 from enaml.core.parser import parse
 from enaml.core.enaml_compiler import EnamlCompiler
 
@@ -121,7 +121,7 @@ def main():
     if requested in ns:
         component = ns[requested]
         descr = 'Enaml-run "%s" view' % requested
-        app = single_view_app(requested, descr, component)
+        app = simple_app(requested, descr, component)
         if options.toolkit == 'wx':
             from enaml.wx.wx_local_server import WxLocalServer
             server = WxLocalServer(app)        
