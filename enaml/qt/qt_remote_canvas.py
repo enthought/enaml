@@ -40,8 +40,10 @@ class QtRemoteCanvas(QtConstraintsWidget):
     
         """
         canvas = content['canvas']
+        stride = content['stride']
+        data = canvas._data
         w, h = canvas._size
-        img = QImage(canvas._data, w, h, w*4, QImage.Format_ARGB32)
+        img = QImage(data, w, h, stride, QImage.Format_ARGB32)
         
         self.widget.setPixmap(QPixmap.fromImage(img))
 

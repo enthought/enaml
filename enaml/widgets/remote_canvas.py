@@ -98,16 +98,19 @@ class RemoteCanvas(ConstraintsWidget):
         """ Render the enable component into the backbuffer and send to the client
 
         """
+        render_size = self._render_size
         component = self.component
-        component.outer_bounds = self._render_size
+        component.outer_bounds = render_size
         component.do_layout(force=True)
         
         context = self._img_buffer
         context.clear()
         context.render_component(component)
         
-        canvas = ImageFromArray(context.bmp_array, 
-                                (context.width(), context.height()), 
+        data = context.bmp_array
+        canvas = ImageFromArray(data,
+                                render_size,
                                 'bgra32')
-        content = {'canvas': canvas}
+        content = {'canvas': canvas,
+                   'stride': data.strides[0]}
         self.send_action('set_canvas', content)
