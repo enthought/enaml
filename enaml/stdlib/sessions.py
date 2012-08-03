@@ -8,80 +8,80 @@ This module contains some Session subclasses and associated utilities that
 handle common Session cases.
 
 """
+from collections import Iterable
+from functools import wraps
 
-from ..session import Session
+from enaml.session import Session
+from enaml.session_factory import SessionFactory
 
-class _ComponentSession(Session):
-    """ Abstract Session that expects an Enaml component and creates a view
-    
-    To use this, create a subclass with a class attribute or method "component".
+
+class ComponentSession(Session):
+    """ A concrete Session class that receives a callable, positional,
+    and keyword arguments and creates the associated view(s).
     
     """
-
-    #: the component object used by the class
-    component = None
-    
-    def initialize(self, *args, **kwargs):
+    def init(self, component, *args, **kwargs):
         """ Initialize the session with the arguments for the component
         
         """
+        self.component = component
         self.args = args
         self.kwargs = kwargs
     
     def on_open(self):
-        """ Create the view from the component
+        """ Create the view from the component.
         
         """
-        view = self.component(*self.args, **self.kwargs)
-        return view
+        comp = self.component(*self.args, **self.kwargs)
+        if not isinstance(comp, Iterable):
+            comp = [comp]
+        return comp
 
 
-def ComponentSession(component, name=None, description=None):
-    """ Class factory that creates a Session class for an Enaml component
+def component_session(name, description, component, *args, **kwargs):
+    """ Creates a SessionFactory instance for a callable.
     
-    This creates a Session class that creates an instance of the specified
-    component when the on_open() method is called.
+    This creates a SessionFactory instance which will create instances
+    of ComponentSession when prompted by the application.
     
     Parameters
     ----------
-    component : Enaml component
-        The component to wrap into a session
-
-    name : string
-        An optional unique, human-friendly name.
+    name : str
+        A unique, human-friendly name.
     
-    description : string
-        An optional brief description of the session.
-    
-    """
-    session_class = type('ComponentHandlerSession', (_ComponentSession,),
-        {'component': component})
-    if name is not None:
-        session_class.name = name
-    if description is not None:
-        session_class.description = description
-    return session_class
+    description : str
+        A brief description of the session.
 
+    component : callable
+        A callable which will return an Enaml view or iterable of views.
 
-def _view_handler(name, description):
-    """ Utility decorator that pre-fills session name and description
+    *args, **kwargs
+        Optional positional and keyword arguments to pass to the callable
+        when the session is created.
     
     """
-    def decorator(component):
-        Session = ComponentSession(component, name, description)
-        handler_factory = Session.create_handler
-        return handler_factory
-        
+    fact = SessionFactory(
+        name, description, ComponentSession, component, *args, **kwargs
+    )
+    return fact
 
-def view_handler(*args, **kwargs):
-    """ Decorator that creates a handler factory for a view factory.
+
+def view_factory(name=None, description=None):
+    """ A decorator that creates a session factory from a function.
      
     """
-    if len(args) == 1 and callable(args[0]):
-        component = args[0]
-        Session = ComponentSession(component)
-        handler_factory = Session.create_handler
-        return handler_factory
-    else:
-        return _view_handler(*args, **kwargs)
-        
+    def wrapper(func, _name, _descr):
+        if _name is None:
+            _name = func.__name__
+        if _descr is None:
+            _descr = func.__doc__ or 'no description'
+        @wraps(func)
+        def closure(*args, **kwargs):
+            return component_session(_name, _descr, func, *args, **kwargs)
+        return closure
+    if name is not None and callable(name):
+        return wrapper(name, None, description)
+    def _wrapper(func):
+        return wrapper(func, name, description)
+    return _wrapper
+
