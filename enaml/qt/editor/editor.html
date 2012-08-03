@@ -30,13 +30,11 @@
 			scroll: false,
 			distance: 15,
 			receive: function (event, ui) {
-				console.log(_this.tab_list.current_tab);
 				_this.tab_list.old_tab = _this.tab_list.current_tab;
 				_this.tab_list.current_tab = ui.item[0];
 				ui.item.click(_this.clickTabItem);
 			},
 			remove: function(event, ui) {
-				console.log(_this.tab_list.old_tab);
 				_this.tab_list.current_tab = _this.tab_list.old_tab;
 				_this.tab_list.old_tab = null;
 				ui.item.unbind('click');
