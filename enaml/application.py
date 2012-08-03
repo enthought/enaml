@@ -2,19 +2,12 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from collections import namedtuple
 import logging
 
 
-#: A namedtuple used for storing session specification info
-SessionSpec = namedtuple(
-    'SessionSpec', 'name description factory args kwargs'
-)
-
-
 class Application(object):
-    """ The app server which manages the top-level communication
-    protocol for serving Enaml applications.
+    """ The application object which manages the top-level communication
+    protocol for serving Enaml views.
 
     """
     #: A message dispatch table used to speed up message routing
@@ -27,18 +20,20 @@ class Application(object):
         'widget_action_response': '_dispatch_session_message',
     }
 
-    def __init__(self, handlers):
+    def __init__(self, factories):
         """ Initialize an Enaml Application.
 
         Parameters
         ----------
-        handlers : iterable of tuples
+        factories : iterable
+            An iterable of SessionFactory instances that will be used
+            to create the sessions for the application.
 
         """
-        self._all_handlers = []
-        self._named_handlers = {}
+        self._all_factories = []
+        self._named_factories = {}
         self._sessions = {}
-        self.add_handlers(handlers)
+        self.add_factories(factories)
 
     #--------------------------------------------------------------------------
     # Message Handling
@@ -56,8 +51,8 @@ class Application(object):
 
         """
         sessions = [
-            {'name': spec.name, 'description': spec.description} 
-            for spec in self._all_handlers
+            {'name': fact.name, 'description': fact.description} 
+            for fact in self._all_factories
         ]
         content = {'sessions': sessions}
         request.send_ok_response(content=content)
@@ -78,19 +73,18 @@ class Application(object):
         """
         message = request.message
         name = message.content.name
-        if name not in self._named_handlers:
+        if name not in self._named_factories:
             request.send_error_response('Invalid session name')
         else:
             # XXX Do we want to move this to a call later, and do some
             # checking on the number of open sessions etc?
-            handler = self._named_handlers[name]
-            factory = handler.factory
-            push_handler = request.push_handler()
-            username = message.header.username
-            session = factory(push_handler, username)
+            factory = self._named_factories[name]
+            session = factory(request)
             session_id = session.session_id
             self._sessions[session_id] = session
-            session.open(*handler.args, **handler.kwargs)
+            # XXX Do we want to open() immediately, or wait util the 
+            # first snapshot request comes in for the session?
+            session.open()
             content = {'session': session_id}
             request.send_ok_response(content=content)
 
@@ -138,44 +132,28 @@ class Application(object):
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
-    def add_handlers(self, handlers):
-        """ Add session handlers to the application.
+    def add_factories(self, factories):
+        """ Add session factories to the application.
 
         Parameters
         ----------
-        handlers : iterable of tuples
+        factories : iterable
+            An iterable of SessionFactory instances to add to the 
+            application.
 
         """
-        all_handlers = self._all_handlers
-        named_handlers = self._named_handlers
-        lens = (3, 4, 5)
-        for handler in handlers:
-            n = len(handler)
-            if n not in lens:
-                raise ValueError('Invalid handler description %s' % handler)
-            if n == 3:
-                name, description, factory = handler
-                args = ()
-                kwargs = {}
-            elif n == 4:
-                name, description, factory, args_or_kwargs = handler
-                if isinstance(args_or_kwargs, tuple):
-                    args = args_or_kwargs
-                    kwargs = {}
-                else:
-                    args = ()
-                    kwargs = args_or_kwargs
-            else:
-                name, description, factory, args, kwargs = handler
-            if name in named_handlers:
-                msg = 'Multiple session handlers named `%s`; ' % name
+        all_factories = self._all_factories
+        named_factories = self._named_factories
+        for factory in factories:
+            name = factory.name
+            if name in named_factories:
+                msg = 'Multiple session factories named `%s`; ' % name
                 msg += 'replacing previous value.'
                 logging.warn(msg)
-                handler = named_handlers.pop(name)
-                all_handlers.remove(handler)
-            spec = SessionSpec(name, description, factory, args, kwargs)
-            all_handlers.append(spec)
-            named_handlers[name] = spec
+                old_factory = named_factories.pop(name)
+                all_factories.remove(old_factory)
+            all_factories.append(factory)
+            named_factories[name] = factory
 
     def handle_request(self, request):
         """ Route and process a message for the Enaml application.
@@ -189,6 +167,7 @@ class Application(object):
         Parameters
         ----------
         request : BaseRequest
+            The request object which wraps a message sent by a client.
 
         """
         msg_type = request.message.header.msg_type
@@ -196,5 +175,5 @@ class Application(object):
         if route is not None:
             getattr(self, route)(request)
         else:
-            self._send_error_response(request, 'Invalid message type')
+            request.send_error_response(request, 'Invalid message type')
 

@@ -12,11 +12,9 @@ import types
 import warnings
 
 from enaml import imports
-from enaml.application import Application
-from enaml.session import Session
+from enaml.stdlib.sessions import simple_app
 from enaml.core.parser import parse
 from enaml.core.enaml_compiler import EnamlCompiler
-from enaml.qt.qt_local_server import QtLocalServer
 
 
 def prepare_toolkit(toolkit_option):
@@ -80,18 +78,14 @@ def prepare_toolkit(toolkit_option):
 
     return enaml_toolkit()
 
-class MainSession(Session):
-
-    def on_open(self, component):
-        return component()
-
-
 def main():
     usage = 'usage: %prog [options] enaml_file [script arguments]'
     parser = optparse.OptionParser(usage=usage, description=__doc__)
     parser.allow_interspersed_args = False
     parser.add_option('-c', '--component', default='Main',
                       help='The component to view')
+    parser.add_option('-t', '--toolkit', default='qt4',
+                      help='The GUI toolikit to use')
 
     options, args = parser.parse_args()
 
@@ -126,18 +120,17 @@ def main():
     requested = options.component
     if requested in ns:
         component = ns[requested]
-
-        app = Application([
-            (requested, 'Enaml-run "%s" view' % requested, MainSession,
-                {'component': component})
-        ])
-        
-        server = QtLocalServer(app)
+        descr = 'Enaml-run "%s" view' % requested
+        app = simple_app(requested, descr, component)
+        if options.toolkit == 'wx':
+            from enaml.wx.wx_local_server import WxLocalServer
+            server = WxLocalServer(app)        
+        else:
+            from enaml.qt.qt_local_server import QtLocalServer
+            server = QtLocalServer(app)
         client = server.local_client()
-        
         client.start_session(requested)
         server.start()
-        
     elif 'main' in ns:
         ns['main']()
     else:
