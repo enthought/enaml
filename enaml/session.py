@@ -4,8 +4,8 @@
 #------------------------------------------------------------------------------
 from abc import ABCMeta, abstractmethod
 
-from enaml.message import Message
-from enaml.utils import id_generator
+from .message import Message
+from .utils import id_generator
 
 
 #: The global message id generator for Session objects.
@@ -17,11 +17,11 @@ _session_id_gen = id_generator('sid_')
 
 
 class Session(object):
-    """ An object representing the session between a client and an 
-    Enaml view.
+    """ An object representing the session between a client and its 
+    Enaml views.
 
     The session object is what ensures that each client has their
-    own individual instance of a view, so that the only state that
+    own individual instances of views, so that the only state that
     is shared between clients is that which is explicitly provided
     by the developer.
 
@@ -42,8 +42,10 @@ class Session(object):
     def __init__(self, push_handler, username, args, kwargs):
         """ Initialize a Session.
 
-        This __init__ method should be overridden by users. Instead,
-        override the `on_open(...)` method in a subclass.
+        The Session class cannot be used directly. It must be subclassed
+        and the subclass must implement the `on_open` method. The user
+        can also optionally implement the `init` and `on_close` methods.
+        This __init__ method should never be overridden.
 
         Parameters
         ----------
@@ -55,10 +57,10 @@ class Session(object):
             The username associated with this session.
         
         args : tuple
-            Additional arguments passed to the session spec.
+            Additional arguments passed to the `init` method.
         
         kwargs : tuple
-            Additional keyword arguments passed to the session spec.
+            Additional keyword arguments passed to the `init` method.
 
         """
         self._push_handler = push_handler
@@ -66,7 +68,7 @@ class Session(object):
         self._session_id = _session_id_gen.next()
         self._session_views = []
         self._widgets = {}
-        self.initialize(*args, **kwargs)
+        self.init(*args, **kwargs)
 
     #--------------------------------------------------------------------------
     # Message Handling
@@ -122,63 +124,87 @@ class Session(object):
     def on_open(self):
         """ Called by the application when the session is opened.
 
-        Use this method to initialize any models or state that should
-        persist for the duration of the session. This method must also
-        create the Enaml view object for the session. This method will
-         only be called once during the session lifetime.
+        This method must be implemented in a subclass and is used to 
+        create the Enaml view objects for the session. This method will
+        only be called once during the session lifetime.
         
         Returns
         -------
-        result : view or list of views
-            The Enaml component tree comprising the view for this
-            session, or a list of these views.
+        result : iterable
+            An iterable of Enaml component trees which are the views
+            for this session. 
 
         """
         raise NotImplementedError
+
+    def on_close(self):
+        """ Called by the application when the session is closed.
+
+        This method may be optionally implemented by subclasses so that
+        they can perform custom cleaup. After this method returns, the 
+        session should be considered invalid. This method is only called
+        once during the session lifetime. 
+
+        """
+        pass
+
+    def init(self, *args, **kwargs):
+        """ Perform subclass specific initialization.
+        
+        This method may be optionally implemented by subclasses so that
+        they can perform custom initialization with the arguments passed
+        to the factory which created the session. This method is called 
+        at the end of the `__init__` method.
+        
+        Parameters
+        ----------
+        *args, **kwargs
+            The positional and keyword arguments that were provided
+            by the user to the SessionFactory which created this 
+            session.
+
+        """
+        pass
 
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
     @classmethod
-    def create_handler(cls, session_name=None, session_description=None,
-            *args, **kwargs):
-        """ Utiltiy class method that creates a SessionHandler for a Session
+    def factory(cls, name=None, description=None, *args, **kwargs):
+        """ A utility classmethod that returns a SessionFactory.
         
-        This method infers the name and description by looking for either
-        name and description class attributes, or if these don't exist,
-        the class name and docstring.  If you need more control over the
-        name and docstring, you should create your own SessionHandler manually.
+        If the name or description are not given, they will be inferred
+        by looking for class attributes `name` and `description`. If 
+        these do not exist, then the class name and docstring will be 
+        used. If more control is needed, then the SessionFactory should 
+        be manually created.
 
         Parameters
         ----------
-        session_name : string
-            A unique, human-friendly name.
+        name : string
+            A unique, human friendly name for the session.
         
-        session_description : string
+        description : string
             A brief description of the session.
         
-        args : tuple
-            Optional positional arguments to be passed to the Session's
-            initialize() method
-        
-        kwargs : dict
-            Optional keyword arguments to be passed to the Session's
-            initialize() method
+        *args, **kwargs
+            Optional postional and keyword arguments to pass to the
+            Session's `init` method when it's created.
         
         """
-        from .session_handler import SessionHandler
-        if session_name is None:
-            session_name = getattr(cls, 'name', cls.__name__)
-        if session_description is None:
-            session_description = getattr(cls, 'description', cls.__doc__)
-            if session_description is None:
-                raise AttributeError('Session class must have "description" '
-                    'class attribute or docstring to use create_handler')
-        handler = SessionHandler(session_name, session_description, cls, *args,
-            **kwargs)
-        return handler
-        
-    
+        from .session_factory import SessionFactory
+        if name is None:
+            name = getattr(cls, 'name', cls.__name__)
+        if description is None:
+            description = getattr(cls, 'description', cls.__doc__)
+            if description is None:
+                msg = ('Session class must have a `description` class '
+                       'attribute or a docstring to use the `factory` '
+                       'classmethod. ')
+                raise AttributeError(msg)
+        factory = SessionFactory(name, description, cls, *args, **kwargs)
+        return factory
+
     @property
     def session_id(self):
         """ The unique identifier for this session.
@@ -209,33 +235,19 @@ class Session(object):
 
         Returns
         -------
-        result : list
-            The Enaml views for the session.
+        result : tuple
+            The Enaml views in use for the session.
 
         """
         return self._session_views
     
-    def initialize(self):
-        """ Subclass-specific initialization
-        
-        This method provides an opportunity for subclasses to be initialized
-        with arguments passed to the SessionSpec.
-        
-        By default it does nothing, but subclasses should use this to store
-        or create any additional state that is required by the session.
-        
-        This method is called by __init__().
-        
-        """
-        pass
-
     def send_action(self, widget_id, action, content):
         """ Send an unsolicited message of type 'widget_action' to a
         client widget of this session. 
 
-        This method is normally only called by the MessengerWidget's
-        which are owned by this Session object. This should not be
-        called directly by user code.
+        This method is called by the MessengerWidget's which are owned 
+        by this Session object. This should never be called directly by 
+        user code.
         
         Parameters
         ----------
@@ -259,31 +271,13 @@ class Session(object):
         message = Message((header, {}, metadata, content))
         self._push_handler.push_message(message)
 
-    def on_close(self):
-        """ Called by the application when the session is destroyed.
-
-        Use this method to perform any resource cleanup required before
-        the session is released by the application. After this method 
-        returns, the session should be considered invalid. This method
-        is only called once during the session lifetime. 
-
-        """
-        pass
-
-    def open(self, *args, **kwargs):
+    def open(self):
         """ Called by the application when the session is opened.
 
-        Parameters
-        ----------
-        *args, **kwargs 
-            Positional and keyword arguments to pass to the session's
-            'on_open' method.
+        This method should never be called by user code.
         
         """
-        views = self.on_open(*args, **kwargs)
-        if not isinstance(views, list):
-            views = [views]
-        self._session_views = views
+        views = self._session_views = tuple(self.on_open())
         for view in views:
             view.set_session(self)
 
@@ -292,15 +286,16 @@ class Session(object):
 
         """
         self.on_close()
-        self._session_views = []
+        # XXX need to do explicit view destruction?
+        self._session_views = ()
 
     def register_widget(self, widget):
         """ A method called by a MessengerWidget when the Session is
         assigned to the widget.
 
         This allows the Session object to build a mapping of widget
-        identifiers to widgets for dispatching messages. This should
-        not normally be called by user code.
+        identifiers to widgets for dispatching messages. This method
+        should never be called by user code.
 
         Parameters
         ----------
@@ -314,7 +309,7 @@ class Session(object):
         """ A method called by the application when the client sends
         a request to the session.
 
-        This method should not normally be called by user code.
+        This method should never be called by user code.
 
         Parameters
         ----------
