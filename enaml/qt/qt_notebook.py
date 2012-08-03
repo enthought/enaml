@@ -116,11 +116,13 @@ class QNotebook(QTabWidget):
         """
         idx = self.indexOf(page)
         if idx == -1:
+            self._bind(page)
             idx = self.addTab(page, page.tabTitle())
+        else:
+            self.setTabText(idx, page.tabTitle())
         self.setTabToolTip(idx, page.tabToolTip())
         self.setTabEnabled(idx, page.tabEnabled())
         page.restoreEnabled()
-        self._bind(page)
 
     def removePage(self, index):
         """ Remove the page at the given index. This method should be
@@ -134,8 +136,8 @@ class QNotebook(QTabWidget):
         """
         page = self.widget(index)
         if page is not None:
-            self.removeTab(index)
             self._unbind(page)
+            self.removeTab(index)
 
 
 class QtNotebook(QtConstraintsWidget):
