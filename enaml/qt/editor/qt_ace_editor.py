@@ -196,6 +196,8 @@ class QtAceEditor(QObject):
         template_path = p.join(p.dirname(p.abspath(__file__)), 'editor.html')
         editor_template = Template(open(template_path, 'r').read())
 
+        _width = 100 / columns - 1
+
         _editors = []
         for _column in range(columns):
             self.generate_ace_event('set_text_from_js', 'getSession()',
@@ -218,7 +220,7 @@ class QtAceEditor(QObject):
                  'this.editor', 'setPrintMarginColumn')
 
             _editors.append(editor_template.substitute(column=_column,
-                events='\n'.join(self._events),
+                events='\n'.join(self._events), width=_width,
                 bindings='\n'.join(self._bindings)))
             self._bindings = []
             self._events = []

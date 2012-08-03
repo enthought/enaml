@@ -1,10 +1,12 @@
 body {
+    background-color: white; /* Fallback if rgba is not supported */
     background-color: rgba(0, 0, 0, 0);
 }
 
 .container {
     margin: 0;
     padding: 0;
+    display: inline-block;
 }
 
 .container button:active {
@@ -18,9 +20,11 @@ body {
     background: none;
     border: none;
     font-size: 1.2em;
+    position: absolute;
 }
 
 .tabs {
+    height: 1.8em;
     overflow: hidden;
     margin: 0;
     padding: 0;
@@ -35,7 +39,7 @@ body {
     background-color: gray;
     border-radius: 10px 10px 0 0;
     padding: 5px 10px 5px 10px;
-    background-color: gray;
+    margin: 0;
     color: #000;
     display: inline-block;
 }

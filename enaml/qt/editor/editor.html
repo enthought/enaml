@@ -3,37 +3,55 @@
 	    position: relative;
 	    width: 100%;
 	    background-color: #fff;
-	    height: 95%;
+	    height: 94%;
+	}
+
+	.container {
+	    width: ${width}%;
 	}
 </style>
+
 <div class="container">
-	<div class="tabs">
-		<div data-sessionid="initial"></div>
-	</div>
+	<div class="tabs"></div>
 	<button class="add_button">+</button>
 	<div id="editor_${column}"></div>
 </div>
 
 <script type="text/javascript">
-	var Editor_${column} = new function(){
+	var editor_${column} = new function(){
 		var _this = this;
 	    var EditSession = require('ace/edit_session').EditSession;
 		this.editor = ace.edit("editor_${column}");
+
 		this.tab_list = jQuery(jQuery('.tabs')[${column}]);
 		this.tab_list.sortable({
 			tolerance: 'pointer',
-			helper: 'clone',
+			connectWith: '.tabs',
 			scroll: false,
-			distance: 15
+			distance: 15,
+			receive: function (event, ui) {
+				console.log(_this.tab_list.current_tab);
+				_this.tab_list.old_tab = _this.tab_list.current_tab;
+				_this.tab_list.current_tab = ui.item[0];
+				ui.item.click(_this.clickTabItem);
+			},
+			remove: function(event, ui) {
+				console.log(_this.tab_list.old_tab);
+				_this.tab_list.current_tab = _this.tab_list.old_tab;
+				_this.tab_list.old_tab = null;
+				ui.item.unbind('click');
+			}
 		});
-
-		this.sessions = {
-			'initial' : new EditSession("")
-		};
 
 		this.tab_list.__defineSetter__("current_tab", function(tab) {
 			jQuery(tab).addClass('current');
 			this._current_tab = tab;
+			try {
+				_this.editor.setSession(tab.session);
+			}
+			catch(e) {
+				_this.editor.setSession(new EditSession(""));
+			}
 		});
 
 		this.tab_list.__defineGetter__("current_tab", function() {
@@ -57,41 +75,23 @@
 			/* handler for when the 'x' on a tab is clicked
 
 			*/
-			li_list = jQuery('div', _this.tab_list);
-			item = jQuery(this).parent();
-			if (item.attr('data-sessionid') == 
-				jQuery(_this.tab_list.current_tab).attr('data-sessionid')) {
-				if (li_list.index(item) == li_list.length-1) {
-					_this.tab_list.current_tab = item.prev();
-				}
-				else
-					_this.tab_list.current_tab = item.next();
+			var div_list = jQuery('div', _this.tab_list);
+			var item = jQuery(this).parent();
 
-				if (_this.tab_list.current_tab.length == 0) {
-					_this.tab_list.current_tab = null;
-					_this.editor.setSession(new EditSession(""));
-					jQuery(this).parent().remove();
-					delete _this.sessions[item.attr('data-sessionid')];
-					return
-				}
+			if (div_list.length == 1) {
+				item.remove();
+				_this.tab_list.current_tab = null;
+				_this.tab_list.old_tab = null;
+				return;
 			}
-			s = _this.sessions[jQuery(_this.tab_list.current_tab).attr('data-sessionid')];
-			_this.editor.setSession(s);
 
-			jQuery(this).parent().remove();
-			delete _this.sessions[item.attr('data-sessionid')];
-		}
-
-		this.generateId = function() {
-			/* Generate a random 32 character id
-
-			*/
-			var result = '';
-			for(var j=0; j<32; j++) {
-				var i = Math.floor(Math.random()*16).toString(16).toUpperCase();
-				result = result + i;
+			if (div_list.index(item) == div_list.length-1) {
+				_this.tab_list.current_tab = item.prev()[0];
 			}
-			return result;
+			else
+				_this.tab_list.current_tab = item.next()[0];
+
+			item.remove();
 		}
 
 		this.addTabItem = function(title) {
@@ -104,27 +104,20 @@
 			div_list = jQuery('div', _this.tab_list);
 			div = document.createElement('div');
 			div.innerHTML = title;
-			var id = _this.generateId();
-			jQuery(div).attr('data-sessionid', id);
-			if (_this.tab_list.current_tab == null) {
-				jQuery(div).addClass("current")
+			div.session = new EditSession('');
+			if (_this.tab_list.current_tab == null)
 				_this.tab_list.current_tab = div
-			}
 			_this.tab_list.append(div);
 			_this.setupTab(div);
-			_this.sessions[id] = new EditSession('');
 		}
 
 		this.clickTabItem = function() {
 			/* Handler for when a tab is clicked
 
 			*/
-			var id = jQuery(this).attr("data-sessionid");
-			var session = _this.sessions[id];
 			if (jQuery(this) != _this.tab_list.current_tab) {
-				_this.editor.setSession(session);
 				_this.tab_list.old_tab = _this.tab_list.current_tab;
-				_this.tab_list.current_tab = jQuery(this);
+				_this.tab_list.current_tab = this;
 			}
 		}
 
@@ -141,10 +134,9 @@
 			jQuery(button).insertAfter(jQuery('span', tab)[0]);
 		}
 
+		this.addTabItem('First Document');
 		this.tab_list.current_tab = jQuery('div', this.tab_list)[0];
-		this.tab_list._old_tab = this.tab_list.current_tab;
  		jQuery(jQuery('.add_button')[${column}]).click(this.addTabItem)
-		this.editor.setSession(this.sessions['initial']);
 
 		var item_list = jQuery('div', this.tab_list);
 		for (var i=0; i<item_list.length; i++) {

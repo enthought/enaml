@@ -1,15 +1,10 @@
-from enaml.widgets import Window, Container, TextEditor, PushButton
+from enaml.widgets import Window, Container, TextEditor
 from enaml.noncomponents.document import Document
-from enaml.layout import vbox
 
 enamldef Main(Window):
     title = 'Test Window'
     Container:
         TextEditor:
             id: text_edit
-            columns = 1
+            columns = 2
             document = Document(title='First Document', text='hello', mode='javascript')
-        PushButton:
-            text="Change"
-            clicked ::
-                text_edit.document.title = 'asdf'

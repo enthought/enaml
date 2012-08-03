@@ -18,6 +18,9 @@ class QtAceEditorView(QWebView):
                                                     self.ace_editor)
 
     def set_columns(self, columns):
+        """ Set the number of columns for the editor
+
+        """
         html = self.ace_editor.generate_html(columns)
         self.setHtml(html)
 
