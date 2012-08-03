@@ -3,8 +3,9 @@ import copy
 import enaml
 from enaml.application import Application
 from enaml.session import Session
-from enaml.wx.wx_local_server import WxLocalServer
-#from enaml.qt.qt_local_server import QtLocalServer
+#from enaml.wx.wx_local_server import WxLocalServer
+from enaml.qt.qt_local_server import QtLocalServer
+from enaml.stdlib.sessions import view_factory
 
 
 class Model(HasTraits):
@@ -22,7 +23,7 @@ class Model(HasTraits):
 
 class SampleView(Session):
     
-    def initialize(self, model, share_model):
+    def init(self, model, share_model):
         if not share_model:
             model = copy.copy(model)
         self.model = model
@@ -30,28 +31,37 @@ class SampleView(Session):
     def on_open(self):
         with enaml.imports():
             from server_test_view import Main
-        return Main(model=self.model)
+        return [Main(model=self.model)]
+
+
+@view_factory('foo-view')
+def create_view(model):
+    with enaml.imports():
+        from server_test_view import Main
+    return Main(model=model)
 
 
 if __name__ == '__main__':
     app_model = Model(text='Foo')
-    shared_handler = SampleView.create_handler(
-        session_name='test-view-shared',
-        session_description="A simple test view which shares the model",
+
+    shared_factory = SampleView.factory(
+        'test-view-shared',
+        "A simple test view which shares the model",
         model=app_model,
         share_model=True,
     )
-    unshared_handler = SampleView.create_handler(
-        session_name='test-view-unshared',
-        session_description="A simple test view which doesn't share the model",
+
+    unshared_factory = SampleView.factory(
+        'test-view-unshared',
+        "A simple test view which doesn't share the model",
         model=app_model,
         share_model=False,
     )
 
-    app = Application([shared_handler, unshared_handler])
+    app = Application([shared_factory, unshared_factory, create_view(app_model)])
 
-    server = WxLocalServer(app)
-    #server = QtLocalServer(app)
+    #server = WxLocalServer(app)
+    server = QtLocalServer(app)
 
     client = server.local_client()
 
@@ -60,6 +70,7 @@ if __name__ == '__main__':
     client.start_session('test-view-shared')
     client.start_session('test-view-shared')
     client.start_session('test-view-unshared')
+    client.start_session('foo-view')
     
     server.start()
 
