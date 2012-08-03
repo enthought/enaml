@@ -104,7 +104,7 @@ class QNotebook(QTabWidget):
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
-    def addPage(self, page):
+    def addPage(self, page, idx=-1):
         """ Add a QPage instance to the notebook. This method should
         be used in favor of the 'addTab' method of the parent class.
 
@@ -113,11 +113,19 @@ class QNotebook(QTabWidget):
         page : QPage
             The QPage instance to add to the notebook.
 
+        idx : int, optional
+            The index at which to add the page if it doesn't already
+            exist in the notebook. If not provided, the page will be
+            added at the end of the notebook.
+
         """
-        idx = self.indexOf(page)
-        if idx == -1:
+        page_idx = self.indexOf(page)
+        if page_idx == -1:
             self._bind(page)
-            idx = self.addTab(page, page.tabTitle())
+            if idx == -1:
+                self.addTab(page, page.tabTitle())
+            else:
+                self.insertTab(idx, page, page.tabTitle())
         else:
             self.setTabText(idx, page.tabTitle())
         self.setTabToolTip(idx, page.tabToolTip())
@@ -208,9 +216,9 @@ class QtNotebook(QtConstraintsWidget):
 
         """
         widget_id = content['widget_id']
-        for child in self.children:
+        for idx, child in enumerate(self.children):
             if child.widget_id == widget_id:
-                self.widget.addPage(child.widget)
+                self.widget.addPage(child.widget, idx)
                 return
 
     def on_action_close_tab(self, content):
