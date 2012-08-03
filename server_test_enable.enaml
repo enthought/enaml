@@ -1,0 +1,59 @@
+from enaml.widgets.api import (MainWindow, Label, Container, PushButton, 
+        ComboBox, Canvas, RemoteCanvas)
+from enaml.layout.api import hbox, vbox, spacer
+
+
+enamldef Main(MainWindow):
+    attr model
+    initial_size = (800, 600)
+    Container:
+        constraints = [
+            vbox(
+                hbox(
+                    #vbox(remote_label, remote_canvas),
+                    vbox(local_label, local_canvas),
+                ),
+                combo,
+                hbox(
+                    add_button, remove_button, spacer, 
+                    change_mode_button, spacer, share_button,
+                ),
+            ),
+            #remote_canvas.width == local_canvas.width,
+            #remote_canvas.height >= 50,
+            local_canvas.height >= 50
+        ]
+        #Label:
+        #    id: remote_label
+        #    text = "Remote Canvas"
+        #Canvas:
+        #    id: remote_canvas
+        #    component << model.plot
+        Label:
+            id: local_label
+            text = "Local Canvas"
+        Canvas:
+            id: local_canvas
+            component << model.plot
+        ComboBox:
+            id: combo
+            items = ['foo', 'bar', 'baz', 'spam', 'ham', 'eggs']
+            index = 4
+            index :: print items[index]
+        PushButton:
+            id: add_button
+            text = 'Add'
+            clicked :: model.value += 20
+        PushButton:
+            id: remove_button
+            text = 'Remove'
+            clicked :: model.value -= 20
+        PushButton:
+            id: change_mode_button
+            text = 'Change Mode'
+            clicked :: self.text = text * 2
+        PushButton:
+            id: share_button
+            text = 'Share...'
+            clicked :: print 'foo'
+            name = 'what'
