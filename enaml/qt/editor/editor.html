@@ -1,3 +1,8 @@
+<!--
+   Copyright (c) 2012, Enthought, Inc.
+   All rights reserved.
+-->
+
 <style>
 	#editor_${column} {
 	    position: relative;
@@ -29,13 +34,17 @@
 			connectWith: '.tabs',
 			scroll: false,
 			distance: 15,
+			opacity: 0.6,
 			receive: function (event, ui) {
 				_this.tab_list.old_tab = _this.tab_list.current_tab;
 				_this.tab_list.current_tab = ui.item[0];
 				ui.item.click(_this.clickTabItem);
 			},
 			remove: function(event, ui) {
-				_this.tab_list.current_tab = _this.tab_list.old_tab;
+				if (_this.tab_list.length == 0)
+					_this.tab_list.current_tab = null;
+				else
+					_this.tab_list.current_tab = _this.tab_list.old_tab;
 				_this.tab_list.old_tab = null;
 				ui.item.unbind('click');
 			}
@@ -76,21 +85,15 @@
 			var div_list = jQuery('div', _this.tab_list);
 			var item = jQuery(this).parent();
 
-			if (div_list.length == 1) {
-				item.remove();
-				_this.tab_list.current_tab = null;
-				_this.tab_list.old_tab = null;
-				return;
+			if (this.session == _this.editor.getSession()) {
+				if (div_list.index(item) == div_list.length-1) {
+					_this.tab_list.current_tab = item.prev()[0];
+				}
+				else
+					_this.tab_list.current_tab = item.next()[0];
 			}
-
-			if (div_list.index(item) == div_list.length-1) {
-				_this.tab_list.current_tab = item.prev()[0];
-			}
-			else
-				_this.tab_list.current_tab = item.next()[0];
-
 			item.remove();
-		}
+		};
 
 		this.addTabItem = function(title) {
 			/* Handler for when the '+' button is clicked
@@ -107,7 +110,7 @@
 				_this.tab_list.current_tab = div
 			_this.tab_list.append(div);
 			_this.setupTab(div);
-		}
+		};
 
 		this.clickTabItem = function() {
 			/* Handler for when a tab is clicked
@@ -117,7 +120,7 @@
 				_this.tab_list.old_tab = _this.tab_list.current_tab;
 				_this.tab_list.current_tab = this;
 			}
-		}
+		};
 
 		this.setupTab = function(tab) {
 			/* Sets up a tab by wrapping the text in a span and
@@ -128,9 +131,14 @@
 			jQuery(tab).wrapInner("<span />");
 			var button = document.createElement('button');
 			button.innerHTML = "x";
+			jQuery(tab).hover(
+				function() { jQuery(button).show() },
+				function() { jQuery(button).hide() }
+			);
+			jQuery(button).hide();
 			jQuery(button).click(_this.removeTabItem);
 			jQuery(button).insertAfter(jQuery('span', tab)[0]);
-		}
+		};
 
 		this.addTabItem('First Document');
 		this.tab_list.current_tab = jQuery('div', this.tab_list)[0];
