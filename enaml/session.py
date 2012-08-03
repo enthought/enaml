@@ -170,7 +170,7 @@ class Session(object):
     # Public API
     #--------------------------------------------------------------------------
     @classmethod
-    def factory(cls, name=None, description=None, *args, **kwargs):
+    def factory(cls, sess_name=None, sess_descr=None, *args, **kwargs):
         """ A utility classmethod that returns a SessionFactory.
         
         If the name or description are not given, they will be inferred
@@ -181,10 +181,10 @@ class Session(object):
 
         Parameters
         ----------
-        name : string
+        sess_name : str, optional
             A unique, human friendly name for the session.
         
-        description : string
+        sess_descr : str, optional
             A brief description of the session.
         
         *args, **kwargs
@@ -193,16 +193,16 @@ class Session(object):
         
         """
         from .session_factory import SessionFactory
-        if name is None:
-            name = getattr(cls, 'name', cls.__name__)
-        if description is None:
-            description = getattr(cls, 'description', cls.__doc__)
-            if description is None:
+        if sess_name is None:
+            sess_name = getattr(cls, 'name', cls.__name__)
+        if sess_descr is None:
+            sess_descr = getattr(cls, 'description', cls.__doc__)
+            if sess_descr is None:
                 msg = ('Session class must have a `description` class '
                        'attribute or a docstring to use the `factory` '
                        'classmethod. ')
                 raise AttributeError(msg)
-        factory = SessionFactory(name, description, cls, *args, **kwargs)
+        factory = SessionFactory(sess_name, sess_descr, cls, *args, **kwargs)
         return factory
 
     @property

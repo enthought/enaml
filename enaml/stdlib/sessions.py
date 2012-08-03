@@ -15,44 +15,44 @@ from enaml.session import Session
 from enaml.session_factory import SessionFactory
 
 
-class ComponentSession(Session):
+class SimpleSession(Session):
     """ A concrete Session class that receives a callable, positional,
     and keyword arguments and creates the associated view(s).
     
     """
-    def init(self, component, *args, **kwargs):
-        """ Initialize the session with the arguments for the component
+    def init(self, sess_callable, *args, **kwargs):
+        """ Initialize the session with the callable and arguments.
         
         """
-        self.component = component
+        self.sess_callable = sess_callable
         self.args = args
         self.kwargs = kwargs
     
     def on_open(self):
-        """ Create the view from the component.
+        """ Create the view from the callable
         
         """
-        comp = self.component(*self.args, **self.kwargs)
-        if not isinstance(comp, Iterable):
-            comp = [comp]
-        return comp
+        views = self.sess_callable(*self.args, **self.kwargs)
+        if not isinstance(views, Iterable):
+            views = [views]
+        return views
 
 
-def component_session(name, description, component, *args, **kwargs):
+def simple_session(sess_name, sess_descr, sess_callable, *args, **kwargs):
     """ Creates a SessionFactory instance for a callable.
     
     This creates a SessionFactory instance which will create instances
-    of ComponentSession when prompted by the application.
+    of SimpleSession when prompted by the application.
     
     Parameters
     ----------
-    name : str
-        A unique, human-friendly name.
+    sess_name : str
+        A unique, human-friendly name for the session.
     
-    description : str
+    sess_descr : str
         A brief description of the session.
 
-    component : callable
+    sess_callable : callable
         A callable which will return an Enaml view or iterable of views.
 
     *args, **kwargs
@@ -61,12 +61,12 @@ def component_session(name, description, component, *args, **kwargs):
 
     """
     fact = SessionFactory(
-        name, description, ComponentSession, component, *args, **kwargs
+        sess_name, sess_descr, SimpleSession, sess_callable, *args, **kwargs
     )
     return fact
 
 
-def view_factory(name=None, description=None):
+def view_factory(sess_name=None, sess_descr=None):
     """ A decorator that creates a session factory from a function.
      
     This can be used in the following ways:
@@ -91,16 +91,16 @@ def view_factory(name=None, description=None):
             _descr = func.__doc__ or 'no description'
         @wraps(func)
         def closure(*args, **kwargs):
-            return component_session(_name, _descr, func, *args, **kwargs)
+            return simple_session(_name, _descr, func, *args, **kwargs)
         return closure
-    if name is not None and callable(name):
-        return wrapper(name, None, description)
+    if sess_name is not None and callable(sess_name):
+        return wrapper(sess_name, None, sess_descr)
     def _wrapper(func):
-        return wrapper(func, name, description)
+        return wrapper(func, sess_name, sess_descr)
     return _wrapper
 
 
-def single_view_app(name, description, component, *args, **kwargs):
+def single_view_app(sess_name, sess_descr, sess_callable, *args, **kwargs):
     """ Utility function which creates an application from a component.
     
     This is suitable for use in simple applications, particularly 
@@ -109,14 +109,15 @@ def single_view_app(name, description, component, *args, **kwargs):
     
     Parameters
     ----------
-    name : str
-        An ounique, human-friendly name.
+    sess_name : str
+        An unique, human-friendly name for the session.
     
-    description : str
+    sess_descr : str
         An brief description of the session.
     
-    component : callable
-        A callable which returns a component or iterable of components.
+    sess_callable : callable
+        A callable which returns a component or iterable of components
+        for the session.
 
     *args, **kwargs
         Optional positional and keyword arguments to pass to the 
@@ -124,7 +125,9 @@ def single_view_app(name, description, component, *args, **kwargs):
     
     """
     from enaml.application import Application
-    factory = component_session(name, description, component, *args, **kwargs)
+    factory = simple_session(
+        sess_name, sess_descr, sess_callable, *args, **kwargs
+    )
     app = Application([factory])
     return app
 
