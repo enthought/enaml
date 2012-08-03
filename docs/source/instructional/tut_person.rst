@@ -172,7 +172,8 @@ Hooking up an |Enaml| View to a Traits Object
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 In the code block for launching the script from the command line, we create a
-Person object and pass it to ``PersonView``::
+``Person`` object and create an applicatation which serves it using the
+``PersonView`` for the GUI::
 
     if __name__ == '__main__':
         import enaml
@@ -180,13 +181,13 @@ Person object and pass it to ``PersonView``::
             from person_view import PersonView
         
         john = Person(first_name='John', last_name='Doe', age=42)
-        
-        view = PersonView(john)
-        
-        app =  QtLocalApplication()
-        app.serve('main', view)
-
-        app.mainloop()
+        app = simple_app('john', 'A view of the Person john', PersonView, 
+            person=john) 
+    
+        server = QtLocalServer(app)
+        client = server.local_client()
+        client.start_session('john')
+        server.start()
 
 
 Running it from the command line, we see::
