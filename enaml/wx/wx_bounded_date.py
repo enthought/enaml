@@ -40,14 +40,14 @@ class WxBoundedDate(WxConstraintsWidget):
      #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
-    def initialize(self, attrs):
-        """ Initialize the attributes of the date widget.
+    def create(self, tree):
+        """ Create and initialize the bounded date widget.
 
         """
-        super(WxBoundedDate, self).initialize(attrs)
-        self.set_min_date(as_wx_date(attrs['minimum']))
-        self.set_max_date(as_wx_date(attrs['maximum']))
-        self.set_date(as_wx_date(attrs['date']))
+        super(WxBoundedDate, self).create(tree)
+        self.set_min_date(as_wx_date(tree['minimum']))
+        self.set_max_date(as_wx_date(tree['maximum']))
+        self.set_date(as_wx_date(tree['date']))
 
     #--------------------------------------------------------------------------
     # Message Handlers

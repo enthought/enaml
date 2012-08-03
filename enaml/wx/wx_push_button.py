@@ -14,18 +14,17 @@ class WxPushButton(WxAbstractButton):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create_widget(self, parent, tree):
         """ Creates the underlying wx.Button control.
 
         """
-        self.widget = wx.Button(self.parent_widget)
+        return wx.Button(parent)
 
-    def initialize(self, attrs):
-        """ Intializes the attributes of the widget and binds the event
-        handlers.
+    def create(self, tree):
+        """ Create and initialize the PushButton control.
         
         """
-        super(WxPushButton, self).initialize(attrs)
+        super(WxPushButton, self).create(tree)
         self.widget.Bind(wx.EVT_BUTTON, self.on_clicked)
 
     #--------------------------------------------------------------------------

@@ -429,26 +429,29 @@ class WxSpinBox(WxConstraintsWidget):
     """ A Wx implementation of an Enaml SpinBox.
 
     """
-    def create(self):
-        """ Create the underlying QSpinBox widget.
+    #--------------------------------------------------------------------------
+    # Setup Methods
+    #--------------------------------------------------------------------------
+    def create_widget(self, parent, tree):
+        """ Create the underlying wxProperSpinBox widget.
 
         """
-        self.widget = wxProperSpinBox(self.parent_widget)
+        return wxProperSpinBox(parent)
 
-    def initialize(self, attrs):
-        """ Initialize the widget's attributes.
+    def create(self, tree):
+        """ Create and initialize the slider control.
 
         """
-        super(WxSpinBox, self).initialize(attrs)
-        self.set_maximum(attrs['maximum'])
-        self.set_minimum(attrs['minimum'])
-        self.set_value(attrs['value'])
-        self.set_prefix(attrs['prefix'])
-        self.set_suffix(attrs['suffix'])
-        self.set_special_value_text(attrs['special_value_text'])
-        self.set_single_step(attrs['single_step'])
-        self.set_read_only(attrs['read_only'])
-        self.set_wrapping(attrs['wrapping'])
+        super(WxSpinBox, self).create(tree)
+        self.set_maximum(tree['maximum'])
+        self.set_minimum(tree['minimum'])
+        self.set_value(tree['value'])
+        self.set_prefix(tree['prefix'])
+        self.set_suffix(tree['suffix'])
+        self.set_special_value_text(tree['special_value_text'])
+        self.set_single_step(tree['single_step'])
+        self.set_read_only(tree['read_only'])
+        self.set_wrapping(tree['wrapping'])
         self.widget.Bind(EVT_SPIN_BOX, self.on_value_changed)
 
     #--------------------------------------------------------------------------

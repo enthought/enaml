@@ -11,18 +11,21 @@ class WxLabel(WxConstraintsWidget):
     """ A Wx implementation of an Enaml Label.
 
     """
-    def create(self):
-        """ Create the underlying widget.
+    #--------------------------------------------------------------------------
+    # Setup Methods
+    #--------------------------------------------------------------------------
+    def create_widget(self, parent, tree):
+        """ Create the underlying wx.StaticText widget.
 
         """
-        self.widget = wx.StaticText(self.parent_widget)
+        return wx.StaticText(parent)
 
-    def initialize(self, attrs):
-        """ Initialize the widget's attributes.
+    def create(self, tree):
+        """ Create and initialize the label control.
 
         """
-        super(WxLabel, self).initialize(attrs)
-        self.set_text(attrs['text'])
+        super(WxLabel, self).create(tree)
+        self.set_text(tree['text'])
 
     #--------------------------------------------------------------------------
     # Message Handlers

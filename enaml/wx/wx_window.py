@@ -64,40 +64,40 @@ class WxWindow(WxWidgetComponent):
     """ A Wx implementation of an Enaml Window.
 
     """
-    def create(self):
-        """ Create the underlying QWidget object.
+    #--------------------------------------------------------------------------
+    # Setup Methods
+    #--------------------------------------------------------------------------
+    def create_widget(self, parent, tree):
+        """ Create the underlying wx.Frame widget.
 
         """
-        self.widget = wx.Frame(self.parent_widget)
+        return wx.Frame(parent)
 
-    def initialize(self, attrs):
-        """ Initialize the widget's attributes.
-
-        """
-        super(WxWindow, self).initialize(attrs)
-        self.set_title(attrs['title'])
-        self.set_initial_size(attrs['initial_size'])
-
-    def post_initialize(self):
-        """ Perform the post initialization work.
-
-        This method sets the central widget for the window.
+    def create(self, tree):
+        """ Create and initialize the window control.
 
         """
-        super(WxWindow, self).post_initialize()
+        super(WxWindow, self).create(tree)
+        self.set_title(tree['title'])
+        self.set_initial_size(tree['initial_size'])
+
+    def init_layout(self):
+        """ Perform the layout initialization for the window control.
+
+        """
+        # A Window is a top-level component and `init_layout` is called 
+        # bottom-up, so the layout for all of the children has already
+        # taken place. This is the proper time to grab the central 
+        # widget child, stick it the sizer, and fit the window.
         children = self.children
         if children:
             child_widget = children[0].widget
             sizer = WxWindowSizer()
             sizer.Add(child_widget)
-            def closure():
-                widget = self.widget
-                widget.SetSizerAndFit(sizer)
-                max_size = widget.ClientToWindowSize(sizer.CalcMax())
-                widget.SetMaxSize(max_size)
-            # XXX slight hack: do the fitting later so the child layout
-            # can fully initialize.
-            wx.CallAfter(closure)
+            widget = self.widget
+            widget.SetSizerAndFit(sizer)
+            max_size = widget.ClientToWindowSize(sizer.CalcMax())
+            widget.SetMaxSize(max_size)
 
     #--------------------------------------------------------------------------
     # Message Handlers

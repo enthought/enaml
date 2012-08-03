@@ -153,18 +153,24 @@ class WxClientSession(object):
                 widget = widget_cls(parent, widget_id, self)
                 widgets[widget_id] = widget
                 created.append((widget, tree_item))
-                for ctree in tree_item['children']:
+
+                # Push the children in reverse order so they get 
+                # popped off in the correct order.
+                for ctree in reversed(tree_item['children']):
                     stack.append(ctree)
                     parents.append(widget)
 
-        # Run across the created widgets and initialize them.
-        # XXX we can probably get rid of this initialization pass.
+        # Create and initialize the widgets top-down
         for widget, tree in created:
-            widget.create()
+            widget.create(tree)
+
+        # Run the post creation pass top-down
         for widget, tree in created:
-            widget.initialize(tree)
-        for widget, tree in created:
-            widget.post_initialize()
+            widget.post_create()
+
+        # Run the layout initializtion bottom-up
+        for widget, tree in reversed(created):
+            widget.init_layout()
 
     #--------------------------------------------------------------------------
     # Public API

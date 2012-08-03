@@ -115,31 +115,41 @@ class WxContainer(WxConstraintsWidget):
     """ A Wx implementation of an Enaml Container.
 
     """
-    def create(self):
+    #--------------------------------------------------------------------------
+    # Setup Methods
+    #--------------------------------------------------------------------------
+    def create_widget(self, parent, tree):
         """ Creates the underlying wxContainer widget.
 
         """
-        self.widget = wxContainer(self.parent_widget)
+        return wxContainer(parent)
 
-    def initialize(self, attrs):
-        """ Initialize the attributes of the widget.
+    def create(self, tree):
+        """ Create and initialize the container. 
 
         """
-        super(WxContainer, self).initialize(attrs)
-        self._share_layout = attrs['layout']['share_layout']
+        super(WxContainer, self).create(tree)
+        self._share_layout = tree['layout']['share_layout']
         self._cn_owners = None
         self._owns_layout = True
         self._layout_owner = None
         self._layout_manager = None
         self.widget.Bind(wx.EVT_SIZE, self.on_resize)
 
-    def post_initialize(self):
-        """ Initializes the layout manager for the container. 
+    def init_layout(self):
+        """ Initializes the layout for the container. 
 
         """
-        super(WxContainer, self).post_initialize()
-        self.setup_layout()
-
+        super(WxContainer, self).init_layout()
+        if self._owns_layout:
+            mgr = self._layout_manager = LayoutManager()
+            mgr.initialize(self._generate_constraints())
+            min_size = self.compute_min_size()
+            max_size = self.compute_max_size()
+            self.widget.SetBestSize(min_size)
+            self.widget.SetMinSize(min_size)
+            self.widget.SetMaxSize(max_size)
+    
     #--------------------------------------------------------------------------
     # Signal Handlers
     #--------------------------------------------------------------------------
@@ -154,46 +164,13 @@ class WxContainer(WxConstraintsWidget):
     #--------------------------------------------------------------------------
     # Layout Handling
     #--------------------------------------------------------------------------
-    def setup_layout(self, force=False):
-        """ Creates the layout manager for this widget if it owns the
-        reponsibility for laying out its descendents.
-
-        Parameters
-        ----------
-        force : bool, optional
-            Force the recreation of the layout manager. The default is
-            False and makes it safe to call this method multiple times
-            during the initialization process. This is handy for when
-            layout is being initialized top-down and the parent needs
-            to have a child setup its layout before its post_initialize
-            method is called.
-
-        """
-        if self._owns_layout:
-            # XXX this is a bit of a hack, not sure if a I like it
-            # yet. The problem is that it's difficult to guarantee
-            # the order of initialization when components are being
-            # built without an O(n**2) sort of the widgets. Is much
-            # easier for the builder to assume that widgets were 
-            # published in an intelligent order and try not to rely
-            # on any particular initialization order. 
-            if self._layout_manager is not None and not force:
-                return
-            mgr = self._layout_manager = LayoutManager()
-            mgr.initialize(self._generate_constraints())
-            min_size = self.compute_min_size()
-            max_size = self.compute_max_size()
-            self.widget.SetBestSize(min_size)
-            self.widget.SetMinSize(min_size)
-            self.widget.SetMaxSize(max_size)
-
     def relayout(self):
         """ Rebuilds the constraints layout for this widget if it owns
         the responsibility for laying out its descendents.
 
         """
         if self._owns_layout:
-            self.setup_layout(force=True)
+            self.init_layout()
             self.refresh()
         else:
             self._layout_owner.relayout()
@@ -278,9 +255,6 @@ class WxContainer(WxConstraintsWidget):
                         cn_dicts_extend(child.constraints)
                         stack_extend(child.children)
                     else:
-                        # XXX see the comment in setup_layout() for 
-                        # why I don't really like this solution.
-                        child.setup_layout()
                         raw_cns_extend(child.size_hint_constraints())
                 else:
                     raw_cns_extend(child.size_hint_constraints())

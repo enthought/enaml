@@ -11,19 +11,22 @@ class WxComboBox(WxConstraintsWidget):
     """ A Wx implementation of an Enaml ComboBox.
     
     """
-    def create(self):
-        """ Create the underlying widget
+    #--------------------------------------------------------------------------
+    # Setup Methods
+    #--------------------------------------------------------------------------
+    def create_widget(self, parent, tree):
+        """ Create the underlying wx.ComboBox widget.
 
         """
-        self.widget = wx.ComboBox(self.parent_widget, style=wx.CB_READONLY)
+        return wx.ComboBox(parent, style=wx.CB_READONLY)
 
-    def initialize(self, attrs):
-        """ Initialize the widget's attributes
-
+    def create(self, tree):
+        """ Create and initialize the combo box control.
+        
         """
-        super(WxComboBox, self).initialize(attrs)
-        self.set_items(attrs['items'])
-        self.set_index(attrs['index'])
+        super(WxComboBox, self).create(tree)
+        self.set_items(tree['items'])
+        self.set_index(tree['index'])
         self.widget.Bind(wx.EVT_COMBOBOX, self.on_index_changed)
 
     #--------------------------------------------------------------------------

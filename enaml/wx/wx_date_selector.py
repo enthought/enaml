@@ -14,18 +14,18 @@ class WxDateSelector(WxBoundedDate):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create_widget(self, parent, tree):
         """ Creates the underlying wx.DatePickerCtrl.
 
         """
-        self.widget = wx.DatePickerCtrl(self.parent_widget)
+        return wx.DatePickerCtrl(parent)
 
-    def initialize(self, attrs):
-        """ Initialize the widget's attributes.
+    def create(self, tree):
+        """ Create and initialize the date selector control.
 
         """
-        super(WxDateSelector, self).initialize(attrs)
-        self.set_date_format(attrs['date_format'])
+        super(WxDateSelector, self).create(tree)
+        self.set_date_format(tree['date_format'])
         self.widget.Bind(wx.EVT_DATE_CHANGED, self.on_date_changed)
 
     #--------------------------------------------------------------------------

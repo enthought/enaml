@@ -67,14 +67,14 @@ def label_factory():
     return WxLabel
 
 
-# def notebook_factory():
-#     from .wx_notebook import WxNotebook
-#     return WxNotebook
+def notebook_factory():
+    from .wx_notebook import WxNotebook
+    return WxNotebook
 
 
-# def page_factory():
-#     from .wx_page import WxPage
-#     return WxPage
+def page_factory():
+    from .wx_page import WxPage
+    return WxPage
 
 
 def push_button_factory():
@@ -136,8 +136,8 @@ WX_FACTORIES = {
     'Html': html_factory,
     #'ImageView': image_view_factory,
     'Label': label_factory,
-    #'Notebook': notebook_factory,
-    #'Page': page_factory,
+    'Notebook': notebook_factory,
+    'Page': page_factory,
     'PushButton': push_button_factory,
     'ProgressBar': progress_bar_factory,
     'RadioButton': radio_button_factory,

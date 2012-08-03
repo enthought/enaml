@@ -24,18 +24,21 @@ class WxHtml(WxConstraintsWidget):
     """ A Wx implementation of the Enaml Html widget.
 
     """
-    def create(self):
-        """ Create the underlying widget.
+    #--------------------------------------------------------------------------
+    # Setup Methods
+    #--------------------------------------------------------------------------
+    def create_widget(self, parent, tree):
+        """ Create the underlying html widget.
 
         """
-        self.widget = wxProperHtmlWindow(self.parent_widget)
+        return wxProperHtmlWindow(parent)
 
-    def initialize(self, attrs):
-        """ Initialize the widget's attributes.
+    def create(self, tree):
+        """ Create and initialize the html control.
 
         """
-        super(WxHtml, self).initialize(attrs)
-        self.set_source(attrs['source'])
+        super(WxHtml, self).create(tree)
+        self.set_source(tree['source'])
 
     #--------------------------------------------------------------------------
     # Message Handlers

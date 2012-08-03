@@ -16,25 +16,25 @@ class WxAbstractButton(WxConstraintsWidget):
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
-    def create(self):
-        """ The create method must be implemented by subclasses to 
-        create the proper button control.
+    def create_widget(self, parent, tree):
+        """ This method must be implemented by subclasses to create 
+        the proper button widget.
 
         """
         raise NotImplementedError
 
-    def initialize(self, attrs):
-        """ Initialize the attribute of the underlying Wx widget.
+    def create(self, tree):
+        """ Create and initialize the abstract button widget.
 
         Subclasses should reimplement this method and bind appropriate
         event handlers to the 'on_clicked' and 'on_toggled' event 
         handlers.
 
         """
-        super(WxAbstractButton, self).initialize(attrs)
-        self.set_checkable(attrs['checkable'])
-        self.set_checked(attrs['checked'])
-        self.set_text(attrs['text'])
+        super(WxAbstractButton, self).create(tree)
+        self.set_checkable(tree['checkable'])
+        self.set_checked(tree['checked'])
+        self.set_text(tree['text'])
 
     #--------------------------------------------------------------------------
     # Message Handlers

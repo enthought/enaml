@@ -17,20 +17,23 @@ class WxProgressBar(WxConstraintsWidget):
     #: The maximum value of the progress bar
     _maximum = 100
 
-    def create(self):
-        """ Create the underlying progress bar widget.
+    #--------------------------------------------------------------------------
+    # Setup Methods
+    #--------------------------------------------------------------------------
+    def create_widget(self, parent, tree):
+        """ Create the underlying wx.Gauge widget.
 
         """
-        self.widget = wx.Gauge(self.parent_widget)
+        return wx.Gauge(parent)
 
-    def initialize(self, attrs):
-        """ Initialize the widget's attributes.
-
+    def create(self, tree):
+        """ Create and initialize the progress bar control.
+        
         """
-        super(WxProgressBar, self).initialize(attrs)
-        self.set_minimum(attrs['minimum'])
-        self.set_maximum(attrs['maximum'])
-        self.set_value(attrs['value'])
+        super(WxProgressBar, self).create(tree)
+        self.set_minimum(tree['minimum'])
+        self.set_maximum(tree['maximum'])
+        self.set_value(tree['value'])
 
     #--------------------------------------------------------------------------
     # Message Handlers

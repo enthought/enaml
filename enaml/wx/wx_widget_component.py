@@ -11,25 +11,28 @@ class WxWidgetComponent(WxMessengerWidget):
     """ A Wx implementation of an Enaml WidgetComponent.
 
     """
-    def create(self):
-        """ Creates the underlying QWidget object.
+    #--------------------------------------------------------------------------
+    # Setup Methods
+    #--------------------------------------------------------------------------
+    def create_widget(self, parent, tree):
+        """ Creates the underlying wx.Panel widget.
 
         """
-        self.widget = wx.Panel(self.parent_widget)
+        return wx.Panel(parent)
 
-    def initialize(self, attrs):
-        """ Initialize the attributes of the underlying QWidget.
+    def create(self, tree):
+        """ Create and initialize the widget control.
 
         """
-        super(WxWidgetComponent, self).initialize(attrs)
-        self.set_minimum_size(attrs['minimum_size'])
-        self.set_maximum_size(attrs['maximum_size'])
-        self.set_bgcolor(attrs['bgcolor'])
-        self.set_fgcolor(attrs['fgcolor'])
-        self.set_font(attrs['font'])
-        self.set_enabled(attrs['enabled'])
-        self.set_visible(attrs['visible'])
-        self.set_show_focus_rect(attrs['show_focus_rect'])
+        super(WxWidgetComponent, self).create(tree)
+        self.set_minimum_size(tree['minimum_size'])
+        self.set_maximum_size(tree['maximum_size'])
+        self.set_bgcolor(tree['bgcolor'])
+        self.set_fgcolor(tree['fgcolor'])
+        self.set_font(tree['font'])
+        self.set_enabled(tree['enabled'])
+        self.set_visible(tree['visible'])
+        self.set_show_focus_rect(tree['show_focus_rect'])
 
     #--------------------------------------------------------------------------
     # Message Handlers

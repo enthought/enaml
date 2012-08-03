@@ -14,17 +14,17 @@ class WxCalendar(WxBoundedDate):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
-        """ Creates the wx.calendar.CalendarCtrl.
+    def create_widget(self, parent, tree):
+        """ Creates the wx.calendar.CalendarCtrl widget.
 
         """
-        self.widget = CalendarCtrl(self.parent_widget)
+        return CalendarCtrl(parent)
 
-    def initialize(self, attrs):
-        """ Initialize the widget's attributes
+    def create(self, tree):
+        """ Create and initialize the the calendar widget.
 
         """
-        super(WxCalendar, self).initialize(attrs)
+        super(WxCalendar, self).create(tree)
         self.widget.Bind(EVT_CALENDAR, self.on_date_changed)
 
     #--------------------------------------------------------------------------

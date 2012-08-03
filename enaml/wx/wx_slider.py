@@ -139,28 +139,31 @@ class WxSlider(WxConstraintsWidget):
     """ A Wx implementation of an Enaml Slider.
 
     """
-    def create(self):
-        """ Create the underlying wx.Slider widget.
+    #--------------------------------------------------------------------------
+    # Setup Methods
+    #--------------------------------------------------------------------------
+    def create_widget(self, parent, tree):
+        """ Create the underlying wxProperSlider widget.
 
         """
-        self.widget = wxProperSlider(self.parent_widget)
+        return wxProperSlider(parent)
 
-    def initialize(self, attrs):
-        """ Initialize the widget's attributes.
+    def create(self, tree):
+        """ Create and initialize the slider control.
 
         """
         # NOTE: The tick interval must be set *after* the tick position
         # or Wx will ignore the tick interval. grrr...
-        super(WxSlider, self).initialize(attrs)
-        self.set_value(attrs['value'])
-        self.set_maximum(attrs['maximum'])
-        self.set_minimum(attrs['minimum'])
-        self.set_orientation(attrs['orientation'])
-        self.set_page_step(attrs['page_step'])
-        self.set_single_step(attrs['single_step'])
-        self.set_tick_position(attrs['tick_position'])
-        self.set_tick_interval(attrs['tick_interval'])
-        self.set_tracking(attrs['tracking'])
+        super(WxSlider, self).create(tree)
+        self.set_value(tree['value'])
+        self.set_maximum(tree['maximum'])
+        self.set_minimum(tree['minimum'])
+        self.set_orientation(tree['orientation'])
+        self.set_page_step(tree['page_step'])
+        self.set_single_step(tree['single_step'])
+        self.set_tick_position(tree['tick_position'])
+        self.set_tick_interval(tree['tick_interval'])
+        self.set_tracking(tree['tracking'])
         self.widget.Bind(EVT_SLIDER, self.on_value_changed)
 
     #--------------------------------------------------------------------------

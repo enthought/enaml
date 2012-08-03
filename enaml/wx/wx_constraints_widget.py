@@ -69,14 +69,14 @@ class WxConstraintsWidget(WxWidgetComponent):
 
     """
     #--------------------------------------------------------------------------
-    # Initialization
+    # Setup Methods
     #--------------------------------------------------------------------------
-    def initialize(self, attrs):
-        """ Initialize the attributes of the widget.
+    def create(self, tree):
+        """ Create and initialize the control.
 
         """
-        super(WxConstraintsWidget, self).initialize(attrs)
-        layout = attrs['layout']
+        super(WxConstraintsWidget, self).create(tree)
+        layout = tree['layout']
         self.hug = layout['hug']
         self.resist_clip = layout['resist_clip']
         self.constraints = layout['constraints']

@@ -85,18 +85,17 @@ class WxCheckBox(WxAbstractButton):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
-        """ Creates the underlying custom wx.CheckBox.
+    def create_widget(self, parent, tree):
+        """ Creates the underlying wxProperCheckBox.
 
         """
-        self.widget = wxProperCheckBox(self.parent_widget)
+        return wxProperCheckBox(parent)
 
-    def initialize(self, attrs):
-        """ Intializes the attributes of the widget and binds the event
-        handlers.
-        
+    def create(self, tree):
+        """ Create and initialize the check box control.
+
         """
-        super(WxCheckBox, self).__init__(attrs)
+        super(WxCheckBox, self).create(tree)
         widget = self.widget
         widget.Bind(EVT_CHECKBOX_CLICKED, self.on_clicked)
         widget.Bind(EVT_CHECKBOX_TOGGLED, self.on_toggled)

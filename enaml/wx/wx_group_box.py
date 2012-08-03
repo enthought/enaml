@@ -184,20 +184,20 @@ class WxGroupBox(WxContainer):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create_widget(self, parent, tree):
         """ Creates the underlying custom wxGroupBox control.
 
         """
-        self.widget = wxGroupBox(self.parent_widget)
+        return wxGroupBox(parent)
 
-    def initialize(self, attrs):
-        """ Intializes the widget with the attributes of this instance.
+    def create(self, tree):
+        """ Create and initialize the group box control.
 
         """
-        super(WxGroupBox, self).initialize(attrs)
-        self.set_title(attrs['title'])
-        self.set_flat(attrs['flat'])
-        self.set_title_align(attrs['title_align'])
+        super(WxGroupBox, self).create(tree)
+        self.set_title(tree['title'])
+        self.set_flat(tree['flat'])
+        self.set_title_align(tree['title_align'])
 
     #--------------------------------------------------------------------------
     # Message Handlers

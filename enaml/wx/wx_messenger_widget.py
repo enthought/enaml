@@ -122,54 +122,76 @@ class WxMessengerWidget(object):
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
-    def create(self):
-        """ A method which must be implemented by subclasses. 
+    def create_widget(self, parent, tree):
+        """ A method which must be implemented by subclasses.
 
-        This method should create the underlying QWidget object and 
-        assign it to the 'widget' attribute. Implementations of this
-        method should *not* call the superclass version.
+        This method is called by the create(...) method. It should and
+        return the underlying wx widget. Implementations of this method
+        should *not* call the superclass version.
+
+        Parameters
+        ----------
+        parent : wxWindow or None
+            The parent wx widget for this control, or None if if the
+            control does not have a parent.
+
+        tree : dict
+            The dictionary representation of the tree for this object.
+            This is provided in the even that the component needs to 
+            create a different type of widget based on the information
+            in the tree.
 
         """
         raise NotImplementedError
 
-    def initialize(self, attributes):
-        """ A method called to initialize the attributes of the 
-        underlying widget.
+    def create(self, tree):
+        """ A method called by the application when creating the UI.
 
-        The default implementation of this method is a no-op in order
-        to be super() friendly. Implementations of this method should
-        call the superclass version to make sure that all attributes
-        get properly initialized.
+        The default implementation of this method calls 'create_widget'
+        and assigns the results to the 'widget' attribute, so subclasses
+        must be sure to call the superclass method as the first order of
+        business.
 
-        This method will be called after all other widgets for the
-        creation pass have been created.
+        This method is called by the application in a top-down fashion.
 
         Parameters
         ----------
-        attributes : dict
-            The dictionary of attributes that was contained in the
-            payload of the operation for the 'create' action which
-            created this widget.
+        tree : dict
+            The dictionary representation of the tree for this object.
 
         """
-        pass
+        self.widget = self.create_widget(self.parent_widget, tree)
 
-    def post_initialize(self):
-        """ A method that allows widgets to do post initialization work.
+    def post_create(self):
+        """ A method that allows widgets to do post creation work.
 
-        This method is called after all widgets in a creation pass have
-        had their 'initialize' method called. It is useful for e.g.
-        layout initialization, which requires that all child widgets
-        have their attributes already initialized.
+        This method is called after all widgets in a tree have had
+        their 'create' method called. It is useful for doing any
+        initialization where a widget must access its child widgets.
 
         The default implementation of this method is a no-op in order
-        to be super() friendly. Implementations of this method should
-        call the superclass version to make sure that all post
-        initialization is properly performed.
+        to be super() friendly.
+
+        This method is called by the application in a top-down fashion.
 
         """
         pass
 
+    def init_layout(self):
+        """ A method that allows widgets to do layout initialization.
+
+        This method is called after all widgets in a tree have had
+        their 'post_create' method called. It is useful for doing any
+        initialization related to layout.
+
+        The default implementation of this method is a no-op in order
+        to be super() friendly.
+
+        This method is called by the application in a bottom-up order.
+        
+        """
+        pass
+        
     def destroy(self):
         """ Destroy this widget by removing all references to it from
         it parent and its children and destroy the underlying Wx widget.

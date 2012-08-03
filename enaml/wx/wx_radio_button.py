@@ -153,18 +153,17 @@ class WxRadioButton(WxAbstractButton):
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create_widget(self, parent, tree):
         """ Creates the underlying custom wx.RadioButton control.
 
         """
-        self.widget = wxProperRadioButton(self.parent_widget)
+        return wxProperRadioButton(parent)
 
-    def initialize(self, attrs):
-        """ Intializes the attributes of the widget and binds the event
-        handlers.
+    def create(self, tree):
+        """ Create and initialize the radio button control.
         
         """
-        super(WxRadioButton, self).__init__(attrs)
+        super(WxRadioButton, self).create(tree)
         widget = self.widget
         widget.Bind(EVT_RADIO_CLICKED, self.on_clicked)
         widget.Bind(EVT_RADIO_TOGGLED, self.on_toggled)
