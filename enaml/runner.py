@@ -13,7 +13,7 @@ import warnings
 
 from enaml import imports
 from enaml.application import Application
-from enaml.stdlib.sessions import ComponentSession
+from enaml.stdlib.sessions import component_session
 from enaml.core.parser import parse
 from enaml.core.enaml_compiler import EnamlCompiler
 from enaml.qt.qt_local_server import QtLocalServer
@@ -120,17 +120,13 @@ def main():
     requested = options.component
     if requested in ns:
         component = ns[requested]
-        Session = ComponentSession(component, requested, 'Enaml-run "%s" view' %
-            requested)
-
-        app = Application([Session.create_handler()])
-        
+        descr = 'Enaml-run "%s" view' % requested
+        factory = component_session(requested, descr, component)
+        app = Application([factory])        
         server = QtLocalServer(app)
         client = server.local_client()
-        
         client.start_session(requested)
         server.start()
-        
     elif 'main' in ns:
         ns['main']()
     else:
