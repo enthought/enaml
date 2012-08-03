@@ -6,8 +6,8 @@ import logging
 
 
 class Application(object):
-    """ The app server which manages the top-level communication
-    protocol for serving Enaml applications.
+    """ The application object which manages the top-level communication
+    protocol for serving Enaml views.
 
     """
     #: A message dispatch table used to speed up message routing
@@ -20,18 +20,20 @@ class Application(object):
         'widget_action_response': '_dispatch_session_message',
     }
 
-    def __init__(self, handlers):
+    def __init__(self, factories):
         """ Initialize an Enaml Application.
 
         Parameters
         ----------
-        handlers : iterable of session handlers
+        factories : iterable
+            An iterable of SessionFactory instances that will be used
+            to create the sessions for the application.
 
         """
-        self._all_handlers = []
-        self._named_handlers = {}
+        self._all_factories = []
+        self._named_factories = {}
         self._sessions = {}
-        self.add_handlers(handlers)
+        self.add_factories(factories)
 
     #--------------------------------------------------------------------------
     # Message Handling
@@ -48,8 +50,9 @@ class Application(object):
             The request object containing the message sent by client.
 
         """
-        sessions = [{'name': h.session_name, 'description': h.session_description} 
-            for h in self._all_handlers
+        sessions = [
+            {'name': fact.name, 'description': fact.description} 
+            for fact in self._all_factories
         ]
         content = {'sessions': sessions}
         request.send_ok_response(content=content)
@@ -70,15 +73,17 @@ class Application(object):
         """
         message = request.message
         name = message.content.name
-        if name not in self._named_handlers:
+        if name not in self._named_factories:
             request.send_error_response('Invalid session name')
         else:
             # XXX Do we want to move this to a call later, and do some
             # checking on the number of open sessions etc?
-            handler = self._named_handlers[name]
-            session = handler(request)
+            factory = self._named_factories[name]
+            session = factory(request)
             session_id = session.session_id
             self._sessions[session_id] = session
+            # XXX Do we want to open() immediately, or wait util the 
+            # first snapshot request comes in for the session?
             session.open()
             content = {'session': session_id}
             request.send_ok_response(content=content)
@@ -127,26 +132,28 @@ class Application(object):
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
-    def add_handlers(self, handlers):
-        """ Add session handlers to the application.
+    def add_factories(self, factories):
+        """ Add session factories to the application.
 
         Parameters
         ----------
-        handlers : iterable of tuples
+        factories : iterable
+            An iterable of SessionFactory instances to add to the 
+            application.
 
         """
-        all_handlers = self._all_handlers
-        named_handlers = self._named_handlers
-        for handler in handlers:
-            name = handler.session_name
-            if name in named_handlers:
-                msg = 'Multiple session handlers named `%s`; ' % name
+        all_factories = self._all_factories
+        named_factories = self._named_factories
+        for factory in factories:
+            name = factory.name
+            if name in named_factories:
+                msg = 'Multiple session factories named `%s`; ' % name
                 msg += 'replacing previous value.'
                 logging.warn(msg)
-                old_handler = named_handlers.pop(name)
-                all_handlers.remove(old_handler)
-            all_handlers.append(handler)
-            named_handlers[name] = handler
+                old_factory = named_factories.pop(name)
+                all_factories.remove(old_factory)
+            all_factories.append(factory)
+            named_factories[name] = factory
 
     def handle_request(self, request):
         """ Route and process a message for the Enaml application.
@@ -160,6 +167,7 @@ class Application(object):
         Parameters
         ----------
         request : BaseRequest
+            The request object which wraps a message sent by a client.
 
         """
         msg_type = request.message.header.msg_type
@@ -167,5 +175,5 @@ class Application(object):
         if route is not None:
             getattr(self, route)(request)
         else:
-            self._send_error_response(request, 'Invalid message type')
+            request.send_error_response(request, 'Invalid message type')
 
