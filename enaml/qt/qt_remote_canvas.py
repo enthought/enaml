@@ -49,6 +49,10 @@ class QtRemoteCanvas(QtConstraintsWidget):
     # Signal Handlers
     #--------------------------------------------------------------------------
     def on_resize(self):
+        """ Notify the server when the widget size changes so the canvas can be
+        regenerated.
+
+        """
         size = self.widget.size()
         content = {'size': (size.width(), size.height())}
         self.send_action('size_changed', content)

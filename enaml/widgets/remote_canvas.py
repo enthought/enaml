@@ -81,16 +81,23 @@ class RemoteCanvas(ConstraintsWidget):
         self.set_guarded(_render_size=size)
 
     def _regenerate_buffer(self):
+        """ Rebuild the backing store used to render the enable component
+            with the new render size
+
+        """
         w, h = self._render_size
         
         rem = w % 4
-        # Each scanline needs to be 32bit aligned
+        # Each scanline needs to be 32bit aligned (for Qt)
         if rem: w += (4 - rem)
         
         self._img_buffer = CanvasGraphicsContext((w,h))
-        self._rerender()
+        self._render()
 
-    def _rerender(self):
+    def _render(self):
+        """ Render the enable component into the backbuffer and send to the client
+
+        """
         component = self.component
         component.outer_bounds = self._render_size
         component.do_layout(force=True)
