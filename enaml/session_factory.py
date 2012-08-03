@@ -2,68 +2,58 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-"""
-Session Handler
-===============
-
-The application object expects session handlers to have the
-following attributes:
-
-session_name : string
-    A unique, human-friendly name.
-
-session_description : string
-    A brief description of the session.
-
-The session handler should also be callable, where the call is given
-a start_session request, and returns an instance of a Session.
-
-While in many cases this may be an instance of the SessionHandler class,
-does not need to be the case.
-
-"""
-
-
-class SessionHandler(object):
-    """ Callable that can create a new session from a Session subclass
+class SessionFactory(object):
+    """ A class whose instances are used by an Enaml Application to 
+    create Session instances.
     
     """
-    
-    def __init__(self, session_name, session_description, session_class, *args, **kwargs):
-        """ Initialize a SessionHandler
+    def __init__(self, name, description, session_class, *args, **kwargs):
+        """ Initialize a SessionFactory.
         
         Parameters
         ----------
-        session_name : string
-            A unique, human-friendly name.
+        name : str
+            A unique, human-friendly name for the Session that will be
+            created.
         
-        session_description : string
-            A brief description of the session.
+        description : str
+            A brief description of the Session that will be created.
         
-        session_class : Session subclass object
-            A subclass of Session that this handler creates
+        session_class : Session subclass
+            A concrete subclass of Session that will be created by this
+            factory.
         
-        args : tuple
-            Optional positional arguments to be passed to the Session's
-            initialize() method
-        
-        kwargs : dict
-            Optional keyword arguments to be passed to the Session's
-            initialize() method
+        *args, **kwargs
+            Optional positional and keyword arguments to pass to the
+            initialize() method of the Session that gets created.
         
         """
-        self.session_name = session_name
-        self.session_description = session_description
+        self.name = name
+        self.description = description
         self.session_class = session_class
         self.args = args
         self.kwargs = kwargs
     
     def __call__(self, request):
-        """ Create an instance of the Session subclass
+        """ Called by the Enaml Application to create an instance of 
+        the Session.
+
+        Parameters
+        ----------
+        request : BaseRequest
+            The request with message type 'start_session' sent by 
+            client to start a new session.
+
+        Returns
+        -------
+        result : Session
+            A new instance of the Session type provided to the factory.
         
         """
         push_handler = request.push_handler()
         username = request.message.header.username
-        session = self.session_class(push_handler, username, self.args,
-            self.kwargs)
+        session = self.session_class(
+            push_handler, username, self.args, self.kwargs
+        )
         return session
+
