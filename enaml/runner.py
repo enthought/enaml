@@ -12,11 +12,9 @@ import types
 import warnings
 
 from enaml import imports
-from enaml.application import Application
-from enaml.stdlib.sessions import component_session
+from enaml.stdlib.sessions import single_view_app
 from enaml.core.parser import parse
 from enaml.core.enaml_compiler import EnamlCompiler
-from enaml.qt.qt_local_server import QtLocalServer
 
 
 def prepare_toolkit(toolkit_option):
@@ -86,6 +84,8 @@ def main():
     parser.allow_interspersed_args = False
     parser.add_option('-c', '--component', default='Main',
                       help='The component to view')
+    parser.add_option('-t', '--toolkit', default='qt4',
+                      help='The GUI toolikit to use')
 
     options, args = parser.parse_args()
 
@@ -121,9 +121,13 @@ def main():
     if requested in ns:
         component = ns[requested]
         descr = 'Enaml-run "%s" view' % requested
-        factory = component_session(requested, descr, component)
-        app = Application([factory])        
-        server = QtLocalServer(app)
+        app = single_view_app(requested, descr, component)
+        if options.toolkit == 'wx':
+            from enaml.wx.wx_local_server import WxLocalServer
+            server = WxLocalServer(app)        
+        else:
+            from enaml.qt.qt_local_server import QtLocalServer
+            server = QtLocalServer(app)
         client = server.local_client()
         client.start_session(requested)
         server.start()

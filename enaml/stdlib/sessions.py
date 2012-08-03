@@ -58,7 +58,7 @@ def component_session(name, description, component, *args, **kwargs):
     *args, **kwargs
         Optional positional and keyword arguments to pass to the callable
         when the session is created.
-    
+
     """
     fact = SessionFactory(
         name, description, ComponentSession, component, *args, **kwargs
@@ -69,6 +69,20 @@ def component_session(name, description, component, *args, **kwargs):
 def view_factory(name=None, description=None):
     """ A decorator that creates a session factory from a function.
      
+    This can be used in the following ways:
+        
+        @view_factory
+        def view(...):
+            ...
+            return View(...)
+        
+        @view_factory('my-views', 'This is several view')
+        def views(...):
+            ...
+            return [View1(...), View2(...)]
+    
+        simple = view_factory(Main)
+    
     """
     def wrapper(func, _name, _descr):
         if _name is None:
@@ -84,4 +98,33 @@ def view_factory(name=None, description=None):
     def _wrapper(func):
         return wrapper(func, name, description)
     return _wrapper
+
+
+def single_view_app(name, description, component, *args, **kwargs):
+    """ Utility function which creates an application from a component.
+    
+    This is suitable for use in simple applications, particularly 
+    "traditional" GUI applications running a single main view in a 
+    single process.
+    
+    Parameters
+    ----------
+    name : str
+        An ounique, human-friendly name.
+    
+    description : str
+        An brief description of the session.
+    
+    component : callable
+        A callable which returns a component or iterable of components.
+
+    *args, **kwargs
+        Optional positional and keyword arguments to pass to the 
+        callable when the session is opened.
+    
+    """
+    from enaml.application import Application
+    factory = component_session(name, description, component, *args, **kwargs)
+    app = Application([factory])
+    return app
 
