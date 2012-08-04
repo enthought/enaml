@@ -153,7 +153,7 @@ class QtClientSession(object):
                 widget = widget_cls(parent, widget_id, self)
                 widgets[widget_id] = widget
                 created.append((widget, tree_item))
-                for ctree in tree_item['children']:
+                for ctree in reversed(tree_item['children']):
                     stack.append(ctree)
                     parents.append(widget)
 
