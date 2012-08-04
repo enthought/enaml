@@ -107,9 +107,9 @@ def spin_box_factory():
     return WxSpinBox
 
 
-# def splitter_factory():
-#     from .wx_splitter import WxSplitter
-#     return WxSplitter
+def splitter_factory():
+    from .wx_splitter import WxSplitter
+    return WxSplitter
 
 
 # def text_editor_factory():
@@ -144,7 +144,7 @@ WX_FACTORIES = {
     #'ScrollArea': scroll_area_factory,
     'Slider': slider_factory,
     'SpinBox': spin_box_factory,
-    #'Splitter': splitter_factory,
+    'Splitter': splitter_factory,
     #'TextEditor': text_editor_factory,
     'Window': window_factory,
 }
