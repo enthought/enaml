@@ -4,56 +4,98 @@
 //-----------------------------------------------------------------------------
 //
 //     JSON does not allow comments, so this file is marked as js.
-//     However, it is describing a JSON specification
+//     However, it is describing a JSON specification.
 //
 //-----------------------------------------------------------------------------
 // Validator Format
 //-----------------------------------------------------------------------------
-// This describes the format for specifying a validator which validates
-// user text input. The format is intentionally loose so that it may
-// scale with new requirements as dictated by future use cases.
+// This describes the format for specifying a client-side validator which 
+// validates user text input. The format is intentionally loose so that it 
+// may scale with new requirements as dictated by future use cases.
 {
-  // The type of this validator. The validator type largely dictate what
-  // other properties are supported by the validator. This field is
-  // required.
+  // The type of this client-side validator. If a particular client does
+  // not support this validator type, the validator will be ignored. This
+  // field is required.
   "type": "<string>",
+
+  // Different types of validators may require arguments to be supplied
+  // to the client-side validator object. These are specified as key-value
+  // pairs and depend upon the validator "type". This field is required. 
+  "arguments": {},
 
   // The message which should be displayed by the control when the 
   // validator fails. The means by which this message is displayed,
   // or whether it is displayed at all, is implementation defined.
-  // This field is optional. If a message is provided, it must be a 
-  // string.
+  // This field is optional.
   "message": "<string>",
   
-  // Different types of validators may require arguments to be
-  // supplied to the toolkit validator object.  These values are
-  // specified in this field as a dictionary of argument, value pairs
-  "arguments": {},
-  
-  // Styling for invalid entries and the associated messages will be
-  // specified by virtual states in the widget stylesheet, once they
-  // are implemented.
+  // The pseudo state to apply to the field if the validator fails. This 
+  // allows the developer to control styling of the field based on the
+  // state of its validator(s). This field is optional. 
+  "fail_state": "<string>",
+
+  // The pseudo state to apply to the field if the validator passes. This 
+  // allows the developer to control styling of the field based on the
+  // state of its validator(s). This field is optional.
+  "pass_state": "<string>"
 }
 
 
 //-----------------------------------------------------------------------------
 // Currently Supported Validators
 //-----------------------------------------------------------------------------
+// The following fragments describe the currently supported validators.
+// Only the required fields are described. The optional fields function
+// exactly as described in the specification of the validator format.
+
+// Regex Validator - uses a regular expression to validate text.
 {
-  // The null validator accepts all input as valid.
-  "type": "null",
+  "type": "regex",
+  "arguments": {
+    // The regex string to use for validating the text. The regex format
+    // follows Python's regex rules. Only text which matches the regex
+    // is considered valid.
+    "regex": "<string>",
+  }
 }
 
 
+// Int Range Validator - allows integer input within a value range
 {
-  // The regexp validator uses a regex for validation.
-  "type": "regex",
-
-  // The regex string to use for validating the text. The regex format
-  // follows Python's regex rules. Only text which matches the regex
-  // is considered valid. This field is required.
+  "type": "int_range",
   "arguments": {
-    "regex": "<string>",
+    // The number base to use with the range. Supported bases are 
+    // 2, 8, 10, and 16.
+    "base": 2 | 8 | 10 | 16,
+
+    // The base 10 lower bound of allowable values, inlcusive. Null 
+    // indicates no lower bound.
+    "minimum": null,
+
+    // The base 10 upper bound of allowable values, inclusive. Null 
+    // indicates no upper bound.
+    "maximum": null,
+  }
+}
+
+
+// Float Range Validator - allows float input within a value range
+{
+  "type": "float_range",
+  "arguments": {
+    // The lower bound of allowable values, inlcusive. Null indicates 
+    // no lower bound.
+    "minimum": null,
+
+    // The upper bound of allowable values, inclusive. Null indicates 
+    // no upper bound.
+    "maximum": null,
+
+    // The number of places to allow after the decimal point.
+    "precision": 0,
+
+    // Whether or not to allow scientific notation in the input.
+    "allow_scientific_notation": false,
   }
 }
 
