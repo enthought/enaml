@@ -327,7 +327,7 @@ class WxNotebook(WxConstraintsWidget):
     # Event Handlers
     #--------------------------------------------------------------------------
     def on_page_close_requested(self, event):
-        """ The signal handler for the 'EVT_PAGE_CLOSE_REQUEST' event.
+        """ The event handler for the 'EVT_PAGE_CLOSE_REQUEST' event.
 
         This handler is only bound for 'document' style notebook tabs, 
         and it is only called when the page is marked as closable.
