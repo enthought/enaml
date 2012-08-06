@@ -27,17 +27,7 @@
   // validator fails. The means by which this message is displayed,
   // or whether it is displayed at all, is implementation defined.
   // This field is optional.
-  "message": "<string>",
-  
-  // The pseudo state to apply to the field if the validator fails. This 
-  // allows the developer to control styling of the field based on the
-  // state of its validator(s). This field is optional. 
-  "fail_state": "<string>",
-
-  // The pseudo state to apply to the field if the validator passes. This 
-  // allows the developer to control styling of the field based on the
-  // state of its validator(s). This field is optional.
-  "pass_state": "<string>"
+  "message": "<string>"
 }
 
 
