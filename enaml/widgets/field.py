@@ -7,7 +7,7 @@ from traits.api import (
 )
 
 from enaml.core.trait_types import EnamlEvent
-from enaml.validators import Validator
+from enaml.validation import Validator
 
 from .constraints_widget import ConstraintsWidget
 
@@ -16,30 +16,16 @@ class TextEditEvent(HasTraits):
     """ An event object that is emitted when the client edits text.
 
     """
-    #: The unicode text that was edited in the client control.
-    edit_text = ReadOnly
+    #: The original unicode text in the field pre-edit.
+    orig_text = ReadOnly
 
-    #: Whether or not the edit text passed all client validators.
-    edit_valid = ReadOnly
+    #: The unicode text that was edited in the client control. This
+    #: text can be modified to change what is applied to the field.
+    edit_text = Unicode
 
-    #: The unicode text to apply to the 'text' attribute of the Field.
-    #: This text will be the same as 'edit_text' until changed.
-    text = Unicode
-    def _text_default(self):
-        return self.edit_text
-
-    #: Whether or not the 'text' attribute should be considered valid.
-    #: This will be the same as 'edit_valid' until changed. If this
-    #: value is True at the end of event processing, then the 'text'
-    #: attribute of the Field will be assigned the value of 'text'.
-    valid = Bool
-    def _valid_default(self):
-        return self.edit_valid
-
-    #: Whether or not the value of the client field should be restored
-    #: to the value of the 'text' attribute on the Field if 'valid' is
-    #: False at the end of event processing.
-    restore = Bool(False)
+    #: Whether or not the edit text is considered valid. This can
+    #: be modified to change whether or not the edit text is valid.
+    edit_valid = Bool
 
 
 class Field(ConstraintsWidget):
@@ -54,17 +40,13 @@ class Field(ConstraintsWidget):
     #: to control the subsequent update to the 'text' attribute.
     text_edited = EnamlEvent
 
-    #: The mask to use for input text. 
+    #: The mask to use for text input. 
     #: TODO - describe and implement this mask
     mask = Unicode
 
-    #: A list of dictionaries representing the validation to perform on
-    #: the field client-side. Validators will be executed in order and 
-    #: will stop at the first failing validator. The validator format
-    #: is specified in the file validator_format.js. If no validators
-    #: are supplied, all input is accepted. Validators are executed by
-    #: the client on every key press.
-    validators = List(Dict)
+    #: The validator to use with the field. Note that the validator will
+    #: executed client-side.
+    validator = Instance(Validator)
 
     #: The actions which should cause the client to send a text edited
     #: event back to the server if the text in the control has changed.
@@ -102,7 +84,7 @@ class Field(ConstraintsWidget):
         """
         snap = super(Field, self).snapshot()
         snap['text'] = self.text
-        snap['validators'] = self.validators
+        snap['validator'] = self._snap_validator()
         snap['edit_triggers'] = self.edit_triggers
         snap['placeholder'] = self.placeholder
         snap['echo_mode'] = self.echo_mode
@@ -120,8 +102,19 @@ class Field(ConstraintsWidget):
             'text', 'placeholder', 'echo_mode', 'max_length', 'read_only',
         )
         self.publish_attributes(*attrs)
-        self.on_trait_change(self._send_validators, 'validators[]')
+        self.on_trait_change(self._send_validator, 'validator')
         self.on_trait_change(self._send_edit_triggers, 'edit_triggers[]')
+
+    #--------------------------------------------------------------------------
+    # Private API
+    #--------------------------------------------------------------------------
+    def _snap_validator(self):
+        """ A private method which returns the serializable form of the
+        current validator.
+
+        """
+        validator = self.validator
+        return validator.as_dict() if validator is not None else None
 
     #--------------------------------------------------------------------------
     # Message Handling
@@ -130,26 +123,35 @@ class Field(ConstraintsWidget):
         """ Handle the 'text_edited' action from the client widget.
 
         """
-        text = content['text']
-        valid = content['valid']
-        event = TextEditEvent(edit_text=text, edit_valid=valid)
+        orig_text = self.text
+        edit_text = content['text']
+        edit_valid = content['valid']
+        
+        validator = self.validator
+        if validator is not None:
+            edit_text, edit_valid = validator.validate(
+                orig_text, edit_text, edit_valid
+            )
+        
+        event = TextEditEvent(
+            orig_text=orig_text, edit_text=edit_text, edit_valid=edit_valid,
+        )
         self.text_edited(event)
-        if event.valid:
-            if event.text != event.edit_text:
-                self.text = event.text
-            else:
-                self.set_guarded(text=event.text)
-        else:
-            if event.restore:
-                content = {'text': self.text}
+        
+        if event.edit_valid:
+            # If the edit is valid and text differs from the original
+            # edit text, we push an update to the client.
+            if edit_text != event.edit_text:
+                content = {'text': event.edit_text}
                 self.send_action('set_text', content)
+            self.set_guarded(text=event.edit_text)
 
-    def _send_validators(self):
-        """ Send the new validators to the client widget.
+    def _send_validator(self):
+        """ Send the new validator to the client widget.
 
         """
-        content = {'validators': self.validators}
-        self.send_action('set_validators', content)
+        content = {'validator': self._snap_validator()}
+        self.send_action('set_validator', content)
 
     def _send_edit_triggers(self):
         """ Send the new edit triggers to the client widget.

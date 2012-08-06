@@ -2,7 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import HasTraits, Str, ReadOnly
+from traits.api import HasTraits, Str, Unicode, ReadOnly
 
 
 class Validator(HasTraits):
@@ -10,19 +10,14 @@ class Validator(HasTraits):
 
     """
     #: The type of the validator to create on the client side. This
-    #: should be defined by subclasses.
+    #: value should be redefined by subclasses. The default type is
+    #: 'null' and indicates that all edit text is considered valid.
     validator_type = ReadOnly('null')
 
     #: An optional message to associate with a validator. The client
-    #: control may use this to display a custom message if and when
-    #: the client-side validation fails.
-    message = Str
-
-    #: The pseudo state to apply to client field if the validator fails.
-    fail_state = Str
-
-    #: The pseudo state to apply to the client field if the succeeds.
-    pass_state = Str
+    #: widget may use this to display a custom message if client-side
+    #: validation fails.
+    message = Unicode
 
     def as_dict(self):
         """ Returns a representation of the validator as dict.
@@ -37,15 +32,14 @@ class Validator(HasTraits):
         res = {}
         res['type'] = self.validator_type
         res['message'] = self.message
-        res['fail_state'] = self.fail_state
-        res['pass_state'] = self.pass_state
         res['arguments'] = self.arguments()
+        return res
 
     def arguments(self):
         """ Returns the arguments for the validator. 
 
         This method should be overridden by subclasses to return the
-        appropriate arguments dict.
+        appropriate arguments dict for the validator.
 
         Returns
         -------
@@ -55,18 +49,49 @@ class Validator(HasTraits):
         """
         return {}
 
+    def validate(self, orig_text, edit_text, edit_valid):
+        """ A method that can be implemented by subclasses to perform
+        additional server-side validation.
+
+        This method is called every time the client widget sends the
+        server widget a text edit event.
+
+        Parameters
+        ----------
+        orig_text : unicode
+            The original text in the Field. This will be the same as
+            the current value of the 'text' attribute in the Field.
+
+        edit_text : unicode
+            The unicode text edited in the client widget.
+
+        edit_valid : bool
+            Whether or not the edit text passed client-side validation.
+
+        Returns
+        -------
+        result : (unicode, bool)
+            The (optionally modified) edit text and whether or not that
+            text is considered valid. The default implementation returns 
+            the given values with no modification.
+
+        """
+        return (edit_text, edit_valid)
+
 
 class RegexValidator(Validator):
     """ A validator which validates based on a regular expression.
 
     """
-    def __init__(self, regex, message='', fail_state=''):
-        """ Initialize a RegexValidator.
+    #: The type of the validator.
+    validator_type = 'regex'
+    
+    #: The regular expression string to use for matching text.
+    regex = Str
 
-        Parameters
-        ----------
-        regex : str
-            A regular expression string to use for validating the 
-            user's text input.
+    def arguments(self):
+        """ Returns the arguments dict for the client-side validator.
 
         """
+        return {'regex': self.regex}
+

@@ -37,9 +37,9 @@ def date_selector_factory():
 #     return WxDialog
 
 
-# def field_factory():
-#     from .wx_field import WxField
-#     return WxField
+def field_factory():
+    from .wx_field import WxField
+    return WxField
 
 
 def form_factory():
@@ -130,7 +130,7 @@ WX_FACTORIES = {
     'DateSelector': date_selector_factory,
     #'DatetimeSelector': datetime_selector_factory,
     #'Dialog': dialog_factory,
-    #'Field': field_factory,
+    'Field': field_factory,
     'Form': form_factory,
     'GroupBox': group_box_factory,
     'Html': html_factory,
