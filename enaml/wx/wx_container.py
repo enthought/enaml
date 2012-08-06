@@ -115,6 +115,10 @@ class WxContainer(WxConstraintsWidget):
     """ A Wx implementation of an Enaml Container.
 
     """
+    #: Whether or not the widget is shown on the screen. This value 
+    #: is updated through an event handler for the EVT_SHOW event.
+    _is_shown = True
+
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
@@ -135,12 +139,14 @@ class WxContainer(WxConstraintsWidget):
         self._layout_owner = None
         self._layout_manager = None
         self.widget.Bind(wx.EVT_SIZE, self.on_resize)
+        self.widget.Bind(wx.EVT_SHOW, self.on_show)
 
     def init_layout(self):
         """ Initializes the layout for the container. 
 
         """
         super(WxContainer, self).init_layout()
+        self._is_shown = self.widget.IsShown()
         if self._owns_layout:
             mgr = self._layout_manager = LayoutManager()
             mgr.initialize(self._generate_constraints())
@@ -151,14 +157,27 @@ class WxContainer(WxConstraintsWidget):
             self.widget.SetMaxSize(max_size)
     
     #--------------------------------------------------------------------------
-    # Signal Handlers
+    # Event Handlers
     #--------------------------------------------------------------------------
     def on_resize(self, event):
-        """ Triggers a layout pass when the container widget has been 
-        resized.
+        """ The event handler for the EVT_SIZE event.
+
+        This handler triggers a layout pass when the container widget 
+        is resized.
 
         """
         if self._layout_manager is not None:
+            self.refresh()
+
+    def on_show(self, event):
+        """ The event handler for the EVT_SHOW event.
+
+        This handler stores the shown state of the widget and triggers
+        a refresh if widget is being made visible.
+
+        """
+        self._is_shown = shown = event.GetShow()
+        if shown and self._layout_manager is not None:
             self.refresh()
 
     #--------------------------------------------------------------------------
@@ -179,7 +198,12 @@ class WxContainer(WxConstraintsWidget):
         """ Makes a layout pass over the descendents if this widget owns
         the responsibility for their layout.
 
+        If the widget is not visible on the screen, the refresh will 
+        be skipped.
+
         """
+        if not self._is_shown:
+            return
         if self._owns_layout:
             primitive = self.layout_box.primitive
             width = primitive('width', False)
