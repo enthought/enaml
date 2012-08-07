@@ -1,4 +1,5 @@
 from ..qt.QtWebKit import QWebView, QWebSettings
+from ..qt.QtCore import QUrl
 from qt_ace_editor import QtAceEditor
 
 
@@ -22,7 +23,7 @@ class QtAceEditorView(QWebView):
 
         """
         html = self.ace_editor.generate_html(columns)
-        self.setHtml(html)
+        self.setHtml(html, QUrl.fromLocalFile(__file__))
 
     def editor(self):
         """ Return the ace editor

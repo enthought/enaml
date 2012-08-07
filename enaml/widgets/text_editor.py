@@ -2,32 +2,23 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Unicode, Bool, Int, Instance, Either
+from traits.api import Unicode, Int, Instance, List
 from ..noncomponents.document import Document
 from .constraints_widget import ConstraintsWidget
 
 
 class TextEditor(ConstraintsWidget):
-    """ A simple control for displaying read-only text.
+    """ A control for editing text, geared toward code.
 
     """
     #: The number of columns of editors to display
     columns = Int(1)
 
-    #: The document that is currently displayed
-    document = Instance(Document, ())
+    #: A list of documents to be displayed
+    documents = List(Instance(Document))
 
     #: The theme for the document
     theme = Unicode("textmate")
-
-    #: Auto pairs parentheses, braces, etc
-    auto_pair = Bool(True)
-
-    #: The editor's font size
-    font_size = Int(12)
-
-    #: Display the margin line at a certain column
-    margin_line = Either(Bool(True), Int(80))
 
     #--------------------------------------------------------------------------
     # Initialization
@@ -38,11 +29,8 @@ class TextEditor(ConstraintsWidget):
         """
         super_attrs = super(TextEditor, self).creation_attributes()
         super_attrs['columns'] = self.columns
-        super_attrs['document'] = self.document
+        super_attrs['documents'] = [doc.as_dict() for doc in self.documents]
         super_attrs['theme'] = self.theme
-        super_attrs['auto_pair'] = self.auto_pair
-        super_attrs['font_size'] = self.font_size
-        super_attrs['margin_line'] = self.margin_line
         return super_attrs
 
     def bind(self):
@@ -51,5 +39,27 @@ class TextEditor(ConstraintsWidget):
 
         """
         super(TextEditor, self).bind()
-        self.publish_attributes('columns', 'document', 'theme', 'auto_pair',
-            'font_size', 'margin_line')
+        self.publish_attributes('columns', 'documents', 'theme')
+
+    #--------------------------------------------------------------------------
+    # Public API
+    #--------------------------------------------------------------------------
+    def set_text(self, text, index=0):
+        """ Set the text of the document at index
+
+        """
+        self.send_message({
+            'action': 'set-text',
+            'index': index,
+            'text': text
+        })
+
+    def set_title(self, title, index=0):
+        """ Set the title of the document at index
+
+        """
+        self.send_message({
+            'action': 'set-title',
+            'index': index,
+            'title': title
+        })

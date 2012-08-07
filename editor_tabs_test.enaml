@@ -1,10 +1,17 @@
 from enaml.widgets import Window, Container, TextEditor
 from enaml.noncomponents.document import Document
+from enaml.layout import vbox
 
 enamldef Main(Window):
     title = 'Test Window'
     Container:
         TextEditor:
             id: text_edit
-            columns = 2
-            document = Document(title='First Document', text='hello', mode='javascript')
+            columns = 1
+            documents = [
+                Document(title='First Document', text='hello', mode='javascript',
+                    margin_line=False),
+                Document(title='Other Doc', text='hello again', mode='python',
+                    margin_line=40)
+            ]
+            theme = 'twilight'

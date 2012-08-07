@@ -30,11 +30,8 @@ class QtTextEditor(QtConstraintsWidget):
         has finished loading, so this function is delayed
 
         """
-        self.set_document(self.attrs['document'])
+        self.set_documents(self.attrs['documents'])
         self.set_theme(self.attrs['theme'])
-        self.set_auto_pair(self.attrs['auto_pair'])
-        self.set_font_size(self.attrs['font_size'])
-        self.set_margin_line(self.attrs['margin_line'])
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -45,11 +42,11 @@ class QtTextEditor(QtConstraintsWidget):
         """
         self.set_columns(payload['columns'])
 
-    def on_message_set_document(self, payload):
-        """ Handle the 'set-document' action from the Enaml widget.
+    def on_message_set_documents(self, payload):
+        """ Handle the 'set-documents' action from the Enaml widget.
 
         """
-        self.set_document(payload['document'])
+        self.set_documents(payload['documents'])
 
     def on_message_set_theme(self, payload):
         """ Handle the 'set-theme' action from the Enaml widget.
@@ -57,23 +54,17 @@ class QtTextEditor(QtConstraintsWidget):
         """
         self.set_theme(payload['theme'])
 
-    def on_message_set_auto_pair(self, payload):
-        """ Handle the 'set-auto_pair' action from the Enaml widget.
+    def on_message_set_text(self, payload):
+        """ Handle the 'set-text' action from the Enaml widget.
 
         """
-        self.set_auto_pair(payload['auto_pair'])
+        self.set_text(payload['index'], payload['text'])
 
-    def on_message_set_font_size(self, payload):
-        """ Handle the 'set-font_size' action from the Enaml widget.
-
-        """
-        self.set_font_size(payload['font_size'])
-
-    def on_message_set_margin_line(self, payload):
-        """ Handle the 'set-margin_line' action from the Enaml widget.
+    def on_message_set_title(self, payload):
+        """ Handle the 'set-title' action from the Enaml widget.
 
         """
-        self.set_margin_line(payload['margin_line'])
+        self.set_title(payload['index'], payload['title'])
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -83,39 +74,58 @@ class QtTextEditor(QtConstraintsWidget):
 
         """
         self.widget.set_columns(columns)
+        self._columns = columns
 
-    def set_document(self, document):
+    def set_documents(self, documents):
         """ Set the document in the underlying widget.
 
         """
-        self.widget.editor().set_text(document.text)
-        self.widget.editor().set_mode(document.mode)
-        self.widget.editor().set_title(document.title)
+        for i in range(min(len(documents), self._columns)):
+            self.set_text(i, documents[i]['text'])
+            self.set_mode(i, documents[i]['mode'])
+            self.set_title(i, documents[i]['title'])
+            self.set_auto_pair(i, documents[i]['auto_pair'])
+            self.set_font_size(i, documents[i]['font_size'])
+            self.set_margin_line(i, documents[i]['margin_line'])
+
+    def set_text(self, index, text):
+        """ Set the text of the document at index
+
+        """
+        self.widget.editor().set_text(index, text)
+
+    def set_mode(self, index, mode):
+        """ Set the mode of the document at index
+
+        """
+        self.widget.editor().set_mode(index, mode)
+
+    def set_title(self, index, title):
+        """ Set the title of the document at index
+
+        """
+        self.widget.editor().set_title(index, title)
+
+    def set_auto_pair(self, index, auto_pair):
+        """ Set whether or not to auto pair in the document at index
+
+        """
+        self.widget.editor().set_auto_pair(index, auto_pair)
+
+    def set_font_size(self, index, font_size):
+        """ Set the font size of the document at index
+
+        """
+        self.widget.editor().set_font_size(index, font_size)
+
+    def set_margin_line(self, index, margin_line):
+        """ Set the margin line of the document at index
+
+        """
+        self.widget.editor().set_margin_line(index, margin_line)
 
     def set_theme(self, theme):
         """ Set the theme of the editor
 
         """
         self.widget.editor().set_theme(theme)
-
-    def set_auto_pair(self, auto_pair):
-        """ Set whether or not to pair parentheses, braces, etc in the editor
-
-        """
-        self.widget.editor().set_auto_pair(auto_pair)
-
-    def set_font_size(self, font_size):
-        """ Set the font size of the editor
-
-        """
-        self.widget.editor().set_font_size(font_size)
-
-    def set_margin_line(self, margin_line):
-        """ Set whether or not to display the margin line in the editor
-
-        """
-        if type(margin_line) == bool:
-            self.widget.editor().show_margin_line(margin_line)
-        else:
-            self.widget.editor().set_margin_line_column(margin_line)
-            self.widget.editor().show_margin_line(True)

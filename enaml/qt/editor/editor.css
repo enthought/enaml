@@ -18,37 +18,34 @@ body {
 }
 
 .add_button {
-    display: inline-block;
     margin: 0;
     padding: 0;
     background: none;
     border: none;
     font-size: 1.2em;
+    top: 0;
+    right: 5px;
     position: absolute;
-    z-index: 99;
-    top: 2px;
 }
 
 .tabs {
+    vertical-align: middle;
     height: 2em;
-    margin: 0;
-    padding: 0;
+    display: inline-block;
     width: 94%;
-    display: inline-table;
-    table-layout: fixed;
+    font-size: 0.8em;
+    overflow: hidden;
 }
 
 .tabs div {
+    position: relative;
+    display: inline-block;
     border: 1px solid #000;
     border-left: none;
     background-color: gray;
     border-radius: 10px 10px 0 0;
     padding: 5px 10px 5px 10px;
     color: #000;
-    display: table-cell;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 .tabs div:first-child {
@@ -67,9 +64,8 @@ body {
 .tabs div button {
     border: none;
     background: none;
-    float: right;
+    margin: 0 0 0 5px;
     padding: 0;
-    margin: 0;
 }
 
 .tabs div.current button {
@@ -78,4 +74,11 @@ body {
 
 .tabs div.current button:active {
     text-shadow: 0 -1px 1px rgba(255,255,255,0.5);
+}
+
+.placeholder {
+    display: inline !important;
+    background-color: gray;
+    opacity: 0.2;
+    border: none;
 }

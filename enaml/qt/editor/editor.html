@@ -8,7 +8,7 @@
 	    position: relative;
 	    width: 100%;
 	    background-color: #fff;
-	    height: 94%;
+	    height: 95%;
 	}
 
 	.container {
@@ -23,32 +23,44 @@
 </div>
 
 <script type="text/javascript">
-	var editor_${column} = new function(){
+	var editor_${column} = new function() {
 		var _this = this;
 	    var EditSession = require('ace/edit_session').EditSession;
 		this.editor = ace.edit("editor_${column}");
 
-		this.tab_list = jQuery(jQuery('.tabs')[${column}]);
+		this.current_index = 0;
+		this.tab_list = jQuery('.tabs').eq(${column});
 		this.tab_list.sortable({
 			tolerance: 'pointer',
 			connectWith: '.tabs',
 			scroll: false,
 			distance: 15,
+			placeholder: 'placeholder',
+			helper: 'clone',
 			opacity: 0.6,
 			receive: function (event, ui) {
 				_this.tab_list.old_tab = _this.tab_list.current_tab;
 				_this.tab_list.current_tab = ui.item[0];
 				ui.item.click(_this.clickTabItem);
+				jQuery('button', ui.item).click(_this.removeTabItem);
 			},
 			remove: function(event, ui) {
 				if (_this.tab_list.length == 0)
 					_this.tab_list.current_tab = null;
-				else
-					_this.tab_list.current_tab = _this.tab_list.old_tab;
-				_this.tab_list.old_tab = null;
+				else {
+					var tabs = jQuery('div', _this.tab_list);
+					if (_this.current_index == 0)
+						_this.tab_list.current_tab = tabs[_this.current_index];
+					else 
+						_this.tab_list.current_tab = tabs[_this.current_index-1];
+				}
 				ui.item.unbind('click');
+				jQuery('button', ui.item).unbind('click');
+			},
+			start: function(event, ui) {
+				_this.current_index = ui.item.index();
 			}
-		});
+		}).disableSelection();
 
 		this.tab_list.__defineSetter__("current_tab", function(tab) {
 			jQuery(tab).addClass('current');
@@ -75,7 +87,7 @@
 		});
 
 		this.setTitle = function(title) {
-			jQuery(jQuery('span', _this.tab_list.current_tab)[0]).text(title);
+			jQuery('span', _this.tab_list.current_tab).text(title);
 		}
 
 		this.removeTabItem = function() {
@@ -85,10 +97,11 @@
 			var div_list = jQuery('div', _this.tab_list);
 			var item = jQuery(this).parent();
 
-			if (this.session == _this.editor.getSession()) {
-				if (div_list.index(item) == div_list.length-1) {
+			if (item[0].session == _this.editor.getSession()) {
+				if (div_list.length == 1)
+					_this.tab_list.current_tab == null;
+				else if (div_list.index(item) == div_list.length-1)
 					_this.tab_list.current_tab = item.prev()[0];
-				}
 				else
 					_this.tab_list.current_tab = item.next()[0];
 			}
@@ -128,28 +141,18 @@
 
 			*/
 			jQuery(tab).click(_this.clickTabItem);
-			jQuery(tab).wrapInner("<span />");
+			jQuery(tab).wrapInner("<span>");
 			var button = document.createElement('button');
 			button.innerHTML = "x";
-			jQuery(tab).hover(
-				function() { jQuery(button).show() },
-				function() { jQuery(button).hide() }
-			);
-			jQuery(button).hide();
 			jQuery(button).click(_this.removeTabItem);
-			jQuery(button).insertAfter(jQuery('span', tab)[0]);
+			jQuery(button).insertAfter(jQuery('span', tab));
 		};
 
-		this.addTabItem('First Document');
+		this.addTabItem();
 		this.tab_list.current_tab = jQuery('div', this.tab_list)[0];
- 		jQuery(jQuery('.add_button')[${column}]).click(this.addTabItem)
-
-		var item_list = jQuery('div', this.tab_list);
-		for (var i=0; i<item_list.length; i++) {
-			this.setupTab(item_list[i]);
-		}
+ 		jQuery('.add_button').eq(${column}).click(this.addTabItem)
 
 		${events}
-		${bindings}
+		${global_bindings}
 	}();
 </script>
