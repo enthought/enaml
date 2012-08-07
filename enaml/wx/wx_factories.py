@@ -37,6 +37,11 @@ def date_selector_factory():
 #     return WxDialog
 
 
+def dock_pane_factory():
+    from .wx_dock_pane import WxDockPane
+    return WxDockPane
+
+
 def field_factory():
     from .wx_field import WxField
     return WxField
@@ -65,6 +70,11 @@ def html_factory():
 def label_factory():
     from .wx_label import WxLabel
     return WxLabel
+
+
+def main_window_factory():
+    from .wx_main_window import WxMainWindow
+    return WxMainWindow
 
 
 def notebook_factory():
@@ -130,12 +140,14 @@ WX_FACTORIES = {
     'DateSelector': date_selector_factory,
     #'DatetimeSelector': datetime_selector_factory,
     #'Dialog': dialog_factory,
+    'DockPane': dock_pane_factory,
     'Field': field_factory,
     'Form': form_factory,
     'GroupBox': group_box_factory,
     'Html': html_factory,
     #'ImageView': image_view_factory,
     'Label': label_factory,
+    'MainWindow': main_window_factory,
     'Notebook': notebook_factory,
     'Page': page_factory,
     'PushButton': push_button_factory,
