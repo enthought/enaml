@@ -92,9 +92,9 @@ def radio_button_factory():
     return WxRadioButton
 
 
-# def scroll_area_factory():
-#     from .wx_scroll_area import WxScrollArea
-#     return WxScrollArea
+def scroll_area_factory():
+    from .wx_scroll_area import WxScrollArea
+    return WxScrollArea
 
 
 def slider_factory():
@@ -141,7 +141,7 @@ WX_FACTORIES = {
     'PushButton': push_button_factory,
     'ProgressBar': progress_bar_factory,
     'RadioButton': radio_button_factory,
-    #'ScrollArea': scroll_area_factory,
+    'ScrollArea': scroll_area_factory,
     'Slider': slider_factory,
     'SpinBox': spin_box_factory,
     'Splitter': splitter_factory,
