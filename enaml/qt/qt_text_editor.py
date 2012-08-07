@@ -22,7 +22,7 @@ class QtTextEditor(QtConstraintsWidget):
         """
         super(QtTextEditor, self).initialize(attrs)
         self.attrs = attrs
-        self.set_columns(attrs['columns'])
+        self.set_columns(len(self.attrs['documents']))
         self.widget.loadFinished.connect(self.on_load)
 
     def on_load(self):
@@ -39,12 +39,6 @@ class QtTextEditor(QtConstraintsWidget):
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
-    def on_message_set_columns(self, payload):
-        """ Handle the 'set-columns' action from the Enaml widget.
-
-        """
-        self.set_columns(payload['columns'])
-
     def on_message_set_documents(self, payload):
         """ Handle the 'set-documents' action from the Enaml widget.
 
@@ -79,13 +73,15 @@ class QtTextEditor(QtConstraintsWidget):
         """ Handle the 'set-text' action from the Enaml widget.
 
         """
-        self.set_text(payload['index'], payload['text'])
+        self.set_text(payload['col_index'], payload['tab_index'],
+            payload['text'])
 
     def on_message_set_title(self, payload):
         """ Handle the 'set-title' action from the Enaml widget.
 
         """
-        self.set_title(payload['index'], payload['title'])
+        self.set_title(payload['col_index'], payload['tab_index'],
+            payload['title'])
 
     #--------------------------------------------------------------------------
     # Widget Update Methods

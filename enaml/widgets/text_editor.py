@@ -10,9 +10,6 @@ class TextEditor(ConstraintsWidget):
     """ A control for editing text, geared toward code.
 
     """
-    #: The number of columns of editors to display
-    columns = Int(1)
-
     #: A nested list of documents to be displayed. The outer list represents
     #: columns and the inner lists represent tabs within the column.
     documents = List
@@ -38,7 +35,6 @@ class TextEditor(ConstraintsWidget):
 
         """
         super_attrs = super(TextEditor, self).creation_attributes()
-        super_attrs['columns'] = self.columns
         super_attrs['documents'] = [[doc.as_dict() for doc in col]
                                         for col in self.documents]
         super_attrs['theme'] = self.theme
@@ -53,28 +49,5 @@ class TextEditor(ConstraintsWidget):
 
         """
         super(TextEditor, self).bind()
-        self.publish_attributes('columns', 'documents', 'theme', 'auto_pair',
-            'font_size', 'margin_line')
-
-    #--------------------------------------------------------------------------
-    # Public API
-    #--------------------------------------------------------------------------
-    def set_text(self, text, index=0):
-        """ Set the text of the document at index
-
-        """
-        self.send_message({
-            'action': 'set-text',
-            'index': index,
-            'text': text
-        })
-
-    def set_title(self, title, index=0):
-        """ Set the title of the document at index
-
-        """
-        self.send_message({
-            'action': 'set-title',
-            'index': index,
-            'title': title
-        })
+        self.publish_attributes('columns', 'theme', 'auto_pair', 'font_size',
+            'margin_line', 'documents[]')
