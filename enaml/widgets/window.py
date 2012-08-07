@@ -2,10 +2,11 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Unicode
+from traits.api import Unicode, Property, cached_property
 
 from enaml.core.trait_types import EnamlEvent
 
+from .container import Container
 from .widget_component import WidgetComponent, SizeTuple
 
 
@@ -14,8 +15,11 @@ class Window(WidgetComponent):
 
     A Window component is represents of a top-level visible component
     with a frame decoration. It may have at most one child widget which
-    is expanded to fit the size of the window. It does not support
-    features like MenuBars or DockPanes, for that, use a MainWindow.
+    is dubbed the 'central widget'. The central widget is an instance
+    of Container and is expanded to fit the size of the window.
+
+    A Window does not support features like MenuBars or DockPanes, for 
+    such functionality, use a MainWindow widget.
 
     """
     #: The titlebar text.
@@ -28,9 +32,39 @@ class Window(WidgetComponent):
     #: An event fired when the window is closed.
     closed = EnamlEvent
 
+    #: Returns the central widget in use for the Window
+    central_widget = Property(depends_on='children[]')
+
     #: The titlebar icon.
     # XXX needs to be implemented
     #icon = Instance()
+
+    #--------------------------------------------------------------------------
+    # Private API
+    #--------------------------------------------------------------------------
+    @cached_property
+    def _get_central_widget(self):
+        """ The getter for the 'central_widget' property.
+
+        Returns
+        -------
+        result : Container or None
+            The central widget for the Window, or None if no central
+            widget is provided.
+
+        """
+        for child in self.children:
+            if isinstance(child, Container):
+                return child
+
+    def _snap_central_widget(self):
+        """ Returns the serializable target id of the central widget,
+        if one exists.
+
+        """
+        widget = self.central_widget
+        if widget is not None:
+            return widget.widget_id
 
     #--------------------------------------------------------------------------
     # Initialization
@@ -42,6 +76,7 @@ class Window(WidgetComponent):
         snap = super(Window, self).snapshot()
         snap['title'] = self.title
         snap['initial_size'] = self.initial_size
+        snap['central_widget'] = self._snap_central_widget()
         return snap
 
     def bind(self):
