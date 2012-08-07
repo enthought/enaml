@@ -17,61 +17,57 @@ ECHO_MODES = {
 
 
 def null_validator(text):
-    """ A validator which validates all input as acceptable.
+    """ A validator function will returns True for all text input.
 
     """
-    return text
+    return True
 
 
-def regexp_validator(regexp):
+def regex_validator(regex):
     """ Creates a callable which will validate text input against the
     provided regex string.
 
     Parameters
     ----------
-    regexp : string
+    regex : string
         A regular expression string to use for matching.
 
     Returns
     -------
     results : callable
-        A callable which returns the original text if it matches the
-        regex, or raises a ValueError if it doesn't.
+        A callable which returns True if the text matches the regex,
+        False otherwise.
 
     """
-    regexp = re.compile(regexp, re.UNICODE)
+    rgx = re.compile(regex, re.UNICODE)
     def validator(text):
-        if regexp.match(text):
-            return text
-        raise ValueError
+        return bool(rgx.match(text))
     return validator
 
 
-def parse_validators(validators):
-    """ Parses a list of validator dicts into a dict of tuples keyed
-    on the trigger type. This is used internally by the QtField to
-    dispatch its validation behaviors.
+def make_validator(info):
+    """ Make a validator function for the given dict represenation.
+
+    Parameters
+    ----------
+    info : dict
+        The dictionary representation of a client side validator sent
+        by the Enaml server widget.
+
+    Returns
+    -------
+    result : callable
+        A callable which will return True if the text is valid. False
+        otherwise. If the validator type is not supported, a null 
+        validator which accepts all text will be returned.
     
     """
-    res = {'all': []}
-    for info in validators:
-        vtype = info['type']
-        if vtype == 'null':
-            vldr = null_validator
-        elif vtype == 'regexp':
-            vldr = regexp_validator(info['regexp'])
-        else:
-            vldr = None 
-        if vldr is not None:
-            item = (info, vldr)
-            res['all'].append(item)
-            triggers = info.get('triggers')
-            if triggers:
-                for trigger in triggers:
-                    if trigger not in res:
-                        res[trigger] = []
-                    res[trigger].append(item)
-    return res
+    vtype = info['type']
+    if vtype == 'regex':
+        vldr = regex_validator(info['arguments']['regex'])
+    else:
+        vldr = null_validator
+    return vldr
 
 
 class QtFocusLineEdit(QLineEdit):
@@ -90,6 +86,21 @@ class QtField(QtConstraintsWidget):
     """ A Qt4 implementation of an Enaml Field.
 
     """
+    #: The client side validator function for the field.
+    _validator = None
+
+    #: The validator message for the validator.
+    _validator_message = ''
+
+    #: The list of submit triggers for when to submit a text change.
+    _submit_triggers = []
+
+    #: The last text value submitted to or sent from the server.
+    _last_value = None
+
+    #: A flag indicating whether the current field is invalid.
+    _is_error_state = False
+
     def create(self):
         """ Create underlying QLineEdit widget.
 
@@ -102,42 +113,82 @@ class QtField(QtConstraintsWidget):
         """
         super(QtField, self).initialize(attrs)
         self.set_text(attrs['text'])
+        self.set_validator(attrs['validator'])
+        self.set_submit_triggers(attrs['submit_triggers'])
         self.set_placeholder(attrs['placeholder'])
         self.set_echo_mode(attrs['echo_mode'])
         self.set_max_length(attrs['max_length'])
         self.set_read_only(attrs['read_only'])
-        self.validators = parse_validators(attrs['validators'])
-        self.dirty = False
         self.widget.lostFocus.connect(self.on_lost_focus)
         self.widget.returnPressed.connect(self.on_return_pressed)
         self.widget.textEdited.connect(self.on_text_edited)
 
     #--------------------------------------------------------------------------
-    # Event Handlers
+    # Private API
+    #--------------------------------------------------------------------------
+    def _submit_text(self, text):
+        """ Submit the given text as an update to the server widget.
+
+        Parameters
+        ----------
+        text : unicode
+            The unicode text to send to the server widget.
+
+        """
+        content = {'text': text}
+        self.send_action('submit_text', content)
+
+    def _validate_and_submit(self):
+        """ Validate the current text in the control, and submit it to
+        the server widget if it's valid.
+
+        """
+        text = self.widget.text()
+        if text != self._last_value:
+            if self._validator(text):
+                self._clear_error_style()
+                self._submit_text(text)
+                self._last_value = text
+            else:
+                self._set_error_style()
+
+    def _set_error_style(self):
+        # A temporary hack until styles are implemented
+        self.widget.setStyleSheet('QLineEdit { background: salmon; }')
+        self._is_error_state = True
+
+    def _clear_error_style(self):
+        # A temporary hack until styles are implemented
+        self.widget.setStyleSheet('')
+        self._is_error_state = False
+
+    #--------------------------------------------------------------------------
+    # Signal Handlers
     #--------------------------------------------------------------------------
     def on_lost_focus(self):
-        """ Event handler for lost_focus
+        """ The signal handler for 'lostFocus' signal.
 
         """
-        if self.dirty:
-            validators = self.validators.get('lost-focus')
-            if validators:
-                self._run_validators(validators)
+        if 'lost_focus' in self._submit_triggers:
+            self._validate_and_submit()
 
     def on_return_pressed(self):
-        """ Event handler for return_pressed
+        """ The signal handler for 'returnPressed' signal.
 
         """
-        if self.dirty:
-            validators = self.validators.get('return-pressed')
-            if validators:
-                self._run_validators(validators)
+        if 'return_pressed' in self._submit_triggers:
+            self._validate_and_submit()
 
     def on_text_edited(self):
-        """ Mark the widget as dirty so that validation can take place.
-
-        """
-        self.dirty = True
+        # Temporary kludge until styles are fully implemented 
+        if self._validator(self.widget.text()):
+            if self._is_error_state:
+                self._clear_error_style()
+                self.widget.setToolTip('')
+        else:
+            if not self._is_error_state:
+                self._set_error_style()
+                self.widget.setToolTip(self._validator_message)
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -148,11 +199,18 @@ class QtField(QtConstraintsWidget):
         """
         self.set_text(content['text'])
 
-    def on_action_set_validators(self, content):
-        """ Handle the 'set_validators' action from the Enaml widget.
+    def on_action_set_validator(self, content):
+        """ Handle the 'set_validator' action from the Enaml widget.
 
         """
-        self.validators = parse_validators(content['validators'])
+        self.set_validator(content['validator'])
+
+    def on_action_set_submit_triggers(self, content):
+        """ Handle the 'set_submit_triggers' action from the Enaml 
+        widget.
+
+        """
+        self.set_submit_triggers(content['submit_triggers'])
 
     def on_action_set_placeholder(self, content):
         """ Hanlde the 'set_placeholder' action from the Enaml widget.
@@ -177,15 +235,6 @@ class QtField(QtConstraintsWidget):
 
         """
         self.set_read_only(content['read_only'])
-
-    def on_action_validate(self, content):
-        """ Handle the 'validate' action from the Enaml widget.
-
-        """
-        if self.dirty:
-            validators = self.validators.get('all')
-            if validators:
-                self._run_validators(validators)
     
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -195,13 +244,32 @@ class QtField(QtConstraintsWidget):
 
         """
         self.widget.setText(text)
+        self._last_value = text
+        self._clear_error_style()
+
+    def set_validator(self, validator):
+        """ Set the validator for the underlying widget.
+
+        """
+        if validator is None:
+            self._validator = null_validator
+            self._validator_message = ''
+        else:
+            self._validator = make_validator(validator)
+            self._validator_message = validator.get('message', '')
+
+    def set_submit_triggers(self, triggers):
+        """ Set the submit triggers for the underlying widget.
+
+        """
+        self._submit_triggers = triggers
 
     def set_placeholder(self, text):
         """ Set the placeholder text of the underlying widget.
 
         """
         self.widget.setPlaceholderText(text)
-        
+    
     def set_echo_mode(self, mode):
         """ Set the echo mode of the underlying widget.
 
@@ -221,44 +289,4 @@ class QtField(QtConstraintsWidget):
 
         """
         self.widget.setReadOnly(read_only)
-
-    #--------------------------------------------------------------------------
-    # Private API
-    #--------------------------------------------------------------------------
-    def _run_validators(self, validators):
-        """ Run the validation process for the given trigger.
-
-        """
-        text = orig = self.widget.text()
-        for info, validator in validators:
-            try:
-                text = validator(text)
-            except ValueError:
-                self._validation_failure(orig, text, info)
-                return
-
-        # Everything validated, we need to send the text update to
-        # the Enaml widget and update the control if the validators 
-        # have changed the text.
-        if orig != text:
-            pos = self.widget.cursorPosition()
-            self.widget.setText(text)
-            self.widget.setCursorPosition(pos)
-
-        content = {'text': text}
-        self.send_action('text_changed', content)
-        self.dirty = False
-
-    def _validation_failure(self, orig, text, info):
-        """ Handle a validator failing its validation.
-
-        """
-        # This is just a temporary popup hack for now until we get 
-        # Naveen's pretty popup widget in place.
-        msg = info.get('action', '')
-        msg = 'Validation Failure: %s' % msg
-        widget = self.widget
-        globalPos = widget.mapToGlobal(widget.pos())
-        QWhatsThis.showText(globalPos, msg, widget)
-        QTimer.singleShot(2000, QWhatsThis.hideText)
 
