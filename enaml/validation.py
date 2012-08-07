@@ -2,96 +2,120 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import HasTraits, Str, Unicode, ReadOnly
+from abc import abstractmethod
+import re
+
+from traits.api import ABCHasTraits, Str, Unicode, Property, cached_property
 
 
-class Validator(HasTraits):
-    """ The base class of all validator objects in Enaml.
+class Validator(ABCHasTraits):
+    """ The base class for creating widget text validators.
+
+    This class is abstract. It's abstract api must be implemented by a
+    subclass in order to be usable.
 
     """
-    #: The type of the validator to create on the client side. This
-    #: value should be redefined by subclasses. The default type is
-    #: 'null' and indicates that all edit text is considered valid.
-    validator_type = ReadOnly('null')
-
-    #: An optional message to associate with a validator. The client
-    #: widget may use this to display a custom message if client-side
-    #: validation fails.
+    #: An optional message to associate with the validator. This message
+    #: will be sent to the client widget if server side validation fails
     message = Unicode
 
-    def as_dict(self):
-        """ Returns a representation of the validator as dict.
+    @abstractmethod
+    def validate(self, text, component):
+        """ Validates the given text.
 
-        Returns
-        -------
-        result : dict
-            A dictionary representation of the validator the conforms
-            to the format specified in 'validator_format.js'.
-
-        """
-        res = {}
-        res['type'] = self.validator_type
-        res['message'] = self.message
-        res['arguments'] = self.arguments()
-        return res
-
-    def arguments(self):
-        """ Returns the arguments for the validator. 
-
-        This method should be overridden by subclasses to return the
-        appropriate arguments dict for the validator.
-
-        Returns
-        -------
-        result : dict
-            The dictionary of client-side validator arguments.
-
-        """
-        return {}
-
-    def validate(self, orig_text, edit_text, edit_valid):
-        """ A method that can be implemented by subclasses to perform
-        additional server-side validation.
-
-        This method is called every time the client widget sends the
-        server widget a text edit event.
+        This is an abstract method which must be implemented by 
+        sublasses.
 
         Parameters
         ----------
-        orig_text : unicode
-            The original text in the Field. This will be the same as
-            the current value of the 'text' attribute in the Field.
+        text : unicode
+            The unicode text edited by the client widget.
 
-        edit_text : unicode
-            The unicode text edited in the client widget.
-
-        edit_valid : bool
-            Whether or not the edit text passed client-side validation.
+        component : Declarative
+            The declarative component currently making use of the
+            validator.
 
         Returns
         -------
         result : (unicode, bool)
-            The (optionally modified) edit text and whether or not that
-            text is considered valid. The default implementation returns 
-            the given values with no modification.
+            A 2-tuple of (optionally modified) unicode text, and whether
+            or not that text should be considered valid.
 
         """
-        return (edit_text, edit_valid)
+        raise NotImplementedError
+
+    def client_validator(self):
+        """ A serializable representation of a client side validator.
+
+        Returns
+        -------
+        result : dict or None
+            A dict in the format specified by 'validator_format.js'
+            or None if no client validator is specified. The default
+            implementation of this method returns None.
+
+        """
+        return None
 
 
 class RegexValidator(Validator):
-    """ A validator which validates based on a regular expression.
+    """ A concrete Validator implementation which validates using a
+    regular expression.
 
     """
-    #: The type of the validator.
-    validator_type = 'regex'
-    
-    #: The regular expression string to use for matching text.
-    regex = Str
+    #: The regular expression string to use for validation. The default
+    #: regex matches everything.
+    regex = Str(r'.*')
 
-    def arguments(self):
-        """ Returns the arguments dict for the client-side validator.
+    #: A read only cached property which returns the compiled regex.
+    _compiled_regex = Property(depends_on='regex')
+
+    @cached_property
+    def _get__compiled_regex(self):
+        """ The getter for the '_compiled_regex' property. 
+
+        Returns
+        -------
+        result : SRE_Pattern
+            The compiled regular expression object to use for matching.
 
         """
-        return {'regex': self.regex}
+        return re.compile(self.regex, re.UNICODE)
+
+    def validate(self, text, component):
+        """ Validates the text against the stored regular expression.
+
+        Parameters
+        ----------
+        text : unicode
+            The unicode text edited by the client widget.
+
+        component : Declarative
+            The declarative component currently making use of the
+            validator.
+
+        Returns
+        -------
+        result : (unicode, bool)
+            The original edited text, and whether or not that text
+            matched the regular expression.
+
+        """
+        return (text, bool(self._compiled_regex.match(text)))
+
+    def client_validator(self):
+        """ The client side regex validator.
+
+        Returns
+        -------
+        result : dict
+            The dictionary representation of a client side regex
+            validator for the current regular expression.
+            
+        """
+        res = {}
+        res['type'] = 'regex'
+        res['message'] = self.message
+        res['arguments'] = {'regex': self.regex}
+        return res
 
