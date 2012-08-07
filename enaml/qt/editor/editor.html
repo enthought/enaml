@@ -106,7 +106,7 @@
 
 		this.setText = function(index, text) {
 			try {
-				_this.tab_list[index].session.doc.setValue(text);
+				jQuery('div', _this.tab_list)[index].session.getDocument().setValue(text);
 			}
 			catch(e) {
 				_this.addTabItem({'text':text})

@@ -83,6 +83,13 @@ class QtTextEditor(QtConstraintsWidget):
         self.set_title(payload['col_index'], payload['tab_index'],
             payload['title'])
 
+    def on_message_set_mode(self, payload):
+        """ Handle the 'set-mode' action from the Enaml widget.
+
+        """
+        self.set_mode(payload['col_index'], payload['tab_index'],
+            payload['mode'])
+
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------

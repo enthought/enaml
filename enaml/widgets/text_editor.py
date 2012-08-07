@@ -34,6 +34,14 @@ class TextEditor(ConstraintsWidget):
         """ Returns the dict of creation attributes for the control.
 
         """
+        for column in self.documents:
+            for doc in column:
+                doc.col = self.documents.index(column)
+                doc.tab = column.index(doc)
+                doc.on_trait_change(self.title_changed, 'title')
+                doc.on_trait_change(self.text_changed, 'text')
+                doc.on_trait_change(self.mode_changed, 'mode')
+
         super_attrs = super(TextEditor, self).creation_attributes()
         super_attrs['documents'] = [[doc.as_dict() for doc in col]
                                         for col in self.documents]
@@ -51,3 +59,30 @@ class TextEditor(ConstraintsWidget):
         super(TextEditor, self).bind()
         self.publish_attributes('columns', 'theme', 'auto_pair', 'font_size',
             'margin_line', 'documents[]')
+
+    def title_changed(self, _object, name, new):
+        payload = {
+            'action': 'set-title',
+            'col_index': _object.col,
+            'tab_index': _object.tab,
+            'title': new
+        }
+        self.send_message(payload)
+
+    def text_changed(self, _object, name, new):
+        payload = {
+            'action': 'set-text',
+            'col_index': _object.col,
+            'tab_index': _object.tab,
+            'text': new
+        }
+        self.send_message(payload)
+
+    def mode_changed(self, _object, name, new):
+        payload = {
+            'action': 'set-mode',
+            'col_index': _object.col,
+            'tab_index': _object.tab,
+            'mode': new
+        }
+        self.send_message(payload)
