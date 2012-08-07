@@ -86,8 +86,31 @@
 			return this._old_tab;
 		});
 
-		this.setTitle = function(title) {
-			jQuery('span', _this.tab_list.current_tab).text(title);
+		this.setTitle = function(index, title) {
+			try {
+				jQuery('span', _this.tab_list).eq(index).text(title);
+			}
+			catch(e) {
+				_this.addTabItem({'title':title})
+			}
+		}
+
+		this.setMode = function(index, mode) {
+			try {
+				jQuery('div', _this.tab_list)[index].session.setMode(mode);
+			}
+			catch(e) {
+				_this.addTabItem({'mode':mode})
+			}
+		}
+
+		this.setText = function(index, text) {
+			try {
+				_this.tab_list[index].session.doc.setValue(text);
+			}
+			catch(e) {
+				_this.addTabItem({'text':text})
+			}
 		}
 
 		this.removeTabItem = function() {
@@ -108,17 +131,21 @@
 			item.remove();
 		};
 
-		this.addTabItem = function(title) {
+		this.addTabItem = function(info) {
 			/* Handler for when the '+' button is clicked
 
 			*/
-			if (typeof(title) !== String)
-				title = 'Untitled';
+			default_args = {
+				'title': 'Untitled',
+				'mode': 'text',
+				'text': ''
+			};
+			options = jQuery.extend(default_args, info);
 
 			div_list = jQuery('div', _this.tab_list);
 			div = document.createElement('div');
-			div.innerHTML = title;
-			div.session = new EditSession('');
+			div.innerHTML = options['title'];
+			div.session = new EditSession(options['text'], options['mode']);
 			if (_this.tab_list.current_tab == null)
 				_this.tab_list.current_tab = div
 			_this.tab_list.append(div);
@@ -148,7 +175,6 @@
 			jQuery(button).insertAfter(jQuery('span', tab));
 		};
 
-		this.addTabItem();
 		this.tab_list.current_tab = jQuery('div', this.tab_list)[0];
  		jQuery('.add_button').eq(${column}).click(this.addTabItem)
 

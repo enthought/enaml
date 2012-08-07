@@ -1,17 +1,22 @@
-from enaml.widgets import Window, Container, TextEditor
+from enaml.widgets import Window, Container, TextEditor, PushButton
 from enaml.noncomponents.document import Document
 from enaml.layout import vbox
 
 enamldef Main(Window):
     title = 'Test Window'
     Container:
+        constraints = [vbox(text_edit, button)]
         TextEditor:
             id: text_edit
-            columns = 1
+            columns = 2
             documents = [
-                Document(title='First Document', text='hello', mode='javascript',
-                    margin_line=False),
-                Document(title='Other Doc', text='hello again', mode='python',
-                    margin_line=40)
+                [Document(title='First Document', text='hello', mode='javascript'),
+                Document(title='Second Document', text='hello2', mode='javascript')],
+                [Document(title='Other Doc', text='hello again', mode='python')]
             ]
             theme = 'twilight'
+        PushButton:
+            id: button
+            text = 'change text'
+            clicked ::
+                text_edit.documents[0][0].text = 'a;lsdkjfal;skdjf'

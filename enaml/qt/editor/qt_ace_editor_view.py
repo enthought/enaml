@@ -14,16 +14,14 @@ class QtAceEditorView(QWebView):
         # XXX this is used for debugging, it should be taken out eventually
         self.settings().setAttribute(QWebSettings.DeveloperExtrasEnabled, True)
 
-        self.main_frame = self.page().mainFrame()
-        self.main_frame.addToJavaScriptWindowObject('py_ace_editor',
-                                                    self.ace_editor)
-
     def set_columns(self, columns):
         """ Set the number of columns for the editor
 
         """
         html = self.ace_editor.generate_html(columns)
         self.setHtml(html, QUrl.fromLocalFile(__file__))
+        self.page().mainFrame().addToJavaScriptWindowObject('py_ace_editor',
+                                                             self.ace_editor)
 
     def editor(self):
         """ Return the ace editor

@@ -31,11 +31,13 @@ EVENT_TEMPLATE = Template("""
 """)
 
 BINDING_TEMPLATE = Template("""
-    router.r_${signal} = function(index, value) {
+    router.r_${signal} = function(col_index, tab_index, value) {
         try {
-            _this['editor_'+index].${func}(value);
+            _this['editor_'+col_index].${func}(tab_index, value);
         }
-        catch(e) {}
+        catch(e) {
+            return;
+        }
     }
     py_ace_editor.${signal}.connect(router, "r_${signal}");
 """)
@@ -46,15 +48,15 @@ GLOBAL_BINDING_TEMPLATE = Template("""
 
 
 class QtAceEditor(QObject):
-    columns_changed = Signal(int, unicode)
-    title_changed = Signal(int, unicode)
-    text_changed = Signal(int, unicode)
-    mode_changed = Signal(int, unicode)
+    columns_changed = Signal(int, int, unicode)
+    title_changed = Signal(int, int, unicode)
+    text_changed = Signal(int, int, unicode)
+    mode_changed = Signal(int, int, unicode)
     theme_changed = Signal(unicode)
-    auto_pair_changed = Signal(int, bool)
-    font_size_changed = Signal(int, int)
-    margin_line_changed = Signal(int, bool)
-    margin_line_column_changed = Signal(int, int)
+    auto_pair_changed = Signal(bool)
+    font_size_changed = Signal(int)
+    margin_line_changed = Signal(bool)
+    margin_line_column_changed = Signal(int)
 
     def __init__(self, parent=None):
         """ Initialize the editor
@@ -71,19 +73,19 @@ class QtAceEditor(QObject):
         """
         self.columns = columns
 
-    def set_title(self, index, title):
+    def set_title(self, col_index, tab_index, title):
         """ Set the title of the current tab in the editor
 
         """
         self._title = title
-        self.title_changed.emit(index, title)
+        self.title_changed.emit(col_index, tab_index, title)
 
-    def set_text(self, index, text):
+    def set_text(self, col_index, tab_index, text):
         """ Set the text of the editor
 
         """
         self._text = text
-        self.text_changed.emit(index, text)
+        self.text_changed.emit(col_index, tab_index, text)
 
     @Slot(unicode)
     def set_text_from_js(self, text):
@@ -99,7 +101,7 @@ class QtAceEditor(QObject):
         """
         return self._text
 
-    def set_mode(self, index, mode):
+    def set_mode(self, col_index, tab_index, mode):
         """ Set the mode of the editor
 
         """
@@ -107,7 +109,7 @@ class QtAceEditor(QObject):
             self._mode = mode
         else:
             self._mode = 'ace/mode/' + mode
-        self.mode_changed.emit(index, self._mode)
+        self.mode_changed.emit(col_index, tab_index, self._mode)
 
     def mode(self):
         """ Return the mode of the editor
@@ -131,32 +133,30 @@ class QtAceEditor(QObject):
         """
         return self._theme
 
-    def set_auto_pair(self, index, auto_pair):
+    def set_auto_pair(self, auto_pair):
         """ Set the auto_pair behavior of the editor
 
         """
         self._auto_pair = auto_pair
-        self.auto_pair_changed.emit(index, auto_pair)
+        self.auto_pair_changed.emit(auto_pair)
 
-    def set_font_size(self, index, font_size):
+    def set_font_size(self, font_size):
         """ Set the font size of the editor
 
         """
         self._font_size = font_size
-        self.font_size_changed.emit(index, font_size)
+        self.font_size_changed.emit(font_size)
 
-    def set_margin_line(self, index, margin_line):
+    def set_margin_line(self, margin_line):
         """ Set whether or not to display the margin line in the editor
 
         """
-        if type(margin_line) == bool:
-            self._margin_line = margin_line
-            self.margin_line_changed.emit(index, margin_line)
+        self._margin_line = margin_line
+        if (margin_line == -1):
+            self.margin_line_changed.emit(False)
         else:
-            self._margin_line_column = margin_line
-            self.margin_line_column_changed.emit(index, margin_line)
-            self._margin_line = True
-            self.margin_line_changed.emit(index, True)
+            self.margin_line_changed.emit(True)
+            self.margin_line_column_changed.emit(margin_line)
 
     def generate_ace_event(self, _func, _target, _args, _event_name):
         """ Generate a Javascript ace editor event handler.
@@ -238,6 +238,14 @@ class QtAceEditor(QObject):
 
             self.generate_global_binding('theme_changed', 'this.editor',
                 'setTheme')
+            self.generate_global_binding('auto_pair_changed', 'this.editor',
+                 'setBehavioursEnabled')
+            self.generate_global_binding('font_size_changed', 'this.editor',
+                 'setFontSize')
+            self.generate_global_binding('margin_line_changed', 'this.editor',
+                 'setShowPrintMargin')
+            self.generate_global_binding('margin_line_column_changed',
+                 'this.editor', 'setPrintMarginColumn')
 
             _editors.append(editor_template.substitute(column=_column,
                 events='\n'.join(self._events), width=_width,
@@ -247,17 +255,8 @@ class QtAceEditor(QObject):
             self._events = []
 
         self.generate_binding('title_changed', 'setTitle')
-        self.generate_binding('theme_changed', 'editor.setTheme')
-        self.generate_binding('mode_changed', 'editor.getSession().setMode')
-        self.generate_binding('text_changed',
-            'editor.getSession().doc.setValue')
-        self.generate_binding('auto_pair_changed',
-            'editor.setBehavioursEnabled')
-        self.generate_binding('font_size_changed', 'editor.setFontSize')
-        self.generate_binding('margin_line_changed',
-            'editor.setShowPrintMargin')
-        self.generate_binding('margin_line_column_changed',
-            'editor.setPrintMarginColumn')
+        self.generate_binding('mode_changed', 'setMode')
+        self.generate_binding('text_changed', 'setText')
 
         return HTML_TEMPLATE.substitute(editors='\n'.join(_editors),
                                         bindings='\n'.join(self._bindings))

@@ -2,8 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Unicode, Int, Instance, List
-from ..noncomponents.document import Document
+from traits.api import Unicode, Int, List, Bool
 from .constraints_widget import ConstraintsWidget
 
 
@@ -14,11 +13,22 @@ class TextEditor(ConstraintsWidget):
     #: The number of columns of editors to display
     columns = Int(1)
 
-    #: A list of documents to be displayed
-    documents = List(Instance(Document))
+    #: A nested list of documents to be displayed. The outer list represents
+    #: columns and the inner lists represent tabs within the column.
+    documents = List
 
     #: The theme for the document
     theme = Unicode("textmate")
+
+    #: Auto pairs parentheses, braces, etc
+    auto_pair = Bool(True)
+
+    #: The editor's font size
+    font_size = Int(12)
+
+    #: Display the margin line at a certain column. A value of -1 hides the
+    #: margin line.
+    margin_line = Int(-1)
 
     #--------------------------------------------------------------------------
     # Initialization
@@ -29,8 +39,12 @@ class TextEditor(ConstraintsWidget):
         """
         super_attrs = super(TextEditor, self).creation_attributes()
         super_attrs['columns'] = self.columns
-        super_attrs['documents'] = [doc.as_dict() for doc in self.documents]
+        super_attrs['documents'] = [[doc.as_dict() for doc in col]
+                                        for col in self.documents]
         super_attrs['theme'] = self.theme
+        super_attrs['auto_pair'] = self.auto_pair
+        super_attrs['font_size'] = self.font_size
+        super_attrs['margin_line'] = self.margin_line
         return super_attrs
 
     def bind(self):
@@ -39,7 +53,8 @@ class TextEditor(ConstraintsWidget):
 
         """
         super(TextEditor, self).bind()
-        self.publish_attributes('columns', 'documents', 'theme')
+        self.publish_attributes('columns', 'documents', 'theme', 'auto_pair',
+            'font_size', 'margin_line')
 
     #--------------------------------------------------------------------------
     # Public API
