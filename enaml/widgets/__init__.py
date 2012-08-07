@@ -12,12 +12,14 @@ from .container import Container
 from .date_selector import DateSelector
 from .datetime_selector import DatetimeSelector
 from .dialog import Dialog
+from .dock_pane import DockPane
 from .field import Field
 from .form import Form
 from .group_box import GroupBox
 from .html import Html
 from .image_view import ImageView
 from .label import Label
+from .main_window import MainWindow
 from .notebook import Notebook
 from .page import Page
 from .progress_bar import ProgressBar
