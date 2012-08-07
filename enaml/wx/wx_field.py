@@ -6,9 +6,61 @@ import re
 
 import wx
 
-from enaml.client_validation import make_validator
-
 from .wx_constraints_widget import WxConstraintsWidget
+
+
+def null_validator(text):
+    """ A validator function will returns True for all text input.
+
+    """
+    return True
+
+
+def regex_validator(regex):
+    """ Creates a callable which will validate text input against the
+    provided regex string.
+
+    Parameters
+    ----------
+    regex : string
+        A regular expression string to use for matching.
+
+    Returns
+    -------
+    results : callable
+        A callable which returns True if the text matches the regex,
+        False otherwise.
+
+    """
+    rgx = re.compile(regex, re.UNICODE)
+    def validator(text):
+        return bool(rgx.match(text))
+    return validator
+
+
+def make_validator(info):
+    """ Make a validator function for the given dict represenation.
+
+    Parameters
+    ----------
+    info : dict
+        The dictionary representation of a client side validator sent
+        by the Enaml server widget.
+
+    Returns
+    -------
+    result : callable
+        A callable which will return True if the text is valid. False
+        otherwise. If the validator type is not supported, a null 
+        validator which accepts all text will be returned.
+    
+    """
+    vtype = info['type']
+    if vtype == 'regex':
+        vldr = regex_validator(info['arguments']['regex'])
+    else:
+        vldr = null_validator
+    return vldr
 
 
 class wxLineEdit(wx.TextCtrl):
@@ -135,14 +187,20 @@ class WxField(WxConstraintsWidget):
     """ A Wx implementation of an Enaml Field.
 
     """
-    #: The validator to use for the field.
-    _validator = None
+    #: The client side validator function for the field.
+    _validator = null_validator
 
-    #: The edit triggers to use for the field.
-    _edit_triggers = []
+    #: The validator message for the validator.
+    _validator_message = ''
 
-    #: The last edit value that was sent to/from the server
-    _last_edit_text = None
+    #: The list of submit triggers for when to submit a text change.
+    _submit_triggers = []
+
+    #: The last text value submitted to or sent from the server.
+    _last_value = None
+
+    #: A flag indicating whether the current field is invalid.
+    _is_error_state = False
 
     #--------------------------------------------------------------------------
     # Setup Methods
@@ -178,43 +236,85 @@ class WxField(WxConstraintsWidget):
         super(WxField, self).create(tree)
         self.set_text(tree['text'])
         self.set_validator(tree['validator'])
-        self.set_edit_triggers(tree['edit_triggers'])
+        self.set_submit_triggers(tree['submit_triggers'])
         self.set_placeholder(tree['placeholder'])
         self.set_max_length(tree['max_length'])
         widget = self.widget
         widget.Bind(wx.EVT_KILL_FOCUS, self.on_lost_focus)
         widget.Bind(wx.EVT_TEXT_ENTER, self.on_return_pressed)
+        widget.Bind(wx.EVT_TEXT, self.on_text_edited)
 
     #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
-    def _send_edit_event(self):
+    def _submit_text(self, text):
+        """ Submit the given text as an update to the server widget.
+
+        Parameters
+        ----------
+        text : unicode
+            The unicode text to send to the server widget.
+
+        """
+        content = {'text': text}
+        self.send_action('submit_text', content)
+
+    def _validate_and_submit(self):
+        """ Validate the current text in the control, and submit it to
+        the server widget if it's valid.
+
+        """
         text = self.widget.GetValue()
-        if text != self._last_edit_text:
-            valid = True
-            validator = self._validator
-            if validator is not None:
-                valid = validator(text)
-            content = {'text': text, 'valid': valid}
-            self.send_action('text_edited', content)
-            self._last_edit_text = text
+        if text != self._last_value:
+            if self._validator(text):
+                self._clear_error_style()
+                self._submit_text(text)
+                self._last_value = text
+            else:
+                self._set_error_style()
+
+    def _set_error_style(self):
+        # A temporary hack until styles are implemented
+        self.widget.SetBackgroundColour(wx.Color(250, 128, 114))
+        self._is_error_state = True
+        self.widget.Refresh()
+
+    def _clear_error_style(self):
+        # A temporary hack until styles are implemented
+        self.widget.SetBackgroundColour(wx.NullColor)
+        self._is_error_state = False
+        self.widget.Refresh()
 
     #--------------------------------------------------------------------------
     # Event Handling
     #--------------------------------------------------------------------------
     def on_lost_focus(self, event):
-        """ The event handler for the EVT_KILL_FOCUS event.
+        """ The event handler for EVT_KILL_FOCUS event.
 
         """
-        if 'lost_focus' in self._edit_triggers:
-            self._send_edit_event()
+        event.Skip()
+        if 'lost_focus' in self._submit_triggers:
+            self._validate_and_submit()
 
     def on_return_pressed(self, event):
-        """ The event handler for the EVT_TEXT_ENTER event.
+        """ The event handler for EVT_TEXT_ENTER event.
 
         """
-        if 'return_pressed' in self._edit_triggers:
-            self._send_edit_event()
+        event.Skip()
+        if 'return_pressed' in self._submit_triggers:
+            self._validate_and_submit()
+
+    def on_text_edited(self, event):
+        event.Skip()
+        # Temporary kludge until styles are fully implemented 
+        if self._validator(self.widget.GetValue()):
+            if self._is_error_state:
+                self._clear_error_style()
+                self.widget.SetToolTip(wx.ToolTip(''))
+        else:
+            if not self._is_error_state:
+                self._set_error_style()
+                self.widget.SetToolTip(wx.ToolTip(self._validator_message))
 
     #--------------------------------------------------------------------------
     # Message Handling
@@ -231,11 +331,12 @@ class WxField(WxConstraintsWidget):
         """
         self.set_validator(content['validator'])
 
-    def on_action_set_edit_triggers(self, content):
-        """ Handle the 'set_edit_triggers' action from the Enaml widget.
+    def on_action_set_submit_triggers(self, content):
+        """ Handle the 'set_submit_triggers' action from the Enaml 
+        widget.
 
         """
-        self.set_edit_triggers(content['edit_triggers'])
+        self.set_submit_triggers(content['sumbit_triggers'])
 
     def on_action_set_placeholder(self, content):
         """ Hanlde the 'set_placeholder' action from the Enaml widget.
@@ -269,21 +370,25 @@ class WxField(WxConstraintsWidget):
 
         """
         self.widget.ChangeValue(text)
-        self._last_edit_text = text
+        self._last_value = text
+        self._clear_error_style()
 
     def set_validator(self, validator):
         """ Sets the validator for the control.
 
         """
-        if validator is not None:
-            validator = make_validator(validator)
-        self._validator = validator
+        if validator is None:
+            self._validator = null_validator
+            self._validator_message = ''
+        else:
+            self._validator = make_validator(validator)
+            self._validator_message = validator.get('message', '')
     
-    def set_edit_triggers(self, triggers):
-        """ Set the edit triggers for the control.
+    def set_submit_triggers(self, triggers):
+        """ Set the submit triggers for the underlying widget.
 
         """
-        self._edit_triggers = triggers
+        self._submit_triggers = triggers
 
     def set_placeholder(self, placeholder):
         """ Sets the placeholder text in the widget.
