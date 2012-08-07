@@ -3,8 +3,8 @@ import copy
 import enaml
 from enaml.application import Application
 from enaml.session import Session
-#from enaml.wx.wx_local_server import WxLocalServer
-from enaml.qt.qt_local_server import QtLocalServer
+from enaml.wx.wx_local_server import WxLocalServer
+#from enaml.qt.qt_local_server import QtLocalServer
 from enaml.stdlib.sessions import view_factory
 
 
@@ -60,17 +60,17 @@ if __name__ == '__main__':
 
     app = Application([shared_factory, unshared_factory, create_view(app_model)])
 
-    #server = WxLocalServer(app)
-    server = QtLocalServer(app)
+    server = WxLocalServer(app)
+    #server = QtLocalServer(app)
 
     client = server.local_client()
 
     # Bring up three ui's, to show how we can link the views with a 
     # common model or not
     client.start_session('test-view-shared')
-    client.start_session('test-view-shared')
-    client.start_session('test-view-unshared')
-    client.start_session('foo-view')
+    #client.start_session('test-view-shared')
+    #client.start_session('test-view-unshared')
+    #client.start_session('foo-view')
     
     server.start()
 

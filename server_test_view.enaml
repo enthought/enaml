@@ -1,46 +1,98 @@
-from enaml.widgets import Window, Html, Container, PushButton, Slider, ComboBox
+from enaml.widgets import (
+    Window, Html, Container, PushButton, Slider, ComboBox, Notebook, Page, 
+    Field, ScrollArea, MainWindow, DockPane
+)
+
 from enaml.layout import hbox, vbox, spacer, align
+from enaml.validation import RegexValidator
 
 
-enamldef Main(Window):
+enamldef Main(MainWindow):
     attr model
+    initial_size = (1000, 800)
     Container:
-        constraints = [
-            vbox(
-                html_frame, 
-                combo,
-                hbox(
-                    add_button, remove_button, spacer, 
-                    change_mode_button, spacer, share_button,
-                ),
-            ),
-            align('h_center', html_frame, change_mode_button) | 'weak',
-            html_frame.height >= 150,
-        ]
-        Html:
-            id: html_frame
-            name = 'html'
-            source << model.html
-        ComboBox:
-            id: combo
-            items = ['foo', 'bar', 'baz', 'spam', 'ham', 'eggs']
-            index = 4
-            index :: print items[index]
-        PushButton:
-            id: add_button
-            text = 'Add'
-            clicked :: model.value += 20
-        PushButton:
-            id: remove_button
-            text = 'Remove'
-            clicked :: model.value -= 20
-        PushButton:
-            id: change_mode_button
-            text = 'Change Mode'
-            clicked :: self.text = text * 2
-        PushButton:
-            id: share_button
-            text = 'Share...'
-            clicked :: print 'foo'
-            name = 'what'
+        padding = 0
+        Notebook:
+            Page:
+                title = 'foo'
+                Field:
+                    pass
+                Field:
+                    pass
+                Field:
+                    pass
+            Page:
+                title = 'foasdfo'
+                Field:
+                    pass
+                Field:
+                    pass
+                Field:
+                    pass
+            Page:
+                title = 'asdffoo'
+                Field:
+                    pass
+                Field:
+                    pass
+                Field:
+                    pass
+            Page:
+                title = 'foasdfo'
+                Field:
+                    pass
+                Field:
+                    pass
+                Field:
+                    pass
+    DockPane:
+        Container:
+            Field:
+                pass
+            Field:
+                pass
+            Field:
+                pass
+            Field:
+                pass
+            Field:
+                pass
+    DockPane:
+        Container:
+            Field:
+                pass
+            Field:
+                pass
+            Field:
+                pass
+            Field:
+                pass
+            Field:
+                pass
+    DockPane:
+        Container:
+            Field:
+                pass
+            Field:
+                pass
+            Field:
+                pass
+            Field:
+                pass
+            Field:
+                pass
+    DockPane:
+        Container:
+            Field:
+                pass
+            Field:
+                pass
+            Field:
+                pass
+            Field:
+                pass
+            Field:
+                pass
+    
+
 
