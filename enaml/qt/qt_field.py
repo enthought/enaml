@@ -87,7 +87,7 @@ class QtField(QtConstraintsWidget):
 
     """
     #: The client side validator function for the field.
-    _validator = None
+    _validator = null_validator
 
     #: The validator message for the validator.
     _validator_message = ''
