@@ -2,13 +2,12 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from abc import abstractmethod
 import re
 
-from traits.api import ABCHasTraits, Str, Unicode, Property, cached_property
+from traits.api import HasTraits, Str, Unicode, Property, cached_property
 
 
-class Validator(ABCHasTraits):
+class Validator(HasTraits):
     """ The base class for creating widget text validators.
 
     This class is abstract. It's abstract api must be implemented by a
@@ -19,7 +18,6 @@ class Validator(ABCHasTraits):
     #: will be sent to the client widget if server side validation fails
     message = Unicode
 
-    @abstractmethod
     def validate(self, text, component):
         """ Validates the given text.
 
