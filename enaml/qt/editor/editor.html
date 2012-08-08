@@ -66,14 +66,14 @@
 			over: function(event, ui) {
 				var tab_width = _this.refreshTabWidths();
 				var padding = parseInt(jQuery(ui.item).css('padding-left'))*2;
-				jQuery(ui.item).css('width', tab_width - padding - 4);
-				jQuery(ui.helper).css('width', tab_width - padding - 4);
+				jQuery(ui.item).css('width', tab_width - padding - 2);
+				jQuery(ui.helper).css('width', tab_width - padding - 2);
 			},
 			out: function(event, ui) {
 				var tab_width = _this.refreshTabWidths();
 				var padding = parseInt(jQuery(ui.item).css('padding-left'))*2;
-				jQuery(ui.item).css('width', tab_width - padding - 4);
-				jQuery(ui.helper).css('width', tab_width - padding - 4);
+				jQuery(ui.item).css('width', tab_width - padding - 2);
+				jQuery(ui.helper).css('width', tab_width - padding - 2);
 			}
 
 		}).disableSelection();
@@ -195,7 +195,7 @@
 			var tab_width = container_width / div_list.length;
 			jQuery.each(div_list, function(index, value) {
 				var padding = parseInt(jQuery(value).css('padding-left'))*2;
-				jQuery(value).css('width', tab_width - padding - 4);
+				jQuery(value).css('width', tab_width - padding - 2);
 			});
 			return tab_width;
 		}
