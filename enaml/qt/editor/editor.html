@@ -133,7 +133,7 @@
 		};
 
 		this.addTabItem = function(info) {
-			/* Handler for when the '+' button is clicked
+			/* Add a tab item
 
 			*/
 			default_args = {
@@ -184,7 +184,10 @@
 		};
 
 		this.tab_list.current_tab = jQuery('div', this.tab_list)[0];
- 		jQuery('.add_button').eq(${column}).click(this.addTabItem)
+ 		jQuery('.add_button').eq(${column}).click(function() {
+ 			_this.addTabItem();
+ 			py_ace_editor.tab_added(${column}, _this.tab_list.length - 1);
+	 	});
 
 		${global_bindings}
 	}();

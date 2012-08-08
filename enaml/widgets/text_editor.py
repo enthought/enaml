@@ -4,6 +4,7 @@
 #------------------------------------------------------------------------------
 from traits.api import Unicode, Int, List, Bool
 from .constraints_widget import ConstraintsWidget
+from ..noncomponents.document import Document
 
 
 class TextEditor(ConstraintsWidget):
@@ -63,7 +64,7 @@ class TextEditor(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
-    def on_message_set_text(self, payload):
+    def on_message_event_text_changed(self, payload):
         """ Update the text of a document.
 
 
@@ -78,6 +79,14 @@ class TextEditor(ConstraintsWidget):
         doc.on_trait_change(self.text_changed, 'text', remove=True)
         doc.text = text
         doc.on_trait_change(self.text_changed, 'text')
+
+    def on_message_event_tab_added(self, payload):
+        """ Update the documents list
+
+        """
+        col_index = payload['col_index']
+        tab_index = payload['tab_index']
+        self.documents[col_index].insert(tab_index, Document())
 
     #--------------------------------------------------------------------------
     # Trait Change Handlers

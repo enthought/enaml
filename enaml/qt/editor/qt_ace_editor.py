@@ -51,6 +51,7 @@ class QtAceEditor(QObject):
     margin_line_changed = Signal(bool)
     margin_line_column_changed = Signal(int)
     text_changed_from_js = Signal(int, int, unicode)
+    tab_added = Signal(int, int)
 
     def __init__(self, parent=None):
         """ Initialize the editor

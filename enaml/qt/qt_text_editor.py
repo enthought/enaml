@@ -16,6 +16,7 @@ class QtTextEditor(QtConstraintsWidget):
         """
         self.widget = QtAceEditorView(self.parent_widget)
         self.widget.ace_editor.text_changed_from_js.connect(self.on_text_change)
+        self.widget.ace_editor.tab_added.connect(self.on_tab_added)
 
     def initialize(self, attrs):
         """ Initialize the widget's attributes.
@@ -45,10 +46,21 @@ class QtTextEditor(QtConstraintsWidget):
 
         """
         payload = {
-            'action': 'set-text',
+            'action': 'event-text-changed',
             'col_index': col_index,
             'tab_index': tab_index,
             'text': text
+        }
+        self.send_message(payload)
+
+    def on_tab_added(self, col_index, tab_index):
+        """ Event fired when a tab is added to the editor
+
+        """
+        payload = {
+            'action': 'event-tab-added',
+            'col_index': col_index,
+            'tab_index': tab_index
         }
         self.send_message(payload)
 
