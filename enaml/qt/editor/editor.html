@@ -26,6 +26,7 @@
 	var editor_${column} = new function() {
 		var _this = this;
 	    var EditSession = require('ace/edit_session').EditSession;
+
 		this.editor = ace.edit("editor_${column}");
 
 		this.current_index = 0;
@@ -146,10 +147,17 @@
 			div = document.createElement('div');
 			div.innerHTML = options['title'];
 			div.session = new EditSession(options['text'], options['mode']);
+
 			if (_this.tab_list.current_tab == null)
 				_this.tab_list.current_tab = div
 			_this.tab_list.append(div);
 			_this.setupTab(div);
+
+			div.session.doc.on('change', function(e) {
+				py_ace_editor.set_text_from_js(${column}, 
+					jQuery('div', _this.tab_list).index(_this.tab_list.current_tab),
+					_this.tab_list.current_tab.session.getDocument().getValue());
+			});
 		};
 
 		this.clickTabItem = function() {
@@ -178,7 +186,6 @@
 		this.tab_list.current_tab = jQuery('div', this.tab_list)[0];
  		jQuery('.add_button').eq(${column}).click(this.addTabItem)
 
-		${events}
 		${global_bindings}
 	}();
 </script>

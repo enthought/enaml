@@ -15,6 +15,7 @@ class QtTextEditor(QtConstraintsWidget):
 
         """
         self.widget = QtAceEditorView(self.parent_widget)
+        self.widget.ace_editor.text_changed_from_js.connect(self.on_text_change)
 
     def initialize(self, attrs):
         """ Initialize the widget's attributes.
@@ -35,6 +36,21 @@ class QtTextEditor(QtConstraintsWidget):
         self.set_auto_pair(self.attrs['auto_pair'])
         self.set_font_size(self.attrs['font_size'])
         self.set_margin_line(self.attrs['margin_line'])
+
+    #--------------------------------------------------------------------------
+    # Event handlers
+    #--------------------------------------------------------------------------
+    def on_text_change(self, col_index, tab_index, text):
+        """ Event fired when the editor text is changed.
+
+        """
+        payload = {
+            'action': 'set-text',
+            'col_index': col_index,
+            'tab_index': tab_index,
+            'text': text
+        }
+        self.send_message(payload)
 
     #--------------------------------------------------------------------------
     # Message Handlers

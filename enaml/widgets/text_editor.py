@@ -60,6 +60,28 @@ class TextEditor(ConstraintsWidget):
         self.publish_attributes('columns', 'theme', 'auto_pair', 'font_size',
             'margin_line', 'documents[]')
 
+    #--------------------------------------------------------------------------
+    # Message Handlers
+    #--------------------------------------------------------------------------
+    def on_message_set_text(self, payload):
+        """ Update the text of a document.
+
+
+        """
+        # XXX This should probably be done with loopback guards, but I could
+        # not get it working. We need a better solution than unhooking and
+        # reattaching the trait change listener.
+        col_index = payload['col_index']
+        tab_index = payload['tab_index']
+        text = payload['text']
+        doc = self.documents[col_index][tab_index]
+        doc.on_trait_change(self.text_changed, 'text', remove=True)
+        doc.text = text
+        doc.on_trait_change(self.text_changed, 'text')
+
+    #--------------------------------------------------------------------------
+    # Trait Change Handlers
+    #--------------------------------------------------------------------------
     def title_changed(self, _object, name, new):
         payload = {
             'action': 'set-title',

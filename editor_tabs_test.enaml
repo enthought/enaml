@@ -18,4 +18,4 @@ enamldef Main(Window):
             id: button
             text = 'change text'
             clicked ::
-                text_edit.documents[1][0].text = 'asdf'
+                print text_edit.documents[0][0].text

@@ -23,13 +23,6 @@ HTML_TEMPLATE = Template("""
     </html>
 """)
 
-EVENT_TEMPLATE = Template("""
-    py_${func} = function() {
-        py_ace_editor.${func}(${args});
-    }
-    this.editor.${target}.on("${event_name}", py_${func});
-""")
-
 BINDING_TEMPLATE = Template("""
     router.r_${signal} = function(col_index, tab_index, value) {
         try {
@@ -57,6 +50,7 @@ class QtAceEditor(QObject):
     font_size_changed = Signal(int)
     margin_line_changed = Signal(bool)
     margin_line_column_changed = Signal(int)
+    text_changed_from_js = Signal(int, int, unicode)
 
     def __init__(self, parent=None):
         """ Initialize the editor
@@ -77,109 +71,58 @@ class QtAceEditor(QObject):
         """ Set the title of the current tab in the editor
 
         """
-        self._title = title
         self.title_changed.emit(col_index, tab_index, title)
 
     def set_text(self, col_index, tab_index, text):
         """ Set the text of the editor
 
         """
-        self._text = text
         self.text_changed.emit(col_index, tab_index, text)
 
-    @Slot(unicode)
-    def set_text_from_js(self, text):
-        """ Set the text from the javascript editor. This method is required
-        because set_text emits the signal to update the text again.
+    @Slot(int, int, unicode)
+    def set_text_from_js(self, col_index, tab_index, text):
+        """ Set the text of the editor
 
         """
-        self._text = text
-
-    def text(self):
-        """ Return the text of the editor
-
-        """
-        return self._text
+        self.text_changed_from_js.emit(col_index, tab_index, text)
 
     def set_mode(self, col_index, tab_index, mode):
         """ Set the mode of the editor
 
         """
-        if mode.startswith('ace/mode/'):
-            self._mode = mode
-        else:
-            self._mode = 'ace/mode/' + mode
-        self.mode_changed.emit(col_index, tab_index, self._mode)
-
-    def mode(self):
-        """ Return the mode of the editor
-
-        """
-        return self._mode
+        if not mode.startswith('ace/mode/'):
+            mode = 'ace/mode/' + mode
+        self.mode_changed.emit(col_index, tab_index, mode)
 
     def set_theme(self, theme):
         """ Set the theme of the editor
 
         """
-        if theme.startswith('ace/theme/'):
-            self._theme = theme
-        else:
-            self._theme = "ace/theme/" + theme
-        self.theme_changed.emit(self._theme)
-
-    def theme(self):
-        """ Return the theme of the editor
-
-        """
-        return self._theme
+        if not theme.startswith('ace/theme/'):
+            theme = "ace/theme/" + theme
+        self.theme_changed.emit(theme)
 
     def set_auto_pair(self, auto_pair):
         """ Set the auto_pair behavior of the editor
 
         """
-        self._auto_pair = auto_pair
         self.auto_pair_changed.emit(auto_pair)
 
     def set_font_size(self, font_size):
         """ Set the font size of the editor
 
         """
-        self._font_size = font_size
         self.font_size_changed.emit(font_size)
 
     def set_margin_line(self, margin_line):
         """ Set whether or not to display the margin line in the editor
 
         """
-        self._margin_line = margin_line
         if (margin_line == -1):
             self.margin_line_changed.emit(False)
         else:
             self.margin_line_changed.emit(True)
             self.margin_line_column_changed.emit(margin_line)
-
-    def generate_ace_event(self, _func, _target, _args, _event_name):
-        """ Generate a Javascript ace editor event handler.
-
-        Parameters
-        -----------
-        _func : string
-            The python method to be called on the python AceEditor object
-
-        _args : string
-            The javascript expression to pass to the method
-
-        _target : string
-            The Ace Editor target to tie the event to
-
-        _event_name : string
-            The name of the AceEditor event
-
-        """
-        event = EVENT_TEMPLATE.substitute(func=_func, args=_args,
-                                          target=_target,
-                                          event_name=_event_name)
-        self._events.append(event)
 
     def generate_binding(self, _signal, _func):
         """ Generate a connection between a Qt signal and a javascript function.
@@ -233,9 +176,6 @@ class QtAceEditor(QObject):
 
         _editors = []
         for _column in range(columns):
-            self.generate_ace_event('set_text_from_js', 'getSession()',
-                 '_this.editor.getSession().getDocument().getValue()', 'change')
-
             self.generate_global_binding('theme_changed', 'this.editor',
                 'setTheme')
             self.generate_global_binding('auto_pair_changed', 'this.editor',
@@ -248,8 +188,7 @@ class QtAceEditor(QObject):
                  'this.editor', 'setPrintMarginColumn')
 
             _editors.append(editor_template.substitute(column=_column,
-                events='\n'.join(self._events), width=_width,
-                global_bindings='\n'.join(self._global_bindings)))
+                width=_width, global_bindings='\n'.join(self._global_bindings)))
 
             self._global_bindings = []
             self._events = []
