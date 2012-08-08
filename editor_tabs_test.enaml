@@ -8,6 +8,7 @@ enamldef Main(Window):
         constraints = [vbox(text_edit, button)]
         TextEditor:
             id: text_edit
+            tabs = True
             documents = [
                 [Document(title='First Document', text='hello', mode='javascript'),
                 Document(title='Second Document', text='hello2', mode='javascript')],

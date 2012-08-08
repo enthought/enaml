@@ -37,6 +37,7 @@ class QtTextEditor(QtConstraintsWidget):
         self.set_auto_pair(self.attrs['auto_pair'])
         self.set_font_size(self.attrs['font_size'])
         self.set_margin_line(self.attrs['margin_line'])
+        self.set_tabs(self.attrs['tabs'])
 
     #--------------------------------------------------------------------------
     # Event handlers
@@ -67,6 +68,12 @@ class QtTextEditor(QtConstraintsWidget):
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
+    def on_message_set_tabs(self, payload):
+        """ Handle the 'set-tabs' action from the Enaml widget.
+
+        """
+        self.set_tabs(payload['tabs'])
+
     def on_message_set_documents(self, payload):
         """ Handle the 'set-documents' action from the Enaml widget.
 
@@ -121,6 +128,12 @@ class QtTextEditor(QtConstraintsWidget):
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
+    def set_tabs(self, tabs):
+        """ Set whether or not to show tabs
+
+        """
+        self.widget.editor().set_tabs(tabs)
+
     def set_columns(self, columns):
         """ Set the number of columns in the editor.
 

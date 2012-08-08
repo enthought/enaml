@@ -28,6 +28,9 @@ class TextEditor(ConstraintsWidget):
     #: margin line.
     margin_line = Int(-1)
 
+    #: Whether or not to show tabs
+    tabs = Bool(False)
+
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
@@ -50,6 +53,7 @@ class TextEditor(ConstraintsWidget):
         super_attrs['auto_pair'] = self.auto_pair
         super_attrs['font_size'] = self.font_size
         super_attrs['margin_line'] = self.margin_line
+        super_attrs['tabs'] = self.tabs
         return super_attrs
 
     def bind(self):
@@ -59,7 +63,7 @@ class TextEditor(ConstraintsWidget):
         """
         super(TextEditor, self).bind()
         self.publish_attributes('columns', 'theme', 'auto_pair', 'font_size',
-            'margin_line', 'documents[]')
+            'margin_line', 'documents[]', 'tabs')
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -92,6 +96,9 @@ class TextEditor(ConstraintsWidget):
     # Trait Change Handlers
     #--------------------------------------------------------------------------
     def title_changed(self, _object, name, new):
+        """ Fired when the title trait changes on a document
+
+        """
         payload = {
             'action': 'set-title',
             'col_index': _object.col,
@@ -101,6 +108,9 @@ class TextEditor(ConstraintsWidget):
         self.send_message(payload)
 
     def text_changed(self, _object, name, new):
+        """ Fired when the text trait changes on a document
+
+        """
         payload = {
             'action': 'set-text',
             'col_index': _object.col,
@@ -110,6 +120,9 @@ class TextEditor(ConstraintsWidget):
         self.send_message(payload)
 
     def mode_changed(self, _object, name, new):
+        """ Fired when the mode trait changes on a document
+
+        """
         payload = {
             'action': 'set-mode',
             'col_index': _object.col,

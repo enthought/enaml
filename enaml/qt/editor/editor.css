@@ -29,12 +29,10 @@ body {
 }
 
 .tabs {
-    vertical-align: middle;
     height: 2em;
     display: inline-block;
     width: 94%;
     font-size: 0.8em;
-    overflow: hidden;
 }
 
 .tabs div {
@@ -46,6 +44,9 @@ body {
     border-radius: 10px 10px 0 0;
     padding: 5px 10px 5px 10px;
     color: #000;
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 150px;
 }
 
 .tabs div:first-child {
@@ -61,15 +62,15 @@ body {
     color: #fff;
 }
 
-.tabs div button {
-    border: none;
-    background: none;
-    margin: 0 0 0 5px;
-    padding: 0;
+.tabs div span {
+    margin-right: 13px;
 }
 
-.tabs div.current button {
-    color: #999;
+.tabs div button {
+    position: absolute;
+    top: 0;
+    right: 2px;
+    padding: 0;
 }
 
 .tabs div.current button:active {

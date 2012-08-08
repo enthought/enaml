@@ -51,6 +51,7 @@ class QtAceEditor(QObject):
     margin_line_changed = Signal(bool)
     margin_line_column_changed = Signal(int)
     text_changed_from_js = Signal(int, int, unicode)
+    show_tabs = Signal(bool)
     tab_added = Signal(int, int)
 
     def __init__(self, parent=None):
@@ -61,6 +62,12 @@ class QtAceEditor(QObject):
         self._events = []
         self._bindings = []
         self._global_bindings = []
+
+    def set_tabs(self, tabs):
+        """ Set whether or not to show tabs
+
+        """
+        self.show_tabs.emit(tabs)
 
     def set_columns(self, columns):
         """ Set the number of columns in the editor
@@ -187,6 +194,7 @@ class QtAceEditor(QObject):
                  'setShowPrintMargin')
             self.generate_global_binding('margin_line_column_changed',
                  'this.editor', 'setPrintMarginColumn')
+            self.generate_global_binding('show_tabs', 'this', 'setTabs')
 
             _editors.append(editor_template.substitute(column=_column,
                 width=_width, global_bindings='\n'.join(self._global_bindings)))

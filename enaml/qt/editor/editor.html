@@ -8,7 +8,6 @@
 	    position: relative;
 	    width: 100%;
 	    background-color: #fff;
-	    height: 95%;
 	}
 
 	.container {
@@ -114,6 +113,17 @@
 			}
 		}
 
+		this.setTabs = function(tabs) {
+			if (tabs) {
+				jQuery('.tabs').show();
+				jQuery("div[id^='editor']").eq(${column}).height('95%');
+			}
+			else {
+				jQuery('.tabs').hide();
+				jQuery("div[id^='editor']").eq(${column}).height('99%');
+			}
+		}
+
 		this.removeTabItem = function() {
 			/* handler for when the 'x' on a tab is clicked
 
@@ -130,6 +140,7 @@
 					_this.tab_list.current_tab = item.next()[0];
 			}
 			item.remove();
+			_this.refreshTabWidths();
 		};
 
 		this.addTabItem = function(info) {
@@ -158,7 +169,19 @@
 					jQuery('div', _this.tab_list).index(_this.tab_list.current_tab),
 					_this.tab_list.current_tab.session.getDocument().getValue());
 			});
+
+			_this.refreshTabWidths();
 		};
+
+		this.refreshTabWidths = function() {
+			var div_list = jQuery('div', _this.tab_list)
+			var container_width = jQuery('.tabs').width();
+			var tab_width = container_width / div_list.length;
+			jQuery.each(div_list, function(index, value) {
+				var padding = parseInt(jQuery(value).css('padding-left'))*2;
+				jQuery(value).css('width', tab_width - padding - 2);
+			});
+		}
 
 		this.clickTabItem = function() {
 			/* Handler for when a tab is clicked
@@ -181,9 +204,15 @@
 			button.innerHTML = "x";
 			jQuery(button).click(_this.removeTabItem);
 			jQuery(button).insertAfter(jQuery('span', tab));
+			jQuery(tab).hover(
+				function() { jQuery(button).show(); },
+				function() { jQuery(button).hide(); }
+			);
+			jQuery(button).hide();
 		};
 
 		this.tab_list.current_tab = jQuery('div', this.tab_list)[0];
+		_this.refreshTabWidths();
  		jQuery('.add_button').eq(${column}).click(function() {
  			_this.addTabItem();
  			py_ace_editor.tab_added(${column}, _this.tab_list.length - 1);
