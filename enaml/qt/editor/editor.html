@@ -8,6 +8,7 @@
 	    position: relative;
 	    width: 100%;
 	    background-color: #fff;
+	    top: 0.74em;
 	}
 
 	.container {
@@ -43,6 +44,7 @@
 				_this.tab_list.current_tab = ui.item[0];
 				ui.item.click(_this.clickTabItem);
 				jQuery('button', ui.item).click(_this.removeTabItem);
+				_this.refreshTabWidths();
 			},
 			remove: function(event, ui) {
 				if (_this.tab_list.length == 0)
@@ -56,10 +58,24 @@
 				}
 				ui.item.unbind('click');
 				jQuery('button', ui.item).unbind('click');
+				_this.refreshTabWidths();
 			},
 			start: function(event, ui) {
 				_this.current_index = ui.item.index();
+			},
+			over: function(event, ui) {
+				var tab_width = _this.refreshTabWidths();
+				var padding = parseInt(jQuery(ui.item).css('padding-left'))*2;
+				jQuery(ui.item).css('width', tab_width - padding - 4);
+				jQuery(ui.helper).css('width', tab_width - padding - 4);
+			},
+			out: function(event, ui) {
+				var tab_width = _this.refreshTabWidths();
+				var padding = parseInt(jQuery(ui.item).css('padding-left'))*2;
+				jQuery(ui.item).css('width', tab_width - padding - 4);
+				jQuery(ui.helper).css('width', tab_width - padding - 4);
 			}
+
 		}).disableSelection();
 
 		this.tab_list.__defineSetter__("current_tab", function(tab) {
@@ -179,8 +195,9 @@
 			var tab_width = container_width / div_list.length;
 			jQuery.each(div_list, function(index, value) {
 				var padding = parseInt(jQuery(value).css('padding-left'))*2;
-				jQuery(value).css('width', tab_width - padding - 2);
+				jQuery(value).css('width', tab_width - padding - 4);
 			});
+			return tab_width;
 		}
 
 		this.clickTabItem = function() {
