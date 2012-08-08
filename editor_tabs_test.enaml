@@ -1,5 +1,5 @@
 from enaml.widgets import Window, Container, TextEditor, PushButton
-from enaml.noncomponents.document import Document
+from enaml.noncomponents import Document
 from enaml.layout import vbox
 
 enamldef Main(Window):
