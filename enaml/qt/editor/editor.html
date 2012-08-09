@@ -5,10 +5,8 @@
 
 <style>
 	#editor_${column} {
-	    position: relative;
+		position: relative;
 	    width: 100%;
-	    background-color: #fff;
-	    top: 0.74em;
 	}
 
 	.container {
@@ -83,6 +81,7 @@
 			},
 			start: function(event, ui) {
 				_this.current_index = ui.item.index();
+				ui.placeholder.width(ui.item.width());
 			},
 			over: function(event, ui) {
 				var tab_width = _this.refreshTabWidths();
@@ -244,7 +243,11 @@
 			var tab_width = container_width / div_list.length;
 			jQuery.each(div_list, function(index, value) {
 				var padding = parseInt(jQuery(value).css('padding-left'))*2;
-				jQuery(value).css('width', tab_width - padding - 2);
+				jQuery(value).width(tab_width - padding - 2);
+				jQuery('button', value).show();
+				var button_left = jQuery('button', value).position().left;
+				if (button_left < jQuery('span', value).width()+4)
+					jQuery('button', value).hide();
 			});
 			return tab_width;
 		}
@@ -270,11 +273,6 @@
 			button.innerHTML = "x";
 			jQuery(button).click(_this.removeTabItem);
 			jQuery(button).insertAfter(jQuery('span', tab));
-			jQuery(tab).hover(
-				function() { jQuery(button).show(); },
-				function() { jQuery(button).hide(); }
-			);
-			jQuery(button).hide();
 		};
 
 		this.tab_list.current_tab = jQuery('div', this.tab_list)[0];

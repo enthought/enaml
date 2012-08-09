@@ -1,5 +1,6 @@
 from ..qt.QtWebKit import QWebView, QWebSettings
-from ..qt.QtCore import QUrl
+from ..qt.QtCore import QUrl, Qt
+from ..qt.QtGui import QPalette
 from qt_ace_editor import QtAceEditor
 
 
@@ -10,6 +11,11 @@ class QtAceEditorView(QWebView):
         """
         super(QtAceEditorView, self).__init__(parent)
         self.ace_editor = QtAceEditor(self)
+
+        p = self.palette()
+        p.setBrush(QPalette.Base, Qt.transparent)
+        self.page().setPalette(p)
+        self.setAttribute(Qt.WA_OpaquePaintEvent, False)
 
         # XXX this is used for debugging, it should be taken out eventually
         self.settings().setAttribute(QWebSettings.DeveloperExtrasEnabled, True)
