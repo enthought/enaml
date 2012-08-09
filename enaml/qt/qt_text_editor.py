@@ -48,34 +48,31 @@ class QtTextEditor(QtConstraintsWidget):
 
         """
         content = {
-            'action': 'event-text-changed',
             'col_index': col_index,
             'tab_index': tab_index,
             'text': text
         }
-        self.send_action(content)
+        self.send_action('text_changed', content)
 
     def on_tab_added(self, col_index, tab_index):
         """ Event fired when a tab is added to the editor
 
         """
         content = {
-            'action': 'event-tab-added',
             'col_index': col_index,
             'tab_index': tab_index
         }
-        self.send_action(content)
+        self.send_action('tab_added', content)
 
     def on_tab_removed(self, col_index, tab_index):
         """ Event fired when a tab is removed from the editor
 
         """
         content = {
-            'action': 'event-tab-removed',
             'col_index': col_index,
             'tab_index': tab_index
         }
-        self.send_action(content)
+        self.send_action('tab_removed', content)
 
     #--------------------------------------------------------------------------
     # Action Handlers

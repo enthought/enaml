@@ -109,33 +109,30 @@ class TextEditor(ConstraintsWidget):
 
         """
         content = {
-            'action': 'set-title',
             'col_index': _object.col,
             'tab_index': _object.tab,
             'title': new
         }
-        self.send_action(content)
+        self.send_action('set_title', content)
 
     def text_changed(self, _object, name, new):
         """ Fired when the text trait changes on a document
 
         """
         content = {
-            'action': 'set-text',
             'col_index': _object.col,
             'tab_index': _object.tab,
             'text': new
         }
-        self.send_action(content)
+        self.send_action('set_text', content)
 
     def mode_changed(self, _object, name, new):
         """ Fired when the mode trait changes on a document
 
         """
         content = {
-            'action': 'set-mode',
             'col_index': _object.col,
             'tab_index': _object.tab,
             'mode': new
         }
-        self.send_action(content)
+        self.send_action('set_mode', content)
