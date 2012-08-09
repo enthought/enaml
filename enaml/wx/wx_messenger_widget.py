@@ -32,10 +32,12 @@ class WxMessengerWidget(object):
         self._parent_ref = ref(parent) if parent is not None else lambda: None
         self.widget = None
         self.children = []
+        self.children_map = {}
         self.widget_id = widget_id
         self.session = session
         if parent is not None:
             parent.children.append(self)
+            parent.children_map[widget_id] = self
 
     #--------------------------------------------------------------------------
     # Messaging/Session API
