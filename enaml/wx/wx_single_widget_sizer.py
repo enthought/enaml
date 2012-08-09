@@ -36,7 +36,7 @@ class wxSingleWidgetSizer(wx.PySizer):
         """
         self.Clear(deleteWindows=False)
         self._widget = widget
-        if widget is not None:
+        if widget:
             res = super(wxSingleWidgetSizer, self).Add(widget)
             self.Layout()
             return res
