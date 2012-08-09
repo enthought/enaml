@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 import datetime
 
-from dateutil import parser as isoparse
+from dateutil import parser as isoparser
 import wx
 
 from .wx_constraints_widget import WxConstraintsWidget
@@ -15,7 +15,7 @@ def as_wx_date(iso_date):
 
     """
     # wx doesn't have iso date parsing until version 2.9
-    py_date = isoparse(iso_date)
+    py_date = isoparser.parse(iso_date)
     day = py_date.day
     month = py_date.month - 1  # wx peculiarity!
     year = py_date.year
