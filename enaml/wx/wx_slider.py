@@ -164,7 +164,7 @@ class WxSlider(WxConstraintsWidget):
         self.set_tick_position(tree['tick_position'])
         self.set_tick_interval(tree['tick_interval'])
         self.set_tracking(tree['tracking'])
-        self.widget.Bind(EVT_SLIDER, self.on_value_changed)
+        self.widget().Bind(EVT_SLIDER, self.on_value_changed)
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -231,7 +231,7 @@ class WxSlider(WxConstraintsWidget):
         slider value has changed.
 
         """
-        content = {'value': self.widget.GetValue()}
+        content = {'value': self.widget().GetValue()}
         self.send_action('value_changed', content)
 
     #--------------------------------------------------------------------------
@@ -241,65 +241,69 @@ class WxSlider(WxConstraintsWidget):
         """ Set the value of the underlying widget.
 
         """
-        self.widget.SetValue(value)
+        self.widget().SetValue(value)
 
     def set_maximum(self, maximum):
         """ Set the maximum value of the underlying widget.
 
         """
-        minimum, _ = self.widget.GetRange()
-        self.widget.SetRange(minimum, maximum)
+        widget = self.widget()
+        minimum, _ = widget.GetRange()
+        widget.SetRange(minimum, maximum)
 
     def set_minimum(self, minimum):
         """ Set the minimum value of the underlying widget.
 
         """
-        _, maximum = self.widget.GetRange()
-        self.widget.SetRange(minimum, maximum)
+        widget = self.widget()
+        _, maximum = widget.GetRange()
+        widget.SetRange(minimum, maximum)
 
     def set_orientation(self, orientation):
         """ Set the orientation of the underlying widget.
 
         """
-        style = self.widget.GetWindowStyle()
+        widget = self.widget()
+        style = widget.GetWindowStyle()
         style &= ~_ORIENTATION_MASK
         style |= _ORIENTATION_MAP[orientation]
-        self.widget.SetWindowStyle(style)
+        widget.SetWindowStyle(style)
 
     def set_page_step(self, page_step):
         """ Set the page step of the underlying widget.
 
         """
-        self.widget.SetPageSize(page_step)
+        self.widget().SetPageSize(page_step)
 
     def set_single_step(self, single_step):
         """ Set the single step of the underlying widget.
 
         """
-        self.widget.SetLineSize(single_step)
+        self.widget().SetLineSize(single_step)
 
     def set_tick_interval(self, interval):
         """ Set the tick interval of the underlying widget.
 
         """
-        self.widget.SetTickFreq(interval)
+        self.widget().SetTickFreq(interval)
 
     def set_tick_position(self, tick_position):
         """ Set the tick position of the underlying widget.
 
         """
-        style = self.widget.GetWindowStyle()
+        widget = self.widget()
+        style = widget.GetWindowStyle()
         style &= ~_TICK_MASK
         if style & wx.SL_VERTICAL:
             tick_position = _TICK_ADAPT_MAP['vertical'][tick_position]
         else:
             tick_position = _TICK_ADAPT_MAP['horizontal'][tick_position]
         style |= _TICK_POSITION_MAP[tick_position]
-        self.widget.SetWindowStyle(style)
+        widget.SetWindowStyle(style)
 
     def set_tracking(self, tracking):
         """ Set the tracking of the underlying widget.
 
         """
-        self.widget.SetTracking(tracking)
+        self.widget().SetTracking(tracking)
 
