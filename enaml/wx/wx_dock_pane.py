@@ -6,7 +6,6 @@ import wx
 import wx.aui
 import wx.lib.newevent
 
-from .wx_main_window import wxMainWindow
 from .wx_single_widget_sizer import wxSingleWidgetSizer
 from .wx_widget_component import WxWidgetComponent
 
@@ -85,9 +84,7 @@ class wxDockPane(wx.Panel):
 
         """
         parent = self.GetParent()
-        if isinstance(parent, wxMainWindow):
-            return parent.GetPaneManager()
-        if isinstance(parent, wx.aui.AuiFloatingFrame):
+        if parent:
             return parent.GetOwnerManager()
 
     def _PaneInfoOperation(self, closure):
