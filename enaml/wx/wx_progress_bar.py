@@ -64,18 +64,18 @@ class WxProgressBar(WxConstraintsWidget):
 
         """
         self._minimum = value
-        self.widget.SetRange(self._maximum - value)
+        self.widget().SetRange(self._maximum - value)
 
     def set_maximum(self, value):
         """ Set the maximum value of the progress bar
 
         """
         self._maximum = value
-        self.widget.SetRange(value - self._minimum)
+        self.widget().SetRange(value - self._minimum)
 
     def set_value(self, value):
         """ Set the value of the progress bar
 
         """
-        self.widget.SetValue(value - self._minimum)
+        self.widget().SetValue(value - self._minimum)
 
