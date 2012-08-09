@@ -70,16 +70,16 @@ class WxSplitter(WxConstraintsWidget):
 
         """
         super(WxSplitter, self).post_create()
-        widget = self.widget
-        for child in self.children:
-            widget.AppendWindow(child.widget)
+        widget = self.widget()
+        for child in self.children():
+            widget.AppendWindow(child.widget())
 
     def init_layout(self):
         """ Handle layout initialization for the splitter.
 
         """
         super(WxSplitter, self).init_layout()
-        self.widget.SizeWindows()
+        self.widget().SizeWindows()
 
     #--------------------------------------------------------------------------
     # Message Handler Methods 
@@ -111,16 +111,17 @@ class WxSplitter(WxConstraintsWidget):
 
         """
         wx_orientation = _ORIENTATION_MAP[orientation]
-        self.widget.SetOrientation(wx_orientation)
+        self.widget().SetOrientation(wx_orientation)
 
     def set_live_drag(self, live_drag):
         """ Updates the drag state of the splitter.
 
         """
+        widget = self.widget()
         if live_drag:
-            self.widget.WindowStyle |= wx.SP_LIVE_UPDATE
+            widget.WindowStyle |= wx.SP_LIVE_UPDATE
         else:
-            self.widget.WindowStyle &= ~wx.SP_LIVE_UPDATE
+            widget.WindowStyle &= ~wx.SP_LIVE_UPDATE
 
     def set_preferred_sizes(self, sizes):
         """ Set the initial sizes for the children.
