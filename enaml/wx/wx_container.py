@@ -138,23 +138,25 @@ class WxContainer(WxConstraintsWidget):
         self._owns_layout = True
         self._layout_owner = None
         self._layout_manager = None
-        self.widget.Bind(wx.EVT_SIZE, self.on_resize)
-        self.widget.Bind(wx.EVT_SHOW, self.on_show)
+        widget = self.widget()
+        widget.Bind(wx.EVT_SIZE, self.on_resize)
+        widget.Bind(wx.EVT_SHOW, self.on_show)
 
     def init_layout(self):
         """ Initializes the layout for the container. 
 
         """
         super(WxContainer, self).init_layout()
-        self._is_shown = self.widget.IsShown()
+        widget = self.widget()
+        self._is_shown = widget.IsShown()
         if self._owns_layout:
             mgr = self._layout_manager = LayoutManager()
             mgr.initialize(self._generate_constraints())
             min_size = self.compute_min_size()
             max_size = self.compute_max_size()
-            self.widget.SetBestSize(min_size)
-            self.widget.SetMinSize(min_size)
-            self.widget.SetMaxSize(max_size)
+            widget.SetBestSize(min_size)
+            widget.SetMinSize(min_size)
+            widget.SetMaxSize(max_size)
     
     #--------------------------------------------------------------------------
     # Event Handlers
@@ -208,7 +210,7 @@ class WxContainer(WxConstraintsWidget):
             primitive = self.layout_box.primitive
             width = primitive('width', False)
             height = primitive('height', False)
-            size = self.widget.GetSizeTuple()
+            size = self.widget().GetSizeTuple()
             self._layout_manager.layout(self.layout, width, height, size)
         else:
             self._layout_owner.refresh()
@@ -221,7 +223,7 @@ class WxContainer(WxConstraintsWidget):
         ownership and applies the geometry updates.
 
         """
-        stack = [((0, 0), self.children)]
+        stack = [((0, 0), self.children())]
         pop = stack.pop
         push = stack.append
         while stack:
@@ -230,7 +232,7 @@ class WxContainer(WxConstraintsWidget):
                 new_offset = child.update_layout_geometry(*offset)
                 if isinstance(child, WxContainer):
                     if child._layout_owner is self:
-                        push((new_offset, child.children))
+                        push((new_offset, child.children()))
 
     #--------------------------------------------------------------------------
     # Constraints Computation
@@ -248,7 +250,7 @@ class WxContainer(WxConstraintsWidget):
         # The mapping of constraint owners and the list of constraint
         # info dictionaries provided by the Enaml widgets.
         box = self.layout_box
-        cn_owners = {self.widget_id: box}
+        cn_owners = {self.widget_id(): box}
         cn_dicts = list(self.constraints)
         cn_dicts_extend = cn_dicts.extend
 
@@ -258,7 +260,7 @@ class WxContainer(WxConstraintsWidget):
         raw_cns_extend = raw_cns.extend
         
         # The widget descendent traversal stack
-        stack = list(self.children)
+        stack = list(self.children())
         stack_pop = stack.pop
         stack_extend = stack.extend
 
@@ -273,11 +275,11 @@ class WxContainer(WxConstraintsWidget):
             child = stack_pop()
             if isinstance(child, WxConstraintsWidget):
                 child_box = child.layout_box
-                cn_owners[child.widget_id] = child_box
+                cn_owners[child.widget_id()] = child_box
                 if isinstance(child, WxContainer):
                     if child.transfer_layout_ownership(self):
                         cn_dicts_extend(child.constraints)
-                        stack_extend(child.children)
+                        stack_extend(child.children())
                     else:
                         raw_cns_extend(child.size_hint_constraints())
                 else:
