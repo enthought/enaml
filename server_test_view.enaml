@@ -1,6 +1,6 @@
 from enaml.widgets import (
     Window, Html, Container, PushButton, Slider, ComboBox, Notebook, Page, 
-    Field, ScrollArea, MainWindow, DockPane, CheckBox
+    Field, ScrollArea, MainWindow, DockPane, CheckBox, Splitter, ScrollArea
 )
 
 from enaml.layout import hbox, vbox, spacer, align
@@ -16,13 +16,84 @@ enamldef Main(MainWindow):
             Page:
                 title << fld.text
                 Container:
-                    Field:
-                        id: fld
-                        text = 'foo'
-                    Field:
-                        pass
-                    CheckBox:
-                        checked := tabs_closable
+                    Splitter:
+                        id: splitter
+                        orientation = 'vertical'
+                        Container:
+                            Field:
+                                id: fld
+                                text = 'foo'
+                            Field:
+                                pass
+                            CheckBox:
+                                checked := tabs_closable
+                        Container:
+                            Field:
+                                id: fld
+                                text = 'foo'
+                            Field:
+                                pass
+                            CheckBox:
+                                checked := tabs_closable
+                        Container:
+                            ScrollArea:
+                                Container:
+                                    Field:
+                                        id: fld
+                                        text = 'foo'
+                                    Field:
+                                        pass
+                                    CheckBox:
+                                        checked := tabs_closable
+                                    Field:
+                                        id: fld
+                                        text = 'foo'
+                                    Field:
+                                        pass
+                                    CheckBox:
+                                        checked := tabs_closable
+                                    Field:
+                                        id: fld
+                                        text = 'foo'
+                                    Field:
+                                        pass
+                                    CheckBox:
+                                        checked := tabs_closable
+                                    Field:
+                                        id: fld
+                                        text = 'foo'
+                                    Field:
+                                        pass
+                                    CheckBox:
+                                        checked := tabs_closable
+                                    Field:
+                                        id: fld
+                                        text = 'foo'
+                                    Field:
+                                        pass
+                                    CheckBox:
+                                        checked := tabs_closable
+                                    Field:
+                                        id: fld
+                                        text = 'foo'
+                                    Field:
+                                        pass
+                                    CheckBox:
+                                        checked := tabs_closable
+                                    Field:
+                                        id: fld
+                                        text = 'foo'
+                                    Field:
+                                        pass
+                                    CheckBox:
+                                        checked := tabs_closable
+                                    Field:
+                                        id: fld
+                                        text = 'foo'
+                                    Field:
+                                        pass
+                                    CheckBox:
+                                        checked := tabs_closable
             Page:
                 title = 'foasdfo'
                 Container:
@@ -63,6 +134,12 @@ enamldef Main(MainWindow):
                 pass
             Field:
                 pass
+            PushButton:
+                clicked ::
+                    if splitter.orientation == 'vertical':
+                        splitter.orientation = 'horizontal'
+                    else:
+                        splitter.orientation = 'vertical'
     DockPane:
         title = 'asdfoo'
         dock_area = 'right'
@@ -88,6 +165,7 @@ enamldef Main(MainWindow):
                 checked := dp.floating
             ComboBox:
                 items = ['left', 'right', 'top', 'bottom']
+                index << items.index(dp.dock_area)
                 index :: dp.dock_area = items[index]
     DockPane:
         title = 'fooasdf'
