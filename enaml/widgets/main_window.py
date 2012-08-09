@@ -17,7 +17,7 @@ class MainWindow(Window):
     functionality beyond frame decoration. A MainWindow may optionally
     contain a MenuBar, any number of ToolBars, a StatusBar, and any
     number of DockPanes. Like Window, a MainWindow can have at most one
-    central Container widget, which will be expanded to fit int the 
+    central Container widget, which will be expanded to fit into the 
     available space.
 
     """
@@ -67,7 +67,7 @@ class MainWindow(Window):
         return tuple(panes)
 
     def _snap_dock_pane_ids(self):
-        """ Returns the widget ids of window's dock panes.
+        """ Returns the widget ids of the main window's dock panes.
 
         """
         return [pane.widget_id for pane in self.dock_panes]

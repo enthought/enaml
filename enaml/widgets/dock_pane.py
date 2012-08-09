@@ -41,16 +41,16 @@ class DockPane(WidgetComponent):
 
     #: The dock areas in the MainWindow where the pane can be docked 
     #: by the user. Note that this does not preclude the pane from 
-    #: docked manually via the 'dock_area' attribute.
+    #: being docked programmatically via the 'dock_area' attribute.
     allowed_dock_areas = List(
         Enum('left', 'right', 'top', 'bottom', 'all'), value=['all'],
     )
 
-    #: A read only property which returns the dock widget for the pane.
+    #: A read only property which returns the pane's dock widget.
     dock_widget = Property(depends_on='children[]')
 
     #: An event fired when the user closes the page by clicking on 
-    #: the tab's close button. This event is fired by the parent 
+    #: the pane's close button. This event is fired by the parent 
     #: MainWindow when the tab is closed. This event has no payload.
     closed = EnamlEvent
 
@@ -91,7 +91,7 @@ class DockPane(WidgetComponent):
         Returns
         -------
         result : Container or None
-            The dock widget for the Pane, or None if not provided.
+            The dock widget for the DockPane, or None if not provided.
 
         """
         for child in self.children:
