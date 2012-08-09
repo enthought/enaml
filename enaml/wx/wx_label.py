@@ -44,5 +44,5 @@ class WxLabel(WxConstraintsWidget):
         """ Set the text in the underlying widget.
 
         """
-        self.widget.SetLabel(text)
+        self.widget().SetLabel(text)
 
