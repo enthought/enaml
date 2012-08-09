@@ -4,68 +4,16 @@
 #------------------------------------------------------------------------------
 import wx
 
+from .wx_single_widget_sizer import wxSingleWidgetSizer
 from .wx_widget_component import WxWidgetComponent
-
-
-class wxWindowSizer(wx.PySizer):
-    """ A custom wx Sizer for use in the WxWindow. 
-
-    There can only be one widget in this sizer at a time and it should
-    be added via the .Add(...) method. Old items will be removed 
-    automatically (but not destroyed).
-
-    """
-    _default_size = wx.Size(-1, -1)
-
-    _widget = None
-
-    def CalcMax(self):
-        """ A method to compute the maximum size allowed by the sizer.
-
-        This is not a native wx sizer method, but is included for 
-        convenience.
-
-        """
-        widget = self._widget
-        if not widget:
-            return self._default_size
-        return widget.GetMaxSize()
-
-    def Add(self, widget):
-        """ Adds the given widget to the sizer, removing the old widget
-        if present. The old widget is not destroyed.
-
-        """
-        self.Clear(deleteWindows=False)
-        self._widget = widget
-        return super(wxWindowSizer, self).Add(widget)
-
-    def CalcMin(self):
-        """ Returns the minimum size for the children this sizer is 
-        managing. Since the size of the Dialog is managed externally,
-        this always returns (-1, -1).
-
-        """
-        widget = self._widget
-        if not widget:
-            return self._default_size
-        return widget.GetEffectiveMinSize()
-
-    def RecalcSizes(self):
-        """ Resizes the child to fit the available space of the window.
-
-        """
-        widget = self._widget
-        if widget:
-            widget.SetSize(self.GetSize())
 
 
 class WxWindow(WxWidgetComponent):
     """ A Wx implementation of an Enaml Window.
 
     """
-    #: The store for the central widget id
-    _central_widget = None
+    #: The storage for the central widget id
+    _central_widget_id = None
 
     #--------------------------------------------------------------------------
     # Setup Methods
@@ -81,9 +29,10 @@ class WxWindow(WxWidgetComponent):
 
         """
         super(WxWindow, self).create(tree)
-        self.set_central_widget(tree['central_widget'])
+        self.set_central_widget_id(tree['central_widget_id'])
         self.set_title(tree['title'])
         self.set_initial_size(tree['initial_size'])
+        self.widget.Bind(wx.EVT_CLOSE, self.on_close)
 
     def init_layout(self):
         """ Perform the layout initialization for the window control.
@@ -93,16 +42,26 @@ class WxWindow(WxWidgetComponent):
         # bottom-up, so the layout for all of the children has already
         # taken place. This is the proper time to grab the central 
         # widget child, stick it the sizer, and fit the window.
-        central_widget = self._central_widget
+        central_widget_id = self._central_widget_id
         for child in self.children:
-            if child.widget_id == central_widget:
-                sizer = wxWindowSizer()
+            if child.widget_id == central_widget_id:
+                sizer = wxSingleWidgetSizer()
                 sizer.Add(child.widget)
                 widget = self.widget
                 widget.SetSizerAndFit(sizer)
                 max_size = widget.ClientToWindowSize(sizer.CalcMax())
                 widget.SetMaxSize(max_size)
                 return
+
+    #--------------------------------------------------------------------------
+    # Event Handlers
+    #--------------------------------------------------------------------------
+    def on_close(self, event):
+        """ The event handler for the EVT_CLOSE event.
+
+        """
+        event.Skip()
+        self.send_action('closed', {})
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -176,11 +135,11 @@ class WxWindow(WxWidgetComponent):
         """
         pass
 
-    def set_central_widget(self, widget):
-        """ Set the central widget for the window.
+    def set_central_widget_id(self, widget_id):
+        """ Set the central widget id for the window.
 
         """
-        self._central_widget = widget
+        self._central_widget_id = widget_id
 
     def set_title(self, title):
         """ Set the title of the window.
