@@ -229,7 +229,7 @@ class WxMainWindow(WxWindow):
         """
         super(WxMainWindow, self).create(tree)
         self.set_dock_pane_ids(tree['dock_pane_ids'])
-        self.widget.Bind(EVT_DOCK_PANE_CLOSED, self.on_dock_pane_closed)
+        self.widget().Bind(EVT_DOCK_PANE_CLOSED, self.on_dock_pane_closed)
 
     def init_layout(self):
         """ Perform the layout initialization for the main window.
@@ -238,21 +238,21 @@ class WxMainWindow(WxWindow):
         # The superclass' init_layout() method is explicitly not called
         # since the layout initialization for Window is not appropriate
         # for MainWindow
-        main_window = self.widget
-        children_map = self.children_map
+        main_window = self.widget()
+        find_child = self.find_child
 
         main_window.BeginBatch()
 
         # Setup the central widget
-        central_child = children_map.get(self._central_widget)
+        central_child = find_child(self._central_widget_id)
         if central_child is not None:
-            main_window.SetCentralWidget(central_child.widget)
+            main_window.SetCentralWidget(central_child.widget())
 
         # Setup the dock panes
         for dock_id in self._dock_pane_ids:
-            dock_pane = children_map.get(dock_id)
+            dock_pane = find_child(dock_id)
             if dock_pane is not None:
-                main_window.AddDockPane(dock_pane.widget)
+                main_window.AddDockPane(dock_pane.widget())
 
         main_window.EndBatch()
 
@@ -264,9 +264,9 @@ class WxMainWindow(WxWindow):
 
         """
         dock_pane = event.DockPane
-        for child in self.children:
-            if dock_pane == child.widget:
-                widget_id = child.widget_id
+        for child in self.children():
+            if dock_pane == child.widget():
+                widget_id = child.widget_id()
                 content = {'widget_id': widget_id}
                 self.send_action('dock_pane_closed', content)
                 return
@@ -278,17 +278,17 @@ class WxMainWindow(WxWindow):
         """ Handle the 'open_dock_pane' action from the Enaml widget.
 
         """
-        child = self.children_map.get(content.widget_id)
+        child = self.find_child(content.widget_id)
         if child is not None:
-            self.widget.OpenDockPane(child.widget)
+            self.widget().OpenDockPane(child.widget())
 
     def on_action_close_dock_pane(self, content):
         """ Handle the 'close_dock_pane' action from the Enaml widget.
 
         """
-        child = self.children_map.get(content.widget_id)
+        child = self.find_child(content.widget_id)
         if child is not None:
-            self.widget.CloseDockPane(child.widget)
+            self.widget().CloseDockPane(child.widget())
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
