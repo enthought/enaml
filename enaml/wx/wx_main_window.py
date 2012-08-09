@@ -4,12 +4,18 @@
 #------------------------------------------------------------------------------
 import wx
 import wx.aui
+import wx.lib.newevent
 
 from .wx_window import WxWindow
 
 
+#: An event emitted when a main window pane is closed. The event will
+#: have an attribute 'DockPane' which is the dock pane which was closed.
+wxDockPaneClosedEvent, EVT_DOCK_PANE_CLOSED = wx.lib.newevent.NewEvent()
+
+
 class wxMainWindow(wx.Frame):
-    """ A wx.Frame subclass which behaves like a MainWindow.
+    """ A wx.Frame subclass which adds MainWindow functionality.
 
     """
     def __init__(self, *args, **kwargs):
@@ -23,52 +29,65 @@ class wxMainWindow(wx.Frame):
 
         """
         super(wxMainWindow, self).__init__(*args, **kwargs)
-        self._central_widget = None
         self._pane_manager = wx.aui.AuiManager(self)
-        self._dock_panes = set()
-        self._pause_updates = False
+        self._central_widget = None
+        self._batch = False
+        self.Bind(wx.aui.EVT_AUI_PANE_CLOSE, self._OnPaneClose)
+
+        # Add a hidden dummy widget to the pane manager. This is a 
+        # workaround for a Wx bug where the laying out of the central
+        # pane will have jitter on window resize (the computed layout
+        # origin of the central pane oscillates between (0, 0) and 
+        # (1, 1)) if there are no other panes in the layout. If we 
+        # add a hidden pane with zero size, it prevents the jitter.
+        self._hidden_widget = wx.Window(self)
+        pane = wx.aui.AuiPaneInfo()
+        pane.BestSize(wx.Size(0, 0)).MinSize(wx.Size(0, 0)).Show(False)
+        self._pane_manager.AddPane(self._hidden_widget, pane)
 
     #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
-    def _InitPaneInfo(self, dock_pane):
-        """ Create and initialize an AuiPaneInfo for the dock pane.
+    def _OnPaneClose(self, event):
+        """ Handle the EVT_AUI_PANE_CLOSE event.
 
-        Parameters
-        ----------
-        dock_pane : wxDockPane
-            The wxDockPane instance for which to create the pane info.
-
-        Returns
-        -------
-        result : AuiPaneInfo
-            A new pane info instance configured for the current state
-            of the dock pane.
+        Wx does not reliably toggle the close button dynamically when 
+        setting the CloseButton flag on the PaneInfo object for the 
+        dock pane, so we always display the button, and veto the close 
+        event when appropriate.
 
         """
-        info = wx.aui.AuiPaneInfo()
-        best_size = dock_pane.GetBestSize()
-        min_size = dock_pane.GetEffectiveMinSize()
-        info.BestSize(best_size).MinSize(min_size)
-        return info
+        info = event.GetPane()
+        dock_pane = info.window
+        if not dock_pane.GetClosable():
+            event.Veto()
+        else:
+            # If the event is Skipped, wx will call this handler twice. 
+            # Hence, don't skip the event.
+            evt = wxDockPaneClosedEvent(DockPane=dock_pane)
+            wx.PostEvent(self, evt)
 
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
     def BeginBatch(self):
-        """ Enter batch update mode for pane updates.
+        """ Enter batch update mode for main window updates.
 
-        Pane updates that are performed after calling this method will
-        not be committed until EndBatch is called.
+        Main window updates that are performed after calling this method
+        will not be committed until EndBatch is called. This can be used
+        to reduce flicker when making updates to the MainWindow.
 
         """
-        self._pause_updates = True
+        self._batch = True
 
     def EndBatch(self):
-        """ Exit batch update mode and any pending pane updates.
+        """ Exit batch update mode and process any pending updates.
+
+        After calling this method, any pending main window updates will
+        be processed.
 
         """
-        self._pause_updates = False
+        self._batch = False
         self._pane_manager.Update()
 
     def SetCentralWidget(self, widget):
@@ -81,12 +100,21 @@ class wxMainWindow(wx.Frame):
             main window.
 
         """
-        # XXX remove old central widget
+        manager = self._pane_manager
+        
+        old_widget = self._central_widget
+        if old_widget:
+            pane = manager.GetPane(old_widget)
+            if pane.IsOk():
+                pane.Show(False)
+                manager.DetachPane(old_widget)
+
         self._central_widget = widget
         pane = wx.aui.AuiPaneInfo().CenterPane()
-        self._pane_manager.AddPane(widget, pane)
-        if not self._pause_updates:
-            self._pane_manager.Update()
+        manager.AddPane(widget, pane)
+
+        if not self._batch:
+            manager.Update()
 
     def AddDockPane(self, dock_pane):
         """ Add a dock pane to the main window.
@@ -100,20 +128,12 @@ class wxMainWindow(wx.Frame):
             The wxDockPane instance to add to the main window.
 
         """
-        if dock_pane in self._dock_panes:
-            return
-        self._dock_panes.add(dock_pane)
-
-        pane_manager = self._pane_manager
-        if pane_manager.GetPane(dock_pane).IsOk():
-            return
-
-        title = dock_pane.GetTitle()
-        info = self._InitPaneInfo(dock_pane)
-        pane_manager.AddPane(dock_pane, info, title)
-        
-        if not self._pause_updates:
-            pane_manager.Update()
+        manager = self._pane_manager
+        pane = manager.GetPane(dock_pane)
+        if not pane.IsOk():
+            manager.AddPane(dock_pane, dock_pane.MakePaneInfo())
+            if not self._batch:
+                manager.Update()
 
     def RemoveDockPane(self, dock_pane):
         """ Remove a dock pane from the main window.
@@ -127,20 +147,72 @@ class wxMainWindow(wx.Frame):
             The wxDockPane instance to remove from the window.
 
         """
-        pass
+        manager = self._pane_manager
+        pane = manager.GetPane(dock_pane)
+        if pane.IsOk():
+            pane.Show(False)
+            manager.DetachPane(dock_pane)
+            if not self._batch:
+                manager.Update()
+
+    def OpenDockPane(self, dock_pane):
+        """ Unhide the given dock pane in the main window.
+
+        If the pane does not exist in the window, this is a no-op.
+
+        Parameters
+        ----------
+        dock_pane : wxDockPane
+            The wxDockPane instance to open in the window.
+
+        """
+        manager = self._pane_manager
+        pane = manager.GetPane(dock_pane)
+        if pane.IsOk():
+            pane.Show(True)
+            if not self._batch:
+                manager.Update()
+
+    def CloseDockPane(self, dock_pane):
+        """ Hide the given dock pane in the main window.
+
+        If the pane does not exist in the window, this is a no op.
+
+        Parameters
+        ----------
+        dock_pane : wxDockPane
+            The wxDockPane instance to close in the window.
+
+        """
+        manager = self._pane_manager
+        pane = manager.GetPane(dock_pane)
+        if pane.IsOk():
+            pane.Show(False)
+            if not self._batch:
+                manager.Update()
+
+    def GetPaneManager(self):
+        """ Get the pane manager for the main window.
+
+        This method should not normally be called by the user. It is
+        used by the various children of the main window when they need
+        to manipulate the state of their pane info object.
+
+        Returns
+        -------
+        result : AuiManager
+            The AuiManager instance managing the panes for this window.
+
+        """
+        return self._pane_manager
 
 
 class WxMainWindow(WxWindow):
     """ A Wx implementation of an Enaml MainWindow.
 
     """
-    #: Storage for a dummy widget for the case where there are no dock
-    #: panes specified. This works around an issue in wx where the layout
-    #: will jitter on resize if only a central pane is present.
-    _dummy_widget = None
-
     #: Storage for the widget ids of the dock panes
-    _dock_panes = []
+    _dock_pane_ids = []
 
     #--------------------------------------------------------------------------
     # Setup Methods
@@ -156,39 +228,74 @@ class WxMainWindow(WxWindow):
 
         """
         super(WxMainWindow, self).create(tree)
-        self.set_dock_panes(tree['dock_panes'])
+        self.set_dock_pane_ids(tree['dock_pane_ids'])
+        self.widget.Bind(EVT_DOCK_PANE_CLOSED, self.on_dock_pane_closed)
 
     def init_layout(self):
         """ Perform the layout initialization for the main window.
 
         """
+        # The superclass' init_layout() method is explicitly not called
+        # since the layout initialization for Window is not appropriate
+        # for MainWindow
         main_window = self.widget
-
-        # Build a mapping of widget_id -> child. This saves us from 
-        # doing multiple O(n) lookups in the following operations.
-        child_map = dict((child.widget_id, child) for child in self.children)
+        children_map = self.children_map
 
         main_window.BeginBatch()
 
         # Setup the central widget
-        central_child = child_map.get(self._central_widget)
+        central_child = children_map.get(self._central_widget)
         if central_child is not None:
             main_window.SetCentralWidget(central_child.widget)
 
         # Setup the dock panes
-        for dock_id in self._dock_panes:
-            dock_pane = child_map.get(dock_id)
+        for dock_id in self._dock_pane_ids:
+            dock_pane = children_map.get(dock_id)
             if dock_pane is not None:
                 main_window.AddDockPane(dock_pane.widget)
 
         main_window.EndBatch()
 
     #--------------------------------------------------------------------------
-    # Widget Update Methods
+    # Event Handlers
     #--------------------------------------------------------------------------
-    def set_dock_panes(self, panes):
-        """ Set the dock panes for the underlying widget.
+    def on_dock_pane_closed(self, event):
+        """ The event handler for the EVT_DOCK_PANE_CLOSED event.
 
         """
-        self._dock_panes = panes
+        dock_pane = event.DockPane
+        for child in self.children:
+            if dock_pane == child.widget:
+                widget_id = child.widget_id
+                content = {'widget_id': widget_id}
+                self.send_action('dock_pane_closed', content)
+                return
+
+    #--------------------------------------------------------------------------
+    # Message Handling
+    #--------------------------------------------------------------------------
+    def on_action_open_dock_pane(self, content):
+        """ Handle the 'open_dock_pane' action from the Enaml widget.
+
+        """
+        child = self.children_map.get(content.widget_id)
+        if child is not None:
+            self.widget.OpenDockPane(child.widget)
+
+    def on_action_close_dock_pane(self, content):
+        """ Handle the 'close_dock_pane' action from the Enaml widget.
+
+        """
+        child = self.children_map.get(content.widget_id)
+        if child is not None:
+            self.widget.CloseDockPane(child.widget)
+
+    #--------------------------------------------------------------------------
+    # Widget Update Methods
+    #--------------------------------------------------------------------------
+    def set_dock_pane_ids(self, pane_ids):
+        """ Set the dock pane ids for the underlying widget.
+
+        """
+        self._dock_pane_ids = pane_ids
 
