@@ -7,7 +7,6 @@ import wx.aui
 import wx.lib.newevent
 
 from .wx_constraints_widget import WxConstraintsWidget
-from .wx_page import EVT_TAB_TITLE
 
 
 #: A mapping of notebook tab positions for the document style tabs.
@@ -23,45 +22,15 @@ _TAB_POSITION_MAP = {
 _TAB_POSITION_MASK = wx.aui.AUI_NB_TOP | wx.aui.AUI_NB_BOTTOM
 
 
-#: An event emitted when a page close is requested on the 'document' 
-#: style notebook control.
-wxPageCloseRequestEvent, EVT_PAGE_CLOSE_REQUEST = wx.lib.newevent.NewEvent()
+#: An event emitted when a page is closed by the notebook.
+wxPageClosed, EVT_PAGE_CLOSED = wx.lib.newevent.NewEvent()
 
 
-class NotebookMixin(object):
+class wxNotebookMixin(object):
     """ A mixin class which provides common functionality for both the 
     wxNotebook and wxAuiNotebook classes.
 
     """
-    #--------------------------------------------------------------------------
-    # Private API
-    #--------------------------------------------------------------------------
-    def _bind(self, page):
-        """ Bind the signal handlers for the given page.
-
-        """
-        # The wx notebooks don't support tab tooltips, enabled state,
-        # or individual close buttons, so we don't bind to those change 
-        # events.
-        page.Bind(EVT_TAB_TITLE, self._OnTabTitleChanged)
-
-    def _unbind(self, page):
-        """ Unbind the signal handlers for the given page.
-
-        """
-        page.Unbind(EVT_TAB_TITLE, handler=self._OnTabTitleChanged)
-
-    def _OnTabTitleChanged(self, event):
-        """ The handler for the 'EVT_TAB_TITLE' event on a child page.
-
-        """
-        idx = self.GetPageIndex(event.page)
-        if idx != -1:
-            self.SetPageText(idx, event.title)
-
-    #--------------------------------------------------------------------------
-    # Public API
-    #--------------------------------------------------------------------------
     def AddPage(self, page, idx=-1):
         """ Add a wxPage instance to the notebook.
 
@@ -78,9 +47,8 @@ class NotebookMixin(object):
         """
         page_idx = self.GetPageIndex(page)
         if page_idx == -1:
-            self._bind(page)
             if idx == -1:
-                super(NotebookMixin, self).AddPage(page, page.GetTabTitle())
+                super(wxNotebookMixin, self).AddPage(page, page.GetTabTitle())
             else:
                 self.InsertPage(idx, page, page.GetTabTitle())
         else:
@@ -101,12 +69,11 @@ class NotebookMixin(object):
             return
         page = self.GetPage(index)
         if page is not None:
-            self._unbind(page)
-            super(NotebookMixin, self).RemovePage(index)
+            super(wxNotebookMixin, self).RemovePage(index)
             page.Show(False)
 
 
-class wxNotebook(NotebookMixin, wx.Notebook):
+class wxNotebook(wxNotebookMixin, wx.Notebook):
     """ A custom wx.Notebook which handles children of type wxPage.
 
     This notebook control is used for the 'preferences' tab style.
@@ -157,7 +124,7 @@ class wxNotebook(NotebookMixin, wx.Notebook):
         return -1
 
 
-class wxAuiNotebook(NotebookMixin, wx.aui.AuiNotebook):
+class wxAuiNotebook(wxNotebookMixin, wx.aui.AuiNotebook):
     """ A custom wx AuiNotebook which handles children of type wxPage.
 
     This notebook control is used for the 'document' tab style.
@@ -192,7 +159,8 @@ class wxAuiNotebook(NotebookMixin, wx.aui.AuiNotebook):
         index = event.GetSelection()
         page = self.GetPage(index)
         if page.GetTabClosable():
-            event = wxPageCloseRequestEvent(index=index)
+            self.RemovePage(index)
+            event = wxPageClosed(Page=page)
             wx.PostEvent(self, event)
 
     #--------------------------------------------------------------------------
@@ -233,6 +201,9 @@ class WxNotebook(WxConstraintsWidget):
     """ A Wx implementation of an Enaml Notebook.
 
     """
+    #: Storage for the widget ids of the notebook pages.
+    _page_ids = []
+
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
@@ -247,7 +218,7 @@ class WxNotebook(WxConstraintsWidget):
             res = wxNotebook(parent)
         else:
             res = wxAuiNotebook(parent, style=wx.aui.AUI_NB_SCROLL_BUTTONS)
-            res.Bind(EVT_PAGE_CLOSE_REQUEST, self.on_page_close_requested)
+            res.Bind(EVT_PAGE_CLOSED, self.on_page_closed)
         return res
 
     def create(self, tree):
@@ -255,21 +226,22 @@ class WxNotebook(WxConstraintsWidget):
 
         """
         super(WxNotebook, self).create(tree)
+        self.set_page_ids(tree['page_ids'])
         self.set_tab_position(tree['tab_position'])
         self.set_tabs_closable(tree['tabs_closable'])
         self.set_tabs_movable(tree['tabs_movable'])
 
-    def post_create(self):
-        """ Handle the post creation work for the notebook.
-
-        This method explicitly adds the child wxPage instances to the
-        underlying wxNotebook control.
+    def init_layout(self):
+        """ Handle the layout initialization for the notebook.
 
         """
-        super(WxNotebook, self).post_create()
-        widget = self.widget
-        for child in self.children:
-            widget.AddPage(child.widget)
+        super(WxNotebook, self).init_layout()
+        widget = self.widget()
+        find_child = self.find_child
+        for page_id in self._page_ids:
+            child = find_child(page_id)
+            if child is not None:
+                widget.AddPage(child.widget())
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -302,66 +274,68 @@ class WxNotebook(WxConstraintsWidget):
         """ Handle the 'open_tab' action from the Enaml widget.
 
         """
-        widget_id = content['widget_id']
-        for idx, child in enumerate(self.children):
-            if child.widget_id == widget_id:
-                # Try to re-open the page in the original position. This
-                # makes most sense for a 'preferences' style notebook, 
-                # since it doesn't support movable tabs. We can hope for
-                # "good enough" on the 'document' style tabs where the
-                # child may have been moved around.
-                self.widget.AddPage(child.widget, idx)
+        child = self.find_child(content['widget_id'])
+        if child is not None:
+            # Try to re-open the page in the original position. This
+            # makes most sense for a 'preferences' style notebook, 
+            # since it doesn't support movable tabs. We can hope for
+            # "good enough" on the 'document' style tabs where the
+            # child may have been moved around.
+            index = self.children().index(child)
+            self.widget().AddPage(child.widget(), index)
 
     def on_action_close_tab(self, content):
         """ Handle the 'close_tab' action from the Enaml widget.
 
         """
-        widget_id = content['widget_id']
-        for child in self.children:
-            if child.widget_id == widget_id:
-                widget = self.widget
-                widget.RemovePage(widget.GetPageIndex(child.widget))
-                return
+        child = self.find_child(content['widget_id'])
+        if child is not None:
+            widget = self.widget()
+            index = widget.GetPageIndex(child.widget())
+            widget.RemovePage(index)
 
     #--------------------------------------------------------------------------
     # Event Handlers
     #--------------------------------------------------------------------------
-    def on_page_close_requested(self, event):
-        """ The event handler for the 'EVT_PAGE_CLOSE_REQUEST' event.
+    def on_page_closed(self, event):
+        """ The event handler for the EVT_PAGE_CLOSED event.
 
         This handler is only bound for 'document' style notebook tabs, 
         and it is only called when the page is marked as closable.
 
         """
-        index = event.index
-        page = self.widget.GetPage(index)
-        self.widget.RemovePage(index)
-        for child in self.children:
-            if page == child.widget:
-                widget_id = child.widget_id
-                content = {'widget_id': widget_id}
+        page = event.Page
+        for child in self.children():
+            if page == child.widget():
+                content = {'widget_id': child.widget_id()}
                 self.send_action('tab_closed', content)
                 return
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
+    def set_page_ids(self, page_ids):
+        """ Set the page ids for the underlying widget.
+
+        """
+        self._page_ids = page_ids
+
     def set_tab_position(self, position):
         """ Set the position of the tab bar in the widget.
 
         """
-        widget = self.widget
+        widget = self.widget()
         if isinstance(widget, wxNotebook):
             # The 'preferences' style wxNotebook only supports nice
             # looking tabs on the top, so changing the tab position 
             # is ignored for this style.
             return
         # The AuiNotebook only supports tabs on top or bottom. The tab
-        # position map maps this discrepancy appropriately.
+        # position map maps this discrepancy appropriately. We also 
+        # need to trigger a full repaint, or we'll suffer rendering
+        # artifacts when the tab position is dynamically changed.
         widget.WindowStyle &= ~_TAB_POSITION_MASK
         widget.WindowStyle |= _TAB_POSITION_MAP[position]
-        # Need to trigger a full repaint, or we'll suffer rendering
-        # artifacts when the tab position is dynamically changed.
         widget.Refresh()
 
     def set_tab_style(self, style):
@@ -375,7 +349,7 @@ class WxNotebook(WxConstraintsWidget):
         """ Set whether or not the tabs are closable.
 
         """
-        widget = self.widget
+        widget = self.widget()
         if isinstance(widget, wxNotebook):
             # The 'preferences' style wxNotebook does not support tabs 
             # with close buttons, so that setting is simply ignored.
@@ -389,7 +363,7 @@ class WxNotebook(WxConstraintsWidget):
         """ Set whether or not the tabs are movable.
 
         """
-        widget = self.widget
+        widget = self.widget()
         if isinstance(widget, wxNotebook):
             # The 'preferences' style wxNotebook does not support
             # movable tabs, so that setting is simply ignored.
