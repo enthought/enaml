@@ -2,15 +2,20 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Unicode, Bool
+from traits.api import Unicode, Bool, Property, cached_property
 
 from enaml.core.trait_types import EnamlEvent
 
 from .container import Container
+from .widget_component import WidgetComponent
 
 
-class Page(Container):
-    """ A component which is used as a page in a Notebook control.
+class Page(WidgetComponent):
+    """ A widget which can be used as a page in a Notebook control.
+
+    A Page is a widget which can be used as a child of a Notebook
+    control. It can have at most a single child widget which is an
+    instance of Container.
 
     """
     #: The title to use for the page in the notebook.
@@ -32,6 +37,9 @@ class Page(Container):
     #: for this to have any effect.
     closable = Bool(True)
 
+    #: A read only property which returns the page's page widget.
+    page_widget = Property(depends_on='children[]')
+
     #: An event fired when the user closes the page by clicking on 
     #: the tab's close button. This event is fired by the parent 
     #: Notebook when the tab is closed. This event has no payload.
@@ -45,6 +53,7 @@ class Page(Container):
 
         """
         snap = super(Page, self).snapshot()
+        snap['page_widget_id'] = self._snap_page_widget_id()
         snap['title'] = self.title
         snap['tool_tip'] = self.tool_tip
         snap['tab_enabled'] = self.tab_enabled
@@ -56,7 +65,33 @@ class Page(Container):
 
         """
         super(Page, self).bind()
-        self.publish_attributes('title', 'tool_tip', 'tab_enabled', 'closable')
+        attrs = ('title', 'tool_tip', 'tab_enabled', 'closable')
+        self.publish_attributes(*attrs)
+
+    #--------------------------------------------------------------------------
+    # Private API
+    #--------------------------------------------------------------------------
+    @cached_property
+    def _get_page_widget(self):
+        """ The getter for the 'page_widget' property.
+
+        Returns
+        -------
+        result : Container or None
+            The page widget for the Page, or None if not provided.
+
+        """
+        for child in self.children:
+            if isinstance(child, Container):
+                return child
+
+    def _snap_page_widget_id(self):
+        """ Returns the widget id for the page widget or None.
+
+        """
+        page_widget = self.page_widget
+        if page_widget is not None:
+            return page_widget.widget_id
 
     #--------------------------------------------------------------------------
     # Public API

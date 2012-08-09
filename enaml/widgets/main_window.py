@@ -57,8 +57,8 @@ class MainWindow(Window):
 
         Returns
         -------
-        result : list
-            The list of DockPane instances defined as children of this
+        result : tuple
+            The tuple of DockPane instances defined as children of this
             MainWindow.
 
         """
@@ -95,12 +95,12 @@ class MainWindow(Window):
         Parameters
         ----------
         dock_pane : DockPane
-            The DockPane instance to open. It must be a child of this 
+            The DockPane instance to open. It must be owned by this
             MainWindow.
 
         """
         if dock_pane not in self.dock_panes:
-            msg = 'DockPane is not a child of the MainWindow'
+            msg = 'Pane is not owned by this MainWindow'
             raise ValueError(msg)
         content = {'widget_id': dock_pane.widget_id}
         self.send_action('open_dock_pane', content)
@@ -111,12 +111,12 @@ class MainWindow(Window):
         Parameters
         ----------
         dock_pane : DockPane
-            The DockPane instance to close. It must be a child of this 
+            The DockPane instance to open. It must be owned by this
             MainWindow.
 
         """
         if dock_pane not in self.dock_panes:
-            msg = 'DockPane is not a child of the MainWindow'
+            msg = 'Pane is not owned by this MainWindow'
             raise ValueError(msg)
         content = {'widget_id': dock_pane.widget_id}
         self.send_action('close_dock_pane', content)
