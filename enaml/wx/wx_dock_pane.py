@@ -7,6 +7,7 @@ import wx.aui
 import wx.lib.newevent
 
 from .wx_main_window import wxMainWindow
+from .wx_single_widget_sizer import wxSingleWidgetSizer
 from .wx_widget_component import WxWidgetComponent
 
 
@@ -40,61 +41,6 @@ wxDockPaneFloatEvent, EVT_DOCK_PANE_FLOAT = wx.lib.newevent.NewEvent()
 wxDockPaneAreaEvent, EVT_DOCK_PANE_AREA = wx.lib.newevent.NewEvent()
 
 
-class wxDockPaneSizer(wx.PySizer):
-    """ A custom wx.PySizer for use with a wxDockPane.
-
-    """
-    #: The widget which is manipulated by the sizer.
-    _widget = None
-
-    def Add(self, widget):
-        """ Adds the given child widget to the sizer.
-
-        This will remove any previous widget set in the sizer, but it
-        will not be destroyed.
-
-        Parameters
-        ----------
-        widget : wxWindow
-            The wx window widget to manage with this sizer.
-
-        """
-        self.Clear(deleteWindows=False)
-        self._widget = widget
-        if widget is not None:
-            res = super(wxDockPaneSizer, self).Add(widget)
-            # The call to Layout is required, because it's not done
-            # automatically by wx and the new item wouldn't properly
-            # lay out otherwise.
-            self.Layout()
-            return res
-
-    def CalcMin(self):
-        """ Returns the minimum size for the area owned by the sizer.
-
-        Returns
-        -------
-        result : wxSize
-            The wx size representing the minimum area required by the
-            sizer.
-
-        """
-        widget = self._widget 
-        if widget is not None:
-            res = widget.GetEffectiveMinSize()
-        else:
-            res = wx.Size(-1, -1)
-        return res
-    
-    def RecalcSizes(self):
-        """ Resizes the child to fit in the available space.
-
-        """
-        widget = self._widget
-        if widget is not None:
-            widget.SetSize(self.GetSize())
-
-
 class wxDockPane(wx.Panel):
     """ A subclass of wx.Panel which adds DockPane features.
 
@@ -117,7 +63,7 @@ class wxDockPane(wx.Panel):
         self._dock_area = wx.aui.AUI_DOCK_LEFT
         self._allowed_dock_areas = wx.ALL
         self._dock_widget = None
-        self.SetSizer(wxDockPaneSizer())
+        self.SetSizer(wxSingleWidgetSizer())
 
         # Wx does not provide events to know when the user has changed
         # the floating state or dock position of a dock pane. So, we
@@ -453,7 +399,7 @@ class WxDockPane(WxWidgetComponent):
         self.set_floating(tree['floating'])
         self.set_dock_area(tree['dock_area'])
         self.set_allowed_dock_areas(tree['allowed_dock_areas'])
-        widget = self.widget
+        widget = self.widget()
         widget.Bind(EVT_DOCK_PANE_FLOAT, self.on_dock_pane_float)
         widget.Bind(EVT_DOCK_PANE_AREA, self.on_dock_pane_area)
 
@@ -462,9 +408,9 @@ class WxDockPane(WxWidgetComponent):
 
         """
         super(WxDockPane, self).init_layout()
-        child = self.children_map.get(self._dock_widget_id)
+        child = self.find_child(self._dock_widget_id)
         if child is not None:
-            self.widget.SetDockWidget(child.widget)
+            self.widget().SetDockWidget(child.widget())
 
     #--------------------------------------------------------------------------
     # Event Handlers
@@ -549,7 +495,7 @@ class WxDockPane(WxWidgetComponent):
         """ Set the title on the underlying widget.
 
         """
-        self.widget.SetTitle(title)
+        self.widget().SetTitle(title)
 
     def set_title_bar_orientation(self, orientation):
         """ Set the title bar orientation of the underyling widget.
@@ -564,7 +510,7 @@ class WxDockPane(WxWidgetComponent):
         """ Set the closable state on the underlying widget.
 
         """
-        self.widget.SetClosable(closable)
+        self.widget().SetClosable(closable)
 
     def set_movable(self, movable):
         """ Set the movable state on the underlying widget.
@@ -580,19 +526,19 @@ class WxDockPane(WxWidgetComponent):
         """ Set the floatable state on the underlying widget.
 
         """
-        self.widget.SetFloatable(floatable)
+        self.widget().SetFloatable(floatable)
 
     def set_floating(self, floating):
         """ Set the floating staet on the underlying widget.
 
         """
-        self.widget.SetFloating(floating)
+        self.widget().SetFloating(floating)
 
     def set_dock_area(self, dock_area):
         """ Set the dock area on the underyling widget.
 
         """
-        self.widget.SetDockArea(_DOCK_AREA_MAP[dock_area])
+        self.widget().SetDockArea(_DOCK_AREA_MAP[dock_area])
 
     def set_allowed_dock_areas(self, dock_areas):
         """ Set the allowed dock areas on the underlying widget.
@@ -601,5 +547,5 @@ class WxDockPane(WxWidgetComponent):
         wx_areas = 0
         for area in dock_areas:
             wx_areas |= _ALLOWED_AREAS_MAP[area]
-        self.widget.SetAllowedDockAreas(wx_areas)
+        self.widget().SetAllowedDockAreas(wx_areas)
 
