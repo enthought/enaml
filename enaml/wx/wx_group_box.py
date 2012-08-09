@@ -227,18 +227,18 @@ class WxGroupBox(WxContainer):
         """ Update the title of the group box.
 
         """
-        self.widget.SetTitle(title)
+        self.widget().SetTitle(title)
 
     def set_flat(self, flat):
         """ Updates the flattened appearance of the group box.
 
         """
-        self.widget.SetFlat(flat)
+        self.widget().SetFlat(flat)
     
     def set_title_align(self, align):
         """ Updates the alignment of the title of the group box.
 
         """
         wx_align = WX_ALIGNMENTS[align]
-        self.widget.SetAlignment(wx_align)
+        self.widget().SetAlignment(wx_align)
 
