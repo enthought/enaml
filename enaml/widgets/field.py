@@ -1,34 +1,36 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2011, Enthought, Inc.
+#  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Bool, Int, Unicode, Enum, List, Dict
+from traits.api import Bool, Int, Unicode, Enum, List, Instance
+
+from enaml.validation import Validator
 
 from .constraints_widget import ConstraintsWidget
 
 
-#: The default validators to use in a Field.
-DEFAULT_FIELD_VALIDATORS = [
-    {'type': 'null',
-     'triggers': ['return-pressed', 'lost-focus']},
-]
-
-
 class Field(ConstraintsWidget):
-    """ A single-line editable text widget.
+    """ A single line editable text widget.
 
     """
     #: The unicode text to display in the field.
     text = Unicode
 
-    #: A list of dictionaries representing the validation to perform 
-    #: on the field. Validators will be executed in order and will 
-    #: stop at the first failing validator. The client will only
-    #: send a text update if all validators pass. The validator format 
-    #: is specified in the file validator_format.js. The default 
-    #: validator accepts all input and triggers on 'lost-focus' and 
-    #: 'return-pressed'.
-    validators = List(Dict, value=DEFAULT_FIELD_VALIDATORS)
+    #: The mask to use for text input. 
+    #: TODO - describe and implement this mask
+    mask = Unicode
+
+    #: The validator to use for this field. If the validator provides
+    #: a client side validator, then text will only be submitted if it
+    #: passes that validator.
+    validator = Instance(Validator)
+
+    #: The list of actions which should cause the client to submit its
+    #: text to the server for validation and update. The currently 
+    #: supported values are 'lost_focus' and 'return_pressed'.
+    submit_triggers = List(
+        Enum('lost_focus', 'return_pressed'), ['lost_focus', 'return_pressed']
+    )
 
     #: The grayed-out text to display if the field is empty and the
     #: widget doesn't have focus. Defaults to the empty string.
@@ -54,21 +56,19 @@ class Field(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
-    def creation_attributes(self):
-        """ Returns the dict of creation attributes for the control.
+    def snapshot(self):
+        """ Returns the snapshot dict for the field.
 
         """
-        super_attrs = super(Field, self).creation_attributes()
-        attrs = {
-            'text': self.text,
-            'validators': self.validators,
-            'placeholder' : self.placeholder,
-            'echo_mode' : self.echo_mode,
-            'max_length': self.max_length,
-            'read_only': self.read_only,
-        }
-        super_attrs.update(attrs)
-        return super_attrs
+        snap = super(Field, self).snapshot()
+        snap['text'] = self.text
+        snap['validator'] = self._client_validator()
+        snap['submit_triggers'] = self.submit_triggers
+        snap['placeholder'] = self.placeholder
+        snap['echo_mode'] = self.echo_mode
+        snap['max_length'] = self.max_length
+        snap['read_only'] = self.read_only
+        return snap
 
     def bind(self):
         """ A method called after initialization which allows the widget
@@ -80,32 +80,54 @@ class Field(ConstraintsWidget):
             'text', 'placeholder', 'echo_mode', 'max_length', 'read_only',
         )
         self.publish_attributes(*attrs)
-        self.on_trait_change(self._send_validators, 'validators[]')
+        self.on_trait_change(self._send_validator, 'validator')
+        self.on_trait_change(self._send_submit_triggers, 'submit_triggers[]')
+
+    #--------------------------------------------------------------------------
+    # Private API
+    #--------------------------------------------------------------------------
+    def _client_validator(self):
+        """ A private method which returns the current client validator.
+
+        """
+        v = self.validator
+        return v.client_validator() if v is not None else None
+
+    def _send_validator(self):
+        """ Send the new validator to the client widget.
+
+        """
+        content = {'validator': self._client_validator()}
+        self.send_action('set_validator', content)
+
+    def _send_submit_triggers(self):
+        """ Send the new submit triggers to the client widget.
+
+        """
+        content = {'submit_triggers': self.submit_triggers}
+        self.send_action('set_submit_triggers', content)
 
     #--------------------------------------------------------------------------
     # Message Handling
     #--------------------------------------------------------------------------
-    def on_message_event_changed(self, payload):
-        """ Handle the 'event-changed' action from the client widget.
+    def on_action_submit_text(self, content):
+        """ Handle the 'submit_text' action from the client widget.
 
         """
-        text = payload['text']
-        self.set_guarded(text=text)
-
-    def _send_validators(self):
-        """ Send the new validators to the client widget.
-
-        """
-        payload = {'action': 'set-validators', 'validators': self.validators}
-        self.send_message(payload)
-
-    #--------------------------------------------------------------------------
-    # Public API
-    #--------------------------------------------------------------------------
-    def validate(self):
-        """ A method which will perform a manual validation of the text
-        in the field.
-
-        """
-        self.send_message({'action': 'validate'})
+        edit_text = content['text']
+        validator = self.validator
+        if validator is not None:
+            text, valid = validator.validate(edit_text, self)
+        else:
+            text, valid = edit_text, True
+        if valid:
+            # If the new text differs from the original edit text,
+            # we push an update to the client.
+            if text != edit_text:
+                content = {'text': text}
+                self.send_action('set_text', content)
+            self.set_guarded(text=text)
+        else:
+            # XXX notify the client that server validation failed.
+            pass
 

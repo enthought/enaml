@@ -33,14 +33,14 @@ class ComboBox(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
-    def creation_attributes(self):
+    def snapshot(self):
         """ Returns the dict of creation attributes for the combo box.
 
         """
-        super_attrs = super(ComboBox, self).creation_attributes()
-        super_attrs['items'] = self.items
-        super_attrs['index'] = self.index
-        return super_attrs
+        snap = super(ComboBox, self).snapshot()
+        snap['items'] = self.items
+        snap['index'] = self.index
+        return snap
 
     def bind(self):
         """ A method called after initialization which allows the widget
@@ -53,12 +53,12 @@ class ComboBox(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Message Handling
     #--------------------------------------------------------------------------
-    def on_message_event_changed(self, payload):
-        """ The message handler for the 'event-changed' action from the 
-        client widget. The payload will contain the selected 'index'.
+    def on_action_index_changed(self, content):
+        """ The message handler for the 'index_changed' action from the 
+        client widget. The content will contain the selected 'index'.
 
         """
-        index = payload['index']
+        index = content['index']
         self.set_guarded(index=index)
 
     #--------------------------------------------------------------------------

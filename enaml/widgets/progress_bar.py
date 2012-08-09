@@ -47,15 +47,15 @@ class ProgressBar(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
-    def creation_attributes(self):
+    def snapshot(self):
         """ Returns the dict of creation attributes for the control.
 
         """
-        super_attrs = super(ProgressBar, self).creation_attributes()
-        super_attrs['maximum'] = self.maximum
-        super_attrs['minimum'] = self.minimum
-        super_attrs['value'] = self.value
-        return super_attrs
+        snap = super(ProgressBar, self).snapshot()
+        snap['maximum'] = self.maximum
+        snap['minimum'] = self.minimum
+        snap['value'] = self.value
+        return snap
 
     def bind(self):
         """ A method called after initialization which allows the widget

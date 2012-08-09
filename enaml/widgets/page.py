@@ -40,16 +40,16 @@ class Page(Container):
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
-    def creation_attributes(self):
+    def snapshot(self):
         """ Return the dict of creation attributes for the control.
 
         """
-        super_attrs = super(Page, self).creation_attributes()
-        super_attrs['title'] = self.title
-        super_attrs['tool_tip'] = self.tool_tip
-        super_attrs['tab_enabled'] = self.tab_enabled
-        super_attrs['closable'] = self.closable
-        return super_attrs
+        snap = super(Page, self).snapshot()
+        snap['title'] = self.title
+        snap['tool_tip'] = self.tool_tip
+        snap['tab_enabled'] = self.tab_enabled
+        snap['closable'] = self.closable
+        return snap
 
     def bind(self):
         """ Bind the change handlers for the control.

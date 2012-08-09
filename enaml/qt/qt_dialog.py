@@ -36,19 +36,13 @@ class QtDialog(QtWindow):
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
-    def on_message_set_modality(self, payload):
-        """ Handle a set_modality message
-
-        """
-        self.set_modality(payload['modality'])
-
-    def on_message_accept(self, payload):
+    def on_action_accept(self, content):
         """ Handle the 'accept' action from the Enaml widget.
 
         """
         self.accept()
 
-    def on_message_reject(self, payload):
+    def on_action_reject(self, content):
         """ Handle the 'reject' action from the Enaml widget.
 
         """
@@ -65,7 +59,7 @@ class QtDialog(QtWindow):
             result = 'accepted'
         else:
             result = 'rejected'
-        self.send_message({'action': 'event-closed', 'result':result})
+        self.send_action('closed', {'result': result})
 
     #--------------------------------------------------------------------------
     # Widget Update Methods

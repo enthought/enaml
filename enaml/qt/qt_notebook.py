@@ -98,7 +98,7 @@ class QNotebook(QTabWidget):
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
-    def addPage(self, page):
+    def addPage(self, page, idx=-1):
         """ Add a QPage instance to the notebook. This method should
         be used in favor of the 'addTab' method of the parent class.
 
@@ -107,14 +107,24 @@ class QNotebook(QTabWidget):
         page : QPage
             The QPage instance to add to the notebook.
 
+        idx : int, optional
+            The index at which to add the page if it doesn't already
+            exist in the notebook. If not provided, the page will be
+            added at the end of the notebook.
+
         """
-        idx = self.indexOf(page)
-        if idx == -1:
-            idx = self.addTab(page, page.tabTitle())
+        page_idx = self.indexOf(page)
+        if page_idx == -1:
+            self._bind(page)
+            if idx == -1:
+                self.addTab(page, page.tabTitle())
+            else:
+                self.insertTab(idx, page, page.tabTitle())
+        else:
+            self.setTabText(idx, page.tabTitle())
         self.setTabToolTip(idx, page.tabToolTip())
         self.setTabEnabled(idx, page.tabEnabled())
         page.restoreEnabled()
-        self._bind(page)
 
     def removePage(self, index):
         """ Remove the page at the given index. This method should be
@@ -128,8 +138,8 @@ class QNotebook(QTabWidget):
         """
         page = self.widget(index)
         if page is not None:
-            self.removeTab(index)
             self._unbind(page)
+            self.removeTab(index)
 
 
 class QtNotebook(QtTabBar):
@@ -168,29 +178,47 @@ class QtNotebook(QtTabBar):
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
-    def on_message_set_tab_position(self, payload):
-        """ Handle the 'set-tab_position' action from the Enaml widget.
+    def on_action_set_tab_position(self, content):
+        """ Handle the 'set_tab_position' action from the Enaml widget.
 
         """
-        self.set_tab_position(payload['tab_position'])
+        self.set_tab_position(content['tab_position'])
 
-    def on_message_open_tab(self, payload):
-        """ Handle the 'open-tab' action from the Enaml widget.
+    def on_action_set_tab_style(self, content):
+        """ Handle the 'set_tab_style' action from the Enaml widget.
 
         """
-        target_id = payload['target_id']
-        for child in self.children:
-            if child.target_id == target_id:
-                self.widget.addPage(child.widget)
+        self.set_tab_style(content['tab_style'])
+
+    def on_action_set_tabs_closable(self, content):
+        """ Handle the 'set_tabs_closable' action from the Enaml widget.
+
+        """
+        self.set_tabs_closable(content['tabs_closable'])
+
+    def on_action_set_tabs_movable(self, content):
+        """ Handle the 'set_tabs_movable' action from the Enaml widget.
+
+        """
+        self.set_tabs_movable(content['tabs_movable'])
+
+    def on_action_open_tab(self, content):
+        """ Handle the 'open_tab' action from the Enaml widget.
+
+        """
+        widget_id = content['widget_id']
+        for idx, child in enumerate(self.children):
+            if child.widget_id == widget_id:
+                self.widget.addPage(child.widget, idx)
                 return
 
-    def on_message_close_tab(self, payload):
-        """ Handle the 'close-page' action from the Enaml widget.
+    def on_action_close_tab(self, content):
+        """ Handle the 'close_tab' action from the Enaml widget.
 
         """
-        target_id = payload['target_id']
+        widget_id = content['widget_id']
         for child in self.children:
-            if child.target_id == target_id:
+            if child.widget_id == widget_id:
                 widget = self.widget
                 widget.removePage(widget.indexOf(child.widget))
                 return
@@ -206,9 +234,9 @@ class QtNotebook(QtTabBar):
         self.widget.removePage(index)
         for child in self.children:
             if page == child.widget:
-                target_id = child.target_id
-                payload = {'action': 'tab-closed', 'target_id': target_id}
-                self.send_message(payload)
+                widget_id = child.widget_id
+                content = {'widget_id': widget_id}
+                self.send_action('tab_closed', content)
                 return
 
     #--------------------------------------------------------------------------

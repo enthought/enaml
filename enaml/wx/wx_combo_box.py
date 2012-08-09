@@ -1,0 +1,73 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2012, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+import wx
+
+from .wx_constraints_widget import WxConstraintsWidget
+
+
+class WxComboBox(WxConstraintsWidget):
+    """ A Wx implementation of an Enaml ComboBox.
+    
+    """
+    #--------------------------------------------------------------------------
+    # Setup Methods
+    #--------------------------------------------------------------------------
+    def create_widget(self, parent, tree):
+        """ Create the underlying wx.ComboBox widget.
+
+        """
+        return wx.ComboBox(parent, style=wx.CB_READONLY)
+
+    def create(self, tree):
+        """ Create and initialize the combo box control.
+        
+        """
+        super(WxComboBox, self).create(tree)
+        self.set_items(tree['items'])
+        self.set_index(tree['index'])
+        self.widget.Bind(wx.EVT_COMBOBOX, self.on_index_changed)
+
+    #--------------------------------------------------------------------------
+    # Message Handlers
+    #--------------------------------------------------------------------------
+    def on_action_set_index(self, content):
+        """ Handle the 'set_index' action from the Enaml widget.
+
+        """
+        self.set_index(content['index'])
+
+    def on_action_set_items(self, content):
+        """ Handle the 'set_items' action from the Enaml widget.
+
+        """
+        self.set_items(content['items'])
+
+    #--------------------------------------------------------------------------
+    # Signal Handlers
+    #--------------------------------------------------------------------------
+    def on_index_changed(self, event):
+        """ The signal handler for the index changed signal.
+
+        """
+        content = {'index': self.widget.GetCurrentSelection()}
+        self.send_action('index_changed', content)
+
+    #--------------------------------------------------------------------------
+    # Widget Update Methods
+    #--------------------------------------------------------------------------
+    def set_items(self, items):
+        """ Set the items of the ComboBox.
+
+        """
+        sel = self.widget.GetCurrentSelection()
+        self.widget.SetItems(items)
+        self.widget.SetSelection(sel)
+
+    def set_index(self, index):
+        """ Set the current index of the ComboBox
+
+        """
+        self.widget.SetSelection(index)
+

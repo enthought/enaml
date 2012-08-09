@@ -2,10 +2,11 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Unicode
+from traits.api import Unicode, Property, cached_property
 
 from enaml.core.trait_types import EnamlEvent
 
+from .container import Container
 from .widget_component import WidgetComponent, SizeTuple
 
 
@@ -14,8 +15,11 @@ class Window(WidgetComponent):
 
     A Window component is represents of a top-level visible component
     with a frame decoration. It may have at most one child widget which
-    is expanded to fit the size of the window. It does not support
-    features like MenuBars or DockPanes, for that, use a MainWindow.
+    is dubbed the 'central widget'. The central widget is an instance
+    of Container and is expanded to fit the size of the window.
+
+    A Window does not support features like MenuBars or DockPanes, for 
+    such functionality, use a MainWindow widget.
 
     """
     #: The titlebar text.
@@ -28,21 +32,50 @@ class Window(WidgetComponent):
     #: An event fired when the window is closed.
     closed = EnamlEvent
 
+    #: Returns the central widget in use for the Window
+    central_widget = Property(depends_on='children[]')
+
     #: The titlebar icon.
     # XXX needs to be implemented
     #icon = Instance()
 
     #--------------------------------------------------------------------------
-    # Initialization
+    # Private API
     #--------------------------------------------------------------------------
-    def creation_attributes(self):
-        """ Return the attr initialization dict for a window.
+    @cached_property
+    def _get_central_widget(self):
+        """ The getter for the 'central_widget' property.
+
+        Returns
+        -------
+        result : Container or None
+            The central widget for the Window, or None if not provieded.
 
         """
-        super_attrs = super(Window, self).creation_attributes()
-        super_attrs['title'] = self.title
-        super_attrs['initial_size'] = self.initial_size
-        return super_attrs
+        for child in self.children:
+            if isinstance(child, Container):
+                return child
+
+    def _snap_central_widget(self):
+        """ Returns the widget id of the central widget or None.
+
+        """
+        widget = self.central_widget
+        if widget is not None:
+            return widget.widget_id
+
+    #--------------------------------------------------------------------------
+    # Initialization
+    #--------------------------------------------------------------------------
+    def snapshot(self):
+        """ Return the snapshot for a Window.
+
+        """
+        snap = super(Window, self).snapshot()
+        snap['title'] = self.title
+        snap['initial_size'] = self.initial_size
+        snap['central_widget'] = self._snap_central_widget()
+        return snap
 
     def bind(self):
         """ A method called after initialization which allows the widget
@@ -55,8 +88,8 @@ class Window(WidgetComponent):
     #--------------------------------------------------------------------------
     # Message Handling
     #--------------------------------------------------------------------------
-    def on_message_event_closed(self, payload):
-        """ The handler for the 'event-closed' message from the client. 
+    def on_action_closed(self, content):
+        """ Handle the 'closed' action from the client widget.
 
         """
         self.closed()
@@ -65,26 +98,26 @@ class Window(WidgetComponent):
     # Public API
     #--------------------------------------------------------------------------
     def close(self):
-        """ Send a 'close' command to the client UI
+        """ Send the 'close' action to the client widget.
 
         """
-        self.send_message({'action': 'close'})
+        self.send_action('close', {})
 
     def maximize(self):
-        """ Send a 'maximize' command to the client UI.
+        """ Send the 'maximize' action to the client widget.
 
         """
-        self.send_message({'action': 'maximize'})
+        self.send_action('maximize', {})
 
     def minimize(self):
-        """ Send a 'minimize' command to the client UI.
+        """ Send the 'minimize' action to the client widget.
 
         """
-        self.send_message({'action': 'minimize'})
+        self.send_action('minimize', {})
 
     def restore(self):
-        """ Send a 'restore' command to the client UI.
+        """ Send the 'restore' action to the client widget.
 
         """
-        self.send_message({'action': 'restore'})
+        self.send_action('restore', {})
 

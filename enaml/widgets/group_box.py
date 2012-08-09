@@ -2,12 +2,10 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-
-from traits.api import Bool, Str
+from traits.api import Bool, Str, Enum
 
 from .container import Container
 
-from ..enums import HorizontalAlign
 from ..layout.geometry import Box
 
 
@@ -25,17 +23,23 @@ class GroupBox(Container):
     flat = Bool(False)
 
     #: The alignment of the title text.
-    title_align = HorizontalAlign
+    title_align = Enum('left', 'right', 'center')
 
-    def creation_attributes(self):
+    def _padding_default(self):
+        """ Returns an appropriate default padding for GroupBox.
+
+        """
+        return Box(20, 10, 10, 10)
+
+    def snapshot(self):
         """ Populates the initial attributes dict for the component.
 
         """
-        super_attrs = super(GroupBox, self).creation_attributes()
-        super_attrs['title'] = self.title
-        super_attrs['flat'] = self.flat
-        super_attrs['title_align'] = self.title_align
-        return super_attrs
+        snap = super(GroupBox, self).snapshot()
+        snap['title'] = self.title
+        snap['flat'] = self.flat
+        snap['title_align'] = self.title_align
+        return snap
 
     def _padding_constraints(self):
         """ Overriden padding constraints method to add the contents 
@@ -44,7 +48,6 @@ class GroupBox(Container):
 
         """
         cns = []
-        #margin_box = self.abstract_obj.get_contents_margins()
         margin_box = Box(0, 0, 0, 0)
         user_padding = self.padding
         padding = map(sum, zip(margin_box, user_padding))

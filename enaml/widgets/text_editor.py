@@ -34,7 +34,7 @@ class TextEditor(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
-    def creation_attributes(self):
+    def snapshot(self):
         """ Returns the dict of creation attributes for the control.
 
         """
@@ -46,15 +46,16 @@ class TextEditor(ConstraintsWidget):
                 doc.on_trait_change(self.text_changed, 'text')
                 doc.on_trait_change(self.mode_changed, 'mode')
 
-        super_attrs = super(TextEditor, self).creation_attributes()
-        super_attrs['documents'] = [[doc.as_dict() for doc in col]
+        snap = super(TextEditor, self).snapshot()
+        snap['documents'] = [[doc.as_dict() for doc in col]
                                         for col in self.documents]
-        super_attrs['theme'] = self.theme
-        super_attrs['auto_pair'] = self.auto_pair
-        super_attrs['font_size'] = self.font_size
-        super_attrs['margin_line'] = self.margin_line
-        super_attrs['tabs'] = self.tabs
-        return super_attrs
+        snap['theme'] = self.theme
+        snap['auto_pair'] = self.auto_pair
+        snap['font_size'] = self.font_size
+        snap['margin_line'] = self.margin_line
+        snap['tabs'] = self.tabs
+
+        return snap
 
     def bind(self):
         """ A method called after initialization which allows the widget
@@ -62,13 +63,13 @@ class TextEditor(ConstraintsWidget):
 
         """
         super(TextEditor, self).bind()
-        self.publish_attributes('columns', 'theme', 'auto_pair', 'font_size',
-            'margin_line', 'documents[]', 'tabs')
+        self.publish_attributes('theme', 'auto_pair', 'font_size', 'tabs',
+            'margin_line', 'documents[]')
 
     #--------------------------------------------------------------------------
-    # Message Handlers
+    # Action Handlers
     #--------------------------------------------------------------------------
-    def on_message_event_text_changed(self, payload):
+    def on_action_text_changed(self, content):
         """ Update the text of a document.
 
 
@@ -76,28 +77,28 @@ class TextEditor(ConstraintsWidget):
         # XXX This should probably be done with loopback guards, but I could
         # not get it working. We need a better solution than unhooking and
         # reattaching the trait change listener.
-        col_index = payload['col_index']
-        tab_index = payload['tab_index']
-        text = payload['text']
+        col_index = content['col_index']
+        tab_index = content['tab_index']
+        text = content['text']
         doc = self.documents[col_index][tab_index]
         doc.on_trait_change(self.text_changed, 'text', remove=True)
         doc.text = text
         doc.on_trait_change(self.text_changed, 'text')
 
-    def on_message_event_tab_added(self, payload):
+    def on_action_tab_added(self, content):
         """ Update the documents list to reflect the added tab
 
         """
-        col_index = payload['col_index']
-        tab_index = payload['tab_index']
+        col_index = content['col_index']
+        tab_index = content['tab_index']
         self.documents[col_index].insert(tab_index, Document())
 
-    def on_message_event_tab_removed(self, payload):
+    def on_action_tab_removed(self, content):
         """ Update the documents list to reflect the removed tab
 
         """
-        col_index = payload['col_index']
-        tab_index = payload['tab_index']
+        col_index = content['col_index']
+        tab_index = content['tab_index']
         del self.documents[col_index][tab_index]
 
     #--------------------------------------------------------------------------
@@ -107,34 +108,34 @@ class TextEditor(ConstraintsWidget):
         """ Fired when the title trait changes on a document
 
         """
-        payload = {
+        content = {
             'action': 'set-title',
             'col_index': _object.col,
             'tab_index': _object.tab,
             'title': new
         }
-        self.send_message(payload)
+        self.send_action(content)
 
     def text_changed(self, _object, name, new):
         """ Fired when the text trait changes on a document
 
         """
-        payload = {
+        content = {
             'action': 'set-text',
             'col_index': _object.col,
             'tab_index': _object.tab,
             'text': new
         }
-        self.send_message(payload)
+        self.send_action(content)
 
     def mode_changed(self, _object, name, new):
         """ Fired when the mode trait changes on a document
 
         """
-        payload = {
+        content = {
             'action': 'set-mode',
             'col_index': _object.col,
             'tab_index': _object.tab,
             'mode': new
         }
-        self.send_message(payload)
+        self.send_action(content)

@@ -44,16 +44,16 @@ class BoundedDatetime(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
-    def creation_attributes(self):
+    def snapshot(self):
         """ Return a dictionary which contains all the state necessary to
         initialize a client widget.
 
         """
-        super_attrs = super(BoundedDatetime, self).creation_attributes()
-        super_attrs['minimum'] = self.minimum.isoformat()
-        super_attrs['maximum'] = self.maximum.isoformat()
-        super_attrs['datetime'] = self.datetime.isoformat()
-        return super_attrs
+        snap = super(BoundedDatetime, self).snapshot()
+        snap['minimum'] = self.minimum.isoformat()
+        snap['maximum'] = self.maximum.isoformat()
+        snap['datetime'] = self.datetime.isoformat()
+        return snap
 
     def bind(self):
         """ A method called after initialization which allows the widget
@@ -69,39 +69,35 @@ class BoundedDatetime(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Message Handling
     #--------------------------------------------------------------------------
-    def on_message_event_changed(self, payload):
-        """ The handler for the 'event-changed' message sent from the UI.
+    def on_action_datetime_changed(self, content):
+        """ The handler for the 'datetime_changed' aciton sent from the
+        client widget.
 
         """
-        datetime = parse_iso_dt(payload['datetime'])
+        datetime = parse_iso_dt(content['datetime'])
         self.set_guarded(datetime=datetime)
         
     def _send_minimum(self):
         """ Send the minimum datetime to the client widget.
 
         """
-        payload = {
-            'action': 'set-minimum', 'minimum': self.minimum.isoformat(),
-        }
-        self.send_message(payload)
+        content = {'minimum': self.minimum.isoformat()}
+        self.send_action('set_minimum', content)
 
     def _send_maximum(self):
         """ Send the maximum datetime to the client widget.
 
         """
-        payload = {
-            'action': 'set-maximum', 'maximum': self.maximum.isoformat(),
-        }
-        self.send_message(payload)
+        content = {'maximum': self.maximum.isoformat()}
+        self.send_action('set_maximum', content)
 
     def _send_datetime(self):
         """ Send the current datetime to the client widget.
 
         """
         if 'datetime' not in self.loopback_guard:
-            dt = self.datetime.isoformat()
-            payload = {'action': 'set-datetime', 'datetime': dt}
-            self.send_message(payload)
+            content = {'datetime': self.datetime.isoformat()}
+            self.send_action('set_datetime', content)
 
     #--------------------------------------------------------------------------
     # Properties

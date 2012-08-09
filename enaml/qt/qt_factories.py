@@ -22,14 +22,14 @@ def container_factory():
     return QtContainer
 
 
-def date_edit_factory():
-    from .qt_date_edit import QtDateEdit
-    return QtDateEdit
+def date_selector_factory():
+    from .qt_date_selector import QtDateSelector
+    return QtDateSelector
 
 
-def datetime_edit_factory():
-    from .qt_datetime_edit import QtDatetimeEdit
-    return QtDatetimeEdit
+def datetime_selector_factory():
+    from .qt_datetime_selector import QtDatetimeSelector
+    return QtDatetimeSelector
 
 
 def dialog_factory():
@@ -47,7 +47,7 @@ def form_factory():
     return QtForm
 
 
-def group_box_factor():
+def group_box_factory():
     from .qt_group_box import QtGroupBox
     return QtGroupBox
 
@@ -132,12 +132,12 @@ QT_FACTORIES = {
     'CheckBox': check_box_factory,
     'ComboBox': combo_box_factory,
     'Container': container_factory,
-    'DateEdit': date_edit_factory,
-    'DatetimeEdit': datetime_edit_factory,
+    'DateSelector': date_selector_factory,
+    'DatetimeSelector': datetime_selector_factory,
     'Dialog': dialog_factory,
     'Field': field_factory,
     'Form': form_factory,
-    'GroupBox': group_box_factor,
+    'GroupBox': group_box_factory,
     'Html': html_factory,
     'ImageView': image_view_factory,
     'Label': label_factory,

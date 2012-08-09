@@ -51,20 +51,20 @@ class QtScrollArea(QtConstraintsWidget):
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
-    def on_message_set_horizontal_scrollbar(self, payload):
-        """ Handle the 'set-horizontal_scrollbar' action from the Enaml
+    def on_action_set_horizontal_scrollbar(self, content):
+        """ Handle the 'set_horizontal_scrollbar' action from the Enaml
         widget.
 
         """
-        policy = payload['horizontal_scrollbar']
+        policy = content['horizontal_scrollbar']
         self.set_horizontal_scrollbar(policy)
 
-    def on_message_set_vertical_scrollbar(self, payload):
-        """ Handle the 'set-vertical_scrollbar' action from the Enaml
+    def on_action_set_vertical_scrollbar(self, content):
+        """ Handle the 'set_vertical_scrollbar' action from the Enaml
         widget.
 
         """
-        policy = payload['vertical_scrollbar']
+        policy = content['vertical_scrollbar']
         self.set_vertical_scrollbar(policy)
 
     #--------------------------------------------------------------------------

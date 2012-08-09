@@ -25,13 +25,13 @@ class Html(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
-    def creation_attributes(self):
+    def snapshot(self):
         """ Return the dictionary of creation attributes for the control.
 
         """
-        super_attrs = super(Html, self).creation_attributes()
-        super_attrs['source'] = self.source
-        return super_attrs
+        snap = super(Html, self).snapshot()
+        snap['source'] = self.source
+        return snap
 
     def bind(self):
         """ A method called after initialization which allows the widget

@@ -54,70 +54,70 @@ class QtSlider(QtConstraintsWidget):
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
-    def on_message_set_value(self, payload):
-        """ Handle the 'set-value' action from the Enaml widget.
+    def on_action_set_value(self, content):
+        """ Handle the 'set_value' action from the Enaml widget.
 
         """
-        self.set_value(payload['value'])
+        self.set_value(content['value'])
 
-    def on_message_set_maximum(self, payload):
-        """ Handle the 'set-maximum' action from the Enaml widget.
-
-        """
-        self.set_maximum(payload['maximum'])
-
-    def on_message_set_minimum(self, payload):
-        """ Handle the 'set-minimum' action from the Enaml widget.
+    def on_action_set_maximum(self, content):
+        """ Handle the 'set_maximum' action from the Enaml widget.
 
         """
-        self.set_minimum(payload['minimum'])
+        self.set_maximum(content['maximum'])
 
-    def on_message_set_orientation(self, payload):
-        """ Handle the 'set-orientation' action from the Enaml widget.
-
-        """
-        self.set_orientation(payload['orientation'])
-
-    def on_message_set_page_step(self, payload):
-        """ Handle the 'set-page_step' action from the Enaml widget.
+    def on_action_set_minimum(self, content):
+        """ Handle the 'set_minimum' action from the Enaml widget.
 
         """
-        self.set_page_step(payload['page_step'])
+        self.set_minimum(content['minimum'])
 
-    def on_message_set_single_step(self, payload):
-        """ Handle the 'set-single_step' action from the Enaml widget.
-
-        """
-        self.set_single_step(payload['single_step'])
-
-    def on_message_set_tick_interval(self, payload):
-        """ Handle the 'set-tick_interval' action from the Enaml widget.
+    def on_action_set_orientation(self, content):
+        """ Handle the 'set_orientation' action from the Enaml widget.
 
         """
-        self.set_tick_interval(payload['tick_interval'])
+        self.set_orientation(content['orientation'])
 
-    def on_message_set_tick_position(self, payload):
-        """ Handle the 'set-tick_position' message from the Enaml widget.
-
-        """
-        self.set_tick_position(payload['tick_position'])
-
-    def on_message_set_tracking(self, payload):
-        """ Handle the 'set-tracking' action from the Enaml widget.
+    def on_action_set_page_step(self, content):
+        """ Handle the 'set_page_step' action from the Enaml widget.
 
         """
-        self.set_tracking(payload['tracking'])
+        self.set_page_step(content['page_step'])
+
+    def on_action_set_single_step(self, content):
+        """ Handle the 'set_single_step' action from the Enaml widget.
+
+        """
+        self.set_single_step(content['single_step'])
+
+    def on_action_set_tick_interval(self, content):
+        """ Handle the 'set_tick_interval' action from the Enaml widget.
+
+        """
+        self.set_tick_interval(content['tick_interval'])
+
+    def on_action_set_tick_position(self, content):
+        """ Handle the 'set_tick_position' action from the Enaml widget.
+
+        """
+        self.set_tick_position(content['tick_position'])
+
+    def on_action_set_tracking(self, content):
+        """ Handle the 'set_tracking' action from the Enaml widget.
+
+        """
+        self.set_tracking(content['tracking'])
     
     #--------------------------------------------------------------------------
     # Signal Handlers
     #--------------------------------------------------------------------------
     def on_value_changed(self):
-        """ Send the 'set-value' action to the Enaml widget when the 
+        """ Send the 'value_changed' action to the Enaml widget when the 
         slider value has changed.
 
         """
-        payload = {'action':'event-changed', 'value': self.widget.value()}
-        self.send_message(payload)
+        content = {'value': self.widget.value()}
+        self.send_action('value_changed', content)
 
     #--------------------------------------------------------------------------
     # Widget Update Methods

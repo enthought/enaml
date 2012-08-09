@@ -2,63 +2,89 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+import logging
 from weakref import ref
 
 from enaml.utils import LoopbackGuard
-
-from .qt_hub import qt_message_hub
 
 
 class QtMessengerWidget(object):
     """ The base class of the Qt widgets wrappers for a Qt Enaml client.
 
     """
-    def __init__(self, parent, target_id):
-        """ Initialize a QtClientWidget
+    def __init__(self, parent, widget_id, session):
+        """ Initialize a QtMessengerWidget
 
         Parameters
         ----------
         parent : QtMessengerWidget or None
-            The parent client widget of this widget, or None if this
-            client widget has no parent.
+            The parent widget of this widget, or None if this widget has
+            no parent.
 
-        target_id : str
-            A string which identifies the target Enaml widget with
-            which this widget will communicate.
+        widget_id : str
+            The identifier string for this widget.
 
-        async_pipe : AsyncPipe
-            The async pipe to use for messaging with the Enaml widget.
+        session : QtClientSession
+            The client session object to use for communicating with the
+            server widget.
 
         """
         self._parent_ref = ref(parent) if parent is not None else lambda: None
         self.widget = None
         self.children = []
-        self.target_id = target_id
+        self.widget_id = widget_id
+        self.session = session
         if parent is not None:
             parent.children.append(self)
 
     #--------------------------------------------------------------------------
-    # Signal Handlers
+    # Messaging/Session API
     #--------------------------------------------------------------------------
-    def receive(self, message):
-        if message['type'] == 'message':
-            self.receive_message(message)
+    def handle_action(self, action, content):
+        """ Handle an action sent from the server widget
 
-    def receive_message(self, message):
-        payload = message['payload']
-        handler_name = 'on_message_' + payload['action'].replace('-', '_')
+        This is called by the QtClientSession object when the server
+        widget sends a message to this widget.
+
+        Parameters
+        ----------
+        action : str
+            The action to be performed by the widget.
+
+        content : ObjectDict
+            The content dictionary for the action.
+
+        """
+        handler_name = 'on_action_' + action
         handler = getattr(self, handler_name, None)
         if handler is not None:
-            handler(payload)
+            handler(content)
+        else:
+            # XXX show a dialog here?
+            msg = "Unhandled action sent to `%s` from server: %s"
+            logging.warn(msg % (self.widget_id, action))
 
-    def send_message(self, payload):
-        msg = {
-            'target_id': self.target_id,
-            'operation_id': None,
-            'type': 'message',
-            'payload': payload,
-        }
-        qt_message_hub.post_message.emit(msg)
+    def send_action(self, action, content):
+        """ Send an action to the server widget.
+
+        This method can be called to send an unsolicited message of
+        type 'widget_action' to the server widget for this widget.
+
+        Parameters
+        ----------
+        action : str
+            The action for the message.
+
+        content : dict
+            The content of the message.
+
+        """
+        session = self.session
+        if session is None:
+            msg = 'No Session object for widget %s'
+            logging.warn(msg % self.widget_id)
+        else:
+            session.send_action(self.widget_id, action, content)
 
     #--------------------------------------------------------------------------
     # Properties

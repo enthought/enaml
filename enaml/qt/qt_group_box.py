@@ -2,18 +2,18 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt import QtCore
+from .qt.QtCore import Qt
 from .qt_container import QtContainer
 from .qt_resizing_widgets import QResizingGroupBox
 from .qt.QtCore import QSize
 
-from ..layout.geometry import Box
 
-QT_ALIGNMENTS = dict(
-    left=QtCore.Qt.AlignLeft,
-    right=QtCore.Qt.AlignRight,
-    center=QtCore.Qt.AlignHCenter,
-)
+QT_ALIGNMENTS = { 
+    'left': Qt.AlignLeft,
+    'right': Qt.AlignRight,
+    'center': Qt.AlignHCenter,
+}
+
 
 class QGroupBox(QResizingGroupBox):
     """ A subclass of QResizingBox which allows the default sizeHint
@@ -55,6 +55,7 @@ class QGroupBox(QResizingGroupBox):
         """
         return self.sizeHint()
 
+
 class QtGroupBox(QtContainer):
     """ A Qt4 implementation of GroupBox.
 
@@ -77,41 +78,30 @@ class QtGroupBox(QtContainer):
 
         """
         super(QtGroupBox, self).initialize(attrs)
-        self.set_title(attrs["title"])
-        self.set_flat(attrs["flat"])
-        self.set_title_align(attrs["title_align"])
+        self.set_title(attrs['title'])
+        self.set_flat(attrs['flat'])
+        self.set_title_align(attrs['title_align'])
 
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
-    def on_message_set_title(self, payload):
-        """ Handle the 'set-title' message from the Enaml widget
+    def on_action_set_title(self, content):
+        """ Handle the 'set_title' action from the Enaml widget.
 
         """
-        self.set_title(payload["title"])
+        self.set_title(content['title'])
 
-    def on_message_set_title_align(self, payload):
-        """ Handle the 'set-title_align' message from the Enaml widget
-
-        """
-        self.set_title_align(payload["title_align"])
-
-    def on_message_set_flat(self, payload):
-        """ Handle the 'set-flat' message from the Enaml widget
+    def on_action_set_title_align(self, content):
+        """ Handle the 'set_title_align' action from the Enaml widget.
 
         """
-        self.set_flat(payload["flat"])
+        self.set_title_align(content['title_align'])
 
-    #--------------------------------------------------------------------------
-    # Implementation
-    #--------------------------------------------------------------------------
-    def get_contents_margins(self):
-        """ Return the (top, left, right, bottom) margin values for the
-        widget.
+    def on_action_set_flat(self, content):
+        """ Handle the 'set_flat' action from the Enaml widget.
 
         """
-        m = self.widget.contentsMargins()
-        return Box(m.top(), m.right(), m.bottom(), m.left())
+        self.set_flat(content['flat'])
 
     #--------------------------------------------------------------------------
     # Widget Update methods 

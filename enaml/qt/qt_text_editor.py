@@ -47,95 +47,95 @@ class QtTextEditor(QtConstraintsWidget):
         """ Event fired when the editor text is changed.
 
         """
-        payload = {
+        content = {
             'action': 'event-text-changed',
             'col_index': col_index,
             'tab_index': tab_index,
             'text': text
         }
-        self.send_message(payload)
+        self.send_action(content)
 
     def on_tab_added(self, col_index, tab_index):
         """ Event fired when a tab is added to the editor
 
         """
-        payload = {
+        content = {
             'action': 'event-tab-added',
             'col_index': col_index,
             'tab_index': tab_index
         }
-        self.send_message(payload)
+        self.send_action(content)
 
     def on_tab_removed(self, col_index, tab_index):
         """ Event fired when a tab is removed from the editor
 
         """
-        payload = {
+        content = {
             'action': 'event-tab-removed',
             'col_index': col_index,
             'tab_index': tab_index
         }
-        self.send_message(payload)
+        self.send_action(content)
 
     #--------------------------------------------------------------------------
-    # Message Handlers
+    # Action Handlers
     #--------------------------------------------------------------------------
-    def on_message_set_tabs(self, payload):
+    def on_action_set_tabs(self, content):
         """ Handle the 'set-tabs' action from the Enaml widget.
 
         """
-        self.set_tabs(payload['tabs'])
+        self.set_tabs(content['tabs'])
 
-    def on_message_set_documents(self, payload):
+    def on_action_set_documents(self, content):
         """ Handle the 'set-documents' action from the Enaml widget.
 
         """
-        self.set_documents(payload['documents'])
+        self.set_documents(content['documents'])
 
-    def on_message_set_theme(self, payload):
+    def on_action_set_theme(self, content):
         """ Handle the 'set-theme' action from the Enaml widget.
 
         """
-        self.set_theme(payload['theme'])
+        self.set_theme(content['theme'])
 
-    def on_message_set_auto_pair(self, payload):
+    def on_action_set_auto_pair(self, content):
         """ Handle the 'set-auto_pair' action from the Enaml widget.
 
         """
-        self.set_auto_pair(payload['auto_pair'])
+        self.set_auto_pair(content['auto_pair'])
 
-    def on_message_set_font_size(self, payload):
+    def on_action_set_font_size(self, content):
         """ Handle the 'set-font_size' action from the Enaml widget.
 
         """
-        self.set_font_size(payload['font_size'])
+        self.set_font_size(content['font_size'])
 
-    def on_message_set_margin_line(self, payload):
+    def on_action_set_margin_line(self, content):
         """ Handle the 'set-margin_line' action from the Enaml widget.
 
         """
-        self.set_margin_line(payload['margin_line'])
+        self.set_margin_line(content['margin_line'])
 
-    def on_message_set_text(self, payload):
+    def on_action_set_text(self, content):
         """ Handle the 'set-text' action from the Enaml widget.
 
         """
-        self.set_text(payload['col_index'], payload['tab_index'],
-            payload['text'])
+        self.set_text(content['col_index'], content['tab_index'],
+            content['text'])
 
-    def on_message_set_title(self, payload):
+    def on_action_set_title(self, content):
         """ Handle the 'set-title' action from the Enaml widget.
 
         """
-        self.set_title(payload['col_index'], payload['tab_index'],
-            payload['title'])
+        self.set_title(content['col_index'], content['tab_index'],
+            content['title'])
 
-    def on_message_set_mode(self, payload):
+    def on_action_set_mode(self, content):
         """ Handle the 'set-mode' action from the Enaml widget.
 
         """
-        self.set_mode(payload['col_index'], payload['tab_index'],
-            payload['mode'])
+        self.set_mode(content['col_index'], content['tab_index'],
+            content['mode'])
 
     #--------------------------------------------------------------------------
     # Widget Update Methods

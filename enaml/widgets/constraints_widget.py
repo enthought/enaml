@@ -114,12 +114,12 @@ class ConstraintsWidget(WidgetComponent):
     #: The private storage the box model instance for this component.
     _box_model = Instance(BoxModel)
     def __box_model_default(self):
-        return BoxModel(self.target_id)
+        return BoxModel(self.widget_id)
 
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
-    def creation_attributes(self):
+    def snapshot(self):
         """ Populates the initial attributes dict for the component.
 
         A ConstraintsWidget adds the 'layout' key to the creation 
@@ -135,9 +135,9 @@ class ConstraintsWidget(WidgetComponent):
             A tuple containing width and height hug policies.
 
         """
-        super_attrs = super(ConstraintsWidget, self).creation_attributes()
-        super_attrs['layout'] = self._layout_info()
-        return super_attrs
+        snap = super(ConstraintsWidget, self).snapshot()
+        snap['layout'] = self._layout_info()
+        return snap
 
     def bind(self):
         """ Binds the change handlers for the component.
@@ -151,12 +151,10 @@ class ConstraintsWidget(WidgetComponent):
     # Message Handling
     #--------------------------------------------------------------------------
     def _send_relayout(self):
-        """ Send the 'relayout' message to the client widget.
+        """ Send the 'relayout' action to the client widget.
 
         """
-        payload = {'action': 'relayout'}
-        payload.update(self._layout_info())
-        self.send_message(payload)
+        self.send_action('relayout', self._layout_info())
 
     #--------------------------------------------------------------------------
     # Constraints Generation

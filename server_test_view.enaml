@@ -1,0 +1,117 @@
+from enaml.widgets import (
+    Window, Html, Container, PushButton, Slider, ComboBox, Notebook, Page, 
+    Field, ScrollArea, MainWindow, DockPane, CheckBox
+)
+
+from enaml.layout import hbox, vbox, spacer, align
+from enaml.validation import RegexValidator
+
+
+enamldef Main(MainWindow):
+    attr model
+    initial_size = (1000, 800)
+    Container:
+        padding = 0
+        Notebook:
+            Page:
+                title = 'foo'
+                Field:
+                    pass
+                Field:
+                    pass
+                Field:
+                    pass
+            Page:
+                title = 'foasdfo'
+                Field:
+                    pass
+                Field:
+                    pass
+                Field:
+                    pass
+            Page:
+                title = 'asdffoo'
+                Field:
+                    pass
+                Field:
+                    pass
+                Field:
+                    pass
+            Page:
+                title = 'foasdfo'
+                Field:
+                    pass
+                Field:
+                    pass
+                Field:
+                    pass
+    DockPane:
+        id: dp
+        title << 'drag me | ' + dock_area + (' (floating)' if floating else '')
+        closable = False
+        Container:
+            Field:
+                pass
+            Field:
+                pass
+            Field:
+                pass
+            Field:
+                pass
+    DockPane:
+        title = 'asdfoo'
+        dock_area = 'right'
+        allowed_dock_areas = ['left', 'top']
+        Container:
+            Field:
+                pass
+            Field:
+                pass
+            Field:
+                pass
+            Field:
+                pass
+            Field:
+                pass
+            PushButton:
+                text = 'Open'
+                clicked :: dp.open()
+            PushButton:
+                text = 'Close'
+                clicked :: dp.close()
+            CheckBox:
+                checked := dp.floating
+            ComboBox:
+                items = ['left', 'right', 'top', 'bottom']
+                index :: dp.dock_area = items[index]
+    DockPane:
+        title = 'fooasdf'
+        dock_area = 'right'
+        Container:
+            Field:
+                pass
+            Field:
+                pass
+            Field:
+                pass
+            Field:
+                pass
+            Field:
+                pass
+    DockPane:
+        title = 'foasdo'
+        dock_area = 'bottom'
+        Container:
+            Field:
+                pass
+            Field:
+                pass
+            Field:
+                pass
+            Field:
+                pass
+            Field:
+                pass
+    
+
+

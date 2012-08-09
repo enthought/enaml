@@ -51,11 +51,11 @@ class SpinBox(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
-    def creation_attributes(self):
+    def snapshot(self):
         """ Return the dict of creation attributes for the control.
 
         """
-        super_attrs = super(SpinBox, self).creation_attributes()
+        snap = super(SpinBox, self).snapshot()
         attrs = {
             'maximum' : self.maximum,
             'minimum' : self.minimum,
@@ -67,8 +67,8 @@ class SpinBox(ConstraintsWidget):
             'read_only': self.read_only,
             'wrapping' : self.wrapping,
         }
-        super_attrs.update(attrs)
-        return super_attrs
+        snap.update(attrs)
+        return snap
 
     def bind(self):
         """ A method called after initialization which allows the widget
@@ -85,9 +85,9 @@ class SpinBox(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Message Handling
     #--------------------------------------------------------------------------
-    def on_message_event_changed(self, payload):
-        """ Handle the 'event-changed' action from the client widget.
+    def on_action_value_changed(self, content):
+        """ Handle the 'value_changed' action from the client widget.
 
         """
-        self.set_guarded(value=payload['value'])
+        self.set_guarded(value=content['value'])
 

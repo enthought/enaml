@@ -38,23 +38,24 @@ class QtSplitter(QtConstraintsWidget):
     #--------------------------------------------------------------------------
     # Message Handler Methods 
     #--------------------------------------------------------------------------
-    def on_message_set_orientation(self, payload):
-        """ Message handler for set_orientation
+    def on_action_set_orientation(self, content):
+        """ Handle the 'set_orientation' action from the Enaml widget.
 
         """
-        self.set_orientation(payload['orientation'])
+        self.set_orientation(content['orientation'])
 
-    def on_message_set_live_drag(self, payload):
-        """ Message handler for set_live_drag
-
-        """
-        self.set_live_drag(payload['live_drag'])
-
-    def on_message_set_preferred_sizes(self, payload):
-        """ Message handler for set_preferred_sizes
+    def on_action_set_live_drag(self, content):
+        """ Handle the 'set_live_drag' action from the Enaml widget.
 
         """
-        self.set_preferred_sizes(payload['preferred_sizes'])
+        self.set_live_drag(content['live_drag'])
+
+    def on_action_set_preferred_sizes(self, content):
+        """ Handle the 'set_preferred_sizes' action from the Enaml 
+        widget.
+
+        """
+        self.set_preferred_sizes(content['preferred_sizes'])
     
     #--------------------------------------------------------------------------
     # Widget Update Methods 

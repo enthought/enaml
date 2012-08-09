@@ -414,6 +414,8 @@ class LinearConstraint(object):
                 msg = 'Expected a known strength string. '
                 msg +=  'Got {!r} instead.'
                 raise ValueError(msg.format(other))
+            else:
+                strength = other
         else:
             msg = 'Expected a known strength string or a float weight. '
             msg += 'Got {!r} instead.'
