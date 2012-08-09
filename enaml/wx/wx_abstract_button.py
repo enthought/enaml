@@ -110,7 +110,7 @@ class WxAbstractButton(WxConstraintsWidget):
         """ Sets the widget's text with the provided value.
 
         """
-        self.widget.SetLabel(text)
+        self.widget().SetLabel(text)
         
     def set_icon(self, icon):
         """ Sets the widget's icon to the provided image
