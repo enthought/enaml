@@ -85,12 +85,20 @@ class TextEditor(ConstraintsWidget):
         doc.on_trait_change(self.text_changed, 'text')
 
     def on_message_event_tab_added(self, payload):
-        """ Update the documents list
+        """ Update the documents list to reflect the added tab
 
         """
         col_index = payload['col_index']
         tab_index = payload['tab_index']
         self.documents[col_index].insert(tab_index, Document())
+
+    def on_message_event_tab_removed(self, payload):
+        """ Update the documents list to reflect the removed tab
+
+        """
+        col_index = payload['col_index']
+        tab_index = payload['tab_index']
+        del self.documents[col_index][tab_index]
 
     #--------------------------------------------------------------------------
     # Trait Change Handlers

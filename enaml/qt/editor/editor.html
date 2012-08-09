@@ -28,6 +28,27 @@
 	    var EditSession = require('ace/edit_session').EditSession;
 
 		this.editor = ace.edit("editor_${column}");
+		var commands = [
+			{
+				name: 'newTab',
+				bindKey: {win: 'Ctrl-T', mac: 'Command-T'},
+				exec: function(editor) {
+					_this.addTabItem();
+				}
+			},
+			{
+				name: 'deleteTab',
+				bindKey: {win: 'Ctrl-W', mac: 'Command-W'},
+				exec: function(editor) {
+					var index = jQuery(_this.tab_list.current_tab).index();
+					_this.removeTabItem({'index': index});
+				}
+			}
+		];
+		for (var i = 0; i < commands.length; i++) {
+			var command = commands[i];
+			this.editor.commands.addCommand(command);
+		}
 
 		this.current_index = 0;
 		this.tab_list = jQuery('.tabs').eq(${column});
@@ -107,7 +128,7 @@
 				jQuery('span', _this.tab_list).eq(index).text(title);
 			}
 			catch(e) {
-				_this.addTabItem({'title':title})
+				_this._addTabItem({'title':title})
 			}
 		}
 
@@ -116,7 +137,7 @@
 				jQuery('div', _this.tab_list)[index].session.setMode(mode);
 			}
 			catch(e) {
-				_this.addTabItem({'mode':mode})
+				_this._addTabItem({'mode':mode})
 			}
 		}
 
@@ -125,7 +146,7 @@
 				jQuery('div', _this.tab_list)[index].session.getDocument().setValue(text);
 			}
 			catch(e) {
-				_this.addTabItem({'text':text})
+				_this._addTabItem({'text':text})
 			}
 		}
 
@@ -140,26 +161,39 @@
 			}
 		}
 
-		this.removeTabItem = function() {
+		this.removeTabItem = function(item_info) {
 			/* handler for when the 'x' on a tab is clicked
 
 			*/
+			var default_item_info = { 'index': -1 };
+			var info = jQuery.extend(default_item_info, item_info);
+
 			var div_list = jQuery('div', _this.tab_list);
-			var item = jQuery(this).parent();
+
+			if (info['index'] == -1) {
+				var item = jQuery(this).parent();
+				var index = div_list.index(item);
+			}
+			else {
+				var index = info['index'];
+				var item = div_list.eq(index);
+			}
 
 			if (item[0].session == _this.editor.getSession()) {
 				if (div_list.length == 1)
-					_this.tab_list.current_tab == null;
-				else if (div_list.index(item) == div_list.length-1)
+					_this.tab_list.current_tab = null;
+				else if (index == div_list.length-1)
 					_this.tab_list.current_tab = item.prev()[0];
 				else
 					_this.tab_list.current_tab = item.next()[0];
 			}
 			item.remove();
 			_this.refreshTabWidths();
+
+			py_ace_editor.tab_removed(${column}, index);
 		};
 
-		this.addTabItem = function(info) {
+		this._addTabItem = function(info) {
 			/* Add a tab item
 
 			*/
@@ -187,9 +221,24 @@
 			});
 
 			_this.refreshTabWidths();
+			
 		};
 
+		this.addTabItem = function(info) {
+			/* Add a tab item and update the current tab and enaml widget
+			accordingly
+
+			*/
+			_this._addTabItem(info);
+			_this.tab_list.old_tab = _this.tab_list.current_tab;
+			_this.tab_list.current_tab = div;
+ 			py_ace_editor.tab_added(${column}, _this.tab_list.length - 1);
+		}
+
 		this.refreshTabWidths = function() {
+			/* Recalculate the widths of the tabs
+
+			*/
 			var div_list = jQuery('div', _this.tab_list)
 			var container_width = jQuery('.tabs').width();
 			var tab_width = container_width / div_list.length;
@@ -230,10 +279,7 @@
 
 		this.tab_list.current_tab = jQuery('div', this.tab_list)[0];
 		_this.refreshTabWidths();
- 		jQuery('.add_button').eq(${column}).click(function() {
- 			_this.addTabItem();
- 			py_ace_editor.tab_added(${column}, _this.tab_list.length - 1);
-	 	});
+ 		jQuery('.add_button').eq(${column}).click(_this.addTabItem);
 
 		${global_bindings}
 	}();

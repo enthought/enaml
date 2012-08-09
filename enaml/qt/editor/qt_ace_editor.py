@@ -53,6 +53,7 @@ class QtAceEditor(QObject):
     text_changed_from_js = Signal(int, int, unicode)
     show_tabs = Signal(bool)
     tab_added = Signal(int, int)
+    tab_removed = Signal(int, int)
 
     def __init__(self, parent=None):
         """ Initialize the editor
