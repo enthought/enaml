@@ -56,5 +56,5 @@ class WxHtml(WxConstraintsWidget):
         """ Set the source of the html widget
 
         """
-        self.widget.SetPage(source)
+        self.widget().SetPage(source)
 
