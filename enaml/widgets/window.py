@@ -49,8 +49,7 @@ class Window(WidgetComponent):
         Returns
         -------
         result : Container or None
-            The central widget for the Window, or None if no central
-            widget is provided.
+            The central widget for the Window, or None if not provieded.
 
         """
         for child in self.children:
@@ -58,8 +57,7 @@ class Window(WidgetComponent):
                 return child
 
     def _snap_central_widget(self):
-        """ Returns the serializable target id of the central widget,
-        if one exists.
+        """ Returns the widget id of the central widget or None.
 
         """
         widget = self.central_widget
