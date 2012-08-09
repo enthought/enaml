@@ -146,11 +146,11 @@ class WxScrollArea(WxConstraintsWidget):
         in undefined behavior.
 
         """
-        children = self.children
+        children = self.children()
         if children:
             sizer = wxScrollAreaSizer()
-            sizer.Add(children[0].widget)
-            self.widget.SetSizer(sizer)
+            sizer.Add(children[0].widget())
+            self.widget().SetSizer(sizer)
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -181,7 +181,7 @@ class WxScrollArea(WxConstraintsWidget):
         self._h_scroll = policy
         horiz = SCROLLBAR_MAP[policy]
         vert = SCROLLBAR_MAP[self._v_scroll]
-        self.widget.SetScrollRate(horiz, vert)
+        self.widget().SetScrollRate(horiz, vert)
         
     def set_vertical_scrollbar(self, policy):
         """ Set the vertical scrollbar policy of the widget.
@@ -190,5 +190,5 @@ class WxScrollArea(WxConstraintsWidget):
         self._v_scroll = policy
         horiz = SCROLLBAR_MAP[self._h_scroll]
         vert = SCROLLBAR_MAP[policy]
-        self.widget.SetScrollRate(horiz, vert)
+        self.widget().SetScrollRate(horiz, vert)
 
