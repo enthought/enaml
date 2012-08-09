@@ -1,6 +1,6 @@
 from enaml.widgets import (
     Window, Html, Container, PushButton, Slider, ComboBox, Notebook, Page, 
-    Field, ScrollArea, MainWindow, DockPane
+    Field, ScrollArea, MainWindow, DockPane, CheckBox
 )
 
 from enaml.layout import hbox, vbox, spacer, align
@@ -46,6 +46,47 @@ enamldef Main(MainWindow):
                 Field:
                     pass
     DockPane:
+        id: dp
+        title << 'drag me | ' + dock_area + (' (floating)' if floating else '')
+        closable = False
+        Container:
+            Field:
+                pass
+            Field:
+                pass
+            Field:
+                pass
+            Field:
+                pass
+    DockPane:
+        title = 'asdfoo'
+        dock_area = 'right'
+        allowed_dock_areas = ['left', 'top']
+        Container:
+            Field:
+                pass
+            Field:
+                pass
+            Field:
+                pass
+            Field:
+                pass
+            Field:
+                pass
+            PushButton:
+                text = 'Open'
+                clicked :: dp.open()
+            PushButton:
+                text = 'Close'
+                clicked :: dp.close()
+            CheckBox:
+                checked := dp.floating
+            ComboBox:
+                items = ['left', 'right', 'top', 'bottom']
+                index :: dp.dock_area = items[index]
+    DockPane:
+        title = 'fooasdf'
+        dock_area = 'right'
         Container:
             Field:
                 pass
@@ -58,30 +99,8 @@ enamldef Main(MainWindow):
             Field:
                 pass
     DockPane:
-        Container:
-            Field:
-                pass
-            Field:
-                pass
-            Field:
-                pass
-            Field:
-                pass
-            Field:
-                pass
-    DockPane:
-        Container:
-            Field:
-                pass
-            Field:
-                pass
-            Field:
-                pass
-            Field:
-                pass
-            Field:
-                pass
-    DockPane:
+        title = 'foasdo'
+        dock_area = 'bottom'
         Container:
             Field:
                 pass
