@@ -99,7 +99,7 @@ class WxWidgetComponent(WxMessengerWidget):
             (-1, -1) indicates the default min size.
 
         """
-        self.widget.SetMinSize(wx.Size(*min_size))
+        self.widget().SetMinSize(wx.Size(*min_size))
 
     def set_maximum_size(self, max_size):
         """ Sets the maximum size on the underlying widget.
@@ -111,7 +111,7 @@ class WxWidgetComponent(WxMessengerWidget):
             (-1, -1) indicates the default max size.
 
         """
-        self.widget.SetMaxSize(wx.Size(*max_size))
+        self.widget().SetMaxSize(wx.Size(*max_size))
 
     def set_enabled(self, enabled):
         """ Set the enabled state on the underlying widget.
@@ -122,7 +122,7 @@ class WxWidgetComponent(WxMessengerWidget):
             Whether or not the widget is enabled.
 
         """
-        self.widget.Enable(enabled)
+        self.widget().Enable(enabled)
 
     def set_visible(self, visible):
         """ Set the visibility state on the underlying widget.
@@ -133,7 +133,7 @@ class WxWidgetComponent(WxMessengerWidget):
             Whether or not the widget is visible.
 
         """
-        self.widget.Show(visible)
+        self.widget().Show(visible)
 
     def set_bgcolor(self, bgcolor):
         """ Set the background color on the underlying widget.
