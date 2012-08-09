@@ -191,7 +191,7 @@ class wxMainWindow(wx.Frame):
             if not self._batch:
                 manager.Update()
 
-    def GetPaneManager(self):
+    def GetOwnerManager(self):
         """ Get the pane manager for the main window.
 
         This method should not normally be called by the user. It is
