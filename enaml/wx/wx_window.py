@@ -32,7 +32,7 @@ class WxWindow(WxWidgetComponent):
         self.set_central_widget_id(tree['central_widget_id'])
         self.set_title(tree['title'])
         self.set_initial_size(tree['initial_size'])
-        self.widget.Bind(wx.EVT_CLOSE, self.on_close)
+        self.widget().Bind(wx.EVT_CLOSE, self.on_close)
 
     def init_layout(self):
         """ Perform the layout initialization for the window control.
@@ -42,16 +42,14 @@ class WxWindow(WxWidgetComponent):
         # bottom-up, so the layout for all of the children has already
         # taken place. This is the proper time to grab the central 
         # widget child, stick it the sizer, and fit the window.
-        central_widget_id = self._central_widget_id
-        for child in self.children:
-            if child.widget_id == central_widget_id:
-                sizer = wxSingleWidgetSizer()
-                sizer.Add(child.widget)
-                widget = self.widget
-                widget.SetSizerAndFit(sizer)
-                max_size = widget.ClientToWindowSize(sizer.CalcMax())
-                widget.SetMaxSize(max_size)
-                return
+        child = self.find_child(self._central_widget_id)
+        if child is not None:
+            sizer = wxSingleWidgetSizer()
+            sizer.Add(child.widget())
+            widget = self.widget()
+            widget.SetSizerAndFit(sizer)
+            max_size = widget.ClientToWindowSize(sizer.CalcMax())
+            widget.SetMaxSize(max_size)
 
     #--------------------------------------------------------------------------
     # Event Handlers
@@ -109,25 +107,25 @@ class WxWindow(WxWidgetComponent):
         """ Close the window
 
         """
-        self.widget.Close()
+        self.widget().Close()
 
     def maximize(self):
         """ Maximize the window.
 
         """
-        self.widget.Maximize(True)
+        self.widget().Maximize(True)
 
     def minimize(self):
         """ Minimize the window.
 
         """
-        self.widget.Iconize(True)
+        self.widget().Iconize(True)
 
     def restore(self):
         """ Restore the window after a minimize or maximize.
 
         """
-        self.widget.Maximize(False)
+        self.widget().Maximize(False)
 
     def set_icon(self, icon):
         """ Set the window icon.
@@ -145,11 +143,11 @@ class WxWindow(WxWidgetComponent):
         """ Set the title of the window.
 
         """
-        self.widget.SetTitle(title)
+        self.widget().SetTitle(title)
 
     def set_initial_size(self, size):
         """ Set the initial size of the window.
 
         """
-        self.widget.SetSize(wx.Size(*size))
+        self.widget().SetSize(wx.Size(*size))
 
