@@ -452,7 +452,7 @@ class WxSpinBox(WxConstraintsWidget):
         self.set_single_step(tree['single_step'])
         self.set_read_only(tree['read_only'])
         self.set_wrapping(tree['wrapping'])
-        self.widget.Bind(EVT_SPIN_BOX, self.on_value_changed)
+        self.widget().Bind(EVT_SPIN_BOX, self.on_value_changed)
 
     #--------------------------------------------------------------------------
     # Event Handlers
@@ -461,7 +461,7 @@ class WxSpinBox(WxConstraintsWidget):
         """ The event handler for the 'EVT_SPIN_BOX' event.
 
         """
-        content = {'value': self.widget.GetValue()}
+        content = {'value': self.widget().GetValue()}
         self.send_action('value_changed', content)
         
     #--------------------------------------------------------------------------
@@ -532,53 +532,53 @@ class WxSpinBox(WxConstraintsWidget):
         """ Set the widget's maximum value.
 
         """
-        self.widget.SetHigh(maximum)
+        self.widget().SetHigh(maximum)
 
     def set_minimum(self, minimum):
         """ Set the widget's minimum value.
 
         """
-        self.widget.SetLow(minimum)
+        self.widget().SetLow(minimum)
 
     def set_value(self, value):
         """ Set the spin box's value.
 
         """
-        self.widget.SetValue(value)
+        self.widget().SetValue(value)
 
     def set_prefix(self, prefix):
         """ Set the prefix for the spin box.
 
         """
-        self.widget.SetPrefix(prefix)
+        self.widget().SetPrefix(prefix)
 
     def set_suffix(self, suffix):
         """ Set the suffix for the spin box.
 
         """
-        self.widget.SetSuffix(suffix)
+        self.widget().SetSuffix(suffix)
 
     def set_special_value_text(self, text):
         """ Set the special value text for the spin box.
 
         """
-        self.widget.SetSpecialValueText(text)
+        self.widget().SetSpecialValueText(text)
 
     def set_single_step(self, step):
         """ Set the widget's single step value.
 
         """
-        self.widget.SetStep(step)
+        self.widget().SetStep(step)
 
     def set_read_only(self, read_only):
         """ Set the widget's read only flag.
 
         """
-        self.widget.SetReadOnly(read_only)
+        self.widget().SetReadOnly(read_only)
 
     def set_wrapping(self, wrapping):
         """ Set the widget's wrapping flag.
 
         """
-        self.widget.SetWrap(wrapping)
+        self.widget().SetWrap(wrapping)
 
