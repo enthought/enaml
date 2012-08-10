@@ -30,4 +30,5 @@ from .slider import Slider
 from .spin_box import SpinBox
 from .splitter import Splitter
 from .text_editor import TextEditor
+from .tool_bar import ToolBar
 from .window import Window

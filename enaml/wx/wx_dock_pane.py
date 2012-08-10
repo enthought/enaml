@@ -3,7 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import wx
-import wx.aui
+import wx.lib.agw.aui as aui
 import wx.lib.newevent
 
 from .wx_single_widget_sizer import wxSingleWidgetSizer
@@ -12,18 +12,18 @@ from .wx_widget_component import WxWidgetComponent
 
 #: A mapping from Enaml dock areas to wx aui dock area enums
 _DOCK_AREA_MAP = {
-    'top': wx.aui.AUI_DOCK_TOP,
-    'right': wx.aui.AUI_DOCK_RIGHT,
-    'bottom': wx.aui.AUI_DOCK_BOTTOM,
-    'left': wx.aui.AUI_DOCK_LEFT,
+    'top': aui.AUI_DOCK_TOP,
+    'right': aui.AUI_DOCK_RIGHT,
+    'bottom': aui.AUI_DOCK_BOTTOM,
+    'left': aui.AUI_DOCK_LEFT,
 }
 
 #: A mapping from wx aui dock area enums to Enaml dock areas.
 _DOCK_AREA_INV_MAP = {
-    wx.aui.AUI_DOCK_TOP: 'top',
-    wx.aui.AUI_DOCK_RIGHT: 'right',
-    wx.aui.AUI_DOCK_BOTTOM: 'bottom',
-    wx.aui.AUI_DOCK_LEFT: 'left',
+    aui.AUI_DOCK_TOP: 'top',
+    aui.AUI_DOCK_RIGHT: 'right',
+    aui.AUI_DOCK_BOTTOM: 'bottom',
+    aui.AUI_DOCK_LEFT: 'left',
 }
 
 #: A mapping from Enaml allowed dock areas to wx direction enums.
@@ -33,6 +33,12 @@ _ALLOWED_AREAS_MAP = {
     'bottom': wx.BOTTOM,
     'left': wx.LEFT,
     'all': wx.ALL,
+}
+
+#: A mappint from Enaml orientations to wx orientations.
+_ORIENTATION_MAP = {
+    'horizontal': wx.HORIZONTAL,
+    'vertical': wx.VERTICAL,
 }
 
 
@@ -65,20 +71,15 @@ class wxDockPane(wx.Panel):
         super(wxDockPane, self).__init__(parent, *args, **kwargs)
         self._is_open = True
         self._title = u''
+        self._title_bar_visible = True
+        self._title_bar_orientation = wx.HORIZONTAL
         self._closable = True
         self._floatable = True
         self._floating = False
-        self._dock_area = wx.aui.AUI_DOCK_LEFT
+        self._dock_area = aui.AUI_DOCK_LEFT
         self._allowed_dock_areas = wx.ALL
         self._dock_widget = None
         self.SetSizer(wxSingleWidgetSizer())
-
-        # Wx does not provide events to know when the user has changed
-        # the floating state or dock position of a dock pane. So, we
-        # have to craft a horrible hack using the show-event and then
-        # testing whether or not our parent has changed.
-        self._curr_parent = parent
-        self.Bind(wx.EVT_SHOW, self.OnShow)
 
     #--------------------------------------------------------------------------
     # Private API
@@ -105,65 +106,80 @@ class wxDockPane(wx.Panel):
         if manager is not None:
             pane = manager.GetPane(self)
             if pane.IsOk():
+                # If the pane is a floating frame, there is a private
+                # manager which needs to be updated as well, or none 
+                # of the state will change for the frame. The private
+                # manager should be updated first, because if the op
+                # causes the pane to float, we'll get a double dispatch
+                # Yet another hacktastic workaround for wx stupidity...
+                if pane.frame:
+                    priv_manager = pane.frame._mgr
+                    priv_pane = priv_manager.GetPane(self)
+                    if priv_pane.IsOk():
+                        closure(priv_pane)
+                        priv_manager.Update()
                 closure(pane)
                 manager.Update()
 
     #--------------------------------------------------------------------------
     # Event Handlers
     #--------------------------------------------------------------------------
-    def OnShow(self, event):
-        """ An event handler for the EVT_SHOW event. 
-
-        This is an attempt to workaround the issue that Wx does not
-        provide any events when the user manually floats or changes 
-        the position of a dock pane.
-
-        """
-        # A change in floating state or dock area is accompanied by a
-        # change in the parent of the dock pane. But we don't get events
-        # for that in wx either, so... We use the show-event which is
-        # triggered when a dock pane changes its floating state. However, 
-        # that event is emitted twice per state change, so we manually 
-        # check for the parent change (which happens once) and then
-        # proceed with our manual checking of state change.
-        #
-        # I can't believe I actually have to do this...
-        event.Skip()
-        parent = self.GetParent()
-        if parent != self._curr_parent:
-            self._curr_parent = parent
-            manager = self._FindPaneManager()
-            if manager is not None:
-                pane = manager.GetPane(self)
-                if pane.IsOk():
-                    is_floating = pane.IsFloating()
-                    if is_floating != self._floating:
-                        self._floating = is_floating
-                        evt = wxDockPaneFloatEvent(IsFloating=is_floating)
-                        wx.PostEvent(self, evt)
-                    if not is_floating:
-                        area = pane.dock_direction
-                        if area != self._dock_area:
-                            self._dock_area = area
-                            evt = wxDockPaneAreaEvent(DockArea=area)
-                            wx.PostEvent(self, evt)
-
     def OnClose(self, event):
         """ Handles the EVT_AUI_PANE_CLOSE event.
 
         This event handler is called directly by the parent wxMainWindow
-        from its pane close event handler. The event object is the same 
-        as that passed to main window's event handler. If this pane is 
-        not closable, the event will be vetoed. Otherwise, the custom
-        EVT_DOCK_PANE_CLOSED event will be emitted.
+        from its pane close event handler. The default close behavior of
+        the aui pane is undesirable. Instead of simply hiding the pane,
+        it destroys the pane info object, losing history. To work around
+        this, the parent event is always vetoed and the pane is manually 
+        hidden. After hiding the pane, this handler emits the 
+        EVT_DOCK_PANE_CLOSED event.
 
         """
-        if not self.GetClosable():
-            event.Veto()
-        else:
-            self._is_open = False
-            evt = wxDockPaneClosedEvent()
-            wx.PostEvent(self, evt)
+        event.Veto()
+        self.Close()
+        evt = wxDockPaneClosedEvent()
+        wx.PostEvent(self, evt)
+
+    def OnFloated(self, event):
+        """ Handles the EVT_AUI_PANE_FLOATED event.
+
+        This event handler is called directly by the parent wxMainWindow
+        from its pane floated event handler. This handler emits the custom
+        EVT_DOCK_PANE_FLOAT event.
+
+        """
+        print 'float event'
+        self._floating = True
+        # The caption state is not copied when floating a pane. We
+        # need to handle that with a CallAfter.
+        def closure():
+            def inner(pane):
+                print 'called'
+                visible = self._title_bar_visible
+                left = self._title_bar_orientation == wx.VERTICAL
+                pane.CaptionVisible(visible, left)
+            self._PaneInfoOperation(inner)
+        wx.CallAfter(closure)
+        evt = wxDockPaneFloatEvent(IsFloating=True)
+        wx.PostEvent(self, evt)
+
+    def OnDocked(self, event):
+        """ Handles the EVT_AUI_PANE_DOCKED event.
+
+        This event handler is called directly by the parent wxMainWindow
+        from its pane docked event handler. This handler emits the custom
+        EVT_DOCK_PANE_FLOAT event, followed by the EVT_DOCK_PANE_AREA
+        event.
+
+        """
+        self._floating = False
+        evt = wxDockPaneFloatEvent(IsFloating=False)
+        wx.PostEvent(self, evt)
+        area = event.GetPane().dock_direction
+        self._dock_area = area
+        evt = wxDockPaneAreaEvent(DockArea=area)
+        wx.PostEvent(self, evt)
 
     #--------------------------------------------------------------------------
     # Public API
@@ -180,21 +196,29 @@ class wxDockPane(wx.Panel):
             An initialized AuiPaneInfo object for this page.
 
         """
-        info = wx.aui.AuiPaneInfo()
+        info = aui.AuiPaneInfo()
+
+        # For now, don't allow docking panes as a notebook. That causes
+        # issues with finding the proper parent manager on updates.
+        info.NotebookDockable(False)
 
         info.BestSize(self.GetBestSize())
         info.MinSize(self.GetEffectiveMinSize())
         info.Show(self.IsOpen())
         info.Caption(self.GetTitle())
+        info.CloseButton(self.GetClosable())
         info.Floatable(self.GetFloatable())
         info.Direction(self.GetDockArea())
+
+        left = self.GetTitleBarOrientation() == wx.VERTICAL
+        info.CaptionVisible(self.GetTitleBarVisible(), left)
 
         areas = self.GetAllowedDockAreas()
         info.TopDockable(bool(areas & wx.TOP))
         info.RightDockable(bool(areas & wx.RIGHT))
         info.LeftDockable(bool(areas & wx.LEFT))
         info.BottomDockable(bool(areas & wx.BOTTOM))
-        
+
         if self.GetFloating():
             info.Float()
         else:
@@ -286,9 +310,64 @@ class wxDockPane(wx.Panel):
         if self._title != title:
             self._title = title
             def closure(pane):
-                if pane.frame:
-                    pane.frame.SetTitle(title)
                 pane.Caption(title)
+            self._PaneInfoOperation(closure)
+
+    def GetTitleBarVisible(self):
+        """ Get the title bar visibility state for the dock pane.
+
+        Returns
+        -------
+        result : bool
+            Whether or not the title bar is visible.
+
+        """
+        return self._title_bar_visible
+
+    def SetTitleBarVisible(self, visible):
+        """ Set the title bar visibility state for the dock pane.
+
+        Parameters
+        ----------
+        visible : bool
+            Whether or not the title bar should be visible.
+
+        """
+        if self._title_bar_visible != visible:
+            self._title_bar_visible = visible
+            def closure(pane):
+                left = self._title_bar_orientation == wx.VERTICAL
+                pane.CaptionVisible(visible, left)
+            self._PaneInfoOperation(closure)
+
+    def GetTitleBarOrientation(self):
+        """ Get the title bar orientation for the dock pane.
+
+        Returns
+        -------
+        result : int
+            The orientation of the title bar. Either wx.HORIZONTAL
+            or wx.VERTICAL
+
+        """
+        return self._title_bar_orientation
+
+    def SetTitleBarOrientation(self, orientation):
+        """ Set the title bar orientation for the dock pane.
+
+        Parameters
+        ----------
+        result : int
+            The orientation of the title bar. Either wx.HORIZONTAL
+            or wx.VERTICAL
+
+        """
+        if self._title_bar_orientation != orientation:
+            self._title_bar_orientation = orientation
+            def closure(pane):
+                visible = self._title_bar_visible
+                left = orientation == wx.VERTICAL
+                pane.CaptionVisible(visible, left)
             self._PaneInfoOperation(closure)
 
     def GetClosable(self):
@@ -311,10 +390,11 @@ class wxDockPane(wx.Panel):
             Whether or not the pane is closable.
 
         """
-        # Setting the CloseButton flag on the pane info object is not
-        # reliable. So we always show the button, and the OnClose event
-        # handler vetoes the close event if the pane is not closable.
-        self._closable = closable
+        if self._closable != closable:
+            self._closable = closable
+            def closure(pane):
+                pane.CloseButton(closable)
+            self._PaneInfoOperation(closure)
 
     def GetFloatable(self):
         """ Get the floatable state of the pane.
@@ -454,6 +534,7 @@ class WxDockPane(WxWidgetComponent):
         super(WxDockPane, self).create(tree)
         self.set_dock_widget_id(tree['dock_widget_id'])
         self.set_title(tree['title'])
+        self.set_title_bar_visible(tree['title_bar_visible'])
         self.set_title_bar_orientation(tree['title_bar_orientation'])
         self.set_closable(tree['closable'])
         self.set_movable(tree['movable'])
@@ -506,6 +587,13 @@ class WxDockPane(WxWidgetComponent):
 
         """
         self.set_title(content['title'])
+
+    def on_action_set_title_bar_visible(self, content):
+        """ Handle the 'set_title_bar_visible' action from the Enaml
+        widget.
+
+        """
+        self.set_title_bar_visible(content['title_bar_visible'])
 
     def on_action_set_title_bar_orientation(self, content):
         """ Handle the 'set_title_bar_orientation' action from the
@@ -589,14 +677,17 @@ class WxDockPane(WxWidgetComponent):
         """
         self.widget().SetTitle(title)
 
+    def set_title_bar_visible(self, visible):
+        """ Set the title bar visibility of the underlying widget.
+
+        """
+        self.widget().SetTitleBarVisible(visible)
+
     def set_title_bar_orientation(self, orientation):
         """ Set the title bar orientation of the underyling widget.
 
-        Wx does not support a title bar orientation in dock panes, so 
-        this setting is simply ignored.
-
         """
-        pass
+        self.widget().SetTitleBarOrientation(_ORIENTATION_MAP[orientation])
 
     def set_closable(self, closable):
         """ Set the closable state on the underlying widget.
@@ -608,10 +699,7 @@ class WxDockPane(WxWidgetComponent):
         """ Set the movable state on the underlying widget.
 
         """
-        # XXX Setting movable has no effect. Glancing through the wx
-        # C++ code indicates that movable flag on a pane info object
-        # is never used. This appears to be dead or not implemented 
-        # functionality, so it's just ignored for now.
+        # XXX Setting movable has no effect in wx 2.8
         pass
 
     def set_floatable(self, floatable):

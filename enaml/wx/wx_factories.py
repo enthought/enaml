@@ -127,6 +127,11 @@ def splitter_factory():
 #     return WxTextEditor
 
 
+def tool_bar_factory():
+    from .wx_tool_bar import WxToolBar
+    return WxToolBar
+
+
 def window_factory():
     from .wx_window import WxWindow
     return WxWindow
@@ -158,6 +163,7 @@ WX_FACTORIES = {
     'SpinBox': spin_box_factory,
     'Splitter': splitter_factory,
     #'TextEditor': text_editor_factory,
+    'ToolBar': tool_bar_factory,
     'Window': window_factory,
 }
 

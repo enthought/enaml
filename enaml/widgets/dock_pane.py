@@ -18,8 +18,11 @@ class DockPane(WidgetComponent):
     an instance of Container.
 
     """
-    #: The title of the dock pane.
+    #: The title to use in the title bar.
     title = Unicode
+
+    #: Whether or not the title bar is visible.
+    title_bar_visible = Bool(True)
 
     #: The orientation of the title bar.
     title_bar_orientation = Enum('horizontal', 'vertical')
@@ -63,6 +66,7 @@ class DockPane(WidgetComponent):
         snap = super(DockPane, self).snapshot()
         snap['dock_widget_id'] = self._snap_dock_widget_id()
         snap['title'] = self.title
+        snap['title_bar_visible'] = self.title_bar_visible
         snap['title_bar_orientation'] = self.title_bar_orientation
         snap['closable'] = self.closable
         snap['movable'] = self.movable
@@ -75,8 +79,9 @@ class DockPane(WidgetComponent):
     def bind(self):
         super(DockPane, self).bind()
         attrs = (
-            'title', 'title_bar_orientation', 'closable', 'movable',
-            'floatable', 'floating', 'dock_area', 'allowed_dock_areas'
+            'title', 'title_bar_visible', 'title_bar_orientation', 'closable', 
+            'movable', 'floatable', 'floating', 'dock_area', 
+            'allowed_dock_areas'
         )
         self.publish_attributes(*attrs)
 

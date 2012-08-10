@@ -1,6 +1,7 @@
 from enaml.widgets import (
     Window, Html, Container, PushButton, Slider, ComboBox, Notebook, Page, 
-    Field, ScrollArea, MainWindow, DockPane, CheckBox, Splitter, ScrollArea
+    Field, ScrollArea, MainWindow, DockPane, CheckBox, Splitter, ScrollArea,
+    ToolBar,
 )
 
 from enaml.layout import hbox, vbox, spacer, align
@@ -22,12 +23,19 @@ enamldef Main(MainWindow):
                     CheckBox:
                         text = 'enabled'
                         checked := page.enabled
+                    CheckBox:
+                        text = 'pane enabled'
+                        checked := pane.enabled
                     PushButton:
                         text = 'open'
                         clicked :: page.open()
                     PushButton:
                         text = 'close'
                         clicked :: page.close()
+                    PushButton:
+                        clicked :: pane.open()
+                    PushButton:
+                        clicked :: pane.close()
             Page:
                 id: page
                 title = 'qwerfsdfo'
@@ -61,7 +69,9 @@ enamldef Main(MainWindow):
                         pass
 
     DockPane:
+        id: pane
         title << 'Docked | ' + dock_area + (' (floating)' if floating else '')
+        closable = False
         Container:
             Field:
                 pass
@@ -69,5 +79,39 @@ enamldef Main(MainWindow):
                 pass
             Field:
                 pass
+            CheckBox:
+                checked := parent.parent.closable
+    DockPane:
+        title << 'Docked | ' + dock_area + (' (floating)' if floating else '')
+        closable = False
+        Container:
             Field:
                 pass
+            Field:
+                pass
+            Field:
+                pass
+            CheckBox:
+                checked := pane.floating
+    DockPane:
+        id: pane
+        title << 'Docked | ' + dock_area + (' (floating)' if floating else '')
+        title << foo.text
+        closable = False
+        title_bar_orientation << 'horizontal' if orient.checked else 'vertical'
+        title_bar_visible << True if vis.checked else False
+        #title << foo.text
+        #allowed_dock_areas = ['left', 'top']
+        Container:
+            CheckBox:
+                id: orient
+                text = 'orient'
+            CheckBox:
+                id: vis
+                text = 'visible'
+            CheckBox:
+                text = 'closable'
+                checked := pane.closable
+            Field:
+                id: foo
+                text = 'sdf'

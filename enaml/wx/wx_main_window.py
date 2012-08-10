@@ -3,7 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import wx
-import wx.aui
+import wx.lib.agw.aui as aui
 
 from .wx_window import WxWindow
 
@@ -23,10 +23,13 @@ class wxMainWindow(wx.Frame):
 
         """
         super(wxMainWindow, self).__init__(*args, **kwargs)
-        self._pane_manager = wx.aui.AuiManager(self)
+        flags = aui.AUI_MGR_DEFAULT | aui.AUI_MGR_LIVE_RESIZE
+        self._manager = aui.AuiManager(self, agwFlags=flags)
         self._central_widget = None
         self._batch = False
-        self.Bind(wx.aui.EVT_AUI_PANE_CLOSE, self._OnPaneClose)
+        self.Bind(aui.EVT_AUI_PANE_CLOSE, self.OnPaneClose)
+        self.Bind(aui.EVT_AUI_PANE_FLOATED, self.OnPaneFloated)
+        self.Bind(aui.EVT_AUI_PANE_DOCKED, self.OnPaneDocked)
 
         # Add a hidden dummy widget to the pane manager. This is a 
         # workaround for a Wx bug where the laying out of the central
@@ -35,23 +38,36 @@ class wxMainWindow(wx.Frame):
         # (1, 1)) if there are no other panes in the layout. If we 
         # add a hidden pane with zero size, it prevents the jitter.
         self._hidden_widget = wx.Window(self)
-        pane = wx.aui.AuiPaneInfo()
+        pane = aui.AuiPaneInfo()
         pane.BestSize(wx.Size(0, 0)).MinSize(wx.Size(0, 0)).Show(False)
-        self._pane_manager.AddPane(self._hidden_widget, pane)
+        self._manager.AddPane(self._hidden_widget, pane)
 
     #--------------------------------------------------------------------------
-    # Private API
+    # Event Handlers
     #--------------------------------------------------------------------------
-    def _OnPaneClose(self, event):
+    def OnPaneClose(self, event):
         """ Handle the EVT_AUI_PANE_CLOSE event.
 
-        Wx does not reliably toggle the close button dynamically when 
-        setting the CloseButton flag on the PaneInfo object for the 
-        dock pane, so we always display the button, and pass the close
-        event to the dock pane and let it deal with it.
+        This event gets passed on to the wxDockPane for handling.
 
         """
         event.GetPane().window.OnClose(event)
+
+    def OnPaneFloated(self, event):
+        """ Handle the EVT_AUI_PANE_FLOATED event.
+
+        This event gets passed on to the wxDockPane for handling.
+
+        """
+        event.GetPane().window.OnFloated(event)
+
+    def OnPaneDocked(self, event):
+        """ Handle the EVT_AUI_PANE_DOCKED event.
+
+        This event gets passed on to the wxDockPane for handling.
+
+        """
+        event.GetPane().window.OnDocked(event)
 
     #--------------------------------------------------------------------------
     # Public API
@@ -69,7 +85,7 @@ class wxMainWindow(wx.Frame):
             The AuiManager instance managing the panes for this window.
 
         """
-        return self._pane_manager
+        return self._manager
 
     def BeginBatch(self):
         """ Enter batch update mode for main window updates.
@@ -89,7 +105,7 @@ class wxMainWindow(wx.Frame):
 
         """
         self._batch = False
-        self._pane_manager.Update()
+        self._manager.Update()
 
     def SetCentralWidget(self, widget):
         """ Set the central widget for the main window.
@@ -101,7 +117,7 @@ class wxMainWindow(wx.Frame):
             main window.
 
         """
-        manager = self._pane_manager
+        manager = self._manager
         
         old_widget = self._central_widget
         if old_widget:
@@ -111,7 +127,7 @@ class wxMainWindow(wx.Frame):
                 manager.DetachPane(old_widget)
 
         self._central_widget = widget
-        pane = wx.aui.AuiPaneInfo().CenterPane()
+        pane = aui.AuiPaneInfo().CenterPane()
         manager.AddPane(widget, pane)
 
         if not self._batch:
@@ -129,7 +145,7 @@ class wxMainWindow(wx.Frame):
             The wxDockPane instance to add to the main window.
 
         """
-        manager = self._pane_manager
+        manager = self._manager
         pane = manager.GetPane(dock_pane)
         if not pane.IsOk():
             manager.AddPane(dock_pane, dock_pane.MakePaneInfo())
@@ -148,7 +164,7 @@ class wxMainWindow(wx.Frame):
             The wxDockPane instance to remove from the window.
 
         """
-        manager = self._pane_manager
+        manager = self._manager
         pane = manager.GetPane(dock_pane)
         if pane.IsOk():
             pane.Show(False)
@@ -163,6 +179,9 @@ class WxMainWindow(WxWindow):
     """
     #: Storage for the widget ids of the dock panes
     _dock_pane_ids = []
+
+    #: Storage for the widget ids of the tool bars
+    _tool_bar_ids = []
 
     #--------------------------------------------------------------------------
     # Setup Methods
@@ -179,6 +198,7 @@ class WxMainWindow(WxWindow):
         """
         super(WxMainWindow, self).create(tree)
         self.set_dock_pane_ids(tree['dock_pane_ids'])
+        self.set_tool_bar_ids(tree['tool_bar_ids'])
 
     def init_layout(self):
         """ Perform the layout initialization for the main window.
@@ -197,6 +217,15 @@ class WxMainWindow(WxWindow):
         if central_child is not None:
             main_window.SetCentralWidget(central_child.widget())
 
+        # Setup the tool bars
+        # for tool_bar_id in self._tool_bar_ids:
+        #     tool_bar = find_child(tool_bar_id)
+        #     if tool_bar is not None:
+        #         pane = aui.AuiPaneInfo().ToolbarPane()
+        #         w = tool_bar.widget()
+        #         w.Realize()
+        #         main_window.GetOwnerManager().AddPane(w, pane)
+
         # Setup the dock panes
         for dock_id in self._dock_pane_ids:
             dock_pane = find_child(dock_id)
@@ -213,4 +242,10 @@ class WxMainWindow(WxWindow):
 
         """
         self._dock_pane_ids = pane_ids
+
+    def set_tool_bar_ids(self, bar_ids):
+        """ Set the tool bar ids for the underlying widget.
+
+        """
+        self._tool_bar_ids = bar_ids
 
