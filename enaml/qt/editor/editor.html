@@ -7,6 +7,7 @@
 	#editor_${column} {
 		position: relative;
 	    width: 100%;
+	    background-color: #fff;
 	}
 
 	.container {
@@ -88,6 +89,10 @@
 				jQuery(ui.item).css('width', tab_width);
 				jQuery(ui.helper).css('width', tab_width);
 			},
+			// XXX this event is not called appropriately (jQuery bug). When a
+			// tab is dragged from one tab bar to another and back without
+			// dropping, this event should be called when the tab leaves the
+			// tab bar, but is not.
 			out: function(event, ui) {
 				var tab_width = _this.refreshTabWidths();
 				jQuery(ui.item).css('width', tab_width);
