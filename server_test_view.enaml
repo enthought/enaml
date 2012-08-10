@@ -124,7 +124,7 @@ enamldef Main(MainWindow):
     DockPane:
         id: dp
         title << 'drag me | ' + dock_area + (' (floating)' if floating else '')
-        closable = False
+        visible = False
         Container:
             Field:
                 pass
@@ -162,37 +162,12 @@ enamldef Main(MainWindow):
                 text = 'Close'
                 clicked :: dp.close()
             CheckBox:
+                text = 'visible'
+                checked := dp.visible
+            CheckBox:
+                text = 'floating'
                 checked := dp.floating
             ComboBox:
                 items = ['left', 'right', 'top', 'bottom']
                 index << items.index(dp.dock_area)
                 index :: dp.dock_area = items[index]
-    DockPane:
-        title = 'fooasdf'
-        dock_area = 'right'
-        Container:
-            Field:
-                pass
-            Field:
-                pass
-            Field:
-                pass
-            Field:
-                pass
-            Field:
-                pass
-    DockPane:
-        title = 'foasdo'
-        dock_area = 'bottom'
-        Container:
-            Field:
-                pass
-            Field:
-                pass
-            Field:
-                pass
-            Field:
-                pass
-            Field:
-                pass
-    
