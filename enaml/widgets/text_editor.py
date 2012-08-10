@@ -64,7 +64,8 @@ class TextEditor(ConstraintsWidget):
         """
         super(TextEditor, self).bind()
         self.publish_attributes('theme', 'auto_pair', 'font_size', 'tabs',
-            'margin_line', 'documents[]')
+            'margin_line')
+        self.on_trait_change(self.documents_changed, 'documents')
 
     #--------------------------------------------------------------------------
     # Action Handlers
@@ -104,6 +105,15 @@ class TextEditor(ConstraintsWidget):
     #--------------------------------------------------------------------------
     # Trait Change Handlers
     #--------------------------------------------------------------------------
+    def documents_changed(self, new):
+        """ Fired when the documents are changed.
+
+        """
+        content = {
+            'documents': [[doc.as_dict() for doc in col] for col in new]
+        }
+        self.send_action('set_documents', content)
+
     def title_changed(self, _object, name, new):
         """ Fired when the title trait changes on a document
 

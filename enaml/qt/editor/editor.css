@@ -4,6 +4,7 @@
 /*----------------------------------------------------------------------------*/
 body {
     background: transparent;
+    overflow: hidden;
 }
 
 .container {
