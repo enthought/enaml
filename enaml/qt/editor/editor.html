@@ -85,13 +85,13 @@
 			},
 			over: function(event, ui) {
 				var tab_width = _this.refreshTabWidths();
-				jQuery(ui.item).css('width', tab_width - 3);
-				jQuery(ui.helper).css('width', tab_width - 3);
+				jQuery(ui.item).css('width', tab_width);
+				jQuery(ui.helper).css('width', tab_width);
 			},
 			out: function(event, ui) {
 				var tab_width = _this.refreshTabWidths();
-				jQuery(ui.item).css('width', tab_width - 3);
-				jQuery(ui.helper).css('width', tab_width - 3);
+				jQuery(ui.item).css('width', tab_width);
+				jQuery(ui.helper).css('width', tab_width);
 			}
 
 		}).disableSelection();
@@ -240,11 +240,14 @@
 			var container_width = jQuery('.tabs').width();
 			var tab_width = container_width / div_list.length;
 			jQuery.each(div_list, function(index, value) {
-				jQuery(value).width(tab_width - 3);
-				jQuery('button', value).show();
-				var button_left = jQuery('button', value).position().left;
-				if (button_left < jQuery('span', value).width()+4)
-					jQuery('button', value).hide();
+				jQuery(value).width(tab_width);
+				var button = jQuery('button', value)
+				if (button.position()) {
+					button.show();
+					var button_left = button.position().left;
+					if (button_left < jQuery('span', value).width()+4)
+						button.hide();
+				}
 			});
 			return tab_width;
 		}
