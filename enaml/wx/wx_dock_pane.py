@@ -184,6 +184,7 @@ class wxDockPane(wx.Panel):
 
         info.BestSize(self.GetBestSize())
         info.MinSize(self.GetEffectiveMinSize())
+        info.Show(self.IsOpen())
         info.Caption(self.GetTitle())
         info.Floatable(self.GetFloatable())
         info.Direction(self.GetDockArea())
@@ -198,8 +199,6 @@ class wxDockPane(wx.Panel):
             info.Float()
         else:
             info.Dock()
-
-        info.Show(self._is_open)
 
         return info
 
@@ -228,6 +227,17 @@ class wxDockPane(wx.Panel):
         """
         self._dock_widget = widget
         self.GetSizer().Add(widget)
+
+    def IsOpen(self):
+        """ Get whether or not the dock pane is open.
+
+        Returns
+        -------
+        result : bool
+            True if the pane is open, False otherwise.
+
+        """
+        return self._is_open
 
     def Open(self):
         """ Open the dock pane in the main window.
