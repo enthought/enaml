@@ -18,6 +18,7 @@ class QtTextEditor(QtConstraintsWidget):
         self.widget.ace_editor.text_changed_from_js.connect(self.on_text_change)
         self.widget.ace_editor.tab_added.connect(self.on_tab_added)
         self.widget.ace_editor.tab_removed.connect(self.on_tab_removed)
+        self.widget.ace_editor.tab_moved.connect(self.on_tab_moved)
 
     def initialize(self, attrs):
         """ Initialize the widget's attributes.
@@ -73,6 +74,18 @@ class QtTextEditor(QtConstraintsWidget):
             'tab_index': tab_index
         }
         self.send_action('tab_removed', content)
+
+    def on_tab_moved(self, old_col, old_tab, new_col, new_tab):
+        """ Event fired when a tab is moved in the editor
+
+        """
+        content = {
+            'old_col': old_col,
+            'old_tab': old_tab,
+            'new_col': new_col,
+            'new_tab': new_tab
+        }
+        self.send_action('tab_moved', content)
 
     #--------------------------------------------------------------------------
     # Action Handlers

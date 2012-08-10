@@ -102,6 +102,17 @@ class TextEditor(ConstraintsWidget):
         tab_index = content['tab_index']
         del self.documents[col_index][tab_index]
 
+    def on_action_tab_moved(self, content):
+        """ Update the documents list to reflect the moved tab
+
+        """
+        old_col = content['old_col']
+        old_tab = content['old_tab']
+        new_col = content['new_col']
+        new_tab = content['new_tab']
+        doc = self.documents[old_col].pop(old_tab)
+        self.documents[new_col].insert(new_tab, doc)
+
     #--------------------------------------------------------------------------
     # Trait Change Handlers
     #--------------------------------------------------------------------------

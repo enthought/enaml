@@ -48,7 +48,6 @@
 			this.editor.commands.addCommand(command);
 		}
 
-		this.current_index = 0;
 		this.tab_list = jQuery('.tabs').eq(${column});
 		this.tab_list.sortable({
 			tolerance: 'pointer',
@@ -70,17 +69,18 @@
 					_this.tab_list.current_tab = null;
 				else {
 					var tabs = jQuery('div', _this.tab_list);
-					if (_this.current_index == 0)
-						_this.tab_list.current_tab = tabs[_this.current_index];
+					if (ui.item._index == 0)
+						_this.tab_list.current_tab = tabs[ui.item._index];
 					else 
-						_this.tab_list.current_tab = tabs[_this.current_index-1];
+						_this.tab_list.current_tab = tabs[ui.item._index-1];
 				}
 				ui.item.unbind('click');
 				jQuery('button', ui.item).unbind('click');
 				_this.refreshTabWidths();
 			},
 			start: function(event, ui) {
-				_this.current_index = ui.item.index();
+				ui.item._index = ui.item.index();
+				ui.item._column = ${column};
 				ui.placeholder.width(ui.item.width());
 			},
 			over: function(event, ui) {
@@ -92,8 +92,12 @@
 				var tab_width = _this.refreshTabWidths();
 				jQuery(ui.item).css('width', tab_width);
 				jQuery(ui.helper).css('width', tab_width);
+			},
+			update: function(event, ui) {
+				console.log('updating')
+				py_ace_editor.tab_moved(ui.item._column, ui.item._index,
+					${column}, ui.item.index());
 			}
-
 		}).disableSelection();
 
 		this.tab_list.__defineSetter__("current_tab", function(tab) {

@@ -54,6 +54,7 @@ class QtAceEditor(QObject):
     show_tabs = Signal(bool)
     tab_added = Signal(int, int)
     tab_removed = Signal(int, int)
+    tab_moved = Signal(int, int, int, int)
 
     def __init__(self, parent=None):
         """ Initialize the editor
