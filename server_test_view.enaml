@@ -14,88 +14,26 @@ enamldef Main(MainWindow):
         padding = 0
         Notebook:
             Page:
-                title << fld.text
+                title = 'foo'
                 Container:
-                    Splitter:
-                        id: splitter
-                        orientation = 'vertical'
-                        Container:
-                            Field:
-                                id: fld
-                                text = 'foo'
-                            Field:
-                                pass
-                            CheckBox:
-                                checked := tabs_closable
-                        Container:
-                            Field:
-                                id: fld
-                                text = 'foo'
-                            Field:
-                                pass
-                            CheckBox:
-                                checked := tabs_closable
-                        Container:
-                            ScrollArea:
-                                Container:
-                                    Field:
-                                        id: fld
-                                        text = 'foo'
-                                    Field:
-                                        pass
-                                    CheckBox:
-                                        checked := tabs_closable
-                                    Field:
-                                        id: fld
-                                        text = 'foo'
-                                    Field:
-                                        pass
-                                    CheckBox:
-                                        checked := tabs_closable
-                                    Field:
-                                        id: fld
-                                        text = 'foo'
-                                    Field:
-                                        pass
-                                    CheckBox:
-                                        checked := tabs_closable
-                                    Field:
-                                        id: fld
-                                        text = 'foo'
-                                    Field:
-                                        pass
-                                    CheckBox:
-                                        checked := tabs_closable
-                                    Field:
-                                        id: fld
-                                        text = 'foo'
-                                    Field:
-                                        pass
-                                    CheckBox:
-                                        checked := tabs_closable
-                                    Field:
-                                        id: fld
-                                        text = 'foo'
-                                    Field:
-                                        pass
-                                    CheckBox:
-                                        checked := tabs_closable
-                                    Field:
-                                        id: fld
-                                        text = 'foo'
-                                    Field:
-                                        pass
-                                    CheckBox:
-                                        checked := tabs_closable
-                                    Field:
-                                        id: fld
-                                        text = 'foo'
-                                    Field:
-                                        pass
-                                    CheckBox:
-                                        checked := tabs_closable
+                    CheckBox:
+                        text = 'visible'
+                        checked := page.visible
+                    CheckBox:
+                        text = 'enabled'
+                        checked := page.enabled
+                    PushButton:
+                        text = 'open'
+                        clicked :: page.open()
+                    PushButton:
+                        text = 'close'
+                        clicked :: page.close()
             Page:
-                title = 'foasdfo'
+                id: page
+                title = 'qwerfsdfo'
+                visible = False
+                closed :: print 'i was closed'
+                closable = False
                 Container:
                     Field:
                         pass
@@ -121,10 +59,9 @@ enamldef Main(MainWindow):
                         pass
                     Field:
                         pass
+
     DockPane:
-        id: dp
-        title << 'drag me | ' + dock_area + (' (floating)' if floating else '')
-        visible = False
+        title << 'Docked | ' + dock_area + (' (floating)' if floating else '')
         Container:
             Field:
                 pass
@@ -134,40 +71,3 @@ enamldef Main(MainWindow):
                 pass
             Field:
                 pass
-            PushButton:
-                clicked ::
-                    if splitter.orientation == 'vertical':
-                        splitter.orientation = 'horizontal'
-                    else:
-                        splitter.orientation = 'vertical'
-    DockPane:
-        title = 'asdfoo'
-        dock_area = 'right'
-        allowed_dock_areas = ['left', 'top']
-        Container:
-            Field:
-                pass
-            Field:
-                pass
-            Field:
-                pass
-            Field:
-                pass
-            Field:
-                pass
-            PushButton:
-                text = 'Open'
-                clicked :: dp.open()
-            PushButton:
-                text = 'Close'
-                clicked :: dp.close()
-            CheckBox:
-                text = 'visible'
-                checked := dp.visible
-            CheckBox:
-                text = 'floating'
-                checked := dp.floating
-            ComboBox:
-                items = ['left', 'right', 'top', 'bottom']
-                index << items.index(dp.dock_area)
-                index :: dp.dock_area = items[index]
