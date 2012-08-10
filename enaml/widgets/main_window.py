@@ -4,8 +4,6 @@
 #------------------------------------------------------------------------------
 from traits.api import Property, cached_property
 
-from enaml.core.trait_types import EnamlEvent
-
 from .dock_pane import DockPane
 from .window import Window
 
@@ -32,10 +30,6 @@ class MainWindow(Window):
 
     #: A read only property which returns the window's DockPanes.
     dock_panes = Property(depends_on='children[]')
-
-    #: An event fired when the user closes a dock pane by clicking on 
-    #: its close button. The content will be the dock pane object.
-    dock_pane_closed = EnamlEvent
 
     #--------------------------------------------------------------------------
     # Initialization 
@@ -71,53 +65,4 @@ class MainWindow(Window):
 
         """
         return [pane.widget_id for pane in self.dock_panes]
-    
-    #--------------------------------------------------------------------------
-    # Message Handling
-    #--------------------------------------------------------------------------
-    def on_action_dock_pane_closed(self, content):
-        """ Handle the 'dock_pane_closed' action from the client widget.
-
-        """
-        widget_id = content['widget_id']
-        for dock_pane in self.dock_panes:
-            if dock_pane.widget_id == widget_id:
-                self.dock_pane_closed(dock_pane)
-                dock_pane.closed()
-                return
-
-    #--------------------------------------------------------------------------
-    # Public API
-    #--------------------------------------------------------------------------
-    def open_dock_pane(self, dock_pane):
-        """ Open the given dock pane if it isn't already open.
-
-        Parameters
-        ----------
-        dock_pane : DockPane
-            The DockPane instance to open. It must be owned by this
-            MainWindow.
-
-        """
-        if dock_pane not in self.dock_panes:
-            msg = 'Pane is not owned by this MainWindow'
-            raise ValueError(msg)
-        content = {'widget_id': dock_pane.widget_id}
-        self.send_action('open_dock_pane', content)
-
-    def close_dock_pane(self, dock_pane):
-        """ Close the given dock pane if it isn't already open.
-
-        Parameters
-        ----------
-        dock_pane : DockPane
-            The DockPane instance to open. It must be owned by this
-            MainWindow.
-
-        """
-        if dock_pane not in self.dock_panes:
-            msg = 'Pane is not owned by this MainWindow'
-            raise ValueError(msg)
-        content = {'widget_id': dock_pane.widget_id}
-        self.send_action('close_dock_pane', content)
 
