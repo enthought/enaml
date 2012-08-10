@@ -63,5 +63,6 @@ class ImageView(ConstraintsWidget):
         """ Sends the image data, encoded in a base64 format
 
         """
-        return
 
+        content = {'image' : self.image.as_dict()}
+        self.send_action('set_image', content)
