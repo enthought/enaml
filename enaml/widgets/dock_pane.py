@@ -41,17 +41,16 @@ class DockPane(WidgetComponent):
 
     #: The dock areas in the MainWindow where the pane can be docked 
     #: by the user. Note that this does not preclude the pane from 
-    #: docked manually via the 'dock_area' attribute.
+    #: being docked programmatically via the 'dock_area' attribute.
     allowed_dock_areas = List(
         Enum('left', 'right', 'top', 'bottom', 'all'), value=['all'],
     )
 
-    #: A read only property which returns the dock widget for the pane.
+    #: A read only property which returns the pane's dock widget.
     dock_widget = Property(depends_on='children[]')
 
-    #: An event fired when the user closes the page by clicking on 
-    #: the tab's close button. This event is fired by the parent 
-    #: MainWindow when the tab is closed. This event has no payload.
+    #: An event fired when the user closes the pane by clicking on the 
+    #: dock pane's close button.
     closed = EnamlEvent
 
     #--------------------------------------------------------------------------
@@ -91,7 +90,7 @@ class DockPane(WidgetComponent):
         Returns
         -------
         result : Container or None
-            The dock widget for the Pane, or None if not provided.
+            The dock widget for the DockPane, or None if not provided.
 
         """
         for child in self.children:
@@ -110,8 +109,7 @@ class DockPane(WidgetComponent):
     # Message Handling
     #--------------------------------------------------------------------------
     def on_action_floating_changed(self, content):
-        """ Handle the 'floating_changed' action from the client 
-        widget.
+        """ Handle the 'floating_changed' action from the client widget.
 
         """
         self.set_guarded(floating=content['floating'])
@@ -123,24 +121,31 @@ class DockPane(WidgetComponent):
         """
         self.set_guarded(dock_area=content['dock_area'])
     
+    def on_action_closed(self, content):
+        """ Handle the 'closed' action from the client widget.
+
+        """
+        self.set_guarded(visible=False)
+        self.closed()
+
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
     def open(self):
-        """ A convenience method for calling 'open_dock_pane' on the
-        parent MainWindow, passing this pane as an argument.
+        """ Open the dock pane in the MainWindow. 
+
+        Calling this method will also set the pane visibility to True.
 
         """
-        parent = self.parent
-        if parent is not None:
-            parent.open_dock_pane(self)
+        self.set_guarded(visible=True)
+        self.send_action('open', {})
 
     def close(self):
-        """ A convenience method for calling 'close_dock_pane' on the
-        parent MainWindow, passing this page as an argument.
+        """ Close the dock pane in the MainWindow.
+
+        Calling this method will set the pane visibility to False.
 
         """ 
-        parent = self.parent
-        if parent is not None:
-            parent.close_dock_pane(self)
+        self.set_guarded(visible=False)
+        self.send_action('close', {})
 

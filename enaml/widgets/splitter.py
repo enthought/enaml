@@ -2,15 +2,18 @@
 # Copyright (c) 2011, Enthought, Inc.
 # All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Bool, List, Either, Int, Enum 
+from traits.api import Bool, List, Either, Int, Enum, Property, cached_property
 
 from .constraints_widget import ConstraintsWidget
+from .container import Container
 
 
 class Splitter(ConstraintsWidget):
     """ A widget which displays its children in separate resizable 
     compartements that are connected with a resizing bar.
      
+    A Splitter can have an arbitrary number of Container children.
+
     """
     #: The orientation of the Splitter. 'horizontal' means the children 
     #: are laid out left to right, 'vertical' means top to bottom.
@@ -25,6 +28,10 @@ class Splitter(ConstraintsWidget):
     #: or None if there is no preference for the size.
     preferred_sizes = List(Either(None, Int))
     
+    #: A read only property which returns the splitter widgets being
+    #: managed by the splitter.
+    splitter_widgets = Property(depends_on='children[]')
+
     #: How strongly a component hugs it's contents' width. A Splitter
     #: container ignores its width hug by default, so it expands freely
     #: in width.
@@ -43,6 +50,7 @@ class Splitter(ConstraintsWidget):
 
         """
         snap = super(Splitter, self).snapshot()
+        snap['splitter_widget_ids'] = self._snap_splitter_widget_ids()
         snap['orientation'] = self.orientation
         snap['live_drag'] = self.live_drag
         snap['preferred_sizes'] = self.preferred_sizes
@@ -54,4 +62,28 @@ class Splitter(ConstraintsWidget):
         """
         super(Splitter, self).bind()
         self.publish_attributes('orientation', 'live_drag', 'preferred_sizes')
+
+    #--------------------------------------------------------------------------
+    # Private API
+    #--------------------------------------------------------------------------
+    @cached_property
+    def _get_splitter_widgets(self):
+        """ The getter for the 'splitter_widgets' property.
+
+        Returns
+        -------
+        result : tuple
+            The tuple of Container instances defined as children of 
+            this Splitter.
+
+        """
+        isinst = isinstance
+        pages = (child for child in self.children if isinst(child, Container))
+        return tuple(pages)
+
+    def _snap_splitter_widget_ids(self):
+        """ Returns the widget ids of the splitters's split widgets.
+
+        """
+        return [widget.widget_id for widget in self.splitter_widgets]
 

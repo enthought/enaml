@@ -25,7 +25,7 @@ class WxCalendar(WxBoundedDate):
 
         """
         super(WxCalendar, self).create(tree)
-        self.widget.Bind(EVT_CALENDAR, self.on_date_changed)
+        self.widget().Bind(EVT_CALENDAR, self.on_date_changed)
 
     #--------------------------------------------------------------------------
     # Abstract Method Implementations
@@ -39,7 +39,7 @@ class WxCalendar(WxBoundedDate):
             The current control date as a wxDateTime object.
 
         """
-        return self.widget.GetDate()
+        return self.widget().GetDate()
 
     def set_date(self, date):
         """ Set the widget's current date.
@@ -50,7 +50,7 @@ class WxCalendar(WxBoundedDate):
             The wxDateTime object to use for setting the date.
 
         """
-        self.widget.SetDate(date)
+        self.widget().SetDate(date)
 
     def set_max_date(self, date):
         """ Set the widget's maximum date.
@@ -61,7 +61,7 @@ class WxCalendar(WxBoundedDate):
             The wxDateTime object to use for setting the maximum date.
 
         """
-        self.widget.SetUpperDateLimit(date)
+        self.widget().SetUpperDateLimit(date)
 
     def set_min_date(self, date):
         """ Set the widget's minimum date.
@@ -72,5 +72,5 @@ class WxCalendar(WxBoundedDate):
             The wxDateTime object to use for setting the minimum date.
 
         """
-        self.widget.SetLowerDateLimit(date)
+        self.widget().SetLowerDateLimit(date)
 

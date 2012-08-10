@@ -47,6 +47,9 @@ class WxSplitter(WxConstraintsWidget):
     """ A Wx implementation of an Enaml Splitter.
 
     """
+    #: Storage for the splitter widget ids
+    _splitter_widget_ids = []
+
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
@@ -60,26 +63,23 @@ class WxSplitter(WxConstraintsWidget):
         """ Create and initialize the splitter control.
         """
         super(WxSplitter, self).create(tree)
+        self.set_splitter_widget_ids(tree['splitter_widget_ids'])
         self.set_orientation(tree['orientation'])
         self.set_live_drag(tree['live_drag'])
         self.set_preferred_sizes(tree['preferred_sizes'])
-
-    def post_create(self):
-        """ Handle the post creation work of adding the children to 
-        the splitter.
-
-        """
-        super(WxSplitter, self).post_create()
-        widget = self.widget
-        for child in self.children:
-            widget.AppendWindow(child.widget)
-
+    
     def init_layout(self):
-        """ Handle layout initialization for the splitter.
+        """ Handle the layout initialization for the splitter.
 
         """
         super(WxSplitter, self).init_layout()
-        self.widget.SizeWindows()
+        widget = self.widget()
+        find_child = self.find_child
+        for widget_id in self._splitter_widget_ids:
+            child = find_child(widget_id)
+            if child is not None:
+                widget.AppendWindow(child.widget())
+        widget.SizeWindows()
 
     #--------------------------------------------------------------------------
     # Message Handler Methods 
@@ -106,21 +106,30 @@ class WxSplitter(WxConstraintsWidget):
     #--------------------------------------------------------------------------
     # Widget Update Methods 
     #--------------------------------------------------------------------------
+    def set_splitter_widget_ids(self, widget_ids):
+        """ Set the splitter widget ids for the underlying widget.
+
+        """
+        self._splitter_widget_ids = widget_ids
+
     def set_orientation(self, orientation):
         """ Update the orientation of the splitter.
 
         """
         wx_orientation = _ORIENTATION_MAP[orientation]
-        self.widget.SetOrientation(wx_orientation)
-
+        widget = self.widget()
+        widget.SetOrientation(wx_orientation)
+        widget.SizeWindows()
+    
     def set_live_drag(self, live_drag):
         """ Updates the drag state of the splitter.
 
         """
+        widget = self.widget()
         if live_drag:
-            self.widget.WindowStyle |= wx.SP_LIVE_UPDATE
+            widget.WindowStyle |= wx.SP_LIVE_UPDATE
         else:
-            self.widget.WindowStyle &= ~wx.SP_LIVE_UPDATE
+            widget.WindowStyle &= ~wx.SP_LIVE_UPDATE
 
     def set_preferred_sizes(self, sizes):
         """ Set the initial sizes for the children.

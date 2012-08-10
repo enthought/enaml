@@ -80,7 +80,7 @@ class WxConstraintsWidget(WxWidgetComponent):
         self.hug = layout['hug']
         self.resist_clip = layout['resist_clip']
         self.constraints = layout['constraints']
-        self.layout_box = LayoutBox(type(self).__name__, self.widget_id)
+        self.layout_box = LayoutBox(type(self).__name__, self.widget_id())
         
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -151,7 +151,7 @@ class WxConstraintsWidget(WxWidgetComponent):
             The size hint to use in layout computations for the widget.
 
         """
-        return self.widget.GetBestSize()
+        return self.widget().GetBestSize()
 
     def update_layout_geometry(self, dx, dy):
         """ A method which can be called during a layout pass to compute
@@ -208,5 +208,5 @@ class WxConstraintsWidget(WxWidgetComponent):
             The height of the widget.
 
         """
-        self.widget.SetDimensions(x, y, width, height)
+        self.widget().SetDimensions(x, y, width, height)
 

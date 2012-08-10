@@ -239,7 +239,7 @@ class WxField(WxConstraintsWidget):
         self.set_submit_triggers(tree['submit_triggers'])
         self.set_placeholder(tree['placeholder'])
         self.set_max_length(tree['max_length'])
-        widget = self.widget
+        widget = self.widget()
         widget.Bind(wx.EVT_KILL_FOCUS, self.on_lost_focus)
         widget.Bind(wx.EVT_TEXT_ENTER, self.on_return_pressed)
         widget.Bind(wx.EVT_TEXT, self.on_text_edited)
@@ -264,7 +264,7 @@ class WxField(WxConstraintsWidget):
         the server widget if it's valid.
 
         """
-        text = self.widget.GetValue()
+        text = self.widget().GetValue()
         if text != self._last_value:
             if self._validator(text):
                 self._clear_error_style()
@@ -275,15 +275,17 @@ class WxField(WxConstraintsWidget):
 
     def _set_error_style(self):
         # A temporary hack until styles are implemented
-        self.widget.SetBackgroundColour(wx.Color(250, 128, 114))
+        widget = self.widget()
+        widget.SetBackgroundColour(wx.Color(250, 128, 114))
         self._is_error_state = True
-        self.widget.Refresh()
+        widget.Refresh()
 
     def _clear_error_style(self):
         # A temporary hack until styles are implemented
-        self.widget.SetBackgroundColour(wx.NullColor)
+        widget = self.widget()
+        widget.SetBackgroundColour(wx.NullColor)
         self._is_error_state = False
-        self.widget.Refresh()
+        widget.Refresh()
 
     #--------------------------------------------------------------------------
     # Event Handling
@@ -305,16 +307,17 @@ class WxField(WxConstraintsWidget):
             self._validate_and_submit()
 
     def on_text_edited(self, event):
-        event.Skip()
         # Temporary kludge until styles are fully implemented 
-        if self._validator(self.widget.GetValue()):
+        event.Skip()
+        widget = self.widget()
+        if self._validator(widget.GetValue()):
             if self._is_error_state:
                 self._clear_error_style()
-                self.widget.SetToolTip(wx.ToolTip(''))
+                widget.SetToolTip(wx.ToolTip(''))
         else:
             if not self._is_error_state:
                 self._set_error_style()
-                self.widget.SetToolTip(wx.ToolTip(self._validator_message))
+                widget.SetToolTip(wx.ToolTip(self._validator_message))
 
     #--------------------------------------------------------------------------
     # Message Handling
@@ -369,7 +372,7 @@ class WxField(WxConstraintsWidget):
         """ Updates the text control with the given unicode text.
 
         """
-        self.widget.ChangeValue(text)
+        self.widget().ChangeValue(text)
         self._last_value = text
         self._clear_error_style()
 
@@ -394,7 +397,7 @@ class WxField(WxConstraintsWidget):
         """ Sets the placeholder text in the widget.
 
         """
-        self.widget.SetPlaceHolderText(placeholder)
+        self.widget().SetPlaceHolderText(placeholder)
 
     def set_echo_mode(self, echo_mode):
         """ Sets the echo mode of the wiget.
@@ -411,7 +414,7 @@ class WxField(WxConstraintsWidget):
         """
         if (max_length <= 0) or (max_length > 32767):
             max_length = 32767
-        self.widget.SetMaxLength(max_length)
+        self.widget().SetMaxLength(max_length)
 
     def set_read_only(self, read_only):
         """ Sets the read only state of the widget. 

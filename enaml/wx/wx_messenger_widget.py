@@ -3,7 +3,6 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import logging
-from weakref import ref
 
 from enaml.utils import LoopbackGuard
 
@@ -12,6 +11,12 @@ class WxMessengerWidget(object):
     """ The base class of the Wx widgets wrappers for a Wx Enaml client.
 
     """
+    # Note that this class creates an explicit reference cycle between
+    # a parent and its children. This is done in the name of performane
+    # and convenience. Since there is already an explicit destruction
+    # phase for tearing down a Session, we can handle breaking the
+    # reference cycles then and make our lives easier the rest of the 
+    # time.
     def __init__(self, parent, widget_id, session):
         """ Initialize a WxMessengerWidget
 
@@ -29,15 +34,13 @@ class WxMessengerWidget(object):
             server widget.
 
         """
-        self._parent_ref = ref(parent) if parent is not None else lambda: None
-        self.widget = None
-        self.children = []
-        self.children_map = {}
-        self.widget_id = widget_id
-        self.session = session
+        self._widget_id = widget_id
+        self._session = session
+        self._parent = parent
+        self._children = []
+        self._children_map = {}
         if parent is not None:
-            parent.children.append(self)
-            parent.children_map[widget_id] = self
+            parent.add_child(self)
 
     #--------------------------------------------------------------------------
     # Messaging/Session API
@@ -64,7 +67,7 @@ class WxMessengerWidget(object):
         else:
             # XXX show a dialog here?
             msg = "Unhandled action sent to `%s` from server: %s"
-            logging.warn(msg % (self.widget_id, action))
+            logging.warn(msg % (self.widget_id(), action))
 
     def send_action(self, action, content):
         """ Send an action to the server widget.
@@ -81,34 +84,16 @@ class WxMessengerWidget(object):
             The content of the message.
 
         """
-        session = self.session
+        session = self._session
         if session is None:
             msg = 'No Session object for widget %s'
-            logging.warn(msg % self.widget_id)
+            logging.warn(msg % self.widget_id())
         else:
-            session.send_action(self.widget_id, action, content)
+            session.send_action(self.widget_id(), action, content)
 
     #--------------------------------------------------------------------------
     # Properties
     #--------------------------------------------------------------------------
-    @property
-    def parent(self):
-        """ A read-only property which returns the parent of this widget.
-
-        """
-        return self._parent_ref()
-
-    @property
-    def parent_widget(self):
-        """ A read-only property which returns the parent wx widget 
-        for this client widget, or None if it has no parent.
-
-        """
-        parent = self.parent
-        if parent is None:
-            return None
-        return parent.widget
-
     @property
     def loopback_guard(self):
         """ Lazily creates and returns a LoopbackGuard for convenient 
@@ -124,6 +109,98 @@ class WxMessengerWidget(object):
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
+    def parent(self):
+        """ Get the parent of this messenger widget.
+
+        Returns
+        -------
+        result : WxMessengerWidget or None
+            The parent of this messenger widget, or None if it has
+            no parent.
+
+        """
+        return self._parent
+
+    def children(self):
+        """ Get the children of this widget.
+
+        Returns
+        -------
+        result : list
+            The list of children of this widget. This list should not
+            be modified in place by user code.
+
+        """
+        return self._children
+
+    def add_child(self, child):
+        """ Add a child widget to this widget.
+
+        Parameters
+        ----------
+        child : WxMessengerWidget
+            The child widget to add to this widget.
+
+        """
+        # XXX handle reparenting and duplicate adding
+        self._children.append(child)
+        self._children_map[child.widget_id()] = child
+
+    def remove_child(self, child):
+        """ Remove the child widget from this widget.
+
+        Parameters
+        ----------
+        child : WxMessengerWidget
+            The child widget to remove from this widget.
+
+        """
+        # XXX handle unparenting
+        try:
+            self._children.remove(child)
+        except ValueError:
+            pass
+        self._children_map.pop(child.widget_id(), None)
+
+    def find_child(self, widget_id):
+        """ Find the child with the given widget id.
+
+        Parameters
+        ----------
+        widget_id : str
+            The widget identifier for the target widget.
+
+        Returns
+        -------
+        result : WxMessengerWidget or None
+            The child widget or None if its not found.
+
+        """
+        return self._children_map.get(widget_id)
+
+    def widget(self):
+        """ Get the toolkit widget for this messenger widget.
+
+        Returns
+        -------
+        result : wxWindow
+            The toolkit widget for this messenger widget, or None if
+            it does not have a toolkit widget.
+
+        """
+        return self._widget
+
+    def widget_id(self):
+        """ Get the widget id for the messenger widget.
+
+        Returns
+        -------
+        result : str
+            The widget identifier for this messenger widget.
+
+        """
+        return self._widget_id
+
     def create_widget(self, parent, tree):
         """ A method which must be implemented by subclasses.
 
@@ -162,7 +239,9 @@ class WxMessengerWidget(object):
             The dictionary representation of the tree for this object.
 
         """
-        self.widget = self.create_widget(self.parent_widget, tree)
+        parent = self._parent
+        parent_widget = parent.widget() if parent else None
+        self._widget = self.create_widget(parent_widget, tree)
 
     def post_create(self):
         """ A method that allows widgets to do post creation work.
@@ -199,13 +278,13 @@ class WxMessengerWidget(object):
         it parent and its children and destroy the underlying Wx widget.
 
         """
-        parent = self.parent
+        # XXX fixup this destroy method
+        parent = self._parent
         if parent is not None:
-            if self in parent.children:
-                parent.children.remove(self)
-        self.children = []
-        widget = self.widget
-        if widget is not None:
+            parent.remove_child(self)
+        self._children = []
+        widget = self._widget
+        if widget:
             widget.Destroy()
-            self.widget = None
+            self._widget = None
 

@@ -6,7 +6,7 @@ import wx
 import wx.aui
 import wx.lib.newevent
 
-from .wx_main_window import wxMainWindow
+from .wx_single_widget_sizer import wxSingleWidgetSizer
 from .wx_widget_component import WxWidgetComponent
 
 
@@ -19,7 +19,12 @@ _DOCK_AREA_MAP = {
 }
 
 #: A mapping from wx aui dock area enums to Enaml dock areas.
-_DOCK_AREA_INV_MAP = dict((v, k) for (k, v) in _DOCK_AREA_MAP.iteritems())
+_DOCK_AREA_INV_MAP = {
+    wx.aui.AUI_DOCK_TOP: 'top',
+    wx.aui.AUI_DOCK_RIGHT: 'right',
+    wx.aui.AUI_DOCK_BOTTOM: 'bottom',
+    wx.aui.AUI_DOCK_LEFT: 'left',
+}
 
 #: A mapping from Enaml allowed dock areas to wx direction enums.
 _ALLOWED_AREAS_MAP = {
@@ -39,64 +44,12 @@ wxDockPaneFloatEvent, EVT_DOCK_PANE_FLOAT = wx.lib.newevent.NewEvent()
 #: to user interaction.
 wxDockPaneAreaEvent, EVT_DOCK_PANE_AREA = wx.lib.newevent.NewEvent()
 
-
-class wxDockPaneSizer(wx.PySizer):
-    """ A custom wx.PySizer for use with a wxDockPane.
-
-    """
-    #: The widget which is manipulated by the sizer.
-    _widget = None
-
-    def Add(self, widget):
-        """ Adds the given child widget to the sizer.
-
-        This will remove any previous widget set in the sizer, but it
-        will not be destroyed.
-
-        Parameters
-        ----------
-        widget : wxWindow
-            The wx window widget to manage with this sizer.
-
-        """
-        self.Clear(deleteWindows=False)
-        self._widget = widget
-        if widget is not None:
-            res = super(wxDockPaneSizer, self).Add(widget)
-            # The call to Layout is required, because it's not done
-            # automatically by wx and the new item wouldn't properly
-            # lay out otherwise.
-            self.Layout()
-            return res
-
-    def CalcMin(self):
-        """ Returns the minimum size for the area owned by the sizer.
-
-        Returns
-        -------
-        result : wxSize
-            The wx size representing the minimum area required by the
-            sizer.
-
-        """
-        widget = self._widget 
-        if widget is not None:
-            res = widget.GetEffectiveMinSize()
-        else:
-            res = wx.Size(-1, -1)
-        return res
-    
-    def RecalcSizes(self):
-        """ Resizes the child to fit in the available space.
-
-        """
-        widget = self._widget
-        if widget is not None:
-            widget.SetSize(self.GetSize())
+#: An event emitted when the dock pane is closed.
+wxDockPaneClosedEvent, EVT_DOCK_PANE_CLOSED = wx.lib.newevent.NewEvent()
 
 
 class wxDockPane(wx.Panel):
-    """ A subclass of wx.Panel which adds DockPane features.
+    """ A wxPanel subclass which adds DockPane features.
 
     """
     def __init__(self, parent, *args, **kwargs):
@@ -110,6 +63,7 @@ class wxDockPane(wx.Panel):
 
         """
         super(wxDockPane, self).__init__(parent, *args, **kwargs)
+        self._is_open = True
         self._title = u''
         self._closable = True
         self._floatable = True
@@ -117,14 +71,14 @@ class wxDockPane(wx.Panel):
         self._dock_area = wx.aui.AUI_DOCK_LEFT
         self._allowed_dock_areas = wx.ALL
         self._dock_widget = None
-        self.SetSizer(wxDockPaneSizer())
+        self.SetSizer(wxSingleWidgetSizer())
 
         # Wx does not provide events to know when the user has changed
         # the floating state or dock position of a dock pane. So, we
-        # to craft a horrible hack on the show-event and testing 
-        # whether or not our parent has changed.
+        # have to craft a horrible hack using the show-event and then
+        # testing whether or not our parent has changed.
         self._curr_parent = parent
-        self.Bind(wx.EVT_SHOW, self._OnShow)
+        self.Bind(wx.EVT_SHOW, self.OnShow)
 
     #--------------------------------------------------------------------------
     # Private API
@@ -139,9 +93,7 @@ class wxDockPane(wx.Panel):
 
         """
         parent = self.GetParent()
-        if isinstance(parent, wxMainWindow):
-            return parent.GetPaneManager()
-        if isinstance(parent, wx.aui.AuiFloatingFrame):
+        if parent:
             return parent.GetOwnerManager()
 
     def _PaneInfoOperation(self, closure):
@@ -156,7 +108,10 @@ class wxDockPane(wx.Panel):
                 closure(pane)
                 manager.Update()
 
-    def _OnShow(self, event):
+    #--------------------------------------------------------------------------
+    # Event Handlers
+    #--------------------------------------------------------------------------
+    def OnShow(self, event):
         """ An event handler for the EVT_SHOW event. 
 
         This is an attempt to workaround the issue that Wx does not
@@ -193,6 +148,23 @@ class wxDockPane(wx.Panel):
                             evt = wxDockPaneAreaEvent(DockArea=area)
                             wx.PostEvent(self, evt)
 
+    def OnClose(self, event):
+        """ Handles the EVT_AUI_PANE_CLOSE event.
+
+        This event handler is called directly by the parent wxMainWindow
+        from its pane close event handler. The event object is the same 
+        as that passed to main window's event handler. If this pane is 
+        not closable, the event will be vetoed. Otherwise, the custom
+        EVT_DOCK_PANE_CLOSED event will be emitted.
+
+        """
+        if not self.GetClosable():
+            event.Veto()
+        else:
+            self._is_open = False
+            evt = wxDockPaneClosedEvent()
+            wx.PostEvent(self, evt)
+
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
@@ -200,18 +172,19 @@ class wxDockPane(wx.Panel):
         """ Create a new AuiPaneInfo object for this dock pane.
 
         This is called by the wxMainWindow when it adds this dock pane
-        for the first time.
+        to its internal layout for the first time.
         
         Returns
         -------
         result : AuiPaneInfo
-            An AuiPaneInfo object for this page.
+            An initialized AuiPaneInfo object for this page.
 
         """
         info = wx.aui.AuiPaneInfo()
 
         info.BestSize(self.GetBestSize())
         info.MinSize(self.GetEffectiveMinSize())
+        info.Show(self.IsOpen())
         info.Caption(self.GetTitle())
         info.Floatable(self.GetFloatable())
         info.Direction(self.GetDockArea())
@@ -254,6 +227,41 @@ class wxDockPane(wx.Panel):
         """
         self._dock_widget = widget
         self.GetSizer().Add(widget)
+
+    def IsOpen(self):
+        """ Get whether or not the dock pane is open.
+
+        Returns
+        -------
+        result : bool
+            True if the pane is open, False otherwise.
+
+        """
+        return self._is_open
+
+    def Open(self):
+        """ Open the dock pane in the main window.
+
+        If the pane is already open, this method is a no-op.
+
+        """
+        self._is_open = True
+        def closure(pane):
+            if not pane.IsShown():
+                pane.Show(True)
+        self._PaneInfoOperation(closure)
+
+    def Close(self):
+        """ Close the dock pane in the main window.
+
+        If the pane is already closed, this method is no-op.
+
+        """
+        self._is_open = False
+        def closure(pane):
+            if pane.IsShown():
+                pane.Show(False)
+        self._PaneInfoOperation(closure)
 
     def GetTitle(self):
         """ Get the title for the dock pane.
@@ -304,8 +312,8 @@ class wxDockPane(wx.Panel):
 
         """
         # Setting the CloseButton flag on the pane info object is not
-        # reliable. So we always show the button, and the main window
-        # handles veto'ing the close event if the pane is not closable.
+        # reliable. So we always show the button, and the OnClose event
+        # handler vetoes the close event if the pane is not closable.
         self._closable = closable
 
     def GetFloatable(self):
@@ -453,18 +461,19 @@ class WxDockPane(WxWidgetComponent):
         self.set_floating(tree['floating'])
         self.set_dock_area(tree['dock_area'])
         self.set_allowed_dock_areas(tree['allowed_dock_areas'])
-        widget = self.widget
+        widget = self.widget()
         widget.Bind(EVT_DOCK_PANE_FLOAT, self.on_dock_pane_float)
         widget.Bind(EVT_DOCK_PANE_AREA, self.on_dock_pane_area)
+        widget.Bind(EVT_DOCK_PANE_CLOSED, self.on_dock_pane_closed)
 
     def init_layout(self):
         """ Handle the layout initialization for the dock pane.
 
         """
         super(WxDockPane, self).init_layout()
-        child = self.children_map.get(self._dock_widget_id)
+        child = self.find_child(self._dock_widget_id)
         if child is not None:
-            self.widget.SetDockWidget(child.widget)
+            self.widget().SetDockWidget(child.widget())
 
     #--------------------------------------------------------------------------
     # Event Handlers
@@ -482,6 +491,12 @@ class WxDockPane(WxWidgetComponent):
         """
         content = {'dock_area': _DOCK_AREA_INV_MAP[event.DockArea]}
         self.send_action('dock_area_changed', content)
+
+    def on_dock_pane_closed(self, event):
+        """ The event handler for the EVT_DOCK_PANE_CLOSED event.
+
+        """
+        self.send_action('closed', {})
 
     #--------------------------------------------------------------------------
     # Message Handling
@@ -536,9 +551,32 @@ class WxDockPane(WxWidgetComponent):
         """
         self.set_allowed_dock_areas(content['allowed_dock_areas'])
 
+    def on_action_open(self, content):
+        """ Handle the 'open' action from the Enaml widget.
+
+        """
+        self.widget().Open()
+
+    def on_action_close(self, content):
+        """ Handle the 'close' action from the Enaml widget.
+
+        """
+        self.widget().Close()
+
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
+    def set_visible(self, visible):
+        """ An overridden visibility setter which to opens|closes the
+        dock pane.
+
+        """
+        widget = self.widget()
+        if visible:
+            widget.Open()
+        else:
+            widget.Close()
+
     def set_dock_widget_id(self, dock_widget_id):
         """ Set the dock widget id for the underlying widget.
 
@@ -549,7 +587,7 @@ class WxDockPane(WxWidgetComponent):
         """ Set the title on the underlying widget.
 
         """
-        self.widget.SetTitle(title)
+        self.widget().SetTitle(title)
 
     def set_title_bar_orientation(self, orientation):
         """ Set the title bar orientation of the underyling widget.
@@ -564,7 +602,7 @@ class WxDockPane(WxWidgetComponent):
         """ Set the closable state on the underlying widget.
 
         """
-        self.widget.SetClosable(closable)
+        self.widget().SetClosable(closable)
 
     def set_movable(self, movable):
         """ Set the movable state on the underlying widget.
@@ -580,19 +618,19 @@ class WxDockPane(WxWidgetComponent):
         """ Set the floatable state on the underlying widget.
 
         """
-        self.widget.SetFloatable(floatable)
+        self.widget().SetFloatable(floatable)
 
     def set_floating(self, floating):
         """ Set the floating staet on the underlying widget.
 
         """
-        self.widget.SetFloating(floating)
+        self.widget().SetFloating(floating)
 
     def set_dock_area(self, dock_area):
         """ Set the dock area on the underyling widget.
 
         """
-        self.widget.SetDockArea(_DOCK_AREA_MAP[dock_area])
+        self.widget().SetDockArea(_DOCK_AREA_MAP[dock_area])
 
     def set_allowed_dock_areas(self, dock_areas):
         """ Set the allowed dock areas on the underlying widget.
@@ -601,5 +639,5 @@ class WxDockPane(WxWidgetComponent):
         wx_areas = 0
         for area in dock_areas:
             wx_areas |= _ALLOWED_AREAS_MAP[area]
-        self.widget.SetAllowedDockAreas(wx_areas)
+        self.widget().SetAllowedDockAreas(wx_areas)
 

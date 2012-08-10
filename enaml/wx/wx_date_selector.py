@@ -26,7 +26,7 @@ class WxDateSelector(WxBoundedDate):
         """
         super(WxDateSelector, self).create(tree)
         self.set_date_format(tree['date_format'])
-        self.widget.Bind(wx.EVT_DATE_CHANGED, self.on_date_changed)
+        self.widget().Bind(wx.EVT_DATE_CHANGED, self.on_date_changed)
 
     #--------------------------------------------------------------------------
     # Message Handling
@@ -49,7 +49,7 @@ class WxDateSelector(WxBoundedDate):
             The current control date as a wxDateTime object.
 
         """
-        return self.widget.GetValue()
+        return self.widget().GetValue()
 
     def set_date(self, date):
         """ Set the widget's current date.
@@ -60,7 +60,7 @@ class WxDateSelector(WxBoundedDate):
             The wxDateTime object to use for setting the date.
 
         """
-        self.widget.SetValue(date)
+        self.widget().SetValue(date)
 
     def set_max_date(self, date):
         """ Set the widget's maximum date.
@@ -71,7 +71,8 @@ class WxDateSelector(WxBoundedDate):
             The wxDateTime object to use for setting the maximum date.
 
         """
-        self.widget.SetRange(self.widget.GetLowerLimit(), date)
+        widget = self.widget()
+        widget.SetRange(widget.GetLowerLimit(), date)
 
     def set_min_date(self, date):
         """ Set the widget's minimum date.
@@ -82,7 +83,8 @@ class WxDateSelector(WxBoundedDate):
             The wxDateTime object to use for setting the minimum date.
 
         """
-        self.widget.SetRange(date, self.widget.GetUpperLimit())
+        widget = self.widget()
+        widget.SetRange(date, widget.GetUpperLimit())
 
     def set_date_format(self, date_format):
         """ Set the widget's date format.

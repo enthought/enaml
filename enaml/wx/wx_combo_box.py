@@ -27,7 +27,7 @@ class WxComboBox(WxConstraintsWidget):
         super(WxComboBox, self).create(tree)
         self.set_items(tree['items'])
         self.set_index(tree['index'])
-        self.widget.Bind(wx.EVT_COMBOBOX, self.on_index_changed)
+        self.widget().Bind(wx.EVT_COMBOBOX, self.on_index_changed)
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -51,7 +51,7 @@ class WxComboBox(WxConstraintsWidget):
         """ The signal handler for the index changed signal.
 
         """
-        content = {'index': self.widget.GetCurrentSelection()}
+        content = {'index': self.widget().GetCurrentSelection()}
         self.send_action('index_changed', content)
 
     #--------------------------------------------------------------------------
@@ -61,13 +61,14 @@ class WxComboBox(WxConstraintsWidget):
         """ Set the items of the ComboBox.
 
         """
-        sel = self.widget.GetCurrentSelection()
-        self.widget.SetItems(items)
-        self.widget.SetSelection(sel)
+        widget = self.widget()
+        sel = widget.GetCurrentSelection()
+        widget.SetItems(items)
+        widget.SetSelection(sel)
 
     def set_index(self, index):
         """ Set the current index of the ComboBox
 
         """
-        self.widget.SetSelection(index)
+        self.widget().SetSelection(index)
 

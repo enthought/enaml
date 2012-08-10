@@ -5,6 +5,7 @@
 import wx
 
 from .wx_constraints_widget import WxConstraintsWidget
+from .wx_single_widget_sizer import wxSingleWidgetSizer
 
 
 # The 'always_on' scroll policy is not supported on wx, because it
@@ -28,41 +29,11 @@ SCROLLBAR_MAP = {
 }
 
 
-class wxScrollAreaSizer(wx.PySizer):
-    """ A custom wxSizer for use in the WxScrollArea. 
-
-    This sizer expands its child to fit the allowable space, regardless
-    of the settings the child widget. However, the minimum size of the
-    child is respected. There can only be one widget managed by this
-    sizer at time. Old widgets will be removed automatically, but they
-    will not be destroyed.
+class wxScrollAreaSizer(wxSingleWidgetSizer):
+    """ A wxSingleWidgetSizer subclass which makes adjusts the min
+    size to account for a 2 pixel error in Wx.
 
     """
-    #: The widget which is manipulated by the sizer.
-    _widget = None
-
-    def Add(self, widget):
-        """ Adds the given child widget to the sizer.
-
-        This will remove any previous widget set in the sizer, but it
-        will not be destroyed.
-
-        Parameters
-        ----------
-        widget : wxWindow
-            The wx window widget to manage with this sizer.
-
-        """
-        self.Clear(deleteWindows=False)
-        self._widget = widget
-        if widget is not None:
-            res = super(wxScrollAreaSizer, self).Add(widget)
-            # The call to Layout is required, because it's not done
-            # automatically by wx and the new item wouldn't properly
-            # lay out otherwise.
-            self.Layout()
-            return res
-
     def CalcMin(self):
         """ Returns the minimum size for the area owned by the sizer.
 
@@ -73,33 +44,38 @@ class wxScrollAreaSizer(wx.PySizer):
             sizer.
 
         """
-        widget = self._widget 
-        if widget is not None:
-            res = widget.GetEffectiveMinSize()
-            # There is a two pixel error on the min size for when scroll
-            # bars show up. We correct for that here.
+        # The effective min size computation is correct, but the wx
+        # scrolled window interprets it with an error of 2px. That
+        # is we need to make wx think that the min size is 2px smaller
+        # than it actually is so that scroll bars should and hide at
+        # the appropriate sizes.
+        res = super(wxScrollAreaSizer, self).CalcMin()
+        if res.IsFullySpecified():
             res.width -= 2
             res.height -= 2
-        else:
-            res = wx.Size(-1, -1)
         return res
-    
-    def RecalcSizes(self):
-        """ Resizes the child to fit in the available space.
-
-        """
-        widget = self._widget
-        if widget is not None:
-            widget.SetSize(self.GetSize())
 
 
 class wxScrollArea(wx.ScrolledWindow):
-    """ A subclass of wx.ScrolledWindow which returns a sensible best
-    size.
+    """ A custom wx.ScrolledWindow which is suits Enaml's use case.
 
     """
     #: The internal best size. The same as QAbstractScrollArea.
     _best_size = wx.Size(256, 192)
+
+    def __init__(self, *args, **kwargs):
+        """ Initialize a wxScrollArea.
+
+        Parameters
+        ----------
+        *args, **kwargs
+            The positional and keyword arguments needed to initialize
+            a wxScrolledWindow.
+
+        """
+        super(wxScrollArea, self).__init__(*args, **kwargs)
+        self._scroll_widget = None
+        self.SetSizer(wxScrollAreaSizer())
 
     def GetBestSize(self):
         """ An overridden parent class method which returns a sensible
@@ -112,11 +88,37 @@ class wxScrollArea(wx.ScrolledWindow):
         """
         return self._best_size
 
+    def GetScrollWidget(self):
+        """ Get the scroll widget for this scroll area.
+
+        Returns
+        -------
+        results : wxWindow
+            The wxWindow being scrolled by this scroll area.
+
+        """
+        return self._scroll_widget
+
+    def SetScrollWidget(self, widget):
+        """ Set the scroll widget for this scroll area.
+
+        Parameters
+        ----------
+        widget : wxWindow
+            The wxWindow which should be scrolled by this area.
+
+        """
+        self._scroll_widget = widget
+        self.GetSizer().Add(widget)
+
 
 class WxScrollArea(WxConstraintsWidget):
     """ A Wx implementation of an Enaml ScrollArea.
 
     """
+    #: Storage for the scroll widget id
+    _scroll_widget_id = None
+
     #: Storage for the horizontal scroll policy
     _h_scroll = 'as_needed'
 
@@ -135,22 +137,17 @@ class WxScrollArea(WxConstraintsWidget):
 
         """
         super(WxScrollArea, self).create(tree)
+        self.set_scroll_widget_id(tree['scroll_widget_id'])
         self.set_horizontal_scrollbar(tree['horizontal_scrollbar'])
         self.set_vertical_scrollbar(tree['vertical_scrollbar'])
 
-    def post_create(self):
-        """ Handle post creation for the scroll area.
-
-        This methods adds the first child as the scrolled widget.
-        Specifying more than one child of a scroll area will result
-        in undefined behavior.
+    def init_layout(self):
+        """ Handle the layout initialization for the scroll area.
 
         """
-        children = self.children
-        if children:
-            sizer = wxScrollAreaSizer()
-            sizer.Add(children[0].widget)
-            self.widget.SetSizer(sizer)
+        child = self.find_child(self._scroll_widget_id)
+        if child is not None:
+            self.widget().SetScrollWidget(child.widget())
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -174,6 +171,12 @@ class WxScrollArea(WxConstraintsWidget):
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
+    def set_scroll_widget_id(self, widget_id):
+        """ Set the scroll widget id for the underlying widget.
+
+        """
+        self._scroll_widget_id = widget_id
+
     def set_horizontal_scrollbar(self, policy):
         """ Set the horizontal scrollbar policy of the widget.
 
@@ -181,7 +184,7 @@ class WxScrollArea(WxConstraintsWidget):
         self._h_scroll = policy
         horiz = SCROLLBAR_MAP[policy]
         vert = SCROLLBAR_MAP[self._v_scroll]
-        self.widget.SetScrollRate(horiz, vert)
+        self.widget().SetScrollRate(horiz, vert)
         
     def set_vertical_scrollbar(self, policy):
         """ Set the vertical scrollbar policy of the widget.
@@ -190,5 +193,5 @@ class WxScrollArea(WxConstraintsWidget):
         self._v_scroll = policy
         horiz = SCROLLBAR_MAP[self._h_scroll]
         vert = SCROLLBAR_MAP[policy]
-        self.widget.SetScrollRate(horiz, vert)
+        self.widget().SetScrollRate(horiz, vert)
 

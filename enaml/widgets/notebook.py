@@ -2,14 +2,13 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Enum, Bool
+from traits.api import Enum, Bool, Property, cached_property
 
-from enaml.core.trait_types import EnamlEvent
+from .constraints_widget import ConstraintsWidget
+from .page import Page
 
-from .tab_bar import TabBar
 
-
-class Notebook(TabBar):
+class Notebook(ConstraintsWidget):
     """ A component which displays its children as tabbed pages.
 
     """
@@ -20,8 +19,7 @@ class Notebook(TabBar):
     #: be supported on all platforms. The 'document' style is used
     #: when displaying many pages in an editing context such as in
     #: an IDE. The 'preferences' style is used to display tabs in
-    #: a style that is appropriate for a preferences dialog. Such
-    #: as used in OSX.
+    #: a style that is appropriate for a preferences dialog.
     tab_style = Enum('document', 'preferences')
 
     #: Whether or not the tabs in the notebook should be closable.
@@ -30,9 +28,8 @@ class Notebook(TabBar):
     #: Whether or not the tabs in the notebook should be movable.
     tabs_movable = Bool(True)
 
-    #: An event fired when the user closes a tab by clicking on its
-    #: close button. The content will be the page object.
-    tab_closed = EnamlEvent
+    #: A read only property which returns the notebook's Pages.
+    pages = Property(depends_on='children[]')
 
     #: How strongly a component hugs it's contents' width. A TabGroup
     #: ignores its width hug by default, so it expands freely in width.
@@ -50,13 +47,11 @@ class Notebook(TabBar):
 
         """
         snap = super(Notebook, self).snapshot()
-        attrs = {
-            'tab_position': self.tab_position,
-            'tab_style': self.tab_style,
-            'tabs_closable': self.tabs_closable,
-            'tabs_movable': self.tabs_movable
-        }
-        snap.update(attrs)
+        snap['page_ids'] = self._snap_page_ids()
+        snap['tab_position'] = self.tab_position
+        snap['tab_style'] = self.tab_style
+        snap['tabs_closable'] = self.tabs_closable
+        snap['tabs_movable'] = self.tabs_movable
         return snap
 
     def bind(self):
@@ -68,46 +63,25 @@ class Notebook(TabBar):
         self.publish_attributes(*attrs)
 
     #--------------------------------------------------------------------------
-    # Message Handling
+    # Private API
     #--------------------------------------------------------------------------
-    def on_action_tab_closed(self, content):
-        """ Handle the 'tab_closed' action from the client widget.
+    @cached_property
+    def _get_pages(self):
+        """ The getter for the 'pages' property.
 
-        """
-        widget_id = content['widget_id']
-        for child in self.children:
-            if child.widget_id == widget_id:
-                self.tab_closed(child)
-                child.closed()
-                return
-
-    #--------------------------------------------------------------------------
-    # Public API
-    #--------------------------------------------------------------------------
-    def open_tab(self, page):
-        """ Open the tab for the given page, if it isn't already open.
-
-        Parameters
-        ----------
-        page : Page
-            The page instance to open. It must be a child of this
+        Returns
+        -------
+        result : tuple
+            The tuple of Page instances defined as children of this
             Notebook.
 
         """
-        assert page in self.children, "Page is not a child of the Notebook"
-        content = {'widget_id': page.widget_id}
-        self.send_action('open_tab', content)
+        isinst = isinstance
+        pages = (child for child in self.children if isinst(child, Page))
+        return tuple(pages)
 
-    def close_tab(self, page):
-        """ Close the tab for the given page, if it isn't already closed.
-
-        Parameters
-        ----------
-        page : Page
-            The page instance to close. It must be a child of this
-            Notebook.
+    def _snap_page_ids(self):
+        """ Returns the widget ids of the notebook's pages.
 
         """
-        assert page in self.children, "Page is not a child of the Notebook"
-        content = {'widget_id': page.widget_id}
-        self.send_action('close_tab', content)
+        return [page.widget_id for page in self.pages]

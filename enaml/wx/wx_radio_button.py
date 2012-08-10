@@ -164,7 +164,7 @@ class WxRadioButton(WxAbstractButton):
         
         """
         super(WxRadioButton, self).create(tree)
-        widget = self.widget
+        widget = self.widget()
         widget.Bind(EVT_RADIO_CLICKED, self.on_clicked)
         widget.Bind(EVT_RADIO_TOGGLED, self.on_toggled)
 
@@ -182,11 +182,11 @@ class WxRadioButton(WxAbstractButton):
         """ Returns the checked state of the widget.
 
         """
-        return self.widget.GetValue()
+        return self.widget().GetValue()
 
     def set_checked(self, checked):
         """ Sets the widget's checked state with the provided value.
 
         """
-        self.widget.SetValue(checked)
+        self.widget().SetValue(checked)
 

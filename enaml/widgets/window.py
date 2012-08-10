@@ -40,6 +40,27 @@ class Window(WidgetComponent):
     #icon = Instance()
 
     #--------------------------------------------------------------------------
+    # Initialization
+    #--------------------------------------------------------------------------
+    def snapshot(self):
+        """ Return the snapshot for a Window.
+
+        """
+        snap = super(Window, self).snapshot()
+        snap['central_widget_id'] = self._snap_central_widget_id()
+        snap['title'] = self.title
+        snap['initial_size'] = self.initial_size
+        return snap
+
+    def bind(self):
+        """ A method called after initialization which allows the widget
+        to bind any event handlers necessary.
+
+        """
+        super(Window, self).bind()
+        self.publish_attributes('title')
+
+    #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
     @cached_property
@@ -56,34 +77,13 @@ class Window(WidgetComponent):
             if isinstance(child, Container):
                 return child
 
-    def _snap_central_widget(self):
+    def _snap_central_widget_id(self):
         """ Returns the widget id of the central widget or None.
 
         """
         widget = self.central_widget
         if widget is not None:
             return widget.widget_id
-
-    #--------------------------------------------------------------------------
-    # Initialization
-    #--------------------------------------------------------------------------
-    def snapshot(self):
-        """ Return the snapshot for a Window.
-
-        """
-        snap = super(Window, self).snapshot()
-        snap['title'] = self.title
-        snap['initial_size'] = self.initial_size
-        snap['central_widget'] = self._snap_central_widget()
-        return snap
-
-    def bind(self):
-        """ A method called after initialization which allows the widget
-        to bind any event handlers necessary.
-
-        """
-        super(Window, self).bind()
-        self.publish_attributes('title')
 
     #--------------------------------------------------------------------------
     # Message Handling

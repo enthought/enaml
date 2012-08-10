@@ -7,7 +7,6 @@ import wx.aui
 import wx.lib.newevent
 
 from .wx_constraints_widget import WxConstraintsWidget
-from .wx_page import EVT_TAB_TITLE
 
 
 #: A mapping of notebook tab positions for the document style tabs.
@@ -23,90 +22,153 @@ _TAB_POSITION_MAP = {
 _TAB_POSITION_MASK = wx.aui.AUI_NB_TOP | wx.aui.AUI_NB_BOTTOM
 
 
-#: An event emitted when a page close is requested on the 'document' 
-#: style notebook control.
-wxPageCloseRequestEvent, EVT_PAGE_CLOSE_REQUEST = wx.lib.newevent.NewEvent()
+class wxNotebookMixin(object):
+    """ A mixin class for the wxNotebook and wxAuiNotebook classes.
 
-
-class NotebookMixin(object):
-    """ A mixin class which provides common functionality for both the 
-    wxNotebook and wxAuiNotebook classes.
-
+    This mixin provides the tab management functionality for opening
+    and closing tabs while still maintaining the logical notebook
+    ownership.
+   
     """
-    #--------------------------------------------------------------------------
-    # Private API
-    #--------------------------------------------------------------------------
-    def _bind(self, page):
-        """ Bind the signal handlers for the given page.
+    def __init__(self, *args, **kwargs):
+        """ Initialize a wxNotebookMixin.
+
+        Parameters
+        ----------
+        *args, **kwargs
+            The positional and keyword arguments to pass to the super
+            class.
 
         """
-        # The wx notebooks don't support tab tooltips, enabled state,
-        # or individual close buttons, so we don't bind to those change 
-        # events.
-        page.Bind(EVT_TAB_TITLE, self._OnTabTitleChanged)
+        super(wxNotebookMixin, self).__init__(*args, **kwargs)
+        self._owned_pages = set()
+        self._closed_pages = {}
 
-    def _unbind(self, page):
-        """ Unbind the signal handlers for the given page.
+    def HasPage(self, page):
+        """ Whether or not the notebook owns the given page.
+
+        Note that this method should be used instead of GetPageIndex.
+        This method is faster, and will not give a False negative if 
+        the page is closed instead of removed.
+
+        Parameters
+        ----------
+        page : wxPage
+            The wxPage instance to check for membership.
+
+        Returns
+        -------
+        result : bool
+            True if the notebook owns the page, False otherwise.
 
         """
-        page.Unbind(EVT_TAB_TITLE, handler=self._OnTabTitleChanged)
+        return page in self._owned_pages
 
-    def _OnTabTitleChanged(self, event):
-        """ The handler for the 'EVT_TAB_TITLE' event on a child page.
+    def OpenPage(self, page):
+        """ Open a hidden page in the notebook.
+
+        If the page does not belong to the notebook or is already open,
+        then this method is a no-op.
+
+        Parameters
+        ----------
+        page : wxPage
+            The wxPage instance to open in the notebook.
 
         """
-        idx = self.GetPageIndex(event.page)
-        if idx != -1:
-            self.SetPageText(idx, event.title)
+        if page not in self._owned_pages:
+            return
+        open_index = self._closed_pages.pop(page, None)
+        if open_index is not None:
+            title = page.GetTitle()
+            super(wxNotebookMixin, self).InsertPage(open_index, page, title)
 
-    #--------------------------------------------------------------------------
-    # Public API
-    #--------------------------------------------------------------------------
-    def AddPage(self, page, idx=-1):
+    def ClosePage(self, page):
+        """ Close the given page in the notebook.
+
+        If the page does not belong to the notebook or is already closed,
+        then this method is a no-op.
+
+        Parameters
+        ----------
+        page : wxPage
+            The wxPage to close in the notebook.
+
+        """
+        if page not in self._owned_pages:
+            return
+        if page in self._closed_pages:
+            return
+        page_index = self.GetPageIndex(page)
+        if page_index != -1:
+            self._closed_pages[page] = page_index
+            super(wxNotebookMixin, self).RemovePage(page_index)
+            page.Show(False)
+            
+    def AddPage(self, page):
         """ Add a wxPage instance to the notebook.
+
+        If the page already exists in the notebook, this is a no-op.
 
         Parameters
         ----------
         page : wxPage
             The wxPage instance to add to the notebook.
 
-        idx : int, optional
-            The index at which to add the page if it doesn't already
-            exist in the notebook. If not provided, the page will be
-            added at the end of the notebook.
-
         """
-        page_idx = self.GetPageIndex(page)
-        if page_idx == -1:
-            self._bind(page)
-            if idx == -1:
-                super(NotebookMixin, self).AddPage(page, page.GetTabTitle())
-            else:
-                self.InsertPage(idx, page, page.GetTabTitle())
+        if page in self._owned_pages:
+            return
+        self._owned_pages.add(page)
+        if page.IsOpen():
+            super(wxNotebookMixin, self).AddPage(page, page.GetTitle())
         else:
-            self.SetPageText(page_idx, page.GetTabTitle())
+            self._closed_pages[page] = self.GetPageCount()
 
-    def RemovePage(self, index):
-        """ Remove the page at the given index.
+    def InsertPage(self, index, page):
+        """ Insert the page at the given index.
+
+        If the page already exists in the notebook, this is a no-op.
 
         Parameters
         ----------
         index : int
-            The index of the page to remove from the notebook.
+            The integer index at which to insert the page.
+
+        page : wxPage
+            The wxPage instance to add to the notebook.
 
         """
-        # This check prevents exceptions and segfaults in case we 
-        # get a -1 or a value out of range.
-        if index < 0 or index >= self.GetPageCount():
+        if page in self._owned_pages:
             return
-        page = self.GetPage(index)
-        if page is not None:
-            self._unbind(page)
-            super(NotebookMixin, self).RemovePage(index)
+        self._owned_pages.add(page)
+        if page.IsOpen():
+            title = page.GetTitle()
+            super(wxNotebookMixin, self).InsertPage(index, page, title)
+        else:
+            self._closed_pages[page] = index
+
+    def RemovePage(self, page):
+        """ Remove the given page from the notebook.
+
+        If the page is not owned by the notebook, this is a no-op.
+
+        Parameters
+        ----------
+        page : wxPage
+            The wxPage instance to add to the notebook.
+
+        """
+        if page not in self._owned_pages:
+            return
+        self._owned_pages.discard(page)
+        self._closed_pages.pop(page, None)
+        index = self.GetPageIndex(page)
+        if index != -1:
+            super(wxNotebookMixin, self).RemovePage(index)
             page.Show(False)
 
 
-class wxNotebook(NotebookMixin, wx.Notebook):
+class wxNotebook(wxNotebookMixin, wx.Notebook):
     """ A custom wx.Notebook which handles children of type wxPage.
 
     This notebook control is used for the 'preferences' tab style.
@@ -157,7 +219,7 @@ class wxNotebook(NotebookMixin, wx.Notebook):
         return -1
 
 
-class wxAuiNotebook(NotebookMixin, wx.aui.AuiNotebook):
+class wxAuiNotebook(wxNotebookMixin, wx.aui.AuiNotebook):
     """ A custom wx AuiNotebook which handles children of type wxPage.
 
     This notebook control is used for the 'document' tab style.
@@ -182,18 +244,11 @@ class wxAuiNotebook(NotebookMixin, wx.aui.AuiNotebook):
     def _OnPageClose(self, event):
         """ The handler for the EVT_AUINOTEBOOK_PAGE_CLOSE event.
 
-        This handler vetos each event and emits its own event if the 
-        page is marked as closable. It is important to veto the event
-        since the default wx behavior when closing a page is to destroy
-        it, rather than remove it.
+        This handler passes the event to wxPage object and lets it
+        handle the close event.
 
         """
-        event.Veto()
-        index = event.GetSelection()
-        page = self.GetPage(index)
-        if page.GetTabClosable():
-            event = wxPageCloseRequestEvent(index=index)
-            wx.PostEvent(self, event)
+        self.GetPage(event.GetSelection()).OnClose(event)
 
     #--------------------------------------------------------------------------
     # Public API
@@ -233,6 +288,9 @@ class WxNotebook(WxConstraintsWidget):
     """ A Wx implementation of an Enaml Notebook.
 
     """
+    #: Storage for the widget ids of the notebook pages.
+    _page_ids = []
+
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
@@ -247,7 +305,6 @@ class WxNotebook(WxConstraintsWidget):
             res = wxNotebook(parent)
         else:
             res = wxAuiNotebook(parent, style=wx.aui.AUI_NB_SCROLL_BUTTONS)
-            res.Bind(EVT_PAGE_CLOSE_REQUEST, self.on_page_close_requested)
         return res
 
     def create(self, tree):
@@ -255,21 +312,22 @@ class WxNotebook(WxConstraintsWidget):
 
         """
         super(WxNotebook, self).create(tree)
+        self.set_page_ids(tree['page_ids'])
         self.set_tab_position(tree['tab_position'])
         self.set_tabs_closable(tree['tabs_closable'])
         self.set_tabs_movable(tree['tabs_movable'])
 
-    def post_create(self):
-        """ Handle the post creation work for the notebook.
-
-        This method explicitly adds the child wxPage instances to the
-        underlying wxNotebook control.
+    def init_layout(self):
+        """ Handle the layout initialization for the notebook.
 
         """
-        super(WxNotebook, self).post_create()
-        widget = self.widget
-        for child in self.children:
-            widget.AddPage(child.widget)
+        super(WxNotebook, self).init_layout()
+        widget = self.widget()
+        find_child = self.find_child
+        for page_id in self._page_ids:
+            child = find_child(page_id)
+            if child is not None:
+                widget.AddPage(child.widget())
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -298,70 +356,31 @@ class WxNotebook(WxConstraintsWidget):
         """
         self.set_tabs_movable(content['tabs_movable'])
 
-    def on_action_open_tab(self, content):
-        """ Handle the 'open_tab' action from the Enaml widget.
-
-        """
-        widget_id = content['widget_id']
-        for idx, child in enumerate(self.children):
-            if child.widget_id == widget_id:
-                # Try to re-open the page in the original position. This
-                # makes most sense for a 'preferences' style notebook, 
-                # since it doesn't support movable tabs. We can hope for
-                # "good enough" on the 'document' style tabs where the
-                # child may have been moved around.
-                self.widget.AddPage(child.widget, idx)
-
-    def on_action_close_tab(self, content):
-        """ Handle the 'close_tab' action from the Enaml widget.
-
-        """
-        widget_id = content['widget_id']
-        for child in self.children:
-            if child.widget_id == widget_id:
-                widget = self.widget
-                widget.RemovePage(widget.GetPageIndex(child.widget))
-                return
-
-    #--------------------------------------------------------------------------
-    # Event Handlers
-    #--------------------------------------------------------------------------
-    def on_page_close_requested(self, event):
-        """ The event handler for the 'EVT_PAGE_CLOSE_REQUEST' event.
-
-        This handler is only bound for 'document' style notebook tabs, 
-        and it is only called when the page is marked as closable.
-
-        """
-        index = event.index
-        page = self.widget.GetPage(index)
-        self.widget.RemovePage(index)
-        for child in self.children:
-            if page == child.widget:
-                widget_id = child.widget_id
-                content = {'widget_id': widget_id}
-                self.send_action('tab_closed', content)
-                return
-
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
+    def set_page_ids(self, page_ids):
+        """ Set the page ids for the underlying widget.
+
+        """
+        self._page_ids = page_ids
+
     def set_tab_position(self, position):
         """ Set the position of the tab bar in the widget.
 
         """
-        widget = self.widget
+        widget = self.widget()
         if isinstance(widget, wxNotebook):
             # The 'preferences' style wxNotebook only supports nice
             # looking tabs on the top, so changing the tab position 
             # is ignored for this style.
             return
         # The AuiNotebook only supports tabs on top or bottom. The tab
-        # position map maps this discrepancy appropriately.
+        # position map maps this discrepancy appropriately. We also 
+        # need to trigger a full repaint, or we'll suffer rendering
+        # artifacts when the tab position is dynamically changed.
         widget.WindowStyle &= ~_TAB_POSITION_MASK
         widget.WindowStyle |= _TAB_POSITION_MAP[position]
-        # Need to trigger a full repaint, or we'll suffer rendering
-        # artifacts when the tab position is dynamically changed.
         widget.Refresh()
 
     def set_tab_style(self, style):
@@ -375,7 +394,7 @@ class WxNotebook(WxConstraintsWidget):
         """ Set whether or not the tabs are closable.
 
         """
-        widget = self.widget
+        widget = self.widget()
         if isinstance(widget, wxNotebook):
             # The 'preferences' style wxNotebook does not support tabs 
             # with close buttons, so that setting is simply ignored.
@@ -389,7 +408,7 @@ class WxNotebook(WxConstraintsWidget):
         """ Set whether or not the tabs are movable.
 
         """
-        widget = self.widget
+        widget = self.widget()
         if isinstance(widget, wxNotebook):
             # The 'preferences' style wxNotebook does not support
             # movable tabs, so that setting is simply ignored.
