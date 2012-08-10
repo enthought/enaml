@@ -4,8 +4,6 @@
 #------------------------------------------------------------------------------
 from traits.api import Enum, Bool, Property, cached_property
 
-from enaml.core.trait_types import EnamlEvent
-
 from .constraints_widget import ConstraintsWidget
 from .page import Page
 
@@ -29,10 +27,6 @@ class Notebook(ConstraintsWidget):
 
     #: Whether or not the tabs in the notebook should be movable.
     tabs_movable = Bool(True)
-
-    #: An event fired when the user closes a tab by clicking on its
-    #: close button. The content will be the page object.
-    tab_closed = EnamlEvent
 
     #: A read only property which returns the notebook's Pages.
     pages = Property(depends_on='children[]')
@@ -91,53 +85,4 @@ class Notebook(ConstraintsWidget):
 
         """
         return [page.widget_id for page in self.pages]
-
-    #--------------------------------------------------------------------------
-    # Message Handling
-    #--------------------------------------------------------------------------
-    def on_action_tab_closed(self, content):
-        """ Handle the 'tab_closed' action from the client widget.
-
-        """
-        widget_id = content['widget_id']
-        for page in self.pages:
-            if page.widget_id == widget_id:
-                self.tab_closed(page)
-                page.closed()
-                return
-
-    #--------------------------------------------------------------------------
-    # Public API
-    #--------------------------------------------------------------------------
-    def open_tab(self, page):
-        """ Open the tab for the given page, if it isn't already open.
-
-        Parameters
-        ----------
-        page : Page
-            The page instance to open. It must be owned by this 
-            Notebook.
-
-        """
-        if page not in self.pages:
-            msg = 'Page is not owned by this Notebook'
-            raise ValueError(msg)
-        content = {'widget_id': page.widget_id}
-        self.send_action('open_tab', content)
-
-    def close_tab(self, page):
-        """ Close the tab for the given page, if it isn't already closed.
-
-        Parameters
-        ----------
-        page : Page
-            The page instance to open. It must be owned by this 
-            Notebook.
-
-        """
-        if page not in self.pages:
-            msg = 'Page is not owned by this Notebook'
-            raise ValueError(msg)
-        content = {'widget_id': page.widget_id}
-        self.send_action('close_tab', content)
 

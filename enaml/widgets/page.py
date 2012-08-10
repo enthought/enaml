@@ -27,11 +27,6 @@ class Page(WidgetComponent):
     #: The tool tip to use for a page when the user hovers a tab.
     tool_tip = Unicode
 
-    #: Whether or not the tab for the page should be enabled. Note
-    #: that this is different from 'enabled' which applies to the 
-    #: page itself as opposed to the tab for the page.
-    tab_enabled = Bool(True)
-
     #: Whether or not this individual page is closable. Note that the
     #: 'tabs_closable' flag on the parent Notebook must be set to True
     #: for this to have any effect.
@@ -56,7 +51,6 @@ class Page(WidgetComponent):
         snap['page_widget_id'] = self._snap_page_widget_id()
         snap['title'] = self.title
         snap['tool_tip'] = self.tool_tip
-        snap['tab_enabled'] = self.tab_enabled
         snap['closable'] = self.closable
         return snap
 
@@ -65,7 +59,7 @@ class Page(WidgetComponent):
 
         """
         super(Page, self).bind()
-        attrs = ('title', 'tool_tip', 'tab_enabled', 'closable')
+        attrs = ('title', 'tool_tip', 'closable')
         self.publish_attributes(*attrs)
 
     #--------------------------------------------------------------------------
@@ -94,23 +88,33 @@ class Page(WidgetComponent):
             return page_widget.widget_id
 
     #--------------------------------------------------------------------------
+    # Message Handling
+    #--------------------------------------------------------------------------
+    def on_action_closed(self, content):
+        """ Handle the 'closed' action from the client widget.
+
+        """
+        self.set_guarded(visible=False)
+        self.closed()
+
+    #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
     def open(self):
-        """ A convenience method for calling 'open_tab' on the parent
-        Notebook, passing this page as an argument.
+        """ Open the page in the Notebook.
+
+        Calling this method will also set the page visibility to True.
 
         """
-        parent = self.parent
-        if parent is not None:
-            parent.open_tab(self)
+        self.set_guarded(visible=True)
+        self.send_action('open', {})
 
     def close(self):
-        """ A convenience method for calling 'close_tab' on the parent
-        Notebook, passing this page as an argument.
+        """ Close the page in the Notebook.
+
+        Calling this method will set the page visibility to False.
 
         """ 
-        parent = self.parent
-        if parent is not None:
-            parent.close_tab(self)
+        self.set_guarded(visible=False)
+        self.send_action('close', {})
 
