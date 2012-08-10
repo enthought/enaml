@@ -101,6 +101,12 @@ def is_really_visible(item):
     if not item.visible:
         return False
     for ancestor in item.traverse_ancestors():
+        # This check works around the issue where non constraints-based
+        # container widgets like Page, DockPane, ScrollArea etc... may
+        # not be visible, but the constraints for the items should still
+        # be included. XXX we need to revisit constraints and visibility. 
+        if not isinstance(ancestor, ABConstrainable):
+            return True
         if not getattr(ancestor, 'visible', True):
             return False
     return True
