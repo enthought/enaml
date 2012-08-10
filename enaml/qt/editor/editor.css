@@ -30,7 +30,8 @@ body {
 
 .tabs {
     height: 27px;
-    display: inline-block;
+    display: block;
+    float: left;
     width: 94%;
     font-size: 0.8em;
 }

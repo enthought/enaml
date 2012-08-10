@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from .qt.QtCore import Signal
 from .qt.QtGui import QTabWidget
-from .qt_tab_bar import QtTabBar
+from .qt_constraints_widget import QtConstraintsWidget
 
 
 TAB_POSITIONS = {
@@ -12,6 +12,12 @@ TAB_POSITIONS = {
     'bottom': QTabWidget.South,
     'left': QTabWidget.West,
     'right': QTabWidget.East,
+}
+
+
+DOCUMENT_MODES = {
+    'document': True,
+    'preferences': False,
 }
 
 
@@ -142,7 +148,7 @@ class QNotebook(QTabWidget):
             self.removeTab(index)
 
 
-class QtNotebook(QtTabBar):
+class QtNotebook(QtConstraintsWidget):
     """ A Qt4 implementation of an Enaml Notebook.
 
     """
@@ -161,6 +167,9 @@ class QtNotebook(QtTabBar):
         """
         super(QtNotebook, self).initialize(attrs)
         self.set_tab_position(attrs['tab_position'])
+        self.set_tab_style(attrs['tab_style'])
+        self.set_tabs_closable(attrs['tabs_closable'])
+        self.set_tabs_movable(attrs['tabs_movable'])
         self.widget.pageCloseRequested.connect(self.on_page_close_requested)
 
     def post_initialize(self):
@@ -183,7 +192,7 @@ class QtNotebook(QtTabBar):
 
         """
         self.set_tab_position(content['tab_position'])
-
+        
     def on_action_set_tab_style(self, content):
         """ Handle the 'set_tab_style' action from the Enaml widget.
 
@@ -247,3 +256,21 @@ class QtNotebook(QtTabBar):
 
         """
         self.widget.setTabPosition(TAB_POSITIONS[position])
+
+    def set_tab_style(self, style):
+        """ Set the tab style for the tab bar in the widget.
+
+        """
+        self.widget.setDocumentMode(DOCUMENT_MODES[style])
+
+    def set_tabs_closable(self, closable):
+        """ Set whether or not the tabs are closable.
+
+        """
+        self.widget.setTabsClosable(closable)
+
+    def set_tabs_movable(self, movable):
+        """ Set whether or not the tabs are movable.
+
+        """
+        self.widget.setMovable(movable)
