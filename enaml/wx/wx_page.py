@@ -3,9 +3,14 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import wx
+import wx.lib.newevent
 
 from .wx_widget_component import WxWidgetComponent
 from .wx_single_widget_sizer import wxSingleWidgetSizer
+
+
+#: An event emitted when the notebook page is closed.
+wxPageClosedEvent, EVT_PAGE_CLOSED = wx.lib.newevent.NewEvent()
 
 
 class wxPage(wx.Panel):
@@ -23,27 +28,33 @@ class wxPage(wx.Panel):
 
         """
         super(wxPage, self).__init__(*args, **kwargs)
-        self._tab_title = u''
-        self._widget_enabled = True
-        self._tab_enabled = True
-        self._tab_closable = True
+        self._title = u''
+        self._closable = True
         self._page_widget = None
+        self._is_open = True
         self.SetSizer(wxSingleWidgetSizer())
 
     #--------------------------------------------------------------------------
-    # Overrides
+    # Event Handlers
     #--------------------------------------------------------------------------
-    def Enable(self, enabled):
-        """ An overridden parent class method for setting the enabled
-        state of a tab.
+    def OnClose(self, event):
+        """ Handle the page close event.
 
-        Wx notebooks do not support enabled state for a tab, so we just
-        overload it with the enabled state of the widget.
+        This event handler is called by the parent notebook. The parent
+        event is always be vetoed or else Wx will destroy the page. If 
+        the page is closable, we close the page and emit the custom
+        close event.
 
         """
-        self._widget_enabled = enabled
-        if (enabled and self._tab_enabled) or not enabled:
-            super(wxPage, self).Enable(enabled)
+        event.Veto()
+        if self.GetClosable():
+            self._is_open = False
+            parent = self.GetParent()
+            if parent:
+                parent.ClosePage(self)
+            self.Show(False)
+            evt = wxPageClosedEvent()
+            wx.PostEvent(self, evt)
 
     #--------------------------------------------------------------------------
     # Public API
@@ -71,8 +82,44 @@ class wxPage(wx.Panel):
         self._page_widget = widget
         self.GetSizer().Add(widget)
 
-    def GetTabTitle(self):
-        """ Returns the tab title for this page.
+    def IsOpen(self):
+        """ Get whether or not the page is open.
+
+        Returns
+        -------
+        result : bool
+            True if the page is be open, False otherwise.
+
+        """
+        return self._is_open
+
+    def Open(self):
+        """ Open the page in the notebook.
+
+        If the page is already open, this method is a no-op.
+
+        """
+        self._is_open = True
+        parent = self.GetParent()
+        if parent:
+            parent.OpenPage(self)
+        # We don't Show(True) here since visibility is at this point
+        # the responsibility of the notebook.
+
+    def Close(self):
+        """ Close the dock pane in the main window.
+
+        If the pane is already closed, this method is no-op.
+
+        """
+        self._is_open = False
+        parent = self.GetParent()
+        if parent:
+            parent.ClosePage(self)
+        self.Show(False)
+
+    def GetTitle(self):
+        """ Returns tab title for this page.
 
         Returns
         -------
@@ -80,10 +127,10 @@ class wxPage(wx.Panel):
             The title string for the page's tab.
 
         """
-        return self._tab_title
+        return self._title
 
-    def SetTabTitle(self, title):
-        """ Set the title for the tab for this page.
+    def SetTitle(self, title):
+        """ Set the title for this page.
 
         Parameters
         ----------
@@ -91,58 +138,34 @@ class wxPage(wx.Panel):
             The string to use for this page's tab title.
 
         """
-        self._tab_title = title
+        self._title = title
         parent = self.GetParent()
         if parent:
             index = parent.GetPageIndex(self)
             if index != -1:
                 parent.SetPageText(index, title)
 
-    def GetTabEnabled(self):
-        """ Return whether or no the tab for this page is enabled.
+    def GetClosable(self):
+        """ Returns whether or not this page is closable.
 
         Returns
         -------
         result : bool
-            True if the tab for this page is enabled, False otherwise.
+            True if this page is closable, False otherwise.
 
         """
-        return self._tab_enabled
+        return self._closable
 
-    def SetTabEnabled(self, enabled):
-        """ Set whether the tab for this page is enabled.
-
-        Parameters
-        ----------
-        enabled : bool
-            True if the tab should be enabled, False otherwise.
-
-        """
-        self._tab_enabled = enabled
-        if (enabled and self._widget_enabled) or not enabled:
-            super(wxPage, self).Enable(enabled)
-
-    def GetTabClosable(self):
-        """ Returns whether or not the tab for this page is closable.
-
-        Returns
-        -------
-        result : bool
-            True if this page's tab is closable, False otherwise.
-
-        """
-        return self._tab_closable
-
-    def SetTabClosable(self, closable):
-        """ Set whether the tab for this page is closable.
+    def SetClosable(self, closable):
+        """ Set whether this page is closable.
 
         Parameters
         ----------
         closable : bool
-            True if the tab should be closable, False otherwise.
+            True if this page should be closable, False otherwise.
 
         """
-        self._tab_closable = closable
+        self._closable = closable
 
 
 class WxPage(WxWidgetComponent):
@@ -169,8 +192,8 @@ class WxPage(WxWidgetComponent):
         self.set_page_widget_id(tree['page_widget_id'])
         self.set_title(tree['title'])
         self.set_tool_tip(tree['tool_tip'])
-        self.set_tab_enabled(tree['tab_enabled'])
         self.set_closable(tree['closable'])
+        self.widget().Bind(EVT_PAGE_CLOSED, self.on_page_closed)
 
     def init_layout(self):
         """ Initialize the layout of the notebook page.
@@ -180,6 +203,15 @@ class WxPage(WxWidgetComponent):
         child = self.find_child(self._page_widget_id)
         if child is not None:
             self.widget().SetPageWidget(child.widget())
+
+    #--------------------------------------------------------------------------
+    # Event Handlers
+    #--------------------------------------------------------------------------
+    def on_page_closed(self, event):
+        """ The event handler for the EVT_PAGE_CLOSED event.
+
+        """
+        self.send_action('closed', {})
 
     #--------------------------------------------------------------------------
     # Message Handling
@@ -196,21 +228,38 @@ class WxPage(WxWidgetComponent):
         """
         self.set_tool_tip(content['tool_tip'])
 
-    def on_action_set_tab_enabled(self, content):
-        """ Handle the 'set_tab_enabled' action from the Enaml widget.
-
-        """
-        self.set_tab_enabled(content['tab_enabled'])
-
     def on_action_set_closable(self, content):
         """ Handle the 'set_closable' action from the Enaml widget.
 
         """
         self.set_closable(content['closable'])
 
+    def on_action_open(self, content):
+        """ Handle the 'open' action from the Enaml widget.
+
+        """
+        self.widget().Open()
+
+    def on_action_close(self, content):
+        """ Handle the 'close' action from the Enaml widget.
+
+        """
+        self.widget().Close()
+    
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
+    def set_visible(self, visible):
+        """ An overridden visibility setter which to opens|closes the
+        notebook page.
+
+        """
+        widget = self.widget()
+        if visible:
+            widget.Open()
+        else:
+            widget.Close()
+
     def set_page_widget_id(self, widget_id):
         """ Set the page widget id for the underlying control.
 
@@ -221,13 +270,13 @@ class WxPage(WxWidgetComponent):
         """ Set the title of the tab for this page.
 
         """
-        self.widget().SetTabTitle(title)
+        self.widget().SetTitle(title)
 
     def set_closable(self, closable):
         """ Set whether or not this page is closable.
 
         """
-        self.widget().SetTabClosable(closable)
+        self.widget().SetClosable(closable)
 
     def set_tool_tip(self, tool_tip):
         """ Set the tooltip of the tab for this page.
@@ -235,21 +284,5 @@ class WxPage(WxWidgetComponent):
         """
         # XXX Wx notebooks do not support a tab tooltip, so this 
         # setting is simply ignored.
-        pass
-
-    def set_tab_enabled(self, enabled):
-        """ Set the enabled state for the tab for this page.
-
-        """
-        self.widget().SetTabEnabled(enabled)
-
-    def set_visible(self, visible):
-        """ Overriden method which disables the setting of visibility
-        by the user code.
-
-        The visibility of a page is controlled entirely by the parent
-        WxNotebook.
-
-        """
         pass
 
