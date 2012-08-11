@@ -3,8 +3,8 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import wx
-import wx.lib.agw.aui as aui
 
+from .wx_upstream import aui
 from .wx_window import WxWindow
 
 
@@ -23,7 +23,10 @@ class wxMainWindow(wx.Frame):
 
         """
         super(wxMainWindow, self).__init__(*args, **kwargs)
-        flags = aui.AUI_MGR_DEFAULT | aui.AUI_MGR_LIVE_RESIZE
+        flags = (
+            aui.AUI_MGR_DEFAULT | aui.AUI_MGR_LIVE_RESIZE | 
+            aui.AUI_MGR_USE_NATIVE_MINIFRAMES
+        )
         self._manager = aui.AuiManager(self, agwFlags=flags)
         self._central_widget = None
         self._batch = False
@@ -39,7 +42,9 @@ class wxMainWindow(wx.Frame):
         # add a hidden pane with zero size, it prevents the jitter.
         self._hidden_widget = wx.Window(self)
         pane = aui.AuiPaneInfo()
-        pane.BestSize(wx.Size(0, 0)).MinSize(wx.Size(0, 0)).Show(False)
+        pane.BestSize(wx.Size(0, 0))
+        pane.MinSize(wx.Size(0, 0))
+        pane.Show(False)
         self._manager.AddPane(self._hidden_widget, pane)
 
     #--------------------------------------------------------------------------
@@ -72,7 +77,7 @@ class wxMainWindow(wx.Frame):
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
-    def GetOwnerManager(self):
+    def GetAuiManager(self):
         """ Get the pane manager for the main window.
 
         This method should not normally be called by the user. It is
