@@ -113,25 +113,25 @@ class DockPane(WidgetComponent):
     #--------------------------------------------------------------------------
     # Message Handling
     #--------------------------------------------------------------------------
-    def on_action_floating_changed(self, content):
-        """ Handle the 'floating_changed' action from the client widget.
-
-        """
-        self.set_guarded(floating=content['floating'])
-
-    def on_action_dock_area_changed(self, content):
-        """ Handle the 'dock_area_changed' action from the client 
-        widget.
-
-        """
-        self.set_guarded(dock_area=content['dock_area'])
-    
     def on_action_closed(self, content):
         """ Handle the 'closed' action from the client widget.
 
         """
         self.set_guarded(visible=False)
         self.closed()
+
+    def on_action_floated(self, content):
+        """ Handle the 'floated' action from the client widget.
+
+        """
+        self.set_guarded(floating=True)
+
+    def on_action_docked(self, content):
+        """ Handle the 'docked' action from the client widget.
+
+        """
+        self.set_guarded(floating=False)
+        self.set_guarded(dock_area=content['dock_area'])
 
     #--------------------------------------------------------------------------
     # Public API
