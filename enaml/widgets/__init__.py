@@ -29,6 +29,7 @@ from .scroll_area import ScrollArea
 from .slider import Slider
 from .spin_box import SpinBox
 from .splitter import Splitter
+from .tab_bar import TabBar
 from .text_editor import TextEditor
 from .tool_bar import ToolBar
 from .window import Window

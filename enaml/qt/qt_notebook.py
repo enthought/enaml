@@ -274,4 +274,3 @@ class QtNotebook(QtConstraintsWidget):
 
         """
         self.widget.setMovable(movable)
-

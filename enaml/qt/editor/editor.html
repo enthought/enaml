@@ -1,0 +1,293 @@
+<!--
+   Copyright (c) 2012, Enthought, Inc.
+   All rights reserved.
+-->
+
+<style>
+	#editor_${column} {
+		position: relative;
+	    width: 100%;
+	    background-color: #fff;
+	}
+
+	.container {
+	    width: ${width}%;
+	}
+</style>
+
+<div class="container">
+	<div class="tabs"></div>
+	<button class="add_button">+</button>
+	<div id="editor_${column}"></div>
+</div>
+
+<script type="text/javascript">
+	var editor_${column} = new function() {
+		var _this = this;
+	    var EditSession = require('ace/edit_session').EditSession;
+
+		this.editor = ace.edit("editor_${column}");
+		var commands = [
+			{
+				name: 'newTab',
+				bindKey: {win: 'Ctrl-T', mac: 'Command-T'},
+				exec: function(editor) {
+					_this.addTabItem();
+				}
+			},
+			{
+				name: 'deleteTab',
+				bindKey: {win: 'Ctrl-W', mac: 'Command-W'},
+				exec: function(editor) {
+					var index = jQuery(_this.tab_list.current_tab).index();
+					_this.removeTabItem({'index': index});
+				}
+			}
+		];
+		for (var i = 0; i < commands.length; i++) {
+			var command = commands[i];
+			this.editor.commands.addCommand(command);
+		}
+
+		this.tab_list = jQuery('.tabs').eq(${column});
+		this.tab_list.sortable({
+			tolerance: 'pointer',
+			connectWith: '.tabs',
+			scroll: false,
+			distance: 15,
+			placeholder: 'placeholder',
+			helper: 'clone',
+			opacity: 0.6,
+			receive: function (event, ui) {
+				_this.tab_list.old_tab = _this.tab_list.current_tab;
+				_this.tab_list.current_tab = ui.item[0];
+				ui.item.click(_this.clickTabItem);
+				jQuery('button', ui.item).click(_this.removeTabItem);
+				_this.refreshTabWidths();
+			},
+			remove: function(event, ui) {
+				if (_this.tab_list.length == 0)
+					_this.tab_list.current_tab = null;
+				else {
+					var tabs = jQuery('div', _this.tab_list);
+					if (ui.item._index == 0)
+						_this.tab_list.current_tab = tabs[ui.item._index];
+					else 
+						_this.tab_list.current_tab = tabs[ui.item._index-1];
+				}
+				ui.item.unbind('click');
+				jQuery('button', ui.item).unbind('click');
+				_this.refreshTabWidths();
+			},
+			start: function(event, ui) {
+				ui.item._index = ui.item.index();
+				ui.item._column = ${column};
+				ui.placeholder.width(ui.item.width());
+			},
+			over: function(event, ui) {
+				var tab_width = _this.refreshTabWidths();
+				jQuery(ui.item).css('width', tab_width);
+				jQuery(ui.helper).css('width', tab_width);
+			},
+			// XXX this event is not called appropriately (jQuery bug). When a
+			// tab is dragged from one tab bar to another and back without
+			// dropping, this event should be called when the tab leaves the
+			// tab bar, but is not.
+			out: function(event, ui) {
+				var tab_width = _this.refreshTabWidths();
+				jQuery(ui.item).css('width', tab_width);
+				jQuery(ui.helper).css('width', tab_width);
+			},
+			update: function(event, ui) {
+				console.log('updating')
+				py_ace_editor.tab_moved(ui.item._column, ui.item._index,
+					${column}, ui.item.index());
+			}
+		}).disableSelection();
+
+		this.tab_list.__defineSetter__("current_tab", function(tab) {
+			jQuery(tab).addClass('current');
+			this._current_tab = tab;
+			try {
+				_this.editor.setSession(tab.session);
+			}
+			catch(e) {
+				_this.editor.setSession(new EditSession(""));
+			}
+		});
+
+		this.tab_list.__defineGetter__("current_tab", function() {
+			return this._current_tab;
+		});
+
+		this.tab_list.__defineSetter__("old_tab", function(tab) {
+			jQuery(tab).removeClass('current');
+			this._old_tab = tab;
+		});
+
+		this.tab_list.__defineGetter__("old_tab", function() {
+			return this._old_tab;
+		});
+
+		this.setTitle = function(index, title) {
+			try {
+				jQuery('span', _this.tab_list).eq(index).text(title);
+			}
+			catch(e) {
+				_this._addTabItem({'title':title})
+			}
+		}
+
+		this.setMode = function(index, mode) {
+			try {
+				jQuery('div', _this.tab_list)[index].session.setMode(mode);
+			}
+			catch(e) {
+				_this._addTabItem({'mode':mode})
+			}
+		}
+
+		this.setText = function(index, text) {
+			try {
+				jQuery('div', _this.tab_list)[index].session.getDocument().setValue(text);
+			}
+			catch(e) {
+				_this._addTabItem({'text':text})
+			}
+		}
+
+		this.setTabs = function(tabs) {
+			if (tabs) {
+				jQuery('.tabs').show();
+				jQuery("div[id^='editor']").eq(${column}).height('95%');
+			}
+			else {
+				jQuery('.tabs').hide();
+				jQuery("div[id^='editor']").eq(${column}).height('99%');
+			}
+		}
+
+		this.removeTabItem = function(item_info) {
+			/* handler for when the 'x' on a tab is clicked
+
+			*/
+			var default_item_info = { 'index': -1 };
+			var info = jQuery.extend(default_item_info, item_info);
+
+			var div_list = jQuery('div', _this.tab_list);
+
+			if (info['index'] == -1) {
+				var item = jQuery(this).parent();
+				var index = div_list.index(item);
+			}
+			else {
+				var index = info['index'];
+				var item = div_list.eq(index);
+			}
+
+			if (item[0].session == _this.editor.getSession()) {
+				if (div_list.length == 1)
+					_this.tab_list.current_tab = null;
+				else if (index == div_list.length-1)
+					_this.tab_list.current_tab = item.prev()[0];
+				else
+					_this.tab_list.current_tab = item.next()[0];
+			}
+			item.remove();
+			_this.refreshTabWidths();
+
+			py_ace_editor.tab_removed(${column}, index);
+		};
+
+		this._addTabItem = function(info) {
+			/* Add a tab item
+
+			*/
+			default_args = {
+				'title': 'Untitled',
+				'mode': 'text',
+				'text': ''
+			};
+			options = jQuery.extend(default_args, info);
+
+			div_list = jQuery('div', _this.tab_list);
+			div = document.createElement('div');
+			div.innerHTML = options['title'];
+			div.session = new EditSession(options['text'], options['mode']);
+
+			if (_this.tab_list.current_tab == null)
+				_this.tab_list.current_tab = div
+			_this.tab_list.append(div);
+			_this.setupTab(div);
+
+			div.session.doc.on('change', function(e) {
+				py_ace_editor.set_text_from_js(${column}, 
+					jQuery('div', _this.tab_list).index(_this.tab_list.current_tab),
+					_this.tab_list.current_tab.session.getDocument().getValue());
+			});
+
+			_this.refreshTabWidths();
+			
+		};
+
+		this.addTabItem = function(info) {
+			/* Add a tab item and update the current tab and enaml widget
+			accordingly
+
+			*/
+			_this._addTabItem(info);
+			_this.tab_list.old_tab = _this.tab_list.current_tab;
+			_this.tab_list.current_tab = div;
+ 			py_ace_editor.tab_added(${column}, _this.tab_list.length - 1);
+		}
+
+		this.refreshTabWidths = function() {
+			/* Recalculate the widths of the tabs
+
+			*/
+			var div_list = jQuery('div', _this.tab_list)
+			var container_width = jQuery('.tabs').width();
+			var tab_width = container_width / div_list.length;
+			jQuery.each(div_list, function(index, value) {
+				jQuery(value).width(tab_width);
+				var button = jQuery('button', value)
+				if (button.position()) {
+					button.show();
+					var button_left = button.position().left;
+					if (button_left < jQuery('span', value).width()+4)
+						button.hide();
+				}
+			});
+			return tab_width;
+		}
+
+		this.clickTabItem = function() {
+			/* Handler for when a tab is clicked
+
+			*/
+			if (jQuery(this) != _this.tab_list.current_tab) {
+				_this.tab_list.old_tab = _this.tab_list.current_tab;
+				_this.tab_list.current_tab = this;
+			}
+		};
+
+		this.setupTab = function(tab) {
+			/* Sets up a tab by wrapping the text in a span and
+			adding the close button
+
+			*/
+			jQuery(tab).click(_this.clickTabItem);
+			jQuery(tab).wrapInner("<span>");
+			var button = document.createElement('button');
+			button.innerHTML = "x";
+			jQuery(button).click(_this.removeTabItem);
+			jQuery(button).insertAfter(jQuery('span', tab));
+		};
+
+		this.tab_list.current_tab = jQuery('div', this.tab_list)[0];
+		_this.refreshTabWidths();
+ 		jQuery('.add_button').eq(${column}).click(_this.addTabItem);
+
+		${global_bindings}
+	}();
+</script>

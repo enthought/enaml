@@ -112,6 +112,11 @@ def splitter_factory():
     return QtSplitter
 
 
+def tab_bar_factory():
+    from .qt_tab_bar import QtTabBar
+    return QtTabBar
+
+
 def text_editor_factory():
     from .qt_text_editor import QtTextEditor
     return QtTextEditor
@@ -145,7 +150,7 @@ QT_FACTORIES = {
     'Slider': slider_factory,
     'SpinBox': spin_box_factory,
     'Splitter': splitter_factory,
+    'TabBar': tab_bar_factory,
     'TextEditor': text_editor_factory,
     'Window': window_factory,
 }
-

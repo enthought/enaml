@@ -85,4 +85,3 @@ class Notebook(ConstraintsWidget):
 
         """
         return [page.widget_id for page in self.pages]
-
