@@ -3,10 +3,10 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import wx
-import wx.lib.agw.aui as aui
 import wx.lib.newevent
 
 from .wx_single_widget_sizer import wxSingleWidgetSizer
+from .wx_upstream import aui
 from .wx_widget_component import WxWidgetComponent
 
 
@@ -42,13 +42,11 @@ _ORIENTATION_MAP = {
 }
 
 
-#: An event emitted when the floating state of a dock pane changes
-#: due to user interaction.
-wxDockPaneFloatEvent, EVT_DOCK_PANE_FLOAT = wx.lib.newevent.NewEvent()
+#: An event emitted when the dock pane is floated.
+wxDockPaneFloatedEvent, EVT_DOCK_PANE_FLOATED = wx.lib.newevent.NewEvent()
 
-#: An event emitted when the dock area of a dock pane changes due
-#: to user interaction.
-wxDockPaneAreaEvent, EVT_DOCK_PANE_AREA = wx.lib.newevent.NewEvent()
+#: An event emitted when the dock is docked.
+wxDockPaneDockedEvent, EVT_DOCK_PANE_DOCKED = wx.lib.newevent.NewEvent()
 
 #: An event emitted when the dock pane is closed.
 wxDockPaneClosedEvent, EVT_DOCK_PANE_CLOSED = wx.lib.newevent.NewEvent()
@@ -74,6 +72,7 @@ class wxDockPane(wx.Panel):
         self._title_bar_visible = True
         self._title_bar_orientation = wx.HORIZONTAL
         self._closable = True
+        self._movable = True
         self._floatable = True
         self._floating = False
         self._dock_area = aui.AUI_DOCK_LEFT
@@ -93,9 +92,9 @@ class wxDockPane(wx.Panel):
             The AuiManager for this dock pane, or None if not found.
 
         """
-        parent = self.GetParent()
-        if parent:
-            return parent.GetOwnerManager()
+        event = aui.AuiManagerEvent(aui.wxEVT_AUI_FIND_MANAGER)
+        self.ProcessEvent(event)
+        return event.GetManager()
 
     def _PaneInfoOperation(self, closure):
         """ A private method which will run the given closure if there 
@@ -106,18 +105,6 @@ class wxDockPane(wx.Panel):
         if manager is not None:
             pane = manager.GetPane(self)
             if pane.IsOk():
-                # If the pane is a floating frame, there is a private
-                # manager which needs to be updated as well, or none 
-                # of the state will change for the frame. The private
-                # manager should be updated first, because if the op
-                # causes the pane to float, we'll get a double dispatch
-                # Yet another hacktastic workaround for wx stupidity...
-                if pane.frame:
-                    priv_manager = pane.frame._mgr
-                    priv_pane = priv_manager.GetPane(self)
-                    if priv_pane.IsOk():
-                        closure(priv_pane)
-                        priv_manager.Update()
                 closure(pane)
                 manager.Update()
 
@@ -125,61 +112,38 @@ class wxDockPane(wx.Panel):
     # Event Handlers
     #--------------------------------------------------------------------------
     def OnClose(self, event):
-        """ Handles the EVT_AUI_PANE_CLOSE event.
+        """ Handles the parent EVT_AUI_PANE_CLOSE event.
 
         This event handler is called directly by the parent wxMainWindow
-        from its pane close event handler. The default close behavior of
-        the aui pane is undesirable. Instead of simply hiding the pane,
-        it destroys the pane info object, losing history. To work around
-        this, the parent event is always vetoed and the pane is manually 
-        hidden. After hiding the pane, this handler emits the 
+        from its pane close event handler. This handler simply emits the
         EVT_DOCK_PANE_CLOSED event.
 
         """
-        event.Veto()
-        self.Close()
-        evt = wxDockPaneClosedEvent()
-        wx.PostEvent(self, evt)
+        self._is_open = False
+        wx.PostEvent(self, wxDockPaneClosedEvent())
 
     def OnFloated(self, event):
-        """ Handles the EVT_AUI_PANE_FLOATED event.
+        """ Handles the parent EVT_AUI_PANE_FLOATED event.
 
         This event handler is called directly by the parent wxMainWindow
-        from its pane floated event handler. This handler emits the custom
-        EVT_DOCK_PANE_FLOAT event.
+        from its pane floated event handler. This handler simply emits 
+        the EVT_DOCK_PANE_FLOATED event.
 
         """
-        print 'float event'
         self._floating = True
-        # The caption state is not copied when floating a pane. We
-        # need to handle that with a CallAfter.
-        def closure():
-            def inner(pane):
-                print 'called'
-                visible = self._title_bar_visible
-                left = self._title_bar_orientation == wx.VERTICAL
-                pane.CaptionVisible(visible, left)
-            self._PaneInfoOperation(inner)
-        wx.CallAfter(closure)
-        evt = wxDockPaneFloatEvent(IsFloating=True)
-        wx.PostEvent(self, evt)
+        wx.PostEvent(self, wxDockPaneFloatedEvent())
 
     def OnDocked(self, event):
-        """ Handles the EVT_AUI_PANE_DOCKED event.
+        """ Handles the parent EVT_AUI_PANE_DOCKED event.
 
         This event handler is called directly by the parent wxMainWindow
-        from its pane docked event handler. This handler emits the custom
-        EVT_DOCK_PANE_FLOAT event, followed by the EVT_DOCK_PANE_AREA
-        event.
+        from its pane docked event handler. This handler simply emits
+        the EVT_DOCK_PANE_DOCKED event.
 
         """
         self._floating = False
-        evt = wxDockPaneFloatEvent(IsFloating=False)
-        wx.PostEvent(self, evt)
-        area = event.GetPane().dock_direction
-        self._dock_area = area
-        evt = wxDockPaneAreaEvent(DockArea=area)
-        wx.PostEvent(self, evt)
+        self._dock_area = event.GetPane().dock_direction
+        wx.PostEvent(self, wxDockPaneDockedEvent())
 
     #--------------------------------------------------------------------------
     # Public API
@@ -198,7 +162,7 @@ class wxDockPane(wx.Panel):
         """
         info = aui.AuiPaneInfo()
 
-        # For now, don't allow docking panes as a notebook. That causes
+        # Don't allow docking panes as a notebook since that causes
         # issues with finding the proper parent manager on updates.
         info.NotebookDockable(False)
 
@@ -207,6 +171,7 @@ class wxDockPane(wx.Panel):
         info.Show(self.IsOpen())
         info.Caption(self.GetTitle())
         info.CloseButton(self.GetClosable())
+        info.Movable(self.GetMovable())
         info.Floatable(self.GetFloatable())
         info.Direction(self.GetDockArea())
 
@@ -396,6 +361,32 @@ class wxDockPane(wx.Panel):
                 pane.CloseButton(closable)
             self._PaneInfoOperation(closure)
 
+    def GetMovable(self):
+        """ Get the movable state of the pane.
+
+        Returns
+        -------
+        result : bool
+            Whether or not the pane is movable.
+
+        """
+        return self._movable
+
+    def SetMovable(self, movable):
+        """ Set the movable state of the pane.
+
+        Parameters
+        ----------
+        movable : bool
+            Whether or not the pane is movable.
+
+        """
+        if self._movable != movable:
+            self._movable = movable
+            def closure(pane):
+                pane.Movable(movable)
+            self._PaneInfoOperation(closure)
+
     def GetFloatable(self):
         """ Get the floatable state of the pane.
 
@@ -543,8 +534,8 @@ class WxDockPane(WxWidgetComponent):
         self.set_dock_area(tree['dock_area'])
         self.set_allowed_dock_areas(tree['allowed_dock_areas'])
         widget = self.widget()
-        widget.Bind(EVT_DOCK_PANE_FLOAT, self.on_dock_pane_float)
-        widget.Bind(EVT_DOCK_PANE_AREA, self.on_dock_pane_area)
+        widget.Bind(EVT_DOCK_PANE_FLOATED, self.on_dock_pane_floated)
+        widget.Bind(EVT_DOCK_PANE_DOCKED, self.on_dock_pane_docked)
         widget.Bind(EVT_DOCK_PANE_CLOSED, self.on_dock_pane_closed)
 
     def init_layout(self):
@@ -559,25 +550,25 @@ class WxDockPane(WxWidgetComponent):
     #--------------------------------------------------------------------------
     # Event Handlers
     #--------------------------------------------------------------------------
-    def on_dock_pane_float(self, event):
-        """ The event handler for the EVT_DOCK_PANE_FLOAT event.
-
-        """
-        content = {'floating': event.IsFloating}
-        self.send_action('floating_changed', content)
-
-    def on_dock_pane_area(self, event):
-        """ The event handler for the EVT_DOCK_PANE_AREA event.
-
-        """
-        content = {'dock_area': _DOCK_AREA_INV_MAP[event.DockArea]}
-        self.send_action('dock_area_changed', content)
-
     def on_dock_pane_closed(self, event):
         """ The event handler for the EVT_DOCK_PANE_CLOSED event.
 
         """
         self.send_action('closed', {})
+
+    def on_dock_pane_floated(self, event):
+        """ The event handler for the EVT_DOCK_PANE_FLOATED event.
+
+        """
+        self.send_action('floated', {})
+
+    def on_dock_pane_docked(self, event):
+        """ The event handler for the EVT_DOCK_PANE_AREA event.
+
+        """
+        area = self.widget().GetDockArea()
+        content = {'dock_area': _DOCK_AREA_INV_MAP[area]}
+        self.send_action('docked', content)
 
     #--------------------------------------------------------------------------
     # Message Handling
@@ -699,8 +690,7 @@ class WxDockPane(WxWidgetComponent):
         """ Set the movable state on the underlying widget.
 
         """
-        # XXX Setting movable has no effect in wx 2.8
-        pass
+        self.widget().SetMovable(movable)
 
     def set_floatable(self, floatable):
         """ Set the floatable state on the underlying widget.
