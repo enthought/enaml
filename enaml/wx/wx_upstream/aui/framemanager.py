@@ -5815,7 +5815,7 @@ class AuiManager(wx.EvtHandler):
         # WHAT IS THIS?! I DON'T EVEN...
         #orientation = (dock.IsHorizontal() and [wx.HORIZONTAL] or [wx.VERTICAL])[0]
         orientation = wx.HORIZONTAL if dock.IsHorizontal() else wx.VERTICAL
-        
+
         # resizable bottom and right docks have a sash before them
         if not self._has_maximized and not dock.fixed and \
            dock.dock_direction in [AUI_DOCK_BOTTOM, AUI_DOCK_RIGHT]:
@@ -8682,7 +8682,9 @@ class AuiManager(wx.EvtHandler):
 
             ptype = part.type
 
-            if ptype in [AuiDockUIPart.typeDockSizer, AuiDockUIPart.typePaneSizer]:
+            # Let's not allocate a list inside a loop, inside a paint event...
+            #if ptype in [AuiDockUIPart.typesDockSizer, AuiDockUIPart.typePaneSizer]:
+            if ptype == AuiDockUIPart.typeDockSizer or ptype == AuiDockUIPart.typePaneSizer:
                 art.DrawSash(dc, self._frame, part.orientation, part.rect)
 
             elif ptype == AuiDockUIPart.typeBackground:
