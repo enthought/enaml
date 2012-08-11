@@ -5811,8 +5811,11 @@ class AuiManager(wx.EvtHandler):
         part = AuiDockUIPart()
 
         sash_size = self._art.GetMetric(AUI_DOCKART_SASH_SIZE)
-        orientation = (dock.IsHorizontal() and [wx.HORIZONTAL] or [wx.VERTICAL])[0]
 
+        # WHAT IS THIS?! I DON'T EVEN...
+        #orientation = (dock.IsHorizontal() and [wx.HORIZONTAL] or [wx.VERTICAL])[0]
+        orientation = wx.HORIZONTAL if dock.IsHorizontal() else wx.VERTICAL
+        
         # resizable bottom and right docks have a sash before them
         if not self._has_maximized and not dock.fixed and \
            dock.dock_direction in [AUI_DOCK_BOTTOM, AUI_DOCK_RIGHT]:
