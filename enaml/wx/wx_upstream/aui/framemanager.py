@@ -2867,7 +2867,7 @@ class AuiFloatingFrame(wx.MiniFrame):
         """
 
         if pane and pane.IsResizeable():
-            style += wx.RESIZE_BORDER
+            style |= wx.RESIZE_BORDER
         if pane:
             self._is_toolbar = pane.IsToolbar()
 
@@ -2875,13 +2875,22 @@ class AuiFloatingFrame(wx.MiniFrame):
         if AuiManager_UseNativeMiniframes(owner_mgr):
             # On wxMac we always use native miniframes
             self._useNativeMiniframes = True
-            style += wx.CAPTION + wx.SYSTEM_MENU
-            if pane.HasCloseButton():
-                style += wx.CLOSE_BOX
-            if pane.HasMaximizeButton():
-                style += wx.MAXIMIZE_BOX
-            if pane.HasMinimizeButton():
-                style += wx.MINIMIZE_BOX
+            # windows does not support min/max boxes nor toggling the state
+            # of the close button. The only way to toggle that button is to
+            # toggle the system menu style. But the close box flag needs to
+            # be set from the beginning.
+            if wx.Platform == '__WXMSW__':
+                style |= wx.CAPTION | wx.CLOSE_BOX
+                if pane.HasCloseButton():
+                    style |= wx.SYSTEM_MENU
+            else:
+                style |= wx.CAPTION | wx.SYSTEM_MENU
+                if pane.HasCloseButton():
+                    style |= wx.CLOSE_BOX
+                if pane.HasMaximizeButton():
+                    style |= wx.MAXIMIZE_BOX
+                if pane.HasMinimizeButton():
+                    style |= wx.MINIMIZE_BOX
 
         wx.MiniFrame.__init__(self, parent, id, title, pos=pane.floating_pos,
                               size=pane.floating_size, style=style, name="auiFloatingFrame")
@@ -4993,7 +5002,6 @@ class AuiManager(wx.EvtHandler):
 
         :param `pane_info`: a :class:`AuiPaneInfo` instance.
         """
-
         # if we were maximized, restore
         if pane_info.IsMaximized():
             self.RestorePane(pane_info)
@@ -5041,7 +5049,11 @@ class AuiManager(wx.EvtHandler):
                 if pane_info.dock_direction in [AUI_DOCK_LEFT, AUI_DOCK_RIGHT]:
                     tb.SetAGWWindowStyleFlag(tb.GetAGWWindowStyleFlag() | AUI_TB_VERTICAL)
 
-            pane_info.Dock().Hide()
+            #pane_info.Dock().Hide()
+            # We don't want to dock the pane when it's closed. Just hide 
+            # it so that if it's currently floated, it's re-floated the
+            # next time it is shown.
+            pane_info.Hide()
 
         if pane_info.IsNotebookControl():
 
@@ -5950,7 +5962,6 @@ class AuiManager(wx.EvtHandler):
         :param bool `spacer_only`: whether to add a simple spacer or a real window;
         :param bool `oncheck`: whether to store the results in a class member or not.
         """
-
         container = wx.BoxSizer(wx.VERTICAL)
 
         pane_border_size = self._art.GetMetric(AUI_DOCKART_PANE_BORDER_SIZE)
@@ -6339,7 +6350,6 @@ class AuiManager(wx.EvtHandler):
         must be called. This construction allows pane flicker to be avoided by updating
         the whole layout at one time.
         """
-
         self._hover_button = None
         self._action_part = None
 
@@ -6401,7 +6411,6 @@ class AuiManager(wx.EvtHandler):
         for ii in xrange(pane_count):
             p = self._panes[ii]
             pFrame = p.frame
-
             if p.IsFloating():
                 if pFrame is None:
                     # we need to create a frame for this
@@ -6447,6 +6456,16 @@ class AuiManager(wx.EvtHandler):
                         style &= ~wx.RESIZE_BORDER
                     else:
                         style |= wx.RESIZE_BORDER
+
+                    # update the close button
+                    if p.HasCloseButton():
+                       style |= wx.CLOSE_BOX
+                       if wx.Platform == '__WXMSW__':
+                           style |= wx.SYSTEM_MENU
+                    else:
+                       style &= ~wx.CLOSE_BOX
+                       if wx.Platform == '__WXMSW__':
+                           style &= ~wx.SYSTEM_MENU
 
                     p.frame.SetWindowStyleFlag(style)
 
@@ -7711,7 +7730,6 @@ class AuiManager(wx.EvtHandler):
         :param AuiPaneInfo `target`: the target pane containing the window;
         :param Point `pt`: a mouse position to check for a drop operation.
         """
-
         screenPt = self._frame.ClientToScreen(pt)
         paneInfo = self.PaneHitTest(panes, pt)
 
@@ -9954,10 +9972,13 @@ class AuiManager(wx.EvtHandler):
                 # close the pane, but check that it
                 # still exists in our pane array first
                 # (the event handler above might have removed it)
-
                 check = self.GetPane(pane.window)
                 if check.IsOk():
-                    self.ClosePane(pane)
+                    # Use the checked pane, because the ui part which 
+                    # emitted this event may actually have a pane that's 
+                    # different from the panes in self._panes. This seems
+                    # to be a fairly endemic problem with this framework.
+                    self.ClosePane(check)
 
                 self.Update()
 
