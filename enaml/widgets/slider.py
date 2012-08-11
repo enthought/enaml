@@ -81,7 +81,7 @@ class Slider(ConstraintsWidget):
     #: horizontal. When the orientation is flipped the tick positions
     #: (if set) also adapt to reflect the changes  (e.g. the LEFT
     #: becomes TOP when the orientation becomes horizontal).
-    orientation = Enum(('horizontal', 'vertical'))
+    orientation = Enum('horizontal', 'vertical')
 
     #: If True, the value is updated while sliding. Otherwise, it is
     #: only updated when the slider is released. Defaults to True.
