@@ -10,17 +10,14 @@ from .page import Page
 
 class Notebook(ConstraintsWidget):
     """ A component which displays its children as tabbed pages.
+    
+    A Notebook is similar to a TabControl, but has more features. It is
+    typically used in document style editing situations where the user
+    should have rich control over the layout of their documents.
 
     """
     #: The position of tabs in the notebook.
     tab_position = Enum('top', 'bottom', 'left', 'right')
-
-    #: The style of the tabs to use in the notebook. This may not
-    #: be supported on all platforms. The 'document' style is used
-    #: when displaying many pages in an editing context such as in
-    #: an IDE. The 'preferences' style is used to display tabs in
-    #: a style that is appropriate for a preferences dialog.
-    tab_style = Enum('document', 'preferences')
 
     #: Whether or not the tabs in the notebook should be closable.
     tabs_closable = Bool(True)
@@ -28,14 +25,17 @@ class Notebook(ConstraintsWidget):
     #: Whether or not the tabs in the notebook should be movable.
     tabs_movable = Bool(True)
 
+    #: Whether or not the tabs in the notebook should be dockable.
+    tabs_dockable = Bool(True)
+
     #: A read only property which returns the notebook's Pages.
     pages = Property(depends_on='children[]')
 
-    #: How strongly a component hugs it's contents' width. A TabGroup
+    #: How strongly a component hugs it's contents' width. A Notebook
     #: ignores its width hug by default, so it expands freely in width.
     hug_width = 'ignore'
 
-    #: How strongly a component hugs it's contents' height. A TabGroup
+    #: How strongly a component hugs it's contents' height. A Notebook
     #: ignores its height hug by default, so it expands freely in height.
     hug_height = 'ignore'
 
@@ -43,15 +43,15 @@ class Notebook(ConstraintsWidget):
     # Initialization
     #--------------------------------------------------------------------------
     def snapshot(self):
-        """ Return the dict of creation attributes for the control.
+        """ Returns the snapshot for the control.
 
         """
         snap = super(Notebook, self).snapshot()
         snap['page_ids'] = self._snap_page_ids()
         snap['tab_position'] = self.tab_position
-        snap['tab_style'] = self.tab_style
         snap['tabs_closable'] = self.tabs_closable
         snap['tabs_movable'] = self.tabs_movable
+        snap['tabs_dockable'] = self.tabs_dockable
         return snap
 
     def bind(self):
@@ -59,7 +59,9 @@ class Notebook(ConstraintsWidget):
 
         """
         super(Notebook, self).bind()
-        attrs = ('tab_position', 'tab_style', 'tabs_closable', 'tabs_movable')
+        attrs = (
+            'tab_position', 'tabs_closable', 'tabs_movable', 'tabs_dockable'
+        )
         self.publish_attributes(*attrs)
 
     #--------------------------------------------------------------------------

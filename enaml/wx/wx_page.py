@@ -30,8 +30,9 @@ class wxPage(wx.Panel):
         super(wxPage, self).__init__(*args, **kwargs)
         self._title = u''
         self._closable = True
-        self._page_widget = None
+        self._is_enabled = True
         self._is_open = True
+        self._page_widget = None
         self.SetSizer(wxSingleWidgetSizer())
 
     #--------------------------------------------------------------------------
@@ -47,14 +48,23 @@ class wxPage(wx.Panel):
 
         """
         event.Veto()
-        if self.GetClosable():
-            self._is_open = False
-            parent = self.GetParent()
-            if parent:
-                parent.ClosePage(self)
-            self.Show(False)
-            evt = wxPageClosedEvent()
-            wx.PostEvent(self, evt)
+        self.Close()
+        evt = wxPageClosedEvent()
+        wx.PostEvent(self, evt)
+
+    #--------------------------------------------------------------------------
+    # Private API
+    #--------------------------------------------------------------------------
+    def _PageIndexOperation(self, closure):
+        """ A private method which will run the given closure if there 
+        is a valid index for this page.
+
+        """
+        parent = self.GetParent()
+        if parent:
+            index = parent.GetPageIndex(self)
+            if index != -1:
+                closure(parent, index)
 
     #--------------------------------------------------------------------------
     # Public API
@@ -96,27 +106,49 @@ class wxPage(wx.Panel):
     def Open(self):
         """ Open the page in the notebook.
 
-        If the page is already open, this method is a no-op.
-
         """
         self._is_open = True
         parent = self.GetParent()
         if parent:
-            parent.OpenPage(self)
-        # We don't Show(True) here since visibility is at this point
-        # the responsibility of the notebook.
+            parent.ShowWxPage(self)
 
     def Close(self):
         """ Close the dock pane in the main window.
-
-        If the pane is already closed, this method is no-op.
 
         """
         self._is_open = False
         parent = self.GetParent()
         if parent:
-            parent.ClosePage(self)
-        self.Show(False)
+            parent.HideWxPage(self) 
+
+    def GetEnabled(self):
+        """ Get the enabled state of the page.
+
+        This method should be used in favor of IsEnabled.
+
+        Returns
+        -------
+        result : bool
+            True the page is enabled, False otherwise.
+
+        """
+        return self._is_enabled
+
+    def SetEnabled(self, enabled):
+        """ Set the enabled state of the page.
+
+        This method should be used in favor of Enable.
+
+        Parameters
+        ---------
+        enabled : bool
+            Whether or not the page should be enabled.
+
+        """
+        self._is_enabled = enabled
+        def closure(nb, index):
+            nb.EnableTab(index, enabled)
+        self._PageIndexOperation(closure)
 
     def GetTitle(self):
         """ Returns tab title for this page.
@@ -139,11 +171,9 @@ class wxPage(wx.Panel):
 
         """
         self._title = title
-        parent = self.GetParent()
-        if parent:
-            index = parent.GetPageIndex(self)
-            if index != -1:
-                parent.SetPageText(index, title)
+        def closure(nb, index):
+            nb.SetPageText(index, title)
+        self._PageIndexOperation(closure)
 
     def GetClosable(self):
         """ Returns whether or not this page is closable.
@@ -166,6 +196,9 @@ class wxPage(wx.Panel):
 
         """
         self._closable = closable
+        def closure(nb, index):
+            nb.SetCloseButton(index, closable)
+        self._PageIndexOperation(closure)
 
 
 class WxPage(WxWidgetComponent):
@@ -260,6 +293,13 @@ class WxPage(WxWidgetComponent):
         else:
             widget.Close()
 
+    def set_enabled(self, enabled):
+        """ An overridden enabled setter which sets the tab enabled
+        state.
+
+        """
+        self.widget().SetEnabled(enabled)
+
     def set_page_widget_id(self, widget_id):
         """ Set the page widget id for the underlying control.
 
@@ -283,6 +323,6 @@ class WxPage(WxWidgetComponent):
 
         """
         # XXX Wx notebooks do not support a tab tooltip, so this 
-        # setting is simply ignored.
+        # setting is simply ignored. (wx trunk now supports this)
         pass
 
