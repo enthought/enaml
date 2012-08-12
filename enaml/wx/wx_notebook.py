@@ -28,7 +28,7 @@ class wxAuiNotebook(aui.AuiNotebook):
 
     """
     def __init__(self, *args, **kwargs):
-        """ Initialize a wxNotebookMixin.
+        """ Initialize a wxAuiNotebook.
 
         Parameters
         ----------
