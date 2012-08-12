@@ -14,7 +14,7 @@ wxPageClosedEvent, EVT_PAGE_CLOSED = wx.lib.newevent.NewEvent()
 
 
 class wxPage(wx.Panel):
-    """ A wxPanel subclass which acts as a page in a wxNotebook.
+    """ A wxPanel subclass which acts as a page in a wxAuiNotebook.
 
     """
     def __init__(self, *args, **kwargs):
@@ -98,7 +98,7 @@ class wxPage(wx.Panel):
         Returns
         -------
         result : bool
-            True if the page is be open, False otherwise.
+            True if the page is open, False otherwise.
 
         """
         return self._is_open
@@ -113,7 +113,7 @@ class wxPage(wx.Panel):
             parent.ShowWxPage(self)
 
     def Close(self):
-        """ Close the dock pane in the main window.
+        """ Close the page in the notebook.
 
         """
         self._is_open = False
