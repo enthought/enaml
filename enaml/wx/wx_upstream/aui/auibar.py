@@ -965,17 +965,17 @@ class AuiDefaultToolBarArt(object):
         text_height = label_size.GetHeight()
 
         if orient == AUI_TBTOOL_HORIZONTAL:
-            text_x = rect.x
-            text_y = rect.y + (rect.height-text_height)/2
+            text_x = rect.x + (rect.width - text_width) / 2
+            text_y = rect.y + (rect.height - text_height) / 2
             dc.DrawText(item.GetLabel(), text_x, text_y)
 
         elif orient == AUI_TBTOOL_VERT_CLOCKWISE:
-            text_x = rect.x + (rect.width+text_width)/2
+            text_x = rect.x + (rect.width + text_width) / 2
             text_y = rect.y
             dc.DrawRotatedText(item.GetLabel(), text_x, text_y, 270)
 
         elif AUI_TBTOOL_VERT_COUNTERCLOCKWISE:
-            text_x = rect.x + (rect.width-text_width)/2
+            text_x = rect.x + (rect.width - text_width) / 2
             text_y = rect.y + text_height
             dc.DrawRotatedText(item.GetLabel(), text_x, text_y, 90)
 
@@ -991,7 +991,7 @@ class AuiDefaultToolBarArt(object):
         """
 
         bmp_rect, text_rect = self.GetToolsPosition(dc, item, rect)
-        
+
         if not item.GetState() & AUI_BUTTON_STATE_DISABLED:
         
             if item.GetState() & AUI_BUTTON_STATE_PRESSED:
@@ -1027,6 +1027,10 @@ class AuiDefaultToolBarArt(object):
 
         if bmp.IsOk():
             dc.DrawBitmap(bmp, bmp_rect.x, bmp_rect.y, True)
+        else:
+            # If there is no bitmap to draw, the text can use the whole
+            # item rect.
+            text_rect = rect
 
         # set the item's text colour based on if it is disabled
         dc.SetTextForeground(wx.BLACK)
@@ -1714,7 +1718,6 @@ class AuiToolBar(wx.PyControl):
         """ Returns the current art provider being used. """
 
         return self._art
-
 
     def AddSimpleTool(self, tool_id, label, bitmap, short_help_string="", kind=ITEM_NORMAL, target=None):
         """
@@ -3406,7 +3409,6 @@ class AuiToolBar(wx.PyControl):
         
         :note: Overridden from :class:`PyControl`.
         """
-
         return self._absolute_min_size
     
 
