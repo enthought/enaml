@@ -44,7 +44,7 @@ class Page(WidgetComponent):
     # Initialization
     #--------------------------------------------------------------------------
     def snapshot(self):
-        """ Return the dict of creation attributes for the control.
+        """ Return the snapshot for the control.
 
         """
         snap = super(Page, self).snapshot()
@@ -59,8 +59,7 @@ class Page(WidgetComponent):
 
         """
         super(Page, self).bind()
-        attrs = ('title', 'tool_tip', 'closable')
-        self.publish_attributes(*attrs)
+        self.publish_attributes('title', 'tool_tip', 'closable')
 
     #--------------------------------------------------------------------------
     # Private API
