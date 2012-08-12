@@ -3902,8 +3902,10 @@ class AuiNotebook(wx.PyPanel):
         if page_idx >= self._tabs.GetPageCount():
             return False
 
-        if self._agwFlags & AUI_NB_CLOSE_ON_ALL_TABS == 0:
-            raise Exception("SetCloseButton can only be used with AUI_NB_CLOSE_ON_ALL_TABS style.")
+        # There's really not a need for this exception. If the close on
+        # all tabs is False, no close buttons get drawn.
+        #if self._agwFlags & AUI_NB_CLOSE_ON_ALL_TABS == 0:
+        #    raise Exception("SetCloseButton can only be used with AUI_NB_CLOSE_ON_ALL_TABS style.")
 
         # update our own tab catalog
         page_info = self._tabs.GetPage(page_idx)
