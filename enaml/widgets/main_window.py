@@ -5,7 +5,7 @@
 from traits.api import Property, cached_property
 
 from .dock_pane import DockPane
-from .tool_bar import ToolBar
+#from .tool_bar import ToolBar
 from .window import Window
 
 
@@ -58,9 +58,9 @@ class MainWindow(Window):
             MainWindow.
 
         """
-        isinst = isinstance
-        panes = (child for child in self.children if isinst(child, ToolBar))
-        return tuple(panes)
+        #isinst = isinstance
+        #panes = (child for child in self.children if isinst(child, ToolBar))
+        return ()#tuple(panes)
 
     @cached_property
     def _get_dock_panes(self):
