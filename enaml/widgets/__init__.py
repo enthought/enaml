@@ -32,5 +32,5 @@ from .splitter import Splitter
 from .tab import Tab
 from .tab_control import TabControl
 from .text_editor import TextEditor
-#from .tool_bar import ToolBar
+from .tool_bar import ToolBar
 from .window import Window
