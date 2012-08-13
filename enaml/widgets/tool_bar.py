@@ -84,6 +84,9 @@ class ToolBar(ConstraintsWidget):
         return snap
 
     def bind(self):
+        """ Bind the change handlers for the ToolBar.
+
+        """
         super(ToolBar, self).bind()
         attrs = (
             'movable', 'floatable', 'floating', 'dock_area', 
@@ -109,7 +112,7 @@ class ToolBar(ConstraintsWidget):
         return tuple(actions)
 
     def _snap_action_ids(self):
-        """ Returns the widget ids for the actions or None.
+        """ Returns the list of widget ids for the actions.
 
         """
         return [action.widget_id for action in self.actions]
