@@ -138,6 +138,31 @@ class wxMainWindow(wx.Frame):
         if not self._batch:
             manager.Update()
 
+    def AddToolBar(self, tool_bar):
+        """ Add a tool bar to the main window.
+
+        If the tool bar already exists in the main window, calling this
+        method is a no-op.
+
+        Parameters
+        ----------
+        tool_bar : wxToolBar
+            The wxToolBar instance to add to the main window.
+
+        """
+        manager = self._manager
+        pane = manager.GetPane(tool_bar)
+        if not pane.IsOk():
+            pane = tool_bar.MakePaneInfo()
+            # Do some shennanigans to make sure the toolbar is oriented
+            # properly on initial display. There shouldn't be a need to
+            # do this; this aui code is really bad...
+            pane.Window(tool_bar)
+            manager.SwitchToolBarOrientation(pane)
+            manager.AddPane(tool_bar, pane)
+            if not self._batch:
+                manager.Update()
+
     def AddDockPane(self, dock_pane):
         """ Add a dock pane to the main window.
 
@@ -223,13 +248,10 @@ class WxMainWindow(WxWindow):
             main_window.SetCentralWidget(central_child.widget())
 
         # Setup the tool bars
-        # for tool_bar_id in self._tool_bar_ids:
-        #     tool_bar = find_child(tool_bar_id)
-        #     if tool_bar is not None:
-        #         pane = aui.AuiPaneInfo().ToolbarPane()
-        #         w = tool_bar.widget()
-        #         w.Realize()
-        #         main_window.GetOwnerManager().AddPane(w, pane)
+        for tool_bar_id in self._tool_bar_ids:
+            tool_bar = find_child(tool_bar_id)
+            if tool_bar is not None:
+                main_window.AddToolBar(tool_bar.widget())
 
         # Setup the dock panes
         for dock_id in self._dock_pane_ids:
