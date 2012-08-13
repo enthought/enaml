@@ -157,7 +157,7 @@ class wxDockPane(wx.Panel):
         Returns
         -------
         result : AuiPaneInfo
-            An initialized AuiPaneInfo object for this page.
+            An initialized AuiPaneInfo object for this pane.
 
         """
         info = aui.AuiPaneInfo()
