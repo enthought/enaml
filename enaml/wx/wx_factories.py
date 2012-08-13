@@ -1,7 +1,12 @@
 #------------------------------------------------------------------------------
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
-#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------\
+def action_factory():
+    from .wx_action import WxAction
+    return WxAction
+
+
 def calendar_factory():
     from .wx_calendar import WxCalendar
     return WxCalendar
@@ -148,6 +153,7 @@ def window_factory():
 
 
 WX_FACTORIES = {
+    'Action': action_factory,
     'Calendar': calendar_factory,
     'CheckBox': check_box_factory,
     'ComboBox': combo_box_factory,
