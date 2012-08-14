@@ -47,8 +47,16 @@ class wxAction(wx.EvtHandler):
         """
         return cls._action_map.get(action_id)
 
-    def __init__(self, parent):
+    def __init__(self, parent=None):
         """ Initialize a wxAction.
+
+        Parameters
+        ----------
+        parent : object or None
+            The parent for this wxAction. The parent is not directly
+            used by action, but is provided as a convenience for other
+            parts of the framework. Only a weak reference is maintained
+            to the parent.
 
         """
         super(wxAction, self).__init__()
@@ -127,6 +135,19 @@ class wxAction(wx.EvtHandler):
         if parent_ref is not None:
             return parent_ref()
 
+    def SetParent(self, parent):
+        """ Set the parent of the action.
+
+        Parameters
+        ----------
+        parent : object or None
+            The object to use as the parent of this action.
+
+        """
+        if parent is not None:
+            parent = ref(parent)
+        self._parent_ref = ref
+    
     def TriggerAction(self):
         """ A method called by the action owner when the user triggers
         the action.
