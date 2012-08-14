@@ -7,7 +7,7 @@ import wx.lib.newevent
 
 from .wx_action import wxAction, EVT_ACTION_CHANGED
 from .wx_action_group import wxActionGroup
-from .wx_messenger_widget import WxMessengerWidget
+from .wx_widget_component import WxWidgetComponent
 
 
 #: An event emitted when the menu state changes.
@@ -33,6 +33,8 @@ class wxMenu(wx.Menu):
         self._all_items = []
         self._menus_map = {}
         self._actions_map = {}
+        self._enabled = True
+        self._visible = True
         self._batch = False
 
     #--------------------------------------------------------------------------
@@ -178,6 +180,54 @@ class wxMenu(wx.Menu):
             self._title = title
             self._EmitChanged()
 
+    def IsEnabled(self):
+        """ Get whether or not the menu is enabled.
+
+        Returns
+        -------
+        result : bool
+            Whether or not the menu is enabled.
+
+        """
+        return self._enabled
+
+    def SetEnabled(self, enabled):
+        """ Set whether or not the menu is enabled.
+
+        Parameters
+        ----------
+        enabled : bool
+            Whether or not the menu is enabled.
+
+        """
+        if self._enabled != enabled:
+            self._enabled = enabled
+            self._EmitChanged()
+
+    def IsVisible(self):
+        """ Get whether or not the menu is visible.
+
+        Returns
+        -------
+        result : bool
+            Whether or not the menu is visible.
+
+        """
+        return self._visible
+
+    def SetVisible(self, visible):
+        """ Set whether or not the menu is visible.
+
+        Parameters
+        ----------
+        visible : bool
+            Whether or not the menu is visible.
+
+        """
+        if self._visible != visible:
+            self._visible = visible
+            self._EmitChanged()
+
     def AddMenu(self, menu):
         """ Add a wx menu to the Menu.
 
@@ -216,7 +266,7 @@ class wxMenu(wx.Menu):
             action.Bind(EVT_ACTION_CHANGED, self.OnActionChanged)
 
 
-class WxMenu(WxMessengerWidget):
+class WxMenu(WxWidgetComponent):
     """ A Wx implementation of an Enaml Menu.
 
     """
@@ -230,18 +280,18 @@ class WxMenu(WxMessengerWidget):
         """ Create the underlying wx menu widget.
 
         """
-        return wxMenu()
+        widget = wxMenu()
+        widget.BeginBatch()
+        return widget
 
     def create(self, tree):
         """ Create and initialize the underlying control.
 
         """
         super(WxMenu, self).create(tree)
-        widget = self.widget()
-        widget.BeginBatch()
         self.set_menu_item_ids(tree['menu_item_ids'])
         self.set_title(tree['title'])
-        widget.EndBatch(emit=False)
+        self.widget().EndBatch(emit=False)
 
     def init_layout(self):
         """ Initialize the layout for the underlying control.
@@ -261,9 +311,6 @@ class WxMenu(WxMessengerWidget):
                 elif isinstance(child_widget, wxActionGroup):
                     for action in child_widget.GetActions():
                         widget.AddAction(action)
-                else:
-                    import logging
-                    logging.error('Unhandled menu child %s' % child)
 
     #--------------------------------------------------------------------------
     # Message Handling
@@ -288,4 +335,38 @@ class WxMenu(WxMessengerWidget):
 
         """
         self.widget().SetTitle(title)
+
+    def set_enabled(self, enabled):
+        """ Overridden parent class method.
+
+        This properly sets the enabled state on a menu using the custom
+        wxMenu api.
+
+        """
+        self.widget().SetEnabled(enabled)
+
+    def set_visible(self, visible):
+        """ Overrdden parent class method.
+
+        This properly sets the visible state on a menu using the custom
+        wxMenu api.
+
+        """
+        self.widget().SetVisible(visible)
+
+    def set_minimum_size(self, min_size):
+        """ Overridden parent class method.
+
+        Menus do not have a minimum size, so this method is a no-op.
+
+        """
+        pass
+
+    def set_maximum_size(self, max_size):
+        """ Overridden parent class method.
+
+        Menus do not have a maximum size, so this method is a no-op.
+
+        """
+        pass
 
