@@ -2,21 +2,23 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from weakref import ref, WeakValueDictionary
+
 import wx
 import wx.lib.newevent
 
 from .wx_messenger_widget import WxMessengerWidget
 
 
-#: An event emitted when a wxAction has been triggered. The payload
-#: of the event will have an 'IsChecked' attribute.
+#: An event emitted when a wxAction has been triggered by the user. The
+#: payload of the event will have an 'IsChecked' attribute.
 wxActionTriggeredEvent, EVT_ACTION_TRIGGERED = wx.lib.newevent.NewEvent()
 
-#: An event emitted by a wxAction when it has been toggled. The payload
-#: of the event will have an 'IsChecked' attribute.
+#: An event emitted by a wxAction when it has been toggled by the user. 
+#: The payload of the event will have an 'IsChecked' attribute.
 wxActionToggledEvent, EVT_ACTION_TOGGLED = wx.lib.newevent.NewEvent()
 
-#: An event emitted by a wxAction when any of its state has changed.
+#: An event emitted by a wxAction when its state has been changed.
 wxActionChangedEvent, EVT_ACTION_CHANGED = wx.lib.newevent.NewEvent()
 
 
@@ -24,85 +26,151 @@ class wxAction(wx.EvtHandler):
     """ A wx.EvtHandler which acts like a wx equivalent to a QAction.
 
     """
-    def __init__(self):
+    #: Class storage which maps action id -> action instance.
+    _action_map = WeakValueDictionary()
+
+    @classmethod
+    def FindById(cls, action_id):
+        """ Find a wxAction instance using the given action id.
+
+        Parameters
+        ----------
+        action_id : int
+            The id for the action.
+
+        Returns
+        -------
+        result : wxAction or None
+            The wxAction instance for the given id, or None if not 
+            action exists for that id.
+
+        """
+        return cls._action_map.get(action_id)
+
+    def __init__(self, parent):
         """ Initialize a wxAction.
 
         """
         super(wxAction, self).__init__()
+        self._parent_ref = ref(parent) if parent else None
         self._text = u''
         self._tool_tip = u''
         self._status_tip = u''
         self._checkable = False
         self._checked = False
-        self._exclusive = False
         self._enabled = True
         self._visible = True
+        self._group_enabled = True
+        self._group_visible = True
         self._separator = False
         self._batch = False
+        self._id = wx.NewId()
+        self._action_map[self._id] = self
 
     #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
     def _EmitChanged(self):
-        """ Emits an action changed event.
+        """ Emits the EVT_ACTION_CHANGED event if not in batch mode.
 
         """
         if not self._batch:
-            evt = wxActionChangedEvent()
-            evt.SetEventObject(self)
-            wx.PostEvent(self, evt)
+            event = wxActionChangedEvent()
+            event.SetEventObject(self)
+            wx.PostEvent(self, event)
 
-    def ActionTriggered(self):
-        """ A method called by the action owner.
-
-        This handler will emit the custom EVT_ACTION_TRIGGERED event. 
-        User code should not call this method directly.
-
-        """
-        # This event is dispatched immediately in order to preserve
-        # the order of event firing for trigger/toggle.
-        evt = wxActionTriggeredEvent(IsChecked=self._checked)
-        self.ProcessEvent(evt)
-
-    def ActionToggled(self, checked):
-        """ A method called by the action owner.
-
-        This handler will emit the custom EVT_ACTION_TOGGLED event.
-        User code should not call this method directly.
+    def _SetGroupEnabled(self, enabled):
+        """ A private method called by an owner action group.
 
         Parameters
         ----------
-        toggled : checked
-            Whether or not the action is checked.
+        enabled : bool
+            Whether or not the owner group is enabled.
 
         """
-        # This event is dispatched immediately in order to preserve
-        # the order of event firing for trigger/toggle.
-        self._checked = checked
-        evt = wxActionToggledEvent(IsChecked=checked)
-        self.ProcessEvent(evt)
+        if self._group_enabled != enabled:
+            old = self.IsEnabled()
+            self._group_enabled = enabled
+            new = self.IsEnabled()
+            if old != new:
+                self._EmitChanged()
+
+    def _SetGroupVisible(self, visible):
+        """ A private method called by an owner action group.
+
+        Parameters
+        ----------
+        visible : bool
+            Whether or not the owner group is visble.
+
+        """
+        if self._group_visible != visible:
+            old = self.IsVisible()
+            self._group_visible = visible
+            new = self.IsVisible()
+            if old != new:
+                self._EmitChanged()
 
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
+    def GetParent(self):
+        """ Get the parent of the action.
+
+        Returns
+        -------
+        result : object or None 
+            The parent of this action or None.
+
+        """
+        parent_ref = self._parent_ref
+        if parent_ref is not None:
+            return parent_ref()
+
+    def TriggerAction(self):
+        """ A method called by the action owner when the user triggers
+        the action.
+
+        This handler will emit the custom EVT_ACTION_TRIGGERED event. 
+        User code should not typically call this method directly.
+
+        """
+        # This event is dispatched immediately in order to preserve
+        # the order of event firing for trigger/toggle.
+        event = wxActionTriggeredEvent(IsChecked=self._checked)
+        event.SetEventObject(self)
+        wx.PostEvent(self, event)
+
     def BeginBatch(self):
-        """ Enter batch change mode for the action.
+        """ Enter batch update mode for the action.
 
         """
         self._batch = True
 
     def EndBatch(self, emit=True):
-        """ End batch change mode for the action.
+        """ Exit batch update mode for the action.
 
         Parameters
         ----------
         emit : bool, optional
-        	If True and change event will be emitted. Defaults to True.
+            If True, emit a changed event after leaving batch mode. The
+            default is True.
 
         """
         self._batch = False
         if emit:
-        	self._EmitChanged()
+            self._EmitChanged()
+
+    def GetId(self):
+        """ Get the unique wx id for this action.
+
+        Returns
+        -------
+        result : int
+            The wx id number for this action.
+
+        """
+        return self._id
 
     def GetText(self):
         """ Get the text for the action.
@@ -223,30 +291,9 @@ class wxAction(wx.EvtHandler):
         if self._checked != checked:
             self._checked = checked
             self._EmitChanged()
-
-    def IsExclusive(self):
-        """ Get whether or not the action is exclusive.
-
-        Returns
-        -------
-        result : bool
-            Whether or not the action is exclusive.
-
-        """
-        return self._exclusive
-    
-    def SetExclusive(self, exclusive):
-        """ Set whether or not the action is exclusive.
-
-        Parameters
-        ----------
-        exclusive : bool
-            Whether or not the action is exclusive.
-
-        """
-        if self._exclusive != exclusive:
-            self._exclusive = exclusive
-            self._EmitChanged()
+            event = wxActionToggledEvent(IsChecked=checked)
+            event.SetEventObject(self)
+            wx.PostEvent(self, event)
 
     def IsEnabled(self):
         """ Get whether or not the action is enabled.
@@ -257,7 +304,9 @@ class wxAction(wx.EvtHandler):
             Whether or not the action is enabled.
 
         """
-        return self._enabled
+        if self._group_enabled:
+            return self._enabled
+        return False
 
     def SetEnabled(self, enabled):
         """ Set whether or not the action is enabled.
@@ -270,7 +319,8 @@ class wxAction(wx.EvtHandler):
         """
         if self._enabled != enabled:
             self._enabled = enabled
-            self._EmitChanged()
+            if self._group_enabled:
+                self._EmitChanged()
 
     def IsVisible(self):
         """ Get whether or not the action is visible.
@@ -281,7 +331,9 @@ class wxAction(wx.EvtHandler):
             Whether or not the action is visible.
 
         """
-        return self._visible
+        if self._group_visible:
+            return self._visible
+        return False
 
     def SetVisible(self, visible):
         """ Set whether or not the action is visible.
@@ -294,7 +346,8 @@ class wxAction(wx.EvtHandler):
         """
         if self._visible != visible:
             self._visible = visible
-            self._EmitChanged()
+            if self._group_visible:
+                self._EmitChanged()
 
     def IsSeparator(self):
         """ Get whether or not the action is a separator.
@@ -332,7 +385,7 @@ class WxAction(WxMessengerWidget):
         """ Create the underlying wxAction object.
 
         """
-        return wxAction()
+        return wxAction(parent)
 
     def create(self, tree):
         """ Create and initialize the underlying control.
@@ -346,7 +399,6 @@ class WxAction(WxMessengerWidget):
         self.set_status_tip(tree['status_tip'])
         self.set_checkable(tree['checkable'])
         self.set_checked(tree['checked'])
-        self.set_exclusive(tree['exclusive'])
         self.set_enabled(tree['enabled'])
         self.set_visible(tree['visible'])
         self.set_separator(tree['separator'])
@@ -404,12 +456,6 @@ class WxAction(WxMessengerWidget):
         """
         self.set_checked(content['checked'])
 
-    def on_action_set_exclusive(self, content):
-        """ Handle the 'set_exclusive' action from the Enaml widget.
-
-        """
-        self.set_exclusive(content['exclusive'])
-
     def on_action_set_enabled(self, content):
         """ Handle the 'set_enabled' action from the Enaml widget.
 
@@ -460,12 +506,6 @@ class WxAction(WxMessengerWidget):
 
         """
         self.widget().SetChecked(checked)
-
-    def set_exclusive(self, exclusive):
-        """ Set the exclusive state on the underlying control.
-
-        """
-        self.widget().SetExclusive(exclusive)
 
     def set_enabled(self, enabled):
         """ Set the enabled state on the underlying control.
