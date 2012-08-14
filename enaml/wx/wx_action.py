@@ -356,7 +356,7 @@ class wxAction(wx.EvtHandler):
 
         Parameters
         ----------
-        enabled : bool
+        visible : bool
             Whether or not the action is visible.
 
         """
