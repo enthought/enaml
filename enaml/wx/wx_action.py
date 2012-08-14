@@ -54,9 +54,9 @@ class wxAction(wx.EvtHandler):
         ----------
         parent : object or None
             The parent for this wxAction. The parent is not directly
-            used by action, but is provided as a convenience for other
-            parts of the framework. Only a weak reference is maintained
-            to the parent.
+            used by the action, but is provided as a convenience for 
+            other parts of the framework. Only a weak reference is
+            maintained to the parent.
 
         """
         super(wxAction, self).__init__()
