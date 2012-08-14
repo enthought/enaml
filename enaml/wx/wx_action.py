@@ -2,7 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from weakref import ref, WeakValueDictionary
+from weakref import WeakValueDictionary
 
 import wx
 import wx.lib.newevent
@@ -55,12 +55,11 @@ class wxAction(wx.EvtHandler):
         parent : object or None
             The parent for this wxAction. The parent is not directly
             used by the action, but is provided as a convenience for 
-            other parts of the framework. Only a weak reference is
-            maintained to the parent.
+            other parts of the framework.
 
         """
         super(wxAction, self).__init__()
-        self._parent_ref = ref(parent) if parent else None
+        self._parent = parent
         self._text = u''
         self._tool_tip = u''
         self._status_tip = u''
@@ -131,9 +130,7 @@ class wxAction(wx.EvtHandler):
             The parent of this action or None.
 
         """
-        parent_ref = self._parent_ref
-        if parent_ref is not None:
-            return parent_ref()
+        return self._parent
 
     def SetParent(self, parent):
         """ Set the parent of the action.
@@ -144,9 +141,7 @@ class wxAction(wx.EvtHandler):
             The object to use as the parent of this action.
 
         """
-        if parent is not None:
-            parent = ref(parent)
-        self._parent_ref = ref
+        self._parent = parent
     
     def TriggerAction(self):
         """ A method called by the action owner when the user triggers
