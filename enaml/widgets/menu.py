@@ -5,6 +5,7 @@
 from traits.api import Unicode, Property, cached_property
 
 from .action import Action
+from .action_group import ActionGroup
 from .widget_component import WidgetComponent
 
 
@@ -15,8 +16,8 @@ class Menu(WidgetComponent):
     #: The title to use for the menu.
     title = Unicode
     
-    #: The menu items in the menu. These will be instances of either 
-    #: Action or Menu
+    #: The menu items in the menu. These will be instances of Action,
+    #: ActionGroup, and Menu.
     menu_items = Property(depends_on='children[]')
 
     #--------------------------------------------------------------------------
@@ -53,7 +54,7 @@ class Menu(WidgetComponent):
 
         """
         isinst = isinstance
-        allowed = (Action, Menu)
+        allowed = (Action, ActionGroup, Menu)
         items = (child for child in self.children if isinst(child, allowed))
         return tuple(items)
 
