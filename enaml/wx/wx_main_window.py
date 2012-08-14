@@ -4,6 +4,7 @@
 #------------------------------------------------------------------------------
 import wx
 
+from .wx_action import wxAction
 from .wx_upstream import aui
 from .wx_window import WxWindow
 
@@ -207,6 +208,9 @@ class WxMainWindow(WxWindow):
     """ A Wx implementation of an Enaml MainWindow.
 
     """
+    #: Storage for the menu bar id
+    _menu_bar_id = None
+
     #: Storage for the widget ids of the dock panes
     _dock_pane_ids = []
 
@@ -227,8 +231,16 @@ class WxMainWindow(WxWindow):
 
         """
         super(WxMainWindow, self).create(tree)
+        self.set_menu_bar_id(tree['menu_bar_id'])
         self.set_dock_pane_ids(tree['dock_pane_ids'])
         self.set_tool_bar_ids(tree['tool_bar_ids'])
+        self.widget().Bind(wx.EVT_MENU, self.OnMenu)
+
+    def OnMenu(self, event):
+        action = wxAction.FindById(event.GetId())
+        if action is not None:
+            if action.IsCheckable():
+                action.SetChecked(event.Checked())
 
     def init_layout(self):
         """ Perform the layout initialization for the main window.
@@ -241,6 +253,12 @@ class WxMainWindow(WxWindow):
         find_child = self.find_child
 
         main_window.BeginBatch()
+
+        # Setup the menu bar
+        menu_bar = find_child(self._menu_bar_id)
+        if menu_bar is not None:
+            main_window.SetMenuBar(menu_bar.widget())
+            menu_bar.widget().PostAttach()
 
         # Setup the central widget
         central_child = find_child(self._central_widget_id)
@@ -259,11 +277,20 @@ class WxMainWindow(WxWindow):
             if dock_pane is not None:
                 main_window.AddDockPane(dock_pane.widget())
 
+        self._status = status = wx.StatusBar(main_window)
+        main_window.SetStatusBar(status)
+        
         main_window.EndBatch()
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
+    def set_menu_bar_id(self, menu_bar_id):
+        """ Set the menu bar id for the underlying widget.
+
+        """
+        self._menu_bar_id = menu_bar_id
+
     def set_dock_pane_ids(self, pane_ids):
         """ Set the dock pane ids for the underlying widget.
 

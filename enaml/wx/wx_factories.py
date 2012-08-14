@@ -7,6 +7,11 @@ def action_factory():
     return WxAction
 
 
+def action_group_factory():
+    from .wx_action_group import WxActionGroup
+    return WxActionGroup
+
+
 def calendar_factory():
     from .wx_calendar import WxCalendar
     return WxCalendar
@@ -82,6 +87,16 @@ def main_window_factory():
     return WxMainWindow
 
 
+def menu_factory():
+    from .wx_menu import WxMenu
+    return WxMenu
+
+
+def menu_bar_factory():
+    from .wx_menu_bar import WxMenuBar
+    return WxMenuBar
+
+
 def notebook_factory():
     from .wx_notebook import WxNotebook
     return WxNotebook
@@ -154,6 +169,7 @@ def window_factory():
 
 WX_FACTORIES = {
     'Action': action_factory,
+    'ActionGroup': action_group_factory,
     'Calendar': calendar_factory,
     'CheckBox': check_box_factory,
     'ComboBox': combo_box_factory,
@@ -169,6 +185,8 @@ WX_FACTORIES = {
     #'ImageView': image_view_factory,
     'Label': label_factory,
     'MainWindow': main_window_factory,
+    'Menu': menu_factory,
+    'MenuBar': menu_bar_factory,
     'Notebook': notebook_factory,
     'Page': page_factory,
     'PushButton': push_button_factory,

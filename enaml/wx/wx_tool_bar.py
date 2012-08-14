@@ -2,11 +2,8 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from itertools import count
-
 import wx
 
-from .wx_action import EVT_ACTION_CHANGED
 from .wx_constraints_widget import WxConstraintsWidget
 from .wx_main_window import wxMainWindow
 from .wx_upstream import aui
@@ -61,7 +58,6 @@ class wxToolBar(aui.AuiToolBar):
         super(wxToolBar, self).__init__(*args, **kwargs)
         self._actions = []
         self._tool_item_map = {}
-        self._tool_id_gen = count()
         self._movable = True
         self._floatable = True
         self._floating = False
@@ -198,13 +194,10 @@ class wxToolBar(aui.AuiToolBar):
         if action.IsSeparator():
             tool_item = self.AddSeparator()
         else:
-            tool_id = self._tool_id_gen.next()
+            tool_id = wx.NewId()
             text = action.GetText()
             if action.IsCheckable():
-                if action.IsExclusive():
-                    kind = wx.ITEM_RADIO
-                else:
-                    kind = wx.ITEM_CHECK
+                kind = wx.ITEM_CHECK
             else:
                 kind = wx.ITEM_NORMAL
             bmp = wx.NullBitmap
@@ -213,10 +206,6 @@ class wxToolBar(aui.AuiToolBar):
         # Store away a reference to the tool item so we map it back
         # to the action for event handling purposes.
         self._tool_item_map[tool_item] = action
-
-        # Finally, bind the change handler for the action so that we
-        # can update the tool item when the action changes.
-        action.Bind(EVT_ACTION_CHANGED, self.OnActionChanged)
 
     def SetToolBarOrientation(self, orientation):
         """ Set the toolbar orientation.
