@@ -4,6 +4,7 @@
 #------------------------------------------------------------------------------
 
 from .action import Action
+from .action_group import ActionGroup
 from .bounded_date import BoundedDate
 from .bounded_datetime import BoundedDatetime
 from .calendar import Calendar
