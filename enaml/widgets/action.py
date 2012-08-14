@@ -40,11 +40,6 @@ class Action(MessengerWidget):
     #: if 'checkable' is set to True.
     checked = Bool(False)
 
-    #: Whether or not the action is exclusive amongst its immediate 
-    #: exclusive siblings. This value only has meaning if 'checkable' 
-    #: is set to True.
-    exclusive = Bool(False)
-
     #: Whether or not the item representing the action is enabled.
     enabled = Bool(True)
 
@@ -74,7 +69,6 @@ class Action(MessengerWidget):
         snap['status_tip'] = self.status_tip
         snap['checkable'] = self.checkable
         snap['checked'] = self.checked
-        snap['exclusive'] = self.exclusive
         snap['enabled'] = self.enabled
         snap['visible'] = self.visible
         snap['separator'] = self.separator
@@ -87,7 +81,7 @@ class Action(MessengerWidget):
         super(Action, self).bind()
         attrs = (
             'text', 'tool_tip', 'status_tip', 'checkable', 'checked',
-            'exclusive', 'enabled', 'visible', 'separator'
+            'enabled', 'visible', 'separator'
         )
         self.publish_attributes(*attrs)
 
