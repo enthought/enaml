@@ -15,7 +15,8 @@ wxMenuChangedEvent, EVT_MENU_CHANGED = wx.lib.newevent.NewEvent()
 
 
 class wxMenu(wx.Menu):
-    """ A wx.Menu subclass which exposes a convenient api.
+    """ A wx.Menu subclass which provides a more convenient api for
+    working with wxMenu and wxAction children.
 
     """
     def __init__(self, *args, **kwargs):
@@ -34,8 +35,10 @@ class wxMenu(wx.Menu):
         self._menus_map = {}
         self._actions_map = {}
         self._enabled = True
+        self._bar_enabled = True
         self._visible = True
         self._batch = False
+        self._id = wx.NewId()
 
     #--------------------------------------------------------------------------
     # Private API
@@ -49,16 +52,50 @@ class wxMenu(wx.Menu):
             event.SetEventObject(self)
             wx.PostEvent(self, event)
 
-    def _CreateMenuActionItem(self, action):
+    def _SetBarEnabled(self, enabled):
+        """ A private method called by an owner menu bar.
+
+        Parameters
+        ----------
+        enabled : bool
+            Whether or not the owner menu bar is enabled.
+
+        """
+        if self._bar_enabled != enabled:
+            old = self.IsEnabled()
+            self._bar_enabled = enabled
+            new = self.IsEnabled()
+            if old != new:
+                self._EmitChanged()
+
+    def _CreateMenuItem(self, menu):
+        """ Create a menu item for the given menu.
+
+        Parameters
+        ----------
+        menu : wxMenu
+            The wxMenu instance to use as the submenu.
+
+        Returns
+        -------
+        result : wx.MenuItem
+            The menu item to use for the given menu.
+
+        """
+        text = menu.GetTitle()
+        menu_id = menu.GetId()
+        text = text or 'menu_%d' % menu_id # null text == exception 
+        res = wx.MenuItem(self, menu_id, text, '', subMenu=menu)
+        res.Enable(menu.IsEnabled())
+        return res
+
+    def _CreateActionItem(self, action):
         """ Create a menu item for the given action.
 
         Parameters
         ----------
         action : wxAction
             The wx action for which to create a wx.MenuItem.
-
-        exclusive : bool, optional
-            Whether or not to make the menu item exclusive.
 
         Returns
         -------
@@ -72,7 +109,7 @@ class wxMenu(wx.Menu):
             res = wx.MenuItem(self, wx.ID_SEPARATOR, text, help)
         else:
             action_id = action.GetId()
-            text = text or 'menu_%d' % action_id # null text == exception
+            text = text or 'action_%d' % action_id # null text == exception
             if action.IsCheckable():
                 # The wx.ITEM_RADIO kind doesn't behave nicely, so we
                 # just use the check kind and rely on the action group
@@ -98,27 +135,48 @@ class wxMenu(wx.Menu):
         """
         event.Skip()
         action = event.GetEventObject()
-        item = self._actions_map[action]
+        item = self._actions_map.get(action)
 
-        # If the item is a separator, and that has changed, we need
-        # to build an entirely new menu item, and replace the existing
-        # item with the new one. Otherwise, we can just update the
-        # existing menu item in-place.
+        # Fist, check for a visibility change. This requires adding or 
+        # removing the menu item from the menu and the actions map.
+        visible = action.IsVisible()
+        if visible != bool(item):
+            if visible:
+                new_item = self._CreateActionItem(action)
+                index = self._all_items.index(action)
+                n_visible = len(self._actions_map) + len(self._menus_map)
+                index = min(index, n_visible)
+                self.InsertItem(index, new_item)
+                self._actions_map[action] = new_item
+            else:
+                self.DestroyItem(item)
+                del self._actions_map[action]
+            return
+
+        # If the item is invisible, there is nothing to update.
+        if not item:
+            return
+
+        # If the item is a separator, and the separator state has 
+        # changed, we need to build an entirely new menu item, and
+        # replace the existing item with the new one.
         item_sep = item.IsSeparator()
         action_sep = action.IsSeparator()
         if item_sep or action_sep:
             if item_sep != action_sep:
                 self.DestroyItem(item)
-                new_item = self._CreateMenuActionItem(action)
-                self._actions_map[action] = new_item
+                new_item = self._CreateActionItem(action)
                 index = self._all_items.index(action)
                 self.InsertItem(index, new_item)
-        else:
-            item.SetItemLabel(action.GetText())
-            item.SetHelp(action.GetStatusTip())
-            if item.IsCheckable():
-                item.Check(action.IsChecked())
-            item.Enable(action.IsEnabled())
+                self._actions_map[action] = new_item
+            return
+
+        # For all other state, the menu item can be updated in-place.
+        item.SetItemLabel(action.GetText())
+        item.SetHelp(action.GetStatusTip())
+        if item.IsCheckable():
+            item.Check(action.IsChecked())
+        item.Enable(action.IsEnabled())
 
     def OnMenuChanged(self, event):
         """ The event hanlder for the EVT_MENU_CHANGED event.
@@ -130,8 +188,33 @@ class wxMenu(wx.Menu):
         """
         event.Skip()
         menu = event.GetEventObject()
-        item = self._menus_map[menu]
+        item = self._menus_map.get(menu)
+
+        # Fist, check for a visibility change. This requires adding or 
+        # removing the menu item from the menu and the menus map.
+        visible = menu.IsVisible()
+        if visible != bool(item):
+            if visible:
+                new_item = self._CreateMenuItem(menu)
+                index = self._all_items.index(menu)
+                n_visible = len(self._actions_map) + len(self._menus_map)
+                index = min(index, n_visible)
+                self.InsertItem(index, new_item)
+                self._menus_map[menu] = new_item
+            else:
+                # Need to first remove the submenu or wx will destroy it.
+                item.SetSubMenu(None)
+                self.DestroyItem(item)
+                del self._menus_map[menu]
+            return
+
+        # If the item is invisible, there is nothing to update.
+        if not item:
+            return
+
+        # For all other state, the menu item can be updated in-place.
         item.SetItemLabel(menu.GetTitle())
+        item.Enable(menu.IsEnabled())
 
     #--------------------------------------------------------------------------
     # Public API
@@ -155,6 +238,17 @@ class wxMenu(wx.Menu):
         self._batch = False
         if emit:
             self._EmitChanged()
+
+    def GetId(self):
+        """ Get the unique wx id for this menu.
+
+        Returns
+        -------
+        result : int
+            The wx id number for this menu.
+
+        """
+        return self._id
 
     def GetTitle(self):
         """ Get the title for the menu.
@@ -189,7 +283,9 @@ class wxMenu(wx.Menu):
             Whether or not the menu is enabled.
 
         """
-        return self._enabled
+        if self._bar_enabled:
+            return self._enabled
+        return False
 
     def SetEnabled(self, enabled):
         """ Set whether or not the menu is enabled.
@@ -202,7 +298,8 @@ class wxMenu(wx.Menu):
         """
         if self._enabled != enabled:
             self._enabled = enabled
-            self._EmitChanged()
+            if self._bar_enabled:
+                self._EmitChanged()
 
     def IsVisible(self):
         """ Get whether or not the menu is visible.
@@ -241,9 +338,11 @@ class wxMenu(wx.Menu):
         """
         menus_map = self._menus_map
         if menu not in menus_map:
-            menu_item = self.AppendSubMenu(menu, menu.GetTitle())
-            menus_map[menu] = menu_item
             self._all_items.append(menu)
+            if menu.IsVisible():
+                menu_item = self._CreateMenuItem(menu)
+                menus_map[menu] = menu_item
+                self.AppendItem(menu_item)
             menu.Bind(EVT_MENU_CHANGED, self.OnMenuChanged)
 
     def AddAction(self, action):
@@ -259,10 +358,11 @@ class wxMenu(wx.Menu):
         """
         actions_map = self._actions_map
         if action not in actions_map:
-            menu_item = self._CreateMenuActionItem(action)
-            self.AppendItem(menu_item)
-            actions_map[action] = menu_item
             self._all_items.append(action)
+            if action.IsVisible():
+                menu_item = self._CreateActionItem(action)
+                actions_map[action] = menu_item
+                self.AppendItem(menu_item)
             action.Bind(EVT_ACTION_CHANGED, self.OnActionChanged)
 
 
