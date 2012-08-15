@@ -9,7 +9,8 @@ from .wx_widget_component import WxWidgetComponent
 
 
 class wxMenuBar(wx.MenuBar):
-    """ A wx.MenuBar subclass which exposes a convenient api.
+    """ A wx.MenuBar subclass which exposes a more convenient api for
+    working with wxMenu children.
 
     """
     def __init__(self, *args, **kwargs):
@@ -24,6 +25,8 @@ class wxMenuBar(wx.MenuBar):
         """
         super(wxMenuBar, self).__init__(*args, **kwargs)
         self._menus = []
+        self._visible_menus = []
+        self._enabled = True
 
     #--------------------------------------------------------------------------
     # Private API
@@ -35,20 +38,65 @@ class wxMenuBar(wx.MenuBar):
         the menu bar.
 
         """
+        event.Skip()
         if self.IsAttached():
             menu = event.GetEventObject()
-            index = self._menus.index(menu)
+
+            # First, check for a visibility change. This requires adding
+            # or removing the menu from the menu bar.
+            visible = menu.IsVisible()
+            was_visible = menu in self._visible_menus
+            if visible != was_visible:
+                if visible:
+                    index = self._menus.index(menu)
+                    index = min(index, len(self._visible_menus))
+                    self._visible_menus.insert(index, menu)
+                    self.Insert(index, menu, menu.GetTitle())
+                    self.EnableTop(index, menu.IsEnabled())
+                else:
+                    index = self._visible_menus.index(menu)
+                    self._visible_menus.pop(index)
+                    self.Remove(index)
+                return
+
+            # If the menu isn't visible, there's nothing to do.
+            if not visible:
+                return
+
+            # For all other state, the menu can be updated in-place.
+            index = self._visible_menus.index(menu)
             self.SetMenuLabel(index, menu.GetTitle())
             self.EnableTop(index, menu.IsEnabled())
 
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
-    def SetEnabled(self, enabled):
-        """ Enables or disables the menu bar.
+    def IsEnabled(self):
+        """ Get whether or not the menu bar is enabled.
+
+        Returns
+        -------
+        result : bool
+            Whether or not the menu bar is enabled.
 
         """
-        pass
+        return self._enabled
+
+    def SetEnabled(self, enabled):
+        """ Set whether or not the menu bar is enabled.
+
+        Parameters
+        ----------
+        enabled : bool
+            Whether or not the menu bar is enabled.
+
+        """
+        # Wx does not provide a means for disabling the entire menu
+        # bar, so we must do it manually by disabling each menu.
+        if self._enabled != enabled:
+            self._enabled = enabled
+            for menu in self._menus:
+                menu._SetBarEnabled(enabled)
 
     def AddMenu(self, menu):
         """ Add a wxMenu to the menu bar.
@@ -64,24 +112,33 @@ class wxMenuBar(wx.MenuBar):
         menus = self._menus
         if menu not in menus:
             menus.append(menu)
-            self.Append(menu, menu.GetTitle())
+            if menu.IsVisible():
+                self._visible_menus.append(menu)
+                self.Append(menu, menu.GetTitle())
             menu.Bind(EVT_MENU_CHANGED, self.OnMenuChanged)
+            menu._SetBarEnabled(self._enabled)
 
-    def PostAttach(self):
-        """ Update the state of the menu bar once it's been attached.
+    def Update(self):
+        """ A method which can be called to update the menu bar.
+
+        Calling this method will manually refresh the state of the
+        items in the menu bar. This is useful to call just after 
+        attaching the menu bar to a frame, since the menu bar state
+        cannot be updated prior to being attached.
 
         """
         if self.IsAttached():
-            for idx, item in enumerate(self._menus):
-                if not item.IsEnabled():
-                    self.EnableTop(idx, False)
+            for index, menu in enumerate(self._visible_menus):
+                self.SetMenuLabel(index, menu.GetTitle())
+                if not menu.IsEnabled():
+                    self.EnableTop(index, False)
 
 
 class WxMenuBar(WxWidgetComponent):
     """ A Wx implementation of an Enaml MenuBar.
 
     """
-    #: Storage for the menu ids
+    #: Storage for the menu ids.
     _menu_ids = []
 
     #--------------------------------------------------------------------------
@@ -111,10 +168,6 @@ class WxMenuBar(WxWidgetComponent):
             child = find_child(menu_id)
             if child is not None:
                 widget.AddMenu(child.widget())
-
-    #--------------------------------------------------------------------------
-    # Message Handling
-    #--------------------------------------------------------------------------
     
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -136,7 +189,8 @@ class WxMenuBar(WxWidgetComponent):
     def set_visible(self, visible):
         """ Overrdden parent class method.
 
-        This properly sets the visible state on a menu bar.
+        This method is a no-op, since a MenuBar cannot change it's
+        visibility under Wx.
 
         """
         pass
