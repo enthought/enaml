@@ -23,7 +23,7 @@ wxActionChangedEvent, EVT_ACTION_CHANGED = wx.lib.newevent.NewEvent()
 
 
 class wxAction(wx.EvtHandler):
-    """ A wx.EvtHandler which acts like a wx equivalent to a QAction.
+    """ A wx.EvtHandler which behaves similar to a QAction.
 
     """
     #: Class storage which maps action id -> action instance.
