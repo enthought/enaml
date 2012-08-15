@@ -5,6 +5,7 @@
 from traits.api import Bool, Enum, List, Property, Either, cached_property
 
 from .action import Action
+from .action_group import ActionGroup
 from .constraints_widget import ConstraintsWidget, PolicyEnum
 
 
@@ -49,8 +50,9 @@ class ToolBar(ConstraintsWidget):
     #: a constraints based layout.
     orientation = Enum('horizontal', 'vertical')
 
-    #: A read only property which returns the tool bar's actions.
-    actions = Property(depends_on='children')
+    #: A read only property which returns the tool bar's items:
+    #: ActionGroup | Action
+    items = Property(depends_on='children')
 
     #: Hug width is redefined as a property to be computed based on the 
     #: orientation of the tool bar unless overridden by the user.
@@ -74,7 +76,7 @@ class ToolBar(ConstraintsWidget):
 
         """
         snap = super(ToolBar, self).snapshot()
-        snap['action_ids'] = self._snap_action_ids()
+        snap['item_ids'] = self._snap_item_ids()
         snap['movable'] = self.movable
         snap['floatable'] = self.floatable
         snap['floating'] = self.floating
@@ -98,24 +100,25 @@ class ToolBar(ConstraintsWidget):
     # Private API
     #--------------------------------------------------------------------------
     @cached_property
-    def _get_actions(self):
-        """ The getter for the 'actions' property.
+    def _get_items(self):
+        """ The getter for the 'items' property.
 
         Returns
         -------
         result : tuple
-            The tuple of Actions defined as children of this ToolBar.
+            The tuple of items for the ToolBar.
 
         """
         isinst = isinstance
-        actions = (child for child in self.children if isinst(child, Action))
-        return tuple(actions)
+        allowed = (Action, ActionGroup)
+        items = (child for child in self.children if isinst(child, allowed))
+        return tuple(items)
 
-    def _snap_action_ids(self):
-        """ Returns the list of widget ids for the actions.
+    def _snap_item_ids(self):
+        """ Returns the list of widget ids for the tool bar items.
 
         """
-        return [action.widget_id for action in self.actions]
+        return [item.widget_id for item in self.items]
 
     #--------------------------------------------------------------------------
     # Property Methods
@@ -179,25 +182,4 @@ class ToolBar(ConstraintsWidget):
         """
         self.set_guarded(floating=False)
         self.set_guarded(dock_area=content['dock_area'])
-
-    #--------------------------------------------------------------------------
-    # Public API
-    #--------------------------------------------------------------------------
-    def open(self):
-        """ Open the tool bar in the MainWindow. 
-
-        Calling this method will also set the pane visibility to True.
-
-        """
-        self.set_guarded(visible=True)
-        self.send_action('open', {})
-
-    def close(self):
-        """ Close the tool bar in the MainWindow.
-
-        Calling this method will set the pane visibility to False.
-
-        """ 
-        self.set_guarded(visible=False)
-        self.send_action('close', {})
 
