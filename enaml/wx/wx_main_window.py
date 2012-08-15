@@ -31,6 +31,7 @@ class wxMainWindow(wx.Frame):
         self._manager = aui.AuiManager(self, agwFlags=flags)
         self._central_widget = None
         self._batch = False
+        self.Bind(wx.EVT_MENU, self.OnMenu)
         self.Bind(aui.EVT_AUI_PANE_CLOSE, self.OnPaneClose)
         self.Bind(aui.EVT_AUI_PANE_FLOATED, self.OnPaneFloated)
         self.Bind(aui.EVT_AUI_PANE_DOCKED, self.OnPaneDocked)
@@ -74,6 +75,19 @@ class wxMainWindow(wx.Frame):
 
         """
         event.GetPane().window.OnDocked(event)
+
+    def OnMenu(self, event):
+        """ The event handler for the EVT_MENU event.
+
+        This event handler will be called by menu item if a menu bar
+        is added to this window.
+
+        """
+        action = wxAction.FindById(event.GetId())
+        if action is not None:
+            if action.IsCheckable():
+                action.SetChecked(event.Checked())
+            action.Trigger()
 
     #--------------------------------------------------------------------------
     # Public API
@@ -138,6 +152,21 @@ class wxMainWindow(wx.Frame):
 
         if not self._batch:
             manager.Update()
+
+    def SetMenuBar(self, menu_bar):
+        """ Set the menu bar for the main window.
+
+        Parameters
+        ----------
+        menu_bar : wxMenuBar
+            The wxMenuBar instance to add to the main window.
+
+        """
+        old_bar = self.GetMenuBar()
+        if old_bar is not menu_bar:
+            super(wxMainWindow, self).SetMenuBar(menu_bar)
+            # The menu bar must be refreshed after attachment
+            menu_bar.Update()
 
     def AddToolBar(self, tool_bar):
         """ Add a tool bar to the main window.
@@ -234,13 +263,6 @@ class WxMainWindow(WxWindow):
         self.set_menu_bar_id(tree['menu_bar_id'])
         self.set_dock_pane_ids(tree['dock_pane_ids'])
         self.set_tool_bar_ids(tree['tool_bar_ids'])
-        self.widget().Bind(wx.EVT_MENU, self.OnMenu)
-
-    def OnMenu(self, event):
-        action = wxAction.FindById(event.GetId())
-        if action is not None:
-            if action.IsCheckable():
-                action.SetChecked(event.Checked())
 
     def init_layout(self):
         """ Perform the layout initialization for the main window.
@@ -258,8 +280,6 @@ class WxMainWindow(WxWindow):
         menu_bar = find_child(self._menu_bar_id)
         if menu_bar is not None:
             main_window.SetMenuBar(menu_bar.widget())
-            # The menu bar must be refreshed after attachment
-            menu_bar.widget().Update()
 
         # Setup the central widget
         central_child = find_child(self._central_widget_id)
