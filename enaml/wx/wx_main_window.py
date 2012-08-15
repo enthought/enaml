@@ -258,7 +258,8 @@ class WxMainWindow(WxWindow):
         menu_bar = find_child(self._menu_bar_id)
         if menu_bar is not None:
             main_window.SetMenuBar(menu_bar.widget())
-            menu_bar.widget().PostAttach()
+            # The menu bar must be refreshed after attachment
+            menu_bar.widget().Update()
 
         # Setup the central widget
         central_child = find_child(self._central_widget_id)
@@ -277,6 +278,7 @@ class WxMainWindow(WxWindow):
             if dock_pane is not None:
                 main_window.AddDockPane(dock_pane.widget())
 
+        # Setup the status bar
         self._status = status = wx.StatusBar(main_window)
         main_window.SetStatusBar(status)
         
