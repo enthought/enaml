@@ -143,7 +143,7 @@ class wxAction(wx.EvtHandler):
         """
         self._parent = parent
     
-    def TriggerAction(self):
+    def Trigger(self):
         """ A method called by the action owner when the user triggers
         the action.
 
