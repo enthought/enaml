@@ -16,9 +16,8 @@ class Menu(WidgetComponent):
     #: The title to use for the menu.
     title = Unicode
     
-    #: The menu items in the menu. These will be instances of Action,
-    #: ActionGroup, and Menu.
-    menu_items = Property(depends_on='children[]')
+    #: The items in the menu: Menu | Action | ActionGroup
+    items = Property(depends_on='children[]')
 
     #--------------------------------------------------------------------------
     # Initialization
@@ -28,7 +27,7 @@ class Menu(WidgetComponent):
 
         """
         snap = super(Menu, self).snapshot()
-        snap['menu_item_ids'] = self._snap_menu_item_ids()
+        snap['item_ids'] = self._snap_item_ids()
         snap['title'] = self.title
         return snap
 
@@ -43,14 +42,13 @@ class Menu(WidgetComponent):
     # Private API
     #--------------------------------------------------------------------------
     @cached_property
-    def _get_menu_items(self):
-        """ The getter for the 'menu_items' property.
+    def _get_items(self):
+        """ The getter for the 'items' property.
 
         Returns
         -------
         result : tuple
-            The tuple of Actions or Menus defined as children of this 
-            Menu.
+            The tuple of menu items for this menu.
 
         """
         isinst = isinstance
@@ -58,9 +56,9 @@ class Menu(WidgetComponent):
         items = (child for child in self.children if isinst(child, allowed))
         return tuple(items)
 
-    def _snap_menu_item_ids(self):
+    def _snap_item_ids(self):
         """ Returns the list of widget ids for the menu items.
 
         """
-        return [item.widget_id for item in self.menu_items]
+        return [item.widget_id for item in self.items]
 

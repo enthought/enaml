@@ -371,7 +371,7 @@ class WxMenu(WxWidgetComponent):
 
     """
     #: Storage for the menu item ids
-    _menu_item_ids = []
+    _item_ids = []
 
     #--------------------------------------------------------------------------
     # Setup Methods
@@ -389,7 +389,7 @@ class WxMenu(WxWidgetComponent):
 
         """
         super(WxMenu, self).create(tree)
-        self.set_menu_item_ids(tree['menu_item_ids'])
+        self.set_item_ids(tree['item_ids'])
         self.set_title(tree['title'])
         self.widget().EndBatch(emit=False)
 
@@ -400,7 +400,7 @@ class WxMenu(WxWidgetComponent):
         super(WxMenu, self).init_layout()
         widget = self.widget()
         find_child = self.find_child
-        for item_id in self._menu_item_ids:
+        for item_id in self._item_ids:
             child = find_child(item_id)
             if child is not None:
                 child_widget = child.widget()
@@ -424,11 +424,11 @@ class WxMenu(WxWidgetComponent):
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
-    def set_menu_item_ids(self, menu_item_ids):
-        """ Set the menu item ids of the underlying control.
+    def set_item_ids(self, item_ids):
+        """ Set the item ids of the underlying control.
 
         """
-        self._menu_item_ids = menu_item_ids
+        self._item_ids = item_ids
 
     def set_title(self, title):
         """ Set the title of the underlyling control.
