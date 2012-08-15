@@ -180,18 +180,20 @@ class wxMainWindow(wx.Frame):
             The wxToolBar instance to add to the main window.
 
         """
-        manager = self._manager
-        pane = manager.GetPane(tool_bar)
-        if not pane.IsOk():
-            pane = tool_bar.MakePaneInfo()
-            # Do some shennanigans to make sure the toolbar is oriented
-            # properly on initial display. There shouldn't be a need to
-            # do this; this aui code is really bad...
-            pane.Window(tool_bar)
-            manager.SwitchToolBarOrientation(pane)
-            manager.AddPane(tool_bar, pane)
-            if not self._batch:
-                manager.Update()
+        super(wxMainWindow, self).SetToolBar(tool_bar)
+        
+        # manager = self._manager
+        # pane = manager.GetPane(tool_bar)
+        # if not pane.IsOk():
+        #     pane = tool_bar.MakePaneInfo()
+        #     # Do some shennanigans to make sure the toolbar is oriented
+        #     # properly on initial display. There shouldn't be a need to
+        #     # do this; this aui code is really bad...
+        #     pane.Window(tool_bar)
+        #     manager.SwitchToolBarOrientation(pane)
+        #     manager.AddPane(tool_bar, pane)
+        #     if not self._batch:
+        #         manager.Update()
 
     def AddDockPane(self, dock_pane):
         """ Add a dock pane to the main window.
