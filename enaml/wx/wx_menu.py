@@ -167,6 +167,8 @@ class wxMenu(wx.Menu):
                 self.DestroyItem(item)
                 new_item = self._CreateActionItem(action)
                 index = self._all_items.index(action)
+                n_visible = len(self._actions_map) + len(self._menus_map)
+                index = min(index, n_visible)
                 self.InsertItem(index, new_item)
                 self._actions_map[action] = new_item
             return
@@ -174,8 +176,13 @@ class wxMenu(wx.Menu):
         # For all other state, the menu item can be updated in-place.
         item.SetItemLabel(action.GetText())
         item.SetHelp(action.GetStatusTip())
-        if item.IsCheckable():
+        if action.IsCheckable():
+            item.SetKind(wx.ITEM_CHECK)
             item.Check(action.IsChecked())
+        else:
+            if item.IsCheckable():
+                item.Check(False)
+            item.SetKind(wx.ITEM_NORMAL)
         item.Enable(action.IsEnabled())
 
     def OnMenuChanged(self, event):
@@ -336,12 +343,12 @@ class wxMenu(wx.Menu):
             The wxMenu instance to add to this menu.
 
         """
-        menus_map = self._menus_map
-        if menu not in menus_map:
-            self._all_items.append(menu)
+        all_items = self._all_items
+        if menu not in all_items:
+            all_items.append(menu)
             if menu.IsVisible():
                 menu_item = self._CreateMenuItem(menu)
-                menus_map[menu] = menu_item
+                self._menus_map[menu] = menu_item
                 self.AppendItem(menu_item)
             menu.Bind(EVT_MENU_CHANGED, self.OnMenuChanged)
 
@@ -356,12 +363,12 @@ class wxMenu(wx.Menu):
             The wxAction instance ot add to this menu.
 
         """
-        actions_map = self._actions_map
-        if action not in actions_map:
-            self._all_items.append(action)
+        all_items = self._all_items
+        if action not in all_items:
+            all_items.append(action)
             if action.IsVisible():
                 menu_item = self._CreateActionItem(action)
-                actions_map[action] = menu_item
+                self._actions_map[action] = menu_item
                 self.AppendItem(menu_item)
             action.Bind(EVT_ACTION_CHANGED, self.OnActionChanged)
 
