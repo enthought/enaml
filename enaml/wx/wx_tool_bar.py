@@ -4,6 +4,8 @@
 #------------------------------------------------------------------------------
 import wx
 
+from .wx_action import wxAction, EVT_ACTION_CHANGED
+from .wx_action_group import wxActionGroup
 from .wx_constraints_widget import WxConstraintsWidget
 from .wx_main_window import wxMainWindow
 from .wx_upstream import aui
@@ -56,8 +58,8 @@ class wxToolBar(aui.AuiToolBar):
 
         """
         super(wxToolBar, self).__init__(*args, **kwargs)
-        self._actions = []
-        self._tool_item_map = {}
+        self._all_items = []
+        self._actions_map = {}
         self._movable = True
         self._floatable = True
         self._floating = False
@@ -100,43 +102,121 @@ class wxToolBar(aui.AuiToolBar):
                 pane.BestSize(self.GetClientSize())
                 manager.Update()
 
+    def _CreationActionItem(self, action):
+        """ Create an AuiToolBarItem for the given action.
+
+        Parameters
+        ----------
+        action : wxAction
+            The wxAction instance for which create a tool bar item.
+
+        Returns
+        -------
+        result : AuiToolBarItem
+            The tool bar item instance to add to the toolbar.
+
+        """
+        item = aui.AuiToolBarItem()
+        item.SetLabel(action.GetText())
+        item.SetShortHelp(action.GetToolTip())
+        item.SetLongHelp(action.GetStatusTip())
+        item.SetId(action.GetId())
+
+        state = item.GetState()
+
+        if action.IsSeparator():
+            item.SetKind(wx.ITEM_SEPARATOR)
+        else:
+            if action.IsCheckable():
+                item.SetKind(wx.ITEM_CHECK)
+                if action.IsChecked():
+                    state |= aui.AUI_BUTTON_STATE_CHECKED
+            else:
+                item.SetKind(wx.ITEM_NORMAL)
+
+        if not action.IsEnabled():
+            state |= aui.AUI_BUTTON_STATE_DISABLED
+        
+        item.SetState(state)
+
+        # Extra initing not dependent on the action.
+        item.SetHasDropDown(False)
+        item.SetSticky(False)
+        item.SetOrientation(self._tool_orientation)
+        return item
+
     def OnMenu(self, event):
         """ The event handler for the EVT_MENU event.
 
-        This handler calls the appropriate triggered and toggled methods
-        on the underlying action, in the same order as peformed by Qt.
+        This handler maps the event to the appropriate wxAction.
 
         """
-        # If the clicked item is a radio button that has been toggled,
-        # we first emit it's toggled event, followed by the toggle off
-        # event for its siblings. After all toggle events are fired, 
-        # the triggered event is fired. Wx does not give us a toggle
-        # off event, so we need to do a linear search and fire one 
-        # off ourselves for any control that has changed state.
-        tool_item_map = self._tool_item_map
-        check_flag = aui.AUI_BUTTON_STATE_CHECKED
-        tool_id = event.GetId()
-        tool_item = self.FindTool(tool_id)
-        action = tool_item_map[tool_item]
-        checked = bool(tool_item.state & check_flag)
-        if checked != action.IsChecked():
-            action.ActionToggled(checked)
-            if tool_item.kind == wx.ITEM_RADIO:
-                for other_item, other_action in tool_item_map.iteritems():
-                    if other_action is not action:
-                        item_checked = bool(other_item.state & check_flag)
-                        if item_checked != other_action.IsChecked():
-                            other_action.ActionToggled(item_checked)
-        action.ActionTriggered()
+        action = wxAction.FindById(event.GetId())
+        if action is not None:
+            if action.IsCheckable():
+                action.SetChecked(event.Checked())
+            action.Trigger()
 
     def OnActionChanged(self, event):
         """ The event handler for the EVT_ACTION_CHANGED event.
 
-        This handler update the state of the given action in the toolbar.
+        This handler will be called when a child action changes. It
+        ensures that the new state of the child action is in sync with
+        the associated tool bar item.
 
         """
-        # XXX implement me!
-        pass
+        event.Skip()
+        action = event.GetEventObject()
+        item = self._actions_map.get(action)
+
+        # Fist, check for a visibility change. This requires adding or 
+        # removing the item from the tool bar and the actions map.
+        visible = action.IsVisible()
+        if visible != bool(item):
+            if visible:
+                new_item = self._CreationActionItem(action)
+                index = self._all_items.index(action)
+                index = min(index, len(self._actions_map))
+                self.InsertItem(index, item)
+                self._actions_map[action] = new_item
+                self.Realize()
+            else:
+                self.DeleteTool(item.GetId())
+                self.Realize()
+                del self._actions_map[action]
+            self.Refresh()
+            return
+
+        # If the item is invisible, there is nothing to update.
+        if not item:
+            return
+
+        # Handle a separator action.
+        if action.IsSeparator():
+            item.SetKind(wx.ITEM_SEPARATOR)
+            self.Refresh()
+            return
+
+        # All other state is updated in-place
+        item.SetLabel(action.GetText())
+        item.SetShortHelp(action.GetToolTip())
+        item.SetLongHelp(action.GetStatusTip())
+        state = item.GetState()
+        if action.IsCheckable():
+            item.SetKind(wx.ITEM_CHECK)
+            if action.IsChecked():
+                state |= aui.AUI_BUTTON_STATE_CHECKED
+            else:
+                state &= ~aui.AUI_BUTTON_STATE_CHECKED
+        else:
+            state &= ~aui.AUI_BUTTON_STATE_CHECKED
+            item.SetKind(wx.ITEM_NORMAL)
+        if not action.IsEnabled():
+            state |= aui.AUI_BUTTON_STATE_DISABLED
+        else:
+            state &= ~aui.AUI_BUTTON_STATE_DISABLED
+        item.SetState(state) 
+        self.Refresh()
 
     #--------------------------------------------------------------------------
     # Public API
@@ -183,29 +263,13 @@ class wxToolBar(aui.AuiToolBar):
             The wxAction instance to add to the tool bar.
 
         """
-        # If the action already exists in this toolbar, bail early.
-        actions = self._actions
-        if action in actions:
-            return
-        actions.append(action)
-
-        # Grab the data from the action that's needed to add the item
-        # to the toolbar and build the corresponding tool item.
-        if action.IsSeparator():
-            tool_item = self.AddSeparator()
-        else:
-            tool_id = wx.NewId()
-            text = action.GetText()
-            if action.IsCheckable():
-                kind = wx.ITEM_CHECK
-            else:
-                kind = wx.ITEM_NORMAL
-            bmp = wx.NullBitmap
-            tool_item = self.AddSimpleTool(tool_id, text, bmp, kind=kind)
-
-        # Store away a reference to the tool item so we map it back
-        # to the action for event handling purposes.
-        self._tool_item_map[tool_item] = action
+        all_items = self._all_items
+        if action not in all_items:
+            all_items.append(action)
+            item = self._CreationActionItem(action)
+            self.AddItem(item)
+            self._actions_map[action] = item
+            action.Bind(EVT_ACTION_CHANGED, self.OnActionChanged)
 
     def SetToolBarOrientation(self, orientation):
         """ Set the toolbar orientation.
@@ -386,8 +450,8 @@ class WxToolBar(WxConstraintsWidget):
     """ A Wx implementation of an Enaml ToolBar.
 
     """
-    #: Storage for the action ids
-    _action_ids = []
+    #: Storage for the tool bar item ids. 
+    _item_ids = []
 
     #--------------------------------------------------------------------------
     # Setup Methods
@@ -406,7 +470,7 @@ class WxToolBar(WxConstraintsWidget):
 
         """
         super(WxToolBar, self).create(tree)
-        self.set_action_ids(tree['action_ids'])
+        self.set_item_ids(tree['item_ids'])
         self.set_orientation(tree['orientation'])
         self.set_movable(tree['movable'])
         self.set_floatable(tree['floatable'])
@@ -421,12 +485,19 @@ class WxToolBar(WxConstraintsWidget):
         super(WxToolBar, self).init_layout()
         widget = self.widget()
         find_child = self.find_child
-        for action_id in self._action_ids:
-            child = find_child(action_id)
+        for item_id in self._item_ids:
+            child = find_child(item_id)
             if child is not None:
-                widget.AddAction(child.widget())
+                child_widget = child.widget()
+                if isinstance(child_widget, wxAction):
+                    widget.AddAction(child_widget)
+                elif isinstance(child_widget, wxActionGroup):
+                    for action in child_widget.GetActions():
+                        widget.AddAction(action)
         # We must 'Realize()' the toolbar after adding items, or we
-        # get exceptions for uninitialized state...
+        # get exceptions for uninitialized state... We don't want 
+        # this to be handled by the wxMainWindow, since the toolbar
+        # can be used on its own.
         widget.Realize()
 
     #--------------------------------------------------------------------------
@@ -467,14 +538,18 @@ class WxToolBar(WxConstraintsWidget):
     # Widget Update Methods
     #--------------------------------------------------------------------------\
     def set_visible(self, visible):
+        """ Overridden parent class visibility setter which properly
+        handles the visibility of the tool bar.
+
+        """
         # XXX implement me!
         pass
 
-    def set_action_ids(self, action_ids):
-        """ Set the action ids for the underlying widget.
+    def set_item_ids(self, item_ids):
+        """ Set the item ids for the underlying widget.
 
         """
-        self._action_ids = action_ids
+        self._item_ids = item_ids
 
     def set_orientation(self, orientation):
         """ Set the orientation of the underlying widget.
