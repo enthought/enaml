@@ -39,8 +39,7 @@ class wxToolBar(wx.ToolBar):
     # Private API
     #--------------------------------------------------------------------------
     def _InsertAction(self, index, action):
-        """ A private method which will insert a new tool into the tool
-        bar for the given action at the given index.
+        """ Insert a new tool into the tool bar for the given action.
 
         Parameters
         ----------
