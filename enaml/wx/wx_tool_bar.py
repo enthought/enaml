@@ -7,16 +7,6 @@ import wx
 from .wx_action import wxAction, EVT_ACTION_CHANGED
 from .wx_action_group import wxActionGroup
 from .wx_constraints_widget import WxConstraintsWidget
-from .wx_main_window import wxMainWindow
-
-
-#: A mapping from Enaml dock orientation to wx dock position
-_DOCK_AREA_MAP = {
-    'left': wx.TB_LEFT,
-    'right': wx.TB_RIGHT,
-    'top': wx.TB_TOP,
-    'bottom': wx.TB_BOTTOM,
-}
 
 
 #: A mapping from Enaml orientation to wx Orientation
@@ -48,21 +38,44 @@ class wxToolBar(wx.ToolBar):
     #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
-    def _CreationActionItem(self, action):
-        """ Create an AuiToolBarItem for the given action.
+    def _InsertAction(self, index, action):
+        """ A private method which will insert a new tool into the tool
+        bar for the given action at the given index.
 
         Parameters
         ----------
         action : wxAction
-            The wxAction instance for which create a tool bar item.
+            The wxAction instance to add to the tool bar.
 
         Returns
         -------
-        result : AuiToolBarItem
-            The tool bar item instance to add to the toolbar.
+        result : wxToolBarToolBase
+            The tool base item created when adding the control to the
+            tool bar.
 
         """
-        
+        if action.IsSeparator():
+            item = self.InsertSeparator(index)
+        else:
+            text = action.GetText()
+            short_help = action.GetToolTip()
+            long_help = action.GetStatusTip()
+            action_id = action.GetId()
+            bmp = wx.EmptyBitmap(0, 0)
+            if action.IsCheckable():
+                item = self.InsertLabelTool(
+                    index, action_id, text, bmp, kind=wx.ITEM_CHECK,
+                    shortHelp=short_help, longHelp=long_help,
+                )
+                if action.IsChecked() != item.IsToggled():
+                    item.Toggle()
+            else:
+                item = self.InsertLabelTool(
+                    index, action_id, text, bmp, kind=wx.ITEM_NORMAL,
+                    shortHelp=short_help, longHelp=long_help,
+                )
+            item.Enable(action.IsEnabled())
+        return item
 
     def OnMenu(self, event):
         """ The event handler for the EVT_MENU event.
@@ -70,12 +83,11 @@ class wxToolBar(wx.ToolBar):
         This handler maps the event to the appropriate wxAction.
 
         """
-        print 'tb menu event'
-        # action = wxAction.FindById(event.GetId())
-        # if action is not None:
-        #     if action.IsCheckable():
-        #         action.SetChecked(event.Checked())
-        #     action.Trigger()
+        action = wxAction.FindById(event.GetId())
+        if action is not None:
+            if action.IsCheckable():
+                action.SetChecked(event.Checked())
+            action.Trigger()
 
     def OnActionChanged(self, event):
         """ The event handler for the EVT_ACTION_CHANGED event.
@@ -85,59 +97,60 @@ class wxToolBar(wx.ToolBar):
         the associated tool bar item.
 
         """
-        # event.Skip()
-        # action = event.GetEventObject()
-        # item = self._actions_map.get(action)
+        event.Skip()
+        action = event.GetEventObject()
+        item = self._actions_map.get(action)
 
-        # # Fist, check for a visibility change. This requires adding or 
-        # # removing the item from the tool bar and the actions map.
-        # visible = action.IsVisible()
-        # if visible != bool(item):
-        #     if visible:
-        #         new_item = self._CreationActionItem(action)
-        #         index = self._all_items.index(action)
-        #         index = min(index, len(self._actions_map))
-        #         self.InsertItem(index, item)
-        #         self._actions_map[action] = new_item
-        #         self.Realize()
-        #     else:
-        #         self.DeleteTool(item.GetId())
-        #         self.Realize()
-        #         del self._actions_map[action]
-        #     self.Refresh()
-        #     return
+        # Handle a visibility change. The tool must be added/removed.
+        visible = action.IsVisible()
+        if visible != bool(item):
+            if visible:
+                index = self._all_items.index(action)
+                index = min(index, len(self._actions_map))
+                new_item = self._InsertAction(index, action)
+                self._actions_map[action] = new_item
+                self.Realize()
+            else:
+                self.DeleteTool(item.GetId())
+                del self._actions_map[action]
+            return
 
-        # # If the item is invisible, there is nothing to update.
-        # if not item:
-        #     return
+        # If the item is invisible, there is nothing to update.
+        if not item:
+            return
 
-        # # Handle a separator action.
-        # if action.IsSeparator():
-        #     item.SetKind(wx.ITEM_SEPARATOR)
-        #     self.Refresh()
-        #     return
+        # Handle a separator change. The existing tool must be replaced.
+        if action.IsSeparator() != item.IsSeparator():
+            self.DeleteTool(item.GetId())
+            del self._actions_map[action]
+            index = self._all_items.index(action)
+            index = min(index, len(self._actions_map))
+            new_item = self._InsertAction(index, action)
+            self._actions_map[action] = new_item
+            self.Realize()
+            return
 
-        # # All other state is updated in-place
-        # item.SetLabel(action.GetText())
-        # item.SetShortHelp(action.GetToolTip())
-        # item.SetLongHelp(action.GetStatusTip())
-        # state = item.GetState()
-        # if action.IsCheckable():
-        #     item.SetKind(wx.ITEM_CHECK)
-        #     if action.IsChecked():
-        #         state |= aui.AUI_BUTTON_STATE_CHECKED
-        #     else:
-        #         state &= ~aui.AUI_BUTTON_STATE_CHECKED
-        # else:
-        #     state &= ~aui.AUI_BUTTON_STATE_CHECKED
-        #     item.SetKind(wx.ITEM_NORMAL)
-        # if not action.IsEnabled():
-        #     state |= aui.AUI_BUTTON_STATE_DISABLED
-        # else:
-        #     state &= ~aui.AUI_BUTTON_STATE_DISABLED
-        # item.SetState(state) 
-        # self.Refresh()
+        # Handle a checkable change. The existing too must be replaced.
+        if action.IsCheckable() != item.CanBeToggled():
+            self.DeleteTool(item.GetId())
+            del self._actions_map[action]
+            index = self._all_items.index(action)
+            index = min(index, len(self._actions_map))
+            new_item = self._InsertAction(index, action)
+            self._actions_map[action] = new_item
+            self.Realize()
+            return 
 
+        # All other state can be updated in-place.
+        item.SetLabel(action.GetText())
+        item.SetShortHelp(action.GetToolTip())
+        item.SetLongHelp(action.GetStatusTip())
+        if action.IsCheckable():
+            if action.IsChecked() != item.IsToggled():
+                item.Toggle()
+        item.Enable(action.IsEnabled())
+        self.Realize()
+    
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
@@ -155,19 +168,11 @@ class wxToolBar(wx.ToolBar):
         all_items = self._all_items
         if action not in all_items:
             all_items.append(action)
-            bmp = wx.EmptyBitmap(0, 0)
-            #bmp = wx.BitmapFromImage(wx.EmptyImage(1, 1))
-            action_id = action.GetId()
-            text = action.GetText()
-            text = text or 'action_%d' % action_id
-            if action.IsSeparator():
-                self.AddSeparator()
-            else:
-                self.AddCheckLabelTool(action_id, text, bmp)
-            #item = self._CreationActionItem(action)
-            #self.AddItem(item)
-            #self._actions_map[action] = item
-            #action.Bind(EVT_ACTION_CHANGED, self.OnActionChanged)
+            if action.IsVisible():
+                index = len(self._actions_map)
+                item = self._InsertAction(index, action)
+                self._actions_map[action] = item 
+            action.Bind(EVT_ACTION_CHANGED, self.OnActionChanged)
 
 
 class WxToolBar(WxConstraintsWidget):
@@ -184,14 +189,16 @@ class WxToolBar(WxConstraintsWidget):
         """ Create the underlying tool bar widget.
 
         """
-        # The orientation or dock position of a tool bar can only be set
-        # at creation time. Wx does not support changing it dynamically.
-        style = wx.TB_TEXT
-        if isinstance(parent, wxMainWindow):
-            style |= _DOCK_AREA_MAP[tree['dock_area']]
-        else:
+        # The orientation of a tool bar can only be set at creation time. 
+        # Wx does not support changing it dynamically. It is only set if
+        # the tool bar is a child of something other than a wx.Frame.
+        # The style must include TB_FLAT or separators won't be drawn.
+        style =  wx.TB_FLAT | wx.TB_TEXT | wx.NO_BORDER
+        if not isinstance(parent, wx.Frame):
             style |= _ORIENTATION_MAP[tree['orientation']]
-    
+        else:
+            style |= wx.HORIZONTAL 
+
         tbar = wxToolBar(parent, style=style)
 
         # Setting the tool bar to double buffered avoids a ton of
@@ -233,9 +240,8 @@ class WxToolBar(WxConstraintsWidget):
                 elif isinstance(child_widget, wxActionGroup):
                     for action in child_widget.GetActions():
                         widget.AddAction(action)
-        # We must 'Realize()' the toolbar after adding items, or we
-        # get exceptions for uninitialized state... We don't want 
-        # this to be handled by the wxMainWindow, since the toolbar
+        # We must 'Realize()' the toolbar after adding items. We don't
+        # want this to be handled by the wxMainWindow, since the toolbar
         # can be used on its own.
         widget.Realize()
 

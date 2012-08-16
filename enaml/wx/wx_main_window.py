@@ -9,6 +9,55 @@ from .wx_upstream import aui
 from .wx_window import WxWindow
 
 
+class wxToolBarContainer(wx.Panel):
+    """ A simple wx.Panel that arranges the tool bars for a main window.
+
+    """
+    # The Wx AuiToolBar is terrible and the aui code which lays out
+    # the tool bars is equally as bad. Unless we want to rewrite the
+    # entire aui libary to do docking properly, we have to accept that
+    # docking toolbars on wx are a no-go. That said, if the user defined
+    # multiple tool bars for their main window, it would be bad to only 
+    # show one of them, which is what we would get if we had the wx.Frame
+    # manage the tool bars directly (since it only supports a single tool
+    # bar). Instead, we put all of the tool bars in a vertical sizer and
+    # stick the entire thing at the top of the main window layout and 
+    # forbid it from being moved around. If better docking support is
+    # desired, the user would be better off with Qt.
+    def __init__(self, *args, **kwargs):
+        """ Initialize a wxToolBarContainer.
+
+        Parameters
+        ----------
+        *args, **kwargs
+            The positional and keyword arguments to initialize a 
+            wx.Panel.
+
+        """
+        super(wxToolBarContainer, self).__init__(*args, **kwargs)
+        self._tool_bars = []
+        self.SetSizer(wx.BoxSizer(wx.VERTICAL))
+        self.SetDoubleBuffered(True)
+
+    def AddToolBar(self, tool_bar):
+        """ Add a tool bar to the container.
+
+        If the tool bar already exists in this container, this will be
+        a no-op. The tool bar will be reparented to this container.
+
+        Parameters
+        ----------
+        tool_bar : wxToolBar
+            The wxToolBar instance to add to this container.
+
+        """
+        tool_bars = self._tool_bars
+        if tool_bar not in tool_bars:
+            tool_bars.append(tool_bar)
+            tool_bar.Reparent(self)
+            self.GetSizer().Add(tool_bar, 0, wx.EXPAND)
+
+
 class wxMainWindow(wx.Frame):
     """ A wx.Frame subclass which adds MainWindow functionality.
 
@@ -30,6 +79,7 @@ class wxMainWindow(wx.Frame):
         )
         self._manager = aui.AuiManager(self, agwFlags=flags)
         self._central_widget = None
+        self._tool_bars = None
         self._batch = False
         self.Bind(wx.EVT_MENU, self.OnMenu)
         self.Bind(aui.EVT_AUI_PANE_CLOSE, self.OnPaneClose)
@@ -92,21 +142,6 @@ class wxMainWindow(wx.Frame):
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
-    def GetAuiManager(self):
-        """ Get the pane manager for the main window.
-
-        This method should not normally be called by the user. It is
-        used by the various children of the main window when they need
-        to manipulate the state of their pane info object.
-
-        Returns
-        -------
-        result : AuiManager
-            The AuiManager instance managing the panes for this window.
-
-        """
-        return self._manager
-
     def BeginBatch(self):
         """ Enter batch update mode for main window updates.
 
@@ -138,18 +173,15 @@ class wxMainWindow(wx.Frame):
 
         """
         manager = self._manager
-        
         old_widget = self._central_widget
         if old_widget:
             pane = manager.GetPane(old_widget)
             if pane.IsOk():
                 pane.Show(False)
                 manager.DetachPane(old_widget)
-
         self._central_widget = widget
         pane = aui.AuiPaneInfo().CenterPane()
         manager.AddPane(widget, pane)
-
         if not self._batch:
             manager.Update()
 
@@ -172,7 +204,7 @@ class wxMainWindow(wx.Frame):
         """ Add a tool bar to the main window.
 
         If the tool bar already exists in the main window, calling this
-        method is a no-op.
+        method is effectively a no-op.
 
         Parameters
         ----------
@@ -180,20 +212,17 @@ class wxMainWindow(wx.Frame):
             The wxToolBar instance to add to the main window.
 
         """
-        super(wxMainWindow, self).SetToolBar(tool_bar)
-        
-        # manager = self._manager
-        # pane = manager.GetPane(tool_bar)
-        # if not pane.IsOk():
-        #     pane = tool_bar.MakePaneInfo()
-        #     # Do some shennanigans to make sure the toolbar is oriented
-        #     # properly on initial display. There shouldn't be a need to
-        #     # do this; this aui code is really bad...
-        #     pane.Window(tool_bar)
-        #     manager.SwitchToolBarOrientation(pane)
-        #     manager.AddPane(tool_bar, pane)
-        #     if not self._batch:
-        #         manager.Update()
+        bars = self._tool_bars
+        manager = self._manager
+        if bars is None:
+            bars = self._tool_bars = wxToolBarContainer(self)
+            pane = aui.AuiPaneInfo().ToolbarPane().Top().Gripper(False)
+            manager.AddPane(bars, pane)
+        pane = manager.GetPane(bars)
+        bars.AddToolBar(tool_bar)
+        pane.MinSize(bars.GetEffectiveMinSize())
+        if not self._batch:
+            manager.Update()
 
     def AddDockPane(self, dock_pane):
         """ Add a dock pane to the main window.
