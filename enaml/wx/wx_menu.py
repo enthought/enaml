@@ -68,8 +68,8 @@ class wxMenu(wx.Menu):
             if old != new:
                 self._EmitChanged()
 
-    def _CreateMenuItem(self, menu):
-        """ Create a menu item for the given menu.
+    def _InsertMenuItem(self, index, menu):
+        """ Insert a new item into the menu for the given menu.
 
         Parameters
         ----------
@@ -87,10 +87,11 @@ class wxMenu(wx.Menu):
         text = text or 'menu_%d' % menu_id # null text == exception 
         res = wx.MenuItem(self, menu_id, text, '', subMenu=menu)
         res.Enable(menu.IsEnabled())
+        self.InsertItem(index, res)
         return res
 
-    def _CreateActionItem(self, action):
-        """ Create a menu item for the given action.
+    def _InsertActionItem(self, index, action):
+        """ Insert a new item into the menu for the given action.
 
         Parameters
         ----------
@@ -107,6 +108,7 @@ class wxMenu(wx.Menu):
         help = action.GetStatusTip()
         if action.IsSeparator():
             res = wx.MenuItem(self, wx.ID_SEPARATOR, text, help)
+            self.InsertItem(index, res)
         else:
             action_id = action.GetId()
             text = text or 'action_%d' % action_id # null text == exception
@@ -118,10 +120,14 @@ class wxMenu(wx.Menu):
                 # breaks the Windows theme.
                 kind = wx.ITEM_CHECK
                 res = wx.MenuItem(self, action_id, text, help, kind)
+                # Must instert the item before checking it, or c++
+                # assertion errors are thrown
+                self.InsertItem(index, res)
                 res.Check(action.IsChecked())
             else:
                 kind = wx.ITEM_NORMAL
                 res = wx.MenuItem(self, action_id, text, help, kind)
+                self.InsertItem(index, res)
             res.Enable(action.IsEnabled())
         return res
 
@@ -142,11 +148,10 @@ class wxMenu(wx.Menu):
         visible = action.IsVisible()
         if visible != bool(item):
             if visible:
-                new_item = self._CreateActionItem(action)
                 index = self._all_items.index(action)
                 n_visible = len(self._actions_map) + len(self._menus_map)
                 index = min(index, n_visible)
-                self.InsertItem(index, new_item)
+                new_item = self._InsertActionItem(index, action)
                 self._actions_map[action] = new_item
             else:
                 self.DestroyItem(item)
@@ -165,11 +170,10 @@ class wxMenu(wx.Menu):
         if item_sep or action_sep:
             if item_sep != action_sep:
                 self.DestroyItem(item)
-                new_item = self._CreateActionItem(action)
                 index = self._all_items.index(action)
                 n_visible = len(self._actions_map) + len(self._menus_map)
                 index = min(index, n_visible)
-                self.InsertItem(index, new_item)
+                new_item = self._InsertActionItem(index, action)
                 self._actions_map[action] = new_item
             return
 
@@ -202,11 +206,10 @@ class wxMenu(wx.Menu):
         visible = menu.IsVisible()
         if visible != bool(item):
             if visible:
-                new_item = self._CreateMenuItem(menu)
                 index = self._all_items.index(menu)
                 n_visible = len(self._actions_map) + len(self._menus_map)
                 index = min(index, n_visible)
-                self.InsertItem(index, new_item)
+                new_item = self._InsertMenuItem(index, menu)
                 self._menus_map[menu] = new_item
             else:
                 # Need to first remove the submenu or wx will destroy it.
@@ -347,9 +350,9 @@ class wxMenu(wx.Menu):
         if menu not in all_items:
             all_items.append(menu)
             if menu.IsVisible():
-                menu_item = self._CreateMenuItem(menu)
+                index = len(self._actions_map) + len(self._menus_map)
+                menu_item = self._InsertMenuItem(index, menu)
                 self._menus_map[menu] = menu_item
-                self.AppendItem(menu_item)
             menu.Bind(EVT_MENU_CHANGED, self.OnMenuChanged)
 
     def AddAction(self, action):
@@ -367,9 +370,9 @@ class wxMenu(wx.Menu):
         if action not in all_items:
             all_items.append(action)
             if action.IsVisible():
-                menu_item = self._CreateActionItem(action)
+                index = len(self._actions_map) + len(self._menus_map)
+                menu_item = self._InsertActionItem(index, action)
                 self._actions_map[action] = menu_item
-                self.AppendItem(menu_item)
             action.Bind(EVT_ACTION_CHANGED, self.OnActionChanged)
 
 
