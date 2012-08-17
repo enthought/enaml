@@ -164,10 +164,6 @@ class WxClientSession(object):
         for widget, tree in created:
             widget.create(tree)
 
-        # Run the post creation pass top-down
-        for widget, tree in created:
-            widget.post_create()
-
         # Run the layout initializtion bottom-up
         for widget, tree in reversed(created):
             widget.init_layout()

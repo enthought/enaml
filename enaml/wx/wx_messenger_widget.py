@@ -243,26 +243,11 @@ class WxMessengerWidget(object):
         parent_widget = parent.widget() if parent else None
         self._widget = self.create_widget(parent_widget, tree)
 
-    def post_create(self):
-        """ A method that allows widgets to do post creation work.
-
-        This method is called after all widgets in a tree have had
-        their 'create' method called. It is useful for doing any
-        initialization where a widget must access its child widgets.
-
-        The default implementation of this method is a no-op in order
-        to be super() friendly.
-
-        This method is called by the application in a top-down fashion.
-
-        """
-        pass
-
     def init_layout(self):
         """ A method that allows widgets to do layout initialization.
 
         This method is called after all widgets in a tree have had
-        their 'post_create' method called. It is useful for doing any
+        their 'create' method called. It is useful for doing any
         initialization related to layout.
 
         The default implementation of this method is a no-op in order
