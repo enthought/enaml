@@ -142,16 +142,6 @@ def splitter_factory():
     return WxSplitter
 
 
-def tab_factory():
-    from .wx_tab import WxTab
-    return WxTab
-
-
-def tab_control_factory():
-    from .wx_tab_control import WxTabControl
-    return WxTabControl
-
-
 # def text_editor_factory():
 #     from .wx_text_editor import WxTextEditor
 #     return WxTextEditor
@@ -196,8 +186,6 @@ WX_FACTORIES = {
     'Slider': slider_factory,
     'SpinBox': spin_box_factory,
     'Splitter': splitter_factory,
-    'Tab': tab_factory,
-    'TabControl': tab_control_factory,
     #'TextEditor': text_editor_factory,
     'ToolBar': tool_bar_factory,
     'Window': window_factory,
