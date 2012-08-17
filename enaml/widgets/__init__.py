@@ -33,8 +33,6 @@ from .scroll_area import ScrollArea
 from .slider import Slider
 from .spin_box import SpinBox
 from .splitter import Splitter
-from .tab import Tab
-from .tab_control import TabControl
 from .text_editor import TextEditor
 from .tool_bar import ToolBar
 from .window import Window
