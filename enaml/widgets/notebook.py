@@ -11,10 +11,6 @@ from .page import Page
 class Notebook(ConstraintsWidget):
     """ A component which displays its children as tabbed pages.
     
-    A Notebook is similar to a TabControl, but has more features. It is
-    typically used in document style editing situations where the user
-    should have rich control over the layout of their documents.
-
     """
     #: The style of tabs to use in the notebook. Preferences style
     #: tabs are appropriate for configuration dialogs and the like.
