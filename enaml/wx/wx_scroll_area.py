@@ -157,16 +157,14 @@ class WxScrollArea(WxConstraintsWidget):
         widget.
 
         """
-        policy = content['horizontal_scrollbar']
-        self.set_horizontal_scrollbar(policy)
+        self.set_horizontal_scrollbar(content['horizontal_scrollbar'])
 
     def on_action_set_vertical_scrollbar(self, content):
         """ Handle the 'set_vertical_scrollbar' action from the Enaml
         widget.
 
         """
-        policy = content['vertical_scrollbar']
-        self.set_vertical_scrollbar(policy)
+        self.set_vertical_scrollbar(content['vertical_scrollbar'])
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
