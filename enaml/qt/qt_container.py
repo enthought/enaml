@@ -6,7 +6,7 @@ from enaml.layout.layout_manager import LayoutManager
 
 from .qt.QtCore import QSize
 from .qt_constraints_widget import QtConstraintsWidget, LayoutBox
-from .qt_resizing_widgets import QResizingFrame, QResizingWidget
+from .qt_resizing_widgets import QResizingFrame
 
 
 class QContainer(QResizingFrame):
@@ -121,7 +121,7 @@ def as_linear_constraint(info, owners):
 
 
 class QtContainer(QtConstraintsWidget):
-    """ A Qt4 implementation of an Enaml Container.
+    """ A Qt implementation of an Enaml Container.
 
     """
     #: Whether or not the widget is shown on the screen. This value is

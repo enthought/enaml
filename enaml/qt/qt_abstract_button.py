@@ -8,7 +8,7 @@ from .qt_constraints_widget import QtConstraintsWidget
 
 
 class QtAbstractButton(QtConstraintsWidget):
-    """ A Qt4 implementation of the Enaml AbstractButton class.
+    """ A Qt implementation of the Enaml AbstractButton class.
 
     This class can serve as a base class for widgets that implement 
     button behavior such as CheckBox, RadioButton and PushButtons. 

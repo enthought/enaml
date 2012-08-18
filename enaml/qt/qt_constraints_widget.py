@@ -66,7 +66,7 @@ class LayoutBox(object):
 
 
 class QtConstraintsWidget(QtWidgetComponent):
-    """ A Qt4 implementation of an Enaml ConstraintsWidget.
+    """ A Qt implementation of an Enaml ConstraintsWidget.
 
     """
     #: A class attribte which indicates whether or not to use a 

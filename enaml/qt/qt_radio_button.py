@@ -7,7 +7,7 @@ from .qt_abstract_button import QtAbstractButton
 
 
 class QtRadioButton(QtAbstractButton):
-    """ A Qt4 implementation of an Enaml RadioButton.
+    """ A Qt implementation of an Enaml RadioButton.
 
     """
     def create_widget(self, parent, tree):

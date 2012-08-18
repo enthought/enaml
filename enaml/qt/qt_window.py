@@ -246,7 +246,7 @@ class QWindow(QFrame):
 
 
 class QtWindow(QtWidgetComponent):
-    """ A Qt4 implementation of an Enaml Window.
+    """ A Qt implementation of an Enaml Window.
 
     """
     #: The storage for the central widget id
