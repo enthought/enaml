@@ -85,7 +85,7 @@ class QtMessengerWidget(object):
             The content of the message.
 
         """
-        session = self.session
+        session = self._session
         if session is None:
             msg = 'No Session object for widget %s'
             logging.warn(msg % self.widget_id())
