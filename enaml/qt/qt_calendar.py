@@ -7,21 +7,24 @@ from .qt_bounded_date import QtBoundedDate
 
 
 class QtCalendar(QtBoundedDate):
-    """ A Qt implementation of a calendar
+    """ A Qt implementation of an Enaml Calendar.
 
     """
-    def create(self):
-        """ Create the underlying widget
+    #--------------------------------------------------------------------------
+    # Setup Methods
+    #--------------------------------------------------------------------------
+    def create_widget(self, parent, tree):
+        """ Create the underlying calender widget.
 
         """
-        self.widget = QCalendarWidget(self.parent_widget)
+        return QCalendarWidget(parent)
 
-    def initialize(self, attrs):
-        """ Initialize the widget's attributes
+    def create(self, tree):
+        """ Create and initialize the underlying widget.
 
         """
-        super(QtCalendar, self).initialize(attrs)
-        self.widget.activated.connect(self.on_date_changed)
+        super(QtCalendar, self).create(tree)
+        self.widget().activated.connect(self.on_date_changed)
         
     #--------------------------------------------------------------------------
     # Abstract Method Implementations
@@ -35,7 +38,7 @@ class QtCalendar(QtBoundedDate):
             The current control date as a QDate object.
 
         """
-        return self.widget.selectedDate()
+        return self.widget().selectedDate()
 
     def set_date(self, date):
         """ Set the widget's current date.
@@ -46,7 +49,7 @@ class QtCalendar(QtBoundedDate):
             The QDate object to use for setting the date.
 
         """
-        self.widget.setSelectedDate(date)
+        self.widget().setSelectedDate(date)
 
     def set_max_date(self, date):
         """ Set the widget's maximum date.
@@ -57,7 +60,7 @@ class QtCalendar(QtBoundedDate):
             The QDate object to use for setting the maximum date.
 
         """
-        self.widget.setMaximumDate(date)
+        self.widget().setMaximumDate(date)
 
     def set_min_date(self, date):
         """ Set the widget's minimum date.
@@ -68,5 +71,5 @@ class QtCalendar(QtBoundedDate):
             The QDate object to use for setting the minimum date.
 
         """
-        self.widget.setMinimumDate(date)
+        self.widget().setMinimumDate(date)
 
