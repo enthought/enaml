@@ -48,9 +48,10 @@ class wxPage(wx.Panel):
 
         """
         event.Veto()
-        self.Close()
-        evt = wxPageClosedEvent()
-        wx.PostEvent(self, evt)
+        if self.GetClosable():
+            self.Close()
+            evt = wxPageClosedEvent()
+            wx.PostEvent(self, evt)
 
     #--------------------------------------------------------------------------
     # Private API
