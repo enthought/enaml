@@ -165,7 +165,7 @@ class QtClientSession(object):
             widget.create(tree)
 
         # Run the layout initialization bottom-up
-        for widget, tree in created:
+        for widget, tree in reversed(created):
             widget.init_layout()
     
     #--------------------------------------------------------------------------
