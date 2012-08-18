@@ -3,7 +3,6 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import logging
-from weakref import ref
 
 from enaml.utils import LoopbackGuard
 
@@ -12,6 +11,12 @@ class QtMessengerWidget(object):
     """ The base class of the Qt widgets wrappers for a Qt Enaml client.
 
     """
+    # Note that this class creates an explicit reference cycle between
+    # a parent and its children. This is done in the name of performane
+    # and convenience. Since there is already an explicit destruction
+    # phase for tearing down a Session, we can handle breaking the
+    # reference cycles then and make our lives easier the rest of the 
+    # time.
     def __init__(self, parent, widget_id, session):
         """ Initialize a QtMessengerWidget
 
@@ -29,13 +34,14 @@ class QtMessengerWidget(object):
             server widget.
 
         """
-        self._parent_ref = ref(parent) if parent is not None else lambda: None
-        self.widget = None
-        self.children = []
-        self.widget_id = widget_id
-        self.session = session
+        self._widget_id = widget_id
+        self._session = session
+        self._parent = parent
+        self._children = []
+        self._children_map = {}
+        self._widget = None
         if parent is not None:
-            parent.children.append(self)
+            parent.add_child(self)
 
     #--------------------------------------------------------------------------
     # Messaging/Session API
@@ -62,7 +68,7 @@ class QtMessengerWidget(object):
         else:
             # XXX show a dialog here?
             msg = "Unhandled action sent to `%s` from server: %s"
-            logging.warn(msg % (self.widget_id, action))
+            logging.warn(msg % (self.widget_id(), action))
 
     def send_action(self, action, content):
         """ Send an action to the server widget.
@@ -82,31 +88,13 @@ class QtMessengerWidget(object):
         session = self.session
         if session is None:
             msg = 'No Session object for widget %s'
-            logging.warn(msg % self.widget_id)
+            logging.warn(msg % self.widget_id())
         else:
-            session.send_action(self.widget_id, action, content)
+            session.send_action(self.widget_id(), action, content)
 
     #--------------------------------------------------------------------------
     # Properties
     #--------------------------------------------------------------------------
-    @property
-    def parent(self):
-        """ A read-only property which returns the parent of this widget.
-
-        """
-        return self._parent_ref()
-
-    @property
-    def parent_widget(self):
-        """ A read-only property which returns the parent qt widget 
-        for this client widget, or None if it has no parent.
-
-        """
-        parent = self.parent
-        if parent is None:
-            return None
-        return parent.widget
-
     @property
     def loopback_guard(self):
         """ Lazily creates and returns a LoopbackGuard for convenient 
@@ -122,51 +110,152 @@ class QtMessengerWidget(object):
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
-    def create(self):
-        """ A method which must be implemented by subclasses. 
+    def parent(self):
+        """ Get the parent of this messenger widget.
 
-        This method should create the underlying QWidget object and 
-        assign it to the 'widget' attribute. Implementations of this
-        method should *not* call the superclass version.
+        Returns
+        -------
+        result : QtMessengerWidget or None
+            The parent of this messenger widget, or None if it has
+            no parent.
+
+        """
+        return self._parent
+
+    def children(self):
+        """ Get the children of this widget.
+
+        Returns
+        -------
+        result : list
+            The list of children of this widget. This list should not
+            be modified in place by user code.
+
+        """
+        return self._children
+
+    def add_child(self, child):
+        """ Add a child widget to this widget.
+
+        Parameters
+        ----------
+        child : QtMessengerWidget
+            The child widget to add to this widget.
+
+        """
+        # XXX handle reparenting and duplicate adding
+        self._children.append(child)
+        self._children_map[child.widget_id()] = child
+
+    def remove_child(self, child):
+        """ Remove the child widget from this widget.
+
+        Parameters
+        ----------
+        child : QtMessengerWidget
+            The child widget to remove from this widget.
+
+        """
+        # XXX handle unparenting
+        try:
+            self._children.remove(child)
+        except ValueError:
+            pass
+        self._children_map.pop(child.widget_id(), None)
+
+    def find_child(self, widget_id):
+        """ Find the child with the given widget id.
+
+        Parameters
+        ----------
+        widget_id : str
+            The widget identifier for the target widget.
+
+        Returns
+        -------
+        result : QtMessengerWidget or None
+            The child widget or None if its not found.
+
+        """
+        return self._children_map.get(widget_id)
+
+    def widget(self):
+        """ Get the toolkit widget for this messenger widget.
+
+        Returns
+        -------
+        result : QWidget
+            The toolkit widget for this messenger widget, or None if
+            it does not have a toolkit widget.
+
+        """
+        return self._widget
+
+    def widget_id(self):
+        """ Get the widget id for the messenger widget.
+
+        Returns
+        -------
+        result : str
+            The widget identifier for this messenger widget.
+
+        """
+        return self._widget_id
+
+    def create_widget(self, parent, tree):
+        """ A method which must be implemented by subclasses.
+
+        This method is called by the create(...) method. It should 
+        create and return the underlying Qt widget. Implementations 
+        of this method should *not* call the superclass version.
+
+        Parameters
+        ----------
+        parent : QWidget or None
+            The parent Qt widget for this control, or None if if the
+            control does not have a parent.
+
+        tree : dict
+            The dictionary representation of the tree for this object.
+            This is provided in the even that the component needs to 
+            create a different type of widget based on the information
+            in the tree.
 
         """
         raise NotImplementedError
 
-    def initialize(self, attributes):
-        """ A method called to initialize the attributes of the 
-        underlying widget.
+    def create(self, tree):
+        """ A method called by the application when creating the UI.
 
-        The default implementation of this method is a no-op in order
-        to be super() friendly. Implementations of this method should
-        call the superclass version to make sure that all attributes
-        get properly initialized.
+        The default implementation of this method calls 'create_widget'
+        and assigns the results to the 'widget' attribute, so subclasses
+        must be sure to call the superclass method as the first order of
+        business.
 
-        This method will be called after all other widgets for the
-        creation pass have been created.
+        This method is called by the application in a top-down fashion.
 
         Parameters
         ----------
-        attributes : dict
-            The dictionary of attributes that was contained in the
-            payload of the operation for the 'create' action which
-            created this widget.
+        tree : dict
+            The dictionary representation of the tree for this object.
 
         """
-        pass
+        parent = self._parent
+        parent_widget = parent.widget() if parent else None
+        self._widget = self.create_widget(parent_widget, tree)
 
-    def post_initialize(self):
-        """ A method that allows widgets to do post initialization work.
+    def init_layout(self):
+        """ A method that allows widgets to do layout initialization.
 
-        This method is called after all widgets in a creation pass have
-        had their 'initialize' method called. It is useful for e.g.
-        layout initialization, which requires that all child widgets
-        have their attributes already initialized.
+        This method is called after all widgets in a tree have had
+        their 'create' method called. It is useful for doing any
+        initialization related to layout.
 
         The default implementation of this method is a no-op in order
-        to be super() friendly. Implementations of this method should
-        call the superclass version to make sure that all post
-        initialization is properly performed.
+        to be super() friendly.
 
+        This method is called by the application in a bottom-up order.
+        
         """
         pass
 
@@ -175,13 +264,13 @@ class QtMessengerWidget(object):
         it parent and its children and destroy the underlying Qt widget.
 
         """
-        parent = self.parent
+        # XXX fixup this destroy method
+        parent = self._parent
         if parent is not None:
-            if self in parent.children:
-                parent.children.remove(self)
-        self.children = []
-        widget = self.widget
+            parent.remove_child(self)
+        self._children = []
+        widget = self._widget
         if widget is not None:
             widget.destroy()
-            self.widget = None
+            self._widget = None
 
