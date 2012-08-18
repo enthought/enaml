@@ -107,21 +107,5 @@ def _resizable(cls):
 QResizingFrame = _resizable(QtGui.QFrame)
 
 
-QResizingDialog = _resizable(QtGui.QDialog)
-
-
-QResizingMainWindow = _resizable(QtGui.QMainWindow)
-
-
 QResizingGroupBox = _resizable(QtGui.QGroupBox)
-
-
-QResizingScrollArea = _resizable(QtGui.QScrollArea)
-
-
-QResizingTabWidget = _resizable(QtGui.QTabWidget)
-
-
-QResizingSplitter = _resizable(QtGui.QSplitter)
-
 
