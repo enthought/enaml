@@ -10,9 +10,9 @@ class QtRadioButton(QtAbstractButton):
     """ A Qt4 implementation of an Enaml RadioButton.
 
     """
-    def create(self):
-        """ Create the underlying widget
+    def create_widget(self, parent, tree):
+        """ Create the underlying radio button widget.
 
         """
-        self.widget = QRadioButton(self.parent_widget)
+        return QRadioButton(parent)
 

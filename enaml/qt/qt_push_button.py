@@ -10,9 +10,9 @@ class QtPushButton(QtAbstractButton):
     """ A Qt4 implementation of an Enaml PushButton.
 
     """
-    def create(self):
+    def create_widget(self, parent, tree):
         """ Create the underlying QPushButton widget.
 
         """
-        self.widget = QPushButton(self.parent_widget)
+        return QPushButton(parent)
 
