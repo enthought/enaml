@@ -7,22 +7,26 @@ from .qt_constraints_widget import QtConstraintsWidget
 
 
 class QtHtml(QtConstraintsWidget):
-    """ A Qt4 implementation of the Enaml HTML widget.
+    """ A Qt implementation of an Enaml HTML widget.
 
     """
-    def create(self):
-        """ Create the underlying widget.
+    #--------------------------------------------------------------------------
+    # Setup Methods
+    #--------------------------------------------------------------------------
+    def create_widget(self, parent, tree):
+        """ Create the underlying html widget.
 
         """
-        self.widget = QTextEdit(self.parent_widget)
-        self.widget.setReadOnly(True)
+        widget = QTextEdit(parent)
+        widget.setReadOnly(True)
+        return widget
 
-    def initialize(self, attrs):
-        """ Initialize the widget's attributes.
+    def create(self, tree):
+        """ Create and initialize the underlying widget.
 
         """
-        super(QtHtml, self).initialize(attrs)
-        self.set_source(attrs['source'])
+        super(QtHtml, self).create(tree)
+        self.set_source(tree['source'])
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -40,5 +44,5 @@ class QtHtml(QtConstraintsWidget):
         """ Set the source of the html widget
 
         """
-        self.widget.setHtml(source)
+        self.widget().setHtml(source)
 

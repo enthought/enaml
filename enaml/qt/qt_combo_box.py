@@ -7,23 +7,26 @@ from .qt_constraints_widget import QtConstraintsWidget
 
 
 class QtComboBox(QtConstraintsWidget):
-    """ A Qt4 implementation of an Enaml ComboBox.
+    """ A Qt implementation of an Enaml ComboBox.
     
     """
-    def create(self):
-        """ Create the underlying widget
+    #--------------------------------------------------------------------------
+    # Setup Methods
+    #--------------------------------------------------------------------------
+    def create_widget(self, parent, tree):
+        """ Create the underlying combo box widget.
 
         """
-        self.widget = QComboBox(self.parent_widget)
+        return QComboBox(parent)
 
-    def initialize(self, attrs):
-        """ Initialize the widget's attributes
+    def create(self, tree):
+        """ Create and initialize the underlying widget.
 
         """
-        super(QtComboBox, self).initialize(attrs)
-        self.set_items(attrs['items'])
-        self.set_index(attrs['index'])
-        self.widget.currentIndexChanged.connect(self.on_index_changed)
+        super(QtComboBox, self).create(tree)
+        self.set_items(tree['items'])
+        self.set_index(tree['index'])
+        self.widget().currentIndexChanged.connect(self.on_index_changed)
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -47,7 +50,7 @@ class QtComboBox(QtConstraintsWidget):
         """ The signal handler for the index changed signal.
 
         """
-        content = {'index': self.widget.currentIndex()}
+        content = {'index': self.widget().currentIndex()}
         self.send_action('index_changed', content)
 
     #--------------------------------------------------------------------------
@@ -57,7 +60,7 @@ class QtComboBox(QtConstraintsWidget):
         """ Set the items of the ComboBox.
 
         """
-        widget = self.widget
+        widget = self.widget()
         count = widget.count()
         nitems = len(items)
         for idx, item in enumerate(items[:count]):
@@ -73,5 +76,5 @@ class QtComboBox(QtConstraintsWidget):
         """ Set the current index of the ComboBox
 
         """
-        self.widget.setCurrentIndex(index)
+        self.widget().setCurrentIndex(index)
 

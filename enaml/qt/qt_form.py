@@ -6,7 +6,7 @@ from .qt_container import QtContainer
 
 
 class QtForm(QtContainer):
-    """ A Qt4 implementation of an Enaml Form.
+    """ A Qt implementation of an Enaml Form.
 
     """
     # Currently, the QtContainer superclass is a sufficient implementation.

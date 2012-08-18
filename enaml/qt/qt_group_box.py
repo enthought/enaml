@@ -57,7 +57,7 @@ class QGroupBox(QResizingGroupBox):
 
 
 class QtGroupBox(QtContainer):
-    """ A Qt4 implementation of GroupBox.
+    """ A Qt implementation of an Enaml GroupBox.
 
     """
     #: Don't use a widget item to compute the layout rect for a group
@@ -67,20 +67,20 @@ class QtGroupBox(QtContainer):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create_widget(self, parent, tree):
         """ Creates the underlying QGroupBox control.
 
         """
-        self.widget = QGroupBox(self.parent_widget)
+        return QGroupBox(parent)
 
-    def initialize(self, attrs):
-        """ Intializes the widget with the attributes of this instance.
+    def create(self, tree):
+        """ Create and initialize the underlying widget.
 
         """
-        super(QtGroupBox, self).initialize(attrs)
-        self.set_title(attrs['title'])
-        self.set_flat(attrs['flat'])
-        self.set_title_align(attrs['title_align'])
+        super(QtGroupBox, self).create(tree)
+        self.set_title(tree['title'])
+        self.set_flat(tree['flat'])
+        self.set_title_align(tree['title_align'])
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -110,18 +110,18 @@ class QtGroupBox(QtContainer):
         """ Updates the title of group box.
 
         """
-        self.widget.setTitle(title)
+        self.widget().setTitle(title)
     
     def set_flat(self, flat):
         """ Updates the flattened appearance of the group box.
 
         """
-        self.widget.setFlat(flat)
+        self.widget().setFlat(flat)
     
     def set_title_align(self, align):
         """ Updates the alignment of the title of the group box.
 
         """
         qt_align = QT_ALIGNMENTS[align]
-        self.widget.setAlignment(qt_align)
+        self.widget().setAlignment(qt_align)
 
