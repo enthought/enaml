@@ -124,39 +124,56 @@ class QtContainer(QtConstraintsWidget):
     """ A Qt4 implementation of an Enaml Container.
 
     """
-    def create(self):
-        """ Creates the underlying QResizingFrame widget.
+    #: Whether or not the widget is shown on the screen. This value is
+    #: update by handler for the visibilityChanged signal.
+    _is_shown = True
+
+    #--------------------------------------------------------------------------
+    # Setup Methods
+    #--------------------------------------------------------------------------
+    def create_widget(self, parent, tree):
+        """ Creates the underlying QContainer widget.
 
         """
-        self.widget = QContainer(self.parent_widget)
+        return QContainer(parent)
 
-    def initialize(self, attrs):
-        """ Initialize the attributes of the widget.
+    def create(self, tree):
+        """ Create and initialize the underlying widget.
 
         """
-        super(QtContainer, self).initialize(attrs)
-        self._share_layout = attrs['layout']['share_layout']
+        super(QtContainer, self).create(tree)
+        self._share_layout = tree['layout']['share_layout']
         self._cn_owners = None
         self._owns_layout = True
         self._layout_owner = None
         self._layout_manager = None
-        widget = self.widget
-        if isinstance(widget, QResizingWidget):
-            widget.resized.connect(self.on_resize)
+        widget = self.widget()
+        widget.resized.connect(self.on_resize)
 
-    def post_initialize(self):
-        """ Initializes the layout manager for the container. 
+    def init_layout(self):
+        """ Initializes the layout for the container. 
 
         """
-        super(QtContainer, self).post_initialize()
-        self.setup_layout()
+        super(QtContainer, self).init_layout()
+        widget = self.widget()
+        self._is_show = widget.isVisible()
+        if self._owns_layout:
+            mgr = self._layout_manager = LayoutManager()
+            mgr.initialize(self._generate_constraints())
+            min_size = self.compute_min_size()
+            max_size = self.compute_max_size()
+            widget.setSizeHint(min_size)
+            widget.setMinimumSize(min_size)
+            widget.setMaximumSize(max_size)
 
     #--------------------------------------------------------------------------
     # Signal Handlers
     #--------------------------------------------------------------------------
     def on_resize(self):
-        """ Triggers a layout pass when the container widget has been 
-        resized.
+        """ The signal handler for the 'resized' signal.
+
+        This handler triggers a layout pass when the container widget 
+        is resized.
 
         """
         if self._layout_manager is not None:
@@ -165,43 +182,13 @@ class QtContainer(QtConstraintsWidget):
     #--------------------------------------------------------------------------
     # Layout Handling
     #--------------------------------------------------------------------------
-    def setup_layout(self, force=False):
-        """ Creates the layout manager for this widget if it owns the
-        reponsibility for laying out its descendents.
-
-        Parameters
-        ----------
-        force : bool, optional
-            Force the recreation of the layout manager. The default is
-            False and makes it safe to call this method multiple times
-            during the initialization process. This is handy for when
-            layout is being initialized top-down and the parent needs
-            to have a child setup its layout before its post_initialize
-            method is called.
-
-        """
-        if self._owns_layout:
-            # XXX this is a bit of a hack, not sure if a I like it
-            # yet. The problem is that it's difficult to guarantee
-            # the order of initialization when components are being
-            # built without an O(n**2) sort of the widgets. Is much
-            # easier for the builder to assume that widgets were 
-            # published in an intelligent order and try not to rely
-            # on any particular initialization order. 
-            if self._layout_manager is not None and not force:
-                return
-            mgr = self._layout_manager = LayoutManager()
-            mgr.initialize(self._generate_constraints())
-            self.widget.setSizeHint(self.compute_min_size())
-            self.widget.setMaximumSize(self.compute_max_size())
-
     def relayout(self):
         """ Rebuilds the constraints layout for this widget if it owns
         the responsibility for laying out its descendents.
 
         """
         if self._owns_layout:
-            self.setup_layout(force=True)
+            self.init_layout()
             self.refresh()
         else:
             self._layout_owner.relayout()
@@ -210,12 +197,17 @@ class QtContainer(QtConstraintsWidget):
         """ Makes a layout pass over the descendents if this widget owns
         the responsibility for their layout.
 
+        If the widget is not visible on the screen, the refresh will be
+        skipped.
+
         """
+        if not self._is_shown:
+            return
         if self._owns_layout:
             primitive = self.layout_box.primitive
             width = primitive('width', False)
             height = primitive('height', False)
-            widget = self.widget
+            widget = self.widget()
             size = (widget.width(), widget.height())
             self._layout_manager.layout(self.layout, width, height, size)
         else:
@@ -229,7 +221,7 @@ class QtContainer(QtConstraintsWidget):
         ownership and applies the geometry updates.
 
         """
-        stack = [((0, 0), self.children)]
+        stack = [((0, 0), self.children())]
         pop = stack.pop
         push = stack.append
         while stack:
@@ -238,7 +230,7 @@ class QtContainer(QtConstraintsWidget):
                 new_offset = child.update_layout_geometry(*offset)
                 if isinstance(child, QtContainer):
                     if child._layout_owner is self:
-                        push((new_offset, child.children))
+                        push((new_offset, child.children()))
 
     #--------------------------------------------------------------------------
     # Constraints Computation
@@ -256,7 +248,7 @@ class QtContainer(QtConstraintsWidget):
         # The mapping of constraint owners and the list of constraint
         # info dictionaries provided by the Enaml widgets.
         box = self.layout_box
-        cn_owners = {self.widget_id: box}
+        cn_owners = {self.widget_id(): box}
         cn_dicts = list(self.constraints)
         cn_dicts_extend = cn_dicts.extend
 
@@ -266,7 +258,7 @@ class QtContainer(QtConstraintsWidget):
         raw_cns_extend = raw_cns.extend
         
         # The widget descendent traversal stack
-        stack = list(self.children)
+        stack = list(self.children())
         stack_pop = stack.pop
         stack_extend = stack.extend
 
@@ -281,15 +273,12 @@ class QtContainer(QtConstraintsWidget):
             child = stack_pop()
             if isinstance(child, QtConstraintsWidget):
                 child_box = child.layout_box
-                cn_owners[child.widget_id] = child_box
+                cn_owners[child.widget_id()] = child_box
                 if isinstance(child, QtContainer):
                     if child.transfer_layout_ownership(self):
                         cn_dicts_extend(child.constraints)
-                        stack_extend(child.children)
+                        stack_extend(child.children())
                     else:
-                        # XXX see the comment in setup_layout() for 
-                        # why I don't really like this solution.
-                        child.setup_layout()
                         raw_cns_extend(child.size_hint_constraints())
                 else:
                     raw_cns_extend(child.size_hint_constraints())
