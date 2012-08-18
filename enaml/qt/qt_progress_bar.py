@@ -7,24 +7,28 @@ from .qt_constraints_widget import QtConstraintsWidget
 
 
 class QtProgressBar(QtConstraintsWidget):
-    """ A Qt4 implementation of an Enaml ProgressBar.
+    """ A Qt implementation of an Enaml ProgressBar.
 
     """
-    def create(self):
+    #--------------------------------------------------------------------------
+    # Setup Methods
+    #--------------------------------------------------------------------------
+    def create_widget(self, parent, tree):
         """ Create the underlying progress bar widget.
 
         """
-        self.widget = QProgressBar(self.parent_widget)
-        self.widget.setTextVisible(False)
-        
-    def initialize(self, attrs):
-        """ Initialize the widget's attributes.
+        widget = QProgressBar(parent)
+        widget.setTextVisible(False)
+        return widget
+
+    def create(self, tree):
+        """ Create and initialize the underlying widget.
 
         """
-        super(QtProgressBar, self).initialize(attrs)
-        self.set_minimum(attrs['minimum'])
-        self.set_maximum(attrs['maximum'])
-        self.set_value(attrs['value'])
+        super(QtProgressBar, self).create(tree)
+        self.set_minimum(tree['minimum'])
+        self.set_maximum(tree['maximum'])
+        self.set_value(tree['value'])
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -54,17 +58,17 @@ class QtProgressBar(QtConstraintsWidget):
         """ Set the minimum value of the progress bar
 
         """
-        self.widget.setMinimum(value)
+        self.widget().setMinimum(value)
 
     def set_maximum(self, value):
         """ Set the maximum value of the progress bar
 
         """
-        self.widget.setMaximum(value)
+        self.widget().setMaximum(value)
 
     def set_value(self, value):
         """ Set the value of the progress bar
 
         """
-        self.widget.setValue(value)
+        self.widget().setValue(value)
 
