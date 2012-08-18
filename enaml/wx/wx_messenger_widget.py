@@ -39,6 +39,7 @@ class WxMessengerWidget(object):
         self._parent = parent
         self._children = []
         self._children_map = {}
+        self._widget = None
         if parent is not None:
             parent.add_child(self)
 
@@ -204,14 +205,14 @@ class WxMessengerWidget(object):
     def create_widget(self, parent, tree):
         """ A method which must be implemented by subclasses.
 
-        This method is called by the create(...) method. It should and
-        return the underlying wx widget. Implementations of this method
-        should *not* call the superclass version.
+        This method is called by the create(...) method. It should 
+        create and return the underlying Wx widget. Implementations
+        of this method should *not* call the superclass version.
 
         Parameters
         ----------
         parent : wxWindow or None
-            The parent wx widget for this control, or None if if the
+            The parent Wx widget for this control, or None if if the
             control does not have a parent.
 
         tree : dict
