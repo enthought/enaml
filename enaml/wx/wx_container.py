@@ -200,8 +200,8 @@ class WxContainer(WxConstraintsWidget):
         """ Makes a layout pass over the descendents if this widget owns
         the responsibility for their layout.
 
-        If the widget is not visible on the screen, the refresh will 
-        be skipped.
+        If the widget is not visible on the screen, the refresh will be
+        skipped.
 
         """
         if not self._is_shown:
@@ -338,12 +338,12 @@ class WxContainer(WxConstraintsWidget):
         allow all constraints to be satisfied. 
 
         If this container does not own its layout then it will return 
-        an invalid QSize.
+        an invalid wxSize.
 
         Returns
         -------
-        result : QSize
-            A (potentially) invalid QSize which is the minimum size 
+        result : wxSize
+            A (potentially) invalid wxSize which is the minimum size 
             required to satisfy all constraints.
 
         """
@@ -362,12 +362,12 @@ class WxContainer(WxConstraintsWidget):
         allow all constraints to be satisfied. 
 
         If this container does not own its layout then it will return 
-        an invalid QSize.
+        an invalid wxSize.
 
         Returns
         -------
-        result : QSize
-            A (potentially) invalid QSize which is the maximum size 
+        result : wxSize
+            A (potentially) invalid wxSize which is the maximum size 
             allowable while still satisfying all constraints.
 
         """
