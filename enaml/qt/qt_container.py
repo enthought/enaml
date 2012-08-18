@@ -4,49 +4,9 @@
 #------------------------------------------------------------------------------
 from enaml.layout.layout_manager import LayoutManager
 
-from .qt.QtCore import QSize
+from .qt.QtCore import QSize, Signal
+from .qt.QtGui import QFrame
 from .qt_constraints_widget import QtConstraintsWidget, LayoutBox
-from .qt_resizing_widgets import QResizingFrame
-
-
-class QContainer(QResizingFrame):
-    """ A subclass of QResizingFrame which allows the default sizeHint
-    to be overridden by calling 'setSizeHint'.
-
-    This functionality is used by the QtContainer to override the 
-    size hint with a value computed from the constraints layout 
-    manager.
-
-    """
-    #: An invalid QSize used as the default value for class instances.
-    _size_hint = QSize()
-
-    def sizeHint(self):
-        """ Returns the previously set size hint. If that size hint is
-        invalid, the superclass' sizeHint will be used.
-
-        """
-        hint = self._size_hint
-        if not hint.isValid():
-            hint = super(QResizingFrame, self).sizeHint()
-        return hint
-
-    def setSizeHint(self, hint):
-        """ Sets the size hint to use for this container.
-
-        """
-        self._size_hint = hint
-
-    def minimumSizeHint(self):
-        """ Returns the minimum size hint of the container.
-
-        The minimum size hint for a QContainer is conceptually the
-        same as its size hint, so we just return that value. Overriding
-        this method allows QContainers to function properly as children
-        of scroll areas and splitters.
-
-        """
-        return self.sizeHint()
 
 
 def _convert_cn_info(info, owners):
@@ -118,6 +78,49 @@ def as_linear_constraint(info, owners):
         msg = 'Unhandled constraint operator `%s`' % op
         raise ValueError(msg)
     return cn | info['strength'] | info['weight']
+
+
+class QContainer(QFrame):
+    """ A subclass of QFrame which behaves as a container.
+
+    """
+    #: A signal which is emitted on a resize event.
+    resized = Signal()
+
+    #: An invalid QSize used as the default value for class instances.
+    _size_hint = QSize()
+
+    def resizeEvent(self, event):
+        """ Converts a resize event into a signal.
+
+        """
+        super(QContainer, self).resizeEvent(event)
+        self.resized.emit()
+
+    def sizeHint(self):
+        """ Returns the previously set size hint. If that size hint is
+        invalid, the superclass' sizeHint will be used.
+
+        """
+        hint = self._size_hint
+        if not hint.isValid():
+            hint = super(QContainer, self).sizeHint()
+        return hint
+
+    def setSizeHint(self, hint):
+        """ Sets the size hint to use for this widget.
+
+        """
+        self._size_hint = hint
+
+    def minimumSizeHint(self):
+        """ Returns the minimum size hint of the widget.
+
+        The minimum size hint for a QContainer is conceptually the same
+        as its size hint, so we just return that value.
+
+        """
+        return self.sizeHint()
 
 
 class QtContainer(QtConstraintsWidget):
