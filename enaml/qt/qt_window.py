@@ -4,112 +4,43 @@
 #------------------------------------------------------------------------------
 from .qt.QtCore import QSize, Signal
 from .qt.QtGui import QFrame, QLayout
+from .q_single_widget_layout import QSingleWidgetLayout
 from .qt_utils import deferred_call
 from .qt_widget_component import QtWidgetComponent
 
 
-class QWindowLayout(QLayout):
-    """ A QLayout subclass which can have at most one layout item. This
-    layout item is expanded to fit the allowable space, regardless of 
-    its size policy settings. This is similar to how central widgets 
-    behave in a QMainWindow.
-
-    The class is designed for use by QWindow other uses are at the 
-    user's own risk.
+class QWindowLayout(QSingleWidgetLayout):
+    """ A QSingleWidgetLayout subclass which adds support for windows
+    which explicitly set their minimum and maximum sizes.
 
     """
-    def __init__(self, *args, **kwargs):
-        super(QWindowLayout, self).__init__(*args, **kwargs)
-        self._layout_item = None
-        self._size_hint = QSize()
-
-    def addItem(self, item):
-        """ A virtual method implementation which sets the layout item
-        in the layout. Any old item will be overridden.
-
-        """
-        self._layout_item = item
-        self.update()
-
-    def count(self):
-        """ A virtual method implementation which returns 0 if no layout
-        item is supplied, or 1 if there is a current layout item.
-
-        """
-        return 0 if self._layout_item is None else 1
-
-    def itemAt(self, idx):
-        """ A virtual method implementation which returns the layout item 
-        for the given index or None if one does not exist.
-
-        """
-        if idx == 0:
-            return self._layout_item
-
-    def takeAt(self, idx):
-        """ A virtual method implementation which removes and returns the
-        item at the given index or None if one does not exist.
-
-        """
-        if idx == 0:
-            res = self._layout_item
-            self._layout_item = None
-            return res
-    
-    def sizeHint(self):
-        """ A virtual method implementation which returns an invalid
-        size hint for the top-level Window.
-
-        """
-        return self._size_hint
-
-    def setGeometry(self, rect):
-        """ A reimplemented method which sets the geometry of the managed
-        widget to fill the given rect.
-
-        """
-        super(QWindowLayout, self).setGeometry(rect)
-        item = self._layout_item
-        if item is not None:
-            item.widget().setGeometry(rect)
-
     def minimumSize(self):
-        """ A reimplemented method which returns the minimum size hint
-        of the layout item widget as the minimum size of the window.
+        """ The minimum size for the layout area.
+
+        This is a reimplemented method which will return the explicit
+        minimum size of the window, if provided.
 
         """
         parent = self.parentWidget()
-        if parent is None:
-            return super(QWindowLayout, self).minimumSize()
-
-        expl_size = parent.explicitMinimumSize()
-        if expl_size.isValid():
-            return expl_size
-
-        item = self._layout_item
-        if item is None:
-            return parent.minimumSize()
-
-        return item.widget().minimumSizeHint()
+        if parent is not None:
+            size = parent.explicitMinimumSize()
+            if size.isValid():
+                return size
+        return super(QWindowLayout, self).minimumSize()
             
     def maximumSize(self):
-        """ A reimplemented method which returns the minimum size hint
-        of the layout item widget as the minimum size of the window.
+        """ The maximum size for the layout area.
+
+        This is a reimplemented method which will return the explicit
+        maximum size of the window, if provided.
 
         """
         parent = self.parentWidget()
-        if parent is None:
-            return super(QWindowLayout, self).maximumSize()
-
-        expl_size = parent.explicitMaximumSize()
-        if expl_size.isValid():
-            return expl_size
-
-        item = self._layout_item
-        if item is None:
-            return parent.maximumSize()
-
-        return item.widget().maximumSize()
+        if parent is not None:
+            size = parent.explicitMaximumSize()
+            if size.isValid():
+                return size
+        return super(QWindowLayout, self).maximumSize()
 
 
 class QWindow(QFrame):
