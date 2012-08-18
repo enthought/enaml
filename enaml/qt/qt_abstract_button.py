@@ -40,6 +40,23 @@ class QtAbstractButton(QtConstraintsWidget):
         widget.toggled.connect(self.on_toggled)
 
     #--------------------------------------------------------------------------
+    # Signal Handlers
+    #--------------------------------------------------------------------------
+    def on_clicked(self):
+        """ The signal handler for the 'clicked' signal.
+
+        """
+        content = {'checked': self.widget().isChecked()}
+        self.send_action('clicked', content)
+
+    def on_toggled(self):
+        """ The signal handler for the 'toggled' signal.
+
+        """
+        content = {'checked': self.widget().isChecked()}
+        self.send_action('toggled', content)
+
+    #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
     def on_action_set_checked(self, content):
@@ -60,23 +77,6 @@ class QtAbstractButton(QtConstraintsWidget):
 
         """
         self.set_icon_size(content['icon_size'])
-
-    #--------------------------------------------------------------------------
-    # Signal Handlers
-    #--------------------------------------------------------------------------
-    def on_clicked(self, checked):
-        """ The signal handler for the 'clicked' signal.
-
-        """
-        content = {'checked': checked}
-        self.send_action('clicked', content)
-
-    def on_toggled(self, checked):
-        """ The signal handler for the 'toggled' signal.
-
-        """
-        content = {'checked': checked}
-        self.send_action('toggled', content)
 
     #--------------------------------------------------------------------------
     # Widget update methods
