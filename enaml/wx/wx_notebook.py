@@ -146,6 +146,7 @@ class wxDocumentNotebook(aui.AuiNotebook):
 
         """
         if page.IsOpen():
+            index = min(index, self.GetPageCount())
             self.InsertPage(index, page, page.GetTitle())
             if not page.GetEnabled():
                 self.EnableTab(index, False)
@@ -268,9 +269,7 @@ class wxPreferencesNotebook(wx.Notebook):
 
         """
         if page.IsOpen():
-            count = self.GetPageCount()
-            if index >= count:
-                index = count
+            index = min(index, self.GetPageCount())
             self.InsertPage(index, page, page.GetTitle())
         else:
             page.Show(False)
