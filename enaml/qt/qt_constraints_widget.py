@@ -75,18 +75,18 @@ class QtConstraintsWidget(QtWidgetComponent):
     use_widget_item_for_layout = True
 
     #--------------------------------------------------------------------------
-    # Initialization
+    # Setup Methods
     #--------------------------------------------------------------------------
-    def initialize(self, attrs):
-        """ Initialize the attributes of the widget.
+    def create(self, tree):
+        """ Create and initialize the underlyling widget.
 
         """
-        super(QtConstraintsWidget, self).initialize(attrs)
-        layout = attrs['layout']
+        super(QtConstraintsWidget, self).create(tree)
+        layout = tree['layout']
         self.hug = layout['hug']
         self.resist_clip = layout['resist_clip']
         self.constraints = layout['constraints']
-        self.layout_box = LayoutBox(type(self).__name__, self.widget_id)
+        self.layout_box = LayoutBox(type(self).__name__, self.widget_id())
         
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -158,9 +158,9 @@ class QtConstraintsWidget(QtWidgetComponent):
 
         """
         if self.use_widget_item_for_layout:
-            item = self.widget_item
+            item = self.widget_item()
         else:
-            item = self.widget
+            item = self.widget()
         size = item.sizeHint()
         return size
 
@@ -220,8 +220,8 @@ class QtConstraintsWidget(QtWidgetComponent):
 
         """
         if self.use_widget_item_for_layout:
-            item = self.widget_item
+            item = self.widget_item()
         else:
-            item = self.widget
+            item = self.widget()
         item.setGeometry(QRect(x, y, width, height))
 
