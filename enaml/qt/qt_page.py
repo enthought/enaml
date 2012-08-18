@@ -3,28 +3,18 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt.QtCore import Signal
-from .qt_container import QtContainer, QContainer
+from .qt.QtGui import QWidget
+from .qt_notebook import QNotebook
+from .q_single_widget_layout import QSingleWidgetLayout
+from .qt_widget_component import QtWidgetComponent
 
 
-class QPage(QContainer):
-    """ A QContainer subclass which acts as a page in a QNotebook.
+class QPage(QWidget):
+    """ A QWidget subclass which acts as a page in a QNotebook.
 
     """
-    #: A signal emitted when the tab title for this page changes.
-    #: The payload is the page itself followed by the new title.
-    tabTitleChanged = Signal(object, unicode)
-
-    #: A signal emitted when the tab tool tip for this page changes.
-    #: The payload is the page itself followed by the new tool tip.
-    tabToolTipChanged = Signal(object, unicode)
-
-    #: A signal emitted when the tab enabled state changes.
-    #: The payload is the page itself followed by the new state.
-    tabEnabledChanged = Signal(object, bool)
-
-    #: A signal emitted when the closable state changes.
-    #: The payload is the page itself followed by the new state.
-    tabClosableChanged = Signal(object, bool)
+    #: A signal emitted when the page has been closed by the user.
+    pageClosed = Signal()
 
     def __init__(self, *args, **kwargs):
         """ Initialize a QPage.
@@ -37,37 +27,146 @@ class QPage(QContainer):
 
         """
         super(QPage, self).__init__(*args, **kwargs)
-        self._tab_title = u''
-        self._tab_tool_tip = u''
-        self._tab_enabled = True
-        self._tab_closable = True
-        self._enabled = self.isEnabled()
+        self._title = u''
+        self._tool_tip = u''
+        self._closable = True
+        self._is_enabled = True
+        self._is_open = True
+        self._page_widget = None
+        self.setLayout(QSingleWidgetLayout())
 
-    def setEnabled(self, enabled):
-        """ An overridden parent class method. 
+    #--------------------------------------------------------------------------
+    # Private API
+    #--------------------------------------------------------------------------
+    def _findNotebook(self):
+        """ Get the parent QNotebook for this page.
 
-        This stores a copy of the enabled flag. The parent QNotebook
-        doesn't keep a separate flag for the tab enabled state (it just
-        uses the flag on the child). So, it must be restored manually 
-        when the tab enabled state is changed.
-
-        """
-        super(QPage, self).setEnabled(enabled)
-        self._enabled = self.isEnabled()
-
-    def restoreEnabled(self):
-        """ A method called by the parent QNotebook.
-
-        This method will restore the enabled state of the QPage to
-        the previously set value. This is used to overcome the issue
-        in QTabWidget, where a separate tab enabled flag is not kept,
-        and enabled flag of a child is clobbered whenever the tab
-        enabled state is changed.
+        Returns
+        -------
+        result : QNotebook or None
+            The parent QNotebook for this page, or None if one cannot
+            be found.
 
         """
-        self.setEnabled(self._enabled)
+        # Depending on where we are during initialization, the notebook
+        # will be either our parent or grandparent because of how the
+        # QTabWidget reparents things internally.
+        parent = self.parent()
+        if isinstance(parent, QNotebook):
+            return parent
+        if parent is not None:
+            parent = parent.parent()
+            if isinstance(parent, QNotebook):
+                return parent
 
-    def tabTitle(self):
+    def _pageIndexOperation(self, closure):
+        """ A private method which will run the given closure if there
+        is a valid index for this page.
+
+        """
+        notebook = self._findNotebook()
+        if notebook is not None:
+            index = notebook.indexOf(self)
+            if index != -1:
+                closure(notebook, index)
+
+    #--------------------------------------------------------------------------
+    # Public API
+    #--------------------------------------------------------------------------
+    def requestClose(self):
+        """ A method called by the parent notebook when the user has
+        requested that this page be closed.
+
+        If the page is marked as closable, then it will be closed and
+        the 'pageClosed' signal will be emitted.
+
+        """
+        if self.isClosable():
+            self.close()
+            self.pageClosed.emit()
+
+    def pageWidget(self):
+        """ Get the page widget for this page.
+
+        Returns
+        -------
+        result : QWidget or None
+            The page widget being managed by this page.
+
+        """
+        return self._page_widget
+
+    def setPageWidget(self, widget):
+        """ Set the page widget for this page.
+
+        Parameters
+        ----------
+        widget : QWudget
+            The Qt widget to use as the page widget in this page.
+
+        """
+        self._page_widget = widget
+        self.layout().addWidget(widget)
+
+    def isOpen(self):
+        """ Get whether or not the page is open.
+
+        Returns
+        -------
+        result : bool
+            True if the page is open, False otherwise.
+
+        """
+        return self._is_open
+
+    def open(self):
+        """ Open the page in the notebook.
+
+        """
+        self._is_open = True
+        notebook = self._findNotebook()
+        if notebook is not None:
+            notebook.showPage(self)
+
+    def close(self):
+        """ Close the page in the notebook.
+
+        """
+        self._is_open = False
+        notebook = self._findNotebook() 
+        if notebook is not None:
+            notebook.hidePage(self)
+
+    def isTabEnabled(self):
+        """ Return whether or not the tab for this page is enabled.
+
+        This method should be used in favor of isEnabled.
+
+        Returns
+        -------
+        result : bool
+            True if the tab for this page is enabled, False otherwise.
+
+        """
+        return self._is_enabled
+
+    def setTabEnabled(self, enabled):
+        """ Set whether the tab for this page is enabled.
+
+        This method should be used in favor of isEnabled.
+
+        Parameters
+        ----------
+        enabled : bool
+            True if the tab should be enabled, False otherwise.
+
+        """
+        self._is_enabled = enabled
+        def closure(nb, index):
+            nb.setTabEnabled(index, enabled)
+        self._pageIndexOperation(closure)
+
+    def title(self):
         """ Returns the tab title for this page.
 
         Returns
@@ -76,11 +175,10 @@ class QPage(QContainer):
             The title string for the page's tab.
 
         """
-        return self._tab_title
+        return self._title
 
-    def setTabTitle(self, title):
-        """ Set the title for the tab for this page. This will emit the
-        'tabTitleChanged' signal.
+    def setTitle(self, title):
+        """ Set the title for the tab for this page.
 
         Parameters
         ----------
@@ -88,58 +186,12 @@ class QPage(QContainer):
             The string to use for this page's tab title.
 
         """
-        self._tab_title = title
-        self.tabTitleChanged.emit(self, title)
+        self._title = title
+        def closure(nb, index):
+            nb.setTabText(index, title)
+        self._pageIndexOperation(closure)
 
-    def tabToolTip(self):
-        """ Returns the tool tip for the tab for this page.
-
-        Returns
-        -------
-        result : unicode
-            The tool tip string for the page's tab.
-
-        """
-        return self._tab_tool_tip
-
-    def setTabToolTip(self, tool_tip):
-        """ Set the tool tip for the tab for this page. This will emit
-        the 'tabToolTipChanged' signal.
-
-        Parameters
-        ----------
-        title : unicode
-            The string to use for this page's tab tool tip.
-
-        """
-        self._tab_tool_tip = tool_tip
-        self.tabToolTipChanged.emit(self, tool_tip)
-
-    def tabEnabled(self):
-        """ Return whether or no the tab for this page is enabled.
-
-        Returns
-        -------
-        result : bool
-            True if the tab for this page is enabled, False otherwise.
-
-        """
-        return self._tab_enabled
-
-    def setTabEnabled(self, enabled):
-        """ Set whether the tab for this page is enabled. This will 
-        emit the 'tabEnabledChanged' signal.
-
-        Parameters
-        ----------
-        enabled : bool
-            True if the tab should be enabled, False otherwise.
-
-        """
-        self._tab_enabled = enabled
-        self.tabEnabledChanged.emit(self, enabled)
-
-    def tabClosable(self):
+    def isClosable(self):
         """ Returns whether or not the tab for this page is closable.
 
         Returns
@@ -148,11 +200,10 @@ class QPage(QContainer):
             True if this page's tab is closable, False otherwise.
 
         """
-        return self._tab_closable
+        return self._closable
 
-    def setTabClosable(self, closable):
-        """ Set whether the tab for this page is closable. This will
-        emit the 'tabClosableChanged' signal.
+    def setClosable(self, closable):
+        """ Set whether the tab for this page is closable.
 
         Parameters
         ----------
@@ -160,35 +211,81 @@ class QPage(QContainer):
             True if the tab should be closable, False otherwise.
 
         """
-        self._tab_closable = closable
-        self.tabClosableChanged.emit(self, closable)
+        self._closable = closable
+        def closure(nb, index):
+            nb.setTabCloseButtonVisible(index, closable)
+        self._pageIndexOperation(closure)
+
+    def toolTip(self):
+        """ Returns the tool tip for the tab for this page.
+
+        Returns
+        -------
+        result : unicode
+            The tool tip string for the page's tab.
+
+        """
+        return self._tool_tip
+
+    def setToolTip(self, tool_tip):
+        """ Set the tool tip for the tab for this page.
+
+        Parameters
+        ----------
+        title : unicode
+            The string to use for this page's tab tool tip.
+
+        """
+        self._tool_tip = tool_tip
+        def closure(nb, index):
+            nb.setTabToolTip(index, tool_tip)
+        self._pageIndexOperation(closure)
 
 
-class QtPage(QtContainer):
-    """ A Qt4 implementation of an Enaml notebook Page.
+class QtPage(QtWidgetComponent):
+    """ A Qt implementation of an Enaml notebook Page.
 
     """
+    #: The storage for the page widget id
+    _page_widget_id = None
+
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
-    def create(self):
-        """ Create the underlying widget.
+    def create_widget(self, parent, tree):
+        """ Create the underlying page widget.
 
         """
-        # The parent QtNotebook will come along and add the pages to
-        # its notebook in a special way, hence we explicitly do not 
-        # parent the QPage widget at this point.
-        self.widget = QPage()
+        return QPage(parent)
 
-    def initialize(self, attrs):
-        """ Initialize the attributes of the underlying control.
+    def create(self, tree):
+        """ Create and initialize the underlying widget.
 
         """
-        super(QtPage, self).initialize(attrs)
-        self.set_title(attrs['title'])
-        self.set_tool_tip(attrs['tool_tip'])
-        self.set_tab_enabled(attrs['tab_enabled'])
-        self.set_closable(attrs['closable'])
+        super(QtPage, self).create(tree)
+        self.set_page_widget_id(tree['page_widget_id'])
+        self.set_title(tree['title'])
+        self.set_tool_tip(tree['tool_tip'])
+        self.set_closable(tree['closable'])
+        self.widget().pageClosed.connect(self.on_page_closed)
+
+    def init_layout(self):
+        """ Initialize the layout for the underyling widget.
+
+        """
+        super(QtPage, self).init_layout()
+        child = self.find_child(self._page_widget_id)
+        if child is not None:
+            self.widget().setPageWidget(child.widget())
+
+    #--------------------------------------------------------------------------
+    # Signal Handlers
+    #--------------------------------------------------------------------------
+    def on_page_closed(self):
+        """ The signal handler for the 'pageClosed' signal.
+
+        """
+        self.send_action('closed', {})
 
     #--------------------------------------------------------------------------
     # Message Handling
@@ -205,52 +302,66 @@ class QtPage(QtContainer):
         """
         self.set_tool_tip(content['tool_tip'])
 
-    def on_action_set_tab_enabled(self, content):
-        """ Handle the 'set_tab_enabled' action from the Enaml widget.
-
-        """
-        self.set_tab_enabled(content['tab_enabled'])
-
     def on_action_set_closable(self, content):
         """ Handle the 'set_closable' action from the Enaml widget.
 
         """
         self.set_closable(content['closable'])
 
+    def on_action_open(self, content):
+        """ Handle the 'open' action from the Enaml widget.
+
+        """
+        self.widget().open()
+
+    def on_action_close(self, content):
+        """ Handle the 'close' action from the Enaml widget.
+
+        """
+        self.widget().close()
+
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
+    def set_visible(self, visible):
+        """ An overridden visibility setter which to opens|closes the
+        notebook page.
+
+        """
+        widget = self.widget()
+        if visible:
+            widget.open()
+        else:
+            widget.close()
+
+    def set_enabled(self, enabled):
+        """ An overridden enabled setter which sets the tab enabled
+        state.
+
+        """
+        self.widget().setTabEnabled(enabled)
+
+    def set_page_widget_id(self, widget_id):
+        """ Set the page widget id for the underlying control.
+
+        """
+        self._page_widget_id = widget_id
+
     def set_title(self, title):
         """ Set the title of the tab for this page.
 
         """
-        self.widget.setTabTitle(title)
+        self.widget().setTitle(title)
 
     def set_closable(self, closable):
         """ Set whether or not this page is closable.
 
         """
-        self.widget.setTabClosable(closable)
+        self.widget().setClosable(closable)
 
     def set_tool_tip(self, tool_tip):
         """ Set the tooltip of the tab for this page.
 
         """
-        self.widget.setTabToolTip(tool_tip)
-
-    def set_tab_enabled(self, enabled):
-        """ Set the enabled state for the tab for this page.
-
-        """
-        self.widget.setTabEnabled(enabled)
-
-    def set_visible(self, visible):
-        """ Overriden method which disables the setting of visibility
-        by the user code.
-
-        The visibility of a page is controlled entirely by the parent
-        QtNotebook.
-
-        """
-        pass
+        self.widget().setToolTip(tool_tip)
 
