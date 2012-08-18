@@ -397,12 +397,6 @@ class WxNotebook(WxConstraintsWidget):
         """
         self.set_tabs_movable(content['tabs_movable'])
 
-    def on_action_set_tabs_dockable(self, content):
-        """ Handle the 'set_tabs_dockable' action from the Enaml widget.
-
-        """
-        self.set_tabs_dockable(content['tabs_dockable'])
-
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
