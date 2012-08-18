@@ -13,43 +13,48 @@ class QtWidgetComponent(QtMessengerWidget):
     """ A Qt4 implementation of an Enaml WidgetComponent.
 
     """
-    #: An attribute which will hold the defautl focus rect state if
+    #: An attribute which will hold the default focus rect state if
     #: it is ever changed by the user.
     _default_focus_attr = None
 
-    def create(self):
+    #: An attribute which will hold the widget item for the widget.
+    _widget_item = None
+
+    def create_widget(self, parent, tree):
         """ Creates the underlying QWidget object.
 
         """
-        self.widget = QWidget(self.parent_widget)
+        return QWidget(parent)
 
-    def initialize(self, attrs):
-        """ Initialize the attributes of the underlying QWidget.
+    def create(self, tree):
+        """ Create and initialize the underlying widget.
 
         """
-        super(QtWidgetComponent, self).initialize(attrs)
-        self.set_minimum_size(attrs['minimum_size'])
-        self.set_maximum_size(attrs['maximum_size'])
-        self.set_bgcolor(attrs['bgcolor'])
-        self.set_fgcolor(attrs['fgcolor'])
-        self.set_font(attrs['font'])
-        self.set_enabled(attrs['enabled'])
-        self.set_visible(attrs['visible'])
-        self.set_show_focus_rect(attrs['show_focus_rect'])
+        super(QtWidgetComponent, self).create(tree)
+        self.set_minimum_size(tree['minimum_size'])
+        self.set_maximum_size(tree['maximum_size'])
+        self.set_bgcolor(tree['bgcolor'])
+        self.set_fgcolor(tree['fgcolor'])
+        self.set_font(tree['font'])
+        self.set_enabled(tree['enabled'])
+        self.set_visible(tree['visible'])
+        self.set_show_focus_rect(tree['show_focus_rect'])
 
     #--------------------------------------------------------------------------
-    # Properties
+    # Public Api
     #--------------------------------------------------------------------------
-    @property
     def widget_item(self):
-        """ A readonly cached property which returns the QWidgetItem
-        for the underlying Qt widget.
+        """ Get the QWidgetItem for the underlying widget. 
 
+        Returns
+        -------
+        result : QWidgetItem
+            The QWidgetItem to use for the underlying widget.
+            
         """
-        try:
-            res = self.__widget_item
-        except AttributeError:
-            res = self.__widget_item = QWidgetItem(self.widget)
+        res = self._widget_item
+        if res is None:
+            res = self._widget_item = QWidgetItem(self.widget())
         return res
 
     #--------------------------------------------------------------------------
@@ -120,7 +125,7 @@ class QtWidgetComponent(QtMessengerWidget):
         # QWidget uses (0, 0) as the minimum size.
         if -1 in min_size:
             min_size = (0, 0)
-        self.widget.setMinimumSize(QSize(*min_size))
+        self.widget().setMinimumSize(QSize(*min_size))
 
     def set_maximum_size(self, max_size):
         """ Sets the maximum size on the underlying widget.
@@ -135,7 +140,7 @@ class QtWidgetComponent(QtMessengerWidget):
         # QWidget uses 16777215 as the max size
         if -1 in max_size:
             max_size = (16777215, 16777215)
-        self.widget.setMaximumSize(QSize(*max_size))
+        self.widget().setMaximumSize(QSize(*max_size))
 
     def set_enabled(self, enabled):
         """ Set the enabled state on the underlying widget.
@@ -146,7 +151,7 @@ class QtWidgetComponent(QtMessengerWidget):
             Whether or not the widget is enabled.
 
         """
-        self.widget.setEnabled(enabled)
+        self.widget().setEnabled(enabled)
 
     def set_visible(self, visible):
         """ Set the visibility state on the underlying widget.
@@ -157,7 +162,7 @@ class QtWidgetComponent(QtMessengerWidget):
             Whether or not the widget is visible.
 
         """
-        self.widget.setVisible(visible)
+        self.widget().setVisible(visible)
 
     def set_bgcolor(self, bgcolor):
         """ Set the background color on the underlying widget.
@@ -198,12 +203,13 @@ class QtWidgetComponent(QtMessengerWidget):
 
         """
         if sys.platform == 'darwin':
+            widget = self.widget()
             attr = Qt.WA_MacShowFocusRect
             if show is None:
                 if self._default_focus_attr is not None:
-                    self.widget.setAttribute(attr, self._default_focus_attr)
+                    widget.setAttribute(attr, self._default_focus_attr)
             else:
                 if self._default_focus_attr is None:
-                    self._default_focus_attr = self.widget.testAttribute(attr)
-                self.widget.setAttribute(attr, show)
+                    self._default_focus_attr = widget.testAttribute(attr)
+                widget.setAttribute(attr, show)
 
