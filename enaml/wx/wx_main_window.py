@@ -271,11 +271,11 @@ class WxMainWindow(WxWindow):
     #: Storage for the menu bar id
     _menu_bar_id = None
 
-    #: Storage for the widget ids of the dock panes
-    _dock_pane_ids = []
-
     #: Storage for the widget ids of the tool bars
     _tool_bar_ids = []
+
+    #: Storage for the widget ids of the dock panes
+    _dock_pane_ids = []
 
     #--------------------------------------------------------------------------
     # Setup Methods
