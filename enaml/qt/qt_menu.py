@@ -2,62 +2,82 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt.QtGui import QMenu
+from .qt.QtGui import QMenu, QAction, QActionGroup
 from .qt_widget_component import QtWidgetComponent
 
+
 class QtMenu(QtWidgetComponent):
-    """ A Qt implementation of a menu
+    """ A Qt implementation of an Enaml Menu.
 
     """
-    def create(self):
-        """ Create the underlying widget
-
-        """
-        self.widget = QMenu(self.parent_widget)
-
-    def initialize(self, attrs):
-        """ Initialize the attributes of the widget
-
-        """
-        super(QtMenu, self).initialize(attrs)
-        self.set_title(attrs['title'])
-
-    def bind(self):
-        """ Bind the widget's events
-
-        """
-        self.widget.aboutToHide.connect(self.on_about_to_hide)
-        self.widget.aboutToShow.connect(self.on_about_to_show)
+    #: Storage for the menu item ids
+    _item_ids = []
 
     #--------------------------------------------------------------------------
-    # Event Handlers
+    # Setup Methods
     #--------------------------------------------------------------------------
-    def on_about_to_hide(self):
-        """ Event handler for about_to_hide
+    def create_widget(self, parent, tree):
+        """ Create the underlying menu widget.
 
         """
-        self.send_message({'action':'about_to_hide'})
+        return QMenu(parent)
 
-    def on_about_to_show(self):
-        """ Event handler for about_to_show
-
-        """
-        self.send_message({'action':'about_to_show'})
-    
-    #--------------------------------------------------------------------------
-    # Message Handlers
-    #--------------------------------------------------------------------------
-    def on_message_set_title(self, payload):
-        """ Message handler for set_title
+    def create(self, tree):
+        """ Create and initialize the underlying widget.
 
         """
-        self.set_title(payload['title'])
+        super(QtMenu, self).create(tree)
+        self.set_item_ids(tree['item_ids'])
+        self.set_title(tree['title'])
+
+    def init_layout(self):
+        """ Initialize the layout for the underlying widget.
+
+        """
+        super(QtMenu, self).init_layout()
+        widget = self.widget()
+        find_child = self.find_child
+        for item_id in self._item_ids:
+            child = find_child(item_id)
+            if child is not None:
+                child_widget = child.widget()
+                if isinstance(child_widget, QMenu):
+                    widget.addMenu(child_widget)
+                elif isinstance(child_widget, QAction):
+                    widget.addAction(child_widget)
+                elif isinstance(child_widget, QActionGroup):
+                    widget.addActions(child_widget.actions())
+
+    #--------------------------------------------------------------------------
+    # Message Handling
+    #--------------------------------------------------------------------------
+    def on_action_set_title(self, content):
+        """ Handle the 'set_title' action from the Enaml widget.
+
+        """
+        self.set_title(content['title'])
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
-    def set_title(self, title):
-        """ Set the title of the menu
+    def set_item_ids(self, item_ids):
+        """ Set the item ids of the underlying widget..
 
         """
-        self.widget.setTitle(title)
+        self._item_ids = item_ids
+
+    def set_visible(self, visible):
+        """ Set the visibility on the underlying widget.
+
+        This is an overridden method which sets the visibility on the
+        underlying QAction for the menu instead of on the menu itself.
+
+        """ 
+        self.widget().menuAction().setVisible(visible)
+
+    def set_title(self, title):
+        """ Set the title of the underlying widget.
+
+        """
+        self.widget().setTitle(title)
+

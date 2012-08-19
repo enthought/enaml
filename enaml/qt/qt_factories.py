@@ -2,6 +2,16 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+def action_factory():
+    from .qt_action import QtAction
+    return QtAction
+
+
+def action_group_factory():
+    from .qt_action_group import QtActionGroup
+    return QtActionGroup
+
+
 def calendar_factory():
     from .qt_calendar import QtCalendar
     return QtCalendar
@@ -67,6 +77,21 @@ def label_factory():
     return QtLabel
 
 
+def main_window_factory():
+    from .qt_main_window import QtMainWindow
+    return QtMainWindow
+
+
+def menu_factory():
+    from .qt_menu import QtMenu
+    return QtMenu
+
+
+def menu_bar_factory():
+    from .qt_menu_bar import QtMenuBar
+    return QtMenuBar
+
+
 def notebook_factory():
     from .qt_notebook import QtNotebook
     return QtNotebook
@@ -123,6 +148,8 @@ def window_factory():
 
 
 QT_FACTORIES = {
+    'Action': action_factory,
+    'ActionGroup': action_group_factory,
     'Calendar': calendar_factory,
     'CheckBox': check_box_factory,
     'ComboBox': combo_box_factory,
@@ -136,6 +163,9 @@ QT_FACTORIES = {
     'Html': html_factory,
     'ImageView': image_view_factory,
     'Label': label_factory,
+    'MainWindow': main_window_factory,
+    'Menu': menu_factory,
+    'MenuBar': menu_bar_factory,
     'Notebook': notebook_factory,
     'Page': page_factory,
     'PushButton': push_button_factory,
