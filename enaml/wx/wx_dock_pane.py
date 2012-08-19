@@ -163,7 +163,8 @@ class wxDockPane(wx.Panel):
         info = aui.AuiPaneInfo()
 
         # Don't allow docking panes as a notebook since that causes
-        # issues with finding the proper parent manager on updates.
+        # issues with finding the proper parent manager on updates
+        # and it makes resizing of dock panes abysmally slow.
         info.NotebookDockable(False)
 
         info.BestSize(self.GetBestSize())
