@@ -46,10 +46,9 @@ class QtSpinBox(QtConstraintsWidget):
         """
         # Guard against loopback recursion since Qt will emit the 
         # valueChanged signal when programatically setting the value.
-        if 'value' in self.loopback_guard:
-            return
-        content = {'value': self.widget().value()}
-        self.send_action('value_changed', content)
+        if 'value' not in self.loopback_guard:
+            content = {'value': self.widget().value()}
+            self.send_action('value_changed', content)
         
     #--------------------------------------------------------------------------
     # Message Handlers
