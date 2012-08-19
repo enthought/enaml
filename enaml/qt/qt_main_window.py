@@ -2,7 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt.QtCore import Signal
+from .qt.QtCore import Qt, Signal
 from .qt.QtGui import QMainWindow
 from .qt_window import QtWindow
 
@@ -67,13 +67,13 @@ class QtMainWindow(QtWindow):
         for tool_bar_id in self._tool_bar_ids:
             tool_bar = find_child(tool_bar_id)
             if tool_bar is not None:
-                pass
+                main_window.addToolBar(tool_bar.widget())
 
         # Setup the dock panes
         for dock_id in self._dock_pane_ids:
             dock_pane = find_child(dock_id)
             if dock_pane is not None:
-                pass
+                main_window.addDockWidget(Qt.LeftDockWidgetArea, dock_pane.widget())
 
         # Setup the status bar
 

@@ -47,6 +47,11 @@ def dialog_factory():
     return QtDialog
 
 
+def dock_pane_factory():
+    from .qt_dock_pane import QtDockPane
+    return QtDockPane
+
+
 def field_factory():
     from .qt_field import QtField
     return QtField
@@ -142,6 +147,11 @@ def text_editor_factory():
     return QtTextEditor
 
 
+def tool_bar_factory():
+    from .qt_tool_bar import QtToolBar
+    return QtToolBar
+
+
 def window_factory():
     from .qt_window import QtWindow
     return QtWindow
@@ -156,6 +166,7 @@ QT_FACTORIES = {
     'Container': container_factory,
     'DateSelector': date_selector_factory,
     'DatetimeSelector': datetime_selector_factory,
+    'DockPane': dock_pane_factory,
     'Dialog': dialog_factory,
     'Field': field_factory,
     'Form': form_factory,
@@ -176,6 +187,7 @@ QT_FACTORIES = {
     'SpinBox': spin_box_factory,
     'Splitter': splitter_factory,
     'TextEditor': text_editor_factory,
+    'ToolBar': tool_bar_factory,
     'Window': window_factory,
 }
 
