@@ -2,16 +2,128 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt.QtCore import Qt
-from .qt.QtGui import QToolBar, QAction, QActionGroup, QMainWindow
+import sys
+
+from .qt.QtCore import Qt, Signal
+from .qt.QtGui import QToolBar, QAction, QActionGroup, QMainWindow 
 from .qt_constraints_widget import QtConstraintsWidget
 
+
+#: A mapping from Enaml dock area to Qt tool bar areas
+_DOCK_AREA_MAP = {
+    'top': Qt.TopToolBarArea,
+    'right': Qt.RightToolBarArea,
+    'bottom': Qt.BottomToolBarArea,
+    'left': Qt.LeftToolBarArea,
+    'all': Qt.AllToolBarAreas,
+}
+
+#: A mapping from Qt tool bar areas to Enaml dock areas
+_DOCK_AREA_INV_MAP = {
+    Qt.TopToolBarArea: 'top',
+    Qt.RightToolBarArea: 'right',
+    Qt.BottomToolBarArea: 'bottom',
+    Qt.LeftToolBarArea: 'left',
+    Qt.AllToolBarAreas: 'all',
+}
 
 #: A mapping from Enaml orientation to Qt Orientation
 _ORIENTATION_MAP = {
     'horizontal': Qt.Horizontal,
     'vertical': Qt.Vertical,
 }
+
+
+class QCustomToolBar(QToolBar):
+    """ A custom QToolBar which adds some Enaml specific features.
+
+    """
+    #: A signal emitted when the dock widget is floated.
+    floated = Signal()
+
+    #: A signal emitted when the dock widget is docked. The payload 
+    #: will be the new dock area.
+    docked = Signal(object)
+
+    def __init__(self, *args, **kwargs):
+        """ Initialize a QCustomToolBar.
+
+        Parameters
+        ----------
+        *args, **kwargs
+            The positional and keyword arguments needed to initialize
+            a QToolBar.
+
+        """
+        super(QCustomToolBar, self).__init__(*args, **kwargs)
+        self._tool_bar_area = Qt.TopToolBarArea
+        self.topLevelChanged.connect(self._onTopLevelChanged)
+
+    #--------------------------------------------------------------------------
+    # Private API
+    #--------------------------------------------------------------------------
+    def _onTopLevelChanged(self, top_level):
+        """ The signal handler for the the 'topLevelChanged' signal.
+
+        """
+        if top_level:
+            self.floated.emit()
+        else:
+            parent = self.parent()
+            if parent is not None and isinstance(parent, QMainWindow):
+                self._tool_bar_area = parent.toolBarArea(self)
+            self.docked.emit(self._tool_bar_area)
+
+    #--------------------------------------------------------------------------
+    # Public API
+    #--------------------------------------------------------------------------
+    def toolBarArea(self):
+        """ Get the current tool bar area for the tool bar.
+
+        Returns
+        -------
+        result : QToolBarArea
+            The tool bar area where this tool bar resides.
+
+        """
+        return self._tool_bar_area
+
+    def setToolBarArea(self, area):
+        """ Set the current tool bar area for the tool bar.
+
+        Parameters
+        ----------
+        area : QToolBarArea
+            The tool bar area where this tool bar should reside.
+
+        """
+        self._tool_bar_area = area
+        parent = self.parent()
+        if isinstance(parent, QMainWindow):
+            parent.setToolBarArea(area, self)
+
+    def setFloating(self, floating):
+        """ Set the floating state of the tool bar.
+
+        Parameters
+        ----------
+        floating : bool
+            Whether or not the tool bar should floating.
+
+        """
+        # QToolBar doesn't provide a setFloating() method. This code
+        # is taken mostly from QToolBarPrivate::updateWindowFlags.
+        parent = self.parent()
+        if isinstance(parent, QMainWindow):
+            visible = self.isVisibleTo(parent)
+            flags = Qt.Tool if floating else Qt.Widget
+            flags |= Qt.FramelessWindowHint
+            if sys.platform == 'darwin':
+                flags |= Qt.WindowStaysOnTopHint
+            self.setWindowFlags(flags)
+            if visible:
+                self.resize(self.sizeHint())
+                self.setVisible(True)
 
 
 class QtToolBar(QtConstraintsWidget):
@@ -28,7 +140,7 @@ class QtToolBar(QtConstraintsWidget):
         """ Create the underlying tool bar widget.
 
         """
-        return QToolBar(parent)
+        return QCustomToolBar(parent)
 
     def create(self, tree):
         """ Create and initialize the underlying tool bar control.
@@ -36,12 +148,15 @@ class QtToolBar(QtConstraintsWidget):
         """
         super(QtToolBar, self).create(tree)
         self.set_item_ids(tree['item_ids'])
-        self.set_orientation(tree['orientation'])
         self.set_movable(tree['movable'])
         self.set_floatable(tree['floatable'])
         self.set_floating(tree['floating'])
         self.set_dock_area(tree['dock_area'])
         self.set_allowed_dock_areas(tree['allowed_dock_areas'])
+        self.set_orientation(tree['orientation'])
+        widget = self.widget()
+        widget.floated.connect(self.on_floated)
+        widget.docked.connect(self.on_docked)
 
     def init_layout(self):
         """ Initialize the layout for the toolbar.
@@ -58,6 +173,24 @@ class QtToolBar(QtConstraintsWidget):
                     widget.addAction(child_widget)
                 elif isinstance(child_widget, QActionGroup):
                     widget.addActions(child_widget.actions())
+
+    #--------------------------------------------------------------------------
+    # Signal Handlers
+    #--------------------------------------------------------------------------
+    def on_floated(self):
+        """ The signal handler for the 'floated' signal.
+
+        """
+        if 'floating' not in self.loopback_guard:
+            self.send_action('floated', {})
+
+    def on_docked(self, area):
+        """ The signal handler for the 'docked' signal.
+
+        """
+        if 'floating' not in self.loopback_guard:
+            content = {'dock_area': _DOCK_AREA_INV_MAP[area]}
+            self.send_action('docked', content)
 
     #--------------------------------------------------------------------------
     # Message Handling
@@ -108,18 +241,6 @@ class QtToolBar(QtConstraintsWidget):
         """
         self._item_ids = item_ids
 
-    def set_orientation(self, orientation):
-        """ Set the orientation of the underlying widget.
-
-        """
-        # If the tool bar is a child of a QMainWindow, then that window
-        # will take control of setting its orientation and changes to
-        # the orientation by the user must be ignored.
-        widget = self.widget()
-        parent = widget.parent()
-        if not isinstance(parent, QMainWindow):
-            widget.setOrientation(_ORIENTATION_MAP[orientation])
-
     def set_movable(self, movable):
         """ Set the movable state on the underlying widget.
 
@@ -136,17 +257,33 @@ class QtToolBar(QtConstraintsWidget):
         """ Set the floating staet on the underlying widget.
 
         """
-        pass
+        with self.loopback_guard('floating'):
+            self.widget().setFloating(floating)
 
     def set_dock_area(self, dock_area):
         """ Set the dock area on the underyling widget.
 
         """
-        pass
+        self.widget().setToolBarArea(_DOCK_AREA_MAP[dock_area])
 
     def set_allowed_dock_areas(self, dock_areas):
         """ Set the allowed dock areas on the underlying widget.
 
         """
-        pass
+        qt_areas = Qt.NoToolBarArea
+        for area in dock_areas:
+            qt_areas |= _DOCK_AREA_MAP[area]
+        self.widget().setAllowedAreas(qt_areas)
+
+    def set_orientation(self, orientation):
+        """ Set the orientation of the underlying widget.
+
+        """
+        # If the tool bar is a child of a QMainWindow, then that window
+        # will take control of setting its orientation and changes to
+        # the orientation by the user must be ignored.
+        widget = self.widget()
+        parent = widget.parent()
+        if not isinstance(parent, QMainWindow):
+            widget.setOrientation(_ORIENTATION_MAP[orientation])
 
