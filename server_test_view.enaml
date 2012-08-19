@@ -74,7 +74,9 @@ enamldef SampleToolBar(ToolBar):
             separator = True
         Action:
             checkable = True
-            text = 'Exclusive' 
+            text = 'Exclusive'
+            triggered :: print 'triggered'
+            toggled :: print 'toggled' 
         Action:
             checkable = True
             text = 'ToolBar'
@@ -99,17 +101,29 @@ enamldef SampleContent(Container):
     constraints = [hbox(notebook, html)]
     Notebook:
         id: notebook
+        tab_style = 'preferences'
         constraints = [width >= 400]
         Page:
-            title = 'Tab One'
+            id: pg
+            title << fld2.text
             Container:
                 Field:
                     id: fld
                     text = '<h1><center>Hello World!</center></h1>'
                 Field:
-                    pass
+                    id: fld2
+                    text = 'Tab One'
         Page:
             title = 'Tab Two'
+            Container:
+                padding = 0
+                SampleToolBar:
+                    pass
+                CheckBox:
+                    checked := pg.enabled
+                ComboBox:
+                    items = ['left', 'right', 'top', 'bottom']
+                    index :: notebook.tab_position = items[index]
         Page:
             title = 'Tab Three'
         Page:
@@ -186,7 +200,7 @@ enamldef Main(MainWindow):
     attr model
     
     initial_size = (1000, 800)
-    minimum_size = (600, 400)
+    #minimum_size = (600, 400)
     
     SampleMenuBar:
         pass
@@ -198,10 +212,15 @@ enamldef Main(MainWindow):
         pass
 
     SampleDock:
+        title = 'Foo Dock'
         dock_area = 'left'
-
+        
     SampleDock:
+        title = 'Bar Dock'
         dock_area = 'left'
 
     SampleDock2:
+        title = 'Baz Dock'
         dock_area = 'bottom'
+
+
