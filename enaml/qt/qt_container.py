@@ -127,10 +127,6 @@ class QtContainer(QtConstraintsWidget):
     """ A Qt implementation of an Enaml Container.
 
     """
-    #: Whether or not the widget is shown on the screen. This value is
-    #: update by handler for the visibilityChanged signal.
-    _is_shown = True
-
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
@@ -200,12 +196,7 @@ class QtContainer(QtConstraintsWidget):
         """ Makes a layout pass over the descendents if this widget owns
         the responsibility for their layout.
 
-        If the widget is not visible on the screen, the refresh will be
-        skipped.
-
         """
-        if not self._is_shown:
-            return
         if self._owns_layout:
             primitive = self.layout_box.primitive
             width = primitive('width', False)
