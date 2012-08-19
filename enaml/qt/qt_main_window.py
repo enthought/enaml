@@ -99,7 +99,9 @@ class QtMainWindow(QtWindow):
         """ Create the underlying widget QMainWindow widget.
 
         """
-        return QCustomMainWindow(parent)
+        widget = QCustomMainWindow(parent)
+        widget.setDocumentMode(True)
+        return widget
 
     def create(self, tree):
         """ Create and initialize the underlying widget.
