@@ -1,4 +1,4 @@
-from enaml.widgets import (
+from enaml.widgets.api import (
     Html, Container, PushButton, ComboBox, Notebook, Page, Field, ScrollArea, 
     MainWindow, DockPane, CheckBox, ToolBar, Label, Form, Action, MenuBar,
     Menu, ActionGroup
