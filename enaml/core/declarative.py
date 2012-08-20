@@ -7,12 +7,12 @@ import re
 
 from traits.api import (
     HasStrictTraits, Instance, List, Property, Str, Dict, Disallow, Bool,
-    Undefined, cached_property
+    Undefined
 )
 
 from .expressions import AbstractExpression
 from .operator_context import OperatorContext
-from .trait_types import EnamlEvent, ExpressionTrait, UserAttribute, UserEvent
+from .trait_types import ExpressionTrait, UserAttribute, UserEvent
 
 
 #: The traits types on an Declarative instance which can be overridden
@@ -59,27 +59,6 @@ class Declarative(HasStrictTraits):
     #: __init__ method, after the keyword arguments have been applied 
     #: to the instance. This should not be manipulated by user code.
     initialized = Bool(False)
-
-    #: A readonly property which returns the list of 'effective'
-    #: children. This list is constructed by calling contribute()
-    #: each child in 'children' and flattening the resulting list of
-    #: lists. This mechanism allows children to contribute different
-    #: 'effective' children to a parent. Children should fire their
-    #: 'contributed_updated' event to trigger a reload by the parent.
-    #: This list of children has no particular semantic meaning for 
-    #: the Declarative type, but it is used by widget subclasses to
-    #: facilitate dynamic children with the Include component.
-    effective_children = Property(
-        List(Instance('Declarative')), 
-        depends_on='children.contributed_updated',
-    )
-
-    #: An event which should be fired by a Declarative component when
-    #: components that it contributes to its parent have changed. This
-    #: will typically not be fired by most components. The exception is
-    #: the Include component, which fires the even when it's effective
-    #: children change.
-    contributed_updated = EnamlEvent
 
     #: The private dictionary of expression objects that are bound to 
     #: attributes on this component. It should not be manipulated by
@@ -330,17 +309,6 @@ class Declarative(HasStrictTraits):
             if base is Declarative:
                 break
         return base_names
-
-    @cached_property
-    def _get_effective_children(self):
-        """ The property getter for the 'effective_children' attribute.
-
-        This property getter returns the flattened list of components
-        returned by calling 'contribute()' on each child.
-
-        """
-        contribs = (child.contribute() for child in self.children)
-        return [child for item in contribs for child in item]
         
     def _on_expression_changed(self, expression, name, value):
         """ A private signal callback for the expression_changed signal
@@ -367,23 +335,6 @@ class Declarative(HasStrictTraits):
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
-    def contribute(self):
-        """ The list of Declarative instances which should be included 
-        as effective children of our parent. 
-
-        This method should be reimplemented by subclasses which need 
-        to contribute different components to their parent's children.
-
-        Returns
-        -------
-        result : list
-            The list of Declarative instances to include in the list of
-            'effective' children on the parent. By defaulf, this method
-            returns [self].
-
-        """
-        return [self]
-
     def snapshot(self):
         """ Create a snapshot of the tree starting from this component.
 
