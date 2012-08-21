@@ -4,7 +4,7 @@ from enaml.widgets.api import (
     Menu, ActionGroup
 )
 
-from enaml.layout import hbox 
+from enaml.layout.api import hbox 
 
 
 enamldef SampleMenuBar(MenuBar):

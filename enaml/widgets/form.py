@@ -4,8 +4,8 @@
 #------------------------------------------------------------------------------
 from traits.api import Instance, Str
 
-from enaml.layout import align, hbox, vbox
 from enaml.layout.constraint_variable import ConstraintVariable
+from enaml.layout.layout_helpers import align, hbox, vbox
 
 from .container import  Container
 
