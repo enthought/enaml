@@ -14,8 +14,9 @@ because that would take up a bunch of extra space, but the top row's
 buttons do expand equally to take up the available space.
 
 """
-from enaml.widgets import Window, Container, PushButton, Field
-from enaml.layout import hbox, vbox, spacer, align
+from enaml.layout.api import hbox, vbox, spacer, align
+from enaml.widgets.api import Window, Container, PushButton, Field
+
 
 enamldef Main(Window):
     title = "Find & Replace"
