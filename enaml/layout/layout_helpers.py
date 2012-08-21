@@ -89,64 +89,6 @@ def is_spacer(item):
     return isinstance(item, (Spacer, int))
 
 
-def is_really_visible(item):
-    """ Returns True if the given item is actually visible on the screen.
-
-    This is determined by checking all the ancestors of the component
-    for visibility and only return True if they are all visible.
-
-    """
-    if isinstance(item, LinearBoxHelper):
-        return True
-    if not item.visible:
-        return False
-    for ancestor in item.traverse_ancestors():
-        # This check works around the issue where non constraints-based
-        # container widgets like Page, DockPane, ScrollArea etc... may
-        # not be visible, but the constraints for the items should still
-        # be included. XXX we need to revisit constraints and visibility. 
-        if not isinstance(ancestor, ABConstrainable):
-            return True
-        if not getattr(ancestor, 'visible', True):
-            return False
-    return True
-
-
-def clear_invisible(items):
-    """ Take a list of Components and other layout items and remove 
-    logically invisible Components.
-
-    This takes into account redundant spacer objects that may surround 
-    invisible objects. Spacer objects that appear before an invisible 
-    Component will be removed.
-
-    Lists that consist solely of spacers will result in an empty list.
-
-    Parameters
-    ----------
-    items : list
-        The list of layout items to filter.
-    
-    Returns
-    -------
-    results : list
-        A new list with logically invisible items removed.
-
-    """
-    vis = []
-    push = vis.append
-    pop = vis.pop
-    for item in items:
-        if isinstance(item, ABConstrainable) and not is_really_visible(item):
-            if len(vis) > 0 and is_spacer(vis[-1]):
-                pop()
-        else:
-            push(item)
-    if all(is_spacer(item) for item in vis):
-        vis = []
-    return vis
-
-
 #------------------------------------------------------------------------------
 # Deferred Constraints
 #------------------------------------------------------------------------------
@@ -161,7 +103,6 @@ class DeferredConstraints(object):
         """ Initialize a DeferredConstraints instance.
 
         """
-        self.clear_invisible = kwds.get('clear_invisible', True)
         # __or__() will set these default strength and weight. If
         # provided, they will be combined with the constraints created
         # by this instance.
@@ -324,15 +265,11 @@ class AbutmentHelper(DeferredConstraints):
 
         """
         items = [item for item in self.items if item is not None]
-        if self.clear_invisible:
-            items = clear_invisible(items)
-        cns = []
         factories = AbutmentConstraintFactory.from_items(
             items, self.orientation, self.spacing,
         )
-        for f in factories:
-            cns.extend(f.constraints())
-        return cns
+        cn_lists = (f.constraints() for f in factories)
+        return list(cn for cns in cn_lists for cn in cns)
 
 
 class AlignmentHelper(DeferredConstraints):
@@ -378,15 +315,11 @@ class AlignmentHelper(DeferredConstraints):
 
         """
         items = [item for item in self.items if item is not None]
-        if self.clear_invisible:
-            items = clear_invisible(items)
-        cns = []
         factories = AlignmentConstraintFactory.from_items(
             items, self.anchor, self.spacing,
         )
-        for f in factories:
-            cns.extend(f.constraints())
-        return cns
+        cn_lists = (f.constraints() for f in factories)
+        return list(cn for cns in cn_lists for cn in cns)
 
     
 class LinearBoxHelper(DeferredConstraints):
@@ -465,11 +398,8 @@ class LinearBoxHelper(DeferredConstraints):
 
         """
         items = [item for item in self.items if item is not None]
-        if self.clear_invisible:
-            items = clear_invisible(items)
-
         if len(items) == 0:
-            return []
+            return items
         
         get = getattr
         first, last = self.orientation_map[self.orientation]
@@ -523,10 +453,7 @@ class LinearBoxHelper(DeferredConstraints):
 
         # Accummulate the constraints in the direction of the layout
         along_args = pre_along_args + items + post_along_args
-        kwds = dict(
-            orientation=self.orientation, spacing=self.spacing,
-            clear_invisible=self.clear_invisible,
-        )
+        kwds = dict(orientation=self.orientation, spacing=self.spacing)
         helpers = [AbutmentHelper(*along_args, **kwds)]
         kwds['orientation'] = self.ortho_orientation
         for item in items:
