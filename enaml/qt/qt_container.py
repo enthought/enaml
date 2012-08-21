@@ -157,8 +157,12 @@ class QtContainer(QtConstraintsWidget):
         widget = self.widget()
         self._is_show = widget.isVisible()
         if self._owns_layout:
-            mgr = self._layout_manager = LayoutManager()
+            mgr = LayoutManager()
+            # This call can fail if the objective function is unbounded.
+            # We let that failure occur so it can be logged, but we dont
+            # take ownership of the manager until success.
             mgr.initialize(self._generate_constraints())
+            self._layout_manager = mgr
             min_size = self.compute_min_size()
             max_size = self.compute_max_size()
             widget.setSizeHint(min_size)
