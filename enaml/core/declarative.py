@@ -367,8 +367,25 @@ class Declarative(HasStrictTraits):
         snap['class'] = self.class_name
         snap['bases'] = self.base_names
         snap['name'] = self.name
-        snap['children'] = [child.snapshot() for child in self.children]
+        snap['children'] = [c.snapshot() for c in self.snap_children()]
         return snap
+
+    def snap_children(self):
+        """ Get the children to include in the snapshot.
+
+        This method is called to retrieve the children to include with
+        the snapshot of the component. The default implementation just
+        returns the list of `children`. Subclasses should reimplement
+        this method if they need more control.
+
+        Returns
+        -------
+        result : iterable
+            An iterable of children to include in the component
+            snapshot.
+
+        """
+        return self.children
 
     def traverse(self, depth_first=False):
         """ Yields all of the nodes in the tree, from this node downward.
