@@ -12,7 +12,7 @@ from traits.api import (
 
 from .expressions import AbstractExpression
 from .operator_context import OperatorContext
-from .trait_types import ExpressionTrait, UserAttribute, UserEvent
+from .trait_types import EnamlEvent, ExpressionTrait, UserAttribute, UserEvent
 
 
 #: The traits types on an Declarative instance which can be overridden
@@ -55,10 +55,15 @@ class Declarative(HasStrictTraits):
     #: The list of children for this component. 
     children = List(Instance('Declarative'))
 
-    #: A boolean flag flipped from False to True at the very end of the 
-    #: __init__ method, after the keyword arguments have been applied 
-    #: to the instance. This should not be manipulated by user code.
+    #: A boolean flag flipped from False to True during the post init
+    #: traversal of the top level widget. This flag should not be 
+    #: manipulated by user code.
     initialized = Bool(False)
+
+    #: An event fired during the post init traversal. This allows 
+    #: any declarative bindings to perform any necessary procedural
+    #: initialization, such as initializing dynamic children.
+    inited = EnamlEvent
 
     #: The private dictionary of expression objects that are bound to 
     #: attributes on this component. It should not be manipulated by
@@ -125,10 +130,11 @@ class Declarative(HasStrictTraits):
         # user are not overridden by default expression bindings.
         self.trait_set(**kwargs)
 
-        # Flip the initialized flag to True after all the keyword arguments
-        # are applied.
-        self.initialized = True
-    
+        # If this widget is top level, then the a bottom-up traversal
+        # is performed to fire off the initialization events.
+        if parent is None:
+            self._post_init_traverse()
+
     #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
@@ -186,6 +192,18 @@ class Declarative(HasStrictTraits):
         ctrait = user_trait.as_ctrait()
         cls.__base_traits__[name] = ctrait
         cls.__class_traits__[name] = ctrait
+
+    def _post_init_traverse(self):
+        """ A method called when the top level widget if fully inited.
+
+        This method performs a bottom up traversal of the tree, flips
+        the `initialized` flag, and fires off the `inited` event.
+
+        """ 
+        for child in self.children:
+            child._post_init_traverse()
+        self.initialized = True
+        self.inited()
 
     def _bind_expression(self, name, expression, notify_only=False):
         """ A private method used by the Enaml execution engine.
