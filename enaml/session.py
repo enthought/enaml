@@ -3,6 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from abc import ABCMeta, abstractmethod
+from collections import Iterable
 
 from .message import Message
 from .utils import id_generator
@@ -277,7 +278,12 @@ class Session(object):
         This method should never be called by user code.
         
         """
-        views = self._session_views = tuple(self.on_open())
+        views = self.on_open()
+        if not isinstance(views, Iterable):
+            views = (views,)
+        else:
+            views = tuple(views)
+        self._session_views = views
         for view in views:
             view.set_session(self)
 

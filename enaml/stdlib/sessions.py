@@ -5,10 +5,9 @@
 """ Enaml Standard Library - Sessions
 
 This module contains some Session subclasses and associated utilities that
-handle common Session cases.
+handle common Session use cases.
 
 """
-from collections import Iterable
 from functools import wraps
 
 from enaml.session import Session
@@ -32,10 +31,7 @@ class SimpleSession(Session):
         """ Create the view from the callable
         
         """
-        views = self.sess_callable(*self.args, **self.kwargs)
-        if not isinstance(views, Iterable):
-            views = [views]
-        return views
+        return self.sess_callable(*self.args, **self.kwargs)
 
 
 def simple_session(sess_name, sess_descr, sess_callable, *args, **kwargs):
@@ -130,4 +126,21 @@ def simple_app(sess_name, sess_descr, sess_callable, *args, **kwargs):
     )
     app = Application([factory])
     return app
+
+
+def show_simple_view(view):
+    """ Display a simple view to the screen in the local process.
+
+    Parameters
+    ----------
+    view : Declarative
+        The top level Declarative component to use as the view.
+
+    """
+    from enaml.qt.qt_local_server import QtLocalServer
+    app = simple_app('main', '', lambda: view)
+    server = QtLocalServer(app)
+    client = server.local_client()
+    client.start_session('main')
+    server.start()
 
