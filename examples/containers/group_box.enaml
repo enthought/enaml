@@ -10,9 +10,12 @@ toggle the presence of the titles and whether they should be shown in a
 "flat" style or the default style.
 
 """
-from enaml.widgets import Window, Container, GroupBox, Form, \
-                            Label, Field, CheckBox
-from enaml.layout import vbox, hbox, align, spacer
+from enaml.layout.api import vbox, hbox, align, spacer
+from enaml.widgets.api import (
+    Window, Container, GroupBox, Form, Label, Field, CheckBox,
+)
+
+
 enamldef Main(Window):
     title = "Group Boxes"
     Container:
@@ -26,9 +29,11 @@ enamldef Main(Window):
         ]
         GroupBox:
             id: top_box
+            share_layout = True
             title = "Personal Details"
             Form:
                 id: top_form
+                share_layout = True
                 Label:
                     text = "First name:"
                 Field:
@@ -43,9 +48,11 @@ enamldef Main(Window):
                     pass
         GroupBox:
             id: bottom_box
+            share_layout = True
             title = "Employment Details"
             Form:
                 id: bottom_form
+                share_layout = True
                 Label:
                     text = "Employer:"
                 Field:

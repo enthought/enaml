@@ -9,8 +9,8 @@ Note:
    cross most Container boundaries.
 
 """
-from enaml.widgets import Window, Label, Container, Form, Field
-from enaml.layout import hbox, vbox, spacer
+from enaml.layout.api import hbox, vbox, spacer
+from enaml.widgets.api import Window, Label, Container, Form, Field
 
 
 enamldef Main(Window):
@@ -31,6 +31,7 @@ enamldef Main(Window):
             text = "Personal Details"
         Form:
             id: top_form
+            share_layout = True
             Label:
                 text = "First name:"
             Field:
@@ -48,6 +49,7 @@ enamldef Main(Window):
             text = "Employment Details"
         Form:
             id: bottom_form
+            share_layout = True
             Label:
                 text = "Employer:"
             Field:
