@@ -57,8 +57,10 @@ class Declarative(HasStrictTraits):
 
     #: An event emitted when the list of children for this component
     #: changes, either in whole or in place. The payload of the event
-    #: is a dict with the keys 'added' and 'removed' which are lists
-    #: of the children removed and added, respectively. This event is
+    #: is a dict with the keys 'added' and 'removed'. The value for 
+    #: the 'added' key is a list of 2-tuples of (idx, item) where 'idx'
+    #: is the new location of 'item' in the list of children. The value
+    #: of the 'removed' key is a list of removed items. This event is
     #: emitted once all reparenting operations for all of the children
     #: are complete.
     children_changed = EnamlEvent
@@ -309,9 +311,9 @@ class Declarative(HasStrictTraits):
                 push_removed(child)
                 if child.parent is self:
                     child.parent = None
-        for child in new:
+        for idx, child in enumerate(new):
             if child not in old_set:
-                push_added(child)
+                push_added((idx, child))
                 if child.parent is not self:
                     child.parent = self
         self.children_changed({'added': added, 'removed': removed})
@@ -336,13 +338,15 @@ class Declarative(HasStrictTraits):
                 push_removed(child)
                 if child.parent is self:
                     child.parent = None
+        curr = self.children
         for child in items_evt.added:
             if child not in old_set:
-                push_added(child)
+                idx = curr.index(child) 
+                push_added((idx, child))
                 if child.parent is not self:
                     child.parent = self
         self.children_changed({'added': added, 'removed': removed})
-        
+
     def _get_base_names(self):
         """ The property getter for the 'base_names' attribute.
 
