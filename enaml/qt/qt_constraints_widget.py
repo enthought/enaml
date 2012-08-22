@@ -95,7 +95,27 @@ class QtConstraintsWidget(QtWidgetComponent):
         """ Handle the 'relayout' action from the Enaml widget.
 
         """
-        print 'relayout!'
+        # XXX these variables should really be made private. And the
+        # QtContainer needs to get in on the action to grab the 
+        # share_layout flag.
+        self.hug = content['hug']
+        self.resist_clip = content['resist_clip']
+        self.constraints = content['constraints']
+        self.relayout()
+
+    def relayout(self):
+        """ Peform a relayout for this constraints widget.
+
+        The default behavior of this method is to proxy the call up the
+        tree of ancestors until it is either handled by a subclass which
+        has reimplemented this method (see QtContainer), or the ancestor
+        is not an instance of QtConstraintsWidget, at which point the
+        layout request is dropped.
+
+        """
+        parent = self.parent()
+        if isinstance(parent, QtConstraintsWidget):
+            parent.relayout()
 
     #--------------------------------------------------------------------------
     # Layout Handling
