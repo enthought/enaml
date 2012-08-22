@@ -331,20 +331,32 @@ class Declarative(HasStrictTraits):
         removed = []
         push_added = added.append
         push_removed = removed.append
-        old_set = set(items_evt.removed)
-        new_set = set(items_evt.added)
-        for child in items_evt.removed:
+        # XXX Traits workaround: Traits does not handle list slice 
+        # assignment with a step properly. When that happens the 
+        # event lists will contain a nested list with the change. 
+        removed_items = items_evt.removed
+        added_items = items_evt.added
+        if len(removed_items) == 1 and isinstance(removed_items[0], list):
+            removed_items = removed_items[0]
+        if len(added_items) == 1 and isinstance(added_items[0], list):
+            added_items = added_items[0]
+        old_set = set(removed_items)
+        new_set = set(added_items)
+        for child in removed_items:
             if child not in new_set:
                 push_removed(child)
                 if child.parent is self:
                     child.parent = None
         curr = self.children
-        for child in items_evt.added:
+        for child in added_items:
             if child not in old_set:
                 idx = curr.index(child) 
                 push_added((idx, child))
                 if child.parent is not self:
                     child.parent = self
+        # The items event makes no guarantees about ordering. Most
+        # consumers of this event, however, will care about it.
+        added.sort()
         self.children_changed({'added': added, 'removed': removed})
 
     def _get_base_names(self):
