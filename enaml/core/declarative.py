@@ -55,8 +55,14 @@ class Declarative(HasStrictTraits):
     #: The list of children for this component. 
     children = List(Instance('Declarative'))
 
-    #: A boolean flag flipped from False to True during the post init
-    #: traversal of the top level widget. This flag should not be 
+    #: An event emitted when the list of children for this component
+    #: changes, either in whole or in place. The payload of the event
+    #: is a dict with the keys 'added' and 'removed' which are lists
+    #: of the children removed and added, respectively. This event is
+    #: emitted once all reparenting operations for all of the children
+    #: are complete.
+    children_changed = EnamlEvent
+
     #: manipulated by user code.
     initialized = Bool(False)
 
@@ -288,31 +294,55 @@ class Declarative(HasStrictTraits):
         Children in the old list which are not in the new list, with
         'self' as their parent will be de-parented. Children in the 
         new list with an improper parent will be properly parented.
+        The 'children_changed' event will be fired when the parenting
+        operations are complete.
 
         """
+        added = []
+        removed = []
+        push_added = added.append
+        push_removed = removed.append
+        old_set = set(old)
         new_set = set(new)
         for child in old:
-            if child not in new_set and child.parent == self:
-                child.parent = None
+            if child not in new_set:
+                push_removed(child)
+                if child.parent is self:
+                    child.parent = None
         for child in new:
-            if child.parent != self:
-                child.parent = self
+            if child not in old_set:
+                push_added(child)
+                if child.parent is not self:
+                    child.parent = self
+        self.children_changed({'added': added, 'removed': removed})
 
     def _children_items_changed(self, items_evt):
         """ The change handler for the 'children' attribute.
 
         This handler will be called when the items in the list change. 
         Children that were added will be properly parented. Children 
-        that were removed will be unparented.
+        that were removed will be unparented. The 'children_changed' 
+        event will be fired when the parenting operations are complete.
 
         """
+        added = []
+        removed = []
+        push_added = added.append
+        push_removed = removed.append
+        old_set = set(items_evt.removed)
+        new_set = set(items_evt.added)
         for child in items_evt.removed:
-            if child.parent == self:
-                child.parent = None
+            if child not in new_set:
+                push_removed(child)
+                if child.parent is self:
+                    child.parent = None
         for child in items_evt.added:
-            if child.parent != self:
-                child.parent = self
-
+            if child not in old_set:
+                push_added(child)
+                if child.parent is not self:
+                    child.parent = self
+        self.children_changed({'added': added, 'removed': removed})
+        
     def _get_base_names(self):
         """ The property getter for the 'base_names' attribute.
 
