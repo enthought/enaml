@@ -55,6 +55,23 @@ class MessengerWidget(Declarative):
         """
         return self._session
 
+    def _children_changed_handler(self, event):
+        """ A trait change handler for the `children_changed` event.
+
+        This handler will assemble a child event for the client 
+        application and hand it off to the Session object.
+
+        """
+        session = self.session
+        if session is None:
+            msg = 'No Session object for widget %s:%s'
+            logging.warn(msg % (self.class_name, self.widget_id))
+        else:
+            removed = [item.widget_id for item in event['removed']]
+            added = [item.snapshot() for idx, item in event['added']]
+            content = {'added': added, 'removed': removed}
+            session.send_children_changed(self.widget_id, content)
+
     def _publish_attr_handler(self, name, new):
         """ A trait change handler which will send an attribute change
         message to the client.
@@ -171,14 +188,14 @@ class MessengerWidget(Declarative):
         publishing.
 
         The intent of this method is to allow a widget to hook up its
-        trait change notification handlers which will send messages
-        to the client. The default implementation of this method is 
-        a no-op, but is provided to be super() friendly. It's assumed
-        that this method will only be called once by the object which
-        manages the process of preparing a widget for communication.
+        trait change notification handlers which will send messages to
+        the client. It's assumed that this method will only be called
+        once by the object which manages the process of preparing a 
+        widget for communication.
 
         """
-        pass
+        handler = self._children_changed_handler
+        self.on_trait_change(handler, 'children_changed')
 
     def publish_attributes(self, *attrs):
         """ A convenience method provided for subclasses to use to 
