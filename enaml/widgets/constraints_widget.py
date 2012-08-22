@@ -222,10 +222,11 @@ class ConstraintsWidget(WidgetComponent):
 
         These are constraints that must apply to the internal layout
         computations of a component as well as that of containers which
-        may parent this component. The default implementation constrains
-        the variables 'left', 'right', 'width', and 'height' to >= 0
-        with the strength of 'required'. Subclasses which need more
-        control should override this method.
+        may parent this component. By default, all components will have
+        their 'left', 'right', 'width', and 'height' symbols constrained
+        to >= 0. These constraints are applied client-side, in order to
+        save bandwidth. Subclasses which need to add more constraints
+        should reimplement this method.
 
         Returns
         -------
@@ -234,11 +235,7 @@ class ConstraintsWidget(WidgetComponent):
             to a component.
 
         """
-        cns = [
-            self.left >= 0, self.top >= 0, 
-            self.width >= 0, self.height >= 0,
-        ]
-        return cns 
+        return []
 
     def _component_constraints(self):
         """ Returns a list of constraints which should be applied on
