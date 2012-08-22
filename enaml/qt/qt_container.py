@@ -155,7 +155,6 @@ class QtContainer(QtConstraintsWidget):
         """
         super(QtContainer, self).init_layout()
         widget = self.widget()
-        self._is_show = widget.isVisible()
         if self._owns_layout:
             mgr = LayoutManager()
             # This call can fail if the objective function is unbounded.
@@ -252,7 +251,7 @@ class QtContainer(QtConstraintsWidget):
 
         # The list of raw casuarius constraints which will be returned 
         # from this method to be added to the casuarius solver.
-        raw_cns = []
+        raw_cns = list(self.hard_constraints())
         raw_cns_extend = raw_cns.extend
         
         # The widget descendent traversal stack
@@ -272,6 +271,7 @@ class QtContainer(QtConstraintsWidget):
             if isinstance(child, QtConstraintsWidget):
                 child_box = child.layout_box
                 cn_owners[child.widget_id()] = child_box
+                raw_cns_extend(child.hard_constraints())
                 if isinstance(child, QtContainer):
                     if child.transfer_layout_ownership(self):
                         cn_dicts_extend(child.constraints)
