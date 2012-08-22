@@ -68,7 +68,7 @@ class MessengerWidget(Declarative):
             logging.warn(msg % (self.class_name, self.widget_id))
         else:
             removed = [item.widget_id for item in event['removed']]
-            added = [item.snapshot() for idx, item in event['added']]
+            added = [(idx, item.snapshot()) for idx, item in event['added']]
             content = {'added': added, 'removed': removed}
             session.send_children_changed(self.widget_id, content)
 
