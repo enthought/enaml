@@ -272,6 +272,33 @@ class Session(object):
         message = Message((header, {}, metadata, content))
         self._push_handler.push_message(message)
 
+    def send_children_changed(self, widget_id, content):
+        """ Send an unsolicited 'widget_children_changed' message to
+        the client of this session.
+
+        This method is called by the MessengerWidget's which are owned 
+        by this Session object. This should never be called directly by 
+        user code.
+        
+        Parameters
+        ----------
+        widget_id : str
+            The widget identifier for the widget sending the message.
+
+        content : dict
+            The content dictionary for the action.
+
+        """
+        header = {
+            'session': self._session_id,
+            'username': self._username,
+            'msg_type': 'widget_children_changed',
+            'msg_id': _session_message_id_gen.next()
+        }
+        metadata = {'widget_id': widget_id}
+        message = Message((header, {}, metadata, content))
+        self._push_handler.push_message(message)
+
     def open(self):
         """ Called by the application when the session is opened.
 
