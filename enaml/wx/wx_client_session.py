@@ -7,6 +7,8 @@ import logging
 from enaml.utils import id_generator
 from enaml.message import Message
 
+import wx
+
 
 #: The global message id generator for this wx process.
 _wxsession_message_id_gen = id_generator('wxsmsg_')
@@ -96,7 +98,24 @@ class WxClientSession(object):
             if widget is not None:
                 widget.destroy()
         parent = self._widgets.get(message.metadata.widget_id)
+       
+        # This is a hack to reduce layout flicker on wx. The common
+        # case of a child event will be followed by a constraints
+        # relayout event. Before that relayout occurs, the widgets
+        # will not be in the correct place. So, we freeze the parent
+        # widget, then wait a cycle for the relayout event to arrive,
+        # at which point we unfreeze the parent and get the redraw.
+        # XXX this is pretty ugly, it would be nice if the relayout
+        # event and its constraints came with the child event when
+        # appropriate
+        if parent is not None:
+            widget = parent.widget()
+            if widget:
+                widget.Freeze()
+                wx.CallAfter(widget.Thaw)
+        
         self._build_children(parent, content.added)
+
 
     def _dispatch_widget_message(self, message):
         """ Route a 'widget_action' message to the client widget.
