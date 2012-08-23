@@ -188,37 +188,51 @@ class QtConstraintsWidget(QtWidgetComponent):
             self._hard_constraints = cns
         return cns
 
-    def update_layout_geometry(self, dx, dy):
-        """ A method which can be called during a layout pass to compute
-        the new layout geometry rect and update the underlying widget.
+    def geometry_updater(self):
+        """ A method which can be called to create a function which
+        will update the layout geometry of the underlying widget.
+
+        The parameter and return values below describe the function
+        that is returned by calling this method.
 
         Parameters
         ----------
-        dx : int
+        dx : float
             The offset of the parent widget from the computed origin
-            of the layout. This amount should be subtracted from the 
-            computed layout 'x' amount.
+            of the layout. This amount is subtracted from the computed 
+            layout 'x' amount, which is expressed in the coordinates
+            of the owner widget.
 
-        dy : int
+        dy : float
             The offset of the parent widget from the computed origin
-            of the layout. This amount should be subtracted from the
-            computed layout 'y' amount.
+            of the layout. This amount is subtracted from the computed 
+            layout 'y' amount, which is expressed in the coordinates
+            of the layout owner widget.
 
         Returns
         -------
         result : (x, y)
-            The computed layout 'x' and 'y' amount, unadjusted with
-            the given dx and dy.
+            The computed layout 'x' and 'y' amount, expressed in the
+            coordinates of the layout owner widget.
 
         """
-        int_ = int
-        round_ = round
+        # The return function is a hyper optimized (for Python) closure
+        # that will is called on every resize to update the geometry of
+        # the widget. According to cProfile, executing the body of this 
+        # closure is 2x faster than the call to QWidgetItem.setGeometry. 
+        # The previous version of this method, `update_layout_geometry`, 
+        # was 5x slower.
         primitive = self.layout_box.primitive
-        x = int_(round_(primitive('left', False).value))
-        y = int_(round_(primitive('top', False).value))
-        width = int_(round_(primitive('width', False).value))
-        height = int_(round_(primitive('height', False).value))
-        rect = QRect(x - dx, y - dy, width, height)
-        self.widget_item().setGeometry(rect)
-        return (x, y)
-    
+        x = primitive('left')
+        y = primitive('top')
+        width = primitive('width')
+        height = primitive('height')
+        setgeo = self.widget_item().setGeometry
+        rect = QRect
+        def update_geometry(dx, dy):
+            nx = x.value
+            ny = y.value
+            setgeo(rect(nx - dx, ny - dy, width.value, height.value))
+            return nx, ny
+        return update_geometry
+
