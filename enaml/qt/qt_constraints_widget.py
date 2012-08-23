@@ -221,7 +221,9 @@ class QtConstraintsWidget(QtWidgetComponent):
         # the widget. According to cProfile, executing the body of this 
         # closure is 2x faster than the call to QWidgetItem.setGeometry. 
         # The previous version of this method, `update_layout_geometry`, 
-        # was 5x slower.
+        # was 5x slower. This is explicitly not idiomatic Python code.
+        # It exists purely for the sake of efficiency, justified with
+        # profiling.
         primitive = self.layout_box.primitive
         x = primitive('left')
         y = primitive('top')
@@ -234,5 +236,8 @@ class QtConstraintsWidget(QtWidgetComponent):
             ny = y.value
             setgeo(rect(nx - dx, ny - dy, width.value, height.value))
             return nx, ny
+        # Store a reference to self on the updater, so that the layout
+        # container can know the object on which the updater operates.
+        update_geometry.item = self
         return update_geometry
 
