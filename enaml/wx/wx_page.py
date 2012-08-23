@@ -34,6 +34,7 @@ class wxPage(wx.Panel):
         self._is_open = True
         self._page_widget = None
         self.SetSizer(wxSingleWidgetSizer())
+        self.Bind(wx.EVT_SHOW, self.OnShow)
 
     #--------------------------------------------------------------------------
     # Event Handlers
@@ -52,6 +53,18 @@ class wxPage(wx.Panel):
             self.Close()
             evt = wxPageClosedEvent()
             wx.PostEvent(self, evt)
+
+    def OnShow(self, event):
+        """ Handle the show event.
+
+        Wx will not emit an EVT_SHOW on the child of this page. So, this
+        event handler passes the show event along to the contained page
+        widget, so that it can disable its layout when not visible.
+
+        """
+        page = self._page_widget
+        if page:
+            wx.PostEvent(page, event)
 
     #--------------------------------------------------------------------------
     # Private API
