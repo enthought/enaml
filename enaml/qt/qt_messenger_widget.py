@@ -284,7 +284,6 @@ class QtMessengerWidget(object):
             6. The object removes itself from the session.
 
         """
-        # XXX fixup this destroy method
         children = self._children
         self._children = []
         self._children_map = {}

@@ -103,6 +103,9 @@ class QtConstraintsWidget(QtWidgetComponent):
         self.constraints = content['constraints']
         self.relayout()
 
+    #--------------------------------------------------------------------------
+    # Layout Handling
+    #--------------------------------------------------------------------------
     def relayout(self):
         """ Peform a relayout for this constraints widget.
 
@@ -117,9 +120,6 @@ class QtConstraintsWidget(QtWidgetComponent):
         if isinstance(parent, QtConstraintsWidget):
             parent.relayout()
 
-    #--------------------------------------------------------------------------
-    # Layout Handling
-    #--------------------------------------------------------------------------
     def size_hint_constraints(self):
         """ Creates the list of size hint constraints for this widget.
 

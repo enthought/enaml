@@ -425,7 +425,7 @@ class QtContainer(QtConstraintsWidget):
 
         Parameters
         ----------
-        owner : BaseComponent
+        owner : Declarative
             The component which has taken ownership responsibility
             for laying out the children of this component. All 
             relayout and refresh requests will be forwarded to this
