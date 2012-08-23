@@ -965,17 +965,17 @@ class AuiDefaultToolBarArt(object):
         text_height = label_size.GetHeight()
 
         if orient == AUI_TBTOOL_HORIZONTAL:
-            text_x = rect.x
-            text_y = rect.y + (rect.height-text_height)/2
+            text_x = rect.x + (rect.width - text_width) / 2
+            text_y = rect.y + (rect.height - text_height) / 2
             dc.DrawText(item.GetLabel(), text_x, text_y)
 
         elif orient == AUI_TBTOOL_VERT_CLOCKWISE:
-            text_x = rect.x + (rect.width+text_width)/2
+            text_x = rect.x + (rect.width + text_width) / 2
             text_y = rect.y
             dc.DrawRotatedText(item.GetLabel(), text_x, text_y, 270)
 
         elif AUI_TBTOOL_VERT_COUNTERCLOCKWISE:
-            text_x = rect.x + (rect.width-text_width)/2
+            text_x = rect.x + (rect.width - text_width) / 2
             text_y = rect.y + text_height
             dc.DrawRotatedText(item.GetLabel(), text_x, text_y, 90)
 
@@ -991,7 +991,7 @@ class AuiDefaultToolBarArt(object):
         """
 
         bmp_rect, text_rect = self.GetToolsPosition(dc, item, rect)
-        
+
         if not item.GetState() & AUI_BUTTON_STATE_DISABLED:
         
             if item.GetState() & AUI_BUTTON_STATE_PRESSED:
@@ -1027,6 +1027,10 @@ class AuiDefaultToolBarArt(object):
 
         if bmp.IsOk():
             dc.DrawBitmap(bmp, bmp_rect.x, bmp_rect.y, True)
+        else:
+            # If there is no bitmap to draw, the text can use the whole
+            # item rect.
+            text_rect = rect
 
         # set the item's text colour based on if it is disabled
         dc.SetTextForeground(wx.BLACK)
@@ -1653,7 +1657,6 @@ class AuiToolBar(wx.PyControl):
          creation and that `Refresh` might need to be be called after changing the
          others for the change to take place immediately.
         """
-        
         self._agwStyle = self._originalStyle = agwStyle
 
         if self._art:
@@ -1687,7 +1690,6 @@ class AuiToolBar(wx.PyControl):
 
         :see: :meth:`SetAGWWindowStyleFlag` for an explanation of various AGW-specific style.
         """
-
         return self._agwStyle
     
 
@@ -1714,7 +1716,6 @@ class AuiToolBar(wx.PyControl):
         """ Returns the current art provider being used. """
 
         return self._art
-
 
     def AddSimpleTool(self, tool_id, label, bitmap, short_help_string="", kind=ITEM_NORMAL, target=None):
         """
@@ -2626,36 +2627,26 @@ class AuiToolBar(wx.PyControl):
 
         :note: This only applies to a tool that has been specified as a toggle tool.
         """
-        
         tool = self.FindTool(tool_id)
-
         if tool:
-            if tool.kind not in [ITEM_CHECK, ITEM_RADIO]:
-                return
-
             if tool.kind == ITEM_RADIO:
-                idx = self.GetToolIndex(tool_id)
-                if idx >= 0 and idx < len(self._items):
-                    for i in xrange(idx, len(self._items)):
-                        tool = self.FindToolByIndex(i)
-                        if tool.kind != ITEM_RADIO:
-                            break
-                        tool.state &= ~AUI_BUTTON_STATE_CHECKED
-
-                    for i in xrange(idx, -1, -1):
-                        tool = self.FindToolByIndex(i)
-                        if tool.kind != ITEM_RADIO:
-                            break
-                        tool.state &= ~AUI_BUTTON_STATE_CHECKED 
-
-                    tool = self.FindTool(tool_id)
+                if state and not (tool.state & AUI_BUTTON_STATE_CHECKED):
                     tool.state |= AUI_BUTTON_STATE_CHECKED
-            else:
+                    items = self._items
+                    index = items.index(tool)
+                    for item in items[index + 1:]:
+                        if item.kind != ITEM_RADIO:
+                            break
+                        item.state &= ~AUI_BUTTON_STATE_CHECKED
+                    for item in reversed(items[:index]):
+                        if item.kind != ITEM_RADIO:
+                            break
+                        item.state &= ~AUI_BUTTON_STATE_CHECKED
+            elif tool.kind == ITEM_CHECK:
                 if state:
                     tool.state |= AUI_BUTTON_STATE_CHECKED
                 else:
                     tool.state &= ~AUI_BUTTON_STATE_CHECKED 
-
 
     def GetToolToggled(self, tool_id):
         """
@@ -3095,21 +3086,16 @@ class AuiToolBar(wx.PyControl):
         
         # add drop down area
         self._overflow_sizer_item = None
-
         if self._agwStyle & AUI_TB_OVERFLOW:
-        
             overflow_size = self._art.GetElementSize(AUI_TBART_OVERFLOW_SIZE)
             if overflow_size > 0 and self._overflow_visible:
-            
                 if horizontal:
                     self._overflow_sizer_item = sizer.Add((overflow_size, 1), 0, wx.EXPAND)
                 else:
                     self._overflow_sizer_item = sizer.Add((1, overflow_size), 0, wx.EXPAND)
-            
             else:
-            
                 self._overflow_sizer_item = None
-            
+
         # the outside sizer helps us apply the "top" and "bottom" padding
         outside_sizer = wx.BoxSizer((horizontal and [wx.VERTICAL] or [wx.HORIZONTAL])[0])
 
@@ -3177,12 +3163,10 @@ class AuiToolBar(wx.PyControl):
         self.Refresh(False)
         return True
 
-
     def GetOverflowState(self):
         """ Returns the state of the overflow button. """
 
         return self._overflow_state
-
 
     def GetOverflowRect(self):
         """ Returns the rectangle of the overflow button. """
@@ -3224,10 +3208,7 @@ class AuiToolBar(wx.PyControl):
     def GetAuiManager(self):
         """ Returns the :class:`~lib.agw.aui.framemanager.AuiManager` which manages the toolbar. """
 
-        try:
-            return self._auiManager
-        except AttributeError:
-            return False
+        return getattr(self, '_auiManager', None)
 
 
     def SetAuiManager(self, auiManager):
@@ -3303,17 +3284,10 @@ class AuiToolBar(wx.PyControl):
 
         :param `event`: a :class:`SizeEvent` event to be processed.        
         """
-        
         x, y = self.GetClientSize()
         realize = False
 
-        if x > y:
-            self.SetOrientation(wx.HORIZONTAL)
-        else:
-            self.SetOrientation(wx.VERTICAL)
-
         if (x >= y and self._absolute_min_size.x > x) or (y > x and self._absolute_min_size.y > y):
-        
             # hide all flexible items
             for item in self._items:
                 if item.sizer_item and item.proportion > 0 and item.sizer_item.IsShown():
@@ -3326,7 +3300,6 @@ class AuiToolBar(wx.PyControl):
                     realize = True
                        
         else:
-
             if self._originalStyle & AUI_TB_OVERFLOW and not self._custom_overflow_append and \
                not self._custom_overflow_prepend:
                 if self.GetOverflowVisible():
@@ -3406,7 +3379,6 @@ class AuiToolBar(wx.PyControl):
         
         :note: Overridden from :class:`PyControl`.
         """
-
         return self._absolute_min_size
     
 
@@ -3416,7 +3388,6 @@ class AuiToolBar(wx.PyControl):
 
         :param `event`: a :class:`PaintEvent` event to be processed.        
         """
-
         dc = wx.AutoBufferedPaintDC(self)
         cli_rect = wx.RectPS(wx.Point(0, 0), self.GetClientSize())
 

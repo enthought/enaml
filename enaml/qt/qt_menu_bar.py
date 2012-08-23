@@ -2,44 +2,67 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt.QtGui import QMenuBar
+import sys
+
+from .qt.QtGui import QMainWindow, QMenuBar
 from .qt_widget_component import QtWidgetComponent
 
+
 class QtMenuBar(QtWidgetComponent):
-    """ A Qt implementation of a menu bar
+    """ A Qt implementation of an Enaml MenuBar.
 
     """
-    def create(self):
-        """ Create the underlying widget. We do not give it a parent,
-        as this is the responsibility of the main window
-
-        """
-        self.widget = QMenuBar()
-
-    def initialize(self, attrs):
-        """ Initialize the widget attributes
-
-        """
-        super(QtMenuBar, self).initialize(attrs)
-        self.set_menus(attrs['menus'])
+    #: Storage for the menu ids.
+    _menu_ids = []
 
     #--------------------------------------------------------------------------
-    # Message Handlers
+    # Setup Methods
     #--------------------------------------------------------------------------
-    def on_message_set_menus(self, payload):
-        """ Message handler for set_menus
+    def create_widget(self, parent, tree):
+        """ Create the underlying menu bar widget.
 
         """
-        self.set_menus(payload['menus'])
+        # On OSX, there is a weird issue where creating a QMenuBar with
+        # a parent will cause the menu bar to not show up when its added
+        # to the main window. On that platform we work around the issue
+        # by having the QMainWindow create the menu bar for us, or by
+        # creating it without a parent. This issue is even more weird,
+        # because in the C++ code for QMainWindow::menuBar() the newly
+        # created menu bar is given the QMainWindow as its parent...
+        if sys.platform == 'darwin':
+            if isinstance(parent, QMainWindow):
+                menu_bar = parent.menuBar()
+            else:
+                menu_bar = QMenuBar()
+        else:
+            menu_bar = QMenuBar(parent)
+        return menu_bar
+
+    def create(self, tree):
+        """ Create and initialize the underlying control.
+
+        """
+        super(QtMenuBar, self).create(tree)
+        self.set_menu_ids(tree['menu_ids'])
+
+    def init_layout(self):
+        """ Initialize the layout for the underlying control.
+
+        """
+        super(QtMenuBar, self).init_layout()
+        widget = self.widget()
+        find_child = self.find_child
+        for menu_id in self._menu_ids:
+            child = find_child(menu_id)
+            if child is not None:
+                widget.addMenu(child.widget())
         
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
-    def set_menus(self, menu_list):
-        """ Set the menus within the menu bar
+    def set_menu_ids(self, menu_ids):
+        """ Set the menu ids for the underlying control.
 
         """
-        self.widget.clear()
-        print menu_list
-        for menu in menu_list:
-            self.widget.addMenu(menu.widget)
+        self._menu_ids = menu_ids
+

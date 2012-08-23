@@ -21,20 +21,20 @@ def as_iso_date(qdate):
 
 
 class QtBoundedDate(QtConstraintsWidget):
-    """ A base class for date widgets.
+    """ A base class for implementing Qt-Enaml date widgets.
 
     """
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
-    def initialize(self, attrs):
-        """ Initialize the attributes of the date widget.
+    def create(self, tree):
+        """ Create and initialize the underyling date widget.
 
         """
-        super(QtBoundedDate, self).initialize(attrs)
-        self.set_min_date(as_qdate(attrs['minimum']))
-        self.set_max_date(as_qdate(attrs['maximum']))
-        self.set_date(as_qdate(attrs['date']))
+        super(QtBoundedDate, self).create(tree)
+        self.set_min_date(as_qdate(tree['minimum']))
+        self.set_max_date(as_qdate(tree['maximum']))
+        self.set_date(as_qdate(tree['date']))
 
     #--------------------------------------------------------------------------
     # Message Handlers

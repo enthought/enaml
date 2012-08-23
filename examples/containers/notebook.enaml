@@ -8,8 +8,11 @@ This example shows how to use the notebook container to arrange constituent page
 
 """
 import itertools
-from enaml.widgets import Window, Html, Container, PushButton, Notebook, Form, Label, Field, Page
-from enaml.layout import hbox, vbox, spacer, align
+
+from enaml.layout.api import hbox, vbox, spacer, align
+from enaml.widgets.api import (
+    Window, Html, Container, PushButton, Notebook, Form, Label, Field, Page
+)
 
 
 tab_pos = itertools.cycle(['top', 'bottom', 'left', 'right'])
@@ -48,10 +51,7 @@ enamldef Main(Window):
     Container:
         Notebook:
             id: nb
-            constraints = [
-                self.height >= 200,
-                self.width >= 500,
-            ]
+            constraints = [height >= 200, width >= 500]
             tab_style = 'preferences'
             tabs_closable = False
             Page:

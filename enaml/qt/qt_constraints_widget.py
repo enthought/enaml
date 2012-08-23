@@ -48,7 +48,7 @@ class LayoutBox(object):
         force_create : bool, optional
             If the constraint variable does not yet exist and this 
             parameter is True, then the constraint variable will be
-            created on-the-fly. If the parameter is False, and the
+            created on the fly. If the parameter is False, and the
             variable does not exist, a ValueError will be raised.
 
         """
@@ -66,28 +66,28 @@ class LayoutBox(object):
 
 
 class QtConstraintsWidget(QtWidgetComponent):
-    """ A Qt4 implementation of an Enaml ConstraintsWidget.
+    """ A Qt implementation of an Enaml ConstraintsWidget.
 
     """
-    #: A class attribte which indicates whether or not to use a 
-    #: QWidgetItem to compute the layout geometry. Subclasses should
-    #: override as necessary to change the behavior. 
-    use_widget_item_for_layout = True
+    #: The list of hard constraints which must be applied to the widget.
+    #: These constraints are computed lazily and only once since they
+    #: are assumed to never change.
+    _hard_constraints = []
 
     #--------------------------------------------------------------------------
-    # Initialization
+    # Setup Methods
     #--------------------------------------------------------------------------
-    def initialize(self, attrs):
-        """ Initialize the attributes of the widget.
+    def create(self, tree):
+        """ Create and initialize the underlyling widget.
 
         """
-        super(QtConstraintsWidget, self).initialize(attrs)
-        layout = attrs['layout']
+        super(QtConstraintsWidget, self).create(tree)
+        layout = tree['layout']
         self.hug = layout['hug']
         self.resist_clip = layout['resist_clip']
         self.constraints = layout['constraints']
-        self.layout_box = LayoutBox(type(self).__name__, self.widget_id)
-        
+        self.layout_box = LayoutBox(type(self).__name__, self.widget_id())
+
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
@@ -95,7 +95,27 @@ class QtConstraintsWidget(QtWidgetComponent):
         """ Handle the 'relayout' action from the Enaml widget.
 
         """
-        print 'relayout!'
+        # XXX these variables should really be made private. And the
+        # QtContainer needs to get in on the action to grab the 
+        # share_layout flag.
+        self.hug = content['hug']
+        self.resist_clip = content['resist_clip']
+        self.constraints = content['constraints']
+        self.relayout()
+
+    def relayout(self):
+        """ Peform a relayout for this constraints widget.
+
+        The default behavior of this method is to proxy the call up the
+        tree of ancestors until it is either handled by a subclass which
+        has reimplemented this method (see QtContainer), or the ancestor
+        is not an instance of QtConstraintsWidget, at which point the
+        layout request is dropped.
+
+        """
+        parent = self.parent()
+        if isinstance(parent, QtConstraintsWidget):
+            parent.relayout()
 
     #--------------------------------------------------------------------------
     # Layout Handling
@@ -119,7 +139,7 @@ class QtConstraintsWidget(QtWidgetComponent):
         """
         cns = []
         push = cns.append
-        hint = self.layout_size_hint()
+        hint = self.widget_item().sizeHint()
         if hint.isValid():
             width_hint = hint.width()
             height_hint = hint.height()
@@ -144,84 +164,80 @@ class QtConstraintsWidget(QtWidgetComponent):
                     push(cn)
         return cns
 
-    def layout_size_hint(self):
-        """ Returns the size hint to use in layout computation.
+    def hard_constraints(self):
+        """ Generate the constraints which must always be applied.
 
-        The default implementation returns the appropriate size hint 
-        based on whether or not a widget item should be used. If a
-        subclass requires more control, it should override this method.
+        These constraints are generated once the first time this method
+        is called. The results are then cached and returned immediately
+        on future calls.
 
         Returns
         -------
-        result : QSize
-            The size hint to use in layout computations for the widget.
+        result : list
+            A list of casuarius LinearConstraint instance.
 
         """
-        if self.use_widget_item_for_layout:
-            item = self.widget_item
-        else:
-            item = self.widget
-        size = item.sizeHint()
-        return size
+        cns = self._hard_constraints
+        if not cns: 
+            primitive = self.layout_box.primitive
+            left = primitive('left')
+            top = primitive('top')
+            width = primitive('width')
+            height = primitive('height')
+            cns = [left >= 0, top >= 0, width >= 0, height >= 0]
+            self._hard_constraints = cns
+        return cns
 
-    def update_layout_geometry(self, dx, dy):
-        """ A method which can be called during a layout pass to compute
-        the new layout geometry rect and update the underlying widget.
+    def geometry_updater(self):
+        """ A method which can be called to create a function which
+        will update the layout geometry of the underlying widget.
+
+        The parameter and return values below describe the function
+        that is returned by calling this method.
 
         Parameters
         ----------
-        dx : int
+        dx : float
             The offset of the parent widget from the computed origin
-            of the layout. This amount should be subtracted from the 
-            computed layout 'x' amount.
+            of the layout. This amount is subtracted from the computed 
+            layout 'x' amount, which is expressed in the coordinates
+            of the owner widget.
 
-        dy : int
+        dy : float
             The offset of the parent widget from the computed origin
-            of the layout. This amount should be subtracted from the
-            computed layout 'y' amount.
+            of the layout. This amount is subtracted from the computed 
+            layout 'y' amount, which is expressed in the coordinates
+            of the layout owner widget.
 
         Returns
         -------
         result : (x, y)
-            The computed layout 'x' and 'y' amount, unadjusted with
-            the given dx and dy.
+            The computed layout 'x' and 'y' amount, expressed in the
+            coordinates of the layout owner widget.
 
         """
+        # The return function is a hyper optimized (for Python) closure
+        # that will is called on every resize to update the geometry of
+        # the widget. According to cProfile, executing the body of this 
+        # closure is 2x faster than the call to QWidgetItem.setGeometry. 
+        # The previous version of this method, `update_layout_geometry`, 
+        # was 5x slower. This is explicitly not idiomatic Python code.
+        # It exists purely for the sake of efficiency, justified with
+        # profiling.
         primitive = self.layout_box.primitive
-        x = int(round(primitive('left', False).value))
-        y = int(round(primitive('top', False).value))
-        width = int(round(primitive('width', False).value))
-        height = int(round(primitive('height', False).value))
-        self.set_layout_geometry(x - dx, y - dy, width, height)
-        return (x, y)
-    
-    def set_layout_geometry(self, x, y, width, height):
-        """ Updates the layout geometry for the widget.
-
-        The default implementation sets the geometry appropriately based
-        on whether or not a widget item should be used. If a subclass
-        requires more control, it should override this method.
-
-        Parameters
-        ----------
-        x : int
-            The x position of the widget, relative to the origin of
-            its parent.
-
-        y : int
-            The y position of the widget, relative to the origin of
-            its parent.
-
-        width : int
-            The width of the widget.
-
-        height : int
-            The height of the widget.
-
-        """
-        if self.use_widget_item_for_layout:
-            item = self.widget_item
-        else:
-            item = self.widget
-        item.setGeometry(QRect(x, y, width, height))
+        x = primitive('left')
+        y = primitive('top')
+        width = primitive('width')
+        height = primitive('height')
+        setgeo = self.widget_item().setGeometry
+        rect = QRect
+        def update_geometry(dx, dy):
+            nx = x.value
+            ny = y.value
+            setgeo(rect(nx - dx, ny - dy, width.value, height.value))
+            return nx, ny
+        # Store a reference to self on the updater, so that the layout
+        # container can know the object on which the updater operates.
+        update_geometry.item = self
+        return update_geometry
 

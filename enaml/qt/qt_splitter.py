@@ -14,26 +14,42 @@ _ORIENTATION_MAP = {
 
 
 class QtSplitter(QtConstraintsWidget):
-    """ A Qt4 implementation of an Enaml Splitter.
+    """ A Qt implementation of an Enaml Splitter.
 
     """
+    #: Storage for the splitter widget ids
+    _splitter_widget_ids = []
+
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create_widget(self, parent, tree):
         """ Creates the underlying QSplitter control.
 
         """
-        self.widget = QSplitter(self.parent_widget)
+        return QSplitter(parent)
 
-    def initialize(self, attrs):
-        """ Intializes the widget with the attributes of this instance.
+    def create(self, tree):
+        """ Create and initialize the underlying control.
 
         """
-        super(QtSplitter, self).initialize(attrs)
-        self.set_orientation(attrs['orientation'])
-        self.set_live_drag(attrs['live_drag'])
-        self.set_preferred_sizes(attrs['preferred_sizes'])
+        super(QtSplitter, self).create(tree)
+        self.set_splitter_widget_ids(tree['splitter_widget_ids'])
+        self.set_orientation(tree['orientation'])
+        self.set_live_drag(tree['live_drag'])
+        self.set_preferred_sizes(tree['preferred_sizes'])
+
+    def init_layout(self):
+        """ Handle the layout initialization for the splitter.
+
+        """
+        super(QtSplitter, self).init_layout()
+        widget = self.widget()
+        find_child = self.find_child
+        for widget_id in self._splitter_widget_ids:
+            child = find_child(widget_id)
+            if child is not None:
+                widget.addWidget(child.widget())
 
     #--------------------------------------------------------------------------
     # Message Handler Methods 
@@ -60,18 +76,24 @@ class QtSplitter(QtConstraintsWidget):
     #--------------------------------------------------------------------------
     # Widget Update Methods 
     #--------------------------------------------------------------------------
+    def set_splitter_widget_ids(self, widget_ids):
+        """ Set the splitter widget ids for the underlying widget.
+
+        """
+        self._splitter_widget_ids = widget_ids
+
     def set_orientation(self, orientation):
         """ Update the orientation of the QSplitter.
 
         """
         q_orientation = _ORIENTATION_MAP[orientation]
-        self.widget.setOrientation(q_orientation)
+        self.widget().setOrientation(q_orientation)
 
     def set_live_drag(self, live_drag):
         """ Update the dragging mode of the QSplitter.
 
         """
-        self.widget.setOpaqueResize(live_drag)
+        self.widget().setOpaqueResize(live_drag)
 
     def set_preferred_sizes(self, sizes):
         """ Set the preferred sizes for the children.
@@ -81,12 +103,12 @@ class QtSplitter(QtConstraintsWidget):
         will be used in its place.
 
         """
-        widget = self.widget
+        widget = self.widget()
         curr_sizes = widget.sizes()[:]
         max_idx = min(len(curr_sizes), len(sizes))
         for idx in xrange(max_idx):
             size = sizes[idx]
             if size is not None:
                 curr_sizes[idx] = size
-        self.widget.setSizes(curr_sizes)
+        widget.setSizes(curr_sizes)
 

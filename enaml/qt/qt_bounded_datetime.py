@@ -21,20 +21,20 @@ def as_iso_datetime(qdatetime):
 
 
 class QtBoundedDatetime(QtConstraintsWidget):
-    """ A base class for datetime widgets.
+    """ A base class for implementing Qt-Enaml datetime widgets.
 
     """
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
-    def initialize(self, attrs):
-        """ Initialize the attributes of the date widget.
+    def create(self, create):
+        """ Create and initialize the underlying datetime widget.
 
         """
-        super(QtBoundedDatetime, self).initialize(attrs)
-        self.set_min_datetime(as_qdatetime(attrs['minimum']))
-        self.set_max_datetime(as_qdatetime(attrs['maximum']))
-        self.set_datetime(as_qdatetime(attrs['datetime']))
+        super(QtBoundedDatetime, self).create(create)
+        self.set_min_datetime(as_qdatetime(create['minimum']))
+        self.set_max_datetime(as_qdatetime(create['maximum']))
+        self.set_datetime(as_qdatetime(create['datetime']))
 
     #--------------------------------------------------------------------------
     # Message Handlers

@@ -14,8 +14,8 @@ wxPageClosedEvent, EVT_PAGE_CLOSED = wx.lib.newevent.NewEvent()
 
 
 class wxPage(wx.Panel):
-    """ A wxPanel subclass which acts as a page in a wxAuiNotebook.
-
+    """ A wxPanel subclass which acts as a page in a wx notebook.
+    
     """
     def __init__(self, *args, **kwargs):
         """ Initialize a wxPage.
@@ -48,9 +48,10 @@ class wxPage(wx.Panel):
 
         """
         event.Veto()
-        self.Close()
-        evt = wxPageClosedEvent()
-        wx.PostEvent(self, evt)
+        if self.GetClosable():
+            self.Close()
+            evt = wxPageClosedEvent()
+            wx.PostEvent(self, evt)
 
     #--------------------------------------------------------------------------
     # Private API

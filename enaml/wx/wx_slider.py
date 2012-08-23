@@ -294,11 +294,12 @@ class WxSlider(WxConstraintsWidget):
         widget = self.widget()
         style = widget.GetWindowStyle()
         style &= ~_TICK_MASK
-        if style & wx.SL_VERTICAL:
-            tick_position = _TICK_ADAPT_MAP['vertical'][tick_position]
-        else:
-            tick_position = _TICK_ADAPT_MAP['horizontal'][tick_position]
-        style |= _TICK_POSITION_MAP[tick_position]
+        if tick_position != 'no_ticks':
+            if style & wx.SL_VERTICAL:
+                tick_position = _TICK_ADAPT_MAP['vertical'][tick_position]
+            else:
+                tick_position = _TICK_ADAPT_MAP['horizontal'][tick_position]
+            style |= _TICK_POSITION_MAP[tick_position]
         widget.SetWindowStyle(style)
 
     def set_tracking(self, tracking):

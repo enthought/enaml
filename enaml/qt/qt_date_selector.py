@@ -7,22 +7,25 @@ from .qt_bounded_date import QtBoundedDate
 
 
 class QtDateSelector(QtBoundedDate):
-    """ A Qt4 implementation of an Enaml DateSelector.
+    """ A Qt implementation of an Enaml DateSelector.
 
     """
-    def create(self):
+    #--------------------------------------------------------------------------
+    # Setup Methods
+    #--------------------------------------------------------------------------
+    def create_widget(self, parent, tree):
         """ Create the underlying QDateEdit widget.
 
         """
-        self.widget = QDateEdit(self.parent_widget)
+        return QDateEdit(parent)
 
-    def initialize(self, attrs):
-        """ Initialize the widget's attributes.
+    def create(self, tree):
+        """ Create and initialize the underlying widget.
 
         """
-        super(QtDateSelector, self).initialize(attrs)
-        self.set_date_format(attrs['date_format'])
-        self.widget.dateChanged.connect(self.on_date_changed)
+        super(QtDateSelector, self).create(tree)
+        self.set_date_format(tree['date_format'])
+        self.widget().dateChanged.connect(self.on_date_changed)
 
     #--------------------------------------------------------------------------
     # Message Handling
@@ -45,7 +48,7 @@ class QtDateSelector(QtBoundedDate):
             The current control date as a QDate object.
 
         """
-        return self.widget.date()
+        return self.widget().date()
 
     def set_date(self, date):
         """ Set the widget's current date.
@@ -56,7 +59,7 @@ class QtDateSelector(QtBoundedDate):
             The QDate object to use for setting the date.
 
         """
-        self.widget.setDate(date)
+        self.widget().setDate(date)
 
     def set_max_date(self, date):
         """ Set the widget's maximum date.
@@ -67,7 +70,7 @@ class QtDateSelector(QtBoundedDate):
             The QDate object to use for setting the maximum date.
 
         """
-        self.widget.setMaximumDate(date)
+        self.widget().setMaximumDate(date)
 
     def set_min_date(self, date):
         """ Set the widget's minimum date.
@@ -78,7 +81,7 @@ class QtDateSelector(QtBoundedDate):
             The QDate object to use for setting the minimum date.
 
         """
-        self.widget.setMinimumDate(date)
+        self.widget().setMinimumDate(date)
 
     def set_date_format(self, date_format):
         """ Set the widget's date format.
@@ -91,5 +94,5 @@ class QtDateSelector(QtBoundedDate):
         """
         # XXX make sure Python's and Qt's format strings are the 
         # same, or convert between the two.
-        self.widget.setDisplayFormat(date_format)
+        self.widget().setDisplayFormat(date_format)
 

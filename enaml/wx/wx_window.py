@@ -151,3 +151,14 @@ class WxWindow(WxWidgetComponent):
         """
         self.widget().SetSize(wx.Size(*size))
 
+    def set_visible(self, visible):
+        """ Set the visibility on the window.
+
+        This is an overridden parent class method to set the visibility
+        at a later time, so that layout can be initialized before the
+        window is displayed.
+
+        """
+        # XXX this could be done better.
+        wx.CallAfter(super(WxWindow, self).set_visible, visible)
+

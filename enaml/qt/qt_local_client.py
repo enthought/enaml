@@ -27,6 +27,7 @@ class QtLocalClient(object):
         'snapshot_response': '_dispatch_session_message',
         'widget_action': '_dispatch_session_message',
         'widget_action_response': '_dispatch_session_message',
+        'widget_children_changed': '_dispatch_session_message',
     }
 
     def __init__(self, router, factories, username='local_qt_client'):

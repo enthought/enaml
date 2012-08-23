@@ -2,8 +2,9 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt.QtCore import Signal
-from .qt.QtGui import QTabWidget
+from weakref import WeakKeyDictionary
+
+from .qt.QtGui import QTabWidget, QTabBar, QResizeEvent, QApplication
 from .qt_constraints_widget import QtConstraintsWidget
 
 
@@ -22,182 +23,261 @@ DOCUMENT_MODES = {
 
 
 class QNotebook(QTabWidget):
-    """ A custom QTabWidget which behaves like a notebook holding
-    instances of QPage.
+    """ A custom QTabWidget which handles children of type QPage.
 
     """
-    #: A signal emitted when the user clicks on the tab close button
-    #: for a QPage which is marked as closable. User code should
-    #: connect to this signal as opposed to the 'tabCloseRequested'
-    #: signal on the parent, since this signal will not be emitted
-    #: for QPage instances which are not closable.
-    pageCloseRequested = Signal(int)
-
     def __init__(self, *args, **kwargs):
         """ Initialize a QNotebook.
 
         Parameters
         ----------
         *args, **kwargs
-            The positional and keyword arguments needed to initialize
+            The positional and keyword arguments needed to create
             a QTabWidget.
 
         """
         super(QNotebook, self).__init__(*args, **kwargs)
-        self.tabCloseRequested.connect(self._onTabCloseRequested)
+        self.tabCloseRequested.connect(self.onTabCloseRequested)
+        self._hidden_pages = WeakKeyDictionary()
 
     #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
-    def _bind(self, page):
-        """ Bind the signal handlers for the given page.
+    def _refreshTabBar(self):
+        """ Trigger an immediate relayout and refresh of the tab bar.
 
         """
-        page.tabTitleChanged.connect(self._onTabTitleChanged)
-        page.tabToolTipChanged.connect(self._onTabToolTipChanged)
-        page.tabEnabledChanged.connect(self._onTabEnabledChanged)
+        # The public QTabBar api does not provide a way to trigger the
+        # 'layoutTabs' method of QTabBarPrivate and there are certain
+        # operations (such as modifying a tab close button) which need
+        # to have that happen. This method provides a workaround by
+        # sending a dummy resize event to the tab bar, followed by one
+        # to the tab widget.
+        app = QApplication.instance()
+        if app is not None:
+            bar = self.tabBar()
+            size = bar.size()
+            event = QResizeEvent(size, size)
+            app.sendEvent(bar, event)
+            size = self.size()
+            event = QResizeEvent(size, size)
+            app.sendEvent(self, event)
 
-    def _unbind(self, page):
-        """ Unbind the signal handlers for the given page.
-
-        """
-        page.tabTitleChanged.disconnect(self._onTabTitleChanged)
-        page.tabToolTipChanged.disconnect(self._onTabToolTipChanged)
-        page.tabEnabledChanged.disconnect(self._onTabEnabledChanged)
-
-    def _onTabCloseRequested(self, index):
+    #--------------------------------------------------------------------------
+    # Signal Handlers
+    #--------------------------------------------------------------------------
+    def onTabCloseRequested(self, index):
         """ The handler for the 'tabCloseRequested' signal.
 
         """
-        page = self.widget(index)
-        if page.tabClosable():
-            self.pageCloseRequested.emit(index)
-
-    def _onTabTitleChanged(self, page, title):
-        """ The handler for the 'tabTitleChanged' signal on a child
-        QPage.
-
-        """
-        idx = self.indexOf(page)
-        if idx != -1:
-            self.setTabText(idx, title)
-
-    def _onTabToolTipChanged(self, page, tool_tip):
-        """ The handler for the 'tabToolTipChanged' signal on a child
-        QPage.
-
-        """
-        idx = self.indexOf(page)
-        if idx != -1:
-            self.setTabToolTip(idx, tool_tip)
-
-    def _onTabEnabledChanged(self, page, enabled):
-        """ The handler for the 'tabEnabledChanged' signal on a child
-        QPage.
-
-        """
-        idx = self.indexOf(page)
-        if idx != -1:
-            self.setTabEnabled(idx, enabled)
-            page.restoreEnabled()
+        self.widget(index).requestClose()
 
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
-    def addPage(self, page, idx=-1):
-        """ Add a QPage instance to the notebook. This method should
-        be used in favor of the 'addTab' method of the parent class.
+    def showPage(self, page):
+        """ Show a hidden QPage instance in the notebook.
+
+        If the page is not owned by the notebook, this is a no-op.
+
+        Parameters
+        ----------
+        page : QPage
+            The hidden QPage instance to show in the notebook.
+
+        """
+        index = self.indexOf(page)
+        if index == -1:
+            index = self._hidden_pages.pop(page, -1)
+            if index != -1:
+                self.insertPage(index, page)
+
+    def hidePage(self, page):
+        """ Hide the given QPage instance in the notebook.
+
+        If the page is not owned by the notebook, this is a no-op.
+
+        Parameters
+        ----------
+        page : QPage
+            The QPage instance to hide in the notebook.
+
+        """
+        index = self.indexOf(page)
+        if index != -1:
+            self.removeTab(index)
+            page.hide()
+            self._hidden_pages[page] = index
+
+    def addPage(self, page):
+        """ Add a QPage instance to the notebook. 
+
+        This method should be used in favor of the 'addTab' method.
 
         Parameters
         ----------
         page : QPage
             The QPage instance to add to the notebook.
 
-        idx : int, optional
-            The index at which to add the page if it doesn't already
-            exist in the notebook. If not provided, the page will be
-            added at the end of the notebook.
-
         """
-        page_idx = self.indexOf(page)
-        if page_idx == -1:
-            self._bind(page)
-            if idx == -1:
-                self.addTab(page, page.tabTitle())
-            else:
-                self.insertTab(idx, page, page.tabTitle())
+        if page.isOpen():
+            self.addTab(page, page.title())
+            index = self.indexOf(page)
+            self.setTabEnabled(index, page.isTabEnabled())
+            self.setTabCloseButtonVisible(index, page.isClosable())
         else:
-            self.setTabText(idx, page.tabTitle())
-        self.setTabToolTip(idx, page.tabToolTip())
-        self.setTabEnabled(idx, page.tabEnabled())
-        page.restoreEnabled()
+            page.hide()
+            self._hidden_pages[page] = self.count()
 
-    def removePage(self, index):
-        """ Remove the page at the given index. This method should be
-        used in favor of the 'removeTab' method of the parent class.
+    def insertPage(self, index, page):
+        """ Insert a QPage instance into the notebook.
+
+        This should be used in favor of the 'insertTab' method.
 
         Parameters
         ----------
         index : int
-            The index of the page to remove from the notebook.
+            The index at which to insert the page.
+
+        page : QPage
+            The QPage instance to add to the notebook.
 
         """
-        page = self.widget(index)
-        if page is not None:
-            self._unbind(page)
-            self.removeTab(index)
+        if page.isOpen():
+            index = min(index, self.count())
+            self.insertTab(index, page, page.title())
+            self.setTabEnabled(index, page.isTabEnabled())
+            self.setTabCloseButtonVisible(index, page.isClosable())
+        else:
+            page.hide()
+            self._hidden_pages[page] = index
+
+    def setTabCloseButtonVisible(self, index, visible, refresh=True):
+        """ Set whether the close button for the given tab is visible.
+
+        The 'tabsClosable' property must be set to True for this to
+        have effect.
+
+        Parameters
+        ----------
+        index : int
+            The index of the target page.
+
+        visible : bool
+            Whether or not the close button for the tab should be
+            visible.
+
+        refresh : bool, optional
+            Whether or not to refresh the tab bar at the end of the
+            operation. The default is True.
+
+        """
+        # When changing the visibility of a button, we also change its
+        # size so that the tab can layout properly.
+        if index >= 0 and index < self.count():
+            tabBar = self.tabBar()
+            btn1 = tabBar.tabButton(index, QTabBar.LeftSide)
+            btn2 = tabBar.tabButton(index, QTabBar.RightSide)
+            if btn1 is not None:
+                btn1.setVisible(visible)
+                if not visible:
+                    btn1.resize(0, 0)
+                else:
+                    btn1.resize(btn1.sizeHint())
+            if btn2 is not None:
+                btn2.setVisible(visible)
+                if not visible:
+                    btn2.resize(0, 0)
+                else:
+                    btn2.resize(btn2.sizeHint())
+            if refresh:
+                self._refreshTabBar()
+
+    def setTabsClosable(self, closable):
+        """ Set the tab closable state for the widget.
+
+        This is an overridden parent class method which extends the
+        logic to account for the closable state on the individual
+        pages.
+
+        Parameters
+        ----------
+        closable : bool
+            Whether or not the tabs should be closable.
+
+        """
+        super(QNotebook, self).setTabsClosable(closable)
+        # When setting tabs closable to False, the default logic of
+        # QTabBar is to delete the close button on the tab. When the
+        # closable flag is set to True a new close button is created
+        # for every tab, unless one has already been provided. This
+        # means we need to make an extra pass over each tab to sync
+        # the state of the buttons when the flag is set to True.
+        if closable:
+            setVisible = self.setTabCloseButtonVisible
+            for index in xrange(self.count()):
+                page = self.widget(index)
+                setVisible(index, page.isClosable(), refresh=False)
+        self._refreshTabBar()
 
 
 class QtNotebook(QtConstraintsWidget):
-    """ A Qt4 implementation of an Enaml Notebook.
+    """ A Qt implementation of an Enaml Notebook.
 
     """
+    # Don't use the widget item for the layout of the notebook, or 
+    # there wont be enough space allocated for the tabs on OSX.
+    use_widget_item_for_layout = False
+
+    #: Storage for the widget ids of the notebook pages.
+    _page_ids = []
+
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
-        """ Create the underlying widget.
+    def create_widget(self, parent, tree):
+        """ Create the underlying notebook widget.
 
         """
-        self.widget = QNotebook(self.parent_widget)
+        return QNotebook(parent)
 
-    def initialize(self, attrs):
-        """ Initialize the widget attributes
-
-        """
-        super(QtNotebook, self).initialize(attrs)
-        self.set_tab_position(attrs['tab_position'])
-        self.set_tab_style(attrs['tab_style'])
-        self.set_tabs_closable(attrs['tabs_closable'])
-        self.set_tabs_movable(attrs['tabs_movable'])
-        self.widget.pageCloseRequested.connect(self.on_page_close_requested)
-
-    def post_initialize(self):
-        """ Handle the post initialization for the notebook.
-
-        This method explicitly adds the child QPage instances to the
-        underlying QNotebook control.
+    def create(self, tree):
+        """ Create and initialize the underyling widget.
 
         """
-        super(QtNotebook, self).post_initialize()
-        widget = self.widget
-        for child in self.children:
-            widget.addPage(child.widget)
+        super(QtNotebook, self).create(tree)
+        self.set_page_ids(tree['page_ids'])
+        self.set_tab_style(tree['tab_style'])
+        self.set_tab_position(tree['tab_position'])
+        self.set_tabs_closable(tree['tabs_closable'])
+        self.set_tabs_movable(tree['tabs_movable'])
+
+    def init_layout(self):
+        """ Handle the layout initialization for the notebook.
+
+        """
+        super(QtNotebook, self).init_layout()
+        widget = self.widget()
+        find_child = self.find_child
+        for page_id in self._page_ids:
+            child = find_child(page_id)
+            if child is not None:
+                widget.addPage(child.widget())
 
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
-    def on_action_set_tab_position(self, content):
-        """ Handle the 'set_tab_position' action from the Enaml widget.
-
-        """
-        self.set_tab_position(content['tab_position'])
-        
     def on_action_set_tab_style(self, content):
         """ Handle the 'set_tab_style' action from the Enaml widget.
 
         """
         self.set_tab_style(content['tab_style'])
+
+    def on_action_set_tab_position(self, content):
+        """ Handle the 'set_tab_position' action from the Enaml widget.
+
+        """
+        self.set_tab_position(content['tab_position'])
 
     def on_action_set_tabs_closable(self, content):
         """ Handle the 'set_tabs_closable' action from the Enaml widget.
@@ -211,67 +291,36 @@ class QtNotebook(QtConstraintsWidget):
         """
         self.set_tabs_movable(content['tabs_movable'])
 
-    def on_action_open_tab(self, content):
-        """ Handle the 'open_tab' action from the Enaml widget.
-
-        """
-        widget_id = content['widget_id']
-        for idx, child in enumerate(self.children):
-            if child.widget_id == widget_id:
-                self.widget.addPage(child.widget, idx)
-                return
-
-    def on_action_close_tab(self, content):
-        """ Handle the 'close_tab' action from the Enaml widget.
-
-        """
-        widget_id = content['widget_id']
-        for child in self.children:
-            if child.widget_id == widget_id:
-                widget = self.widget
-                widget.removePage(widget.indexOf(child.widget))
-                return
-
-    #--------------------------------------------------------------------------
-    # Signal Handlers
-    #--------------------------------------------------------------------------
-    def on_page_close_requested(self, index):
-        """ The signal handler for the 'pageCloseRequested' signal.
-
-        """
-        page = self.widget.widget(index)
-        self.widget.removePage(index)
-        for child in self.children:
-            if page == child.widget:
-                widget_id = child.widget_id
-                content = {'widget_id': widget_id}
-                self.send_action('tab_closed', content)
-                return
-
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
-    def set_tab_position(self, position):
-        """ Set the position of the tab bar in the widget.
+    def set_page_ids(self, page_ids):
+        """ Set the page ids for the underlying widget.
 
         """
-        self.widget.setTabPosition(TAB_POSITIONS[position])
+        self._page_ids = page_ids
 
     def set_tab_style(self, style):
         """ Set the tab style for the tab bar in the widget.
 
         """
-        self.widget.setDocumentMode(DOCUMENT_MODES[style])
+        self.widget().setDocumentMode(DOCUMENT_MODES[style])
+
+    def set_tab_position(self, position):
+        """ Set the position of the tab bar in the widget.
+
+        """
+        self.widget().setTabPosition(TAB_POSITIONS[position])
 
     def set_tabs_closable(self, closable):
         """ Set whether or not the tabs are closable.
 
         """
-        self.widget.setTabsClosable(closable)
+        self.widget().setTabsClosable(closable)
 
     def set_tabs_movable(self, movable):
         """ Set whether or not the tabs are movable.
 
         """
-        self.widget.setMovable(movable)
+        self.widget().setMovable(movable)
 

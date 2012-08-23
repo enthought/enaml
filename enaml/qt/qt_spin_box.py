@@ -7,31 +7,35 @@ from .qt_constraints_widget import QtConstraintsWidget
 
     
 class QtSpinBox(QtConstraintsWidget):
-    """ A Qt4 implementation of an Enaml SpinBox.
+    """ A Qt implementation of an Enaml SpinBox.
 
     """
-    def create(self):
+    #--------------------------------------------------------------------------
+    # Setup Methods
+    #--------------------------------------------------------------------------
+    def create_widget(self, parent, tree):
         """ Create the underlying QSpinBox widget.
 
         """
-        self.widget = QSpinBox(self.parent_widget)
-        self.widget.setKeyboardTracking(False)
+        widget = QSpinBox(parent)
+        widget.setKeyboardTracking(False)
+        return widget
 
-    def initialize(self, attrs):
-        """ Initialize the widget's attributes.
+    def create(self, tree):
+        """ Create and initialize the underlying widget.
 
         """
-        super(QtSpinBox, self).initialize(attrs)
-        self.set_maximum(attrs['maximum'])
-        self.set_minimum(attrs['minimum'])
-        self.set_value(attrs['value'])
-        self.set_prefix(attrs['prefix'])
-        self.set_suffix(attrs['suffix'])
-        self.set_special_value_text(attrs['special_value_text'])
-        self.set_single_step(attrs['single_step'])
-        self.set_read_only(attrs['read_only'])
-        self.set_wrapping(attrs['wrapping'])
-        self.widget.valueChanged.connect(self.on_value_changed)
+        super(QtSpinBox, self).create(tree)
+        self.set_maximum(tree['maximum'])
+        self.set_minimum(tree['minimum'])
+        self.set_value(tree['value'])
+        self.set_prefix(tree['prefix'])
+        self.set_suffix(tree['suffix'])
+        self.set_special_value_text(tree['special_value_text'])
+        self.set_single_step(tree['single_step'])
+        self.set_read_only(tree['read_only'])
+        self.set_wrapping(tree['wrapping'])
+        self.widget().valueChanged.connect(self.on_value_changed)
 
     #--------------------------------------------------------------------------
     # Signal Handler
@@ -42,10 +46,9 @@ class QtSpinBox(QtConstraintsWidget):
         """
         # Guard against loopback recursion since Qt will emit the 
         # valueChanged signal when programatically setting the value.
-        if 'value' in self.loopback_guard:
-            return
-        content = {'value': self.widget.value()}
-        self.send_action('value_changed', content)
+        if 'value' not in self.loopback_guard:
+            content = {'value': self.widget().value()}
+            self.send_action('value_changed', content)
         
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -115,13 +118,13 @@ class QtSpinBox(QtConstraintsWidget):
         """ Set the widget's maximum value.
 
         """
-        self.widget.setMaximum(maximum)
+        self.widget().setMaximum(maximum)
 
     def set_minimum(self, minimum):
         """ Set the widget's minimum value.
 
         """
-        self.widget.setMinimum(minimum)
+        self.widget().setMinimum(minimum)
 
     def set_value(self, value):
         """ Set the spin box's value.
@@ -131,41 +134,41 @@ class QtSpinBox(QtConstraintsWidget):
         # be called as a result of an Enaml action, we guard against 
         # the loopback
         with self.loopback_guard('value'):
-            self.widget.setValue(value)
+            self.widget().setValue(value)
 
     def set_prefix(self, prefix):
         """ Set the prefix for the spin box.
 
         """
-        self.widget.setPrefix(prefix)
+        self.widget().setPrefix(prefix)
 
     def set_suffix(self, suffix):
         """ Set the suffix for the spin box.
 
         """
-        self.widget.setSuffix(suffix)
+        self.widget().setSuffix(suffix)
 
     def set_special_value_text(self, text):
         """ Set the special value text for the spin box.
 
         """
-        self.widget.setSpecialValueText(text)
+        self.widget().setSpecialValueText(text)
 
     def set_single_step(self, step):
         """ Set the widget's single step value.
 
         """
-        self.widget.setSingleStep(step)
+        self.widget().setSingleStep(step)
 
     def set_read_only(self, read_only):
         """ Set the widget's read only flag.
 
         """
-        self.widget.setReadOnly(read_only)
+        self.widget().setReadOnly(read_only)
 
     def set_wrapping(self, wrapping):
         """ Set the widget's wrapping flag.
 
         """
-        self.widget.setWrapping(wrapping)
+        self.widget().setWrapping(wrapping)
 

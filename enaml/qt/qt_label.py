@@ -7,21 +7,24 @@ from .qt_constraints_widget import QtConstraintsWidget
 
 
 class QtLabel(QtConstraintsWidget):
-    """ A Qt4 implementation of an Enaml Label.
+    """ A Qt implementation of an Enaml Label.
 
     """
-    def create(self):
-        """ Create the underlying widget.
+    #--------------------------------------------------------------------------
+    # Setup Methods
+    #--------------------------------------------------------------------------
+    def create_widget(self, parent, tree):
+        """ Create the underlying label widget.
 
         """
-        self.widget = QLabel(self.parent_widget)
+        return QLabel(parent)
 
-    def initialize(self, attrs):
-        """ Initialize the widget's attributes.
+    def create(self, tree):
+        """ Create and initialize the underlying widget.
 
         """
-        super(QtLabel, self).initialize(attrs)
-        self.set_text(attrs['text'])
+        super(QtLabel, self).create(tree)
+        self.set_text(tree['text'])
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -40,5 +43,5 @@ class QtLabel(QtConstraintsWidget):
         """ Set the text in the underlying widget.
 
         """
-        self.widget.setText(text)
+        self.widget().setText(text)
 

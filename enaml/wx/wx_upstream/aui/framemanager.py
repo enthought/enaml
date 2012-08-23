@@ -1741,7 +1741,7 @@ class AuiPaneInfo(object):
         state = self.state
 
         state |= (self.optionToolbar | self.optionGripper)
-        state &= ~(self.optionResizable | self.optionCaption | self.optionCaptionLeft)
+        state &= ~(self.optionResizable | self.optionCaption | self.optionCaptionLeft | self.buttonClose)
 
         if self.dock_layer == 0:
             self.dock_layer = 10
@@ -6484,7 +6484,7 @@ class AuiManager(wx.EvtHandler):
             else:
 
                 if p.IsToolbar():
-#                    self.SwitchToolBarOrientation(p)
+                    #self.SwitchToolBarOrientation(p)
                     p.best_size = p.window.GetBestSize()
 
                 if p.window and not p.IsNotebookPage() and p.window.IsShown() != p.IsShown():
@@ -7507,7 +7507,6 @@ class AuiManager(wx.EvtHandler):
         :param `pane`: an instance of :class:`AuiPaneInfo`, which may have a :class:`~lib.agw.aui.auibar.AuiToolBar`
          window associated with it.
         """
-
         if not isinstance(pane.window, auibar.AuiToolBar):
             return pane
 
@@ -7533,7 +7532,6 @@ class AuiManager(wx.EvtHandler):
 
         s = pane.window.GetMinSize()
         pane.BestSize(s)
-
         if new_agwStyle != agwStyle:
             toolBar.Realize()
 
@@ -10696,7 +10694,6 @@ class AuiManager_DCP(AuiManager):
         :meth:`Update` must be called. This construction allows pane flicker to
         be avoided by updating the whole layout at one time.
         """
-
         AuiManager.Update(self)
 
         # check if there's already a center pane (except our dummy pane)

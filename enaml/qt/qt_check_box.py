@@ -7,12 +7,12 @@ from .qt_abstract_button import QtAbstractButton
 
 
 class QtCheckBox(QtAbstractButton):
-    """ A Qt4 implementation of an Enaml CheckBox.
+    """ A Qt implementation of an Enaml CheckBox.
 
     """
-    def create(self):
-        """ Create the underlying widget
+    def create_widget(self, parent, tree):
+        """ Create the underlying check box widget.
 
         """
-        self.widget = QCheckBox(self.parent_widget)
+        return QCheckBox(parent)
 

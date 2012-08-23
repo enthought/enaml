@@ -39,6 +39,7 @@ class WxMessengerWidget(object):
         self._parent = parent
         self._children = []
         self._children_map = {}
+        self._widget = None
         if parent is not None:
             parent.add_child(self)
 
@@ -204,14 +205,14 @@ class WxMessengerWidget(object):
     def create_widget(self, parent, tree):
         """ A method which must be implemented by subclasses.
 
-        This method is called by the create(...) method. It should and
-        return the underlying wx widget. Implementations of this method
-        should *not* call the superclass version.
+        This method is called by the create(...) method. It should 
+        create and return the underlying Wx widget. Implementations
+        of this method should *not* call the superclass version.
 
         Parameters
         ----------
         parent : wxWindow or None
-            The parent wx widget for this control, or None if if the
+            The parent Wx widget for this control, or None if if the
             control does not have a parent.
 
         tree : dict
@@ -243,26 +244,11 @@ class WxMessengerWidget(object):
         parent_widget = parent.widget() if parent else None
         self._widget = self.create_widget(parent_widget, tree)
 
-    def post_create(self):
-        """ A method that allows widgets to do post creation work.
-
-        This method is called after all widgets in a tree have had
-        their 'create' method called. It is useful for doing any
-        initialization where a widget must access its child widgets.
-
-        The default implementation of this method is a no-op in order
-        to be super() friendly.
-
-        This method is called by the application in a top-down fashion.
-
-        """
-        pass
-
     def init_layout(self):
         """ A method that allows widgets to do layout initialization.
 
         This method is called after all widgets in a tree have had
-        their 'post_create' method called. It is useful for doing any
+        their 'create' method called. It is useful for doing any
         initialization related to layout.
 
         The default implementation of this method is a no-op in order

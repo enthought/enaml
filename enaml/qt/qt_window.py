@@ -2,113 +2,45 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt.QtCore import QSize
+from .qt.QtCore import QSize, Signal
 from .qt.QtGui import QFrame, QLayout
+from .q_single_widget_layout import QSingleWidgetLayout
+from .qt_utils import deferred_call
 from .qt_widget_component import QtWidgetComponent
 
 
-class QWindowLayout(QLayout):
-    """ A QLayout subclass which can have at most one layout item. This
-    layout item is expanded to fit the allowable space, regardless of 
-    its size policy settings. This is similar to how central widgets 
-    behave in a QMainWindow.
-
-    The class is designed for use by QWindow other uses are at the 
-    user's own risk.
+class QWindowLayout(QSingleWidgetLayout):
+    """ A QSingleWidgetLayout subclass which adds support for windows
+    which explicitly set their minimum and maximum sizes.
 
     """
-    def __init__(self, *args, **kwargs):
-        super(QWindowLayout, self).__init__(*args, **kwargs)
-        self._layout_item = None
-        self._size_hint = QSize()
-
-    def addItem(self, item):
-        """ A virtual method implementation which sets the layout item
-        in the layout. Any old item will be overridden.
-
-        """
-        self._layout_item = item
-        self.update()
-
-    def count(self):
-        """ A virtual method implementation which returns 0 if no layout
-        item is supplied, or 1 if there is a current layout item.
-
-        """
-        return 0 if self._layout_item is None else 1
-
-    def itemAt(self, idx):
-        """ A virtual method implementation which returns the layout item 
-        for the given index or None if one does not exist.
-
-        """
-        if idx == 0:
-            return self._layout_item
-
-    def takeAt(self, idx):
-        """ A virtual method implementation which removes and returns the
-        item at the given index or None if one does not exist.
-
-        """
-        if idx == 0:
-            res = self._layout_item
-            self._layout_item = None
-            return res
-    
-    def sizeHint(self):
-        """ A virtual method implementation which returns an invalid
-        size hint for the top-level Window.
-
-        """
-        return self._size_hint
-
-    def setGeometry(self, rect):
-        """ A reimplemented method which sets the geometry of the managed
-        widget to fill the given rect.
-
-        """
-        super(QWindowLayout, self).setGeometry(rect)
-        item = self._layout_item
-        if item is not None:
-            item.widget().setGeometry(rect)
-
     def minimumSize(self):
-        """ A reimplemented method which returns the minimum size hint
-        of the layout item widget as the minimum size of the window.
+        """ The minimum size for the layout area.
+
+        This is a reimplemented method which will return the explicit
+        minimum size of the window, if provided.
 
         """
         parent = self.parentWidget()
-        if parent is None:
-            return super(QWindowLayout, self).minimumSize()
-
-        expl_size = parent.explicitMinimumSize()
-        if expl_size.isValid():
-            return expl_size
-
-        item = self._layout_item
-        if item is None:
-            return parent.minimumSize()
-
-        return item.widget().minimumSizeHint()
+        if parent is not None:
+            size = parent.explicitMinimumSize()
+            if size.isValid():
+                return size
+        return super(QWindowLayout, self).minimumSize()
             
     def maximumSize(self):
-        """ A reimplemented method which returns the minimum size hint
-        of the layout item widget as the minimum size of the window.
+        """ The maximum size for the layout area.
+
+        This is a reimplemented method which will return the explicit
+        maximum size of the window, if provided.
 
         """
         parent = self.parentWidget()
-        if parent is None:
-            return super(QWindowLayout, self).maximumSize()
-
-        expl_size = parent.explicitMaximumSize()
-        if expl_size.isValid():
-            return expl_size
-
-        item = self._layout_item
-        if item is None:
-            return parent.maximumSize()
-
-        return item.widget().maximumSize()
+        if parent is not None:
+            size = parent.explicitMaximumSize()
+            if size.isValid():
+                return size
+        return super(QWindowLayout, self).maximumSize()
 
 
 class QWindow(QFrame):
@@ -119,23 +51,36 @@ class QWindow(QFrame):
     on its central widget, unless the user explicitly changes them.
 
     """
+    #: A signal emitted when the window is closed.
+    closed = Signal()
+
     def __init__(self, *args, **kwargs):
         """ Initialize a QWindow.
 
         Parameters
         ----------
         *args, **kwargs
-            The positional and keyword arguments necessary to 
-            initialize a QFrame.
+            The positional and keyword arguments needed to initialize
+            a QFrame.
 
         """
         super(QWindow, self).__init__(*args, **kwargs)
-        layout = QWindowLayout()
-        layout.setSizeConstraint(QLayout.SetMinAndMaxSize)
-        self.setLayout(layout)
         self._central_widget = None
         self._expl_min_size = QSize()
         self._expl_max_size = QSize()
+        layout = QWindowLayout()
+        layout.setSizeConstraint(QLayout.SetMinAndMaxSize)
+        self.setLayout(layout)
+    
+    def closeEvent(self, event):
+        """ Handle the QCloseEvent from the window system.
+
+        By default, this handler calls the superclass' method to close
+        the window and then emits the 'closed' signal.
+
+        """
+        super(QWindow, self).closeEvent(event)
+        self.closed.emit()
 
     def centralWidget(self):
         """ Returns the central widget for the window.
@@ -158,9 +103,10 @@ class QWindow(QFrame):
             The widget to use as the content of the window.
 
         """
-        self.layout().removeWidget(self._central_widget)
+        layout = self.layout()
+        layout.removeWidget(self._central_widget)
         self._central_widget = widget
-        self.layout().addWidget(widget)
+        layout.addWidget(widget)
 
     def explicitMinimumSize(self):
         """ Return the explicit minimum size for this widget.
@@ -231,33 +177,47 @@ class QWindow(QFrame):
 
 
 class QtWindow(QtWidgetComponent):
-    """ A Qt4 implementation of an Enaml Window.
+    """ A Qt implementation of an Enaml Window.
 
     """
-    def create(self):
-        """ Create the underlying QWidget object.
+    #: The storage for the central widget id
+    _central_widget_id = None
+
+    #--------------------------------------------------------------------------
+    # Setup Methods
+    #--------------------------------------------------------------------------
+    def create_widget(self, parent, tree):
+        """ Create the underlying QWindow object.
 
         """
-        self.widget = QWindow(self.parent_widget)
+        return QWindow(parent)
 
-    def initialize(self, attrs):
-        """ Initialize the widget's attributes.
-
-        """
-        super(QtWindow, self).initialize(attrs)
-        self.set_title(attrs['title'])
-        self.set_initial_size(attrs['initial_size'])
-
-    def post_initialize(self):
-        """ Perform the post initialization work.
-
-        This method sets the central widget for the window.
+    def create(self, tree):
+        """ Create and initialize the underlying widget.
 
         """
-        super(QtWindow, self).post_initialize()
-        children = self.children
-        if children:
-            self.widget.setCentralWidget(children[0].widget)
+        super(QtWindow, self).create(tree)
+        self.set_central_widget_id(tree['central_widget_id'])
+        self.set_title(tree['title'])
+        self.set_initial_size(tree['initial_size'])
+        self.widget().closed.connect(self.on_closed)
+
+    def init_layout(self):
+        """ Perform layout initialization for the control.
+
+        """
+        child = self.find_child(self._central_widget_id)
+        if child is not None:
+            self.widget().setCentralWidget(child.widget())
+
+    #--------------------------------------------------------------------------
+    # Signal Handlers
+    #--------------------------------------------------------------------------
+    def on_closed(self):
+        """ The signal handler for the 'closed' signal.
+
+        """
+        self.send_action('closed', {})
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -305,25 +265,25 @@ class QtWindow(QtWidgetComponent):
         """ Close the window
 
         """
-        self.widget.close()
+        self.widget().close()
 
     def maximize(self):
         """ Maximize the window.
 
         """
-        self.widget.showMaximized()
+        self.widget().showMaximized()
 
     def minimize(self):
         """ Minimize the window.
 
         """
-        self.widget.showMinimized()
+        self.widget().showMinimized()
 
     def restore(self):
         """ Restore the window after a minimize or maximize.
 
         """
-        self.widget.showNormal()
+        self.widget().showNormal()
 
     def set_icon(self, icon):
         """ Set the window icon.
@@ -331,11 +291,17 @@ class QtWindow(QtWidgetComponent):
         """
         pass 
 
+    def set_central_widget_id(self, widget_id):
+        """ Set the central widge id for the window.
+
+        """
+        self._central_widget_id = widget_id
+
     def set_title(self, title):
         """ Set the title of the window.
 
         """
-        self.widget.setWindowTitle(title)
+        self.widget().setWindowTitle(title)
 
     def set_initial_size(self, size):
         """ Set the initial size of the window.
@@ -343,5 +309,16 @@ class QtWindow(QtWidgetComponent):
         """
         if -1 in size:
             return
-        self.widget.resize(QSize(*size))
+        self.widget().resize(QSize(*size))
+
+    def set_visible(self, visible):
+        """ Set the visibility on the window.
+
+        This is an overridden parent class method to set the visibility
+        at a later time, so that layout can be initialized before the
+        window is displayed.
+
+        """
+        # XXX this could be done better.
+        deferred_call(super(QtWindow, self).set_visible, visible)
 

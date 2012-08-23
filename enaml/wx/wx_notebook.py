@@ -23,12 +23,15 @@ _TAB_POSITION_MAP = {
 _TAB_POSITION_MASK = aui.AUI_NB_TOP | aui.AUI_NB_BOTTOM
 
 
-class wxAuiNotebook(aui.AuiNotebook):
-    """ A custom wx AuiNotebook which handles children of type wxPage.
+class wxDocumentNotebook(aui.AuiNotebook):
+    """ A custom AuiNotebook which handles children of type wxPage.
+
+    This notebook is used to implement 'document' style tabs for an
+    Enaml Notebook control.
 
     """
     def __init__(self, *args, **kwargs):
-        """ Initialize a wxAuiNotebook.
+        """ Initialize a wxDocumentNotebook.
 
         Parameters
         ----------
@@ -37,7 +40,7 @@ class wxAuiNotebook(aui.AuiNotebook):
             class.
 
         """
-        super(wxAuiNotebook, self).__init__(*args, **kwargs)
+        super(wxDocumentNotebook, self).__init__(*args, **kwargs)
         self.Bind(aui.EVT_AUINOTEBOOK_PAGE_CLOSE, self.OnPageClose)
         self._hidden_pages = weakref.WeakKeyDictionary()
 
@@ -143,6 +146,7 @@ class wxAuiNotebook(aui.AuiNotebook):
 
         """
         if page.IsOpen():
+            index = min(index, self.GetPageCount())
             self.InsertPage(index, page, page.GetTitle())
             if not page.GetEnabled():
                 self.EnableTab(index, False)
@@ -152,6 +156,174 @@ class wxAuiNotebook(aui.AuiNotebook):
             page.Show(False)
             self._hidden_pages[page] = index
 
+
+class wxPreferencesNotebook(wx.Notebook):
+    """ A custom wx.Notebook which handles children of type wxPage.
+
+    This notebook is used to implement 'document' style tabs for an
+    Enaml Notebook control.
+
+    """
+    def __init__(self, *args, **kwargs):
+        """ Initialize a wxPreferencesNotebook.
+
+        Parameters
+        ----------
+        *args, **kwargs
+            The positional and keyword arguments to pass to the super
+            class.
+
+        """
+        super(wxPreferencesNotebook, self).__init__(*args, **kwargs)
+        self._hidden_pages = weakref.WeakKeyDictionary()
+
+    #--------------------------------------------------------------------------
+    # Public API
+    #--------------------------------------------------------------------------
+    def GetBestSize(self):
+        """ Overridden GetBestSize method which will return the best
+        size for the current tab.
+
+        """
+        page = self.GetCurrentPage()
+        if page is None:
+            return wx.Size(256, 192)
+        # On windows, the wx.Notebook renders each page with 2 pixels
+        # of padding on the top, and bottom, and 4 pixels of padding
+        # on the left and right (at least under the Windows 7 theme).
+        # We need to compensate for this padding along with the space
+        # taken up by the tab bar. The tab bar height was manually 
+        # measured to be 21 pixels. I've found no way to have wx measure
+        # it for me (there's nothing in RendererNative for it), so its 
+        # just hard-coded for now.
+        size = page.GetBestSize()
+        return wx.Size(size.GetWidth() + 8, size.GetHeight() + 25)
+
+    def ShowWxPage(self, page):
+        """ Show a hidden wxPage instance in the notebook.
+
+        If the page is not owned by the notebook, this is a no-op.
+
+        Parameters
+        ----------
+        page : wxPage
+            The hidden wxPage instance to show in the notebook.
+
+        """
+        index = self.GetPageIndex(page)
+        if index == -1:
+            index = self._hidden_pages.pop(page, -1)
+            if index != -1:
+                self.InsertWxPage(index, page)
+
+    def HideWxPage(self, page):
+        """ Hide the given wxPage instance in the notebook.
+
+        If the page is not owned by the notebook, this is a no-op.
+
+        Parameters
+        ----------
+        page : wxPage
+            The wxPage instance to hide in the notebook.
+
+        """
+        index = self.GetPageIndex(page)
+        if index != -1:
+            self.RemovePage(index)
+            page.Show(False)
+            self._hidden_pages[page] = index
+
+    def AddWxPage(self, page):
+        """ Add a wxPage instance to the notebook.
+
+        This should be used in favor of AddPage for adding a wxPage
+        instance to the notebook, as it takes into account the current
+        page state.
+
+        Parameters
+        ----------
+        page : wxPage
+            The wxPage instance to add to the notebook.
+
+        """
+        if page.IsOpen():
+            self.AddPage(page, page.GetTitle())
+        else:
+            page.Show(False)
+            self._hidden_pages[page] = self.GetPageCount()
+
+    def InsertWxPage(self, index, page):
+        """ Insert a wxPage instance into the notebook.
+
+        This should be used in favor of InsertPage for inserting a
+        wxPage instance into the notebook, as it takes into account the
+        current page state.
+
+        Parameters
+        ----------
+        index : int
+            The index at which to insert the page.
+
+        page : wxPage
+            The wxPage instance to add to the notebook.
+
+        """
+        if page.IsOpen():
+            index = min(index, self.GetPageCount())
+            self.InsertPage(index, page, page.GetTitle())
+        else:
+            page.Show(False)
+            self._hidden_pages[page] = index
+
+    def GetPageIndex(self, page):
+        """ Returns the index of the page in the control.
+
+        Parameters
+        ----------
+        page : wxPage
+            The wxPage instance in the control.
+
+        Returns
+        -------
+        result : int
+            The index of the page in the control, or -1 if the page
+            is not found.
+
+        """
+        # Wx has no way of querying for the index of a page, so we must
+        # linear search ourselves. Hooray for brain-dead toolkits!
+        for idx in xrange(self.GetPageCount()):
+            if self.GetPage(idx) == page:
+                return idx
+        return -1
+
+    def EnableTab(self, index, enabled):
+        """ Change the enabled state of the tab at the given index.
+
+        Parameters
+        ----------
+        index : int
+            The index of the target tab.
+
+        enabled : bool
+            Whether or not the tab should be enabled.
+
+        """
+        if index >= 0 and index < self.GetPageCount():
+            page = self.GetPage(index)
+            page.Enable(enabled)
+
+    def SetCloseButton(self, index, closable):
+        """ A dummy method which makes the wxPreferencesNotebook api
+        compatible with the wxDocumentNotebook.
+
+        Close buttons cannot be set on a preferences notebook. This 
+        method exists soley so that child wxPages do not need to 
+        special case their implementation based on their parent.
+
+        """
+        pass
+        
 
 class WxNotebook(WxConstraintsWidget):
     """ A Wx implementation of an Enaml Notebook.
@@ -167,7 +339,12 @@ class WxNotebook(WxConstraintsWidget):
         """ Create the underlying wx notebook widget.
 
         """
-        return wxAuiNotebook(parent, agwStyle=aui.AUI_NB_SCROLL_BUTTONS)
+        if tree['tab_style'] == 'preferences':
+            res = wxPreferencesNotebook(parent)
+        else: 
+            style = aui.AUI_NB_SCROLL_BUTTONS
+            res =  wxDocumentNotebook(parent, agwStyle=style)
+        return res
 
     def create(self, tree):
         """ Create and initialize the notebook control
@@ -175,10 +352,10 @@ class WxNotebook(WxConstraintsWidget):
         """
         super(WxNotebook, self).create(tree)
         self.set_page_ids(tree['page_ids'])
+        self.set_tab_style(tree['tab_style'])
         self.set_tab_position(tree['tab_position'])
         self.set_tabs_closable(tree['tabs_closable'])
         self.set_tabs_movable(tree['tabs_movable'])
-        self.set_tabs_dockable(tree['tabs_dockable'])
 
     def init_layout(self):
         """ Handle the layout initialization for the notebook.
@@ -195,6 +372,12 @@ class WxNotebook(WxConstraintsWidget):
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
+    def on_action_set_tab_style(self, content):
+        """ Handle the 'set_tab_style' action from the Enaml widget.
+
+        """
+        self.set_tab_style(content['tab_style'])
+
     def on_action_set_tab_position(self, content):
         """ Handle the 'set_tab_position' action from the Enaml widget.
 
@@ -213,12 +396,6 @@ class WxNotebook(WxConstraintsWidget):
         """
         self.set_tabs_movable(content['tabs_movable'])
 
-    def on_action_set_tabs_dockable(self, content):
-        """ Handle the 'set_tabs_dockable' action from the Enaml widget.
-
-        """
-        self.set_tabs_dockable(content['tabs_dockable'])
-
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
@@ -228,50 +405,51 @@ class WxNotebook(WxConstraintsWidget):
         """
         self._page_ids = page_ids
 
+    def set_tab_style(self, style):
+        """ Set the tab style for the underlying widget.
+
+        """
+        # Changing the tab style on wx is not supported
+        pass
+
     def set_tab_position(self, position):
         """ Set the position of the tab bar in the widget.
 
         """
+        # Tab position changes only supported on the document notebook.
         widget = self.widget()
-        flags = widget.GetAGWWindowStyleFlag()
-        flags &= ~_TAB_POSITION_MASK
-        flags |= _TAB_POSITION_MAP[position]
-        widget.SetAGWWindowStyleFlag(flags)
-        widget.Refresh() # Avoids rendering artifacts
+        if isinstance(widget, wxDocumentNotebook):
+            flags = widget.GetAGWWindowStyleFlag()
+            flags &= ~_TAB_POSITION_MASK
+            flags |= _TAB_POSITION_MAP[position]
+            widget.SetAGWWindowStyleFlag(flags)
+            widget.Refresh() # Avoids rendering artifacts
 
     def set_tabs_closable(self, closable):
         """ Set whether or not the tabs are closable.
 
         """
+        # Closable tabs are only supported on the document notebook.
         widget = self.widget()
-        flags = widget.GetAGWWindowStyleFlag()
-        if closable:
-            flags |= aui.AUI_NB_CLOSE_ON_ALL_TABS
-        else:
-            flags &= ~aui.AUI_NB_CLOSE_ON_ALL_TABS
-        widget.SetAGWWindowStyleFlag(flags)
+        if isinstance(widget, wxDocumentNotebook):
+            flags = widget.GetAGWWindowStyleFlag()
+            if closable:
+                flags |= aui.AUI_NB_CLOSE_ON_ALL_TABS
+            else:
+                flags &= ~aui.AUI_NB_CLOSE_ON_ALL_TABS
+            widget.SetAGWWindowStyleFlag(flags)
 
     def set_tabs_movable(self, movable):
         """ Set whether or not the tabs are movable.
 
         """
+        # Movable tabs are only supported on the document notebook.
         widget = self.widget()
-        flags = widget.GetAGWWindowStyleFlag()
-        if movable:
-           flags |= aui.AUI_NB_TAB_MOVE
-        else:
-           flags &= ~aui.AUI_NB_TAB_MOVE
-        widget.SetAGWWindowStyleFlag(flags)
-
-    def set_tabs_dockable(self, dockable):
-        """ Set whether or not the tabs are dockable.
-
-        """
-        widget = self.widget()
-        flags = widget.GetAGWWindowStyleFlag()
-        if dockable:
-           flags |= aui.AUI_NB_TAB_SPLIT
-        else:
-           flags &= ~aui.AUI_NB_TAB_SPLIT
-        widget.SetAGWWindowStyleFlag(flags)
+        if isinstance(widget, wxDocumentNotebook):
+            flags = widget.GetAGWWindowStyleFlag()
+            if movable:
+               flags |= aui.AUI_NB_TAB_MOVE
+            else:
+               flags &= ~aui.AUI_NB_TAB_MOVE
+            widget.SetAGWWindowStyleFlag(flags)
 

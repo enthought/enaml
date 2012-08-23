@@ -2,10 +2,9 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt.QtCore import Qt
+from .qt.QtCore import Qt, QSize, Signal
+from .qt.QtGui import QGroupBox
 from .qt_container import QtContainer
-from .qt_resizing_widgets import QResizingGroupBox
-from .qt.QtCore import QSize
 
 
 QT_ALIGNMENTS = { 
@@ -15,49 +14,51 @@ QT_ALIGNMENTS = {
 }
 
 
-class QGroupBox(QResizingGroupBox):
-    """ A subclass of QResizingBox which allows the default sizeHint
-    to be overridden by calling 'setSizeHint'.
-
-    This functionality is used by the QtContainer to override the 
-    size hint with a value computed from the constraints layout 
-    manager.
+class QResizingGroupBox(QGroupBox):
+    """ A subclass of QGroupBox which behaves like a container.
 
     """
+    #: A signal which is emitted on a resize event.
+    resized = Signal()
+
     #: An invalid QSize used as the default value for class instances.
     _size_hint = QSize()
 
+    def resizeEvent(self, event):
+        """ Converts a resize event into a signal.
+
+        """
+        super(QResizingGroupBox, self).resizeEvent(event)
+        self.resized.emit()
+
     def sizeHint(self):
-        """ Computes the size hint from the given QtContainer using the
-        containers minimimum computed size. If the container returns an
-        invalid size, the superclass' sizeHint will be used.
+        """ Returns the previously set size hint. If that size hint is
+        invalid, the superclass' sizeHint will be used.
 
         """
         hint = self._size_hint
         if not hint.isValid():
-            hint = super(QGroupBox, self).sizeHint()
+            hint = super(QResizingGroupBox, self).sizeHint()
         return hint
 
     def setSizeHint(self, hint):
-        """ Sets the size hint to use for this resizing frame.
+        """ Sets the size hint to use for this widget.
 
         """
         self._size_hint = hint
 
     def minimumSizeHint(self):
-        """ Returns the minimum size hint of the container.
+        """ Returns the minimum size hint of the widget.
 
-        The minimum size hint for a QContainer is conceptually the
-        same as its size hint, so we just return that value. Overriding
-        this method allows QContainers to function properly as children
-        of scroll areas and splitters.
+        The minimum size hint for a QResizingGroupBox is conceptually 
+        the same as its size hint, so we just return that value.
 
         """
         return self.sizeHint()
 
 
 class QtGroupBox(QtContainer):
-    """ A Qt4 implementation of GroupBox.
+    """ A Qt implementation of an Enaml GroupBox.
 
     """
     #: Don't use a widget item to compute the layout rect for a group
@@ -67,20 +68,20 @@ class QtGroupBox(QtContainer):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create_widget(self, parent, tree):
         """ Creates the underlying QGroupBox control.
 
         """
-        self.widget = QGroupBox(self.parent_widget)
+        return QResizingGroupBox(parent)
 
-    def initialize(self, attrs):
-        """ Intializes the widget with the attributes of this instance.
+    def create(self, tree):
+        """ Create and initialize the underlying widget.
 
         """
-        super(QtGroupBox, self).initialize(attrs)
-        self.set_title(attrs['title'])
-        self.set_flat(attrs['flat'])
-        self.set_title_align(attrs['title_align'])
+        super(QtGroupBox, self).create(tree)
+        self.set_title(tree['title'])
+        self.set_flat(tree['flat'])
+        self.set_title_align(tree['title_align'])
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -110,18 +111,18 @@ class QtGroupBox(QtContainer):
         """ Updates the title of group box.
 
         """
-        self.widget.setTitle(title)
+        self.widget().setTitle(title)
     
     def set_flat(self, flat):
         """ Updates the flattened appearance of the group box.
 
         """
-        self.widget.setFlat(flat)
+        self.widget().setFlat(flat)
     
     def set_title_align(self, align):
         """ Updates the alignment of the title of the group box.
 
         """
         qt_align = QT_ALIGNMENTS[align]
-        self.widget.setAlignment(qt_align)
+        self.widget().setAlignment(qt_align)
 

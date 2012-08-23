@@ -8,7 +8,7 @@ from .qt_constraints_widget import QtConstraintsWidget
 
 
 class QtAbstractButton(QtConstraintsWidget):
-    """ A Qt4 implementation of the Enaml AbstractButton class.
+    """ A Qt implementation of the Enaml AbstractButton class.
 
     This class can serve as a base class for widgets that implement 
     button behavior such as CheckBox, RadioButton and PushButtons. 
@@ -18,25 +18,43 @@ class QtAbstractButton(QtConstraintsWidget):
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
-    def create(self):
-        """ The create method must be implemented by subclasses to 
-        create an instance of QAbstractButton.
+    def create_widget(self, parent, tree):
+        """ This method must be implemented by subclasses to create 
+        the proper button widget.
 
         """
         raise NotImplementedError
 
-    def initialize(self, attrs):
-        """ Initialize the attribute of the underlying Qt widget.
+    def create(self, tree):
+        """ Create and initialize the abstract button widget.
 
         """
-        super(QtAbstractButton, self).initialize(attrs)
-        self.set_checkable(attrs['checkable'])
-        self.set_checked(attrs['checked'])
-        self.set_text(attrs['text'])
-        #self.set_icon(attrs['icon'])
-        self.set_icon_size(attrs['icon_size'])
-        self.widget.clicked.connect(self.on_clicked)
-        self.widget.toggled.connect(self.on_toggled)
+        super(QtAbstractButton, self).create(tree)
+        self.set_checkable(tree['checkable'])
+        self.set_checked(tree['checked'])
+        self.set_text(tree['text'])
+        #self.set_icon(tree['icon'])
+        self.set_icon_size(tree['icon_size'])
+        widget = self.widget()
+        widget.clicked.connect(self.on_clicked)
+        widget.toggled.connect(self.on_toggled)
+
+    #--------------------------------------------------------------------------
+    # Signal Handlers
+    #--------------------------------------------------------------------------
+    def on_clicked(self):
+        """ The signal handler for the 'clicked' signal.
+
+        """
+        content = {'checked': self.widget().isChecked()}
+        self.send_action('clicked', content)
+
+    def on_toggled(self):
+        """ The signal handler for the 'toggled' signal.
+
+        """
+        content = {'checked': self.widget().isChecked()}
+        self.send_action('toggled', content)
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -61,36 +79,19 @@ class QtAbstractButton(QtConstraintsWidget):
         self.set_icon_size(content['icon_size'])
 
     #--------------------------------------------------------------------------
-    # Signal Handlers
-    #--------------------------------------------------------------------------
-    def on_clicked(self):
-        """ The event handler for the clicked event.
-
-        """
-        content = {'checked': self.widget.isChecked()}
-        self.send_action('clicked', content)
-
-    def on_toggled(self):
-        """ The event handler for the toggled event.
-
-        """
-        content = {'checked': self.widget.isChecked()}
-        self.send_action('toggled', content)
-
-    #--------------------------------------------------------------------------
     # Widget update methods
     #--------------------------------------------------------------------------
     def set_checkable(self, checkable):
         """ Sets whether or not the widget is checkable.
 
         """
-        self.widget.setCheckable(checkable)
+        self.widget().setCheckable(checkable)
 
     def set_checked(self, checked):
         """ Sets the widget's checked state with the provided value.
 
         """
-        widget = self.widget
+        widget = self.widget()
         # This handles the case where, by default, Qt will not allow
         # all of the radio buttons in a group to be disabled. By 
         # temporarily turning off auto-exclusivity, we are able to
@@ -106,10 +107,10 @@ class QtAbstractButton(QtConstraintsWidget):
         """ Sets the widget's text with the provided value.
 
         """
-        self.widget.setText(text)
+        self.widget().setText(text)
 
     def set_icon(self, icon):
-        """ Sets the widget's icon to the provided image
+        """ Sets the widget's icon to the provided image.
 
         """
         return
@@ -117,8 +118,8 @@ class QtAbstractButton(QtConstraintsWidget):
         #self.widget.setIcon(self._icon.as_QIcon())
 
     def set_icon_size(self, icon_size):
-        """ Sets the widget's icon size to the provided tuple
+        """ Sets the widget's icon size to the provided size.
 
         """
-        self.widget.setIconSize(QSize(*icon_size))
+        self.widget().setIconSize(QSize(*icon_size))
 

@@ -4,8 +4,8 @@
 #------------------------------------------------------------------------------
 import re
 
-from .qt.QtGui import QLineEdit, QWhatsThis
-from .qt.QtCore import Signal, QTimer
+from .qt.QtGui import QLineEdit
+from .qt.QtCore import Signal
 from .qt_constraints_widget import QtConstraintsWidget
 
 
@@ -101,27 +101,31 @@ class QtField(QtConstraintsWidget):
     #: A flag indicating whether the current field is invalid.
     _is_error_state = False
 
-    def create(self):
-        """ Create underlying QLineEdit widget.
+    #--------------------------------------------------------------------------
+    # Setup Methods
+    #--------------------------------------------------------------------------
+    def create_widget(self, parent, tree):
+        """ Creates the underlying QLineEdit widget.
 
         """
-        self.widget = QtFocusLineEdit(self.parent_widget)
+        return QtFocusLineEdit(parent)
 
-    def initialize(self, attrs):
-        """ Initialize the attributes of the widget
+    def create(self, tree):
+        """ Create and initialize the underlying widget.
 
         """
-        super(QtField, self).initialize(attrs)
-        self.set_text(attrs['text'])
-        self.set_validator(attrs['validator'])
-        self.set_submit_triggers(attrs['submit_triggers'])
-        self.set_placeholder(attrs['placeholder'])
-        self.set_echo_mode(attrs['echo_mode'])
-        self.set_max_length(attrs['max_length'])
-        self.set_read_only(attrs['read_only'])
-        self.widget.lostFocus.connect(self.on_lost_focus)
-        self.widget.returnPressed.connect(self.on_return_pressed)
-        self.widget.textEdited.connect(self.on_text_edited)
+        super(QtField, self).create(tree)
+        self.set_text(tree['text'])
+        self.set_validator(tree['validator'])
+        self.set_submit_triggers(tree['submit_triggers'])
+        self.set_placeholder(tree['placeholder'])
+        self.set_echo_mode(tree['echo_mode'])
+        self.set_max_length(tree['max_length'])
+        self.set_read_only(tree['read_only'])
+        widget = self.widget()
+        widget.lostFocus.connect(self.on_lost_focus)
+        widget.returnPressed.connect(self.on_return_pressed)
+        widget.textEdited.connect(self.on_text_edited)
 
     #--------------------------------------------------------------------------
     # Private API
@@ -143,7 +147,7 @@ class QtField(QtConstraintsWidget):
         the server widget if it's valid.
 
         """
-        text = self.widget.text()
+        text = self.widget().text()
         if text != self._last_value:
             if self._validator(text):
                 self._clear_error_style()
@@ -154,12 +158,12 @@ class QtField(QtConstraintsWidget):
 
     def _set_error_style(self):
         # A temporary hack until styles are implemented
-        self.widget.setStyleSheet('QLineEdit { background: salmon; }')
+        self.widget().setStyleSheet('QLineEdit { background: salmon; }')
         self._is_error_state = True
 
     def _clear_error_style(self):
         # A temporary hack until styles are implemented
-        self.widget.setStyleSheet('')
+        self.widget().setStyleSheet('')
         self._is_error_state = False
 
     #--------------------------------------------------------------------------
@@ -181,14 +185,15 @@ class QtField(QtConstraintsWidget):
 
     def on_text_edited(self):
         # Temporary kludge until styles are fully implemented 
-        if self._validator(self.widget.text()):
+        widget = self.widget()
+        if self._validator(widget.text()):
             if self._is_error_state:
                 self._clear_error_style()
-                self.widget.setToolTip('')
+                widget.setToolTip('')
         else:
             if not self._is_error_state:
                 self._set_error_style()
-                self.widget.setToolTip(self._validator_message)
+                widget.setToolTip(self._validator_message)
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -243,7 +248,7 @@ class QtField(QtConstraintsWidget):
         """ Set the text in the underlying widget.
 
         """
-        self.widget.setText(text)
+        self.widget().setText(text)
         self._last_value = text
         self._clear_error_style()
 
@@ -268,13 +273,13 @@ class QtField(QtConstraintsWidget):
         """ Set the placeholder text of the underlying widget.
 
         """
-        self.widget.setPlaceholderText(text)
+        self.widget().setPlaceholderText(text)
     
     def set_echo_mode(self, mode):
         """ Set the echo mode of the underlying widget.
 
         """
-        self.widget.setEchoMode(ECHO_MODES[mode])
+        self.widget().setEchoMode(ECHO_MODES[mode])
 
     def set_max_length(self, length):
         """ Set the maximum text length in the underlying widget.
@@ -282,11 +287,11 @@ class QtField(QtConstraintsWidget):
         """
         if length <= 0 or length > 32767:
             length = 32767
-        self.widget.setMaxLength(length)
+        self.widget().setMaxLength(length)
 
     def set_read_only(self, read_only):
         """ Set whether or not the widget is read only.
 
         """
-        self.widget.setReadOnly(read_only)
+        self.widget().setReadOnly(read_only)
 

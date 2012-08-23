@@ -2,6 +2,16 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+def action_factory():
+    from .qt_action import QtAction
+    return QtAction
+
+
+def action_group_factory():
+    from .qt_action_group import QtActionGroup
+    return QtActionGroup
+
+
 def calendar_factory():
     from .qt_calendar import QtCalendar
     return QtCalendar
@@ -37,6 +47,11 @@ def dialog_factory():
     return QtDialog
 
 
+def dock_pane_factory():
+    from .qt_dock_pane import QtDockPane
+    return QtDockPane
+
+
 def field_factory():
     from .qt_field import QtField
     return QtField
@@ -65,6 +80,21 @@ def image_view_factory():
 def label_factory():
     from .qt_label import QtLabel
     return QtLabel
+
+
+def main_window_factory():
+    from .qt_main_window import QtMainWindow
+    return QtMainWindow
+
+
+def menu_factory():
+    from .qt_menu import QtMenu
+    return QtMenu
+
+
+def menu_bar_factory():
+    from .qt_menu_bar import QtMenuBar
+    return QtMenuBar
 
 
 def notebook_factory():
@@ -117,18 +147,26 @@ def text_editor_factory():
     return QtTextEditor
 
 
+def tool_bar_factory():
+    from .qt_tool_bar import QtToolBar
+    return QtToolBar
+
+
 def window_factory():
     from .qt_window import QtWindow
     return QtWindow
 
 
 QT_FACTORIES = {
+    'Action': action_factory,
+    'ActionGroup': action_group_factory,
     'Calendar': calendar_factory,
     'CheckBox': check_box_factory,
     'ComboBox': combo_box_factory,
     'Container': container_factory,
     'DateSelector': date_selector_factory,
     'DatetimeSelector': datetime_selector_factory,
+    'DockPane': dock_pane_factory,
     'Dialog': dialog_factory,
     'Field': field_factory,
     'Form': form_factory,
@@ -136,6 +174,9 @@ QT_FACTORIES = {
     'Html': html_factory,
     'ImageView': image_view_factory,
     'Label': label_factory,
+    'MainWindow': main_window_factory,
+    'Menu': menu_factory,
+    'MenuBar': menu_bar_factory,
     'Notebook': notebook_factory,
     'Page': page_factory,
     'PushButton': push_button_factory,
@@ -146,6 +187,7 @@ QT_FACTORIES = {
     'SpinBox': spin_box_factory,
     'Splitter': splitter_factory,
     'TextEditor': text_editor_factory,
+    'ToolBar': tool_bar_factory,
     'Window': window_factory,
 }
 

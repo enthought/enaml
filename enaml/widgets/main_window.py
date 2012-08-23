@@ -5,7 +5,8 @@
 from traits.api import Property, cached_property
 
 from .dock_pane import DockPane
-#from .tool_bar import ToolBar
+from .menu_bar import MenuBar
+from .tool_bar import ToolBar
 from .window import Window
 
 
@@ -21,7 +22,7 @@ class MainWindow(Window):
 
     """
     #: A read only property which returns the window's MenuBar.
-    # menu_bar = Property(depends_on='children[]')
+    menu_bar = Property(depends_on='children[]')
 
     #: A read only property which returns the window's ToolBars.
     tool_bars = Property(depends_on='children[]')
@@ -40,6 +41,7 @@ class MainWindow(Window):
 
         """
         snap = super(MainWindow, self).snapshot()
+        snap['menu_bar_id'] = self._snap_menu_bar_id()
         snap['tool_bar_ids'] = self._snap_tool_bar_ids()
         snap['dock_pane_ids'] = self._snap_dock_pane_ids()
         return snap
@@ -47,6 +49,21 @@ class MainWindow(Window):
     #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
+    @cached_property
+    def _get_menu_bar(self):
+        """ The getter for the 'menu_bar' property.
+
+        Returns
+        -------
+        result : MenuBar or None
+            The menu bar for this main window, or None if one is not 
+            defined.
+
+        """
+        for child in self.children:
+            if isinstance(child, MenuBar):
+                return child
+
     @cached_property
     def _get_tool_bars(self):
         """ The getter for the 'tool_bars' property.
@@ -58,9 +75,9 @@ class MainWindow(Window):
             MainWindow.
 
         """
-        #isinst = isinstance
-        #panes = (child for child in self.children if isinst(child, ToolBar))
-        return ()#tuple(panes)
+        isinst = isinstance
+        panes = (child for child in self.children if isinst(child, ToolBar))
+        return tuple(panes)
 
     @cached_property
     def _get_dock_panes(self):
@@ -76,6 +93,14 @@ class MainWindow(Window):
         isinst = isinstance
         panes = (child for child in self.children if isinst(child, DockPane))
         return tuple(panes)
+
+    def _snap_menu_bar_id(self):
+        """ Returns the widget id for the menu bar or None.
+
+        """
+        menu_bar = self.menu_bar
+        if menu_bar is not None:
+            return menu_bar.widget_id
 
     def _snap_tool_bar_ids(self):
         """ Returns the widget ids of the main window's tool bars.

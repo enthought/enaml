@@ -7,22 +7,25 @@ from .qt_bounded_datetime import QtBoundedDatetime
 
 
 class QtDatetimeSelector(QtBoundedDatetime):
-    """ A Qt implementation of a datetime edit
+    """ A Qt implementation of an Enaml DatetimeSelector.
 
     """
-    def create(self):
-        """ Create the underlying widget
+    #--------------------------------------------------------------------------
+    # Setup Methods
+    #--------------------------------------------------------------------------
+    def create_widget(self, parent, tree):
+        """ Create the underlying datetime widget.
 
         """
-        self.widget = QDateTimeEdit(self.parent_widget)
+        return QDateTimeEdit(parent)
 
-    def initialize(self, attrs):
-        """ Initialize the widget's attributes
+    def create(self, tree):
+        """ Create and initialize the underlying widget.
 
         """
-        super(QtDatetimeSelector, self).initialize(attrs)
-        self.set_datetime_format(attrs['datetime_format'])
-        self.widget.dateTimeChanged.connect(self.on_datetime_changed)
+        super(QtDatetimeSelector, self).create(tree)
+        self.set_datetime_format(tree['datetime_format'])
+        self.widget().dateTimeChanged.connect(self.on_datetime_changed)
 
     #--------------------------------------------------------------------------
     # Message Handling
@@ -46,7 +49,7 @@ class QtDatetimeSelector(QtBoundedDatetime):
             The current control datetime as a QDateTime object.
 
         """
-        return self.widget.dateTime()
+        return self.widget().dateTime()
 
     def set_datetime(self, datetime):
         """ Set the widget's current datetime.
@@ -57,7 +60,7 @@ class QtDatetimeSelector(QtBoundedDatetime):
             The QDateTime object to use for setting the datetime.
 
         """
-        self.widget.setDateTime(datetime)
+        self.widget().setDateTime(datetime)
 
     def set_max_datetime(self, datetime):
         """ Set the widget's maximum datetime.
@@ -68,7 +71,7 @@ class QtDatetimeSelector(QtBoundedDatetime):
             The QDateTime object to use for setting the maximum datetime.
 
         """
-        self.widget.setMaximumDateTime(datetime)
+        self.widget().setMaximumDateTime(datetime)
 
     def set_min_datetime(self, datetime):
         """ Set the widget's minimum datetime.
@@ -79,7 +82,7 @@ class QtDatetimeSelector(QtBoundedDatetime):
             The QDateTime object to use for setting the minimum datetime.
 
         """
-        self.widget.setMinimumDateTime(datetime)
+        self.widget().setMinimumDateTime(datetime)
 
     def set_datetime_format(self, datetime_format):
         """ Set the widget's datetime format.
@@ -92,5 +95,5 @@ class QtDatetimeSelector(QtBoundedDatetime):
         """
         # XXX make sure Python's and Qt's format strings are the 
         # same, or convert between the two.
-        self.widget.setDisplayFormat(datetime_format)
+        self.widget().setDisplayFormat(datetime_format)
 
