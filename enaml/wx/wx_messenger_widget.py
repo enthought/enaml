@@ -40,8 +40,6 @@ class WxMessengerWidget(object):
         self._children = []
         self._children_map = {}
         self._widget = None
-        if parent is not None:
-            parent.add_child(self)
 
     #--------------------------------------------------------------------------
     # Messaging/Session API
@@ -147,6 +145,22 @@ class WxMessengerWidget(object):
         self._children.append(child)
         self._children_map[child.widget_id()] = child
 
+    def insert_child(self, index, child):
+        """ Insert a child widget into this widget.
+
+        Parameters
+        ----------
+        index : int
+            The target index for the child widget.
+
+        child : WxMessengerWidget
+            The child widget to insert into this widget.
+
+        """
+        # XXX handle reparenting and duplicates
+        self._children.insert(index, child)
+        self._children_map[child.widget_id()] = child
+
     def remove_child(self, child):
         """ Remove the child widget from this widget.
 
@@ -157,11 +171,10 @@ class WxMessengerWidget(object):
 
         """
         # XXX handle unparenting
-        try:
-            self._children.remove(child)
-        except ValueError:
-            pass
-        self._children_map.pop(child.widget_id(), None)
+        children = self._children
+        if child in children:
+            children.remove(child)
+            self._children_map.pop(child.widget_id(), None)
 
     def find_child(self, widget_id):
         """ Find the child with the given widget id.
@@ -260,17 +273,36 @@ class WxMessengerWidget(object):
         pass
         
     def destroy(self):
-        """ Destroy this widget by removing all references to it from
-        it parent and its children and destroy the underlying Wx widget.
+        """ Destroy this widget.
+
+        Destruction is performed in the following order:
+            1. The 'destroy' method is called on all children.
+            2. The reference to the children are dropped.
+            3. The object removes itself from its parent.
+            4. The parent reference is set to None.
+            5. The underyling Wx widget is hidden and destroyed.
+            6. The object removes itself from the session.
 
         """
-        # XXX fixup this destroy method
+        children = self._children
+        self._children = []
+        self._children_map = {}
+        for child in children:
+            child.destroy()
+
         parent = self._parent
         if parent is not None:
             parent.remove_child(self)
-        self._children = []
+        self._parent = None
+
         widget = self._widget
         if widget:
+            widget.Show(False)
             widget.Destroy()
-            self._widget = None
+        self._widget = None
+
+        session = self._session
+        if session is not None:
+            session.widget_destroyed(self._widget_id)
+            self._session = None
 
