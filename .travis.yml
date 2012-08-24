@@ -11,7 +11,6 @@ before_install:
  - pip install cython --use-mirrors
  - pip install casuarius --use-mirrors
  - pip install traits --use-mirrors
- - pip install pyside --use-mirrors
 
 before_script:
  - ln -s /usr/lib/pymodules/python2.7/PySide /home/vagrant/virtualenv/python2.7/lib/python2.7/site-packages/PySide -v
