@@ -6,6 +6,7 @@ python:
 before_install:
  - sudo apt-get update
  - sudo apt-get install python-pyside
+ - sudo aptitude install python-wxgtk2.8
  - pip install ply --use-mirrors
  - pip install cython --use-mirrors
  - pip install casuarius --use-mirrors
@@ -14,6 +15,7 @@ before_install:
 
 before_script:
  - ln -s /usr/lib/pymodules/python2.7/PySide /home/vagrant/virtualenv/python2.7/lib/python2.7/site-packages/PySide -v
+ - ln -s /usr/lib/pymodules/python2.7/wx /home/vagrant/virtualenv/python2.7/lib/python2.7/site-packages/wx -v
 
 script: python setup.py test
 notifications:
