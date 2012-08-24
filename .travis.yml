@@ -4,9 +4,9 @@ language: python
 python:
   - 2.7
 before_install:
- - sudc apt-get update
+ - sudo apt-get update
  - sudo apt-get install python-pyside
- - sudo aptitude install --force-yes --yes python-wxgtk2.8
+ - sudo aptitude install python-wxgtk2.8
  - pip install ply --use-mirrors
  - pip install cython --use-mirrors
  - pip install casuarius --use-mirrors
