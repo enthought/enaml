@@ -3,19 +3,6 @@
 
 from setuptools import setup, find_packages
 
-kwds = {}
-
-try:
-    from distutils.core import Extension
-    from Cython.Distutils import build_ext
-
-    # only build the speedups Cython C extension when Cython is installed
-    kwds['cmdclass'] = {'build_ext': build_ext}
-    kwds['ext_modules'] = [Extension('enaml.speedups.model_index',
-                                     ['enaml/speedups/model_index.pyx'])]
-except ImportError:
-    pass
-
 
 setup(
     name='enaml',
@@ -36,5 +23,4 @@ setup(
         ],
     ),
     test_suite = "enaml.test_collector",
-    **kwds
 )

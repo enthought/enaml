@@ -14,6 +14,8 @@ every resize as may be expected when laying out widgets manually.
 """
 import math
 
+from enaml.widgets.api import MainWindow, Container, PushButton, Label
+
 
 def gen_constraints(comps, top, left, width, height):
     res = []
@@ -38,15 +40,12 @@ enamldef SimpleButton(PushButton):
 
 
 enamldef Main(MainWindow):
+    attr buttons = [SimpleButton(text=str(i)) for i in range(50)]
     Container:
         constraints = gen_constraints(
-            buttons.components, top, left, width, height,
+            buttons, top, left, width, height,
         ) + [(height / 2) == lbl.v_center, (width / 2) == lbl.h_center]
-        Include:
-            id: buttons
-            components << [
-                SimpleButton(text=str(i)) for i in range(50)
-            ]
+        inited :: children.extend(buttons)
         Label:
             id: lbl
             text = 'Button Ring'

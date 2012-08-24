@@ -330,8 +330,8 @@ class WxMainWindow(WxWindow):
                 main_window.AddDockPane(dock_pane.widget())
 
         # Setup the status bar
-        self._status = status = wx.StatusBar(main_window)
-        main_window.SetStatusBar(status)
+        #self._status = status = wx.StatusBar(main_window)
+        #main_window.SetStatusBar(status)
         
         main_window.EndBatch()
 

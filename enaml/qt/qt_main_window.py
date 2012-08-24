@@ -101,6 +101,7 @@ class QtMainWindow(QtWindow):
         """
         widget = QCustomMainWindow(parent)
         widget.setDocumentMode(True)
+        widget.setDockNestingEnabled(True)
         return widget
 
     def create(self, tree):

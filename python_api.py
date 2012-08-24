@@ -1,4 +1,4 @@
-from enaml.widgets import *
+from enaml.widgets.api import *
 from enaml.application import Application
 from enaml.qt.qt_local_server import QtLocalServer
 from enaml.stdlib.sessions import view_factory

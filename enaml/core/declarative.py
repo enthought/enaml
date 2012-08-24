@@ -7,7 +7,7 @@ import re
 
 from traits.api import (
     HasStrictTraits, Instance, List, Property, Str, Dict, Disallow, Bool,
-    Undefined, cached_property
+    Undefined
 )
 
 from .expressions import AbstractExpression
@@ -55,31 +55,23 @@ class Declarative(HasStrictTraits):
     #: The list of children for this component. 
     children = List(Instance('Declarative'))
 
-    #: A boolean flag flipped from False to True at the very end of the 
-    #: __init__ method, after the keyword arguments have been applied 
-    #: to the instance. This should not be manipulated by user code.
+    #: An event emitted when the list of children for this component
+    #: changes, either in whole or in place. The payload of the event
+    #: is a dict with the keys 'added' and 'removed'. The value for 
+    #: the 'added' key is a list of 2-tuples of (idx, item) where 'idx'
+    #: is the new location of 'item' in the list of children. The value
+    #: of the 'removed' key is a list of removed items. This event is
+    #: emitted once all reparenting operations for all of the children
+    #: are complete.
+    children_changed = EnamlEvent
+
+    #: manipulated by user code.
     initialized = Bool(False)
 
-    #: A readonly property which returns the list of 'effective'
-    #: children. This list is constructed by calling contribute()
-    #: each child in 'children' and flattening the resulting list of
-    #: lists. This mechanism allows children to contribute different
-    #: 'effective' children to a parent. Children should fire their
-    #: 'contributed_updated' event to trigger a reload by the parent.
-    #: This list of children has no particular semantic meaning for 
-    #: the Declarative type, but it is used by widget subclasses to
-    #: facilitate dynamic children with the Include component.
-    effective_children = Property(
-        List(Instance('Declarative')), 
-        depends_on='children.contributed_updated',
-    )
-
-    #: An event which should be fired by a Declarative component when
-    #: components that it contributes to its parent have changed. This
-    #: will typically not be fired by most components. The exception is
-    #: the Include component, which fires the even when it's effective
-    #: children change.
-    contributed_updated = EnamlEvent
+    #: An event fired during the post init traversal. This allows 
+    #: any declarative bindings to perform any necessary procedural
+    #: initialization, such as initializing dynamic children.
+    inited = EnamlEvent
 
     #: The private dictionary of expression objects that are bound to 
     #: attributes on this component. It should not be manipulated by
@@ -146,10 +138,11 @@ class Declarative(HasStrictTraits):
         # user are not overridden by default expression bindings.
         self.trait_set(**kwargs)
 
-        # Flip the initialized flag to True after all the keyword arguments
-        # are applied.
-        self.initialized = True
-    
+        # If this widget is top level, then the a bottom-up traversal
+        # is performed to fire off the initialization events.
+        if parent is None:
+            self._post_init_traverse()
+
     #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
@@ -207,6 +200,18 @@ class Declarative(HasStrictTraits):
         ctrait = user_trait.as_ctrait()
         cls.__base_traits__[name] = ctrait
         cls.__class_traits__[name] = ctrait
+
+    def _post_init_traverse(self):
+        """ A method called when the top level widget if fully inited.
+
+        This method performs a bottom up traversal of the tree, flips
+        the `initialized` flag, and fires off the `inited` event.
+
+        """ 
+        for child in self.children:
+            child._post_init_traverse()
+        self.initialized = True
+        self.inited()
 
     def _bind_expression(self, name, expression, notify_only=False):
         """ A private method used by the Enaml execution engine.
@@ -291,30 +296,68 @@ class Declarative(HasStrictTraits):
         Children in the old list which are not in the new list, with
         'self' as their parent will be de-parented. Children in the 
         new list with an improper parent will be properly parented.
+        The 'children_changed' event will be fired when the parenting
+        operations are complete.
 
         """
+        added = []
+        removed = []
+        push_added = added.append
+        push_removed = removed.append
+        old_set = set(old)
         new_set = set(new)
         for child in old:
-            if child not in new_set and child.parent == self:
-                child.parent = None
-        for child in new:
-            if child.parent != self:
-                child.parent = self
+            if child not in new_set:
+                push_removed(child)
+                if child.parent is self:
+                    child.parent = None
+        for idx, child in enumerate(new):
+            if child not in old_set:
+                push_added((idx, child))
+                if child.parent is not self:
+                    child.parent = self
+        self.children_changed({'added': added, 'removed': removed})
 
     def _children_items_changed(self, items_evt):
         """ The change handler for the 'children' attribute.
 
         This handler will be called when the items in the list change. 
         Children that were added will be properly parented. Children 
-        that were removed will be unparented.
+        that were removed will be unparented. The 'children_changed' 
+        event will be fired when the parenting operations are complete.
 
         """
-        for child in items_evt.removed:
-            if child.parent == self:
-                child.parent = None
-        for child in items_evt.added:
-            if child.parent != self:
-                child.parent = self
+        added = []
+        removed = []
+        push_added = added.append
+        push_removed = removed.append
+        # XXX Traits workaround: Traits does not handle list slice 
+        # assignment with a step properly. When that happens the 
+        # event lists will contain a nested list with the change. 
+        removed_items = items_evt.removed
+        added_items = items_evt.added
+        if len(removed_items) == 1 and isinstance(removed_items[0], list):
+            removed_items = removed_items[0]
+        if len(added_items) == 1 and isinstance(added_items[0], list):
+            added_items = added_items[0]
+        old_set = set(removed_items)
+        new_set = set(added_items)
+        for child in removed_items:
+            if child not in new_set:
+                push_removed(child)
+                if child.parent is self:
+                    child.parent = None
+        curr = self.children
+        for child in added_items:
+            if child not in old_set:
+                idx = curr.index(child) 
+                push_added((idx, child))
+                if child.parent is not self:
+                    child.parent = self
+        # The items event makes no guarantees about ordering. Most
+        # consumers of this event, however, will care about it.
+        added.sort()
+        self.children_changed({'added': added, 'removed': removed})
 
     def _get_base_names(self):
         """ The property getter for the 'base_names' attribute.
@@ -330,17 +373,6 @@ class Declarative(HasStrictTraits):
             if base is Declarative:
                 break
         return base_names
-
-    @cached_property
-    def _get_effective_children(self):
-        """ The property getter for the 'effective_children' attribute.
-
-        This property getter returns the flattened list of components
-        returned by calling 'contribute()' on each child.
-
-        """
-        contribs = (child.contribute() for child in self.children)
-        return [child for item in contribs for child in item]
         
     def _on_expression_changed(self, expression, name, value):
         """ A private signal callback for the expression_changed signal
@@ -367,23 +399,6 @@ class Declarative(HasStrictTraits):
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
-    def contribute(self):
-        """ The list of Declarative instances which should be included 
-        as effective children of our parent. 
-
-        This method should be reimplemented by subclasses which need 
-        to contribute different components to their parent's children.
-
-        Returns
-        -------
-        result : list
-            The list of Declarative instances to include in the list of
-            'effective' children on the parent. By defaulf, this method
-            returns [self].
-
-        """
-        return [self]
-
     def snapshot(self):
         """ Create a snapshot of the tree starting from this component.
 
@@ -398,8 +413,25 @@ class Declarative(HasStrictTraits):
         snap['class'] = self.class_name
         snap['bases'] = self.base_names
         snap['name'] = self.name
-        snap['children'] = [child.snapshot() for child in self.children]
+        snap['children'] = [c.snapshot() for c in self.snap_children()]
         return snap
+
+    def snap_children(self):
+        """ Get the children to include in the snapshot.
+
+        This method is called to retrieve the children to include with
+        the snapshot of the component. The default implementation just
+        returns the list of `children`. Subclasses should reimplement
+        this method if they need more control.
+
+        Returns
+        -------
+        result : iterable
+            An iterable of children to include in the component
+            snapshot.
+
+        """
+        return self.children
 
     def traverse(self, depth_first=False):
         """ Yields all of the nodes in the tree, from this node downward.

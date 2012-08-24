@@ -2356,7 +2356,7 @@ def p_subscript9(p):
 
 def p_subscript10(p):
     ''' subscript : test COLON test '''
-    p[0] = ast.Slice(lower=p[1], uppper=p[3], step=None)
+    p[0] = ast.Slice(lower=p[1], upper=p[3], step=None)
 
 
 def p_subscript11(p):
