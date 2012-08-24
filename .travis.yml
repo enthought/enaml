@@ -5,16 +5,11 @@ python:
   - 2.7
 before_install:
  - sudo apt-get update
- - sudo apt-get install python-pyside
  - pip install ply --use-mirrors
  - pip install cython --use-mirrors
  - pip install casuarius --use-mirrors
  - pip install traits --use-mirrors
- - pip install pyside --use-mirrors
-
-before_script:
- - ln -s /usr/lib/pymodules/python2.7/PySide /home/vagrant/virtualenv/python2.7/lib/python2.7/site-packages/PySide -v
-
+install:
 script: python setup.py test
 notifications:
   email: 
