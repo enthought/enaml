@@ -618,7 +618,14 @@ def p_suite2(p):
 
 def p_stmt_list1(p):
     ''' stmt_list : stmt stmt_list '''
-    p[0] = [p[1]] + p[2]
+    # stmt may be a list of simple_stmt due to this piece of grammar:
+    # simple_stmt: small_stmt (';' small_stmt)* [';'] NEWLINE
+    stmt = p[1]
+    if isinstance(stmt, list):
+        res = stmt + p[2]
+    else:
+        res = [stmt] + p[2]
+    p[0] = res
 
 
 def p_stmt_list2(p):
