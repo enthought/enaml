@@ -1,0 +1,16 @@
+# After changing this file, check it on:
+#   http://lint.travis-ci.org/
+language: python
+python:
+  - 2.7
+before_install:
+ - sudo apt-get update
+ - pip install ply --use-mirrors
+ - pip install cython --use-mirrors
+ - pip install casuarius --use-mirrors
+ - pip install traits --use-mirrors
+install:
+script: python setup.py test
+notifications:
+  email: 
+    - dpinte@enthought.com
