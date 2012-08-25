@@ -198,6 +198,7 @@ class QtWidgetComponent(QtMessengerWidget):
             The background color of the widget as a CSS color string.
 
         """
+        return
         widget = self.widget()
         role = widget.backgroundRole()
         qcolor = q_parse_color(bgcolor)
@@ -226,6 +227,7 @@ class QtWidgetComponent(QtMessengerWidget):
             The foreground color of the widget as a CSS color string.
 
         """
+        return
         widget = self.widget()
         role = widget.foregroundRole()
         qcolor = q_parse_color(fgcolor)
