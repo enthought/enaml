@@ -147,7 +147,7 @@ class QtContainer(QtConstraintsWidget):
     _layout_manager = None
 
     #: The function to use for refreshing the layout on a resize event.
-    _refresh = lambda: None
+    _refresh = lambda *args, **kwargs: None
 
     #: The table of offsets to use during a layout pass.
     _offset_table = []
