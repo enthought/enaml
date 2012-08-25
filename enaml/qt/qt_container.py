@@ -4,6 +4,7 @@
 #------------------------------------------------------------------------------
 from collections import deque
 
+from casuarius import weak
 from enaml.layout.layout_manager import LayoutManager
 
 from .qt.QtCore import QSize, Signal
@@ -116,13 +117,13 @@ class QContainer(QFrame):
         self._size_hint = hint
 
     def minimumSizeHint(self):
-        """ Returns the minimum size hint of the widget.
+        """ Returns the minimum size hint for the widget.
 
-        The minimum size hint for a QContainer is conceptually the same
-        as its size hint, so we just return that value.
-
+        For a QContainer, the minimum size hint is equivalent to the
+        minimum size as computed by the layout manager.
+        
         """
-        return self.sizeHint()
+        return self.minimumSize()
 
 
 class QtContainer(QtConstraintsWidget):
@@ -198,12 +199,10 @@ class QtContainer(QtConstraintsWidget):
             self._layout_table = layout_table
             self._layout_manager = manager
             self._refresh = self._build_refresher(manager)
-            min_size = self.compute_min_size()
-            max_size = self.compute_max_size()
             widget = self.widget()
-            widget.setSizeHint(min_size)
-            widget.setMinimumSize(min_size)
-            widget.setMaximumSize(max_size)
+            widget.setSizeHint(self.compute_best_size())
+            widget.setMinimumSize(self.compute_min_size())
+            widget.setMaximumSize(self.compute_max_size())
 
     #--------------------------------------------------------------------------
     # Layout Handling
@@ -482,6 +481,34 @@ class QtContainer(QtConstraintsWidget):
             width = primitive('width')
             height = primitive('height')
             w, h = self._layout_manager.get_min_size(width, height)
+            res = QSize(w, h)
+        else:
+            res = QSize()
+        return res
+
+    def compute_best_size(self):
+        """ Calculates the best size of the container.
+
+        The best size of the container is obtained by computing the min
+        size of the layout using a strength which is much weaker than a
+        normal resize. This takes into account the size of any widgets 
+        which have their resist clip property set to 'weak' while still 
+        allowing the window to be resized smaller by the user. If this
+        container does not own its layout then it will return an
+        invalid QSize.
+
+        Returns
+        -------
+        result : QSize
+            A (potentially) invalid QSize which is the minimum size 
+            required to satisfy all constraints.
+
+        """
+        if self._owns_layout and self._layout_manager is not None:
+            primitive = self.layout_box.primitive
+            width = primitive('width')
+            height = primitive('height')
+            w, h = self._layout_manager.get_min_size(width, height, weak)
             res = QSize(w, h)
         else:
             res = QSize()
