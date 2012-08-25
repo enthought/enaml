@@ -36,10 +36,10 @@ class WidgetComponent(MessengerWidget):
     #: supplied by the client.
     show_focus_rect = Enum(None, True, False)
 
-    #: The background color of the widget. Supports CSS color formats.
+    #: The background color of the widget. Supports CSS3 color strings.
     bgcolor = Str
 
-    #: The foreground color of the widget. Supports CSS color formats.
+    #: The foreground color of the widget. Supports CSS3 color strings.
     fgcolor = Str
 
     #: The font used for the widget. Supports CSS font formats.
