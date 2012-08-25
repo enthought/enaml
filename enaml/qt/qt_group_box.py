@@ -2,6 +2,8 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+import sys
+
 from .qt.QtCore import Qt, QSize, Signal
 from .qt.QtGui import QGroupBox
 from .qt_container import QtContainer
@@ -72,8 +74,14 @@ class QtGroupBox(QtContainer):
         """ Creates the underlying QGroupBox control.
 
         """
-        return QResizingGroupBox(parent)
-
+        widget = QResizingGroupBox(parent)
+        if sys.platform == 'darwin':
+            # On OSX, the widget item layout rect is too small. 
+            # Setting this attribute forces the widget item to
+            # use the widget rect for layout.
+            widget.setAttribute(Qt.WA_LayoutUsesWidgetRect, True)
+        return widget
+        
     def create(self, tree):
         """ Create and initialize the underlying widget.
 

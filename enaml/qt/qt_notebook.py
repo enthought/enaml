@@ -2,8 +2,10 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+import sys
 from weakref import WeakKeyDictionary
 
+from .qt.QtCore import Qt
 from .qt.QtGui import QTabWidget, QTabBar, QResizeEvent, QApplication
 from .qt_constraints_widget import QtConstraintsWidget
 
@@ -239,7 +241,13 @@ class QtNotebook(QtConstraintsWidget):
         """ Create the underlying notebook widget.
 
         """
-        return QNotebook(parent)
+        widget = QNotebook(parent)
+        if sys.platform == 'darwin':
+            # On OSX, the widget item layout rect is too small. 
+            # Setting this attribute forces the widget item to
+            # use the widget rect for layout.
+            widget.setAttribute(Qt.WA_LayoutUsesWidgetRect, True)
+        return widget
 
     def create(self, tree):
         """ Create and initialize the underyling widget.
