@@ -14,7 +14,7 @@ class DockPane(WidgetComponent):
     """ A widget which can be docked in a MainWindow.
 
     A DockPane is a widget which can be docked in designated dock areas
-    in a MainWindow. I can have at most a single child widget which is 
+    in a MainWindow. It can have at most a single child widget which is 
     an instance of Container.
 
     """
