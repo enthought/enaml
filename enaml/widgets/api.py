@@ -21,6 +21,8 @@ from .html import Html
 from .image_view import ImageView
 from .label import Label
 from .main_window import MainWindow
+from .mdi_area import MdiArea
+from .mdi_window import MdiWindow
 from .menu import Menu
 from .menu_bar import MenuBar
 from .notebook import Notebook

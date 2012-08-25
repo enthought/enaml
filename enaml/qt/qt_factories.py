@@ -87,6 +87,16 @@ def main_window_factory():
     return QtMainWindow
 
 
+def mdi_area_factory():
+    from .qt_mdi_area import QtMdiArea
+    return QtMdiArea
+
+
+def mdi_window_factory():
+    from .qt_mdi_window import QtMdiWindow
+    return QtMdiWindow
+
+
 def menu_factory():
     from .qt_menu import QtMenu
     return QtMenu
@@ -175,6 +185,8 @@ QT_FACTORIES = {
     'ImageView': image_view_factory,
     'Label': label_factory,
     'MainWindow': main_window_factory,
+    'MdiArea': mdi_area_factory,
+    'MdiWindow': mdi_window_factory,
     'Menu': menu_factory,
     'MenuBar': menu_bar_factory,
     'Notebook': notebook_factory,
