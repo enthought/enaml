@@ -30,7 +30,7 @@ def q_parse_color(color):
         qcolor = QColor()
     else:
         r, g, b, a = rgba
-        qcolor = QColor(r, g, b, a * 255)
+        qcolor = QColor.fromRgbF(r, g, b, a)
     return qcolor
 
 
