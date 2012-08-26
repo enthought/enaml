@@ -227,10 +227,6 @@ class QtNotebook(QtConstraintsWidget):
     """ A Qt implementation of an Enaml Notebook.
 
     """
-    # Don't use the widget item for the layout of the notebook, or 
-    # there wont be enough space allocated for the tabs on OSX.
-    use_widget_item_for_layout = False
-
     #: Storage for the widget ids of the notebook pages.
     _page_ids = []
 
