@@ -38,7 +38,7 @@ class Form(Container):
 
         """
         # FIXME: do something sensible when children are not visible.
-        children = self.constraints_children
+        children = list(self.widgets)
         labels = children[::2]
         widgets = children[1::2]
 
