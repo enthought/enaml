@@ -4,7 +4,6 @@
 #------------------------------------------------------------------------------
 from traits.api import Bool, Unicode, Enum
 
-
 from .container import Container
 
 
