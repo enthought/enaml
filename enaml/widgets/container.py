@@ -2,18 +2,45 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import (
-    Property, Either, Tuple, Instance, List, Bool, cached_property,
-)
+from traits.api import Property, Instance, Bool, cached_property
 
 from enaml.core.trait_types import CoercingInstance
+from enaml.layout.constraint_variable import ConstraintVariable
 from enaml.layout.geometry import Box
-from enaml.layout.box_model import PaddingBoxModel
 from enaml.layout.layout_helpers import vbox
 
-from .constraints_widget import (
-    ConstraintsWidget, PolicyEnum, get_from_box_model
-)
+from .constraints_widget import ConstraintsWidget, BoxModel, get_from_box_model
+
+
+class ContainerBoxModel(BoxModel):
+    """ A class which provided the box model for a Container.
+
+    Primitive Variables:
+        contents_[left|right|top|bottom]
+    
+    Derived Variables:
+        contents_[width|height|v_center|h_center]
+    
+    """
+    def __init__(self, owner):
+        """ Initialize a ContainerBoxModel.
+
+        Parameters
+        ----------
+        owner : string
+            A string which uniquely identifies the owner of this box 
+            model.
+
+        """
+        super(ContainerBoxModel, self).__init__(owner)
+        for primitive in ('left', 'right', 'top', 'bottom'):
+            attr = 'contents_' + primitive
+            var = ConstraintVariable(attr, owner)
+            setattr(self, attr, var)
+        self.contents_width = self.contents_right - self.contents_left
+        self.contents_height = self.contents_bottom - self.contents_top
+        self.contents_v_center = self.contents_top + self.contents_height / 2.0
+        self.contents_h_center = self.contents_left + self.contents_width / 2.0
 
 
 class Container(ConstraintsWidget):
@@ -42,22 +69,6 @@ class Container(ConstraintsWidget):
     #: across Container boundaries. This flag must be explicitly 
     #: marked as True to enable sharing.
     share_layout = Bool(False)
-
-    #: A read-only symbolic object that represents the internal left 
-    #: padding of the container.
-    padding_left = Property(fget=get_from_box_model)
-
-    #: A read-only symbolic object that represents the internal right 
-    #: padding of the container.
-    padding_right = Property(fget=get_from_box_model)
-
-    #: A read-only symbolic object that represents the internal top 
-    #: padding of the container.
-    padding_top = Property(fget=get_from_box_model)
-
-    #: A read-only symbolic object that represents the internal bottom 
-    #: padding of the container.
-    padding_bottom = Property(fget=get_from_box_model)
 
     #: A read-only symbolic object that represents the internal left 
     #: boundary of the content area of the container.
@@ -95,13 +106,8 @@ class Container(ConstraintsWidget):
     #: default padding is Box(10, 10, 10, 10).
     padding = CoercingInstance(Box, (10, 10, 10, 10))
 
-    #: The PolicyEnum for the strength with which to enforce the padding.
-    #: This can be a single policy value to apply to everything, or a 
-    #: 4-tuple of policies to apply to the individual padding.           
-    padding_strength = Either(
-        PolicyEnum, Tuple(PolicyEnum, PolicyEnum, PolicyEnum, PolicyEnum),
-        default='required'
-    )
+    #: A read only property which returns this container's widgets.
+    widgets = Property(depends_on='children[]')
 
     #: Containers freely exapnd in width and height. The size hint 
     #: constraints for a Container are used when the container is
@@ -109,18 +115,11 @@ class Container(ConstraintsWidget):
     #: container is typically desired.
     hug_width = 'ignore'
     hug_height = 'ignore'
-    
-    #: The list of children that can participate in constraints based
-    #: layout. This list is composed of components in the list of 
-    #: children that are instances of ConstraintsWidget.
-    constraints_children = Property(
-        List(Instance(ConstraintsWidget)), depends_on='children',
-    )
 
     #: The private storage the box model instance for this component. 
-    _box_model = Instance(PaddingBoxModel)
+    _box_model = Instance(ContainerBoxModel)
     def __box_model_default(self):
-        return PaddingBoxModel(self.widget_id)
+        return ContainerBoxModel(self.widget_id)
 
     #--------------------------------------------------------------------------
     # Initialization
@@ -130,7 +129,7 @@ class Container(ConstraintsWidget):
 
         """
         super(Container, self).bind()
-        self.on_trait_change(self._send_relayout, 'share_layout')
+        self.on_trait_change(self._send_relayout, 'share_layout, padding')
 
     #--------------------------------------------------------------------------
     # Constraints Generation
@@ -142,43 +141,8 @@ class Container(ConstraintsWidget):
         """
         layout = super(Container, self)._layout_info()
         layout['share_layout'] = self.share_layout
+        layout['padding'] = self.padding
         return layout
-
-    def _collect_constraints(self):
-        """ Collect the list of symbolic constraints for the component.
-
-        This method is overridden from the parent class to add the 
-        constraints for the container padding to the list of collected
-        constraints.
-
-        """
-        cns = super(Container, self)._collect_constraints()
-        cns.extend(self._padding_constraints())
-        return cns
-
-    def _padding_constraints(self):
-        """ Creates the symbolic constraints for the container padding.
-
-        These constraints apply to the internal layout calculations of 
-        a container. The default implementation constrains the padding 
-        according the 'padding' values and 'padding_strength' policies. 
-        It also places a required constraint >= 0 on every padding 
-        constraint variable.
-
-        """
-        cns = []
-        padding = self.padding
-        tags = ('top', 'right', 'bottom', 'left')
-        strengths = self.padding_strength
-        if isinstance(strengths, basestring):
-            strengths = (strengths,) * 4
-        for tag, strength, padding in zip(tags, strengths, padding):
-            tag = 'padding_' + tag
-            sym = getattr(self, tag)
-            cns.append(sym >= 0)
-            if strength != 'ignore':
-                cns.append((sym == padding) | strength)
-        return cns
 
     def _default_constraints(self):
         """ Supplies a default vbox constraint to the constraints 
@@ -186,20 +150,24 @@ class Container(ConstraintsWidget):
 
         """
         cns = super(Container, self)._default_constraints()
-        cns.append(vbox(*self.constraints_children))
+        cns.append(vbox(*self.widgets))
         return cns
 
     #--------------------------------------------------------------------------
     # Property Getters
     #--------------------------------------------------------------------------
     @cached_property
-    def _get_constraints_children(self):
-        """ Cached property getter for 'constraints_children'. 
+    def _get_widgets(self):
+        """ The getter for the 'widgets' property
 
-        This getter returns the sublist of children that are instances 
-        of ConstraintsWidget.
+        Returns
+        -------
+        result : tuple
+            The tuple of ContraintsWidgets defined as children of this
+            Container.
 
         """
-        flt = lambda child: isinstance(child, ConstraintsWidget)
-        return filter(flt, self.children)
+        isinst = isinstance
+        widgets = (c for c in self.children if isinst(c, ConstraintsWidget))
+        return tuple(widgets)
 
