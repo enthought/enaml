@@ -2,12 +2,42 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Property, Tuple, Enum, Instance, List
+from traits.api import Property, Enum, Instance, List
 
-from enaml.layout.box_model import BoxModel
+from enaml.layout.constraint_variable import ConstraintVariable
 from enaml.layout.layout_helpers import expand_constraints, ABConstrainable
 
 from .widget_component import WidgetComponent   
+
+
+class BoxModel(object):
+    """ A class which provides a simple constraints box model.
+
+    Primitive Variables:
+        left, top, width, height
+
+    Derived Variables:
+        right, bottom, v_center, h_center
+
+    """
+    def __init__(self, owner):
+        """ Initialize a BoxModel.
+
+        Parameters
+        ----------
+        owner : string
+            A string which uniquely identifies the owner of this box 
+            model.
+
+        """
+        owner = str(owner)
+        for primitive in ('left', 'top', 'width', 'height'):
+            var = ConstraintVariable(primitive, owner)
+            setattr(self, primitive, var) 
+        self.right = self.left + self.width
+        self.bottom = self.top + self.height
+        self.v_center = self.top + self.height / 2.0
+        self.h_center = self.left + self.width / 2.0
 
 
 #: A traits enum which defines the allowable constraints strengths.
@@ -90,26 +120,15 @@ class ConstraintsWidget(WidgetComponent):
     #: basis to specify a logical default for the given control.
     hug_height = PolicyEnum('strong')
 
-    #: The combination of (hug_width, hug_height).
-    hug = Property(
-        Tuple(PolicyEnum, PolicyEnum), depends_on='hug_width, hug_height',
-    )
-
     #: How strongly a component resists clipping its contents. Valid 
     #: strengths are 'weak', 'medium', 'strong', 'required' and 'ignore'. 
     #: The default is 'strong' for width.
-    resist_clip_width = PolicyEnum('strong')
+    resist_width = PolicyEnum('strong')
 
     #: How strongly a component resists clipping its contents. Valid 
     #: strengths are 'weak', 'medium', 'strong', 'required' and 'ignore'. 
     #: The default is 'strong' for height.
-    resist_clip_height = PolicyEnum('strong')
-
-    #: The combination of (resist_clip_width, resist_clip_height).
-    resist_clip = Property(
-        Tuple(PolicyEnum, PolicyEnum),
-        depends_on='resist_clip_width, resist_clip_height',
-    )
+    resist_height = PolicyEnum('strong')
 
     #: The private storage the box model instance for this component.
     _box_model = Instance(BoxModel)
@@ -144,8 +163,8 @@ class ConstraintsWidget(WidgetComponent):
 
         """
         super(ConstraintsWidget, self).bind()
-        items = 'constraints, hug, resist_clip'
-        self.on_trait_change(self._send_relayout, items)
+        d = 'constraints, hug_width, hug_height, resist_width, resist_height'
+        self.on_trait_change(self._send_relayout, d)
 
     #--------------------------------------------------------------------------
     # Message Handling
@@ -174,8 +193,8 @@ class ConstraintsWidget(WidgetComponent):
         """
         info = {
             'constraints': self._generate_constraints(),
-            'resist_clip': self.resist_clip,
-            'hug': self.hug,
+            'resist': (self.resist_width, self.resist_height),
+            'hug': (self.hug_width, self.hug_height),
         }
         return info
 
@@ -255,35 +274,6 @@ class ConstraintsWidget(WidgetComponent):
 
         """
         return []
-
-    #--------------------------------------------------------------------------
-    # Property Getters and Setters
-    #--------------------------------------------------------------------------
-    def _get_hug(self):
-        """ Property getter for the 'hug' property.
-
-        """
-        return (self.hug_width, self.hug_height)
-
-    def _set_hug(self, value):
-        """ Property setter for the 'hug' property.
-
-        """
-        width, height = value
-        self.trait_set(hug_width=width, hug_height=height)
-
-    def _get_resist_clip(self):
-        """ Property getter for the 'resist_clip' property.
-
-        """
-        return (self.resist_clip_width, self.resist_clip_height)
-
-    def _set_resist_clip(self, value):
-        """ Property setter for the 'resist_clip' property.
-
-        """
-        width, height = value
-        self.trait_set(resist_clip_width=width, resist_clip_height=height)
 
 
 ABConstrainable.register(ConstraintsWidget)
