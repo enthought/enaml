@@ -45,6 +45,14 @@ class QtWidgetComponent(QtMessengerWidget):
     #: An attribute which will hold the widget item for the widget.
     _widget_item = None
 
+    #: An attribute which indicates whether or not the background
+    #: color of the widget has been changed.
+    _bgcolor_changed = False
+
+    #: An attribute which indicates whether or not the foreground
+    #: color of the widget has been changed.
+    _fgcolor_changed = False
+
     def create_widget(self, parent, tree):
         """ Creates the underlying QWidget object.
 
@@ -198,25 +206,17 @@ class QtWidgetComponent(QtMessengerWidget):
             The background color of the widget as a CSS color string.
 
         """
-        return
-        widget = self.widget()
-        role = widget.backgroundRole()
-        qcolor = q_parse_color(bgcolor)
-        if not qcolor.isValid():
-            palette = QApplication.instance().palette(widget)
-            qcolor = palette.color(role)
-            # On OSX, the default color is rendered *slightly* off
-            # so a simple workaround is to tell the widget not to
-            # auto fill the background.
-            widget.setAutoFillBackground(False)
-        else:
-            # When not using qt style sheets to set the background
-            # color, we need to tell the widget to auto fill the 
-            # background or the bgcolor won't render at all.
-            widget.setAutoFillBackground(True)
-        palette = widget.palette()
-        palette.setColor(role, qcolor)
-        widget.setPalette(palette)
+        if bgcolor or self._bgcolor_changed:
+            widget = self.widget()
+            role = widget.backgroundRole()
+            qcolor = q_parse_color(bgcolor)
+            if not qcolor.isValid():
+                app_palette = QApplication.instance().palette(widget)
+                qcolor = app_palette.color(role)
+            palette = widget.palette()
+            palette.setColor(role, qcolor)
+            widget.setPalette(palette)
+            self._bgcolor_changed = True
 
     def set_fgcolor(self, fgcolor):
         """ Set the foreground color on the underlying widget.
@@ -227,16 +227,17 @@ class QtWidgetComponent(QtMessengerWidget):
             The foreground color of the widget as a CSS color string.
 
         """
-        return
-        widget = self.widget()
-        role = widget.foregroundRole()
-        qcolor = q_parse_color(fgcolor)
-        if not qcolor.isValid():
-            palette = QApplication.instance().palette(widget)
-            qcolor = palette.color(role)
-        palette = widget.palette()
-        palette.setColor(role, qcolor)
-        widget.setPalette(palette)
+        if fgcolor or self._fgcolor_changed:
+            widget = self.widget()
+            role = widget.foregroundRole()
+            qcolor = q_parse_color(fgcolor)
+            if not qcolor.isValid():
+                app_palette = QApplication.instance().palette(widget)
+                qcolor = app_palette.color(role)
+            palette = widget.palette()
+            palette.setColor(role, qcolor)
+            widget.setPalette(palette)
+            self._fgcolor_changed = True
 
     def set_font(self, font):
         """ Set the font on the underlying widget.
