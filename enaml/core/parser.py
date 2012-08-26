@@ -2579,6 +2579,50 @@ def p_arglist10(p):
     p[0] = Arguments(args=args, keywords=kws, kwargs=p[3])
 
 
+def p_arglist11(p):
+    ''' arglist : STAR test COMMA argument '''
+    keyword = p[4]
+    if isinstance(keyword, ast.keyword):
+        p[0] = Arguments(keywords=[keyword], starargs=p[2])
+    else:
+        msg = 'only named arguments may follow *expression'
+        tok = FakeToken(p.lexer.lexer, p.lineno(1))
+        syntax_error(msg, tok)
+
+
+def p_arglist12(p):
+    ''' arglist : STAR test COMMA argument COMMA DOUBLESTAR test '''
+    keyword = p[4]
+    if isinstance(keyword, ast.keyword):
+        p[0] = Arguments(keywords=[keyword], starargs=p[2], kwargs=p[7])
+    else:
+        msg = 'only named arguments may follow *expression'
+        tok = FakeToken(p.lexer.lexer, p.lineno(1))
+        syntax_error(msg, tok)
+
+
+def p_arglist13(p):
+    ''' arglist : STAR test COMMA arglist_list argument '''
+    keywords = p[4] + [p[5]]
+    for kw in keywords:
+        if not isinstance(kw, ast.keyword):
+            msg = 'only named arguments may follow *expression'
+            tok = FakeToken(p.lexer.lexer, p.lineno(1))
+            syntax_error(msg, tok)
+    p[0] = Arguments(keywords=keywords, starargs=p[2])
+        
+
+def p_arglist14(p):
+    ''' arglist : STAR test COMMA arglist_list argument COMMA DOUBLESTAR test '''
+    keywords = p[4] + [p[5]]
+    for kw in keywords:
+        if not isinstance(kw, ast.keyword):
+            msg = 'only named arguments may follow *expression'
+            tok = FakeToken(p.lexer.lexer, p.lineno(1))
+            syntax_error(msg, tok)
+    p[0] = Arguments(keywords=keywords, starargs=p[2], kwargs=p[8])
+
+
 def p_arglist_list1(p):
     ''' arglist_list : argument COMMA '''
     p[0] = [p[1]]
