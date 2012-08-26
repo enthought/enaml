@@ -2,7 +2,6 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt.QtCore import Qt, QSize
 from .qt.QtGui import QMdiArea
 from .qt_constraints_widget import QtConstraintsWidget
 

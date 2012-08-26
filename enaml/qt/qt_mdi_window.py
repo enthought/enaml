@@ -2,8 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt.QtCore import Qt
-from .qt.QtGui import QMdiSubWindow
+from .qt.QtGui import QMdiSubWindow, QLayout
 from .qt_widget_component import QtWidgetComponent
 
 
@@ -24,10 +23,13 @@ class QtMdiWindow(QtWidgetComponent):
         # We don't parent the subwindow immediately. It will be added
         # explicitly by the parent QMdiArea during its layout pass.
         # If we set the parent here, Qt will spit out warnings when
-        # its set in the are later on. We *could* parent it here, and
-        # simply not add it explicitly do the mdi area, but this way
-        # is more explicit and easier to follow.
-        return QMdiSubWindow()
+        # it's set added to the area later on. We *could* parent it 
+        # here, and simply not add it explicitly to the mdi area, but
+        # this way is more explicit and consistent with the rest of
+        # the framework.
+        widget = QMdiSubWindow()
+        widget.layout().setSizeConstraint(QLayout.SetMinAndMaxSize)
+        return widget
 
     def create(self, tree):
         """ Create and initialize the underlying control.
@@ -43,12 +45,15 @@ class QtMdiWindow(QtWidgetComponent):
         super(QtMdiWindow, self).init_layout()
         child = self.find_child(self._mdi_widget_id)
         if child is not None:
-            # We need to unparent the underlying widget, before adding
-            # it to the subwindow, or things get wonky with certain 
-            # child types like QMainWindow.
+            # We need to unparent the underlying widget before adding 
+            # it to the subwindow. Otherwise, children like QMainWindow
+            # will persist as top-level non-mdi widgets.
             child_widget = child.widget()
             child_widget.setParent(None)
-            self.widget().setWidget(child.widget())
+            self.widget().setWidget(child_widget)
+            # On OSX, the resize gripper will be obscured unless we
+            # lower the widget in the window's stacking order.
+            child_widget.lower()
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
