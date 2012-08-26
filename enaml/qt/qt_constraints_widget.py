@@ -14,8 +14,7 @@ class LayoutBox(object):
 
     The constraint variables are created on an as-needed basis, this
     allows Enaml widgets to define new constraints and build layouts
-    with them, without having to specifically update this client 
-    code.
+    with them, without having to specifically update this client code.
 
     """
     def __init__(self, name, owner):
@@ -36,7 +35,7 @@ class LayoutBox(object):
         self._owner = owner
         self._primitives = {}
 
-    def primitive(self, name, force_create=True):
+    def primitive(self, name):
         """ Returns a primitive casuarius constraint variable for the
         given name.
 
@@ -45,23 +44,13 @@ class LayoutBox(object):
         name : str
             The name of the constraint variable to return.
 
-        force_create : bool, optional
-            If the constraint variable does not yet exist and this 
-            parameter is True, then the constraint variable will be
-            created on the fly. If the parameter is False, and the
-            variable does not exist, a ValueError will be raised.
-
         """
         primitives = self._primitives
-        try:
+        if name in primitives:
             res = primitives[name]
-        except KeyError:
-            if force_create:
-                label = '{0}_{1}'.format(self._name, self._owner)
-                res = primitives[name] = ConstraintVariable(label)
-            else:
-                msg = 'Constraint variable `{0}` does not exist'
-                raise ValueError(msg.format(name))
+        else:
+            label = '{0}|{1}|{2}'.format(self._name, self._owner, name)
+            res = primitives[name] = ConstraintVariable(label)
         return res
 
 
@@ -69,10 +58,20 @@ class QtConstraintsWidget(QtWidgetComponent):
     """ A Qt implementation of an Enaml ConstraintsWidget.
 
     """
+    #: The hug strengths for the widget's size hint.
+    _hug = ('strong', 'strong')
+
+    #: The resist strengths for the widget's size hint.
+    _resist = ('strong', 'strong')
+
     #: The list of hard constraints which must be applied to the widget.
     #: These constraints are computed lazily and only once since they
     #: are assumed to never change.
-    _hard_constraints = []
+    _hard_cns = []
+
+    #: The list of constraint dictionaries defined by the user on 
+    #: the server side Enaml widget.
+    _user_cns = []
 
     #--------------------------------------------------------------------------
     # Setup Methods
@@ -83,10 +82,10 @@ class QtConstraintsWidget(QtWidgetComponent):
         """
         super(QtConstraintsWidget, self).create(tree)
         layout = tree['layout']
-        self.hug = layout['hug']
-        self.resist_clip = layout['resist_clip']
-        self.constraints = layout['constraints']
         self.layout_box = LayoutBox(type(self).__name__, self.widget_id())
+        self._hug = layout['hug']
+        self._resist = layout['resist']
+        self._user_cns = layout['constraints']
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -95,12 +94,11 @@ class QtConstraintsWidget(QtWidgetComponent):
         """ Handle the 'relayout' action from the Enaml widget.
 
         """
-        # XXX these variables should really be made private. And the
-        # QtContainer needs to get in on the action to grab the 
+        # XXX The QtContainer needs to get in on the action to grab the 
         # share_layout flag.
-        self.hug = content['hug']
-        self.resist_clip = content['resist_clip']
-        self.constraints = content['constraints']
+        self._hug = content['hug']
+        self._resist = content['resist']
+        self._user_cns = content['constraints']
         self.relayout()
 
     #--------------------------------------------------------------------------
@@ -120,13 +118,36 @@ class QtConstraintsWidget(QtWidgetComponent):
         if isinstance(parent, QtConstraintsWidget):
             parent.relayout()
 
+    def replace_constraints(self, old_cns, new_cns):
+        """ Replace constraints in the current layout system.
+
+        The default behavior of this method is to proxy the call up the
+        tree of ancestors until it is either handled by a subclass which
+        has reimplemented this method (see QtContainer), or the ancestor
+        is not an instance of QtConstraintsWidget, at which point the
+        request is dropped.
+
+        Parameters
+        ----------
+        old_cns : list
+            The list of casuarius constraints to remove from the
+            current layout system.
+
+        new_cns : list
+            The list of casuarius constraints to add to the 
+            current layout system.
+
+        """
+        parent = self.parent()
+        if isinstance(parent, QtConstraintsWidget):
+            parent.replace_constraints(old_cns, new_cns)
+    
     def size_hint_constraints(self):
         """ Creates the list of size hint constraints for this widget.
 
         This method using the provided size hint of the widget and the
-        policies for 'hug' and 'resist_clip' to generate casuarius 
-        LinearConstraint objects which respect the size hinting of the
-        widget.
+        policies for 'hug' and 'resist' to generate constraints which
+        respect the size hinting of the widget.
 
         If the size hint of the underlying widget is not valid, then
         no constraints will be generated.
@@ -146,8 +167,8 @@ class QtConstraintsWidget(QtWidgetComponent):
             primitive = self.layout_box.primitive
             width = primitive('width')
             height = primitive('height')
-            hug_width, hug_height = self.hug
-            resist_width, resist_height = self.resist_clip
+            hug_width, hug_height = self._hug
+            resist_width, resist_height = self._resist
             if width_hint >= 0:
                 if hug_width != 'ignore':
                     cn = (width == width_hint) | hug_width
@@ -177,7 +198,7 @@ class QtConstraintsWidget(QtWidgetComponent):
             A list of casuarius LinearConstraint instance.
 
         """
-        cns = self._hard_constraints
+        cns = self._hard_cns
         if not cns: 
             primitive = self.layout_box.primitive
             left = primitive('left')
@@ -185,8 +206,23 @@ class QtConstraintsWidget(QtWidgetComponent):
             width = primitive('width')
             height = primitive('height')
             cns = [left >= 0, top >= 0, width >= 0, height >= 0]
-            self._hard_constraints = cns
+            self._hard_cns = cns
         return cns
+
+    def user_constraints(self):
+        """ Get the list of user constraints defined for this widget.
+
+        The default implementation returns the list of constraint
+        information sent by the server.
+
+        Returns
+        -------
+        result : list
+            The list of dictionaries which represent the user defined
+            linear constraints.
+
+        """
+        return self._user_cns
 
     def geometry_updater(self):
         """ A method which can be called to create a function which
