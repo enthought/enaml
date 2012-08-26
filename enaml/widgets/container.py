@@ -102,8 +102,11 @@ class Container(ConstraintsWidget):
     #: along the horizontal direction of the content area of the container.
     contents_h_center = Property(fget=get_from_box_model)
 
-    #: A box object which holds the padding for this component. The 
-    #: default padding is Box(10, 10, 10, 10).
+    #: A box object which holds the padding for this component. The
+    #: padding is the amount of space between the outer boundary box
+    #: and the content box. The default padding is (10, 10, 10, 10).
+    #: Certain subclasses, such as GroupBox, may provide additional 
+    #: margin than what is specified by the padding.
     padding = CoercingInstance(Box, (10, 10, 10, 10))
 
     #: A read only property which returns this container's widgets.
