@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 import wx
 
-from enaml.common.colors import parse_color
+from enaml.colors import parse_color
 
 from .wx_messenger_widget import WxMessengerWidget
 
