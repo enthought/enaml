@@ -2,7 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Unicode, Property, cached_property
+from traits.api import Unicode, Enum, Property, cached_property
 
 from enaml.core.trait_types import EnamlEvent
 
@@ -29,6 +29,10 @@ class Window(WidgetComponent):
     #: to let the client choose the initial size
     initial_size = SizeTuple
 
+    #: An enum which indicates the modality of the window. The default
+    #: value is 'non_modal'.
+    modality = Enum('non_modal', 'application_modal', 'window_modal')
+
     #: An event fired when the window is closed.
     closed = EnamlEvent
 
@@ -50,6 +54,7 @@ class Window(WidgetComponent):
         snap['central_widget_id'] = self._snap_central_widget_id()
         snap['title'] = self.title
         snap['initial_size'] = self.initial_size
+        snap['modality'] = self.modality
         return snap
 
     def bind(self):
@@ -58,7 +63,7 @@ class Window(WidgetComponent):
 
         """
         super(Window, self).bind()
-        self.publish_attributes('title')
+        self.publish_attributes('title', 'modality')
 
     #--------------------------------------------------------------------------
     # Private API
