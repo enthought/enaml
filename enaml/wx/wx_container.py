@@ -171,7 +171,9 @@ class WxContainer(WxConstraintsWidget):
 
         """
         super(WxContainer, self).create(tree)
-        self._share_layout = tree['layout']['share_layout']
+        layout = tree['layout']
+        self._share_layout = layout['share_layout']
+        self._padding = layout['padding']
         widget = self.widget()
         widget.Bind(wx.EVT_SIZE, self.on_resize)
         widget.Bind(wx.EVT_SHOW, self.on_show)
