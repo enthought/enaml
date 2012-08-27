@@ -42,11 +42,6 @@ def datetime_selector_factory():
     return QtDatetimeSelector
 
 
-def dialog_factory():
-    from .qt_dialog import QtDialog
-    return QtDialog
-
-
 def dock_pane_factory():
     from .qt_dock_pane import QtDockPane
     return QtDockPane
@@ -177,7 +172,6 @@ QT_FACTORIES = {
     'DateSelector': date_selector_factory,
     'DatetimeSelector': datetime_selector_factory,
     'DockPane': dock_pane_factory,
-    'Dialog': dialog_factory,
     'Field': field_factory,
     'Form': form_factory,
     'GroupBox': group_box_factory,
