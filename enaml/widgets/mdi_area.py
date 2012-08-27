@@ -20,9 +20,13 @@ class MdiArea(ConstraintsWidget):
     #: A read only property which returns the area's MdiWindows.
     mdi_windows = Property(depends_on='children[]')
 
-    #: An MdiArea expands freely in width and height.
+    #: An MdiArea expands freely in width and height by default.
     hug_width = 'ignore'
     hug_height = 'ignore'
+    
+    #: An MdiArea resists clipping only weakly by default.
+    resist_width = 'weak'
+    resist_height = 'weak'
     
     #--------------------------------------------------------------------------
     # Initialization 
