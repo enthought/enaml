@@ -158,7 +158,8 @@ class QtField(QtConstraintsWidget):
 
     def _set_error_style(self):
         # A temporary hack until styles are implemented
-        self.widget().setStyleSheet('QLineEdit { background: salmon; }')
+        s = 'QLineEdit { border: 2px solid red; background: rgb(255, 220, 220); }'
+        self.widget().setStyleSheet(s)
         self._is_error_state = True
 
     def _clear_error_style(self):
