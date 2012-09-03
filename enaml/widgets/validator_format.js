@@ -81,8 +81,9 @@
     // no upper bound.
     "maximum": null,
 
-    // The number of places to allow after the decimal point.
-    "precision": 0,
+    // The number of places to allow after the decimal point.  Null
+    // indicates arbitrary precision.
+    "precision": null,
 
     // Whether or not to allow scientific notation in the input.
     "allow_scientific_notation": false,

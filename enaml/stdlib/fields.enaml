@@ -7,37 +7,80 @@
 This is a library of Enaml components deriving from the built-in Field.
 
 """
-from enaml.widgets import Field
+from enaml.widgets.api import Field
+from enaml.validation.validator import RegexValidator, IntRangeValidator, \
+    FloatRangeValidator
 
 # XXX This needs to be generalized and cleaned up when validators are refactored
 
-int_validator = {
-    "type": "regexp",
-    "regexp": r"^-?\d+$",
-    "message": 'value must be an integer',
-    "triggers": ["return-pressed"],
-}
-
-float_validator = {
-    "type": "regexp",
-    "regexp": r"^(+|-)?\d+(\.\d*)?((e|E)(+|-)?\d+(\.\d*)$",
-    "message": 'value must be a float',
-    "triggers": ["return-pressed"],
-}
-
-enamldef IntField(Field):
-    attr value : int = 0
+enamldef RegexField(Field):
+    attr regex : str
+    
     text << str(value)
     text ::
         self.value = int(self.text)
-    validators = [int_validator]
+    validator = RegexValidator(regex=self.regex)
+        
+    regex ::
+        validator = RegexValidator(regex=self.regex)
+
+
+enamldef IntField(Field):
+    attr minimum = None
+    attr maximum = None
+    attr base = 10
+    attr value : int = 0
+    
+    event _update_validator
+    
+    text << str(value)
+    text ::
+        self.value = int(self.text)
+    validator = IntRangeValidator(base=self.base, minimum=self.minimum,
+        maximum=self.maximum)
+        
+    minimum ::
+        _update_validator()
+    maximum ::
+        _update_validator()
+    base ::
+        _update_validator()
+    
+    _update_validator ::
+        validator = IntRangeValidator(base=self.base, minimum=self.minimum,
+            maximum=self.maximum)
+
 
 enamldef FloatField(Field):
+    attr minimum = None
+    attr maximum = None
+    attr precision = None
+    attr allow_scientific_notation : bool = False
     attr value : float = 0.0
+    
+    event _update_validator
+
     text << str(value)
     text ::
         self.value = float(self.text)
-    validators = [int_validator]
+    validator = FloatRangeValidator(minimum=self.minimum, maximum=self.maximum,
+        allow_scientific_notation=self.allow_scientific_notation,
+        precision=self.precision)
+        
+    minimum ::
+        _update_validator()
+    maximum ::
+        _update_validator()
+    precision ::
+        _update_validator()
+    allow_scientific_notation ::
+        _update_validator()
+    
+    _update_validator ::
+        validator = FloatRangeValidator(minimum=self.minimum, maximum=self.maximum,
+            allow_scientific_notation=self.allow_scientific_notation,
+            precision=self.precision)
+
 
 enamldef PasswordField(Field):
     password_mode = 'password'
