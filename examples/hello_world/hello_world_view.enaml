@@ -3,7 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 
-from enaml.widgets import Window, Container, Label
+from enaml.widgets.api import Window, Container, Label
 
 enamldef Main(Window):
     attr message = "Hello, world!"
