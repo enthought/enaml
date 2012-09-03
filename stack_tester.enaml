@@ -14,7 +14,7 @@ enamldef Main(Window):
                 id: cbox_type
                 hug_width = 'ignore'
                 index = 0
-                items = ['none', 'slide', 'wipe']
+                items = ['none', 'slide', 'wipe', 'iris']
             Label:
                 text = 'Transition Direction'
             ComboBox:
@@ -25,6 +25,7 @@ enamldef Main(Window):
                     'left_to_right', 'right_to_left',
                     'top_to_bottom', 'bottom_to_top',
                 ]
+                enabled << cbox_type.items[cbox_type.index] not in ('none', 'iris')
             Label:
                 text = 'Selected Item'
             ComboBox:
@@ -34,6 +35,7 @@ enamldef Main(Window):
                 items = ['first', 'second']
         Stack:
             hug_width = 'ignore'
+            hug_height = 'ignore'
             index << cbox_item.index
             transition << {
                 'type': cbox_type.items[cbox_type.index],

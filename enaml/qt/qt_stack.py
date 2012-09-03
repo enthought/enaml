@@ -4,11 +4,12 @@
 #------------------------------------------------------------------------------
 from .qt.QtCore import QTimer 
 from .qt.QtGui import QStackedWidget, QPixmap
+from .qt_constraints_widget import QtConstraintsWidget
 from .q_pixmap_painter import QPixmapPainter
 from .q_pixmap_transition import (
-    QPixmapTransition, QDirectedTransition, QSlideTransition, QWipeTransition
+    QPixmapTransition, QDirectedTransition, QSlideTransition, QWipeTransition,
+    QIrisTransition,
 )
-from .qt_constraints_widget import QtConstraintsWidget
 
 
 _TRANSITION_DIRECTIONS = {
@@ -45,6 +46,8 @@ def parseTransition(info):
         if direction in _TRANSITION_DIRECTIONS:
             transition.setDirection(_TRANSITION_DIRECTIONS[direction])
         return transition
+    if ttype == 'iris':
+        return QIrisTransition()
 
 
 class QStack(QStackedWidget):
