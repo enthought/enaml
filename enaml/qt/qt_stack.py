@@ -84,6 +84,12 @@ class QStack(QStackedWidget):
             painter.setTargetWidget(None)
         self._painter = None
         self.setCurrentIndex(self._transition_index)
+        # This final show() makes sure the underlyling widget is visible.
+        # If transitions are being fired rapidly, it's possible that the 
+        # current index and the transition index will be the same when 
+        # the call above is invoked. In such cases, Qt short circuits the
+        # evaluation and the current widget is not shown.
+        self.currentWidget().show()
 
     def _runTransition(self):
         """ A private method which runs the transition effect.
