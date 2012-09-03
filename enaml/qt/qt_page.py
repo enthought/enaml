@@ -23,7 +23,7 @@ class QPage(QWidget):
         ----------
         *args, **kwargs
             The position and keyword arguments required to initialize
-            a QContainer.
+            a QWidget.
 
         """
         super(QPage, self).__init__(*args, **kwargs)

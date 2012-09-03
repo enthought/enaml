@@ -2,6 +2,8 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+import sys
+
 from .qt.QtCore import Qt, QSize, Signal
 from .qt.QtGui import QGroupBox
 from .qt_container import QtContainer
@@ -61,10 +63,6 @@ class QtGroupBox(QtContainer):
     """ A Qt implementation of an Enaml GroupBox.
 
     """
-    #: Don't use a widget item to compute the layout rect for a group
-    #: box, it results in not enough space around/above neighbors.
-    use_widget_item_for_layout = False
-    
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
@@ -72,8 +70,14 @@ class QtGroupBox(QtContainer):
         """ Creates the underlying QGroupBox control.
 
         """
-        return QResizingGroupBox(parent)
-
+        widget = QResizingGroupBox(parent)
+        if sys.platform == 'darwin':
+            # On OSX, the widget item layout rect is too small. 
+            # Setting this attribute forces the widget item to
+            # use the widget rect for layout.
+            widget.setAttribute(Qt.WA_LayoutUsesWidgetRect, True)
+        return widget
+        
     def create(self, tree):
         """ Create and initialize the underlying widget.
 
@@ -84,13 +88,28 @@ class QtGroupBox(QtContainer):
         self.set_title_align(tree['title_align'])
 
     #--------------------------------------------------------------------------
+    # Layout Handling
+    #--------------------------------------------------------------------------
+    def contents_margins(self):
+        """ Get the current contents margins for the group box.
+
+        """
+        m = self.widget().contentsMargins()
+        return (m.top(), m.right(), m.bottom(), m.left())
+
+    #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
     def on_action_set_title(self, content):
         """ Handle the 'set_title' action from the Enaml widget.
 
         """
+        widget = self.widget()
+        old_margins = widget.contentsMargins()
         self.set_title(content['title'])
+        new_margins = widget.contentsMargins()
+        if old_margins != new_margins:
+            self.refresh_contents_constraints()
 
     def on_action_set_title_align(self, content):
         """ Handle the 'set_title_align' action from the Enaml widget.

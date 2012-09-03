@@ -79,7 +79,7 @@ class WeakMethod(object):
     #: An internal dict which maintains a strong reference to the
     #: the underlying weak method wrappers until the owner of the 
     #: method is destroyed.
-    _instances = {}
+    _instances = defaultdict(list)
 
     def __new__(cls, method):
         """ Create a new WeakMethod instance or return an equivalent 
@@ -92,13 +92,16 @@ class WeakMethod(object):
 
         """
         def remove(wr_item):
-            WeakMethod._instances.pop(key)
-        key = (method.im_func, ref(method.im_self, remove), method.im_class)
-        if key in WeakMethod._instances:
-            return WeakMethod._instances[key]
+            WeakMethod._instances.pop(wr_item, None)
+        sref = ref(method.im_self, remove)
+        key = (method.im_func, sref, method.im_class)
+        if sref in WeakMethod._instances:
+            for item in WeakMethod._instances[sref]:
+                if item._key == key:
+                    return item
         self = super(WeakMethod, cls).__new__(cls)
         self._key = key
-        WeakMethod._instances[key] = self
+        WeakMethod._instances[sref].append(self)
         return self
 
     def __call__(self, *args, **kwargs):

@@ -42,11 +42,6 @@ def datetime_selector_factory():
     return QtDatetimeSelector
 
 
-def dialog_factory():
-    from .qt_dialog import QtDialog
-    return QtDialog
-
-
 def dock_pane_factory():
     from .qt_dock_pane import QtDockPane
     return QtDockPane
@@ -85,6 +80,16 @@ def label_factory():
 def main_window_factory():
     from .qt_main_window import QtMainWindow
     return QtMainWindow
+
+
+def mdi_area_factory():
+    from .qt_mdi_area import QtMdiArea
+    return QtMdiArea
+
+
+def mdi_window_factory():
+    from .qt_mdi_window import QtMdiWindow
+    return QtMdiWindow
 
 
 def menu_factory():
@@ -142,6 +147,16 @@ def splitter_factory():
     return QtSplitter
 
 
+def stack_factory():
+    from .qt_stack import QtStack
+    return QtStack
+
+
+def stack_item_factory():
+    from .qt_stack_item import QtStackItem
+    return QtStackItem
+
+
 def text_editor_factory():
     from .qt_text_editor import QtTextEditor
     return QtTextEditor
@@ -167,7 +182,6 @@ QT_FACTORIES = {
     'DateSelector': date_selector_factory,
     'DatetimeSelector': datetime_selector_factory,
     'DockPane': dock_pane_factory,
-    'Dialog': dialog_factory,
     'Field': field_factory,
     'Form': form_factory,
     'GroupBox': group_box_factory,
@@ -175,6 +189,8 @@ QT_FACTORIES = {
     'ImageView': image_view_factory,
     'Label': label_factory,
     'MainWindow': main_window_factory,
+    'MdiArea': mdi_area_factory,
+    'MdiWindow': mdi_window_factory,
     'Menu': menu_factory,
     'MenuBar': menu_bar_factory,
     'Notebook': notebook_factory,
@@ -186,6 +202,8 @@ QT_FACTORIES = {
     'Slider': slider_factory,
     'SpinBox': spin_box_factory,
     'Splitter': splitter_factory,
+    'Stack': stack_factory,
+    'StackItem': stack_item_factory,
     'TextEditor': text_editor_factory,
     'ToolBar': tool_bar_factory,
     'Window': window_factory,

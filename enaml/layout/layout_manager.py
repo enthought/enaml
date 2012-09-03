@@ -34,6 +34,29 @@ class LayoutManager(object):
         solver.autosolve = True
         self._initialized = True
 
+    def replace_constraints(self, old_cns, new_cns):
+        """ Replace constraints in the solver.
+
+        Parameters
+        ----------
+        old_cns : list
+            The list of casuarius constraints to remove from the
+            solver.
+
+        new_cns : list
+            The list of casuarius constraints to add to the solver.
+
+        """
+        if not self._initialized:
+            raise RuntimeError('Solver not yet initialized')
+        solver = self._solver
+        solver.autosolve = False
+        for cn in old_cns:
+            solver.remove_constraint(cn)
+        for cn in new_cns:
+            solver.add_constraint(cn)
+        solver.autosolve = True
+        
     def layout(self, cb, width, height, size, strength=medium, weight=1.0):
         """ Perform an iteration of the solver for the new width and 
         height constraint variables.

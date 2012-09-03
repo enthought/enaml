@@ -4,13 +4,47 @@
 #------------------------------------------------------------------------------
 import wx
 
+from enaml.colors import parse_color
+
 from .wx_messenger_widget import WxMessengerWidget
+
+
+def wx_parse_color(color):
+    """ Convert a color string into a wxColour.
+
+    Parameters
+    ----------
+    color : string
+        A CSS3 color string to convert to a wxColour.
+
+    Returns
+    -------
+    result : wxColour
+        The wxColour for the given color string
+
+    """
+    rgba = parse_color(color)
+    if rgba is None:
+        wx_color = wx.NullColour
+    else:
+        r, g, b, a = rgba
+        i = int
+        wx_color = wx.Colour(i(r * 255), i(g * 255), i(b * 255), i(a * 255))
+    return wx_color
 
 
 class WxWidgetComponent(WxMessengerWidget):
     """ A Wx implementation of an Enaml WidgetComponent.
 
     """
+    #: An attribute which indicates whether or not the background
+    #: color of the widget has been changed.
+    _bgcolor_changed = False
+
+    #: An attribute which indicates whether or not the foreground
+    #: color of the widget has been changed.
+    _fgcolor_changed = False
+
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
@@ -144,7 +178,12 @@ class WxWidgetComponent(WxMessengerWidget):
             The background color of the widget as a CSS color string.
 
         """
-        pass
+        if bgcolor or self._bgcolor_changed:
+            wx_color = wx_parse_color(bgcolor)
+            widget = self.widget()
+            widget.SetBackgroundColour(wx_color)
+            widget.Refresh()
+            self._bgcolor_changed = True
 
     def set_fgcolor(self, fgcolor):
         """ Set the foreground color on the underlying widget.
@@ -155,7 +194,12 @@ class WxWidgetComponent(WxMessengerWidget):
             The foreground color of the widget as a CSS color string.
 
         """
-        pass
+        if fgcolor or self._fgcolor_changed:
+            wx_color = wx_parse_color(fgcolor)
+            widget = self.widget()
+            widget.SetForegroundColour(wx_color)
+            widget.Refresh()
+            self._fgcolor_changed = True
 
     def set_font(self, font):
         """ Set the font on the underlying widget.

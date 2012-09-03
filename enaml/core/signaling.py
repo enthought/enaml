@@ -6,7 +6,6 @@ from bisect import insort
 from collections import namedtuple
 from itertools import count
 from types import MethodType
-from threading import RLock
 from weakref import ref, WeakKeyDictionary
 
 from enaml.utils import WeakMethod
@@ -30,14 +29,13 @@ class Signal(object):
     itself.
     
     """
-    __slots__ = ('_instances', '_lock')
+    __slots__ = ('_instances',)
 
     def __init__(self):
         """ Initialize a Signal.
 
         """
         self._instances = WeakKeyDictionary()
-        self._lock = RLock()
 
     def __get__(self, obj, cls):
         """ The data descriptor getter. 
@@ -53,11 +51,10 @@ class Signal(object):
         if obj is None:
             return self
         instances = self._instances
-        with self._lock:
-            if obj in instances:
-                res = instances[obj]
-            else:
-                res = instances[obj] = SignalInstance()
+        if obj in instances:
+            res = instances[obj]
+        else:
+            res = instances[obj] = SignalInstance()
         return res
 
     def __set__(self, obj, val):
@@ -75,8 +72,7 @@ class Signal(object):
         remove all connected handlers.
 
         """
-        with self._lock:
-            self._instances.pop(obj, None)
+        self._instances.pop(obj, None)
 
 
 class SignalInstance(object):
@@ -88,7 +84,7 @@ class SignalInstance(object):
     manages the actual connected handlers for the object.
 
     """
-    __slots__ = ('_remove', '_counter', '_items', '_lock', '__weakref__')
+    __slots__ = ('_remove', '_counter', '_items', '__weakref__')
     
     def __init__(self):
         """ Initialize a SignalInstance.
@@ -101,7 +97,6 @@ class SignalInstance(object):
         self._remove = remove
         self._counter = count(0)
         self._items = []
-        self._lock = RLock()
 
     #--------------------------------------------------------------------------
     # Private API
@@ -116,20 +111,10 @@ class SignalInstance(object):
             of connection items.
 
         """
-        with self._lock:
-            items = self._items[:]
-        target = None
-        for item in items:
+        for item in self._items[:]:
             if item.cb_ref == cb_ref:
-                target = item
-                break
-        if target is not None:
-            with self._lock:
-                try:
-                    self._items.remove(target)
-                except ValueError:
-                    # The target may have already been disconnected
-                    pass
+                self._items.remove(item)
+                return
 
     #--------------------------------------------------------------------------
     # Public API
@@ -138,9 +123,7 @@ class SignalInstance(object):
         """ Emits the signal with the given arguments and keywords.
 
         """
-        with self._lock:
-            items = self._items[:]
-        for item in items:
+        for item in self._items[:]:
             callback = item.cb_ref()
             if callback is not None:
                 dispatcher = item.dispatcher
@@ -182,10 +165,9 @@ class SignalInstance(object):
         else:
             cb_ref = ref(callback, self._remove)
         self._remove_item(cb_ref)
-        with self._lock:
-            counter = self._counter.next()
-            conn = ConnItem(priority, counter, cb_ref, dispatcher)
-            insort(self._items, conn)
+        counter = self._counter.next()
+        conn = ConnItem(priority, counter, cb_ref, dispatcher)
+        insort(self._items, conn)
 
     def disconnect(self, callback):
         """ Disconnects the given callback from the signal. 

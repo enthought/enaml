@@ -618,7 +618,14 @@ def p_suite2(p):
 
 def p_stmt_list1(p):
     ''' stmt_list : stmt stmt_list '''
-    p[0] = [p[1]] + p[2]
+    # stmt may be a list of simple_stmt due to this piece of grammar:
+    # simple_stmt: small_stmt (';' small_stmt)* [';'] NEWLINE
+    stmt = p[1]
+    if isinstance(stmt, list):
+        res = stmt + p[2]
+    else:
+        res = [stmt] + p[2]
+    p[0] = res
 
 
 def p_stmt_list2(p):
@@ -2570,6 +2577,50 @@ def p_arglist10(p):
         else:
             args.append(arg)
     p[0] = Arguments(args=args, keywords=kws, kwargs=p[3])
+
+
+def p_arglist11(p):
+    ''' arglist : STAR test COMMA argument '''
+    keyword = p[4]
+    if isinstance(keyword, ast.keyword):
+        p[0] = Arguments(keywords=[keyword], starargs=p[2])
+    else:
+        msg = 'only named arguments may follow *expression'
+        tok = FakeToken(p.lexer.lexer, p.lineno(1))
+        syntax_error(msg, tok)
+
+
+def p_arglist12(p):
+    ''' arglist : STAR test COMMA argument COMMA DOUBLESTAR test '''
+    keyword = p[4]
+    if isinstance(keyword, ast.keyword):
+        p[0] = Arguments(keywords=[keyword], starargs=p[2], kwargs=p[7])
+    else:
+        msg = 'only named arguments may follow *expression'
+        tok = FakeToken(p.lexer.lexer, p.lineno(1))
+        syntax_error(msg, tok)
+
+
+def p_arglist13(p):
+    ''' arglist : STAR test COMMA arglist_list argument '''
+    keywords = p[4] + [p[5]]
+    for kw in keywords:
+        if not isinstance(kw, ast.keyword):
+            msg = 'only named arguments may follow *expression'
+            tok = FakeToken(p.lexer.lexer, p.lineno(1))
+            syntax_error(msg, tok)
+    p[0] = Arguments(keywords=keywords, starargs=p[2])
+        
+
+def p_arglist14(p):
+    ''' arglist : STAR test COMMA arglist_list argument COMMA DOUBLESTAR test '''
+    keywords = p[4] + [p[5]]
+    for kw in keywords:
+        if not isinstance(kw, ast.keyword):
+            msg = 'only named arguments may follow *expression'
+            tok = FakeToken(p.lexer.lexer, p.lineno(1))
+            syntax_error(msg, tok)
+    p[0] = Arguments(keywords=keywords, starargs=p[2], kwargs=p[8])
 
 
 def p_arglist_list1(p):

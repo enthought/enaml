@@ -243,6 +243,8 @@ class WxLocalServer(object):
             f = wx.Frame(None)
             wx.CallAfter(f.Destroy)
             app.MainLoop()
+        else:
+            self._client.startup()
 
     def stop(self):
         """ Stop the server's main loop.

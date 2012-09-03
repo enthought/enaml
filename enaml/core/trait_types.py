@@ -531,34 +531,3 @@ class CoercingInstance(BaseInstance):
             pass
         return super(CoercingInstance, self).validate(obj, name, value)
 
-
-#------------------------------------------------------------------------------
-# Enaml Widget Instance
-#------------------------------------------------------------------------------
-class EnamlWidgetInstance(BaseInstance):
-    """ A BaseInstance subclass which will call the 'setup' method on
-    the value being assigned, passing in the appropriate toolkit widget
-    object. The 'destroy' method on the old instance will be called 
-    unless the 'destroy_old' flag is set to False. These operations are
-    done *before* the value is actually set and therefore before any 
-    change notifications are fired.
-
-    """
-    def __init__(self, *args, **kwargs):
-        self.destroy_old = kwargs.pop('destroy_old', True)
-        super(EnamlWidgetInstance, self).__init__(*args, **kwargs)
-
-    def validate(self, obj, name, value):
-        """ Validates the value using the superclass method. Upon
-        success, it then destroys the old value (if requested) and 
-        sets up the new value. The value is expected to be at least
-        an instance WidgetComponent.
-
-        """
-        value = super(EnamlWidgetInstance, self).validate(obj, name, value)
-        old = getattr(obj, name, None)
-        if old is not None and self.destroy_old:
-            old.destroy()
-        value.setup(obj.toolkit_widget)
-        return value
-

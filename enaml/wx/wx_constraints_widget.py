@@ -35,7 +35,7 @@ class LayoutBox(object):
         self._owner = owner
         self._primitives = {}
 
-    def primitive(self, name, force_create=True):
+    def primitive(self, name):
         """ Returns a primitive casuarius constraint variable for the
         given name.
 
@@ -44,23 +44,13 @@ class LayoutBox(object):
         name : str
             The name of the constraint variable to return.
 
-        force_create : bool, optional
-            If the constraint variable does not yet exist and this 
-            parameter is True, then the constraint variable will be
-            created on-the-fly. If the parameter is False, and the
-            variable does not exist, a ValueError will be raised.
-
         """
         primitives = self._primitives
-        try:
+        if name in primitives:
             res = primitives[name]
-        except KeyError:
-            if force_create:
-                label = '{0}_{1}'.format(self._name, self._owner)
-                res = primitives[name] = ConstraintVariable(label)
-            else:
-                msg = 'Constraint variable `{0}` does not exist'
-                raise ValueError(msg.format(name))
+        else:
+            label = '{0}|{1}|{2}'.format(self._name, self._owner, name)
+            res = primitives[name] = ConstraintVariable(label)
         return res
 
 
@@ -68,6 +58,21 @@ class WxConstraintsWidget(WxWidgetComponent):
     """ A Wx implementation of an Enaml ConstraintsWidget.
 
     """
+    #: The hug strengths for the widget's size hint.
+    _hug = ('strong', 'strong')
+
+    #: The resist strengths for the widget's size hint.
+    _resist = ('strong', 'strong')
+
+    #: The list of hard constraints which must be applied to the widget.
+    #: These constraints are computed lazily and only once since they
+    #: are assumed to never change.
+    _hard_cns = []
+
+    #: The list of constraint dictionaries defined by the user on 
+    #: the server side Enaml widget.
+    _user_cns = []
+
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
@@ -77,10 +82,10 @@ class WxConstraintsWidget(WxWidgetComponent):
         """
         super(WxConstraintsWidget, self).create(tree)
         layout = tree['layout']
-        self.hug = layout['hug']
-        self.resist_clip = layout['resist_clip']
-        self.constraints = layout['constraints']
         self.layout_box = LayoutBox(type(self).__name__, self.widget_id())
+        self._hug = layout['hug']
+        self._resist = layout['resist']
+        self._user_cns = layout['constraints']
         
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -89,11 +94,54 @@ class WxConstraintsWidget(WxWidgetComponent):
         """ Handle the 'relayout' action from the Enaml widget.
 
         """
-        print 'relayout!'
+        # XXX The WxContainer needs to get in on the action to grab the 
+        # share_layout flag.
+        self._hug = content['hug']
+        self._resist_clip = content['resist']
+        self._user_cns = content['constraints']
+        self.relayout()
 
     #--------------------------------------------------------------------------
     # Layout Handling
     #--------------------------------------------------------------------------
+    def relayout(self):
+        """ Peform a relayout for this constraints widget.
+
+        The default behavior of this method is to proxy the call up the
+        tree of ancestors until it is either handled by a subclass which
+        has reimplemented this method (see WxContainer), or the ancestor
+        is not an instance of WxConstraintsWidget, at which point the
+        layout request is dropped.
+
+        """
+        parent = self.parent()
+        if isinstance(parent, WxConstraintsWidget):
+            parent.relayout()
+
+    def replace_constraints(self, old_cns, new_cns):
+        """ Replace constraints in the current layout system.
+
+        The default behavior of this method is to proxy the call up the
+        tree of ancestors until it is either handled by a subclass which
+        has reimplemented this method (see WxContainer), or the ancestor
+        is not an instance of WxConstraintsWidget, at which point the
+        request is dropped.
+
+        Parameters
+        ----------
+        old_cns : list
+            The list of casuarius constraints to remove from the
+            current layout system.
+
+        new_cns : list
+            The list of casuarius constraints to add to the 
+            current layout system.
+
+        """
+        parent = self.parent()
+        if isinstance(parent, WxConstraintsWidget):
+            parent.replace_constraints(old_cns, new_cns)
+
     def size_hint_constraints(self):
         """ Creates the list of size hint constraints for this widget.
 
@@ -113,15 +161,15 @@ class WxConstraintsWidget(WxWidgetComponent):
         """
         cns = []
         push = cns.append
-        hint = self.layout_size_hint()
+        hint = self.widget().GetBestSize()
         if hint.IsFullySpecified():
             width_hint = hint.width
             height_hint = hint.height
             primitive = self.layout_box.primitive
             width = primitive('width')
             height = primitive('height')
-            hug_width, hug_height = self.hug
-            resist_width, resist_height = self.resist_clip
+            hug_width, hug_height = self._hug
+            resist_width, resist_height = self._resist
             if width_hint >= 0:
                 if hug_width != 'ignore':
                     cn = (width == width_hint) | hug_width
@@ -138,75 +186,91 @@ class WxConstraintsWidget(WxWidgetComponent):
                     push(cn)
         return cns
 
-    def layout_size_hint(self):
-        """ Returns the size hint to use in layout computation.
+    def hard_constraints(self):
+        """ Generate the constraints which must always be applied.
 
-        The default implementation returns the result of calling the
-        widget.GetBestSize() method. If a subclass requires more 
-        control, it should override this method.
+        These constraints are generated once the first time this method
+        is called. The results are then cached and returned immediately
+        on future calls.
 
         Returns
         -------
-        result : wxSize
-            The size hint to use in layout computations for the widget.
+        result : list
+            A list of casuarius LinearConstraint instance.
 
         """
-        return self.widget().GetBestSize()
+        cns = self._hard_cns
+        if not cns: 
+            primitive = self.layout_box.primitive
+            left = primitive('left')
+            top = primitive('top')
+            width = primitive('width')
+            height = primitive('height')
+            cns = [left >= 0, top >= 0, width >= 0, height >= 0]
+            self._hard_cns = cns
+        return cns
 
-    def update_layout_geometry(self, dx, dy):
-        """ A method which can be called during a layout pass to compute
-        the new layout geometry rect and update the underlying widget.
+    def user_constraints(self):
+        """ Get the list of user constraints defined for this widget.
+
+        The default implementation returns the list of constraint
+        information sent by the server.
+
+        Returns
+        -------
+        result : list
+            The list of dictionaries which represent the user defined
+            linear constraints.
+
+        """
+        return self._user_cns
+    
+    def geometry_updater(self):
+        """ A method which can be called to create a function which
+        will update the layout geometry of the underlying widget.
+
+        The parameter and return values below describe the function
+        that is returned by calling this method.
 
         Parameters
         ----------
-        dx : int
+        dx : float
             The offset of the parent widget from the computed origin
-            of the layout. This amount should be subtracted from the 
-            computed layout 'x' amount.
+            of the layout. This amount is subtracted from the computed 
+            layout 'x' amount, which is expressed in the coordinates
+            of the owner widget.
 
-        dy : int
+        dy : float
             The offset of the parent widget from the computed origin
-            of the layout. This amount should be subtracted from the
-            computed layout 'y' amount.
+            of the layout. This amount is subtracted from the computed 
+            layout 'y' amount, which is expressed in the coordinates
+            of the layout owner widget.
 
         Returns
         -------
         result : (x, y)
-            The computed layout 'x' and 'y' amount, unadjusted with
-            the given dx and dy.
+            The computed layout 'x' and 'y' amount, expressed in the
+            coordinates of the layout owner widget.
 
         """
+        # The return function is a hyper optimized (for Python) closure
+        # that will is called on every resize to update the geometry of
+        # the widget. This is explicitly not idiomatic Python code. It 
+        # exists purely for the sake of efficiency and was justified 
+        # with profiling.
         primitive = self.layout_box.primitive
-        x = int(round(primitive('left', False).value))
-        y = int(round(primitive('top', False).value))
-        width = int(round(primitive('width', False).value))
-        height = int(round(primitive('height', False).value))
-        self.set_layout_geometry(x - dx, y - dy, width, height)
-        return (x, y)
-    
-    def set_layout_geometry(self, x, y, width, height):
-        """ Updates the layout geometry for the widget.
-
-        The default implementation sets the geometry by calling the
-        widget.SetDimensions(...) method. If a subclass requires more
-        control, it should override this method.
-
-        Parameters
-        ----------
-        x : int
-            The x position of the widget, relative to the origin of
-            its parent.
-
-        y : int
-            The y position of the widget, relative to the origin of
-            its parent.
-
-        width : int
-            The width of the widget.
-
-        height : int
-            The height of the widget.
-
-        """
-        self.widget().SetDimensions(x, y, width, height)
+        x = primitive('left')
+        y = primitive('top')
+        width = primitive('width')
+        height = primitive('height')
+        setdims = self.widget().SetDimensions
+        def update_geometry(dx, dy):
+            nx = x.value
+            ny = y.value
+            setdims(nx - dx, ny - dy, width.value, height.value)
+            return nx, ny
+        # Store a reference to self on the updater, so that the layout
+        # container can know the object on which the updater operates.
+        update_geometry.item = self
+        return update_geometry
 

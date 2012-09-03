@@ -122,6 +122,24 @@ class wxGroupBox(wxContainer):
         super(wxGroupBox, self).SetSize(size)
         self._update_layout()
 
+    def GetContentsMargins(self):
+        """ Get the contents margins for the group box.
+
+        These margins are computed empirically so that they look similar
+        to the margins provided by Qt on Windows.
+
+        Returns
+        -------
+        result : tuple
+            The top, right, bottom, and left margin values.
+
+        """
+        label = self._label
+        height = label.GetCharHeight()
+        if not label.IsShown():
+            height /= 2
+        return (height, 1, 1, 1)
+
     #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
@@ -200,13 +218,27 @@ class WxGroupBox(WxContainer):
         self.set_title_align(tree['title_align'])
 
     #--------------------------------------------------------------------------
+    # Layout Handling
+    #--------------------------------------------------------------------------
+    def contents_margins(self):
+        """ Get the current contents margins for the group box.
+
+        """
+        return self.widget().GetContentsMargins()
+
+    #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
     def on_action_set_title(self, content):
         """ Handle the 'set_title' action from the Enaml widget.
 
         """
+        widget = self.widget()
+        old_margins = widget.GetContentsMargins()
         self.set_title(content['title'])
+        new_margins = widget.GetContentsMargins()
+        if old_margins != new_margins:
+            self.refresh_contents_constraints()
 
     def on_action_set_title_align(self, content):
         """ Handle the 'set_title_align' action from the Enaml widget.
