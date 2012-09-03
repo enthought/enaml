@@ -12,7 +12,6 @@ from .combo_box import ComboBox
 from .container import Container
 from .date_selector import DateSelector
 from .datetime_selector import DatetimeSelector
-from .dialog import Dialog
 from .dock_pane import DockPane
 from .field import Field
 from .form import Form

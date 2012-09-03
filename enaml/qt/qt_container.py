@@ -249,8 +249,8 @@ class QtContainer(QtConstraintsWidget):
         """ Replace constraints in the given layout.
 
         This method can be used to selectively add/remove/replace 
-        constraints in the layout system, when it is efficient than
-        performing a full relayout.
+        constraints in the layout system, when it is more efficient 
+        than performing a full relayout.
 
         Parameters
         ----------
@@ -504,7 +504,7 @@ class QtContainer(QtConstraintsWidget):
             if isinst(child, QtContainer_):
                 if child.transfer_layout_ownership(self):
                     cn_dicts_extend(child.user_constraints())
-                    raw_cns.extend(child.contents_constraints())
+                    raw_cns_extend(child.contents_constraints())
                 else:
                     raw_cns_extend(child.size_hint_constraints())
             else:

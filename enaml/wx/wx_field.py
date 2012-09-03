@@ -275,17 +275,13 @@ class WxField(WxConstraintsWidget):
 
     def _set_error_style(self):
         # A temporary hack until styles are implemented
-        widget = self.widget()
-        widget.SetBackgroundColour(wx.Color(250, 128, 114))
         self._is_error_state = True
-        widget.Refresh()
+        # XXX attempting to change the field style here is futile
 
     def _clear_error_style(self):
         # A temporary hack until styles are implemented
-        widget = self.widget()
-        widget.SetBackgroundColour(wx.NullColor)
         self._is_error_state = False
-        widget.Refresh()
+        # XXX attempting to change the field style here is futile
 
     #--------------------------------------------------------------------------
     # Event Handling

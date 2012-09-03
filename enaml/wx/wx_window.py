@@ -32,6 +32,7 @@ class WxWindow(WxWidgetComponent):
         self.set_central_widget_id(tree['central_widget_id'])
         self.set_title(tree['title'])
         self.set_initial_size(tree['initial_size'])
+        self.set_modality(tree['modality'])
         self.widget().Bind(wx.EVT_CLOSE, self.on_close)
 
     def init_layout(self):
@@ -59,6 +60,9 @@ class WxWindow(WxWidgetComponent):
 
         """
         event.Skip()
+        # Make sure the frame is not modal when closing, or no other 
+        # windows will be unblocked.
+        self.widget().MakeModal(False)
         self.send_action('closed', {})
 
     #--------------------------------------------------------------------------
@@ -100,6 +104,12 @@ class WxWindow(WxWidgetComponent):
         """
         self.set_title(content['title'])
     
+    def on_action_set_modality(self, content):
+        """ Handle the 'set-modality' action from the Enaml widget.
+
+        """
+        self.set_modality(content['modality'])
+
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
@@ -150,6 +160,15 @@ class WxWindow(WxWidgetComponent):
 
         """
         self.widget().SetSize(wx.Size(*size))
+
+    def set_modality(self, modality):
+        """ Set the modality of the window.
+
+        """
+        if modality == 'non_modal':
+            self.widget().MakeModal(False)
+        else:
+            self.widget().MakeModal(True)
 
     def set_visible(self, visible):
         """ Set the visibility on the window.

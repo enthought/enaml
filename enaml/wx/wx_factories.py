@@ -42,11 +42,6 @@ def date_selector_factory():
 #     return WxDatetimeSelector
 
 
-# def dialog_factory():
-#     from .wx_dialog import WxDialog
-#     return WxDialog
-
-
 def dock_pane_factory():
     from .wx_dock_pane import WxDockPane
     return WxDockPane
@@ -166,7 +161,6 @@ WX_FACTORIES = {
     'Container': container_factory,
     'DateSelector': date_selector_factory,
     #'DatetimeSelector': datetime_selector_factory,
-    #'Dialog': dialog_factory,
     'DockPane': dock_pane_factory,
     'Field': field_factory,
     'Form': form_factory,

@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 import sys
 
-from enaml.common.colors import parse_color
+from enaml.colors import parse_color
 
 from .qt.QtGui import QWidget, QWidgetItem, QColor, QApplication
 from .qt.QtCore import Qt, QSize

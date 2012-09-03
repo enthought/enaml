@@ -244,6 +244,8 @@ class QtLocalServer(object):
             self._client.startup()
             app.exec_()
             app._in_event_loop = False
+        else:
+            self._client.startup()
 
     def stop(self):
         """ Stop the server's main loop.
