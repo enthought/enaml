@@ -345,7 +345,7 @@ class QIrisTransition(QPixmapTransition):
         size = start.size().expandedTo(end.size())
         width = size.width()
         height = size.height()
-        radius = int((width**2 + height**2) ** 0.5)
+        radius = int((width**2 + height**2) ** 0.5) / 2
         start_rect = QRect(width / 2, height / 2, 0, 0)
         end_rect = QRect(width / 2, height / 2, radius, radius)
         return start_rect, end_rect
