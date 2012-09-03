@@ -152,6 +152,16 @@ def splitter_factory():
     return QtSplitter
 
 
+def stack_factory():
+    from .qt_stack import QtStack
+    return QtStack
+
+
+def stack_item_factory():
+    from .qt_stack_item import QtStackItem
+    return QtStackItem
+
+
 def text_editor_factory():
     from .qt_text_editor import QtTextEditor
     return QtTextEditor
@@ -198,6 +208,8 @@ QT_FACTORIES = {
     'Slider': slider_factory,
     'SpinBox': spin_box_factory,
     'Splitter': splitter_factory,
+    'Stack': stack_factory,
+    'StackItem': stack_item_factory,
     'TextEditor': text_editor_factory,
     'ToolBar': tool_bar_factory,
     'Window': window_factory,
