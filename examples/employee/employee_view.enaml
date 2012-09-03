@@ -5,9 +5,11 @@
 
 #from phone_validator import PhoneNumberValidator
 
-from enaml.widgets import Window, Label, Field, Form, DateEdit, \
+from enaml.widgets.api import Window, Label, Field, Form, DateSelector, \
                             CheckBox, GroupBox, Container, PushButton
-from enaml.layout import vertical, horizontal, align, spacer
+from enaml.layout.api import vertical, horizontal, align, spacer
+
+from phone_validator import PhoneNumberValidator
 
 enamldef EmployeeForm(Form):
     attr employee
@@ -23,13 +25,20 @@ enamldef EmployeeForm(Form):
     Label:
         text = "Home phone:"
     Field:
-        #text := employee.phone
-        text << str(employee.phone)
-        #validator = PhoneNumberValidator()
+        text ::
+            match = PhoneNumberValidator.proper.match(text)
+            if match:
+                area = match.group(1)
+                prefix = match.group(2)
+                suffix = match.group(3)
+                employee.phone = tuple(map(int, (area, prefix, suffix)))
+                
+        text << '(%s) %s-%s' % employee.phone
+        validator = PhoneNumberValidator()
         #bgcolor << 'unacceptable' if not acceptable else 'none'
     Label:
         text = 'Date of Birth:'
-    DateEdit:
+    DateSelector:
         date := employee.dob
     Label:
         text = 'Age:'
@@ -78,7 +87,8 @@ enamldef EmployeeView(Window):
                                               employee.first_name)
     Container:
         constraints << [
-            vertical(top, top_box, bottom_box.when(bottom_box.visible), bottom),
+            vertical(top, top_box, bottom_box.when(bottom_box.visible), spacer,
+                bottom),
             horizontal(left, spacer.flex(), top_box, spacer.flex(), right),
             horizontal(left, spacer.flex(), bottom_box, spacer.flex(), right),
             align('midline', top_form, bottom_form, clear_invisible=False)

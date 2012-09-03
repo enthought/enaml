@@ -6,7 +6,8 @@ import datetime
 
 from traits.api import HasTraits, Str, Int, Instance, Tuple, Date, Property
 
-from enaml.qt.qt_local_application import QtLocalApplication
+from enaml.stdlib.sessions import simple_app
+from enaml.qt.qt_local_server import QtLocalServer
 
 class Person(HasTraits):
     """ A simple class representing a person object.
@@ -78,11 +79,11 @@ if __name__ == '__main__':
         from employee_view import EmployeeView
     
     # Create a view and show it.
-    view = EmployeeView(employee=employee_mary)
+    app = simple_app('mary', 'A view of the Employee mary', EmployeeView, 
+       employee=employee_mary) 
 
-
-    app = QtLocalApplication()
-    app.serve('main', view)
-
-    app.mainloop()
+    server = QtLocalServer(app)
+    client = server.local_client()
+    client.start_session('mary')
+    server.start()
 

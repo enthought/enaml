@@ -152,6 +152,12 @@ class QtField(QtConstraintsWidget):
         """
         self.set_text(content['text'])
 
+    def on_action_invalid_text(self, content):
+        """ Handle the 'invalid_text' action from the Enaml widget.
+        
+        """
+        self.invalid_text(content['text'])
+
     def on_action_set_validator(self, content):
         """ Handle the 'set_validator' action from the Enaml widget.
 
@@ -243,3 +249,9 @@ class QtField(QtConstraintsWidget):
         """
         self.widget().setReadOnly(read_only)
 
+    def invalid_text(self, text):
+        """ User entered invalid text, so enter error style if text is unchanged.
+        
+        """
+        if self.widget().text() == text:
+            self._set_error_style()
