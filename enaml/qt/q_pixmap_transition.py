@@ -3,7 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt.QtCore import QPoint, QRect, QVariantAnimation, Signal
-from .qt.QtGui import QPainter, QPixmap
+from .qt.QtGui import QPainter, QPixmap, QPainterPath
 
 
 class QPixmapTransition(QVariantAnimation):
@@ -324,4 +324,46 @@ class QWipeTransition(QDirectedTransition):
         """
         painter = QPainter(self.outPixmap())
         painter.drawPixmap(rect, self.endPixmap(), rect)
+
+
+class QIrisTransition(QPixmapTransition):
+    """ A QPixmap transition which animates using an iris effect.
+
+    """
+    def preparePixmap(self):
+        """ Prepare the pixmap(s) for the transition.
+
+        This method draws the starting pixmap into the output pixmap.
+        The transition update then sets a circular clipping region on
+        the ouput and draws in the ending pixmap.
+
+        """
+        start = self.startPixmap()
+        end = self.endPixmap()
+        painter = QPainter(self.outPixmap())
+        painter.drawPixmap(0, 0, start)
+        size = start.size().expandedTo(end.size())
+        width = size.width()
+        height = size.height()
+        radius = int((width**2 + height**2) ** 0.5) / 2
+        start_rect = QRect(width / 2, height / 2, 0, 0)
+        end_rect = QRect(width / 2, height / 2, radius, radius)
+        return start_rect, end_rect
+
+    def updatePixmap(self, rect):
+        """ Update the pixmap for the current transition.
+
+        This method sets a radial clipping region on the output pixmap
+        and draws in the relevant portion of the ending pixamp.
+
+        """
+        x = rect.x()
+        y = rect.y()
+        rx = rect.width()
+        ry = rect.height()
+        path = QPainterPath()
+        path.addEllipse(QPoint(x, y), rx, ry)
+        painter = QPainter(self.outPixmap())
+        painter.setClipPath(path)
+        painter.drawPixmap(QPoint(0, 0), self.endPixmap())
 
