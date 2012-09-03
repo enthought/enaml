@@ -209,6 +209,9 @@ class Declarative(HasStrictTraits):
 
         """ 
         for child in self.children:
+            # Ensure parenting since children may be assigned quietly
+            # on initialization, outside of Enaml's control.
+            child.parent = self
             child._post_init_traverse()
         self.initialized = True
         self.inited()
