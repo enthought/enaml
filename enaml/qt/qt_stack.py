@@ -9,6 +9,7 @@ from .q_pixmap_painter import QPixmapPainter
 from .q_pixmap_transition import (
     QPixmapTransition, QDirectedTransition, QSlideTransition, QWipeTransition,
     QIrisTransition,
+    QCrossFadeTransition, QFadeInTransition, QFadeOutTransition
 )
 
 
@@ -46,8 +47,17 @@ def parseTransition(info):
         if direction in _TRANSITION_DIRECTIONS:
             transition.setDirection(_TRANSITION_DIRECTIONS[direction])
         return transition
-    if ttype == 'iris':
+    elif ttype == 'iris':
         return QIrisTransition()
+    elif ttype == 'cross_fade':
+        transition = QCrossFadeTransition()
+        return transition
+    elif ttype == 'fade_in':
+        transition = QFadeInTransition()
+        return transition
+    elif ttype == 'fade_out':
+        transition = QFadeOutTransition()
+        return transition
 
 
 class QStack(QStackedWidget):

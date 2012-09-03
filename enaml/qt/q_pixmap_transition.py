@@ -3,7 +3,8 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt.QtCore import QPoint, QRect, QVariantAnimation, Signal
-from .qt.QtGui import QPainter, QPixmap, QPainterPath
+from .qt.QtGui import QPainter, QPixmap
+from .qt.QtGui import QPainter, QPixmap, QPainterPath, QImage, QColor
 
 
 class QPixmapTransition(QVariantAnimation):
@@ -336,7 +337,6 @@ class QIrisTransition(QPixmapTransition):
         This method draws the starting pixmap into the output pixmap.
         The transition update then sets a circular clipping region on
         the ouput and draws in the ending pixmap.
-
         """
         start = self.startPixmap()
         end = self.endPixmap()
@@ -367,3 +367,107 @@ class QIrisTransition(QPixmapTransition):
         painter.setClipPath(path)
         painter.drawPixmap(QPoint(0, 0), self.endPixmap())
 
+
+class QFadeTransition(QPixmapTransition):
+    """ A QPixmapTransition which animates using fading
+    
+    """
+    def preparePixmap(self):
+        """ Prepare the pixmap(s) for the transition.
+
+        This method draws the starting pixmap into the output pixmap.
+        The transition update then draws appropriately faded representations.
+
+        """
+        start = self.startPixmap()
+        painter = QPainter(self.outPixmap())
+        painter.drawPixmap(0, 0, start)
+        return 0.0, 1.0
+
+    def _fade_pixmap(self, pm, alpha):
+        """ Utility method that takes a pixmap and returns a QImage with an 
+        alpha-faded copy.
+        
+        """
+        rect = pm.rect()
+        out_pm = QImage(pm.width(), pm.height(), QImage.Format_ARGB32_Premultiplied)
+        painter = QPainter(out_pm)
+        painter.drawPixmap(0, 0, pm)
+        painter.setCompositionMode(QPainter.CompositionMode_DestinationIn)
+        painter.fillRect(rect, QColor(0, 0, 0, int(alpha*255)))
+        return out_pm
+
+
+class QCrossFadeTransition(QFadeTransition):
+    """ A QDirectedTransition which animates fades in the end while fading
+    out the start.
+
+    """
+
+    def updatePixmap(self, alpha):
+        """ Update the pixmap for the current transition.
+
+        This method paints the current rect from the ending pixmap into
+        the proper rect of the output pixmap.
+
+        """
+        faded_start = self._fade_pixmap(self.startPixmap(), 1.0-alpha)
+        faded_end = self._fade_pixmap(self.endPixmap(), alpha)
+        blend_pm = QImage(faded_start.width(), faded_start.height(),
+            QImage.Format_ARGB32_Premultiplied)
+        painter = QPainter(blend_pm)
+        painter.setCompositionMode(QPainter.CompositionMode_SourceOver)
+        painter.drawImage(0, 0, faded_start)
+        painter.drawImage(0, 0, faded_end)
+        
+        painter = QPainter(self.outPixmap())
+        painter.drawImage(0, 0, blend_pm)
+        
+        
+class QFadeInTransition(QFadeTransition):
+    """ A QDirectedTransition which animates fading in the end.
+
+    """
+
+    def updatePixmap(self, alpha):
+        """ Update the pixmap for the current transition.
+
+        This method paints the current rect from the ending pixmap into
+        the proper rect of the output pixmap.
+
+        """
+        faded_end = self._fade_pixmap(self.endPixmap(), alpha)
+        blend_pm = QImage(faded_end.width(), faded_end.height(),
+            QImage.Format_ARGB32_Premultiplied)
+        painter = QPainter(blend_pm)
+        painter.setCompositionMode(QPainter.CompositionMode_SourceOver)
+        painter.drawPixmap(0, 0, self.startPixmap())
+        painter.drawImage(0, 0, faded_end)
+        
+        painter = QPainter(self.outPixmap())
+        painter.drawImage(0, 0, blend_pm)
+        
+        
+class QFadeOutTransition(QFadeTransition):
+    """ A QDirectedTransition which animates fading out the start.
+
+    """
+
+    def updatePixmap(self, alpha):
+        """ Update the pixmap for the current transition.
+
+        This method paints the current rect from the ending pixmap into
+        the proper rect of the output pixmap.
+
+        """
+        faded_start = self._fade_pixmap(self.startPixmap(), 1.0-alpha)
+        blend_pm = QImage(faded_start.width(), faded_start.height(),
+            QImage.Format_ARGB32_Premultiplied)
+        painter = QPainter(blend_pm)
+        painter.setCompositionMode(QPainter.CompositionMode_SourceOver)
+        painter.drawPixmap(0, 0, self.endPixmap())
+        painter.drawImage(0, 0, faded_start)
+        
+        painter = QPainter(self.outPixmap())
+        painter.drawImage(0, 0, blend_pm)
+        

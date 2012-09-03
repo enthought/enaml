@@ -14,7 +14,8 @@ enamldef Main(Window):
                 id: cbox_type
                 hug_width = 'ignore'
                 index = 0
-                items = ['none', 'slide', 'wipe', 'iris']
+                items = ['none', 'slide', 'wipe', 'iris', 'cross_fade', 'fade_in',
+                    'fade_out']
             Label:
                 text = 'Transition Direction'
             ComboBox:
