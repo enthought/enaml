@@ -34,6 +34,8 @@ from .scroll_area import ScrollArea
 from .slider import Slider
 from .spin_box import SpinBox
 from .splitter import Splitter
+from .stack import Stack
+from .stack_item import StackItem
 from .text_editor import TextEditor
 from .tool_bar import ToolBar
 from .window import Window
