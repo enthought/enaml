@@ -38,15 +38,14 @@ enamldef FloatField(Field):
     attr minimum = None
     attr maximum = None
     attr precision = None
-    attr allow_scientific_notation : bool = False
+    attr allow_exponent : bool = False
     attr value : float = 0.0
 
     text << str(value)
     text ::
         self.value = int(text)
     validator << FloatRangeValidator(minimum=minimum, maximum=maximum,
-        allow_scientific_notation=allow_scientific_notation,
-        precision=precision)
+        precision=precision, allow_exponent=allow_exponent)
 
 
 enamldef PasswordField(Field):
