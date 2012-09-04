@@ -18,11 +18,8 @@ enamldef RegexField(Field):
     
     text << str(value)
     text ::
-        self.value = int(self.text)
-    validator = RegexValidator(regex=self.regex)
-        
-    regex ::
-        validator = RegexValidator(regex=self.regex)
+        self.value = int(text)
+    validator << RegexValidator(regex=regex)
 
 
 enamldef IntField(Field):
@@ -31,24 +28,10 @@ enamldef IntField(Field):
     attr base = 10
     attr value : int = 0
     
-    event _update_validator
-    
     text << str(value)
     text ::
-        self.value = int(self.text)
-    validator = IntRangeValidator(base=self.base, minimum=self.minimum,
-        maximum=self.maximum)
-        
-    minimum ::
-        _update_validator()
-    maximum ::
-        _update_validator()
-    base ::
-        _update_validator()
-    
-    _update_validator ::
-        validator = IntRangeValidator(base=self.base, minimum=self.minimum,
-            maximum=self.maximum)
+        self.value = int(text)
+    validator << IntRangeValidator(base=base, minimum=minimum, maximum=maximum)
 
 
 enamldef FloatField(Field):
@@ -57,29 +40,13 @@ enamldef FloatField(Field):
     attr precision = None
     attr allow_scientific_notation : bool = False
     attr value : float = 0.0
-    
-    event _update_validator
 
     text << str(value)
     text ::
-        self.value = float(self.text)
-    validator = FloatRangeValidator(minimum=self.minimum, maximum=self.maximum,
-        allow_scientific_notation=self.allow_scientific_notation,
-        precision=self.precision)
-        
-    minimum ::
-        _update_validator()
-    maximum ::
-        _update_validator()
-    precision ::
-        _update_validator()
-    allow_scientific_notation ::
-        _update_validator()
-    
-    _update_validator ::
-        validator = FloatRangeValidator(minimum=self.minimum, maximum=self.maximum,
-            allow_scientific_notation=self.allow_scientific_notation,
-            precision=self.precision)
+        self.value = int(text)
+    validator << FloatRangeValidator(minimum=minimum, maximum=maximum,
+        allow_scientific_notation=allow_scientific_notation,
+        precision=precision)
 
 
 enamldef PasswordField(Field):

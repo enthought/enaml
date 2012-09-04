@@ -2,18 +2,18 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import re
-
 """
 Python implementation of basic validation
 -----------------------------------------
 
 These are intended to be a single location for the Python implementation of
-client-side validators.  Implementations in other languages (eg javascript)
+client-side validators.  Implementations in other languages (eg. javascript)
 or in tookits which provide their own validation system should use these as
 references.
 
 """
+
+import re
 
 def null_validator(text):
     """ A validator function will returns True for all text input.
