@@ -2,13 +2,11 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import re
-
 from traits.api import HasTraits, Str, Unicode, Int, Bool, Enum, Either, \
-    Callable, Property, cached_property
+    Property, cached_property
 
 from .client_validators import regex_validator, int_range_validator, \
-    float_range_validator
+    float_range_validator, regex_preprocessor
 
 #------------------------------------------------------------------------------
 #  Validator classes
@@ -63,16 +61,33 @@ class Validator(HasTraits):
         return None
 
 
-class ClientValidator(Validator):
-    """ An abstract class that encapsulates client validation logic.
-    
-    """
+class RegexValidator(Validator):
+    """ A concrete Validator implementation which validates using a
+    regular expression.
 
-    #: A validation function which should match the client validator
-    _validator = Callable
-    
+    """
+    #: The regular expression string to use for validation. The default
+    #: regex matches everything.
+    regex = Str(r'.*')
+
+    #: A read only cached property which holds a preprocessed arguments.
+    _cached_arguments = Property(depends_on='regex')
+
+    @cached_property
+    def _get__cached_arguments(self):
+        """ The getter for the '_validator' property. 
+
+        Returns
+        -------
+        result : function
+            A function that takes text and returns True if the regex matches
+            the text.
+
+        """
+        return regex_preprocessor(self.regex)
+
     def validate(self, text, component):
-        """ Validates the text against the stored regular expression.
+        """ Validates the given text matches the regular expression.
 
         Parameters
         ----------
@@ -86,37 +101,13 @@ class ClientValidator(Validator):
         Returns
         -------
         result : (unicode, bool)
-            The original edited text, and whether or not that text
-            matched the regular expression.
+            A 2-tuple of (optionally modified) unicode text, and whether
+            or not that text should be considered valid.
 
         """
-        return (text, self._validator(text))
-
-
-class RegexValidator(ClientValidator):
-    """ A concrete Validator implementation which validates using a
-    regular expression.
-
-    """
-    #: The regular expression string to use for validation. The default
-    #: regex matches everything.
-    regex = Str(r'.*')
-
-    #: A read only cached property which holds a validation function.
-    _validator = Property(depends_on='regex')
-
-    @cached_property
-    def _get__validator(self):
-        """ The getter for the '_validator' property. 
-
-        Returns
-        -------
-        result : function
-            A function that takes text and returns True if the regex matches
-            the text.
-
-        """
-        return regex_validator(self.regex)
+        validity = regex_validator(text, **self._cached_arguments)
+        return (text, validity)
+ 
 
     def client_validator(self):
         """ The client side regex validator.
@@ -135,7 +126,7 @@ class RegexValidator(ClientValidator):
         return res
 
 
-class IntRangeValidator(ClientValidator):
+class IntRangeValidator(Validator):
     """ A concrete Validator implementation which ensures that the text
     converts to an integer in a certain range in a specified base.
 
@@ -150,21 +141,28 @@ class IntRangeValidator(ClientValidator):
     #: The base that the integer is represented.
     base = Enum(10, 2, 8, 16)
     
-    #: A read only cached property which holds a validation function.
-    _validator = Property(depends_on=['base', 'minimum', 'maximum'])
+    def validate(self, text, component):
+        """ Validates the given text matches the integer range.
 
-    @cached_property
-    def _get__validator(self):
-        """ The getter for the '_validator' property. 
+        Parameters
+        ----------
+        text : unicode
+            The unicode text edited by the client widget.
+
+        component : Declarative
+            The declarative component currently making use of the
+            validator.
 
         Returns
         -------
-        result : function
-            A function that takes text and returns True if the value is an
-            integer in the correct range.
+        result : (unicode, bool)
+            A 2-tuple of (optionally modified) unicode text, and whether
+            or not that text should be considered valid.
 
         """
-        return int_range_validator(self.base, self.minimum, self.maximum)
+        validity = int_range_validator(text, self.base, self.minimum,
+            self.maximum)
+        return (text, validity)
 
     def client_validator(self):
         """ The client side regex validator.
@@ -187,7 +185,7 @@ class IntRangeValidator(ClientValidator):
         return res
 
 
-class FloatRangeValidator(ClientValidator):
+class FloatRangeValidator(Validator):
     """ A concrete Validator implementation which ensures that the text
     converts to a float in a certain range with a specified precision.
 
@@ -206,23 +204,28 @@ class FloatRangeValidator(ClientValidator):
     #: Whether or not to allow scientific notation in the input.
     allow_scientific_notation = Bool
     
-    #: A read only cached property which holds a validation function.
-    _validator = Property(depends_on=['minimum', 'maximum', 'precision',
-        'allow_scientific_notation'])
+    def validate(self, text, component):
+        """ Validates the given text matches the integer range.
 
-    @cached_property
-    def _get__validator(self):
-        """ The getter for the '_validator' property. 
+        Parameters
+        ----------
+        text : unicode
+            The unicode text edited by the client widget.
+
+        component : Declarative
+            The declarative component currently making use of the
+            validator.
 
         Returns
         -------
-        result : function
-            A function that takes text and returns True if the regex matches
-            the text.
+        result : (unicode, bool)
+            A 2-tuple of (optionally modified) unicode text, and whether
+            or not that text should be considered valid.
 
         """
-        return float_range_validator(self.minimum, self.maximum, self.precision,
-            self.allow_scientific_notation)
+        validity = float_range_validator(text, self.minimum, self.maximum,
+            self.precision, self.allow_scientific_notation)
+        return (text, validity)
 
     def client_validator(self):
         """ The client side regex validator.

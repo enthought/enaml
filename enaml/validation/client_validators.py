@@ -14,22 +14,64 @@ references.
 """
 
 import re
+from functools import partial
+
+def null_preprocessor(**kwargs):
+    """ A validator preprocessor which does no preprocessing.
+    
+    Parameters
+    ----------
+    **kwargs : 
+        The arguments passed to the validator
+    
+    Returns
+    -------
+    kwargs :
+        A modified set of kwargs to be passed to the closure.
+    
+    """
+    return kwargs
 
 def null_validator(text):
     """ A validator function will returns True for all text input.
+
+    Parameters
+    ----------
+    text : string
+        The text to validate.
 
     """
     return True
 
 
-def regex_validator(regex):
+def regex_preprocessor(regex=r'.*'):
+    """ A validator preprocessor which does no preprocessing.
+    
+    Parameters
+    ----------
+    regex : 
+        The regex string to match
+    
+    Returns
+    -------
+    kwargs :
+        A dictionary containing the compiled regular expression.
+    
+    """
+    return {'regex': re.compile(regex, re.UNICODE)}
+
+
+def regex_validator(text, regex):
     """ Creates a callable which will validate text input against the
     provided regex string.
 
     Parameters
     ----------
-    regex : string
-        A regular expression string to use for matching.
+    text : string
+        The text to validate.
+
+    regex : compiled regular expression
+        A regular expression to use for matching.
 
     Returns
     -------
@@ -38,18 +80,18 @@ def regex_validator(regex):
         False otherwise.
 
     """
-    rgx = re.compile(regex, re.UNICODE)
-    def validator(text):
-        return bool(rgx.match(text))
-    return validator
+    return bool(regex.match(text))
 
 
-def int_range_validator(base=10, minimum=None, maximum=None):
+def int_range_validator(text, base=10, minimum=None, maximum=None):
     """ Creates a callable which will validate text input against the
     provided regex string.
 
     Parameters
     ----------
+    text : string
+        The text to validate.
+
     base : 2, 8, 10, or 16
         The number base to use with the range. Supported bases are 
         2, 8, 10, and 16.
@@ -69,26 +111,28 @@ def int_range_validator(base=10, minimum=None, maximum=None):
         False otherwise.
 
     """
-    def validator(text):
-        try:
-            value = int(text, base)
-        except ValueError:
-            return False
-        if minimum is not None and value < minimum:
-            return False
-        if maximum is not None and value > maximum:
-            return False
-        return True
-    return validator
+    try:
+        value = int(text, base)
+    except ValueError:
+        return False
+        
+    if minimum is not None and value < minimum:
+        return False
+    if maximum is not None and value > maximum:
+        return False
+    return True
 
 
-def float_range_validator(minimum=None, maximum=None, precision=None,
+def float_range_validator(text, minimum=None, maximum=None, precision=None,
         allow_scientific_notation=False):
     """ Creates a callable which will validate text input against the
     provided regex string.
 
     Parameters
     ----------
+    text : string
+        The text to validate.
+
     minimum : None or int
         The base 10 lower bound of allowable values, inlcusive. None 
         indicates no lower bound.
@@ -111,29 +155,28 @@ def float_range_validator(minimum=None, maximum=None, precision=None,
         False otherwise.
 
     """
-    def validator(text):
-        try:
-            value = float(text)
-        except ValueError:
-            return False
-        if minimum is not None and value < minimum:
-            return False
-        if maximum is not None and value > maximum:
-            return False
-        if precision is not None and value != round(value, precision):
-            return False
-        if not allow_scientific_notation and 'e' in text.lower():
-            return False
-        return True
-    return validator
+    try:
+        value = float(text)
+    except ValueError:
+        return False
+
+    if minimum is not None and value < minimum:
+        return False
+    if maximum is not None and value > maximum:
+        return False
+    if precision is not None and value != round(value, precision):
+        return False
+    if not allow_scientific_notation and 'e' in text.lower():
+        return False
+    return True
 
 
 # Client validator look-up table
 
 validator_types = {
-    'regex': regex_validator,
-    'int_range': int_range_validator,
-    'float_range': float_range_validator,
+    'regex': (regex_preprocessor, regex_validator),
+    'int_range': (null_preprocessor, int_range_validator),
+    'float_range': (null_preprocessor, float_range_validator),
 }
 
 #------------------------------------------------------------------------------
@@ -159,7 +202,8 @@ def make_validator(info):
     """
     vtype = info['type']
     if vtype in validator_types:
-        vldr = validator_types[vtype](**info['arguments'])
+        preprocessor, validator = validator_types[vtype]
+        arguments = preprocessor(**info['arguments'])
+        return partial(validator, **arguments)
     else:
-        vldr = null_validator
-    return vldr
+        return null_validator
