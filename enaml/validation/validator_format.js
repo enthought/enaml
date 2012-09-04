@@ -85,8 +85,8 @@
     // indicates arbitrary precision.
     "precision": null,
 
-    // Whether or not to allow scientific notation in the input.
-    "allow_scientific_notation": false,
+    // Whether or not to allow exponents like '1e6' in the input.
+    "allow_exponent": false,
   }
 }
 

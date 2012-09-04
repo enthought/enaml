@@ -165,7 +165,7 @@ class IntRangeValidator(Validator):
         return (text, validity)
 
     def client_validator(self):
-        """ The client side regex validator.
+        """ The client side int range validator.
 
         Returns
         -------
@@ -201,11 +201,11 @@ class FloatRangeValidator(Validator):
     #: indicates arbitrary precision.
     precision = Either(None, Int)
 
-    #: Whether or not to allow scientific notation in the input.
-    allow_scientific_notation = Bool
+    #: Whether or not to allow exponents like '1e6' in the input.
+    allow_exponent = Bool
     
     def validate(self, text, component):
-        """ Validates the given text matches the integer range.
+        """ Validates the given text matches the float range.
 
         Parameters
         ----------
@@ -224,11 +224,11 @@ class FloatRangeValidator(Validator):
 
         """
         validity = float_range_validator(text, self.minimum, self.maximum,
-            self.precision, self.allow_scientific_notation)
+            self.precision, self.allow_exponent)
         return (text, validity)
 
     def client_validator(self):
-        """ The client side regex validator.
+        """ The client side float range validator.
 
         Returns
         -------
@@ -244,7 +244,7 @@ class FloatRangeValidator(Validator):
             'minimum': self.minimum,
             'maximum': self.maximum,
             'precision': self.precision,
-            'allow_scientific_notation': self.allow_scientific_notation
+            'allow_exponent': self.allow_exponent
         }
         return res
 

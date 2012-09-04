@@ -85,7 +85,7 @@ def regex_validator(text, regex):
 
 def int_range_validator(text, base=10, minimum=None, maximum=None):
     """ Creates a callable which will validate text input against the
-    provided regex string.
+    provided integer range.
 
     Parameters
     ----------
@@ -107,7 +107,7 @@ def int_range_validator(text, base=10, minimum=None, maximum=None):
     Returns
     -------
     results : callable
-        A callable which returns True if the text matches the regex,
+        A callable which returns True if the text matches the range,
         False otherwise.
 
     """
@@ -124,9 +124,9 @@ def int_range_validator(text, base=10, minimum=None, maximum=None):
 
 
 def float_range_validator(text, minimum=None, maximum=None, precision=None,
-        allow_scientific_notation=False):
+        allow_exponent=False):
     """ Creates a callable which will validate text input against the
-    provided regex string.
+    provided float range.
 
     Parameters
     ----------
@@ -145,13 +145,13 @@ def float_range_validator(text, minimum=None, maximum=None, precision=None,
         The number of places to allow after the decimal point.  None
         indicates arbitrary precision.
 
-    allow_scientific_notation : bool
-        Whether or not to allow scientific notation in the input.
+    allow_exponent : bool
+        Whether or not to allow exponents like '1e6' in the input.
 
     Returns
     -------
     results : callable
-        A callable which returns True if the text matches the regex,
+        A callable which returns True if the text matches the range,
         False otherwise.
 
     """
