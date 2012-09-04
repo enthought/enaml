@@ -106,13 +106,6 @@ class AbstractTkApplication(object):
     #--------------------------------------------------------------------------
     # Private API 
     #--------------------------------------------------------------------------
-    def __process_task(self, task):
-        """ Processes the given task, then dispatches the next task.
-
-        """
-        task._execute()
-        self.__next_task()
-    
     def __next_task(self):
         """ Pulls the next task off the heap and processes it on the 
         main gui thread.
@@ -122,7 +115,8 @@ class AbstractTkApplication(object):
         with self.__heap_lock:
             if heap:
                 priority, count, task = heappop(heap)
-                self.call_on_main(self.__process_task, task)
+                self.call_on_main(task._execute)
+                self.call_on_main(self.__next_task)
 
     #--------------------------------------------------------------------------
     # Public API
