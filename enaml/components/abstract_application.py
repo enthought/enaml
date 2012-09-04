@@ -110,8 +110,10 @@ class AbstractTkApplication(object):
         """ Processes the given task, then dispatches the next task.
 
         """
-        task._execute()
-        self.__next_task()
+        try:
+            task._execute()
+        finally:
+            self.__next_task()
     
     def __next_task(self):
         """ Pulls the next task off the heap and processes it on the 
