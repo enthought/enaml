@@ -2,10 +2,9 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-#from .qt_messenger_widget import QtMessengerWidget
-from .qt_constraints_widget import QtConstraintsWidget
+from .qt_messenger_widget import QtMessengerWidget
 
-class QtProxyWidget(QtConstraintsWidget):
+class QtProxyWidget(QtMessengerWidget):
     """ A Qt implementation of an Enaml ProxyWidget.
 
     """
@@ -27,7 +26,6 @@ class QtProxyWidget(QtConstraintsWidget):
         """
         self.set_proxy_id(tree['proxy_id'])
         super(QtProxyWidget, self).create(tree)
-        #self.widget().closed.connect(self.on_closed)
 
     #--------------------------------------------------------------------------
     # Widget Update Methods

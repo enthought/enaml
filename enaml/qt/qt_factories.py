@@ -22,6 +22,16 @@ def check_box_factory():
     return QtCheckBox
 
 
+def client_panel_factory():
+    from .qt_client_panel import QtClientPanel
+    return QtClientPanel
+
+
+def client_widget_factory():
+    from .qt_client_widget import QtClientWidget
+    return QtClientWidget
+
+
 def combo_box_factory():
     from .qt_combo_box import QtComboBox
     return QtComboBox
@@ -122,11 +132,6 @@ def progress_bar_factory():
     return QtProgressBar
 
 
-def proxy_widget_factory():
-    from .qt_proxy_widget import QtProxyWidget
-    return QtProxyWidget
-
-
 def radio_button_factory():
     from .qt_radio_button import QtRadioButton
     return QtRadioButton
@@ -182,6 +187,8 @@ QT_FACTORIES = {
     'ActionGroup': action_group_factory,
     'Calendar': calendar_factory,
     'CheckBox': check_box_factory,
+    'ClientPanel': client_panel_factory,
+    'ClientWidget': client_widget_factory,
     'ComboBox': combo_box_factory,
     'Container': container_factory,
     'DateSelector': date_selector_factory,
@@ -202,7 +209,6 @@ QT_FACTORIES = {
     'Page': page_factory,
     'PushButton': push_button_factory,
     'ProgressBar': progress_bar_factory,
-    'ProxyWidget': proxy_widget_factory,
     'RadioButton': radio_button_factory,
     'ScrollArea': scroll_area_factory,
     'Slider': slider_factory,

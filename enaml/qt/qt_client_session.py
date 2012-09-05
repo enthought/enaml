@@ -342,6 +342,5 @@ class QtClientSession(object):
             The parent QWidget for the proxy.
 
         """
-        print proxy, proxy._proxy_id, self._proxies
         proxy_factory = self._proxies[proxy._proxy_id]
         return proxy_factory(self, proxy, parent)

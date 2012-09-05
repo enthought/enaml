@@ -41,21 +41,20 @@ if __name__ == '__main__':
        person=john) 
 
     def make_traitsui(session, proxy, parent):
-        #from PySide.QtGui import QLabel
-        #widget = QLabel(parent=parent)
-        #widget.setText("Hello Proxy!")
-        #return widget
-        #from PySide.QtGui import QFrame
-        #panel = QFrame(parent=parent)
         proxy.traitsui = john.edit_traits(kind='subpanel', parent=parent)
         control = proxy.traitsui.control
-        control.setParent(parent)
-        print control, control.parent()
+        control.setParent(parent) # XXX why isn't parent being set correctly?
         return control
+
+    def make_panel(session, proxy, parent):
+        from PySide.QtGui import QMainWindow
+        panel = QMainWindow()
+        return panel
 
     def local_session_factory(session_id, username, router, factories):
         session = QtClientSession(session_id, username, router, factories)
         session._proxies['person'] = make_traitsui
+        session._proxies['panel'] = make_panel
         return session
 
 
