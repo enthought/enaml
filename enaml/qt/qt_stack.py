@@ -8,7 +8,7 @@ from .qt_constraints_widget import QtConstraintsWidget
 from .q_pixmap_painter import QPixmapPainter
 from .q_pixmap_transition import (
     QPixmapTransition, QDirectedTransition, QSlideTransition, QWipeTransition,
-    QIrisTransition, QFadeTransition,
+    QIrisTransition, QFadeTransition, QCrossFadeTransition
 )
 
 
@@ -50,6 +50,8 @@ def parseTransition(info):
         return QIrisTransition()
     if ttype == 'fade':
         return QFadeTransition()
+    if ttype == 'crossfade':
+        return QCrossFadeTransition()
 
 
 class QStack(QStackedWidget):
