@@ -50,6 +50,7 @@ class QtClientSession(object):
         self._router = router
         self._factories = factories
         self._widgets = {}
+        self._proxies = {}
 
     #--------------------------------------------------------------------------
     # Message Handling
@@ -325,3 +326,21 @@ class QtClientSession(object):
         """
         self._widgets.pop(widget_id, None)
 
+    def get_proxy_widget(self, proxy, parent):
+        """ A method to get or create an appropriate Qt proxy widget.
+
+        This method is called directly by a QtProxyWidget when
+        it creates itself. By default, this method looks up the proxy_id
+        and calls the object it gets.
+
+        Parameters
+        ----------
+        proxy : QtProxyWidget
+            The QtProxyWidget instance.
+
+        parent : QWidget or None
+            The parent QWidget for the proxy.
+
+        """
+        proxy_factory = self._proxies[proxy._proxy_id]
+        return proxy_factory(self, proxy, parent)

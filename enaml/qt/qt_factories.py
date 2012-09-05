@@ -122,6 +122,11 @@ def progress_bar_factory():
     return QtProgressBar
 
 
+def proxy_widget_factory():
+    from .qt_proxy_widget import QtProxyWidget
+    return QtProxyWidget
+
+
 def radio_button_factory():
     from .qt_radio_button import QtRadioButton
     return QtRadioButton
@@ -197,6 +202,7 @@ QT_FACTORIES = {
     'Page': page_factory,
     'PushButton': push_button_factory,
     'ProgressBar': progress_bar_factory,
+    'ProxyWidget': proxy_widget_factory,
     'RadioButton': radio_button_factory,
     'ScrollArea': scroll_area_factory,
     'Slider': slider_factory,

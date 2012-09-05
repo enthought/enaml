@@ -51,7 +51,8 @@ class QtLocalClient(object):
         self._router = router
         self._factories = factories
         self._username = username
-        self._session_names = []
+        self._initial_sessions = []
+        self._session_factories = {}
         self._client_sessions = {}
         self._started = False
         self._router.clientMessagePosted.connect(
@@ -107,7 +108,17 @@ class QtLocalClient(object):
                 msg = "Session id already exists: %s"
                 logging.error(msg % session_id)
                 return
-            client_session = QtClientSession(
+
+            parent_msg_id = message.parent_header.msg_id
+            client_session_factory = self._session_factories.pop(parent_msg_id,
+                None)
+            if client_session_factory is None:
+                # XXX show a dialog error message
+                msg = "No session factory for message id: %s."
+                logging.error(msg % parent_msg_id)
+                client_session_factory = QtClientSession
+
+            client_session = client_session_factory(
                 session_id, self._username, self._router, self._factories,
             )
             self._client_sessions[session_id] = client_session
@@ -168,6 +179,21 @@ class QtLocalClient(object):
     #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
+    def _start_session(self, name, client_session_factory):
+        msg_id = _qtclient_message_id_gen.next()
+        self._session_factories[msg_id] = client_session_factory
+        header = {
+            'session': None,
+            'username': self._username,
+            'msg_id': msg_id,
+            'msg_type': 'start_session',
+            'version': '1.0',
+        }
+        content = {'name': name}
+        message = Message((header, {}, {}, content))
+        self._router.appMessagePosted.emit(message)
+        
+    
     def _start_sessions(self):
         """ A private method which starts the sessions for the client.
 
@@ -176,17 +202,8 @@ class QtLocalClient(object):
         sessions.
 
         """
-        for name in self._session_names:
-            header = {
-                'session': None,
-                'username': self._username,
-                'msg_id': _qtclient_message_id_gen.next(),
-                'msg_type': 'start_session',
-                'version': '1.0',
-            }
-            content = {'name': name}
-            message = Message((header, {}, {}, content))
-            self._router.appMessagePosted.emit(message)
+        for name, client_session_factory in self._initial_sessions:
+            self._start_session(name, client_session_factory)
 
     #--------------------------------------------------------------------------
     # Public API
@@ -201,7 +218,7 @@ class QtLocalClient(object):
         self._router.addCallback(self._start_sessions)
         self._started = True
         
-    def start_session(self, name):
+    def start_session(self, name, client_session_factory=QtClientSession):
         """ A public method used to request a local session to start
         after the local server is started.
 
@@ -213,6 +230,6 @@ class QtLocalClient(object):
 
         """
         if not self._started:
-            self._session_names.append(name)
+            self._initial_sessions.append((name, client_session_factory))
         # XXX handle dynamic session additions
 
