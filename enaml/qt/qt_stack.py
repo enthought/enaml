@@ -7,9 +7,18 @@ from .qt.QtGui import QStackedWidget, QPixmap
 from .qt_constraints_widget import QtConstraintsWidget
 from .q_pixmap_painter import QPixmapPainter
 from .q_pixmap_transition import (
-    QPixmapTransition, QDirectedTransition, QSlideTransition, QWipeTransition,
-    QIrisTransition, QFadeTransition, QCrossFadeTransition
+    QDirectedTransition, QSlideTransition, QWipeTransition, QIrisTransition, 
+    QFadeTransition, QCrossFadeTransition
 )
+
+
+_TRANSITION_TYPES = {
+    'slide': QSlideTransition,
+    'wipe': QWipeTransition,
+    'iris': QIrisTransition,
+    'fade': QFadeTransition,
+    'crossfade': QCrossFadeTransition,
+}
 
 
 _TRANSITION_DIRECTIONS = {
@@ -20,8 +29,8 @@ _TRANSITION_DIRECTIONS = {
 }
 
 
-def parseTransition(info):
-    """ Parse a dict of transition info into a QPixmapTransition.
+def make_transition(info):
+    """ Make a QPixmapTransition from a description dictionary.
 
     Parameters
     ----------
@@ -36,22 +45,17 @@ def parseTransition(info):
         could not be created for the given dict.
 
     """
-    ttype = info.get('type')
-    if ttype == 'slide' or ttype == 'wipe':
-        if ttype == 'slide':
-            transition = QSlideTransition()
-        else:
-            transition = QWipeTransition()
-        direction = info.get('direction')
-        if direction in _TRANSITION_DIRECTIONS:
-            transition.setDirection(_TRANSITION_DIRECTIONS[direction])
+    type_ = info.get('type')
+    if type_ in _TRANSITION_TYPES:
+        transition = _TRANSITION_TYPES[type_]()
+        duration = info.get('duration')
+        if duration is not None:
+            transition.setDuration(duration)
+        if isinstance(transition, QDirectedTransition):
+            direction = info.get('direction')
+            if direction in _TRANSITION_DIRECTIONS:
+                transition.setDirection(_TRANSITION_DIRECTIONS[direction])
         return transition
-    if ttype == 'iris':
-        return QIrisTransition()
-    if ttype == 'fade':
-        return QFadeTransition()
-    if ttype == 'crossfade':
-        return QCrossFadeTransition()
 
 
 class QStack(QStackedWidget):
@@ -167,7 +171,6 @@ class QStack(QStackedWidget):
             stack or None if no transition should be used.
 
         """
-        assert isinstance(transition, (QPixmapTransition, type(None)))
         old = self._transition
         if old is not None:
             old.finished.disconnect(self._onTransitionFinished)
@@ -268,5 +271,5 @@ class QtStack(QtConstraintsWidget):
         """ Set the transition on the underlying widget.
 
         """
-        self.widget().setTransition(parseTransition(transition))
+        self.widget().setTransition(make_transition(transition))
 
