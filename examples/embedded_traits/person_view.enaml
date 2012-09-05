@@ -23,11 +23,12 @@ enamldef PersonForm(Form):
 
 
 enamldef PersonView(Window):
-    attr person_proxy
+    id: view
+    attr person
     
     Container:
         PersonForm:
-            person := parent.person
+            person := view.person
         ProxyWidget:
             proxy_id = 'person'
 

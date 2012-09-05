@@ -7,9 +7,9 @@ from traits.api import Str
 from enaml.core.trait_types import EnamlEvent
 
 from .container import Container
-from .widget_component import MessengerWidget
+from .constraints_widget import ConstraintsWidget
 
-class ProxyWidget(MessengerWidget):
+class ProxyWidget(ConstraintsWidget):
     """ A proxy of a non-Enaml UI widget
     
     An ProxyComponent represents a UI widget that is outside the control of

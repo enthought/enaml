@@ -2,9 +2,10 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt_messenger_widget import QtMessengerWidget
+#from .qt_messenger_widget import QtMessengerWidget
+from .qt_constraints_widget import QtConstraintsWidget
 
-class QtProxyWidget(QtMessengerWidget):
+class QtProxyWidget(QtConstraintsWidget):
     """ A Qt implementation of an Enaml ProxyWidget.
 
     """
@@ -24,40 +25,17 @@ class QtProxyWidget(QtMessengerWidget):
         """ Create and initialize the underlying widget.
 
         """
-        super(QtProxyWidget, self).create(tree)
         self.set_proxy_id(tree['proxy_id'])
-        self.widget().closed.connect(self.on_closed)
-
-    #--------------------------------------------------------------------------
-    # Signal Handlers
-    #--------------------------------------------------------------------------
-    def on_closed(self):
-        """ The signal handler for the 'closed' signal.
-
-        """
-        self.send_action('closed', {})
-
-    #--------------------------------------------------------------------------
-    # Message Handlers
-    #--------------------------------------------------------------------------
-    def on_action_close(self, content):
-        """ Handle the 'close' action from the Enaml widget. 
-
-        """
-        self.close()
+        super(QtProxyWidget, self).create(tree)
+        #self.widget().closed.connect(self.on_closed)
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
-    def close(self):
-        """ Close the window
-
-        """
-        self.widget().close()
 
     def set_proxy_id(self, proxy_id):
         """ Set the proxy id for the window.
 
         """
-        self.proxy_id = proxy_id
+        self._proxy_id = proxy_id
 

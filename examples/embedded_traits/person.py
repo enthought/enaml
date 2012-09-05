@@ -41,12 +41,22 @@ if __name__ == '__main__':
        person=john) 
 
     def make_traitsui(session, proxy, parent):
+        #from PySide.QtGui import QLabel
+        #widget = QLabel(parent=parent)
+        #widget.setText("Hello Proxy!")
+        #return widget
+        #from PySide.QtGui import QFrame
+        #panel = QFrame(parent=parent)
         proxy.traitsui = john.edit_traits(kind='subpanel', parent=parent)
-        return proxy.traitsui.control
+        control = proxy.traitsui.control
+        control.setParent(parent)
+        print control, control.parent()
+        return control
 
     def local_session_factory(session_id, username, router, factories):
         session = QtClientSession(session_id, username, router, factories)
         session._proxies['person'] = make_traitsui
+        return session
 
 
     server = QtLocalServer(app)
