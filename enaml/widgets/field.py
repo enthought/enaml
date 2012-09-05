@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from traits.api import Bool, Int, Unicode, Enum, List, Instance
 
-from enaml.validation import Validator
+from enaml.validation.validator import Validator
 
 from .constraints_widget import ConstraintsWidget
 
@@ -128,6 +128,7 @@ class Field(ConstraintsWidget):
                 self.send_action('set_text', content)
             self.set_guarded(text=text)
         else:
-            # XXX notify the client that server validation failed.
-            pass
+            # notify the client that server validation failed.
+            content = {'text': text}
+            self.send_action('invalid_text', content)
 
