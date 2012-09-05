@@ -27,6 +27,7 @@ from .menu_bar import MenuBar
 from .notebook import Notebook
 from .page import Page
 from .progress_bar import ProgressBar
+from .proxy_widget import ProxyWidget
 from .push_button import PushButton
 from .radio_button import RadioButton
 from .scroll_area import ScrollArea
