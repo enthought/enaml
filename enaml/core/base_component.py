@@ -297,6 +297,7 @@ class BaseComponent(HasStrictTraits):
         for child in self._subcomponents:
             child.destroy()
         del self._subcomponents[:]
+        self.initialized = False
         self._expressions.clear()
 
     #--------------------------------------------------------------------------
