@@ -1,46 +1,41 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2011, Enthought, Inc.
+#  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
 """ Enaml Standard Library - Fields
 
-This is a library of Enaml components deriving from the built-in Field.
+This is a library of Enaml components deriving from the builtin Field.
 
 """
-from enaml.widgets import Field
+from enaml.widgets.api import Field
+from enaml.validation.api import RegexValidator, IntValidator, FloatValidator
 
-# XXX This needs to be generalized and cleaned up when validators are refactored
 
-int_validator = {
-    "type": "regexp",
-    "regexp": r"^-?\d+$",
-    "message": 'value must be an integer',
-    "triggers": ["return-pressed"],
-}
+enamldef RegexField(Field):
+    attr regex : str
+    validator << RegexValidator(regex=regex)
 
-float_validator = {
-    "type": "regexp",
-    "regexp": r"^(+|-)?\d+(\.\d*)?((e|E)(+|-)?\d+(\.\d*)$",
-    "message": 'value must be a float',
-    "triggers": ["return-pressed"],
-}
 
 enamldef IntField(Field):
+    attr minimum = None
+    attr maximum = None
+    attr base = 10
     attr value : int = 0
-    text << str(value)
-    text ::
-        self.value = int(self.text)
-    validators = [int_validator]
+    text << unicode(value)
+    text :: self.value = int(text)
+    validator << IntValidator(base=base, minimum=minimum, maximum=maximum)
+
 
 enamldef FloatField(Field):
+    attr minimum = None
+    attr maximum = None
+    attr allow_exponent : bool = True
     attr value : float = 0.0
-    text << str(value)
-    text ::
-        self.value = float(self.text)
-    validators = [int_validator]
-
-enamldef PasswordField(Field):
-    password_mode = 'password'
+    text << unicode(value)
+    text :: self.value = int(text)
+    validator << FloatValidator(
+        minimum=minimum, maximum=maximum, allow_exponent=allow_exponent
+    )
 
 
 #from abc import ABCMeta

@@ -2,65 +2,11 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import re
-
 import wx
 
+from enaml.validation.client_validators import null_validator, make_validator
+
 from .wx_constraints_widget import WxConstraintsWidget
-
-
-def null_validator(text):
-    """ A validator function will returns True for all text input.
-
-    """
-    return True
-
-
-def regex_validator(regex):
-    """ Creates a callable which will validate text input against the
-    provided regex string.
-
-    Parameters
-    ----------
-    regex : string
-        A regular expression string to use for matching.
-
-    Returns
-    -------
-    results : callable
-        A callable which returns True if the text matches the regex,
-        False otherwise.
-
-    """
-    rgx = re.compile(regex, re.UNICODE)
-    def validator(text):
-        return bool(rgx.match(text))
-    return validator
-
-
-def make_validator(info):
-    """ Make a validator function for the given dict represenation.
-
-    Parameters
-    ----------
-    info : dict
-        The dictionary representation of a client side validator sent
-        by the Enaml server widget.
-
-    Returns
-    -------
-    result : callable
-        A callable which will return True if the text is valid. False
-        otherwise. If the validator type is not supported, a null 
-        validator which accepts all text will be returned.
-    
-    """
-    vtype = info['type']
-    if vtype == 'regex':
-        vldr = regex_validator(info['arguments']['regex'])
-    else:
-        vldr = null_validator
-    return vldr
 
 
 class wxLineEdit(wx.TextCtrl):
@@ -360,6 +306,13 @@ class WxField(WxConstraintsWidget):
 
         """
         self.set_read_only(content['read_only'])
+
+    def on_action_invalid_text(self, content):
+        """ Handle the 'invalid_text' action from the Enaml widget.
+        
+        """
+        if self.widget.GetValue() == content['text']:
+            self._set_error_style()
 
     #--------------------------------------------------------------------------
     # Widget Update Methods

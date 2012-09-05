@@ -2,12 +2,14 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from enaml.layout.api import vertical, horizontal, align, spacer
+from enaml.widgets.api import (
+    Window, Label, Field, Form, DateSelector, CheckBox, GroupBox, Container,
+    PushButton
+)
 
-#from phone_validator import PhoneNumberValidator
+from phone_validator import PhoneNumberValidator
 
-from enaml.widgets import Window, Label, Field, Form, DateEdit, \
-                            CheckBox, GroupBox, Container, PushButton
-from enaml.layout import vertical, horizontal, align, spacer
 
 enamldef EmployeeForm(Form):
     attr employee
@@ -23,22 +25,27 @@ enamldef EmployeeForm(Form):
     Label:
         text = "Home phone:"
     Field:
-        #text := employee.phone
-        text << str(employee.phone)
-        #validator = PhoneNumberValidator()
-        #bgcolor << 'unacceptable' if not acceptable else 'none'
+        validator = PhoneNumberValidator()
+        text << '(%s) %s-%s' % employee.phone
+        text ::
+            match = validator.proper.match(text)
+            if match:
+                area = match.group(1)
+                prefix = match.group(2)
+                suffix = match.group(3)
+                employee.phone = tuple(map(int, (area, prefix, suffix)))
     Label:
         text = 'Date of Birth:'
-    DateEdit:
+    DateSelector:
         date := employee.dob
     Label:
         text = 'Age:'
     Label:
         text << str(employee.age)
     Label:
-        text = 'Password'
+        text = 'Password:'
     Field:
-        #password_mode << 'password' if not pw_cb.checked else 'normal'
+        echo_mode << 'password' if not pw_cb.checked else 'normal'
         text :: print 'Password:', text
     Label:
         text = 'Show Password:'
@@ -78,26 +85,32 @@ enamldef EmployeeView(Window):
                                               employee.first_name)
     Container:
         constraints << [
-            vertical(top, top_box, bottom_box.when(bottom_box.visible), bottom),
+            vertical(
+                top, top_box, btm_box.when(btm_box.visible), spacer, bottom
+            ),
             horizontal(left, spacer.flex(), top_box, spacer.flex(), right),
-            horizontal(left, spacer.flex(), bottom_box, spacer.flex(), right),
-            align('midline', top_form, bottom_form, clear_invisible=False)
+            horizontal(left, spacer.flex(), btm_box, spacer.flex(), right),
+            align('midline', top_form, btm_form, clear_invisible=False)
         ]
         GroupBox:
             id: top_box
+            share_layout = True
             title = "Personal Details"
             EmployeeForm:
                 id: top_form
+                share_layout = True
                 # We access the employee object through the identifier
                 # 'main' here, because the EmployeeForm also has an 
                 # 'employee' attribute declared, and that would be 
                 # found first.
                 employee = main.employee
         GroupBox:
-            id: bottom_box
+            id: btm_box
+            share_layout = True
             title = "Employer Details"
             visible << top_form.show_employer
             EmployerForm:
-                id: bottom_form
+                id: btm_form
+                share_layout = True
                 employer << employee.boss
 

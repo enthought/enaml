@@ -2,17 +2,9 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-#from enaml.widgets.messenger_widget import MessengerWidget
-from enaml.widgets import Window, Label, Field, Form
+from enaml.widgets.api import Window, Label, Field, Form
 from enaml.stdlib.fields import IntField
 
-enamldef Person(MessengerWidget):
-    attr first_name : str = ''
-    attr last_name : str = ''
-    attr age : int = 18
-    age ::
-        print "The age of %s %s is %d" % (self.first_name, self.last_name,
-            self.age)
 
 enamldef PersonForm(Form):
     attr person
@@ -27,14 +19,13 @@ enamldef PersonForm(Form):
     Label:
         text = 'Age'
     IntField:
+        minimum = 0
         value := person.age
 
 
 enamldef PersonView(Window):
-    #attr person
+    attr person
     PersonForm:
-        person = person
-    Person:
-        id: person
+        person := parent.person
 
             

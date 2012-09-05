@@ -50,9 +50,9 @@
 }
 
 
-// Int Range Validator - allows integer input within a value range
+// Int Validator - allows integer input within a value range
 {
-  "type": "int_range",
+  "type": "int",
   "arguments": {
     // The number base to use with the range. Supported bases are 
     // 2, 8, 10, and 16.
@@ -71,7 +71,7 @@
 
 // Float Range Validator - allows float input within a value range
 {
-  "type": "float_range",
+  "type": "float",
   "arguments": {
     // The lower bound of allowable values, inlcusive. Null indicates 
     // no lower bound.
@@ -81,11 +81,8 @@
     // no upper bound.
     "maximum": null,
 
-    // The number of places to allow after the decimal point.
-    "precision": 0,
-
-    // Whether or not to allow scientific notation in the input.
-    "allow_scientific_notation": false,
+    // Whether or not to allow exponents like '1e6' in the input.
+    "allow_exponent": false,
   }
 }
 
