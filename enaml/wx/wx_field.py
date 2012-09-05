@@ -2,13 +2,11 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import re
-
 import wx
 
-from .wx_constraints_widget import WxConstraintsWidget
-
 from enaml.validation.client_validators import null_validator, make_validator
+
+from .wx_constraints_widget import WxConstraintsWidget
 
 
 class wxLineEdit(wx.TextCtrl):
@@ -272,12 +270,6 @@ class WxField(WxConstraintsWidget):
         """
         self.set_text(content['text'])
 
-    def on_action_invalid_text(self, content):
-        """ Handle the 'invalid_text' action from the Enaml widget.
-        
-        """
-        self.invalid_text(content['text'])
-
     def on_action_set_validator(self, content):
         """ Handle the 'set_validator' action from the Enaml widget.
 
@@ -314,6 +306,13 @@ class WxField(WxConstraintsWidget):
 
         """
         self.set_read_only(content['read_only'])
+
+    def on_action_invalid_text(self, content):
+        """ Handle the 'invalid_text' action from the Enaml widget.
+        
+        """
+        if self.widget.GetValue() == content['text']:
+            self._set_error_style()
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -374,9 +373,3 @@ class WxField(WxConstraintsWidget):
         # creating a brand-new control, so we just ignore the change.
         pass
 
-    def invalid_text(self, text):
-        """ User entered invalid text, so enter error style if text is unchanged.
-        
-        """
-        if self.widget.GetValue() == text:
-            self._set_error_style()

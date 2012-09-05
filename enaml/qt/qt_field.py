@@ -2,13 +2,12 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import re
+from enaml.validation.client_validators import null_validator, make_validator
 
 from .qt.QtGui import QLineEdit
 from .qt.QtCore import Signal
 from .qt_constraints_widget import QtConstraintsWidget
 
-from enaml.validation.client_validators import null_validator, make_validator
 
 ECHO_MODES = {
     'normal': QLineEdit.Normal,
@@ -152,12 +151,6 @@ class QtField(QtConstraintsWidget):
         """
         self.set_text(content['text'])
 
-    def on_action_invalid_text(self, content):
-        """ Handle the 'invalid_text' action from the Enaml widget.
-        
-        """
-        self.invalid_text(content['text'])
-
     def on_action_set_validator(self, content):
         """ Handle the 'set_validator' action from the Enaml widget.
 
@@ -194,7 +187,14 @@ class QtField(QtConstraintsWidget):
 
         """
         self.set_read_only(content['read_only'])
-    
+        
+    def on_action_invalid_text(self, content):
+        """ Handle the 'invalid_text' action from the Enaml widget.
+        
+        """
+        if self.widget().text() == content['text']:
+            self._set_error_style()
+
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
@@ -249,9 +249,3 @@ class QtField(QtConstraintsWidget):
         """
         self.widget().setReadOnly(read_only)
 
-    def invalid_text(self, text):
-        """ User entered invalid text, so enter error style if text is unchanged.
-        
-        """
-        if self.widget().text() == text:
-            self._set_error_style()

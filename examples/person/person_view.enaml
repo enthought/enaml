@@ -5,6 +5,7 @@
 from enaml.widgets.api import Window, Label, Field, Form
 from enaml.stdlib.fields import IntField
 
+
 enamldef PersonForm(Form):
     attr person
     Label:

@@ -1,24 +1,18 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2011, Enthought, Inc.
+#  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
 """ Enaml Standard Library - Fields
 
-This is a library of Enaml components deriving from the built-in Field.
+This is a library of Enaml components deriving from the builtin Field.
 
 """
 from enaml.widgets.api import Field
-from enaml.validation.validator import RegexValidator, IntRangeValidator, \
-    FloatRangeValidator
+from enaml.validation.api import RegexValidator, IntValidator, FloatValidator
 
-# XXX This needs to be generalized and cleaned up when validators are refactored
 
 enamldef RegexField(Field):
     attr regex : str
-    
-    text << str(value)
-    text ::
-        self.value = int(text)
     validator << RegexValidator(regex=regex)
 
 
@@ -27,29 +21,21 @@ enamldef IntField(Field):
     attr maximum = None
     attr base = 10
     attr value : int = 0
-    
-    text << str(value)
-    text ::
-        self.value = int(text)
-    validator << IntRangeValidator(base=base, minimum=minimum, maximum=maximum)
+    text << unicode(value)
+    text :: self.value = int(text)
+    validator << IntValidator(base=base, minimum=minimum, maximum=maximum)
 
 
 enamldef FloatField(Field):
     attr minimum = None
     attr maximum = None
-    attr precision = None
-    attr allow_exponent : bool = False
+    attr allow_exponent : bool = True
     attr value : float = 0.0
-
-    text << str(value)
-    text ::
-        self.value = int(text)
-    validator << FloatRangeValidator(minimum=minimum, maximum=maximum,
-        precision=precision, allow_exponent=allow_exponent)
-
-
-enamldef PasswordField(Field):
-    password_mode = 'password'
+    text << unicode(value)
+    text :: self.value = int(text)
+    validator << FloatValidator(
+        minimum=minimum, maximum=maximum, allow_exponent=allow_exponent
+    )
 
 
 #from abc import ABCMeta

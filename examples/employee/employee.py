@@ -6,8 +6,10 @@ import datetime
 
 from traits.api import HasTraits, Str, Int, Instance, Tuple, Date, Property
 
+import enaml
 from enaml.stdlib.sessions import simple_app
 from enaml.qt.qt_local_server import QtLocalServer
+
 
 class Person(HasTraits):
     """ A simple class representing a person object.
@@ -68,19 +70,22 @@ class Employee(Person):
 
 if __name__ == '__main__':
     # Create an employee with a boss
-    boss_john = Employer(first_name='John', last_name='Paw', 
-                         company_name="Packrat's Cats")
-    employee_mary = Employee(first_name='Mary', last_name='Sue', 
-                             boss=boss_john)
+    boss_john = Employer(
+        first_name='John', last_name='Paw', company_name="Packrat's Cats"
+    )
+    employee_mary = Employee(
+        first_name='Mary', last_name='Sue', boss=boss_john
+    )
 
     # Import our Enaml EmployeeView
-    import enaml
     with enaml.imports():
         from employee_view import EmployeeView
     
     # Create a view and show it.
-    app = simple_app('mary', 'A view of the Employee mary', EmployeeView, 
-       employee=employee_mary) 
+    app = simple_app(
+        'mary', 'A view of the Employee mary', EmployeeView, 
+        employee=employee_mary
+    ) 
 
     server = QtLocalServer(app)
     client = server.local_client()
