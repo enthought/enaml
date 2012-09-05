@@ -3,8 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt.QtCore import QPoint, QRect, QVariantAnimation, Signal
-from .qt.QtGui import QPainter, QPixmap
-from .qt.QtGui import QPainter, QPixmap, QPainterPath, QImage, QColor
+from .qt.QtGui import QPainter, QPixmap, QPainterPath 
 
 
 class QPixmapTransition(QVariantAnimation):
@@ -337,6 +336,7 @@ class QIrisTransition(QPixmapTransition):
         This method draws the starting pixmap into the output pixmap.
         The transition update then sets a circular clipping region on
         the ouput and draws in the ending pixmap.
+
         """
         start = self.startPixmap()
         end = self.endPixmap()
@@ -376,6 +376,44 @@ class QFadeTransition(QPixmapTransition):
         """ Prepare the pixmap(s) for the transition.
 
         This method draws the starting pixmap into the output pixmap.
+        The transition updates then draw the relevant pixmaps into 
+        the output using an appropriate alpha.
+
+        """
+        painter = QPainter(self.outPixmap())
+        painter.drawPixmap(QPoint(0, 0), self.startPixmap())
+        return -1.0, 1.0
+
+    def updatePixmap(self, alpha):
+        """ Update the pixmap for the current transition.
+
+        This method first clears the output pixmap. It then draws a
+        pixmap using the given alpha value. An alpha value less than
+        zero indicates that the starting pixmap should be drawn. A 
+        value greater than or equal to zero indicates the ending 
+        pixmap should be drawn.
+
+        """
+        out = self.outPixmap()
+        painter = QPainter(out)
+        painter.eraseRect(0, 0, out.width(), out.height())
+        if alpha < 0.0:
+            alpha = -1.0 * alpha
+            source = self.startPixmap()
+        else:
+            source = self.endPixmap()
+        painter.setOpacity(alpha)
+        painter.drawPixmap(QPoint(0, 0), source)
+
+
+class QCrossFadeTransition(QPixmapTransition):
+    """ A QPixmapTransition which animates using a cross fade effect.
+
+    """
+    def preparePixmap(self):
+        """ Prepare the pixmap(s) for the transition.
+
+        This method draws the starting pixmap into the output pixmap.
         The transition updates then draw the two pixmaps with an 
         appropriate alpha blending value.
 
@@ -387,11 +425,14 @@ class QFadeTransition(QPixmapTransition):
     def updatePixmap(self, alpha):
         """ Update the pixmap for the current transition.
 
-        This method draws the starting pixmap following by the ending
-        pixmap with complementary alpha values.
+        This method first clears the output pixmap. It then draws the 
+        starting pixmap followed by the ending pixmap. Each pixmap is
+        drawn with complementary alpha values.
 
         """
-        painter = QPainter(self.outPixmap())
+        out = self.outPixmap()
+        painter = QPainter(out)
+        painter.eraseRect(0, 0, out.width(), out.height())
         painter.setOpacity(1.0 - alpha)
         painter.drawPixmap(QPoint(0, 0), self.startPixmap())
         painter.setOpacity(alpha)
