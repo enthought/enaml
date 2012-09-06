@@ -51,7 +51,8 @@ class WxLocalClient(object):
         self._router = router
         self._factories = factories
         self._username = username
-        self._session_names = []
+        self._initial_sessions = []
+        self._session_factories = {}
         self._client_sessions = {}
         self._started = False
         self._router.Bind(EVT_CLIENT_MESSAGE, self._on_client_message_posted)
@@ -106,7 +107,17 @@ class WxLocalClient(object):
                 msg = "Session id already exists: %s"
                 logging.error(msg % session_id)
                 return
-            client_session = WxClientSession(
+            
+            parent_msg_id = message.parent_header.msg_id
+            client_session_factory = self._session_factories.pop(parent_msg_id,
+                None)
+            if client_session_factory is None:
+                # XXX show a dialog error message
+                msg = "No session factory for message id: %s."
+                logging.error(msg % parent_msg_id)
+                client_session_factory = WxClientSession
+
+            client_session = client_session_factory(
                 session_id, self._username, self._router, self._factories,
             )
             self._client_sessions[session_id] = client_session
@@ -167,25 +178,43 @@ class WxLocalClient(object):
     #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
+    def _start_session(self, name, client_session_factory):
+        """ A private method used to request a local session.
+
+        Parameters
+        ----------
+        name : str
+            The name of the session to start when the server is 
+            spooled up.
+
+        client_session_factory : callable
+            A factory for building an appropriate client session.  Usually
+            returns a QtClientSession or subclass.
+
+        """
+        msg_id = _wxclient_message_id_gen.next(),
+        self._session_factories[msg_id] = client_session_factory
+        header = {
+            'session': None,
+            'username': self._username,
+            'msg_id': msg_id,
+            'msg_type': 'start_session',
+            'version': '1.0',
+        }
+        content = {'name': name}
+        message = Message((header, {}, {}, content))
+        self._router.PostAppMessage(message)
+
     def _start_sessions(self):
-        """ A private method which starts the sessions for the client.
+        """ A private method which starts the initial sessions for the client.
 
         This method is called by the public 'startup' method when the
         client should make requests from the server to start its 
         sessions.
 
         """
-        for name in self._session_names:
-            header = {
-                'session': None,
-                'username': self._username,
-                'msg_id': _wxclient_message_id_gen.next(),
-                'msg_type': 'start_session',
-                'version': '1.0',
-            }
-            content = {'name': name}
-            message = Message((header, {}, {}, content))
-            self._router.PostAppMessage(message)
+        for name, client_session_factory in self._initial_sessions:
+            self._start_session(name, client_session_factory)
 
     #--------------------------------------------------------------------------
     # Public API
@@ -200,7 +229,7 @@ class WxLocalClient(object):
         self._router.AddCallback(self._start_sessions)
         self._started = True
         
-    def start_session(self, name):
+    def start_session(self, name, client_session_factory=WxClientSession):
         """ A public method used to request a local session to start
         after the local server is started.
 
@@ -210,8 +239,13 @@ class WxLocalClient(object):
             The name of the session to start when the server is 
             spooled up.
 
+        client_session_factory : callable
+            A factory for building an appropriate client session.  Usually
+            returns a QtClientSession or subclass.
+
         """
         if not self._started:
-            self._session_names.append(name)
-        # XXX handle dynamic session additions
+            self._initial_sessions.append((name, client_session_factory))
+        else:
+            self._start_session(name, client_session_factory)
 

@@ -33,5 +33,6 @@ enamldef PersonView(ClientPanel):
             person := view.person
         ClientWidget:
             proxy_id = 'person'
+            hug_width = 'ignore'
 
             
