@@ -7,6 +7,8 @@ from traits.api import HasTraits, Str, Range, on_trait_change
 from enaml.stdlib.sessions import simple_app
 from enaml.qt.qt_local_server import QtLocalServer
 from enaml.qt.qt_client_session import QtClientSession
+#from enaml.qt.qt_window import QWindowLayout
+from enaml.qt.q_single_widget_layout import QSingleWidgetLayout
 
 
 class Person(HasTraits):
@@ -40,6 +42,12 @@ if __name__ == '__main__':
     app = simple_app('john', 'A view of the Person john', PersonView, 
        person=john) 
 
+    from PySide.QtGui import QApplication, QMainWindow, QFrame
+    qapp = QApplication.instance() or QApplication([])
+    panel = QFrame()
+    panel.setLayout(QSingleWidgetLayout())
+    panel.show()
+
     def make_traitsui(session, proxy, parent):
         proxy.traitsui = john.edit_traits(kind='subpanel', parent=parent)
         control = proxy.traitsui.control
@@ -47,8 +55,6 @@ if __name__ == '__main__':
         return control
 
     def make_panel(session, proxy, parent):
-        from PySide.QtGui import QMainWindow
-        panel = QMainWindow()
         return panel
 
     def local_session_factory(session_id, username, router, factories):
