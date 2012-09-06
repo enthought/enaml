@@ -180,6 +180,19 @@ class QtLocalClient(object):
     # Private API
     #--------------------------------------------------------------------------
     def _start_session(self, name, client_session_factory):
+        """ A private method used to request a local session.
+
+        Parameters
+        ----------
+        name : str
+            The name of the session to start when the server is 
+            spooled up.
+
+        client_session_factory : callable
+            A factory for building an appropriate client session.  Usually
+            returns a QtClientSession or subclass.
+
+        """
         msg_id = _qtclient_message_id_gen.next()
         self._session_factories[msg_id] = client_session_factory
         header = {
@@ -228,8 +241,13 @@ class QtLocalClient(object):
             The name of the session to start when the server is 
             spooled up.
 
+        client_session_factory : callable
+            A factory for building an appropriate client session.  Usually
+            returns a QtClientSession or subclass.
+
         """
         if not self._started:
             self._initial_sessions.append((name, client_session_factory))
-        # XXX handle dynamic session additions
+        else:
+            self._start_session(name, client_session_factory)
 
