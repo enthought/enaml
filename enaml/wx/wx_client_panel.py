@@ -35,7 +35,9 @@ class WxClientPanel(WxProxyWidget, WxWidgetComponent):
 
     def set_central_widget(self, child):
         sizer = self.widget().GetSizer()
-        if self._central_widget is not None:
-            sizer.Detach(self._central_widget)
         self._central_widget = child.widget()
         sizer.Add(self._central_widget)
+        # if we have a native parent, relayout
+        parent = self.widget().GetParent()
+        if parent is not None:
+            parent.Layout()
