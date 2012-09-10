@@ -23,7 +23,7 @@ enamldef Main(Window):
 
             # Align the top button with the center of the field with
             # a relative offset between them.
-            align('h_center', fld, 30, pb1),
+            align('h_center', fld, 50, pb1),
 
             # Pin the Field to the top of the Container. This is 
             # orthogonal to the use of `align` for this example,
