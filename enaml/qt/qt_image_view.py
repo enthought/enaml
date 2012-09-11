@@ -3,7 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt.QtGui import QWidget, QPainter
-from .qt_constraints_widget import QtContraintsWidget
+from .qt_constraints_widget import QtConstraintsWidget
 
 
 class QImageView(QWidget):
@@ -190,7 +190,7 @@ class QImageView(QWidget):
         self.update()
 
 
-class QtImageView(QtContraintsWidget):
+class QtImageView(QtConstraintsWidget):
     """ A Qt4 implementation of an Enaml ImageView widget.
 
     """
