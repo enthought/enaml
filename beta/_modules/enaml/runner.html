@@ -1,0 +1,256 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.runner &mdash; enaml 0.3alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.3alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.3alpha documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.runner</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.runner</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="sd">&quot;&quot;&quot; Command-line tool to run .enaml files.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">optparse</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">types</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">from</span> <span class="nn">enaml</span> <span class="kn">import</span> <span class="n">imports</span>
+<span class="kn">from</span> <span class="nn">enaml.stdlib.sessions</span> <span class="kn">import</span> <span class="n">simple_app</span>
+<span class="kn">from</span> <span class="nn">enaml.core.parser</span> <span class="kn">import</span> <span class="n">parse</span>
+<span class="kn">from</span> <span class="nn">enaml.core.enaml_compiler</span> <span class="kn">import</span> <span class="n">EnamlCompiler</span>
+
+
+<div class="viewcode-block" id="prepare_toolkit"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.runner.prepare_toolkit">[docs]</a><span class="k">def</span> <span class="nf">prepare_toolkit</span><span class="p">(</span><span class="n">toolkit_option</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Prepares the toolkit to be used by enaml.</span>
+
+<span class="sd">    The function creates the enaml toolkit and sets if necessary the</span>
+<span class="sd">    value of ETS_TOOLKIT. ETS gui components default to WX when ETS_TOOLKIT</span>
+<span class="sd">    is not defined, while enaml defaults to Qt. In that case we set the</span>
+<span class="sd">    ETS_TOOLKIT enviroment for the process and it&#39;s childern to make sure</span>
+<span class="sd">    that ets amd enaml will use the same toolkit at all times.</span>
+
+<span class="sd">    If the ETS_TOOLKIT is already set a warning is raised if there is</span>
+<span class="sd">    an incompatibility with the -t option.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    toolkit_option : str</span>
+<span class="sd">        The toolkit option provided to the enaml-run script</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    enaml_toolkit : ~enaml.core.toolkit.Toolkit</span>
+<span class="sd">       The enaml toolkit object to be used.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c"># NOTE: This function is not currently used</span>
+    <span class="c"># the toolkit is assumed to be Qt for the time being</span>
+
+    <span class="c"># TODO: These two defines have been moved here from global scope</span>
+    <span class="c"># since the imports do not currently work. They will need to be</span>
+    <span class="c"># restored when more than just Qt is supported</span>
+    <span class="kn">from</span> <span class="nn">enaml</span> <span class="kn">import</span> <span class="n">default_toolkit</span><span class="p">,</span> <span class="n">wx_toolkit</span><span class="p">,</span> <span class="n">qt_toolkit</span>
+    <span class="c"># Acceptable enaml toolkit options for enaml-run</span>
+    <span class="n">ENAML_TOOLKITS</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">&#39;default&#39;</span><span class="p">:</span> <span class="n">default_toolkit</span><span class="p">,</span> <span class="s">&#39;wx&#39;</span><span class="p">:</span> <span class="n">wx_toolkit</span><span class="p">,</span> <span class="s">&#39;qt&#39;</span><span class="p">:</span> <span class="n">qt_toolkit</span>
+    <span class="p">}</span>
+
+    <span class="c"># Mapping of the --toolkit option to the ETS_TOOLKIT value</span>
+    <span class="n">OPTION_TO_ETS</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;default&#39;</span><span class="p">:</span> <span class="s">&#39;qt4&#39;</span><span class="p">,</span> <span class="s">&#39;wx&#39;</span><span class="p">:</span> <span class="s">&#39;wx&#39;</span><span class="p">,</span> <span class="s">&#39;qt&#39;</span><span class="p">:</span> <span class="s">&#39;qt4&#39;</span><span class="p">}</span>
+
+
+
+    <span class="n">enaml_toolkit</span> <span class="o">=</span> <span class="n">ENAML_TOOLKITS</span><span class="p">[</span><span class="n">toolkit_option</span><span class="p">]</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">ets_toolkit</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">&#39;ETS_TOOLKIT&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="n">compatible_toolkit</span> <span class="o">=</span> <span class="n">OPTION_TO_ETS</span><span class="p">[</span><span class="n">toolkit_option</span><span class="p">]</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">&#39;ETS_TOOLKIT&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">compatible_toolkit</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c"># if the -t option is &#39;default&#39; then enaml obeys ETS_TOOLKIT</span>
+        <span class="c"># so there is no incompatibility.</span>
+        <span class="k">if</span> <span class="n">toolkit_option</span> <span class="o">!=</span> <span class="s">&#39;default&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ets_toolkit</span> <span class="o">!=</span> <span class="n">OPTION_TO_ETS</span><span class="p">[</span><span class="n">toolkit_option</span><span class="p">]:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;The --toolkit option is different from the &#39;</span>
+                       <span class="s">&#39;ETS_TOOLKIT enviroment variable which can &#39;</span>
+                       <span class="s">&#39;cause issues if enable or chaco components &#39;</span>
+                       <span class="s">&#39;are used.&#39;</span><span class="p">)</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">enaml_toolkit</span><span class="p">()</span>
+</div>
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">usage</span> <span class="o">=</span> <span class="s">&#39;usage: %prog [options] enaml_file [script arguments]&#39;</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">optparse</span><span class="o">.</span><span class="n">OptionParser</span><span class="p">(</span><span class="n">usage</span><span class="o">=</span><span class="n">usage</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="n">__doc__</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">allow_interspersed_args</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s">&#39;-c&#39;</span><span class="p">,</span> <span class="s">&#39;--component&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&#39;Main&#39;</span><span class="p">,</span>
+                      <span class="n">help</span><span class="o">=</span><span class="s">&#39;The component to view&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s">&#39;-t&#39;</span><span class="p">,</span> <span class="s">&#39;--toolkit&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&#39;qt4&#39;</span><span class="p">,</span>
+                      <span class="n">help</span><span class="o">=</span><span class="s">&#39;The GUI toolikit to use&#39;</span><span class="p">)</span>
+
+    <span class="n">options</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&#39;No .enaml file specified&#39;</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">enaml_file</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">script_argv</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">enaml_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">enaml_code</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="c"># Parse and compile the Enaml source into a code object</span>
+    <span class="n">ast</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">enaml_code</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">enaml_file</span><span class="p">)</span>
+    <span class="n">code</span> <span class="o">=</span> <span class="n">EnamlCompiler</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">ast</span><span class="p">,</span> <span class="n">enaml_file</span><span class="p">)</span>
+
+    <span class="c"># Create a proper module in which to execute the compiled code so</span>
+    <span class="c"># that exceptions get reported with better meaning</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">types</span><span class="o">.</span><span class="n">ModuleType</span><span class="p">(</span><span class="s">&#39;__main__&#39;</span><span class="p">)</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">__file__</span> <span class="o">=</span> <span class="n">enaml_file</span>
+    <span class="n">ns</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">__dict__</span>
+
+    <span class="c"># Put the directory of the Enaml file first in the path so relative imports</span>
+    <span class="c"># can work.</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">enaml_file</span><span class="p">)))</span>
+    <span class="c"># Bung in the command line arguments.</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">argv</span> <span class="o">=</span> <span class="p">[</span><span class="n">enaml_file</span><span class="p">]</span> <span class="o">+</span> <span class="n">script_argv</span>
+    <span class="k">with</span> <span class="n">imports</span><span class="p">():</span>
+        <span class="k">exec</span> <span class="n">code</span> <span class="ow">in</span> <span class="n">ns</span>
+
+    <span class="n">requested</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">component</span>
+    <span class="k">if</span> <span class="n">requested</span> <span class="ow">in</span> <span class="n">ns</span><span class="p">:</span>
+        <span class="n">component</span> <span class="o">=</span> <span class="n">ns</span><span class="p">[</span><span class="n">requested</span><span class="p">]</span>
+        <span class="n">descr</span> <span class="o">=</span> <span class="s">&#39;Enaml-run &quot;</span><span class="si">%s</span><span class="s">&quot; view&#39;</span> <span class="o">%</span> <span class="n">requested</span>
+        <span class="n">app</span> <span class="o">=</span> <span class="n">simple_app</span><span class="p">(</span><span class="n">requested</span><span class="p">,</span> <span class="n">descr</span><span class="p">,</span> <span class="n">component</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">toolkit</span> <span class="o">==</span> <span class="s">&#39;wx&#39;</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">enaml.wx.wx_local_server</span> <span class="kn">import</span> <span class="n">WxLocalServer</span>
+            <span class="n">server</span> <span class="o">=</span> <span class="n">WxLocalServer</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>        
+        <span class="k">else</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">enaml.qt.qt_local_server</span> <span class="kn">import</span> <span class="n">QtLocalServer</span>
+            <span class="n">server</span> <span class="o">=</span> <span class="n">QtLocalServer</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="n">server</span><span class="o">.</span><span class="n">local_client</span><span class="p">()</span>
+        <span class="n">client</span><span class="o">.</span><span class="n">start_session</span><span class="p">(</span><span class="n">requested</span><span class="p">)</span>
+        <span class="n">server</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="s">&#39;main&#39;</span> <span class="ow">in</span> <span class="n">ns</span><span class="p">:</span>
+        <span class="n">ns</span><span class="p">[</span><span class="s">&#39;main&#39;</span><span class="p">]()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;Could not find component &#39;</span><span class="si">%s</span><span class="s">&#39;&quot;</span> <span class="o">%</span> <span class="n">options</span><span class="o">.</span><span class="n">component</span>
+        <span class="k">print</span> <span class="n">msg</span>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.runner</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Sep 11, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

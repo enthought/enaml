@@ -1,0 +1,259 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.widgets.bounded_date &mdash; enaml 0.3alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.3alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.3alpha documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.widgets.bounded_date</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.widgets.bounded_date</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span> <span class="k">as</span> <span class="n">py_date</span>
+
+<span class="kn">from</span> <span class="nn">dateutil.parser</span> <span class="kn">import</span> <span class="n">parse</span> <span class="k">as</span> <span class="n">parse_iso_dt</span>
+<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">Date</span><span class="p">,</span> <span class="n">Property</span><span class="p">,</span> <span class="n">TraitError</span><span class="p">,</span> <span class="n">on_trait_change</span>
+
+<span class="kn">from</span> <span class="nn">enaml.core.trait_types</span> <span class="kn">import</span> <span class="n">Bounded</span>
+
+<span class="kn">from</span> <span class="nn">.constraints_widget</span> <span class="kn">import</span> <span class="n">ConstraintsWidget</span>
+
+
+<div class="viewcode-block" id="BoundedDate"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.bounded_date.BoundedDate.html#enaml.widgets.bounded_date.BoundedDate">[docs]</a><span class="k">class</span> <span class="nc">BoundedDate</span><span class="p">(</span><span class="n">ConstraintsWidget</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A base class for components which edit a Python datetime.date </span>
+<span class="sd">    object bounded between minimum and maximum values. </span>
+
+<span class="sd">    This class is not meant to be used directly.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#: The minimum date available in the date edit. If not defined then</span>
+    <span class="c">#: the default value is September 14, 1752.</span>
+    <span class="n">minimum</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">Date</span><span class="p">,</span> <span class="n">depends_on</span> <span class="o">=</span><span class="s">&#39;_minimum&#39;</span><span class="p">)</span>
+
+    <span class="c">#: The internal minimum date storage</span>
+    <span class="n">_minimum</span> <span class="o">=</span> <span class="n">Date</span><span class="p">(</span><span class="n">py_date</span><span class="p">(</span><span class="mi">1752</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">14</span><span class="p">))</span>
+
+    <span class="c">#: The maximum date available in the date edit. If not defined then</span>
+    <span class="c">#: the default value is December 31, 7999.</span>
+    <span class="n">maximum</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">Date</span><span class="p">,</span> <span class="n">depends_on</span> <span class="o">=</span><span class="s">&#39;_maximum&#39;</span><span class="p">)</span>
+
+    <span class="c">#: The internal maximum date storage</span>
+    <span class="n">_maximum</span> <span class="o">=</span> <span class="n">Date</span><span class="p">(</span><span class="n">py_date</span><span class="p">(</span><span class="mi">7999</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">31</span><span class="p">))</span>
+
+    <span class="c">#: The currently selected date. Default is the current date. The</span>
+    <span class="c">#: value is bounded between :attr:`minimum` and :attr:`maximum`. </span>
+    <span class="n">date</span> <span class="o">=</span> <span class="n">Bounded</span><span class="p">(</span><span class="n">Date</span><span class="p">(</span><span class="n">py_date</span><span class="o">.</span><span class="n">today</span><span class="p">()),</span> <span class="n">low</span><span class="o">=</span><span class="s">&#39;minimum&#39;</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="s">&#39;maximum&#39;</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Initialization</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="BoundedDate.snapshot"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.bounded_date.BoundedDate.html#enaml.widgets.bounded_date.BoundedDate.snapshot">[docs]</a>    <span class="k">def</span> <span class="nf">snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Return a dictionary which contains all the state necessary to</span>
+<span class="sd">        initialize a client widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">snap</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">BoundedDate</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">snapshot</span><span class="p">()</span>
+        <span class="n">snap</span><span class="p">[</span><span class="s">&#39;minimum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">minimum</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
+        <span class="n">snap</span><span class="p">[</span><span class="s">&#39;maximum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maximum</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
+        <span class="n">snap</span><span class="p">[</span><span class="s">&#39;date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">snap</span>
+</div>
+<div class="viewcode-block" id="BoundedDate.bind"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.bounded_date.BoundedDate.html#enaml.widgets.bounded_date.BoundedDate.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A method called after initialization which allows the widget</span>
+<span class="sd">        to bind any event handlers necessary.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BoundedDate</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">bind</span><span class="p">()</span>
+        <span class="n">otc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_trait_change</span>
+        <span class="n">otc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send_minimum</span><span class="p">,</span> <span class="s">&#39;minimum&#39;</span><span class="p">)</span>
+        <span class="n">otc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send_maximum</span><span class="p">,</span> <span class="s">&#39;maximum&#39;</span><span class="p">)</span>
+        <span class="n">otc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send_date</span><span class="p">,</span> <span class="s">&#39;date&#39;</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Message Handling</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="BoundedDate.on_action_date_changed"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.bounded_date.BoundedDate.html#enaml.widgets.bounded_date.BoundedDate.on_action_date_changed">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_date_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;date_changed&#39; action from the UI control.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">date</span> <span class="o">=</span> <span class="n">parse_iso_dt</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s">&#39;date&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_guarded</span><span class="p">(</span><span class="n">date</span><span class="o">=</span><span class="n">date</span><span class="p">)</span>
+</div>
+    <span class="k">def</span> <span class="nf">_send_minimum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Send the minimum date to the client widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;minimum&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">minimum</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_action</span><span class="p">(</span><span class="s">&#39;set_minimum&#39;</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_send_maximum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Send the maximum date to the client widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;maximum&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">maximum</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_action</span><span class="p">(</span><span class="s">&#39;set_maximum&#39;</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_send_date</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Send the current date to the client widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s">&#39;date&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loopback_guard</span><span class="p">:</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;date&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">send_action</span><span class="p">(</span><span class="s">&#39;set_date&#39;</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Property methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">_get_minimum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The property getter for the minimum date.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minimum</span>
+
+    <span class="k">def</span> <span class="nf">_set_minimum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the minimum date. Addtional checks are applied to make </span>
+<span class="sd">        sure that :attr:`minimum` &lt; :attr:`maximum`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">date</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">maximum</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;The minimum date should be smaller than the current &quot;</span>
+                   <span class="s">&quot;maximum date({0}), but a value of {1} was given.&quot;</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">maximum</span><span class="p">,</span> <span class="n">date</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">TraitError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_minimum</span> <span class="o">=</span> <span class="n">date</span>
+
+    <span class="k">def</span> <span class="nf">_get_maximum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The property getter for the maximum date.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maximum</span>
+
+    <span class="k">def</span> <span class="nf">_set_maximum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the maximum date. Addtional checks are applied to make </span>
+<span class="sd">        sure that :attr:`minimum` &lt; :attr:`maximum`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">date</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">minimum</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;The maximum date should be larger than the current &quot;</span>
+                   <span class="s">&quot;minimum date({0}), but a value of {1} was given.&quot;</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">minimum</span><span class="p">,</span> <span class="n">date</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">TraitError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_maximum</span> <span class="o">=</span> <span class="n">date</span>
+    
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Private API</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="nd">@on_trait_change</span><span class="p">(</span><span class="s">&#39;minimum, maximum&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_adapt_date</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Actively adapt the date to lie within the boundaries.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">initialized</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">date</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">minimum</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">maximum</span><span class="p">)</span>
+</pre></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.widgets.bounded_date</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Sep 11, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

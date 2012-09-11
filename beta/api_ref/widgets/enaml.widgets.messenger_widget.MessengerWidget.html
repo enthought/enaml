@@ -1,0 +1,579 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>MessengerWidget &mdash; enaml 0.3alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.3alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.3alpha documentation" href="../../index.html" />
+    <link rel="up" title="Widgets" href="../enaml.widgets.html" />
+    <link rel="next" title="WidgetComponent" href="enaml.widgets.widget_component.WidgetComponent.html" />
+    <link rel="prev" title="Enaml Standard Widget Library" href="../std_library_ref.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.widget_component.WidgetComponent.html" title="WidgetComponent"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../std_library_ref.html" title="Enaml Standard Widget Library"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" accesskey="U">Widgets</a> &raquo;</li>
+  
+    <li><a href="#">MessengerWidget</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">MessengerWidget</a><ul>
+<li><a class="reference internal" href="#backends">Backends</a><ul>
+<li><a class="reference internal" href="#qt">Qt</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/api_ref/widgets/enaml.widgets.messenger_widget.MessengerWidget.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="messengerwidget">
+<h1>MessengerWidget<a class="headerlink" href="#messengerwidget" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="enaml.widgets.messenger_widget.MessengerWidget">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.messenger_widget.</tt><tt class="descname">MessengerWidget</tt><big>(</big><em>parent=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/messenger_widget.html#MessengerWidget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.messenger_widget.MessengerWidget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">enaml.core.declarative.Declarative</span></tt></p>
+<p>The base class of all widget classes in Enaml.</p>
+<p>This extends Declarative with the ability to send and receive
+commands to and from a client.</p>
+<dl class="attribute">
+<dt id="enaml.widgets.messenger_widget.MessengerWidget.session">
+<tt class="descname">session</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.messenger_widget.MessengerWidget.session" title="Permalink to this definition">¶</a></dt>
+<dd><p>The session object to use for sending messages to the client.
+This will be initially set by the Session object when it takes
+ownership of the view. It should not typically be changed by
+user code. Only a weakref to the Session object is stored.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.messenger_widget.MessengerWidget.widget_id">
+<tt class="descname">widget_id</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.messenger_widget.MessengerWidget.widget_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>The unique messaging identifier for this widget. It is generated
+automatically and should not typically be changed by user code.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.messenger_widget.MessengerWidget.loopback_guard">
+<tt class="descname">loopback_guard</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.messenger_widget.MessengerWidget.loopback_guard" title="Permalink to this definition">¶</a></dt>
+<dd><p>A loopback guard which can be used to prevent a loopback cycle
+of messages when setting attributes from within a handler.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.messenger_widget.MessengerWidget.set_session">
+<tt class="descname">set_session</tt><big>(</big><em>session</em><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/messenger_widget.html#MessengerWidget.set_session"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.messenger_widget.MessengerWidget.set_session" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply the session object to this component and its subtree.</p>
+<p>This method will be called by the Session object when it takes
+ownership of the view. If may be called later by child change
+handlers to make sure the whole tree is operating on the same
+session. This method should not typically be called by user
+code.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>session</strong> (<em>Session</em>) &#8211; The Session object which should be used by this view.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.messenger_widget.MessengerWidget.handle_action">
+<tt class="descname">handle_action</tt><big>(</big><em>action</em>, <em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/messenger_widget.html#MessengerWidget.handle_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.messenger_widget.MessengerWidget.handle_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle an action sent from the client of this widget.</p>
+<p>This is called by the widget&#8217;s Session object when the client
+of the widget sends a message to this widget.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>action</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The action to be performed by the widget.</li>
+<li><strong>content</strong> (<em>ObjectDict</em>) &#8211; The content dictionary for the action.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.messenger_widget.MessengerWidget.send_action">
+<tt class="descname">send_action</tt><big>(</big><em>action</em>, <em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/messenger_widget.html#MessengerWidget.send_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.messenger_widget.MessengerWidget.send_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send an action to the client of this widget.</p>
+<p>This method can be called to send an unsolicited message of
+type &#8216;widget_action&#8217; to the client of this widget.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>action</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The action for the message.</li>
+<li><strong>content</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; The content of the message.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.messenger_widget.MessengerWidget.snapshot">
+<tt class="descname">snapshot</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/messenger_widget.html#MessengerWidget.snapshot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.messenger_widget.MessengerWidget.snapshot" title="Permalink to this definition">¶</a></dt>
+<dd><p>An overridden method which updates the superclass snapshot.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.messenger_widget.MessengerWidget.bind">
+<tt class="descname">bind</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/messenger_widget.html#MessengerWidget.bind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.messenger_widget.MessengerWidget.bind" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method which should be called when preparing a widget for
+publishing.</p>
+<p>The intent of this method is to allow a widget to hook up its
+trait change notification handlers which will send messages to
+the client. It&#8217;s assumed that this method will only be called
+once by the object which manages the process of preparing a 
+widget for communication.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.messenger_widget.MessengerWidget.publish_attributes">
+<tt class="descname">publish_attributes</tt><big>(</big><em>*attrs</em><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/messenger_widget.html#MessengerWidget.publish_attributes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.messenger_widget.MessengerWidget.publish_attributes" title="Permalink to this definition">¶</a></dt>
+<dd><p>A convenience method provided for subclasses to use to 
+publish an arbitrary number of attributes to the client widet.</p>
+<p>The action for the message is created by prefixing &#8216;set-&#8216; to the
+name of the changed attribute. This method is not intended to 
+meet the needs of <em>all</em> attribute publishing. Rather it is meant
+to handle most of the simple cases. More complex cases will need
+to implement their own dispatching handlers.</p>
+<dl class="docutils">
+<dt><a href="#id1"><span class="problematic" id="id2">*</span></a>attrs</dt>
+<dd>The string names of the attributes to publish to the client.
+The values of these attributes are expected to be JSON
+serializable. More complex values should use their own 
+dispatch handlers.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.messenger_widget.MessengerWidget.set_guarded">
+<tt class="descname">set_guarded</tt><big>(</big><em>**attrs</em><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/messenger_widget.html#MessengerWidget.set_guarded"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.messenger_widget.MessengerWidget.set_guarded" title="Permalink to this definition">¶</a></dt>
+<dd><p>A convenience method provided for subclasses to set a
+sequence of attributes from within a loopback guard.</p>
+<dl class="docutils">
+<dt><a href="#id3"><span class="problematic" id="id4">**</span></a>attrs</dt>
+<dd>The attributes which should be set on the component from
+within a loopback guard context.</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.messenger_widget.MessengerWidget.__implements__">
+<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.widgets.messenger_widget.MessengerWidget.__implements__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="backends">
+<h2>Backends<a class="headerlink" href="#backends" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="qt">
+<h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-e7d76c7a3cacad2f8c7337f295376ed25bb3520f.png" alt="Inheritance diagram of enaml.qt.qt_messenger_widget.QtMessengerWidget" usemap="#inheritance44cf1db022" class="inheritance"/>
+<map id="inheritance44cf1db022" name="inheritance44cf1db022">
+<area shape="rect" id="node1" href="#enaml.qt.qt_messenger_widget.QtMessengerWidget" title="QtMessengerWidget" alt="" coords="6,5,157,35"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.qt.qt_messenger_widget.QtMessengerWidget">
+<em class="property">class </em><tt class="descclassname">enaml.qt.qt_messenger_widget.</tt><tt class="descname">QtMessengerWidget</tt><big>(</big><em>parent</em>, <em>widget_id</em>, <em>session</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_messenger_widget.html#QtMessengerWidget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_messenger_widget.QtMessengerWidget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>The base class of the Qt widgets wrappers for a Qt Enaml client.</p>
+<dl class="method">
+<dt id="enaml.qt.qt_messenger_widget.QtMessengerWidget.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>parent</em>, <em>widget_id</em>, <em>session</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_messenger_widget.html#QtMessengerWidget.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_messenger_widget.QtMessengerWidget.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize a QtMessengerWidget</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>parent</strong> (<em>QtMessengerWidget or None</em>) &#8211; The parent widget of this widget, or None if this widget has
+no parent.</li>
+<li><strong>widget_id</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The identifier string for this widget.</li>
+<li><strong>session</strong> (<em>QtClientSession</em>) &#8211; The client session object to use for communicating with the
+server widget.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_messenger_widget.QtMessengerWidget.handle_action">
+<tt class="descname">handle_action</tt><big>(</big><em>action</em>, <em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_messenger_widget.html#QtMessengerWidget.handle_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_messenger_widget.QtMessengerWidget.handle_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle an action sent from the server widget</p>
+<p>This is called by the QtClientSession object when the server
+widget sends a message to this widget.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>action</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The action to be performed by the widget.</li>
+<li><strong>content</strong> (<em>ObjectDict</em>) &#8211; The content dictionary for the action.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_messenger_widget.QtMessengerWidget.send_action">
+<tt class="descname">send_action</tt><big>(</big><em>action</em>, <em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_messenger_widget.html#QtMessengerWidget.send_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_messenger_widget.QtMessengerWidget.send_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send an action to the server widget.</p>
+<p>This method can be called to send an unsolicited message of
+type &#8216;widget_action&#8217; to the server widget for this widget.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>action</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The action for the message.</li>
+<li><strong>content</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; The content of the message.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.qt.qt_messenger_widget.QtMessengerWidget.loopback_guard">
+<tt class="descname">loopback_guard</tt><a class="reference internal" href="../../_modules/enaml/qt/qt_messenger_widget.html#QtMessengerWidget.loopback_guard"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_messenger_widget.QtMessengerWidget.loopback_guard" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lazily creates and returns a LoopbackGuard for convenient 
+use by subclasses.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_messenger_widget.QtMessengerWidget.parent">
+<tt class="descname">parent</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_messenger_widget.html#QtMessengerWidget.parent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_messenger_widget.QtMessengerWidget.parent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the parent of this messenger widget.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (QtMessengerWidget or None) &#8211; The parent of this messenger widget, or None if it has no parent.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_messenger_widget.QtMessengerWidget.children">
+<tt class="descname">children</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_messenger_widget.html#QtMessengerWidget.children"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_messenger_widget.QtMessengerWidget.children" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the children of this widget.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (list) &#8211; The list of children of this widget. This list should not be modified in place by user code.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_messenger_widget.QtMessengerWidget.add_child">
+<tt class="descname">add_child</tt><big>(</big><em>child</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_messenger_widget.html#QtMessengerWidget.add_child"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_messenger_widget.QtMessengerWidget.add_child" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a child widget to this widget.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>child</strong> (<em>QtMessengerWidget</em>) &#8211; The child widget to add to this widget.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_messenger_widget.QtMessengerWidget.insert_child">
+<tt class="descname">insert_child</tt><big>(</big><em>index</em>, <em>child</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_messenger_widget.html#QtMessengerWidget.insert_child"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_messenger_widget.QtMessengerWidget.insert_child" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert a child widget into this widget.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>index</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The target index for the child widget.</li>
+<li><strong>child</strong> (<em>QtMessengerWidget</em>) &#8211; The child widget to insert into this widget.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_messenger_widget.QtMessengerWidget.remove_child">
+<tt class="descname">remove_child</tt><big>(</big><em>child</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_messenger_widget.html#QtMessengerWidget.remove_child"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_messenger_widget.QtMessengerWidget.remove_child" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove the child widget from this widget.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>child</strong> (<em>QtMessengerWidget</em>) &#8211; The child widget to remove from this widget.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_messenger_widget.QtMessengerWidget.find_child">
+<tt class="descname">find_child</tt><big>(</big><em>widget_id</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_messenger_widget.html#QtMessengerWidget.find_child"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_messenger_widget.QtMessengerWidget.find_child" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the child with the given widget id.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>widget_id</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The widget identifier for the target widget.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (QtMessengerWidget or None) &#8211; The child widget or None if its not found.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_messenger_widget.QtMessengerWidget.widget">
+<tt class="descname">widget</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_messenger_widget.html#QtMessengerWidget.widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_messenger_widget.QtMessengerWidget.widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the toolkit widget for this messenger widget.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (QWidget) &#8211; The toolkit widget for this messenger widget, or None if it does not have a toolkit widget.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_messenger_widget.QtMessengerWidget.widget_id">
+<tt class="descname">widget_id</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_messenger_widget.html#QtMessengerWidget.widget_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_messenger_widget.QtMessengerWidget.widget_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the widget id for the messenger widget.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (str) &#8211; The widget identifier for this messenger widget.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_messenger_widget.QtMessengerWidget.create_widget">
+<tt class="descname">create_widget</tt><big>(</big><em>parent</em>, <em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_messenger_widget.html#QtMessengerWidget.create_widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_messenger_widget.QtMessengerWidget.create_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method which must be implemented by subclasses.</p>
+<p>This method is called by the create(...) method. It should 
+create and return the underlying Qt widget. Implementations 
+of this method should <em>not</em> call the superclass version.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>parent</strong> (<em>QWidget or None</em>) &#8211; The parent Qt widget for this control, or None if if the
+control does not have a parent.</li>
+<li><strong>tree</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; The dictionary representation of the tree for this object.
+This is provided in the even that the component needs to
+create a different type of widget based on the information
+in the tree.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_messenger_widget.QtMessengerWidget.create">
+<tt class="descname">create</tt><big>(</big><em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_messenger_widget.html#QtMessengerWidget.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_messenger_widget.QtMessengerWidget.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method called by the application when creating the UI.</p>
+<p>The default implementation of this method calls &#8216;create_widget&#8217;
+and assigns the results to the &#8216;widget&#8217; attribute, so subclasses
+must be sure to call the superclass method as the first order of
+business.</p>
+<p>This method is called by the application in a top-down fashion.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tree</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; The dictionary representation of the tree for this object.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_messenger_widget.QtMessengerWidget.init_layout">
+<tt class="descname">init_layout</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_messenger_widget.html#QtMessengerWidget.init_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_messenger_widget.QtMessengerWidget.init_layout" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method that allows widgets to do layout initialization.</p>
+<p>This method is called after all widgets in a tree have had
+their &#8216;create&#8217; method called. It is useful for doing any
+initialization related to layout.</p>
+<p>The default implementation of this method is a no-op in order
+to be super() friendly.</p>
+<p>This method is called by the application in a bottom-up order.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_messenger_widget.QtMessengerWidget.destroy">
+<tt class="descname">destroy</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_messenger_widget.html#QtMessengerWidget.destroy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_messenger_widget.QtMessengerWidget.destroy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Destroy this widget.</p>
+<dl class="docutils">
+<dt>Destruction is performed in the following order:</dt>
+<dd><ol class="first last arabic simple">
+<li>The &#8216;destroy&#8217; method is called on all children.</li>
+<li>The reference to the children are dropped.</li>
+<li>The object removes itself from its parent.</li>
+<li>The parent reference is set to None.</li>
+<li>The underyling Qt widget is hidden and unparented.</li>
+<li>The object removes itself from the session.</li>
+</ol>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.qt.qt_messenger_widget.QtMessengerWidget.__weakref__">
+<tt class="descname">__weakref__</tt><a class="headerlink" href="#enaml.qt.qt_messenger_widget.QtMessengerWidget.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.widget_component.WidgetComponent.html" title="WidgetComponent"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../std_library_ref.html" title="Enaml Standard Widget Library"
+             >previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" >Widgets</a> &raquo;</li>
+  
+    <li><a href="#">MessengerWidget</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Sep 11, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,206 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.widgets.abstract_button &mdash; enaml 0.3alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.3alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.3alpha documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.widgets.abstract_button</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.widgets.abstract_button</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#from base64 import b64encode</span>
+
+<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">Bool</span><span class="p">,</span> <span class="n">Unicode</span><span class="p">,</span> <span class="n">Tuple</span><span class="c">#, Instance</span>
+
+<span class="kn">from</span> <span class="nn">enaml.core.trait_types</span> <span class="kn">import</span> <span class="n">EnamlEvent</span>
+
+<span class="kn">from</span> <span class="nn">.constraints_widget</span> <span class="kn">import</span> <span class="n">ConstraintsWidget</span>
+<span class="c">#from ..noncomponents.image.abstract_image import AbstractImage</span>
+<span class="c">#from ..noncomponents.image import ImageFromFile</span>
+
+
+<div class="viewcode-block" id="AbstractButton"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.abstract_button.AbstractButton.html#enaml.widgets.abstract_button.AbstractButton">[docs]</a><span class="k">class</span> <span class="nc">AbstractButton</span><span class="p">(</span><span class="n">ConstraintsWidget</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A base class which provides functionality common for several</span>
+<span class="sd">    button-like widgets.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#: The text to use as the button&#39;s label.</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">Unicode</span>
+
+    <span class="c">#: The icon to use for the button.</span>
+    <span class="c">#icon = Instance(AbstractImage, ImageFromFile(&#39;&#39;))</span>
+
+    <span class="c">#: The size to use for the icon.</span>
+    <span class="n">icon_size</span> <span class="o">=</span> <span class="n">Tuple</span>
+
+    <span class="c">#: Whether or not the button is checkable. The default is False.</span>
+    <span class="n">checkable</span> <span class="o">=</span> <span class="n">Bool</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+
+    <span class="c">#: Whether a checkable button is currently checked.</span>
+    <span class="n">checked</span> <span class="o">=</span> <span class="n">Bool</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+
+    <span class="c">#: Fired when the button is pressed then released. The payload will</span>
+    <span class="c">#: be the current checked state.</span>
+    <span class="n">clicked</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
+
+    <span class="c">#: Fired when a checkable button is toggled. The payload will be</span>
+    <span class="c">#: the current checked state.</span>
+    <span class="n">toggled</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
+
+    <span class="c">#: How strongly a component hugs it&#39;s contents&#39; width. Buttons hug</span>
+    <span class="c">#: their contents&#39; width weakly by default.</span>
+    <span class="n">hug_width</span> <span class="o">=</span> <span class="s">&#39;weak&#39;</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Initialization</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="AbstractButton.snapshot"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.abstract_button.AbstractButton.html#enaml.widgets.abstract_button.AbstractButton.snapshot">[docs]</a>    <span class="k">def</span> <span class="nf">snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the snapshot for an abstract button.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">snap</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">AbstractButton</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">snapshot</span><span class="p">()</span>
+        <span class="n">snap</span><span class="p">[</span><span class="s">&#39;text&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span>
+        <span class="n">snap</span><span class="p">[</span><span class="s">&#39;checkable&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkable</span>
+        <span class="n">snap</span><span class="p">[</span><span class="s">&#39;checked&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">checked</span>
+        <span class="n">snap</span><span class="p">[</span><span class="s">&#39;icon_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">icon_size</span>
+        <span class="c">#snap[&#39;icon&#39;] = self.icon.as_dict()</span>
+        <span class="k">return</span> <span class="n">snap</span>
+</div>
+<div class="viewcode-block" id="AbstractButton.bind"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.abstract_button.AbstractButton.html#enaml.widgets.abstract_button.AbstractButton.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Bind the change handlers for an abstract button.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">AbstractButton</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">bind</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">publish_attributes</span><span class="p">(</span><span class="s">&#39;text&#39;</span><span class="p">,</span> <span class="s">&#39;checkable&#39;</span><span class="p">,</span> <span class="s">&#39;checked&#39;</span><span class="p">,</span> <span class="s">&#39;icon_size&#39;</span><span class="p">)</span>
+        <span class="c">#self.on_trait_change(self._send_icon, &#39;icon&#39;)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Message Handling</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="AbstractButton.on_action_clicked"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.abstract_button.AbstractButton.html#enaml.widgets.abstract_button.AbstractButton.on_action_clicked">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;clicked&#39; action from the UI widget. </span>
+
+<span class="sd">        The content will contain the current checked state.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">checked</span> <span class="o">=</span> <span class="n">content</span><span class="p">[</span><span class="s">&#39;checked&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_guarded</span><span class="p">(</span><span class="n">checked</span><span class="o">=</span><span class="n">checked</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clicked</span><span class="p">(</span><span class="n">checked</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="AbstractButton.on_action_toggled"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.abstract_button.AbstractButton.html#enaml.widgets.abstract_button.AbstractButton.on_action_toggled">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_toggled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;toggled&#39; action from the UI widget. </span>
+
+<span class="sd">        The payload will contain the current checked state.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">checked</span> <span class="o">=</span> <span class="n">content</span><span class="p">[</span><span class="s">&#39;checked&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_guarded</span><span class="p">(</span><span class="n">checked</span><span class="o">=</span><span class="n">checked</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toggled</span><span class="p">(</span><span class="n">checked</span><span class="p">)</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.widgets.abstract_button</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Sep 11, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

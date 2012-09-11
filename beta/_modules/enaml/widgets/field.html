@@ -1,0 +1,247 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.widgets.field &mdash; enaml 0.3alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.3alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.3alpha documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.widgets.field</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.widgets.field</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2012, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">Bool</span><span class="p">,</span> <span class="n">Int</span><span class="p">,</span> <span class="n">Unicode</span><span class="p">,</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Instance</span>
+
+<span class="kn">from</span> <span class="nn">enaml.validation.validator</span> <span class="kn">import</span> <span class="n">Validator</span>
+
+<span class="kn">from</span> <span class="nn">.constraints_widget</span> <span class="kn">import</span> <span class="n">ConstraintsWidget</span>
+
+
+<div class="viewcode-block" id="Field"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.field.Field.html#enaml.widgets.field.Field">[docs]</a><span class="k">class</span> <span class="nc">Field</span><span class="p">(</span><span class="n">ConstraintsWidget</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A single line editable text widget.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#: The unicode text to display in the field.</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">Unicode</span>
+
+    <span class="c">#: The mask to use for text input. </span>
+    <span class="c">#: TODO - describe and implement this mask</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">Unicode</span>
+
+    <span class="c">#: The validator to use for this field. If the validator provides</span>
+    <span class="c">#: a client side validator, then text will only be submitted if it</span>
+    <span class="c">#: passes that validator.</span>
+    <span class="n">validator</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="n">Validator</span><span class="p">)</span>
+
+    <span class="c">#: The list of actions which should cause the client to submit its</span>
+    <span class="c">#: text to the server for validation and update. The currently </span>
+    <span class="c">#: supported values are &#39;lost_focus&#39; and &#39;return_pressed&#39;.</span>
+    <span class="n">submit_triggers</span> <span class="o">=</span> <span class="n">List</span><span class="p">(</span>
+        <span class="n">Enum</span><span class="p">(</span><span class="s">&#39;lost_focus&#39;</span><span class="p">,</span> <span class="s">&#39;return_pressed&#39;</span><span class="p">),</span> <span class="p">[</span><span class="s">&#39;lost_focus&#39;</span><span class="p">,</span> <span class="s">&#39;return_pressed&#39;</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="c">#: The grayed-out text to display if the field is empty and the</span>
+    <span class="c">#: widget doesn&#39;t have focus. Defaults to the empty string.</span>
+    <span class="n">placeholder</span> <span class="o">=</span> <span class="n">Unicode</span>
+
+    <span class="c">#: How to display the text in the field. Valid values are &#39;normal&#39; </span>
+    <span class="c">#: which displays the text as normal, &#39;password&#39; which displays the</span>
+    <span class="c">#: text with an obscured character, and &#39;silent&#39; which displays no</span>
+    <span class="c">#: text at all but still allows input.</span>
+    <span class="n">echo_mode</span> <span class="o">=</span> <span class="n">Enum</span><span class="p">(</span><span class="s">&#39;normal&#39;</span><span class="p">,</span> <span class="s">&#39;password&#39;</span><span class="p">,</span> <span class="s">&#39;silent&#39;</span><span class="p">)</span>
+
+    <span class="c">#: The maximum length of the field in characters. The default value</span>
+    <span class="c">#: is Zero and indicates there is no maximum length.</span>
+    <span class="n">max_length</span> <span class="o">=</span> <span class="n">Int</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c">#: Whether or not the field is read only. Defaults to False.</span>
+    <span class="n">read_only</span> <span class="o">=</span> <span class="n">Bool</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+
+    <span class="c">#: How strongly a component hugs it&#39;s contents&#39; width. Fields ignore </span>
+    <span class="c">#: the width hug by default, so they expand freely in width.</span>
+    <span class="n">hug_width</span> <span class="o">=</span> <span class="s">&#39;ignore&#39;</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Initialization</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="Field.snapshot"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.field.Field.html#enaml.widgets.field.Field.snapshot">[docs]</a>    <span class="k">def</span> <span class="nf">snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the snapshot dict for the field.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">snap</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">Field</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">snapshot</span><span class="p">()</span>
+        <span class="n">snap</span><span class="p">[</span><span class="s">&#39;text&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span>
+        <span class="n">snap</span><span class="p">[</span><span class="s">&#39;validator&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client_validator</span><span class="p">()</span>
+        <span class="n">snap</span><span class="p">[</span><span class="s">&#39;submit_triggers&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">submit_triggers</span>
+        <span class="n">snap</span><span class="p">[</span><span class="s">&#39;placeholder&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">placeholder</span>
+        <span class="n">snap</span><span class="p">[</span><span class="s">&#39;echo_mode&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">echo_mode</span>
+        <span class="n">snap</span><span class="p">[</span><span class="s">&#39;max_length&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_length</span>
+        <span class="n">snap</span><span class="p">[</span><span class="s">&#39;read_only&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_only</span>
+        <span class="k">return</span> <span class="n">snap</span>
+</div>
+<div class="viewcode-block" id="Field.bind"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.field.Field.html#enaml.widgets.field.Field.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A method called after initialization which allows the widget</span>
+<span class="sd">        to bind any event handlers necessary.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Field</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">bind</span><span class="p">()</span>
+        <span class="n">attrs</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s">&#39;text&#39;</span><span class="p">,</span> <span class="s">&#39;placeholder&#39;</span><span class="p">,</span> <span class="s">&#39;echo_mode&#39;</span><span class="p">,</span> <span class="s">&#39;max_length&#39;</span><span class="p">,</span> <span class="s">&#39;read_only&#39;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">publish_attributes</span><span class="p">(</span><span class="o">*</span><span class="n">attrs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">on_trait_change</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send_validator</span><span class="p">,</span> <span class="s">&#39;validator&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">on_trait_change</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send_submit_triggers</span><span class="p">,</span> <span class="s">&#39;submit_triggers[]&#39;</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Private API</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+    <span class="k">def</span> <span class="nf">_client_validator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A private method which returns the current client validator.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validator</span>
+        <span class="k">return</span> <span class="n">v</span><span class="o">.</span><span class="n">client_validator</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="bp">None</span>
+
+    <span class="k">def</span> <span class="nf">_send_validator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Send the new validator to the client widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;validator&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client_validator</span><span class="p">()}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_action</span><span class="p">(</span><span class="s">&#39;set_validator&#39;</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_send_submit_triggers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Send the new submit triggers to the client widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;submit_triggers&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">submit_triggers</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_action</span><span class="p">(</span><span class="s">&#39;set_submit_triggers&#39;</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Message Handling</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="Field.on_action_submit_text"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.field.Field.html#enaml.widgets.field.Field.on_action_submit_text">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_submit_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;submit_text&#39; action from the client widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">edit_text</span> <span class="o">=</span> <span class="n">content</span><span class="p">[</span><span class="s">&#39;text&#39;</span><span class="p">]</span>
+        <span class="n">validator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validator</span>
+        <span class="k">if</span> <span class="n">validator</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">text</span><span class="p">,</span> <span class="n">valid</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">edit_text</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">text</span><span class="p">,</span> <span class="n">valid</span> <span class="o">=</span> <span class="n">edit_text</span><span class="p">,</span> <span class="bp">True</span>
+        <span class="k">if</span> <span class="n">valid</span><span class="p">:</span>
+            <span class="c"># If the new text differs from the original edit text,</span>
+            <span class="c"># we push an update to the client.</span>
+            <span class="k">if</span> <span class="n">text</span> <span class="o">!=</span> <span class="n">edit_text</span><span class="p">:</span>
+                <span class="n">content</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;text&#39;</span><span class="p">:</span> <span class="n">text</span><span class="p">}</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">send_action</span><span class="p">(</span><span class="s">&#39;set_text&#39;</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_guarded</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># notify the client that server validation failed.</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;text&#39;</span><span class="p">:</span> <span class="n">text</span><span class="p">}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">send_action</span><span class="p">(</span><span class="s">&#39;invalid_text&#39;</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.widgets.field</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Sep 11, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

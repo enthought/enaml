@@ -1,0 +1,242 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.qt.qt_text_editor &mdash; enaml 0.3alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.3alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.3alpha documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.qt.qt_text_editor</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.qt.qt_text_editor</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2012, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">.editor.qt_ace_editor_view</span> <span class="kn">import</span> <span class="n">QtAceEditorView</span>
+<span class="kn">from</span> <span class="nn">.qt_constraints_widget</span> <span class="kn">import</span> <span class="n">QtConstraintsWidget</span>
+
+
+<div class="viewcode-block" id="QtTextEditor"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.text_editor.TextEditor.html#enaml.qt.qt_text_editor.QtTextEditor">[docs]</a><span class="k">class</span> <span class="nc">QtTextEditor</span><span class="p">(</span><span class="n">QtConstraintsWidget</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A Qt4 implementation of an Enaml TextEditor.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="QtTextEditor.create"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.text_editor.TextEditor.html#enaml.qt.qt_text_editor.QtTextEditor.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Create the underlying widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">QtAceEditorView</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent_widget</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtTextEditor.initialize"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.text_editor.TextEditor.html#enaml.qt.qt_text_editor.QtTextEditor.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attrs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize the widget&#39;s attributes.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">QtTextEditor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">attrs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="n">attrs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">loadFinished</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_load</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtTextEditor.on_load"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.text_editor.TextEditor.html#enaml.qt.qt_text_editor.QtTextEditor.on_load">[docs]</a>    <span class="k">def</span> <span class="nf">on_load</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The attributes have to be set after the webview</span>
+<span class="sd">        has finished loading, so this function is delayed</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s">&#39;text&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_theme</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s">&#39;theme&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_mode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s">&#39;mode&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_auto_pair</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s">&#39;auto_pair&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_font_size</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s">&#39;font_size&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">show_margin_line</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s">&#39;margin_line&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_margin_line_column</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s">&#39;margin_line_column&#39;</span><span class="p">])</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Message Handlers</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="QtTextEditor.on_message_set_text"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.text_editor.TextEditor.html#enaml.qt.qt_text_editor.QtTextEditor.on_message_set_text">[docs]</a>    <span class="k">def</span> <span class="nf">on_message_set_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">payload</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;set-text&#39; action from the Enaml widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="n">payload</span><span class="p">[</span><span class="s">&#39;text&#39;</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="QtTextEditor.on_message_set_theme"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.text_editor.TextEditor.html#enaml.qt.qt_text_editor.QtTextEditor.on_message_set_theme">[docs]</a>    <span class="k">def</span> <span class="nf">on_message_set_theme</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">payload</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;set-theme&#39; action from the Enaml widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_theme</span><span class="p">(</span><span class="n">payload</span><span class="p">[</span><span class="s">&#39;theme&#39;</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="QtTextEditor.on_message_set_mode"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.text_editor.TextEditor.html#enaml.qt.qt_text_editor.QtTextEditor.on_message_set_mode">[docs]</a>    <span class="k">def</span> <span class="nf">on_message_set_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">payload</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;set-mode&#39; action from the Enaml widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_mode</span><span class="p">(</span><span class="n">payload</span><span class="p">[</span><span class="s">&#39;mode&#39;</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="QtTextEditor.on_message_set_auto_pair"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.text_editor.TextEditor.html#enaml.qt.qt_text_editor.QtTextEditor.on_message_set_auto_pair">[docs]</a>    <span class="k">def</span> <span class="nf">on_message_set_auto_pair</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">payload</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;set-auto_pair&#39; action from the Enaml widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_auto_pair</span><span class="p">(</span><span class="n">payload</span><span class="p">[</span><span class="s">&#39;auto_pair&#39;</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="QtTextEditor.on_message_set_font_size"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.text_editor.TextEditor.html#enaml.qt.qt_text_editor.QtTextEditor.on_message_set_font_size">[docs]</a>    <span class="k">def</span> <span class="nf">on_message_set_font_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">payload</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;set-font_size&#39; action from the Enaml widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_font_size</span><span class="p">(</span><span class="n">payload</span><span class="p">[</span><span class="s">&#39;font_size&#39;</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="QtTextEditor.on_message_show_margin_line"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.text_editor.TextEditor.html#enaml.qt.qt_text_editor.QtTextEditor.on_message_show_margin_line">[docs]</a>    <span class="k">def</span> <span class="nf">on_message_show_margin_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">payload</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;show-margin_line&#39; action from the Enaml widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">show_margin_line</span><span class="p">(</span><span class="n">payload</span><span class="p">[</span><span class="s">&#39;margin_line&#39;</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="QtTextEditor.on_message_set_margin_line_column"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.text_editor.TextEditor.html#enaml.qt.qt_text_editor.QtTextEditor.on_message_set_margin_line_column">[docs]</a>    <span class="k">def</span> <span class="nf">on_message_set_margin_line_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">payload</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;set-margin_line_column&#39; action from the Enaml widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_margin_line_column</span><span class="p">(</span><span class="n">payload</span><span class="p">[</span><span class="s">&#39;margin_line_column&#39;</span><span class="p">])</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Widget Update Methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="QtTextEditor.set_text"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.text_editor.TextEditor.html#enaml.qt.qt_text_editor.QtTextEditor.set_text">[docs]</a>    <span class="k">def</span> <span class="nf">set_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the text in the underlying widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">editor</span><span class="p">()</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtTextEditor.set_theme"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.text_editor.TextEditor.html#enaml.qt.qt_text_editor.QtTextEditor.set_theme">[docs]</a>    <span class="k">def</span> <span class="nf">set_theme</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theme</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the theme of the underlying editor.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">editor</span><span class="p">()</span><span class="o">.</span><span class="n">set_theme</span><span class="p">(</span><span class="n">theme</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtTextEditor.set_mode"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.text_editor.TextEditor.html#enaml.qt.qt_text_editor.QtTextEditor.set_mode">[docs]</a>    <span class="k">def</span> <span class="nf">set_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the mode of the underlying editor.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">editor</span><span class="p">()</span><span class="o">.</span><span class="n">set_mode</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtTextEditor.set_auto_pair"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.text_editor.TextEditor.html#enaml.qt.qt_text_editor.QtTextEditor.set_auto_pair">[docs]</a>    <span class="k">def</span> <span class="nf">set_auto_pair</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auto_pair</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set whether or not to pair parentheses, braces, etc in the editor</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">editor</span><span class="p">()</span><span class="o">.</span><span class="n">set_auto_pair</span><span class="p">(</span><span class="n">auto_pair</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtTextEditor.set_font_size"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.text_editor.TextEditor.html#enaml.qt.qt_text_editor.QtTextEditor.set_font_size">[docs]</a>    <span class="k">def</span> <span class="nf">set_font_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">font_size</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the font size of the editor</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">editor</span><span class="p">()</span><span class="o">.</span><span class="n">set_font_size</span><span class="p">(</span><span class="n">font_size</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtTextEditor.show_margin_line"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.text_editor.TextEditor.html#enaml.qt.qt_text_editor.QtTextEditor.show_margin_line">[docs]</a>    <span class="k">def</span> <span class="nf">show_margin_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">margin_line</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set whether or not to display the margin line in the editor</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">editor</span><span class="p">()</span><span class="o">.</span><span class="n">show_margin_line</span><span class="p">(</span><span class="n">margin_line</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtTextEditor.set_margin_line_column"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.text_editor.TextEditor.html#enaml.qt.qt_text_editor.QtTextEditor.set_margin_line_column">[docs]</a>    <span class="k">def</span> <span class="nf">set_margin_line_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">margin_line_col</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the column number for the margin line</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">editor</span><span class="p">()</span><span class="o">.</span><span class="n">set_margin_line_column</span><span class="p">(</span><span class="n">margin_line_col</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.qt.qt_text_editor</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Sep 11, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

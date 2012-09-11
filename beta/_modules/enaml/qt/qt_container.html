@@ -1,0 +1,772 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.qt.qt_container &mdash; enaml 0.3alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.3alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.3alpha documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.qt.qt_container</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.qt.qt_container</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2012, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">deque</span>
+
+<span class="kn">from</span> <span class="nn">casuarius</span> <span class="kn">import</span> <span class="n">weak</span>
+<span class="kn">from</span> <span class="nn">enaml.layout.layout_manager</span> <span class="kn">import</span> <span class="n">LayoutManager</span>
+
+<span class="kn">from</span> <span class="nn">.qt.QtCore</span> <span class="kn">import</span> <span class="n">QSize</span><span class="p">,</span> <span class="n">Signal</span>
+<span class="kn">from</span> <span class="nn">.qt.QtGui</span> <span class="kn">import</span> <span class="n">QFrame</span>
+<span class="kn">from</span> <span class="nn">.qt_constraints_widget</span> <span class="kn">import</span> <span class="n">QtConstraintsWidget</span><span class="p">,</span> <span class="n">LayoutBox</span>
+
+
+<span class="k">def</span> <span class="nf">_convert_cn_info</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">owners</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Converts the lhs or rhs of a linear constraint info dict into </span>
+<span class="sd">    its corresponding casuarius object.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cn_type</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">cn_type</span> <span class="o">==</span> <span class="s">&#39;linear_expression&#39;</span><span class="p">:</span>
+        <span class="n">const</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;constant&#39;</span><span class="p">]</span>
+        <span class="n">terms</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;terms&#39;</span><span class="p">]</span>
+        <span class="n">convert</span> <span class="o">=</span> <span class="n">_convert_cn_info</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">convert</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">owners</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">terms</span><span class="p">)</span> <span class="o">+</span> <span class="n">const</span>
+    <span class="k">elif</span> <span class="n">cn_type</span> <span class="o">==</span> <span class="s">&#39;term&#39;</span><span class="p">:</span>
+        <span class="n">coeff</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;coeff&#39;</span><span class="p">]</span>
+        <span class="n">var</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;var&#39;</span><span class="p">]</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">coeff</span> <span class="o">*</span> <span class="n">_convert_cn_info</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">owners</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">cn_type</span> <span class="o">==</span> <span class="s">&#39;linear_symbolic&#39;</span><span class="p">:</span>
+        <span class="n">sym_name</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;-&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">owner_id</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;owner&#39;</span><span class="p">]</span>
+        <span class="n">owner</span> <span class="o">=</span> <span class="n">owners</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">owner_id</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">owner</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">owner</span> <span class="o">=</span> <span class="n">owners</span><span class="p">[</span><span class="n">owner_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">LayoutBox</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">],</span> <span class="n">owner_id</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">owner</span><span class="o">.</span><span class="n">primitive</span><span class="p">(</span><span class="n">sym_name</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Unhandled constraint info type `</span><span class="si">%s</span><span class="s">`&#39;</span> <span class="o">%</span> <span class="n">cn_type</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">res</span>
+
+
+<span class="k">def</span> <span class="nf">as_linear_constraint</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">owners</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Converts a constraint info dict into a casuarius linear</span>
+<span class="sd">    constraint.</span>
+
+<span class="sd">    For constraints specified in the info dict which do not have a </span>
+<span class="sd">    corresponding owner (e.g. those created by box helpers) a </span>
+<span class="sd">    constraint variable will be synthesized.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    info : dict</span>
+<span class="sd">        A dictionary sent from an Enaml widget which specifies the</span>
+<span class="sd">        information for a linear constraint.</span>
+
+<span class="sd">    owners : dict</span>
+<span class="sd">        A mapping from constraint id to an owner object which holds</span>
+<span class="sd">        the actual casuarius constraint variables as attributes.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    result : LinearConstraint</span>
+<span class="sd">        A casuarius linear constraint for the given dict.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s">&#39;linear_constraint&#39;</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;The info dict does not specify a linear constraint.&#39;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="n">convert</span> <span class="o">=</span> <span class="n">_convert_cn_info</span>
+    <span class="n">lhs</span> <span class="o">=</span> <span class="n">convert</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s">&#39;lhs&#39;</span><span class="p">],</span> <span class="n">owners</span><span class="p">)</span>
+    <span class="n">rhs</span> <span class="o">=</span> <span class="n">convert</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s">&#39;rhs&#39;</span><span class="p">],</span> <span class="n">owners</span><span class="p">)</span>
+    <span class="n">op</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;op&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">op</span> <span class="o">==</span> <span class="s">&#39;==&#39;</span><span class="p">:</span>
+        <span class="n">cn</span> <span class="o">=</span> <span class="n">lhs</span> <span class="o">==</span> <span class="n">rhs</span>
+    <span class="k">elif</span> <span class="n">op</span> <span class="o">==</span> <span class="s">&#39;&lt;=&#39;</span><span class="p">:</span>
+        <span class="n">cn</span> <span class="o">=</span> <span class="n">lhs</span> <span class="o">&lt;=</span> <span class="n">rhs</span>
+    <span class="k">elif</span> <span class="n">op</span> <span class="o">==</span> <span class="s">&#39;&gt;=&#39;</span><span class="p">:</span>
+        <span class="n">cn</span> <span class="o">=</span> <span class="n">lhs</span> <span class="o">&gt;=</span> <span class="n">rhs</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Unhandled constraint operator `</span><span class="si">%s</span><span class="s">`&#39;</span> <span class="o">%</span> <span class="n">op</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">cn</span> <span class="o">|</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;strength&#39;</span><span class="p">]</span> <span class="o">|</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;weight&#39;</span><span class="p">]</span>
+
+
+<span class="k">class</span> <span class="nc">QContainer</span><span class="p">(</span><span class="n">QFrame</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A subclass of QFrame which behaves as a container.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#: A signal which is emitted on a resize event.</span>
+    <span class="n">resized</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">()</span>
+
+    <span class="c">#: An invalid QSize used as the default value for class instances.</span>
+    <span class="n">_size_hint</span> <span class="o">=</span> <span class="n">QSize</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">resizeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Converts a resize event into a signal.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">QContainer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">resizeEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resized</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">sizeHint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the previously set size hint. If that size hint is</span>
+<span class="sd">        invalid, the superclass&#39; sizeHint will be used.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">hint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size_hint</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">hint</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
+            <span class="n">hint</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">QContainer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">sizeHint</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">hint</span>
+
+    <span class="k">def</span> <span class="nf">setSizeHint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hint</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the size hint to use for this widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_size_hint</span> <span class="o">=</span> <span class="n">hint</span>
+
+    <span class="k">def</span> <span class="nf">minimumSizeHint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the minimum size hint for the widget.</span>
+
+<span class="sd">        For a QContainer, the minimum size hint is equivalent to the</span>
+<span class="sd">        minimum size as computed by the layout manager.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">minimumSize</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="QtContainer"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.container.Container.html#enaml.qt.qt_container.QtContainer">[docs]</a><span class="k">class</span> <span class="nc">QtContainer</span><span class="p">(</span><span class="n">QtConstraintsWidget</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A Qt implementation of an Enaml Container.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#: Whether or not this container should share its layout with a </span>
+    <span class="c">#: parent container.</span>
+    <span class="n">_share_layout</span> <span class="o">=</span> <span class="bp">False</span>
+
+    <span class="c">#: The padding to use when constraining the layout.</span>
+    <span class="n">_padding</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+
+    <span class="c">#: Whether or not this container owns its layout. A container which</span>
+    <span class="c">#: does not own its layout is not responsible for laying out its</span>
+    <span class="c">#: children on a resize event, and will proxy the call to its owner.</span>
+    <span class="n">_owns_layout</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="c">#: The object which has taken ownership of the layout for this </span>
+    <span class="c">#: container, if any.</span>
+    <span class="n">_layout_owner</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="c">#: The LayoutManager instance to use for solving the layout system</span>
+    <span class="c">#: for this container.</span>
+    <span class="n">_layout_manager</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="c">#: The function to use for refreshing the layout on a resize event.</span>
+    <span class="n">_refresh</span> <span class="o">=</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="bp">None</span>
+
+    <span class="c">#: The table of offsets to use during a layout pass.</span>
+    <span class="n">_offset_table</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c">#: The table of (index, updater) pairs to use during a layout pass.</span>
+    <span class="n">_layout_table</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c">#: A dict mapping constraint owner id to associated LayoutBox</span>
+    <span class="n">_cn_owners</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c">#: A list of the current contents constraints for the widget. </span>
+    <span class="n">_contents_cns</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Setup Methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="QtContainer.create_widget"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.container.Container.html#enaml.qt.qt_container.QtContainer.create_widget">[docs]</a>    <span class="k">def</span> <span class="nf">create_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">tree</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates the underlying QContainer widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">QContainer</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtContainer.create"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.container.Container.html#enaml.qt.qt_container.QtContainer.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tree</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Create and initialize the underlying widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">QtContainer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
+        <span class="n">layout</span> <span class="o">=</span> <span class="n">tree</span><span class="p">[</span><span class="s">&#39;layout&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_share_layout</span> <span class="o">=</span> <span class="n">layout</span><span class="p">[</span><span class="s">&#39;share_layout&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_padding</span> <span class="o">=</span> <span class="n">layout</span><span class="p">[</span><span class="s">&#39;padding&#39;</span><span class="p">]</span>
+        <span class="c"># The resized signal is connected directly to the refresh</span>
+        <span class="c"># method to save the overhead of the extra function call.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">resized</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">refresh</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtContainer.init_layout"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.container.Container.html#enaml.qt.qt_container.QtContainer.init_layout">[docs]</a>    <span class="k">def</span> <span class="nf">init_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initializes the layout for the container. </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">QtContainer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">init_layout</span><span class="p">()</span>
+        <span class="c"># Layout ownership can only be transferred *after* this init</span>
+        <span class="c"># layout method is called, since layout occurs bottom up. So,</span>
+        <span class="c"># we only initialize a layout manager if we are not going to</span>
+        <span class="c"># transfer ownership at some point.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">will_transfer</span><span class="p">():</span>
+            <span class="n">offset_table</span><span class="p">,</span> <span class="n">layout_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_layout_table</span><span class="p">()</span>
+            <span class="n">cns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_constraints</span><span class="p">(</span><span class="n">layout_table</span><span class="p">)</span>
+            <span class="c"># Initializing the layout manager can fail if the objective </span>
+            <span class="c"># function is unbounded. We let that failure occur so it can </span>
+            <span class="c"># be logged. Nothing is stored until it succeeds.</span>
+            <span class="n">manager</span> <span class="o">=</span> <span class="n">LayoutManager</span><span class="p">()</span>
+            <span class="n">manager</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">cns</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_offset_table</span> <span class="o">=</span> <span class="n">offset_table</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_layout_table</span> <span class="o">=</span> <span class="n">layout_table</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_layout_manager</span> <span class="o">=</span> <span class="n">manager</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_refresh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_refresher</span><span class="p">(</span><span class="n">manager</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">refresh_sizes</span><span class="p">()</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Public Layout Handling</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="QtContainer.relayout"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.container.Container.html#enaml.qt.qt_container.QtContainer.relayout">[docs]</a>    <span class="k">def</span> <span class="nf">relayout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Rebuilds the constraints layout for this widget if it owns</span>
+<span class="sd">        the responsibility for laying out its descendents.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_owns_layout</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">init_layout</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_layout_owner</span><span class="o">.</span><span class="n">relayout</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="QtContainer.refresh"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.container.Container.html#enaml.qt.qt_container.QtContainer.refresh">[docs]</a>    <span class="k">def</span> <span class="nf">refresh</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Makes a layout pass over the descendents if this widget owns</span>
+<span class="sd">        the responsibility for their layout.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># The _refresh function is generated on every relayout and has</span>
+        <span class="c"># already taken into account whether or not the container owns</span>
+        <span class="c"># the layout.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_refresh</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="QtContainer.refresh_sizes"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.container.Container.html#enaml.qt.qt_container.QtContainer.refresh_sizes">[docs]</a>    <span class="k">def</span> <span class="nf">refresh_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Refresh the min/max/best sizes for the underlying widget.</span>
+
+<span class="sd">        This method is normally called automatically at the proper</span>
+<span class="sd">        times. It should not normally need to be called by user code.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">setSizeHint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">compute_best_size</span><span class="p">())</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">setMinimumSize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">compute_min_size</span><span class="p">())</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">setMaximumSize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">compute_max_size</span><span class="p">())</span>
+</div>
+<div class="viewcode-block" id="QtContainer.replace_constraints"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.container.Container.html#enaml.qt.qt_container.QtContainer.replace_constraints">[docs]</a>    <span class="k">def</span> <span class="nf">replace_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">old_cns</span><span class="p">,</span> <span class="n">new_cns</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Replace constraints in the given layout.</span>
+
+<span class="sd">        This method can be used to selectively add/remove/replace </span>
+<span class="sd">        constraints in the layout system, when it is more efficient </span>
+<span class="sd">        than performing a full relayout.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        old_cns : list</span>
+<span class="sd">            The list of casuarius constraints to remove from the</span>
+<span class="sd">            the current layout system.</span>
+
+<span class="sd">        new_cns : list</span>
+<span class="sd">            The list of casuarius constraints to add to the </span>
+<span class="sd">            current layout system.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_owns_layout</span><span class="p">:</span>
+            <span class="n">manager</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layout_manager</span>
+            <span class="k">if</span> <span class="n">manager</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">manager</span><span class="o">.</span><span class="n">replace_constraints</span><span class="p">(</span><span class="n">old_cns</span><span class="p">,</span> <span class="n">new_cns</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">refresh_sizes</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+                <span class="c"># XXX I don&#39;t really like this parent refresh hack</span>
+                <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">QtConstraintsWidget</span><span class="p">):</span>
+                    <span class="n">parent</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_layout_owner</span><span class="o">.</span><span class="n">replace_constraints</span><span class="p">(</span><span class="n">old_cns</span><span class="p">,</span> <span class="n">new_cns</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtContainer.layout"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.container.Container.html#enaml.qt.qt_container.QtContainer.layout">[docs]</a>    <span class="k">def</span> <span class="nf">layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The callback invoked by the layout manager when there are</span>
+<span class="sd">        new layout values available.</span>
+
+<span class="sd">        This iterates over the layout table and calls the geometry</span>
+<span class="sd">        updater functions.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># We explicitly don&#39;t use enumerate() to generate the running</span>
+        <span class="c"># index because this method is on the code path of the resize</span>
+        <span class="c"># event and hence called *often*. The entire code path for a</span>
+        <span class="c"># resize event is micro optimized and justified with profiling.</span>
+        <span class="n">offset_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_offset_table</span>
+        <span class="n">layout_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layout_table</span>
+        <span class="n">running_index</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">offset_index</span><span class="p">,</span> <span class="n">updater</span> <span class="ow">in</span> <span class="n">layout_table</span><span class="p">:</span>
+            <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span> <span class="o">=</span> <span class="n">offset_table</span><span class="p">[</span><span class="n">offset_index</span><span class="p">]</span>
+            <span class="n">new_offset</span> <span class="o">=</span> <span class="n">updater</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">)</span>
+            <span class="n">offset_table</span><span class="p">[</span><span class="n">running_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_offset</span>
+            <span class="n">running_index</span> <span class="o">+=</span> <span class="mi">1</span>
+</div>
+<div class="viewcode-block" id="QtContainer.contents_margins"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.container.Container.html#enaml.qt.qt_container.QtContainer.contents_margins">[docs]</a>    <span class="k">def</span> <span class="nf">contents_margins</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get the contents margins for the container. </span>
+
+<span class="sd">        The contents margins are added to the user provided padding</span>
+<span class="sd">        to determine the final offset from a layout box boundary to</span>
+<span class="sd">        the corresponding content line. The default content margins</span>
+<span class="sd">        are zero. This method can be reimplemented by subclasses to</span>
+<span class="sd">        supply different margins.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : tuple</span>
+<span class="sd">            A tuple of &#39;top&#39;, &#39;right&#39;, &#39;bottom&#39;, &#39;left&#39; contents </span>
+<span class="sd">            margins to use for computing the contents constraints.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtContainer.contents_constraints"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.container.Container.html#enaml.qt.qt_container.QtContainer.contents_constraints">[docs]</a>    <span class="k">def</span> <span class="nf">contents_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Create the contents constraints for the container.</span>
+
+<span class="sd">        The contents contraints are generated by combining the user </span>
+<span class="sd">        padding with the margins returned by &#39;contents_margins&#39; method.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : list</span>
+<span class="sd">            The list of casuarius constraints for the content.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contents_cns</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">cns</span><span class="p">:</span>
+            <span class="n">padding</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_padding</span>
+            <span class="n">margins</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contents_margins</span><span class="p">()</span>
+            <span class="n">tval</span><span class="p">,</span> <span class="n">rval</span><span class="p">,</span> <span class="n">bval</span><span class="p">,</span> <span class="n">lval</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">sum</span><span class="p">,</span> <span class="nb">zip</span><span class="p">(</span><span class="n">padding</span><span class="p">,</span> <span class="n">margins</span><span class="p">))</span>
+            <span class="n">primitive</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout_box</span><span class="o">.</span><span class="n">primitive</span>
+            <span class="n">top</span> <span class="o">=</span> <span class="n">primitive</span><span class="p">(</span><span class="s">&#39;top&#39;</span><span class="p">)</span>
+            <span class="n">left</span> <span class="o">=</span> <span class="n">primitive</span><span class="p">(</span><span class="s">&#39;left&#39;</span><span class="p">)</span>
+            <span class="n">width</span> <span class="o">=</span> <span class="n">primitive</span><span class="p">(</span><span class="s">&#39;width&#39;</span><span class="p">)</span>
+            <span class="n">height</span> <span class="o">=</span> <span class="n">primitive</span><span class="p">(</span><span class="s">&#39;height&#39;</span><span class="p">)</span>
+            <span class="n">contents_top</span> <span class="o">=</span> <span class="n">primitive</span><span class="p">(</span><span class="s">&#39;contents_top&#39;</span><span class="p">)</span>
+            <span class="n">contents_left</span> <span class="o">=</span> <span class="n">primitive</span><span class="p">(</span><span class="s">&#39;contents_left&#39;</span><span class="p">)</span>
+            <span class="n">contents_right</span> <span class="o">=</span> <span class="n">primitive</span><span class="p">(</span><span class="s">&#39;contents_right&#39;</span><span class="p">)</span>
+            <span class="n">contents_bottom</span> <span class="o">=</span> <span class="n">primitive</span><span class="p">(</span><span class="s">&#39;contents_bottom&#39;</span><span class="p">)</span>
+            <span class="n">cns</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">contents_top</span> <span class="o">==</span> <span class="p">(</span><span class="n">top</span> <span class="o">+</span> <span class="n">tval</span><span class="p">),</span>
+                <span class="n">contents_left</span> <span class="o">==</span> <span class="p">(</span><span class="n">left</span> <span class="o">+</span> <span class="n">lval</span><span class="p">),</span>
+                <span class="n">contents_right</span> <span class="o">==</span> <span class="p">(</span><span class="n">left</span> <span class="o">+</span> <span class="n">width</span> <span class="o">-</span> <span class="n">rval</span><span class="p">),</span>
+                <span class="n">contents_bottom</span> <span class="o">==</span> <span class="p">(</span><span class="n">top</span> <span class="o">+</span> <span class="n">height</span> <span class="o">-</span> <span class="n">bval</span><span class="p">),</span>
+            <span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_contents_cns</span> <span class="o">=</span> <span class="n">cns</span>
+        <span class="k">return</span> <span class="n">cns</span>
+</div>
+<div class="viewcode-block" id="QtContainer.refresh_contents_constraints"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.container.Container.html#enaml.qt.qt_container.QtContainer.refresh_contents_constraints">[docs]</a>    <span class="k">def</span> <span class="nf">refresh_contents_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Perform a refresh of the contents constraints for the </span>
+<span class="sd">        container.</span>
+
+<span class="sd">        This will replace the old contents constraints with the new</span>
+<span class="sd">        contents constraints.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">old_cns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contents_cns</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_contents_cns</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">new_cns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contents_constraints</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">replace_constraints</span><span class="p">(</span><span class="n">old_cns</span><span class="p">,</span> <span class="n">new_cns</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Private Layout Handling</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+    <span class="k">def</span> <span class="nf">_build_refresher</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manager</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A private method which will build a function which, when</span>
+<span class="sd">        called, will refresh the layout for the container.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        manager : LayoutManager</span>
+<span class="sd">            The layout manager to use when refreshing the layout.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># The return function is a hyper optimized (for Python) closure</span>
+        <span class="c"># in order minimize the amount of work which is performed on the</span>
+        <span class="c"># code path of the resize event. This is explicitly not idiomatic</span>
+        <span class="c"># Python code. It exists purely for the sake of efficiency, </span>
+        <span class="c"># justified with profiling.</span>
+        <span class="n">mgr_layout</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">layout</span>
+        <span class="n">layout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout</span>
+        <span class="n">primitive</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout_box</span><span class="o">.</span><span class="n">primitive</span>
+        <span class="n">width_var</span> <span class="o">=</span> <span class="n">primitive</span><span class="p">(</span><span class="s">&#39;width&#39;</span><span class="p">)</span>
+        <span class="n">height_var</span> <span class="o">=</span> <span class="n">primitive</span><span class="p">(</span><span class="s">&#39;height&#39;</span><span class="p">)</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span>
+        <span class="n">width</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">width</span>
+        <span class="n">height</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">height</span>
+        <span class="k">def</span> <span class="nf">refresher</span><span class="p">():</span>
+            <span class="n">mgr_layout</span><span class="p">(</span><span class="n">layout</span><span class="p">,</span> <span class="n">width_var</span><span class="p">,</span> <span class="n">height_var</span><span class="p">,</span> <span class="p">(</span><span class="n">width</span><span class="p">(),</span> <span class="n">height</span><span class="p">()))</span>
+        <span class="k">return</span> <span class="n">refresher</span>
+
+    <span class="k">def</span> <span class="nf">_build_layout_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A private method which will build the layout table for</span>
+<span class="sd">        this container.</span>
+
+<span class="sd">        A layout table is a pair of flat lists which hold the required</span>
+<span class="sd">        objects for laying out the child widgets of this container.</span>
+<span class="sd">        The flat table is built in advance (and rebuilt if and when</span>
+<span class="sd">        the tree structure changes) so that it&#39;s not necessary to </span>
+<span class="sd">        perform an expensive tree traversal to layout the children</span>
+<span class="sd">        on every resize event.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : (list, list)</span>
+<span class="sd">            The offset table and layout table to use during a resize</span>
+<span class="sd">            event.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># The offset table is a list of (dx, dy) tuples which are the</span>
+        <span class="c"># x, y offsets of children expressed in the coordinates of the</span>
+        <span class="c"># layout owner container. This owner container may be different</span>
+        <span class="c"># from the parent of the widget, and so the delta offset must</span>
+        <span class="c"># be subtracted from the computed geometry values during layout.</span>
+        <span class="c"># The offset table is updated during a layout pass in breadth</span>
+        <span class="c"># first order.</span>
+        <span class="c">#</span>
+        <span class="c"># The layout table is a flat list of (idx, updater) tuples. The</span>
+        <span class="c"># idx is an index into the offset table where the given child</span>
+        <span class="c"># can find the offset to use for its layout. The updater is a</span>
+        <span class="c"># callable provided by the widget which accepts the dx, dy </span>
+        <span class="c"># offset and will update the layout geometry of the widget.</span>
+        <span class="n">zero_offset</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">offset_table</span> <span class="o">=</span> <span class="p">[</span><span class="n">zero_offset</span><span class="p">]</span>
+        <span class="n">layout_table</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">queue</span> <span class="o">=</span> <span class="n">deque</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">child</span><span class="p">)</span> <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">())</span>
+
+        <span class="c"># Micro-optimization: pre-fetch bound methods and store globals</span>
+        <span class="c"># as locals. This method is not on the code path of a resize </span>
+        <span class="c"># event, but it is on the code path of a relayout. If there</span>
+        <span class="c"># are many children, the queue could potentially grow large.</span>
+        <span class="n">push_offset</span> <span class="o">=</span> <span class="n">offset_table</span><span class="o">.</span><span class="n">append</span>
+        <span class="n">push_item</span> <span class="o">=</span> <span class="n">layout_table</span><span class="o">.</span><span class="n">append</span>
+        <span class="n">push</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">append</span>
+        <span class="n">pop</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">popleft</span>
+        <span class="n">QtConstraintsWidget_</span> <span class="o">=</span> <span class="n">QtConstraintsWidget</span>
+        <span class="n">QtContainer_</span> <span class="o">=</span> <span class="n">QtContainer</span>
+        <span class="n">isinst</span> <span class="o">=</span> <span class="nb">isinstance</span>
+
+        <span class="c"># The queue yields the items in the tree in breadth-first order</span>
+        <span class="c"># starting with the immediate children of this container. If a</span>
+        <span class="c"># given child is a container that will share its layout, then </span>
+        <span class="c"># the children of that container are added to the queue to be</span>
+        <span class="c"># added to the layout table.</span>
+        <span class="n">running_index</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">queue</span><span class="p">:</span>
+            <span class="n">offset_index</span><span class="p">,</span> <span class="n">item</span> <span class="o">=</span> <span class="n">pop</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">isinst</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">QtConstraintsWidget_</span><span class="p">):</span>
+                <span class="n">push_item</span><span class="p">((</span><span class="n">offset_index</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">geometry_updater</span><span class="p">()))</span>
+                <span class="n">push_offset</span><span class="p">(</span><span class="n">zero_offset</span><span class="p">)</span>
+                <span class="n">running_index</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">isinst</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">QtContainer_</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">transfer_layout_ownership</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                        <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">children</span><span class="p">():</span>
+                            <span class="n">push</span><span class="p">((</span><span class="n">running_index</span><span class="p">,</span> <span class="n">child</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">offset_table</span><span class="p">,</span> <span class="n">layout_table</span>
+
+    <span class="k">def</span> <span class="nf">_generate_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layout_table</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates the list of casuarius LinearConstraint objects for</span>
+<span class="sd">        the widgets for which this container owns the layout.</span>
+
+<span class="sd">        This method walks over the items in the given layout table and</span>
+<span class="sd">        aggregates their constraints into a single list of casuarius</span>
+<span class="sd">        LinearConstraint objects which can be given to the layout</span>
+<span class="sd">        manager.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        layout_table : list</span>
+<span class="sd">            The layout table created by a call to _build_layout_table.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : list</span>
+<span class="sd">            The list of casuarius LinearConstraints instances to pass to</span>
+<span class="sd">            the layout manager.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># The mapping of constraint owners and the list of constraint</span>
+        <span class="c"># info dictionaries provided by the Enaml widgets.</span>
+        <span class="n">box</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout_box</span>
+        <span class="n">cn_owners</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">widget_id</span><span class="p">():</span> <span class="n">box</span><span class="p">}</span>
+        <span class="n">cn_dicts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">user_constraints</span><span class="p">())</span>
+        <span class="n">cn_dicts_extend</span> <span class="o">=</span> <span class="n">cn_dicts</span><span class="o">.</span><span class="n">extend</span>
+
+        <span class="c"># The list of raw casuarius constraints which will be returned </span>
+        <span class="c"># from this method to be added to the casuarius solver.</span>
+        <span class="n">raw_cns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hard_constraints</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">contents_constraints</span><span class="p">()</span>
+        <span class="n">raw_cns_extend</span> <span class="o">=</span> <span class="n">raw_cns</span><span class="o">.</span><span class="n">extend</span>
+
+        <span class="c"># The first element in a layout table item is its offset index</span>
+        <span class="c"># which is not relevant to constraints generation.</span>
+        <span class="n">isinst</span> <span class="o">=</span> <span class="nb">isinstance</span>
+        <span class="n">QtContainer_</span> <span class="o">=</span> <span class="n">QtContainer</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">updater</span> <span class="ow">in</span> <span class="n">layout_table</span><span class="p">:</span>
+            <span class="n">child</span> <span class="o">=</span> <span class="n">updater</span><span class="o">.</span><span class="n">item</span>
+            <span class="n">cn_owners</span><span class="p">[</span><span class="n">child</span><span class="o">.</span><span class="n">widget_id</span><span class="p">()]</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">layout_box</span>
+            <span class="n">raw_cns_extend</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">hard_constraints</span><span class="p">())</span>
+            <span class="k">if</span> <span class="n">isinst</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">QtContainer_</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">transfer_layout_ownership</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                    <span class="n">cn_dicts_extend</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">user_constraints</span><span class="p">())</span>
+                    <span class="n">raw_cns_extend</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">contents_constraints</span><span class="p">())</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">raw_cns_extend</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">size_hint_constraints</span><span class="p">())</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">raw_cns_extend</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">size_hint_constraints</span><span class="p">())</span>
+                <span class="n">cn_dicts_extend</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">user_constraints</span><span class="p">())</span>
+
+        <span class="c"># Convert the list of Enaml constraints info dicts to actual </span>
+        <span class="c"># casuarius LinearConstraint objects for the solver.</span>
+        <span class="n">add_cn</span> <span class="o">=</span> <span class="n">raw_cns</span><span class="o">.</span><span class="n">append</span>
+        <span class="n">as_cn</span> <span class="o">=</span> <span class="n">as_linear_constraint</span>
+        <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">cn_dicts</span><span class="p">:</span>
+            <span class="n">add_cn</span><span class="p">(</span><span class="n">as_cn</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">cn_owners</span><span class="p">))</span>
+
+        <span class="c"># We keep a strong reference to the constraint owners dict,</span>
+        <span class="c"># since it may include instances of LayoutBox which were </span>
+        <span class="c"># created on-the-fly and hold constraint variables which </span>
+        <span class="c"># should not be deleted.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cn_owners</span> <span class="o">=</span> <span class="n">cn_owners</span>
+
+        <span class="k">return</span> <span class="n">raw_cns</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Auxiliary Methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="QtContainer.transfer_layout_ownership"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.container.Container.html#enaml.qt.qt_container.QtContainer.transfer_layout_ownership">[docs]</a>    <span class="k">def</span> <span class="nf">transfer_layout_ownership</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">owner</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A method which can be called by other components in the</span>
+<span class="sd">        hierarchy to gain ownership responsibility for the layout </span>
+<span class="sd">        of the children of this container. By default, the transfer</span>
+<span class="sd">        is allowed and is the mechanism which allows constraints to</span>
+<span class="sd">        cross widget boundaries. Subclasses should reimplement this </span>
+<span class="sd">        method if different behavior is desired.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        owner : Declarative</span>
+<span class="sd">            The component which has taken ownership responsibility</span>
+<span class="sd">            for laying out the children of this component. All </span>
+<span class="sd">            relayout and refresh requests will be forwarded to this</span>
+<span class="sd">            component.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        results : bool</span>
+<span class="sd">            True if the transfer was allowed, False otherwise.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_share_layout</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_owns_layout</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_layout_owner</span> <span class="o">=</span> <span class="n">owner</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_layout_manager</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_refresh</span> <span class="o">=</span> <span class="n">owner</span><span class="o">.</span><span class="n">refresh</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_offset_table</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_layout_table</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cn_owners</span> <span class="o">=</span> <span class="p">{}</span> 
+        <span class="k">return</span> <span class="bp">True</span>
+</div>
+<div class="viewcode-block" id="QtContainer.will_transfer"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.container.Container.html#enaml.qt.qt_container.QtContainer.will_transfer">[docs]</a>    <span class="k">def</span> <span class="nf">will_transfer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Whether or not the container expects to transfer its layout</span>
+<span class="sd">        ownership to its parent.</span>
+
+<span class="sd">        This method is predictive in nature and exists so that layout</span>
+<span class="sd">        managers are not senslessly created during the bottom-up layout</span>
+<span class="sd">        initialization pass. It is declared public so that subclasses </span>
+<span class="sd">        can override the behavior if necessary.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_share_layout</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">(),</span> <span class="n">QtContainer</span><span class="p">):</span>
+                <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">return</span> <span class="bp">False</span>
+</div>
+<div class="viewcode-block" id="QtContainer.compute_min_size"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.container.Container.html#enaml.qt.qt_container.QtContainer.compute_min_size">[docs]</a>    <span class="k">def</span> <span class="nf">compute_min_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Calculates the minimum size of the container which would </span>
+<span class="sd">        allow all constraints to be satisfied. </span>
+
+<span class="sd">        If this container does not own its layout then it will return </span>
+<span class="sd">        an invalid QSize.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : QSize</span>
+<span class="sd">            A (potentially) invalid QSize which is the minimum size </span>
+<span class="sd">            required to satisfy all constraints.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_owns_layout</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layout_manager</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">primitive</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout_box</span><span class="o">.</span><span class="n">primitive</span>
+            <span class="n">width</span> <span class="o">=</span> <span class="n">primitive</span><span class="p">(</span><span class="s">&#39;width&#39;</span><span class="p">)</span>
+            <span class="n">height</span> <span class="o">=</span> <span class="n">primitive</span><span class="p">(</span><span class="s">&#39;height&#39;</span><span class="p">)</span>
+            <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layout_manager</span><span class="o">.</span><span class="n">get_min_size</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">QSize</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">QSize</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">res</span>
+</div>
+<div class="viewcode-block" id="QtContainer.compute_best_size"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.container.Container.html#enaml.qt.qt_container.QtContainer.compute_best_size">[docs]</a>    <span class="k">def</span> <span class="nf">compute_best_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Calculates the best size of the container.</span>
+
+<span class="sd">        The best size of the container is obtained by computing the min</span>
+<span class="sd">        size of the layout using a strength which is much weaker than a</span>
+<span class="sd">        normal resize. This takes into account the size of any widgets </span>
+<span class="sd">        which have their resist clip property set to &#39;weak&#39; while still </span>
+<span class="sd">        allowing the window to be resized smaller by the user. If this</span>
+<span class="sd">        container does not own its layout then it will return an</span>
+<span class="sd">        invalid QSize.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : QSize</span>
+<span class="sd">            A (potentially) invalid QSize which is the minimum size </span>
+<span class="sd">            required to satisfy all constraints.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_owns_layout</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layout_manager</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">primitive</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout_box</span><span class="o">.</span><span class="n">primitive</span>
+            <span class="n">width</span> <span class="o">=</span> <span class="n">primitive</span><span class="p">(</span><span class="s">&#39;width&#39;</span><span class="p">)</span>
+            <span class="n">height</span> <span class="o">=</span> <span class="n">primitive</span><span class="p">(</span><span class="s">&#39;height&#39;</span><span class="p">)</span>
+            <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layout_manager</span><span class="o">.</span><span class="n">get_min_size</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">weak</span><span class="p">)</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">QSize</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">QSize</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">res</span>
+</div>
+<div class="viewcode-block" id="QtContainer.compute_max_size"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.container.Container.html#enaml.qt.qt_container.QtContainer.compute_max_size">[docs]</a>    <span class="k">def</span> <span class="nf">compute_max_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Calculates the maximum size of the container which would </span>
+<span class="sd">        allow all constraints to be satisfied. </span>
+
+<span class="sd">        If this container does not own its layout then it will return </span>
+<span class="sd">        an invalid QSize.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : QSize</span>
+<span class="sd">            A (potentially) invalid QSize which is the maximum size </span>
+<span class="sd">            allowable while still satisfying all constraints.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_owns_layout</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layout_manager</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">primitive</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout_box</span><span class="o">.</span><span class="n">primitive</span>
+            <span class="n">width</span> <span class="o">=</span> <span class="n">primitive</span><span class="p">(</span><span class="s">&#39;width&#39;</span><span class="p">)</span>
+            <span class="n">height</span> <span class="o">=</span> <span class="n">primitive</span><span class="p">(</span><span class="s">&#39;height&#39;</span><span class="p">)</span>
+            <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layout_manager</span><span class="o">.</span><span class="n">get_max_size</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">QSize</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">QSize</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">width</span><span class="p">()</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">setWidth</span><span class="p">(</span><span class="mi">16777215</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">height</span><span class="p">()</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">setHeight</span><span class="p">(</span><span class="mi">16777215</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.qt.qt_container</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Sep 11, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

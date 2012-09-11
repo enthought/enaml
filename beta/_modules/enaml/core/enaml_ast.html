@@ -1,0 +1,283 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.core.enaml_ast &mdash; enaml 0.3alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.3alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.3alpha documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.core.enaml_ast</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.core.enaml_ast</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="ASTNode"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.enaml_ast.ASTNode">[docs]</a><span class="k">class</span> <span class="nc">ASTNode</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; The base Enaml AST node.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    lineno : int</span>
+<span class="sd">        The line number in the source code that created this node.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lineno</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lineno</span> <span class="o">=</span> <span class="n">lineno</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            
+</div>
+<div class="viewcode-block" id="Module"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.enaml_ast.Module">[docs]</a><span class="k">class</span> <span class="nc">Module</span><span class="p">(</span><span class="n">ASTNode</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; An AST node representing an Enaml module.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    doc : str</span>
+<span class="sd">        The module&#39;s documentation string.</span>
+<span class="sd">    </span>
+<span class="sd">    body : list</span>
+<span class="sd">        A list of ast nodes comprising the body of the module.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">,</span> <span class="n">lineno</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Module</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">lineno</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">body</span> <span class="o">=</span> <span class="n">body</span>
+
+</div>
+<div class="viewcode-block" id="Python"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.enaml_ast.Python">[docs]</a><span class="k">class</span> <span class="nc">Python</span><span class="p">(</span><span class="n">ASTNode</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; An AST node representing a chunk of pure Python code.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    py_ast : ast.AST</span>
+<span class="sd">        A Python ast node.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">py_ast</span><span class="p">,</span> <span class="n">lineno</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Python</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">lineno</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">py_ast</span> <span class="o">=</span> <span class="n">py_ast</span>
+
+</div>
+<div class="viewcode-block" id="Declaration"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.enaml_ast.Declaration">[docs]</a><span class="k">class</span> <span class="nc">Declaration</span><span class="p">(</span><span class="n">ASTNode</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; An AST node representing an Enaml declaration.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        The name of the declaration.</span>
+<span class="sd">    </span>
+<span class="sd">    base : Python</span>
+<span class="sd">        A Python node which represents the base type of the declaration.</span>
+<span class="sd">    </span>
+<span class="sd">    identifier : str</span>
+<span class="sd">        The local identifier to use for instances of the declaration.</span>
+<span class="sd">    </span>
+<span class="sd">    doc : str</span>
+<span class="sd">        The documentation string for the declaration.</span>
+<span class="sd">    </span>
+<span class="sd">    body : list</span>
+<span class="sd">        A list of AST nodes that comprise the body of the declaration.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">identifier</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="n">body</span><span class="p">,</span> <span class="n">lineno</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Declaration</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">lineno</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base</span> <span class="o">=</span> <span class="n">base</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span> <span class="o">=</span> <span class="n">identifier</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">doc</span> <span class="o">=</span> <span class="n">doc</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">body</span> <span class="o">=</span> <span class="n">body</span>
+
+</div>
+<div class="viewcode-block" id="Instantiation"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.enaml_ast.Instantiation">[docs]</a><span class="k">class</span> <span class="nc">Instantiation</span><span class="p">(</span><span class="n">ASTNode</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; An AST node representing a declaration instantiation.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        The name of declaration being instantiated.</span>
+<span class="sd">    </span>
+<span class="sd">    identifier : str</span>
+<span class="sd">        The local identifier to use for the new instance.</span>
+<span class="sd">    </span>
+<span class="sd">    body : list</span>
+<span class="sd">        A list of AST nodes which comprise the instantiation body.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">identifier</span><span class="p">,</span> <span class="n">body</span><span class="p">,</span> <span class="n">lineno</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Instantiation</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">lineno</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span> <span class="o">=</span> <span class="n">identifier</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">body</span> <span class="o">=</span> <span class="n">body</span>
+
+</div>
+<div class="viewcode-block" id="AttributeDeclaration"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.enaml_ast.AttributeDeclaration">[docs]</a><span class="k">class</span> <span class="nc">AttributeDeclaration</span><span class="p">(</span><span class="n">ASTNode</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; An AST node which represents an attribute declaration.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        The name of the attribute being declared.</span>
+
+<span class="sd">    type : Python or None</span>
+<span class="sd">        A Python node representing the type of the attribute, or None</span>
+<span class="sd">        if no type was given. If None the attribute can be of any type.</span>
+
+<span class="sd">    default : AttributeBinding or None</span>
+<span class="sd">        The default binding of the attribute, or None if no default </span>
+<span class="sd">        is provided.</span>
+<span class="sd">        </span>
+<span class="sd">    is_event : boolean</span>
+<span class="sd">        Whether or not this declaration represents an event.</span>
+<span class="sd">        i.e. was declared with &#39;event&#39; instead of &#39;attr&#39;.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">default</span><span class="p">,</span> <span class="n">is_event</span><span class="p">,</span> <span class="n">lineno</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">AttributeDeclaration</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">lineno</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">default</span> <span class="o">=</span> <span class="n">default</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_event</span> <span class="o">=</span> <span class="n">is_event</span>
+
+</div>
+<div class="viewcode-block" id="AttributeBinding"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.enaml_ast.AttributeBinding">[docs]</a><span class="k">class</span> <span class="nc">AttributeBinding</span><span class="p">(</span><span class="n">ASTNode</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; An AST node which represents an expression attribute binding.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        The name of the attribute being bound.</span>
+<span class="sd">    </span>
+<span class="sd">    binding : BoundExpression</span>
+<span class="sd">        The BoundExpression ast node which represents the binding.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">binding</span><span class="p">,</span> <span class="n">lineno</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">AttributeBinding</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">lineno</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">binding</span> <span class="o">=</span> <span class="n">binding</span>
+
+</div>
+<div class="viewcode-block" id="BoundExpression"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.enaml_ast.BoundExpression">[docs]</a><span class="k">class</span> <span class="nc">BoundExpression</span><span class="p">(</span><span class="n">ASTNode</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; An ast node which represents a bound expression.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    op : str</span>
+<span class="sd">        The name of the operator that will perform the binding.</span>
+<span class="sd">    </span>
+<span class="sd">    expr : Python</span>
+<span class="sd">        A Python ast node that reprents the bound expression.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">op</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">lineno</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BoundExpression</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">lineno</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">op</span> <span class="o">=</span> <span class="n">op</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">expr</span> <span class="o">=</span> <span class="n">expr</span>
+</pre></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.core.enaml_ast</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Sep 11, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

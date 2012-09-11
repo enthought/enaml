@@ -1,0 +1,421 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.qt.qt_messenger_widget &mdash; enaml 0.3alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.3alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.3alpha documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.qt.qt_messenger_widget</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.qt.qt_messenger_widget</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2012, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">from</span> <span class="nn">enaml.utils</span> <span class="kn">import</span> <span class="n">LoopbackGuard</span>
+
+
+<div class="viewcode-block" id="QtMessengerWidget"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget">[docs]</a><span class="k">class</span> <span class="nc">QtMessengerWidget</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; The base class of the Qt widgets wrappers for a Qt Enaml client.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># Note that this class creates an explicit reference cycle between</span>
+    <span class="c"># a parent and its children. This is done in the name of performane</span>
+    <span class="c"># and convenience. Since there is already an explicit destruction</span>
+    <span class="c"># phase for tearing down a Session, we can handle breaking the</span>
+    <span class="c"># reference cycles then and make our lives easier the rest of the </span>
+    <span class="c"># time.</span>
+<div class="viewcode-block" id="QtMessengerWidget.__init__"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">widget_id</span><span class="p">,</span> <span class="n">session</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize a QtMessengerWidget</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        parent : QtMessengerWidget or None</span>
+<span class="sd">            The parent widget of this widget, or None if this widget has</span>
+<span class="sd">            no parent.</span>
+
+<span class="sd">        widget_id : str</span>
+<span class="sd">            The identifier string for this widget.</span>
+
+<span class="sd">        session : QtClientSession</span>
+<span class="sd">            The client session object to use for communicating with the</span>
+<span class="sd">            server widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_widget_id</span> <span class="o">=</span> <span class="n">widget_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_session</span> <span class="o">=</span> <span class="n">session</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="n">parent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_children</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_children_map</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Messaging/Session API</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="QtMessengerWidget.handle_action"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget.handle_action">[docs]</a>    <span class="k">def</span> <span class="nf">handle_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle an action sent from the server widget</span>
+
+<span class="sd">        This is called by the QtClientSession object when the server</span>
+<span class="sd">        widget sends a message to this widget.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        action : str</span>
+<span class="sd">            The action to be performed by the widget.</span>
+
+<span class="sd">        content : ObjectDict</span>
+<span class="sd">            The content dictionary for the action.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">handler_name</span> <span class="o">=</span> <span class="s">&#39;on_action_&#39;</span> <span class="o">+</span> <span class="n">action</span>
+        <span class="n">handler</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">handler_name</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">handler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">handler</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># XXX show a dialog here?</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;Unhandled action sent to `</span><span class="si">%s</span><span class="s">` from server: </span><span class="si">%s</span><span class="s">&quot;</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget_id</span><span class="p">(),</span> <span class="n">action</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="QtMessengerWidget.send_action"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget.send_action">[docs]</a>    <span class="k">def</span> <span class="nf">send_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Send an action to the server widget.</span>
+
+<span class="sd">        This method can be called to send an unsolicited message of</span>
+<span class="sd">        type &#39;widget_action&#39; to the server widget for this widget.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        action : str</span>
+<span class="sd">            The action for the message.</span>
+
+<span class="sd">        content : dict</span>
+<span class="sd">            The content of the message.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">session</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_session</span>
+        <span class="k">if</span> <span class="n">session</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;No Session object for widget </span><span class="si">%s</span><span class="s">&#39;</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget_id</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">session</span><span class="o">.</span><span class="n">send_action</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget_id</span><span class="p">(),</span> <span class="n">action</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Properties</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="QtMessengerWidget.loopback_guard"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget.loopback_guard">[docs]</a>    <span class="k">def</span> <span class="nf">loopback_guard</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Lazily creates and returns a LoopbackGuard for convenient </span>
+<span class="sd">        use by subclasses.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">guard</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loopback_guard</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="n">guard</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loopback_guard</span> <span class="o">=</span> <span class="n">LoopbackGuard</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">guard</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Public API</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="QtMessengerWidget.parent"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget.parent">[docs]</a>    <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get the parent of this messenger widget.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : QtMessengerWidget or None</span>
+<span class="sd">            The parent of this messenger widget, or None if it has</span>
+<span class="sd">            no parent.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span>
+</div>
+<div class="viewcode-block" id="QtMessengerWidget.children"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget.children">[docs]</a>    <span class="k">def</span> <span class="nf">children</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get the children of this widget.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : list</span>
+<span class="sd">            The list of children of this widget. This list should not</span>
+<span class="sd">            be modified in place by user code.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span>
+</div>
+<div class="viewcode-block" id="QtMessengerWidget.add_child"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget.add_child">[docs]</a>    <span class="k">def</span> <span class="nf">add_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Add a child widget to this widget.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        child : QtMessengerWidget</span>
+<span class="sd">            The child widget to add to this widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># XXX handle reparenting and duplicate adding</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_children_map</span><span class="p">[</span><span class="n">child</span><span class="o">.</span><span class="n">widget_id</span><span class="p">()]</span> <span class="o">=</span> <span class="n">child</span>
+</div>
+<div class="viewcode-block" id="QtMessengerWidget.insert_child"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget.insert_child">[docs]</a>    <span class="k">def</span> <span class="nf">insert_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">child</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Insert a child widget into this widget.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        index : int</span>
+<span class="sd">            The target index for the child widget.</span>
+
+<span class="sd">        child : QtMessengerWidget</span>
+<span class="sd">            The child widget to insert into this widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># XXX handle reparenting and duplicates</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">child</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_children_map</span><span class="p">[</span><span class="n">child</span><span class="o">.</span><span class="n">widget_id</span><span class="p">()]</span> <span class="o">=</span> <span class="n">child</span>
+</div>
+<div class="viewcode-block" id="QtMessengerWidget.remove_child"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget.remove_child">[docs]</a>    <span class="k">def</span> <span class="nf">remove_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Remove the child widget from this widget.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        child : QtMessengerWidget</span>
+<span class="sd">            The child widget to remove from this widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># XXX handle unparenting</span>
+        <span class="n">children</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span>
+        <span class="k">if</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">children</span><span class="p">:</span>
+            <span class="n">children</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_children_map</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">widget_id</span><span class="p">(),</span> <span class="bp">None</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtMessengerWidget.find_child"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget.find_child">[docs]</a>    <span class="k">def</span> <span class="nf">find_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Find the child with the given widget id.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        widget_id : str</span>
+<span class="sd">            The widget identifier for the target widget.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : QtMessengerWidget or None</span>
+<span class="sd">            The child widget or None if its not found.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">widget_id</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtMessengerWidget.widget"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget.widget">[docs]</a>    <span class="k">def</span> <span class="nf">widget</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get the toolkit widget for this messenger widget.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : QWidget</span>
+<span class="sd">            The toolkit widget for this messenger widget, or None if</span>
+<span class="sd">            it does not have a toolkit widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span>
+</div>
+<div class="viewcode-block" id="QtMessengerWidget.widget_id"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget.widget_id">[docs]</a>    <span class="k">def</span> <span class="nf">widget_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get the widget id for the messenger widget.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : str</span>
+<span class="sd">            The widget identifier for this messenger widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widget_id</span>
+</div>
+<div class="viewcode-block" id="QtMessengerWidget.create_widget"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget.create_widget">[docs]</a>    <span class="k">def</span> <span class="nf">create_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">tree</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A method which must be implemented by subclasses.</span>
+
+<span class="sd">        This method is called by the create(...) method. It should </span>
+<span class="sd">        create and return the underlying Qt widget. Implementations </span>
+<span class="sd">        of this method should *not* call the superclass version.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        parent : QWidget or None</span>
+<span class="sd">            The parent Qt widget for this control, or None if if the</span>
+<span class="sd">            control does not have a parent.</span>
+
+<span class="sd">        tree : dict</span>
+<span class="sd">            The dictionary representation of the tree for this object.</span>
+<span class="sd">            This is provided in the even that the component needs to </span>
+<span class="sd">            create a different type of widget based on the information</span>
+<span class="sd">            in the tree.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+<div class="viewcode-block" id="QtMessengerWidget.create"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tree</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A method called by the application when creating the UI.</span>
+
+<span class="sd">        The default implementation of this method calls &#39;create_widget&#39;</span>
+<span class="sd">        and assigns the results to the &#39;widget&#39; attribute, so subclasses</span>
+<span class="sd">        must be sure to call the superclass method as the first order of</span>
+<span class="sd">        business.</span>
+
+<span class="sd">        This method is called by the application in a top-down fashion.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        tree : dict</span>
+<span class="sd">            The dictionary representation of the tree for this object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span>
+        <span class="n">parent_widget</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span> <span class="k">if</span> <span class="n">parent</span> <span class="k">else</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_widget</span><span class="p">(</span><span class="n">parent_widget</span><span class="p">,</span> <span class="n">tree</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtMessengerWidget.init_layout"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget.init_layout">[docs]</a>    <span class="k">def</span> <span class="nf">init_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A method that allows widgets to do layout initialization.</span>
+
+<span class="sd">        This method is called after all widgets in a tree have had</span>
+<span class="sd">        their &#39;create&#39; method called. It is useful for doing any</span>
+<span class="sd">        initialization related to layout.</span>
+
+<span class="sd">        The default implementation of this method is a no-op in order</span>
+<span class="sd">        to be super() friendly.</span>
+
+<span class="sd">        This method is called by the application in a bottom-up order.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</div>
+<div class="viewcode-block" id="QtMessengerWidget.destroy"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget.destroy">[docs]</a>    <span class="k">def</span> <span class="nf">destroy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Destroy this widget.</span>
+
+<span class="sd">        Destruction is performed in the following order:</span>
+<span class="sd">            1. The &#39;destroy&#39; method is called on all children.</span>
+<span class="sd">            2. The reference to the children are dropped.</span>
+<span class="sd">            3. The object removes itself from its parent.</span>
+<span class="sd">            4. The parent reference is set to None.</span>
+<span class="sd">            5. The underyling Qt widget is hidden and unparented.</span>
+<span class="sd">            6. The object removes itself from the session.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">children</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_children</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_children_map</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">children</span><span class="p">:</span>
+            <span class="n">child</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span>
+
+        <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span>
+        <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">parent</span><span class="o">.</span><span class="n">remove_child</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span>
+        <span class="k">if</span> <span class="n">widget</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">setParent</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="n">session</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_session</span>
+        <span class="k">if</span> <span class="n">session</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">session</span><span class="o">.</span><span class="n">widget_destroyed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_widget_id</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_session</span> <span class="o">=</span> <span class="bp">None</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.qt.qt_messenger_widget</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Sep 11, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>
