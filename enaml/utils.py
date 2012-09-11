@@ -113,8 +113,11 @@ class WeakMethod(object):
 
         Parameters
         ----------
-        *args, **kwargs
-            The positional and keyword arguments to pass to the method.
+        args
+            The positional arguments to pass to the method.
+
+        kwargs
+            The keyword arguments to pass to the method.
 
         """
         im_func, im_self_ref, im_class = self._key
@@ -179,7 +182,7 @@ class LoopbackGuard(object):
 
         Parameters
         ----------
-        *items
+        items
             The items for which to acquire the guard from within the
             returned context manager. These items must be hashable.
 
