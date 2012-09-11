@@ -10,8 +10,8 @@ integer 'index' attribute of the Stacked widget. Changing this index
 changes which child is visible.
 
 """
-from enaml.widgets import Container, Form
-from enaml.layout import vbox
+from enaml.widgets.api import Container, Form
+from enaml.layout.api import vbox
 
 
 enamldef Stacked(Container):
