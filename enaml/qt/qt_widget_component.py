@@ -213,6 +213,9 @@ class QtWidgetComponent(QtMessengerWidget):
             if not qcolor.isValid():
                 app_palette = QApplication.instance().palette(widget)
                 qcolor = app_palette.color(role)
+                widget.setAutoFillBackground(False)
+            else:
+                widget.setAutoFillBackground(True)
             palette = widget.palette()
             palette.setColor(role, qcolor)
             widget.setPalette(palette)
