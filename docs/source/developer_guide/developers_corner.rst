@@ -271,6 +271,6 @@ Example
 
         """
 
-.. currentmodule:: refactor_doc
+.. currentmodule:: refactordoc
 
-.. automethod:: FunctionDocstring.extract_fields
+.. automethod:: FunctionDoc.extract_fields
