@@ -16,20 +16,18 @@ user-facing views and the underlying graphical toolkits.
 *Standard interfaces*
 
 .. inheritance-diagram::
-    enaml.core.base_component.BaseComponent
     enaml.widgets.messenger_widget.MessengerWidget
     enaml.widgets.widget_component.WidgetComponent
     enaml.widgets.constraints_widget.ConstraintsWidget
     enaml.widgets.abstract_button.AbstractButton
     enaml.widgets.container.Container
-    enaml.widgets.dialog.Dialog
     enaml.widgets.bounded_date.BoundedDate
     enaml.widgets.bounded_datetime.BoundedDatetime
     enaml.widgets.calendar.Calendar
     enaml.widgets.check_box.CheckBox
     enaml.widgets.combo_box.ComboBox
-    enaml.widgets.date_edit.DateEdit
-    enaml.widgets.datetime_edit.DatetimeEdit
+    enaml.widgets.date_selector.DateSelector
+    enaml.widgets.datetime_selector.DatetimeSelector
     enaml.widgets.field.Field
     enaml.widgets.form.Form
     enaml.widgets.group_box.GroupBox
@@ -60,7 +58,6 @@ Abstract base widgets
     :toctree: widgets
     :template: widget.rst
 
-    enaml.core.base_component.BaseComponent
     enaml.widgets.messenger_widget.MessengerWidget
     enaml.widgets.widget_component.WidgetComponent
     enaml.widgets.constraints_widget.ConstraintsWidget
@@ -78,8 +75,8 @@ Standard widgets
     enaml.widgets.calendar.Calendar
     enaml.widgets.check_box.CheckBox
     enaml.widgets.combo_box.ComboBox
-    enaml.widgets.date_edit.DateEdit
-    enaml.widgets.datetime_edit.DatetimeEdit
+    enaml.widgets.date_selector.DateSelector
+    enaml.widgets.datetime_selector.DatetimeSelector
     enaml.widgets.field.Field
     enaml.widgets.label.Label
     enaml.widgets.progress_bar.ProgressBar
@@ -107,7 +104,6 @@ Window widgets
     :template: widget.rst
 
     enaml.widgets.window.Window
-    enaml.widgets.dialog.Dialog
 
 Container and Layout widgets
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -123,27 +119,6 @@ Container and Layout widgets
     enaml.widgets.page.Page
     enaml.widgets.scroll_area.ScrollArea
 
-
-Item views
-^^^^^^^^^^
-
-.. autosummary::
-    :toctree: widgets
-    :template: widget.rst
-
-    enaml.components.list_view.ListView
-    enaml.components.table_view.TableView
-    enaml.components.tree_view.TreeView
-
-Menu widgets
-^^^^^^^^^^^^
-
-.. autosummary::
-    :toctree: widgets
-    :template: widget.rst
-
-    enaml.components.menu_bar.MenuBar
-    enaml.components.menu.Menu
 
 Standard library
 ^^^^^^^^^^^^^^^^

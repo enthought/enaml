@@ -5,11 +5,6 @@ The :py:mod:`enaml.core` package contains all of the core functionality of the
 Enaml toolkit.
 
 
-:mod:`toolkit` Module
----------------------
-
-.. automodule:: enaml.core.toolkit
-
 :mod:`import_hooks` Module
 --------------------------
 
@@ -19,17 +14,18 @@ Enaml toolkit.
 :mod:`expressions` Module
 -------------------------
 
-.. inheritance-diagram:: enaml.core.expressions.ExpressionScope
+.. inheritance-diagram:: enaml.core.expressions.ExecutionScope
     :parts: 1
 
-.. inheritance-diagram:: enaml.core.expressions.TraitAttributeNotifier
+.. inheritance-diagram:: enaml.core.expressions.NonlocalScope
     :parts: 1
 
 .. inheritance-diagram:: enaml.core.expressions.AbstractExpression
                          enaml.core.expressions.SimpleExpression
-			 enaml.core.expressions.SubscriptionExpression
-			 enaml.core.expressions.NotifyingExpression
-			 enaml.core.expressions.DelegatingExpression
+                         enaml.core.expressions.NotificationExpression
+                         enaml.core.expressions.UpdateExpression
+                         enaml.core.expressions.SubscriptionExpression
+                         enaml.core.expressions.DelegationExpression
     :parts: 1
 
 .. automodule:: enaml.core.expressions
@@ -48,3 +44,34 @@ Enaml toolkit.
 
 .. autoclass:: enaml.core.item_model.ModelIndex
 
+
+:mod:`enaml_ast` Module
+-----------------------
+
+.. inheritance-diagram:: enaml.core.enaml_ast
+    :parts: 1
+
+.. automodule:: enaml.core.enaml_ast
+
+
+:mod:`lexer` Module
+-------------------
+
+.. currentmodule:: enaml.core.lexer
+
+.. autoclass:: EnamlLexer
+    :no-members:
+    :members: __init__, input, token, dedent, indent,
+        make_token_stream, create_strings,
+        annotate_indentation_state, synthesize_indentation_tokens,
+        add_endmarker
+
+:mod:`parser` Module
+--------------------
+
+.. automodule:: enaml.core.parser
+
+:mod:`enaml_compiler` Module
+----------------------------
+
+.. automodule:: enaml.core.enaml_compiler
