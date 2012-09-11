@@ -219,7 +219,7 @@ class DeclarationCompiler(_NodeVisitor):
 
         This node visitor pulls the passed in root into a local var
         and stores it's identifier if one is given. It also loads
-        in the commonly used local variables f_globals, and eval_.
+        in the commonly used local variables `f_globals`, and `eval_`.
 
         """
         name = self.name_gen.next()

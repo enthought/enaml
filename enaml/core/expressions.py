@@ -513,10 +513,10 @@ class UpdateExpression(AbstractExpression):
             An iterable of concrete AbstractInverter subclasses which
             will invert the given expression code into a mirrored 
             operation which sets the value on the appropriate object.
-        
-        *args
+
+        args
             The arguments required to initialize an AbstractExpression
-        
+
         """
         super(UpdateExpression, self).__init__(*args)
         
@@ -654,10 +654,10 @@ class SubscriptionExpression(AbstractExpression):
             An iterable of AbstractMonitor subclasses which will
             be used to generating the monitoring code for the
             expression.
-        
-        *args
+
+        args
             The arguments required to initialize an AbstractExpression
-        
+
         """
         super(SubscriptionExpression, self).__init__(*args)
         
@@ -765,10 +765,10 @@ class DelegationExpression(SubscriptionExpression):
             An iterable of concrete AbstractInverter subclasses which
             will invert the given expression code into a mirrored 
             operation which sets the value on the appropriate object.
-        
-        *args
+
+        args
             The arguments required to initialize a SubscriptionExpression
-        
+
         """
         super(DelegationExpression, self).__init__(*args)
         
