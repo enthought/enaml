@@ -24,4 +24,5 @@ Other great Enaml features include
     Getting Started Guide & Tutorials <instructional/index.rst>
     API Reference <api_ref/index.rst>
     Developer's Guide <developer_guide/index.rst>
+    Technical Reference <tech_ref/index.rst>
 
