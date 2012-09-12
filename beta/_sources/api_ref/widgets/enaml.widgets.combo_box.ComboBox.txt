@@ -17,3 +17,13 @@ Qt
     :parts: 1
 
 .. autoclass:: enaml.qt.qt_combo_box.QtComboBox
+
+
+Wx
+^^
+
+.. inheritance-diagram::
+    enaml.wx.wx_combo_box.WxComboBox
+    :parts: 1
+
+.. autoclass:: enaml.wx.wx_combo_box.WxComboBox

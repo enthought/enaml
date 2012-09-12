@@ -17,3 +17,13 @@ Qt
     :parts: 1
 
 .. autoclass:: enaml.qt.qt_calendar.QtCalendar
+
+
+Wx
+^^
+
+.. inheritance-diagram::
+    enaml.wx.wx_calendar.WxCalendar
+    :parts: 1
+
+.. autoclass:: enaml.wx.wx_calendar.WxCalendar

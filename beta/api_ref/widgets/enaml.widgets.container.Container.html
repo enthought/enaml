@@ -70,6 +70,7 @@
 <li><a class="reference internal" href="#">Container</a><ul>
 <li><a class="reference internal" href="#backends">Backends</a><ul>
 <li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
 </ul>
 </li>
 </ul>
@@ -233,12 +234,12 @@ container is typically desired.</p>
 <div class="section" id="qt">
 <h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
 <p class="graphviz">
-<img src="../../_images/inheritance-045db5b886a36c09f583ca08b52a90c20f4476cc.png" alt="Inheritance diagram of enaml.qt.qt_container.QtContainer" usemap="#inheritance4fd8a93c6b" class="inheritance"/>
+<img src="../../_images/inheritance-80d1fff8ebeb87c78ac69a1bd29702c47c6120d3.png" alt="Inheritance diagram of enaml.qt.qt_container.QtContainer" usemap="#inheritance4fd8a93c6b" class="inheritance"/>
 <map id="inheritance4fd8a93c6b" name="inheritance4fd8a93c6b">
-<area shape="rect" id="node1" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget" title="QtMessengerWidget" alt="" coords="6,5,157,35"/>
-<area shape="rect" id="node2" href="enaml.widgets.widget_component.WidgetComponent.html#enaml.qt.qt_widget_component.QtWidgetComponent" title="QtWidgetComponent" alt="" coords="206,5,362,35"/>
-<area shape="rect" id="node4" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.qt.qt_constraints_widget.QtConstraintsWidget" title="QtConstraintsWidget" alt="" coords="410,5,566,35"/>
-<area shape="rect" id="node6" href="#enaml.qt.qt_container.QtContainer" title="QtContainer" alt="" coords="614,5,714,35"/>
+<area shape="rect" id="node1" href="#enaml.qt.qt_container.QtContainer" title="QtContainer" alt="" coords="614,5,714,35"/>
+<area shape="rect" id="node2" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.qt.qt_constraints_widget.QtConstraintsWidget" title="QtConstraintsWidget" alt="" coords="410,5,566,35"/>
+<area shape="rect" id="node4" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget" title="QtMessengerWidget" alt="" coords="6,5,157,35"/>
+<area shape="rect" id="node5" href="enaml.widgets.widget_component.WidgetComponent.html#enaml.qt.qt_widget_component.QtWidgetComponent" title="QtWidgetComponent" alt="" coords="206,5,362,35"/>
 </map>
 </p>
 <dl class="class">
@@ -447,6 +448,248 @@ an invalid QSize.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (QSize) &#8211; A (potentially) invalid QSize which is the maximum size allowable while still satisfying all constraints.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="wx">
+<h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-a62df2bd71847a39f4198a53806572d21761f53d.png" alt="Inheritance diagram of enaml.wx.wx_container.WxContainer" usemap="#inheritance274a0e6e71" class="inheritance"/>
+<map id="inheritance274a0e6e71" name="inheritance274a0e6e71">
+<area shape="rect" id="node1" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.wx.wx_constraints_widget.WxConstraintsWidget" title="WxConstraintsWidget" alt="" coords="419,5,578,35"/>
+<area shape="rect" id="node6" href="#enaml.wx.wx_container.WxContainer" title="WxContainer" alt="" coords="627,5,731,35"/>
+<area shape="rect" id="node2" href="enaml.widgets.widget_component.WidgetComponent.html#enaml.wx.wx_widget_component.WxWidgetComponent" title="WxWidgetComponent" alt="" coords="209,5,370,35"/>
+<area shape="rect" id="node4" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.wx.wx_messenger_widget.WxMessengerWidget" title="WxMessengerWidget" alt="" coords="5,5,160,35"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.wx.wx_container.WxContainer">
+<em class="property">class </em><tt class="descclassname">enaml.wx.wx_container.</tt><tt class="descname">WxContainer</tt><big>(</big><em>parent</em>, <em>widget_id</em>, <em>session</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_container.html#WxContainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_container.WxContainer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.wx.wx_constraints_widget.WxConstraintsWidget" title="enaml.wx.wx_constraints_widget.WxConstraintsWidget"><tt class="xref py py-class docutils literal"><span class="pre">enaml.wx.wx_constraints_widget.WxConstraintsWidget</span></tt></a></p>
+<p>A Wx implementation of an Enaml Container.</p>
+<dl class="method">
+<dt id="enaml.wx.wx_container.WxContainer.create_widget">
+<tt class="descname">create_widget</tt><big>(</big><em>parent</em>, <em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_container.html#WxContainer.create_widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_container.WxContainer.create_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the underlying wxContainer widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_container.WxContainer.create">
+<tt class="descname">create</tt><big>(</big><em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_container.html#WxContainer.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_container.WxContainer.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create and initialize the container.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_container.WxContainer.init_layout">
+<tt class="descname">init_layout</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_container.html#WxContainer.init_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_container.WxContainer.init_layout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes the layout for the container.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_container.WxContainer.on_resize">
+<tt class="descname">on_resize</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_container.html#WxContainer.on_resize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_container.WxContainer.on_resize" title="Permalink to this definition">¶</a></dt>
+<dd><p>The event handler for the EVT_SIZE event.</p>
+<p>This handler triggers a layout pass when the container widget 
+is resized.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_container.WxContainer.on_show">
+<tt class="descname">on_show</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_container.html#WxContainer.on_show"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_container.WxContainer.on_show" title="Permalink to this definition">¶</a></dt>
+<dd><p>The event handler for the EVT_SHOW event.</p>
+<p>This handler toggles the value of the _is_shown flag.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_container.WxContainer.relayout">
+<tt class="descname">relayout</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_container.html#WxContainer.relayout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_container.WxContainer.relayout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rebuilds the constraints layout for this widget if it owns
+the responsibility for laying out its descendents.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_container.WxContainer.refresh">
+<tt class="descname">refresh</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_container.html#WxContainer.refresh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_container.WxContainer.refresh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes a layout pass over the descendents if this widget owns
+the responsibility for their layout.</p>
+<p>If the widget is not visible on the screen, the refresh will be
+skipped.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_container.WxContainer.refresh_sizes">
+<tt class="descname">refresh_sizes</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_container.html#WxContainer.refresh_sizes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_container.WxContainer.refresh_sizes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Refresh the min/max/best sizes for the underlying widget.</p>
+<p>This method is normally called automatically at the proper
+times. It should not normally need to be called by user code.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_container.WxContainer.replace_constraints">
+<tt class="descname">replace_constraints</tt><big>(</big><em>old_cns</em>, <em>new_cns</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_container.html#WxContainer.replace_constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_container.WxContainer.replace_constraints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replace constraints in the given layout.</p>
+<p>This method can be used to selectively add/remove/replace 
+constraints in the layout system, when it is more efficient 
+than performing a full relayout.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>old_cns</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; The list of casuarius constraints to remove from the
+the current layout system.</li>
+<li><strong>new_cns</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; The list of casuarius constraints to add to the
+current layout system.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_container.WxContainer.layout">
+<tt class="descname">layout</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_container.html#WxContainer.layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_container.WxContainer.layout" title="Permalink to this definition">¶</a></dt>
+<dd><p>The callback invoked by the layout manager when there are
+new layout values available.</p>
+<p>This iterates over the layout table and calls the geometry
+updater functions.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_container.WxContainer.contents_margins">
+<tt class="descname">contents_margins</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_container.html#WxContainer.contents_margins"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_container.WxContainer.contents_margins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the contents margins for the container.</p>
+<p>The contents margins are added to the user provided padding
+to determine the final offset from a layout box boundary to
+the corresponding content line. The default content margins
+are zero. This method can be reimplemented by subclasses to
+supply different margins.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (tuple) &#8211; A tuple of &#8216;top&#8217;, &#8216;right&#8217;, &#8216;bottom&#8217;, &#8216;left&#8217; contents margins to use for computing the contents constraints.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_container.WxContainer.contents_constraints">
+<tt class="descname">contents_constraints</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_container.html#WxContainer.contents_constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_container.WxContainer.contents_constraints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the contents constraints for the container.</p>
+<p>The contents contraints are generated by combining the user 
+padding with the margins returned by &#8216;contents_margins&#8217; method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (list) &#8211; The list of casuarius constraints for the content.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_container.WxContainer.refresh_contents_constraints">
+<tt class="descname">refresh_contents_constraints</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_container.html#WxContainer.refresh_contents_constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_container.WxContainer.refresh_contents_constraints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform a refresh of the contents constraints for the 
+container.</p>
+<p>This will replace the old contents constraints with the new
+contents constraints.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_container.WxContainer.transfer_layout_ownership">
+<tt class="descname">transfer_layout_ownership</tt><big>(</big><em>owner</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_container.html#WxContainer.transfer_layout_ownership"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_container.WxContainer.transfer_layout_ownership" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method which can be called by other components in the
+hierarchy to gain ownership responsibility for the layout 
+of the children of this container. By default, the transfer
+is allowed and is the mechanism which allows constraints to
+cross widget boundaries. Subclasses should reimplement this 
+method if different behavior is desired.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>owner</strong> (<em>Declarative</em>) &#8211; The component which has taken ownership responsibility
+for laying out the children of this component. All
+relayout and refresh requests will be forwarded to this
+component.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>results</strong> (bool) &#8211; True if the transfer was allowed, False otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_container.WxContainer.will_transfer">
+<tt class="descname">will_transfer</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_container.html#WxContainer.will_transfer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_container.WxContainer.will_transfer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether or not the container expects to transfer its layout
+ownership to its parent.</p>
+<p>This method is predictive in nature and exists so that layout
+managers are not senslessly created during the bottom-up layout
+initialization pass. It is declared public so that subclasses 
+can override the behavior if necessary.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_container.WxContainer.compute_min_size">
+<tt class="descname">compute_min_size</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_container.html#WxContainer.compute_min_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_container.WxContainer.compute_min_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the minimum size of the container which would 
+allow all constraints to be satisfied.</p>
+<p>If this container does not own its layout then it will return 
+an invalid wxSize.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (wxSize) &#8211; A (potentially) invalid wxSize which is the minimum size required to satisfy all constraints.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_container.WxContainer.compute_best_size">
+<tt class="descname">compute_best_size</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_container.html#WxContainer.compute_best_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_container.WxContainer.compute_best_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the best size of the container.</p>
+<p>The best size of the container is obtained by computing the min
+size of the layout using a strength which is much weaker than a
+normal resize. This takes into account the size of any widgets 
+which have their resist clip property set to &#8216;weak&#8217; while still 
+allowing the window to be resized smaller by the user. If this
+container does not own its layout then it will return an
+invalid QSize.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (wxSize) &#8211; A (potentially) invalid wxSize which is the minimum size required to satisfy all constraints.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_container.WxContainer.compute_max_size">
+<tt class="descname">compute_max_size</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_container.html#WxContainer.compute_max_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_container.WxContainer.compute_max_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the maximum size of the container which would 
+allow all constraints to be satisfied.</p>
+<p>If this container does not own its layout then it will return 
+an invalid wxSize.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (wxSize) &#8211; A (potentially) invalid wxSize which is the maximum size allowable while still satisfying all constraints.</td>
 </tr>
 </tbody>
 </table>

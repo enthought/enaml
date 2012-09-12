@@ -90,7 +90,7 @@ available to simply specifying layout.  These are:
     ``horizontal(*items)`` or ``hbox(*items)``
 
     ``vertical(*items)`` or ``vbox(*items)``
-        These two functions take a list of symbols, widgets and spacers and
+        These four functions take a list of symbols, widgets and spacers and
         create a series of constraints that specify a sequential horizontal
         or vertical layout where the sides of each object in sequence abut
         against each other.

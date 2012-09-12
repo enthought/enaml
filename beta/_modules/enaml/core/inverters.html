@@ -94,7 +94,7 @@
 <span class="c"># Abstract Inverter</span>
 <span class="c">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="AbstractInverter"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.inverters.AbstractInverter">[docs]</a><span class="k">class</span> <span class="nc">AbstractInverter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; An abstract base class which defined the api for creating code</span>
+    <span class="sd">&quot;&quot;&quot; An abstract base class which defines the api for creating code</span>
 <span class="sd">    inverter objects. An inverter is responsible for converting a code</span>
 <span class="sd">    list supplied by an expression into the inverse of that expression</span>
 <span class="sd">    which applies the new value onto the expression. For example:</span>
@@ -114,13 +114,13 @@
 <span class="sd">    The value, among other information, is provided by the expression </span>
 <span class="sd">    by inserting the following names into the scope, which can be </span>
 <span class="sd">    retrieved with the LOAD_NAME op-code:</span>
-<span class="sd">        </span>
-<span class="sd">        _[expr] : The expression object</span>
-<span class="sd">        _[obj]  : The component object which triggered the change</span>
-<span class="sd">        _[name] : The attribute on the component which changed</span>
-<span class="sd">        _[old]  : The old value of the attribute.</span>
-<span class="sd">        _[new]  : The new value of the attribute which should be</span>
-<span class="sd">                  applied to the inverted expression.</span>
+
+<span class="sd">        * [expr] : The expression object</span>
+<span class="sd">        * [obj]  : The component object which triggered the change</span>
+<span class="sd">        * [name] : The attribute on the component which changed</span>
+<span class="sd">        * [old]  : The old value of the attribute.</span>
+<span class="sd">        * [new]  : The new value of the attribute which should be </span>
+<span class="sd">          applied to the inverted expression.</span>
 <span class="sd">    </span>
 <span class="sd">    The generated expression should return True if it successfully </span>
 <span class="sd">    completed the operation, False otherwise.</span>

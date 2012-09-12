@@ -70,6 +70,7 @@
 <li><a class="reference internal" href="#">Notebook</a><ul>
 <li><a class="reference internal" href="#backends">Backends</a><ul>
 <li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
 </ul>
 </li>
 </ul>
@@ -181,12 +182,12 @@ ignores its height hug by default, so it expands freely in height.</p>
 <div class="section" id="qt">
 <h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
 <p class="graphviz">
-<img src="../../_images/inheritance-44389d3256a0ee527d3d31e312c935daf7cf24ff.png" alt="Inheritance diagram of enaml.qt.qt_notebook.QtNotebook" usemap="#inheritance5ee603ea4b" class="inheritance"/>
+<img src="../../_images/inheritance-ad1bb835359feed6b8e84e9d763c42239a48340b.png" alt="Inheritance diagram of enaml.qt.qt_notebook.QtNotebook" usemap="#inheritance5ee603ea4b" class="inheritance"/>
 <map id="inheritance5ee603ea4b" name="inheritance5ee603ea4b">
-<area shape="rect" id="node1" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget" title="QtMessengerWidget" alt="" coords="6,5,157,35"/>
-<area shape="rect" id="node2" href="enaml.widgets.widget_component.WidgetComponent.html#enaml.qt.qt_widget_component.QtWidgetComponent" title="QtWidgetComponent" alt="" coords="206,5,362,35"/>
-<area shape="rect" id="node4" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.qt.qt_constraints_widget.QtConstraintsWidget" title="QtConstraintsWidget" alt="" coords="410,5,566,35"/>
-<area shape="rect" id="node6" href="#enaml.qt.qt_notebook.QtNotebook" title="QtNotebook" alt="" coords="614,5,714,35"/>
+<area shape="rect" id="node1" href="#enaml.qt.qt_notebook.QtNotebook" title="QtNotebook" alt="" coords="614,5,714,35"/>
+<area shape="rect" id="node2" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.qt.qt_constraints_widget.QtConstraintsWidget" title="QtConstraintsWidget" alt="" coords="410,5,566,35"/>
+<area shape="rect" id="node4" href="enaml.widgets.widget_component.WidgetComponent.html#enaml.qt.qt_widget_component.QtWidgetComponent" title="QtWidgetComponent" alt="" coords="206,5,362,35"/>
+<area shape="rect" id="node6" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget" title="QtMessengerWidget" alt="" coords="6,5,157,35"/>
 </map>
 </p>
 <dl class="class">
@@ -263,6 +264,97 @@ ignores its height hug by default, so it expands freely in height.</p>
 <dl class="method">
 <dt id="enaml.qt.qt_notebook.QtNotebook.set_tabs_movable">
 <tt class="descname">set_tabs_movable</tt><big>(</big><em>movable</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_notebook.html#QtNotebook.set_tabs_movable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_notebook.QtNotebook.set_tabs_movable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set whether or not the tabs are movable.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="wx">
+<h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-368e46c3ee20021a93abeb0f8c172ab4db32ea66.png" alt="Inheritance diagram of enaml.wx.wx_notebook.WxNotebook" usemap="#inheritance2ca6282413" class="inheritance"/>
+<map id="inheritance2ca6282413" name="inheritance2ca6282413">
+<area shape="rect" id="node1" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.wx.wx_constraints_widget.WxConstraintsWidget" title="WxConstraintsWidget" alt="" coords="419,5,578,35"/>
+<area shape="rect" id="node4" href="#enaml.wx.wx_notebook.WxNotebook" title="WxNotebook" alt="" coords="627,5,731,35"/>
+<area shape="rect" id="node2" href="enaml.widgets.widget_component.WidgetComponent.html#enaml.wx.wx_widget_component.WxWidgetComponent" title="WxWidgetComponent" alt="" coords="209,5,370,35"/>
+<area shape="rect" id="node6" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.wx.wx_messenger_widget.WxMessengerWidget" title="WxMessengerWidget" alt="" coords="5,5,160,35"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.wx.wx_notebook.WxNotebook">
+<em class="property">class </em><tt class="descclassname">enaml.wx.wx_notebook.</tt><tt class="descname">WxNotebook</tt><big>(</big><em>parent</em>, <em>widget_id</em>, <em>session</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_notebook.html#WxNotebook"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_notebook.WxNotebook" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.wx.wx_constraints_widget.WxConstraintsWidget" title="enaml.wx.wx_constraints_widget.WxConstraintsWidget"><tt class="xref py py-class docutils literal"><span class="pre">enaml.wx.wx_constraints_widget.WxConstraintsWidget</span></tt></a></p>
+<p>A Wx implementation of an Enaml Notebook.</p>
+<dl class="method">
+<dt id="enaml.wx.wx_notebook.WxNotebook.create_widget">
+<tt class="descname">create_widget</tt><big>(</big><em>parent</em>, <em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_notebook.html#WxNotebook.create_widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_notebook.WxNotebook.create_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the underlying wx notebook widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_notebook.WxNotebook.create">
+<tt class="descname">create</tt><big>(</big><em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_notebook.html#WxNotebook.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_notebook.WxNotebook.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create and initialize the notebook control</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_notebook.WxNotebook.init_layout">
+<tt class="descname">init_layout</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_notebook.html#WxNotebook.init_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_notebook.WxNotebook.init_layout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the layout initialization for the notebook.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_notebook.WxNotebook.on_action_set_tab_style">
+<tt class="descname">on_action_set_tab_style</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_notebook.html#WxNotebook.on_action_set_tab_style"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_notebook.WxNotebook.on_action_set_tab_style" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_tab_style&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_notebook.WxNotebook.on_action_set_tab_position">
+<tt class="descname">on_action_set_tab_position</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_notebook.html#WxNotebook.on_action_set_tab_position"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_notebook.WxNotebook.on_action_set_tab_position" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_tab_position&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_notebook.WxNotebook.on_action_set_tabs_closable">
+<tt class="descname">on_action_set_tabs_closable</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_notebook.html#WxNotebook.on_action_set_tabs_closable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_notebook.WxNotebook.on_action_set_tabs_closable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_tabs_closable&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_notebook.WxNotebook.on_action_set_tabs_movable">
+<tt class="descname">on_action_set_tabs_movable</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_notebook.html#WxNotebook.on_action_set_tabs_movable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_notebook.WxNotebook.on_action_set_tabs_movable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_tabs_movable&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_notebook.WxNotebook.set_page_ids">
+<tt class="descname">set_page_ids</tt><big>(</big><em>page_ids</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_notebook.html#WxNotebook.set_page_ids"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_notebook.WxNotebook.set_page_ids" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the page ids for the underlying widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_notebook.WxNotebook.set_tab_style">
+<tt class="descname">set_tab_style</tt><big>(</big><em>style</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_notebook.html#WxNotebook.set_tab_style"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_notebook.WxNotebook.set_tab_style" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the tab style for the underlying widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_notebook.WxNotebook.set_tab_position">
+<tt class="descname">set_tab_position</tt><big>(</big><em>position</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_notebook.html#WxNotebook.set_tab_position"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_notebook.WxNotebook.set_tab_position" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the position of the tab bar in the widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_notebook.WxNotebook.set_tabs_closable">
+<tt class="descname">set_tabs_closable</tt><big>(</big><em>closable</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_notebook.html#WxNotebook.set_tabs_closable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_notebook.WxNotebook.set_tabs_closable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set whether or not the tabs are closable.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_notebook.WxNotebook.set_tabs_movable">
+<tt class="descname">set_tabs_movable</tt><big>(</big><em>movable</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_notebook.html#WxNotebook.set_tabs_movable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_notebook.WxNotebook.set_tabs_movable" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set whether or not the tabs are movable.</p>
 </dd></dl>
 

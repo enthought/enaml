@@ -18,6 +18,7 @@ Widget Examples
     ex_form
     ex_group_box
     ex_main_window
+    ex_menu_bar
     ex_notebook
     ex_progress_bar
     ex_scroll_area
@@ -25,6 +26,7 @@ Widget Examples
     ex_spin_box
     ex_splitter
     ex_tool_bar
+    ex_window
     ex_window_children
 
 

@@ -70,6 +70,7 @@
 <li><a class="reference internal" href="#">Calendar</a><ul>
 <li><a class="reference internal" href="#backends">Backends</a><ul>
 <li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
 </ul>
 </li>
 </ul>
@@ -123,13 +124,13 @@ a widget which resembles a calendar.</p>
 <div class="section" id="qt">
 <h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
 <p class="graphviz">
-<img src="../../_images/inheritance-6a909ea3513cc97837b219e939b75fe574151ea5.png" alt="Inheritance diagram of enaml.qt.qt_calendar.QtCalendar" usemap="#inheritance69b79905c4" class="inheritance"/>
+<img src="../../_images/inheritance-b610465537fd9c22e99a40e364fa9bfbc5546a98.png" alt="Inheritance diagram of enaml.qt.qt_calendar.QtCalendar" usemap="#inheritance69b79905c4" class="inheritance"/>
 <map id="inheritance69b79905c4" name="inheritance69b79905c4">
-<area shape="rect" id="node1" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget" title="QtMessengerWidget" alt="" coords="5,5,136,30"/>
-<area shape="rect" id="node6" href="enaml.widgets.widget_component.WidgetComponent.html#enaml.qt.qt_widget_component.QtWidgetComponent" title="QtWidgetComponent" alt="" coords="178,5,314,30"/>
-<area shape="rect" id="node2" href="#enaml.qt.qt_calendar.QtCalendar" title="QtCalendar" alt="" coords="681,5,763,30"/>
-<area shape="rect" id="node3" href="enaml.widgets.bounded_date.BoundedDate.html#enaml.qt.qt_bounded_date.QtBoundedDate" title="QtBoundedDate" alt="" coords="532,5,639,30"/>
-<area shape="rect" id="node5" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.qt.qt_constraints_widget.QtConstraintsWidget" title="QtConstraintsWidget" alt="" coords="356,5,491,30"/>
+<area shape="rect" id="node1" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.qt.qt_constraints_widget.QtConstraintsWidget" title="QtConstraintsWidget" alt="" coords="356,5,491,30"/>
+<area shape="rect" id="node4" href="enaml.widgets.bounded_date.BoundedDate.html#enaml.qt.qt_bounded_date.QtBoundedDate" title="QtBoundedDate" alt="" coords="532,5,639,30"/>
+<area shape="rect" id="node2" href="enaml.widgets.widget_component.WidgetComponent.html#enaml.qt.qt_widget_component.QtWidgetComponent" title="QtWidgetComponent" alt="" coords="178,5,314,30"/>
+<area shape="rect" id="node7" href="#enaml.qt.qt_calendar.QtCalendar" title="QtCalendar" alt="" coords="681,5,763,30"/>
+<area shape="rect" id="node6" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget" title="QtMessengerWidget" alt="" coords="5,5,136,30"/>
 </map>
 </p>
 <dl class="class">
@@ -200,6 +201,94 @@ a widget which resembles a calendar.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>date</strong> (<em>QDate</em>) &#8211; The QDate object to use for setting the minimum date.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="wx">
+<h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-e6ae3b90afcf8b1ba70e326733f205bf29fdcad7.png" alt="Inheritance diagram of enaml.wx.wx_calendar.WxCalendar" usemap="#inheritance4fbdf04ecc" class="inheritance"/>
+<map id="inheritance4fbdf04ecc" name="inheritance4fbdf04ecc">
+<area shape="rect" id="node1" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.wx.wx_constraints_widget.WxConstraintsWidget" title="WxConstraintsWidget" alt="" coords="355,4,490,29"/>
+<area shape="rect" id="node6" href="enaml.widgets.bounded_date.BoundedDate.html#enaml.wx.wx_bounded_date.WxBoundedDate" title="WxBoundedDate" alt="" coords="531,4,639,29"/>
+<area shape="rect" id="node2" href="enaml.widgets.widget_component.WidgetComponent.html#enaml.wx.wx_widget_component.WxWidgetComponent" title="WxWidgetComponent" alt="" coords="177,4,313,29"/>
+<area shape="rect" id="node4" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.wx.wx_messenger_widget.WxMessengerWidget" title="WxMessengerWidget" alt="" coords="5,4,136,29"/>
+<area shape="rect" id="node8" href="#enaml.wx.wx_calendar.WxCalendar" title="WxCalendar" alt="" coords="680,4,763,29"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.wx.wx_calendar.WxCalendar">
+<em class="property">class </em><tt class="descclassname">enaml.wx.wx_calendar.</tt><tt class="descname">WxCalendar</tt><big>(</big><em>parent</em>, <em>widget_id</em>, <em>session</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_calendar.html#WxCalendar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_calendar.WxCalendar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.bounded_date.BoundedDate.html#enaml.wx.wx_bounded_date.WxBoundedDate" title="enaml.wx.wx_bounded_date.WxBoundedDate"><tt class="xref py py-class docutils literal"><span class="pre">enaml.wx.wx_bounded_date.WxBoundedDate</span></tt></a></p>
+<p>A Wx implementation of an Enaml Calendar.</p>
+<dl class="method">
+<dt id="enaml.wx.wx_calendar.WxCalendar.create_widget">
+<tt class="descname">create_widget</tt><big>(</big><em>parent</em>, <em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_calendar.html#WxCalendar.create_widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_calendar.WxCalendar.create_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the wx.calendar.CalendarCtrl widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_calendar.WxCalendar.create">
+<tt class="descname">create</tt><big>(</big><em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_calendar.html#WxCalendar.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_calendar.WxCalendar.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create and initialize the the calendar widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_calendar.WxCalendar.get_date">
+<tt class="descname">get_date</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_calendar.html#WxCalendar.get_date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_calendar.WxCalendar.get_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the current date in the control.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (wxDateTime) &#8211; The current control date as a wxDateTime object.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_calendar.WxCalendar.set_date">
+<tt class="descname">set_date</tt><big>(</big><em>date</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_calendar.html#WxCalendar.set_date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_calendar.WxCalendar.set_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the widget&#8217;s current date.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>date</strong> (<em>wxDateTime</em>) &#8211; The wxDateTime object to use for setting the date.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_calendar.WxCalendar.set_max_date">
+<tt class="descname">set_max_date</tt><big>(</big><em>date</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_calendar.html#WxCalendar.set_max_date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_calendar.WxCalendar.set_max_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the widget&#8217;s maximum date.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>date</strong> (<em>wxDateTime</em>) &#8211; The wxDateTime object to use for setting the maximum date.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_calendar.WxCalendar.set_min_date">
+<tt class="descname">set_min_date</tt><big>(</big><em>date</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_calendar.html#WxCalendar.set_min_date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_calendar.WxCalendar.set_min_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the widget&#8217;s minimum date.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>date</strong> (<em>wxDateTime</em>) &#8211; The wxDateTime object to use for setting the minimum date.</td>
 </tr>
 </tbody>
 </table>

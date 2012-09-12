@@ -70,6 +70,7 @@
 <li><a class="reference internal" href="#">Menu</a><ul>
 <li><a class="reference internal" href="#backends">Backends</a><ul>
 <li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
 </ul>
 </li>
 </ul>
@@ -146,11 +147,11 @@
 <div class="section" id="qt">
 <h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
 <p class="graphviz">
-<img src="../../_images/inheritance-12b5b9c453f63a0f437f41e83087a6dd17f57e49.png" alt="Inheritance diagram of enaml.qt.qt_menu.QtMenu" usemap="#inheritancee20825a7dc" class="inheritance"/>
+<img src="../../_images/inheritance-bf282a8d724f37cee6d4a1926a10472d249f7675.png" alt="Inheritance diagram of enaml.qt.qt_menu.QtMenu" usemap="#inheritancee20825a7dc" class="inheritance"/>
 <map id="inheritancee20825a7dc" name="inheritancee20825a7dc">
-<area shape="rect" id="node1" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget" title="QtMessengerWidget" alt="" coords="6,5,157,35"/>
-<area shape="rect" id="node2" href="enaml.widgets.widget_component.WidgetComponent.html#enaml.qt.qt_widget_component.QtWidgetComponent" title="QtWidgetComponent" alt="" coords="206,5,362,35"/>
+<area shape="rect" id="node1" href="enaml.widgets.widget_component.WidgetComponent.html#enaml.qt.qt_widget_component.QtWidgetComponent" title="QtWidgetComponent" alt="" coords="206,5,362,35"/>
 <area shape="rect" id="node4" href="#enaml.qt.qt_menu.QtMenu" title="QtMenu" alt="" coords="411,5,483,35"/>
+<area shape="rect" id="node2" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget" title="QtMessengerWidget" alt="" coords="6,5,157,35"/>
 </map>
 </p>
 <dl class="class">
@@ -200,6 +201,90 @@ underlying QAction for the menu instead of on the menu itself.</p>
 <dt id="enaml.qt.qt_menu.QtMenu.set_title">
 <tt class="descname">set_title</tt><big>(</big><em>title</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_menu.html#QtMenu.set_title"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_menu.QtMenu.set_title" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the title of the underlying widget.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="wx">
+<h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-fe4ea328a3b43c2e53c38df1c4ddece8d268fc86.png" alt="Inheritance diagram of enaml.wx.wx_menu.WxMenu" usemap="#inheritancee3240430ea" class="inheritance"/>
+<map id="inheritancee3240430ea" name="inheritancee3240430ea">
+<area shape="rect" id="node1" href="enaml.widgets.widget_component.WidgetComponent.html#enaml.wx.wx_widget_component.WxWidgetComponent" title="WxWidgetComponent" alt="" coords="209,5,370,35"/>
+<area shape="rect" id="node4" href="#enaml.wx.wx_menu.WxMenu" title="WxMenu" alt="" coords="419,5,496,35"/>
+<area shape="rect" id="node2" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.wx.wx_messenger_widget.WxMessengerWidget" title="WxMessengerWidget" alt="" coords="5,5,160,35"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.wx.wx_menu.WxMenu">
+<em class="property">class </em><tt class="descclassname">enaml.wx.wx_menu.</tt><tt class="descname">WxMenu</tt><big>(</big><em>parent</em>, <em>widget_id</em>, <em>session</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_menu.html#WxMenu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_menu.WxMenu" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.widget_component.WidgetComponent.html#enaml.wx.wx_widget_component.WxWidgetComponent" title="enaml.wx.wx_widget_component.WxWidgetComponent"><tt class="xref py py-class docutils literal"><span class="pre">enaml.wx.wx_widget_component.WxWidgetComponent</span></tt></a></p>
+<p>A Wx implementation of an Enaml Menu.</p>
+<dl class="method">
+<dt id="enaml.wx.wx_menu.WxMenu.create_widget">
+<tt class="descname">create_widget</tt><big>(</big><em>parent</em>, <em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_menu.html#WxMenu.create_widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_menu.WxMenu.create_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the underlying wx menu widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_menu.WxMenu.create">
+<tt class="descname">create</tt><big>(</big><em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_menu.html#WxMenu.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_menu.WxMenu.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create and initialize the underlying control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_menu.WxMenu.init_layout">
+<tt class="descname">init_layout</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_menu.html#WxMenu.init_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_menu.WxMenu.init_layout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the layout for the underlying control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_menu.WxMenu.on_action_set_title">
+<tt class="descname">on_action_set_title</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_menu.html#WxMenu.on_action_set_title"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_menu.WxMenu.on_action_set_title" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_title&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_menu.WxMenu.set_item_ids">
+<tt class="descname">set_item_ids</tt><big>(</big><em>item_ids</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_menu.html#WxMenu.set_item_ids"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_menu.WxMenu.set_item_ids" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the item ids of the underlying control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_menu.WxMenu.set_title">
+<tt class="descname">set_title</tt><big>(</big><em>title</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_menu.html#WxMenu.set_title"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_menu.WxMenu.set_title" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the title of the underlyling control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_menu.WxMenu.set_enabled">
+<tt class="descname">set_enabled</tt><big>(</big><em>enabled</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_menu.html#WxMenu.set_enabled"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_menu.WxMenu.set_enabled" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden parent class method.</p>
+<p>This properly sets the enabled state on a menu using the custom
+wxMenu api.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_menu.WxMenu.set_visible">
+<tt class="descname">set_visible</tt><big>(</big><em>visible</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_menu.html#WxMenu.set_visible"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_menu.WxMenu.set_visible" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrdden parent class method.</p>
+<p>This properly sets the visible state on a menu using the custom
+wxMenu api.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_menu.WxMenu.set_minimum_size">
+<tt class="descname">set_minimum_size</tt><big>(</big><em>min_size</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_menu.html#WxMenu.set_minimum_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_menu.WxMenu.set_minimum_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden parent class method.</p>
+<p>Menus do not have a minimum size, so this method is a no-op.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_menu.WxMenu.set_maximum_size">
+<tt class="descname">set_maximum_size</tt><big>(</big><em>max_size</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_menu.html#WxMenu.set_maximum_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_menu.WxMenu.set_maximum_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden parent class method.</p>
+<p>Menus do not have a maximum size, so this method is a no-op.</p>
 </dd></dl>
 
 </dd></dl>

@@ -70,6 +70,7 @@
 <li><a class="reference internal" href="#">Field</a><ul>
 <li><a class="reference internal" href="#backends">Backends</a><ul>
 <li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
 </ul>
 </li>
 </ul>
@@ -206,12 +207,12 @@ to bind any event handlers necessary.</p>
 <div class="section" id="qt">
 <h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
 <p class="graphviz">
-<img src="../../_images/inheritance-5d3b20e5fdf50cf069868beccdeeb93f204e4038.png" alt="Inheritance diagram of enaml.qt.qt_field.QtField" usemap="#inheritance18dbbf9725" class="inheritance"/>
+<img src="../../_images/inheritance-3e833ebe59e8189473fa3977757d4af16dfab668.png" alt="Inheritance diagram of enaml.qt.qt_field.QtField" usemap="#inheritance18dbbf9725" class="inheritance"/>
 <map id="inheritance18dbbf9725" name="inheritance18dbbf9725">
-<area shape="rect" id="node1" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget" title="QtMessengerWidget" alt="" coords="6,5,157,35"/>
-<area shape="rect" id="node5" href="enaml.widgets.widget_component.WidgetComponent.html#enaml.qt.qt_widget_component.QtWidgetComponent" title="QtWidgetComponent" alt="" coords="206,5,362,35"/>
-<area shape="rect" id="node2" href="#enaml.qt.qt_field.QtField" title="QtField" alt="" coords="613,5,685,35"/>
-<area shape="rect" id="node3" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.qt.qt_constraints_widget.QtConstraintsWidget" title="QtConstraintsWidget" alt="" coords="410,5,566,35"/>
+<area shape="rect" id="node1" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.qt.qt_constraints_widget.QtConstraintsWidget" title="QtConstraintsWidget" alt="" coords="410,5,566,35"/>
+<area shape="rect" id="node5" href="#enaml.qt.qt_field.QtField" title="QtField" alt="" coords="613,5,685,35"/>
+<area shape="rect" id="node2" href="enaml.widgets.widget_component.WidgetComponent.html#enaml.qt.qt_widget_component.QtWidgetComponent" title="QtWidgetComponent" alt="" coords="206,5,362,35"/>
+<area shape="rect" id="node4" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget" title="QtMessengerWidget" alt="" coords="6,5,157,35"/>
 </map>
 </p>
 <dl class="class">
@@ -332,6 +333,142 @@ widget.</p>
 <dt id="enaml.qt.qt_field.QtField.set_read_only">
 <tt class="descname">set_read_only</tt><big>(</big><em>read_only</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_field.html#QtField.set_read_only"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_field.QtField.set_read_only" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set whether or not the widget is read only.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="wx">
+<h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-9815d1eed09b06068f6880fb213ec525c311bd19.png" alt="Inheritance diagram of enaml.wx.wx_field.WxField" usemap="#inheritance49cddce110" class="inheritance"/>
+<map id="inheritance49cddce110" name="inheritance49cddce110">
+<area shape="rect" id="node1" href="#enaml.wx.wx_field.WxField" title="WxField" alt="" coords="627,5,699,35"/>
+<area shape="rect" id="node2" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.wx.wx_constraints_widget.WxConstraintsWidget" title="WxConstraintsWidget" alt="" coords="419,5,578,35"/>
+<area shape="rect" id="node4" href="enaml.widgets.widget_component.WidgetComponent.html#enaml.wx.wx_widget_component.WxWidgetComponent" title="WxWidgetComponent" alt="" coords="209,5,370,35"/>
+<area shape="rect" id="node6" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.wx.wx_messenger_widget.WxMessengerWidget" title="WxMessengerWidget" alt="" coords="5,5,160,35"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.wx.wx_field.WxField">
+<em class="property">class </em><tt class="descclassname">enaml.wx.wx_field.</tt><tt class="descname">WxField</tt><big>(</big><em>parent</em>, <em>widget_id</em>, <em>session</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_field.html#WxField"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_field.WxField" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.wx.wx_constraints_widget.WxConstraintsWidget" title="enaml.wx.wx_constraints_widget.WxConstraintsWidget"><tt class="xref py py-class docutils literal"><span class="pre">enaml.wx.wx_constraints_widget.WxConstraintsWidget</span></tt></a></p>
+<p>A Wx implementation of an Enaml Field.</p>
+<dl class="method">
+<dt id="enaml.wx.wx_field.WxField.create_widget">
+<tt class="descname">create_widget</tt><big>(</big><em>parent</em>, <em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_field.html#WxField.create_widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_field.WxField.create_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the underlying wxLineEdit.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_field.WxField.create">
+<tt class="descname">create</tt><big>(</big><em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_field.html#WxField.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_field.WxField.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create and initialize the wx field control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_field.WxField.on_lost_focus">
+<tt class="descname">on_lost_focus</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_field.html#WxField.on_lost_focus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_field.WxField.on_lost_focus" title="Permalink to this definition">¶</a></dt>
+<dd><p>The event handler for EVT_KILL_FOCUS event.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_field.WxField.on_return_pressed">
+<tt class="descname">on_return_pressed</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_field.html#WxField.on_return_pressed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_field.WxField.on_return_pressed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The event handler for EVT_TEXT_ENTER event.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_field.WxField.on_action_set_text">
+<tt class="descname">on_action_set_text</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_field.html#WxField.on_action_set_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_field.WxField.on_action_set_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_text&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_field.WxField.on_action_set_validator">
+<tt class="descname">on_action_set_validator</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_field.html#WxField.on_action_set_validator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_field.WxField.on_action_set_validator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_validator&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_field.WxField.on_action_set_submit_triggers">
+<tt class="descname">on_action_set_submit_triggers</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_field.html#WxField.on_action_set_submit_triggers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_field.WxField.on_action_set_submit_triggers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_submit_triggers&#8217; action from the Enaml 
+widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_field.WxField.on_action_set_placeholder">
+<tt class="descname">on_action_set_placeholder</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_field.html#WxField.on_action_set_placeholder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_field.WxField.on_action_set_placeholder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hanlde the &#8216;set_placeholder&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_field.WxField.on_action_set_echo_mode">
+<tt class="descname">on_action_set_echo_mode</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_field.html#WxField.on_action_set_echo_mode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_field.WxField.on_action_set_echo_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_echo_mode&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_field.WxField.on_action_set_max_length">
+<tt class="descname">on_action_set_max_length</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_field.html#WxField.on_action_set_max_length"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_field.WxField.on_action_set_max_length" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_max_length&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_field.WxField.on_action_set_read_only">
+<tt class="descname">on_action_set_read_only</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_field.html#WxField.on_action_set_read_only"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_field.WxField.on_action_set_read_only" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_read_only&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_field.WxField.on_action_invalid_text">
+<tt class="descname">on_action_invalid_text</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_field.html#WxField.on_action_invalid_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_field.WxField.on_action_invalid_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;invalid_text&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_field.WxField.set_text">
+<tt class="descname">set_text</tt><big>(</big><em>text</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_field.html#WxField.set_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_field.WxField.set_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the text control with the given unicode text.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_field.WxField.set_validator">
+<tt class="descname">set_validator</tt><big>(</big><em>validator</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_field.html#WxField.set_validator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_field.WxField.set_validator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the validator for the control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_field.WxField.set_submit_triggers">
+<tt class="descname">set_submit_triggers</tt><big>(</big><em>triggers</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_field.html#WxField.set_submit_triggers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_field.WxField.set_submit_triggers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the submit triggers for the underlying widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_field.WxField.set_placeholder">
+<tt class="descname">set_placeholder</tt><big>(</big><em>placeholder</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_field.html#WxField.set_placeholder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_field.WxField.set_placeholder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the placeholder text in the widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_field.WxField.set_echo_mode">
+<tt class="descname">set_echo_mode</tt><big>(</big><em>echo_mode</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_field.html#WxField.set_echo_mode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_field.WxField.set_echo_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the echo mode of the wiget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_field.WxField.set_max_length">
+<tt class="descname">set_max_length</tt><big>(</big><em>max_length</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_field.html#WxField.set_max_length"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_field.WxField.set_max_length" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the max length of the control to max_length. If the max 
+length is &lt;= 0 or &gt; 32767 then the control will be set to hold 
+32kb of text.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_field.WxField.set_read_only">
+<tt class="descname">set_read_only</tt><big>(</big><em>read_only</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_field.html#WxField.set_read_only"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_field.WxField.set_read_only" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the read only state of the widget.</p>
 </dd></dl>
 
 </dd></dl>

@@ -70,6 +70,7 @@
 <li><a class="reference internal" href="#">Slider</a><ul>
 <li><a class="reference internal" href="#backends">Backends</a><ul>
 <li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
 </ul>
 </li>
 </ul>
@@ -236,12 +237,12 @@ to bind any event handlers necessary.</p>
 <div class="section" id="qt">
 <h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
 <p class="graphviz">
-<img src="../../_images/inheritance-5dc175dbdb7958ac1796f9a56145cb2e54e220d0.png" alt="Inheritance diagram of enaml.qt.qt_slider.QtSlider" usemap="#inheritance5bf62ca8eb" class="inheritance"/>
+<img src="../../_images/inheritance-a9caa32a9ae4f6212f054a0009730f5f6abbc40c.png" alt="Inheritance diagram of enaml.qt.qt_slider.QtSlider" usemap="#inheritance5bf62ca8eb" class="inheritance"/>
 <map id="inheritance5bf62ca8eb" name="inheritance5bf62ca8eb">
-<area shape="rect" id="node1" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget" title="QtMessengerWidget" alt="" coords="6,5,157,35"/>
+<area shape="rect" id="node1" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.qt.qt_constraints_widget.QtConstraintsWidget" title="QtConstraintsWidget" alt="" coords="410,5,566,35"/>
+<area shape="rect" id="node4" href="#enaml.qt.qt_slider.QtSlider" title="QtSlider" alt="" coords="614,5,687,35"/>
 <area shape="rect" id="node2" href="enaml.widgets.widget_component.WidgetComponent.html#enaml.qt.qt_widget_component.QtWidgetComponent" title="QtWidgetComponent" alt="" coords="206,5,362,35"/>
-<area shape="rect" id="node4" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.qt.qt_constraints_widget.QtConstraintsWidget" title="QtConstraintsWidget" alt="" coords="410,5,566,35"/>
-<area shape="rect" id="node6" href="#enaml.qt.qt_slider.QtSlider" title="QtSlider" alt="" coords="614,5,687,35"/>
+<area shape="rect" id="node6" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget" title="QtMessengerWidget" alt="" coords="6,5,157,35"/>
 </map>
 </p>
 <dl class="class">
@@ -373,6 +374,152 @@ slider value has changed.</p>
 <dl class="method">
 <dt id="enaml.qt.qt_slider.QtSlider.set_tracking">
 <tt class="descname">set_tracking</tt><big>(</big><em>tracking</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_slider.html#QtSlider.set_tracking"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_slider.QtSlider.set_tracking" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the tracking of the underlying widget.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="wx">
+<h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-f3616bbd23f3d493c1d843f6fe8257791e8d2753.png" alt="Inheritance diagram of enaml.wx.wx_slider.WxSlider" usemap="#inheritance19e7da8d56" class="inheritance"/>
+<map id="inheritance19e7da8d56" name="inheritance19e7da8d56">
+<area shape="rect" id="node1" href="#enaml.wx.wx_slider.WxSlider" title="WxSlider" alt="" coords="627,5,704,35"/>
+<area shape="rect" id="node2" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.wx.wx_constraints_widget.WxConstraintsWidget" title="WxConstraintsWidget" alt="" coords="419,5,578,35"/>
+<area shape="rect" id="node4" href="enaml.widgets.widget_component.WidgetComponent.html#enaml.wx.wx_widget_component.WxWidgetComponent" title="WxWidgetComponent" alt="" coords="209,5,370,35"/>
+<area shape="rect" id="node6" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.wx.wx_messenger_widget.WxMessengerWidget" title="WxMessengerWidget" alt="" coords="5,5,160,35"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.wx.wx_slider.WxSlider">
+<em class="property">class </em><tt class="descclassname">enaml.wx.wx_slider.</tt><tt class="descname">WxSlider</tt><big>(</big><em>parent</em>, <em>widget_id</em>, <em>session</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_slider.html#WxSlider"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_slider.WxSlider" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.wx.wx_constraints_widget.WxConstraintsWidget" title="enaml.wx.wx_constraints_widget.WxConstraintsWidget"><tt class="xref py py-class docutils literal"><span class="pre">enaml.wx.wx_constraints_widget.WxConstraintsWidget</span></tt></a></p>
+<p>A Wx implementation of an Enaml Slider.</p>
+<dl class="method">
+<dt id="enaml.wx.wx_slider.WxSlider.create_widget">
+<tt class="descname">create_widget</tt><big>(</big><em>parent</em>, <em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_slider.html#WxSlider.create_widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_slider.WxSlider.create_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the underlying wxProperSlider widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_slider.WxSlider.create">
+<tt class="descname">create</tt><big>(</big><em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_slider.html#WxSlider.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_slider.WxSlider.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create and initialize the slider control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_slider.WxSlider.on_action_set_value">
+<tt class="descname">on_action_set_value</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_slider.html#WxSlider.on_action_set_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_slider.WxSlider.on_action_set_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_value&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_slider.WxSlider.on_action_set_maximum">
+<tt class="descname">on_action_set_maximum</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_slider.html#WxSlider.on_action_set_maximum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_slider.WxSlider.on_action_set_maximum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_maximum&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_slider.WxSlider.on_action_set_minimum">
+<tt class="descname">on_action_set_minimum</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_slider.html#WxSlider.on_action_set_minimum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_slider.WxSlider.on_action_set_minimum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_minimum&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_slider.WxSlider.on_action_set_orientation">
+<tt class="descname">on_action_set_orientation</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_slider.html#WxSlider.on_action_set_orientation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_slider.WxSlider.on_action_set_orientation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_orientation&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_slider.WxSlider.on_action_set_page_step">
+<tt class="descname">on_action_set_page_step</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_slider.html#WxSlider.on_action_set_page_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_slider.WxSlider.on_action_set_page_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_page_step&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_slider.WxSlider.on_action_set_single_step">
+<tt class="descname">on_action_set_single_step</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_slider.html#WxSlider.on_action_set_single_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_slider.WxSlider.on_action_set_single_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_single_step&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_slider.WxSlider.on_action_set_tick_interval">
+<tt class="descname">on_action_set_tick_interval</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_slider.html#WxSlider.on_action_set_tick_interval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_slider.WxSlider.on_action_set_tick_interval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_tick_interval&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_slider.WxSlider.on_action_set_tick_position">
+<tt class="descname">on_action_set_tick_position</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_slider.html#WxSlider.on_action_set_tick_position"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_slider.WxSlider.on_action_set_tick_position" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_tick_position&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_slider.WxSlider.on_action_set_tracking">
+<tt class="descname">on_action_set_tracking</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_slider.html#WxSlider.on_action_set_tracking"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_slider.WxSlider.on_action_set_tracking" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_tracking&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_slider.WxSlider.on_value_changed">
+<tt class="descname">on_value_changed</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_slider.html#WxSlider.on_value_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_slider.WxSlider.on_value_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send the &#8216;value_changed&#8217; action to the Enaml widget when the 
+slider value has changed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_slider.WxSlider.set_value">
+<tt class="descname">set_value</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_slider.html#WxSlider.set_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_slider.WxSlider.set_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the value of the underlying widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_slider.WxSlider.set_maximum">
+<tt class="descname">set_maximum</tt><big>(</big><em>maximum</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_slider.html#WxSlider.set_maximum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_slider.WxSlider.set_maximum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the maximum value of the underlying widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_slider.WxSlider.set_minimum">
+<tt class="descname">set_minimum</tt><big>(</big><em>minimum</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_slider.html#WxSlider.set_minimum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_slider.WxSlider.set_minimum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the minimum value of the underlying widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_slider.WxSlider.set_orientation">
+<tt class="descname">set_orientation</tt><big>(</big><em>orientation</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_slider.html#WxSlider.set_orientation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_slider.WxSlider.set_orientation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the orientation of the underlying widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_slider.WxSlider.set_page_step">
+<tt class="descname">set_page_step</tt><big>(</big><em>page_step</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_slider.html#WxSlider.set_page_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_slider.WxSlider.set_page_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the page step of the underlying widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_slider.WxSlider.set_single_step">
+<tt class="descname">set_single_step</tt><big>(</big><em>single_step</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_slider.html#WxSlider.set_single_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_slider.WxSlider.set_single_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the single step of the underlying widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_slider.WxSlider.set_tick_interval">
+<tt class="descname">set_tick_interval</tt><big>(</big><em>interval</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_slider.html#WxSlider.set_tick_interval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_slider.WxSlider.set_tick_interval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the tick interval of the underlying widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_slider.WxSlider.set_tick_position">
+<tt class="descname">set_tick_position</tt><big>(</big><em>tick_position</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_slider.html#WxSlider.set_tick_position"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_slider.WxSlider.set_tick_position" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the tick position of the underlying widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_slider.WxSlider.set_tracking">
+<tt class="descname">set_tracking</tt><big>(</big><em>tracking</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_slider.html#WxSlider.set_tracking"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_slider.WxSlider.set_tracking" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the tracking of the underlying widget.</p>
 </dd></dl>
 

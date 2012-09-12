@@ -17,3 +17,13 @@ Qt
     :parts: 1
 
 .. autoclass:: enaml.qt.qt_group_box.QtGroupBox
+
+
+Wx
+^^
+
+.. inheritance-diagram::
+    enaml.wx.wx_group_box.WxGroupBox
+    :parts: 1
+
+.. autoclass:: enaml.wx.wx_group_box.WxGroupBox

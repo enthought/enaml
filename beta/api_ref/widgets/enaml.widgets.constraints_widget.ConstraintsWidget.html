@@ -70,6 +70,7 @@
 <li><a class="reference internal" href="#">ConstraintsWidget</a><ul>
 <li><a class="reference internal" href="#backends">Backends</a><ul>
 <li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
 </ul>
 </li>
 </ul>
@@ -255,11 +256,11 @@ attributes dict. The value is a dict with the following keys.</p>
 <div class="section" id="qt">
 <h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
 <p class="graphviz">
-<img src="../../_images/inheritance-045d97c8d85ef8f2561087449208827546d09299.png" alt="Inheritance diagram of enaml.qt.qt_constraints_widget.QtConstraintsWidget" usemap="#inheritance7c2e8f94d0" class="inheritance"/>
+<img src="../../_images/inheritance-661ad781eeaf610096f42521426d9678c8cd0d10.png" alt="Inheritance diagram of enaml.qt.qt_constraints_widget.QtConstraintsWidget" usemap="#inheritance7c2e8f94d0" class="inheritance"/>
 <map id="inheritance7c2e8f94d0" name="inheritance7c2e8f94d0">
-<area shape="rect" id="node1" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget" title="QtMessengerWidget" alt="" coords="6,5,157,35"/>
+<area shape="rect" id="node1" href="#enaml.qt.qt_constraints_widget.QtConstraintsWidget" title="QtConstraintsWidget" alt="" coords="410,5,566,35"/>
 <area shape="rect" id="node2" href="enaml.widgets.widget_component.WidgetComponent.html#enaml.qt.qt_widget_component.QtWidgetComponent" title="QtWidgetComponent" alt="" coords="206,5,362,35"/>
-<area shape="rect" id="node4" href="#enaml.qt.qt_constraints_widget.QtConstraintsWidget" title="QtConstraintsWidget" alt="" coords="410,5,566,35"/>
+<area shape="rect" id="node4" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget" title="QtMessengerWidget" alt="" coords="6,5,157,35"/>
 </map>
 </p>
 <dl class="class">
@@ -370,6 +371,155 @@ information sent by the server.</p>
 <dl class="method">
 <dt id="enaml.qt.qt_constraints_widget.QtConstraintsWidget.geometry_updater">
 <tt class="descname">geometry_updater</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_constraints_widget.html#QtConstraintsWidget.geometry_updater"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_constraints_widget.QtConstraintsWidget.geometry_updater" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method which can be called to create a function which
+will update the layout geometry of the underlying widget.</p>
+<p>The parameter and return values below describe the function
+that is returned by calling this method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dx</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; The offset of the parent widget from the computed origin
+of the layout. This amount is subtracted from the computed
+layout &#8216;x&#8217; amount, which is expressed in the coordinates
+of the owner widget.</li>
+<li><strong>dy</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; The offset of the parent widget from the computed origin
+of the layout. This amount is subtracted from the computed
+layout &#8216;y&#8217; amount, which is expressed in the coordinates
+of the layout owner widget.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>result</strong> ((x, y)) &#8211; The computed layout &#8216;x&#8217; and &#8216;y&#8217; amount, expressed in the coordinates of the layout owner widget.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="wx">
+<h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-874485fa65a095a10edbe68f064968a6fd315a9c.png" alt="Inheritance diagram of enaml.wx.wx_constraints_widget.WxConstraintsWidget" usemap="#inheritanceadc3877570" class="inheritance"/>
+<map id="inheritanceadc3877570" name="inheritanceadc3877570">
+<area shape="rect" id="node1" href="#enaml.wx.wx_constraints_widget.WxConstraintsWidget" title="WxConstraintsWidget" alt="" coords="419,5,578,35"/>
+<area shape="rect" id="node2" href="enaml.widgets.widget_component.WidgetComponent.html#enaml.wx.wx_widget_component.WxWidgetComponent" title="WxWidgetComponent" alt="" coords="209,5,370,35"/>
+<area shape="rect" id="node4" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.wx.wx_messenger_widget.WxMessengerWidget" title="WxMessengerWidget" alt="" coords="5,5,160,35"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.wx.wx_constraints_widget.WxConstraintsWidget">
+<em class="property">class </em><tt class="descclassname">enaml.wx.wx_constraints_widget.</tt><tt class="descname">WxConstraintsWidget</tt><big>(</big><em>parent</em>, <em>widget_id</em>, <em>session</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_constraints_widget.html#WxConstraintsWidget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_constraints_widget.WxConstraintsWidget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.widget_component.WidgetComponent.html#enaml.wx.wx_widget_component.WxWidgetComponent" title="enaml.wx.wx_widget_component.WxWidgetComponent"><tt class="xref py py-class docutils literal"><span class="pre">enaml.wx.wx_widget_component.WxWidgetComponent</span></tt></a></p>
+<p>A Wx implementation of an Enaml ConstraintsWidget.</p>
+<dl class="method">
+<dt id="enaml.wx.wx_constraints_widget.WxConstraintsWidget.create">
+<tt class="descname">create</tt><big>(</big><em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_constraints_widget.html#WxConstraintsWidget.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_constraints_widget.WxConstraintsWidget.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create and initialize the control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_constraints_widget.WxConstraintsWidget.on_action_relayout">
+<tt class="descname">on_action_relayout</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_constraints_widget.html#WxConstraintsWidget.on_action_relayout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_constraints_widget.WxConstraintsWidget.on_action_relayout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;relayout&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_constraints_widget.WxConstraintsWidget.relayout">
+<tt class="descname">relayout</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_constraints_widget.html#WxConstraintsWidget.relayout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_constraints_widget.WxConstraintsWidget.relayout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Peform a relayout for this constraints widget.</p>
+<p>The default behavior of this method is to proxy the call up the
+tree of ancestors until it is either handled by a subclass which
+has reimplemented this method (see WxContainer), or the ancestor
+is not an instance of WxConstraintsWidget, at which point the
+layout request is dropped.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_constraints_widget.WxConstraintsWidget.replace_constraints">
+<tt class="descname">replace_constraints</tt><big>(</big><em>old_cns</em>, <em>new_cns</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_constraints_widget.html#WxConstraintsWidget.replace_constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_constraints_widget.WxConstraintsWidget.replace_constraints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replace constraints in the current layout system.</p>
+<p>The default behavior of this method is to proxy the call up the
+tree of ancestors until it is either handled by a subclass which
+has reimplemented this method (see WxContainer), or the ancestor
+is not an instance of WxConstraintsWidget, at which point the
+request is dropped.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>old_cns</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; The list of casuarius constraints to remove from the
+current layout system.</li>
+<li><strong>new_cns</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; The list of casuarius constraints to add to the
+current layout system.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_constraints_widget.WxConstraintsWidget.size_hint_constraints">
+<tt class="descname">size_hint_constraints</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_constraints_widget.html#WxConstraintsWidget.size_hint_constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_constraints_widget.WxConstraintsWidget.size_hint_constraints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the list of size hint constraints for this widget.</p>
+<p>This method using the provided size hint of the widget and the
+policies for &#8216;hug&#8217; and &#8216;resist_clip&#8217; to generate casuarius 
+LinearConstraint objects which respect the size hinting of the
+widget.</p>
+<p>If the size hint of the underlying widget is not valid, then
+no constraints will be generated.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (list) &#8211; A list of casuarius LinearConstraint instances.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_constraints_widget.WxConstraintsWidget.hard_constraints">
+<tt class="descname">hard_constraints</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_constraints_widget.html#WxConstraintsWidget.hard_constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_constraints_widget.WxConstraintsWidget.hard_constraints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate the constraints which must always be applied.</p>
+<p>These constraints are generated once the first time this method
+is called. The results are then cached and returned immediately
+on future calls.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (list) &#8211; A list of casuarius LinearConstraint instance.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_constraints_widget.WxConstraintsWidget.user_constraints">
+<tt class="descname">user_constraints</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_constraints_widget.html#WxConstraintsWidget.user_constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_constraints_widget.WxConstraintsWidget.user_constraints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the list of user constraints defined for this widget.</p>
+<p>The default implementation returns the list of constraint
+information sent by the server.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (list) &#8211; The list of dictionaries which represent the user defined linear constraints.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_constraints_widget.WxConstraintsWidget.geometry_updater">
+<tt class="descname">geometry_updater</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_constraints_widget.html#WxConstraintsWidget.geometry_updater"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_constraints_widget.WxConstraintsWidget.geometry_updater" title="Permalink to this definition">¶</a></dt>
 <dd><p>A method which can be called to create a function which
 will update the layout geometry of the underlying widget.</p>
 <p>The parameter and return values below describe the function

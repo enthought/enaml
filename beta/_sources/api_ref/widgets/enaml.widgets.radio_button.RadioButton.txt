@@ -17,3 +17,13 @@ Qt
     :parts: 1
 
 .. autoclass:: enaml.qt.qt_radio_button.QtRadioButton
+
+
+Wx
+^^
+
+.. inheritance-diagram::
+    enaml.wx.wx_radio_button.WxRadioButton
+    :parts: 1
+
+.. autoclass:: enaml.wx.wx_radio_button.WxRadioButton

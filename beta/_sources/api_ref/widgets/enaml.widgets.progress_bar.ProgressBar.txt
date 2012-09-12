@@ -17,3 +17,13 @@ Qt
     :parts: 1
 
 .. autoclass:: enaml.qt.qt_progress_bar.QtProgressBar
+
+
+Wx
+^^
+
+.. inheritance-diagram::
+    enaml.wx.wx_progress_bar.WxProgressBar
+    :parts: 1
+
+.. autoclass:: enaml.wx.wx_progress_bar.WxProgressBar

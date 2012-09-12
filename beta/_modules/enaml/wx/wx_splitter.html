@@ -1,0 +1,254 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.wx.wx_splitter &mdash; enaml 0.3alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.3alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.3alpha documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.wx.wx_splitter</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.wx.wx_splitter</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Copyright (c) 2012, Enthought, Inc.</span>
+<span class="c"># All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">import</span> <span class="nn">wx</span>
+<span class="kn">from</span> <span class="nn">wx.lib.splitter</span> <span class="kn">import</span> <span class="n">MultiSplitterWindow</span>
+
+<span class="kn">from</span> <span class="nn">.wx_constraints_widget</span> <span class="kn">import</span> <span class="n">WxConstraintsWidget</span>
+
+
+<span class="n">_ORIENTATION_MAP</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&#39;horizontal&#39;</span><span class="p">:</span> <span class="n">wx</span><span class="o">.</span><span class="n">HORIZONTAL</span><span class="p">,</span>
+    <span class="s">&#39;vertical&#39;</span><span class="p">:</span> <span class="n">wx</span><span class="o">.</span><span class="n">VERTICAL</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<span class="k">class</span> <span class="nc">wxSplitter</span><span class="p">(</span><span class="n">MultiSplitterWindow</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A wx.lib.splitter.MultiSplitterWindow subclass that changes</span>
+<span class="sd">    the behavior of resizing neighbors to be consistent with Qt.</span>
+
+<span class="sd">    TODO - Fix the problem with the splitter not resizing its children</span>
+<span class="sd">           smaller when possible when the splitter window shrinks.</span>
+<span class="sd">           Fix the problem with initial sash positions.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">_OnMouse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Overriden parent class mouse event handler which fakes the</span>
+<span class="sd">        state of the keyboard so that resize behavior is consistent</span>
+<span class="sd">        between wx and Qt.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># We modify the mouse event to &quot;fake&quot; like the shift key is</span>
+        <span class="c"># always down. This causes the splitter to not adjust its </span>
+        <span class="c"># neighbor when dragging the sash. This behavior is consistent</span>
+        <span class="c"># with Qt&#39;s behavior. This is not *the best* way to handle this,</span>
+        <span class="c"># but it&#39;s the easiest and quickest at the moment. The proper </span>
+        <span class="c"># way would be to reimplement this method in its entirety and</span>
+        <span class="c"># allow the adjustNeighbor computation to be based on keyboard</span>
+        <span class="c"># state as well as attribute flags. </span>
+        <span class="c">#</span>
+        <span class="c"># TODO implement this properly</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">m_shiftDown</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">wxSplitter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">_OnMouse</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="WxSplitter"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.splitter.Splitter.html#enaml.wx.wx_splitter.WxSplitter">[docs]</a><span class="k">class</span> <span class="nc">WxSplitter</span><span class="p">(</span><span class="n">WxConstraintsWidget</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A Wx implementation of an Enaml Splitter.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#: Storage for the splitter widget ids</span>
+    <span class="n">_splitter_widget_ids</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Setup methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="WxSplitter.create_widget"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.splitter.Splitter.html#enaml.wx.wx_splitter.WxSplitter.create_widget">[docs]</a>    <span class="k">def</span> <span class="nf">create_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">tree</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates the underlying wxSplitter widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">wxSplitter</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WxSplitter.create"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.splitter.Splitter.html#enaml.wx.wx_splitter.WxSplitter.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tree</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Create and initialize the splitter control.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">WxSplitter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_splitter_widget_ids</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="s">&#39;splitter_widget_ids&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_orientation</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="s">&#39;orientation&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_live_drag</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="s">&#39;live_drag&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_preferred_sizes</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="s">&#39;preferred_sizes&#39;</span><span class="p">])</span>
+    </div>
+<div class="viewcode-block" id="WxSplitter.init_layout"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.splitter.Splitter.html#enaml.wx.wx_splitter.WxSplitter.init_layout">[docs]</a>    <span class="k">def</span> <span class="nf">init_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the layout initialization for the splitter.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">WxSplitter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">init_layout</span><span class="p">()</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span>
+        <span class="n">find_child</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_child</span>
+        <span class="k">for</span> <span class="n">widget_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_splitter_widget_ids</span><span class="p">:</span>
+            <span class="n">child</span> <span class="o">=</span> <span class="n">find_child</span><span class="p">(</span><span class="n">widget_id</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">child</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">widget</span><span class="o">.</span><span class="n">AppendWindow</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">widget</span><span class="p">())</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">SizeWindows</span><span class="p">()</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Message Handler Methods </span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="WxSplitter.on_action_set_orientation"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.splitter.Splitter.html#enaml.wx.wx_splitter.WxSplitter.on_action_set_orientation">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_set_orientation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;set_orientation&#39; action from the Enaml widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_orientation</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s">&#39;orientation&#39;</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="WxSplitter.on_action_set_live_drag"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.splitter.Splitter.html#enaml.wx.wx_splitter.WxSplitter.on_action_set_live_drag">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_set_live_drag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;set_live_drag&#39; action from the Enaml widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_live_drag</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s">&#39;live_drag&#39;</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="WxSplitter.on_action_set_preferred_sizes"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.splitter.Splitter.html#enaml.wx.wx_splitter.WxSplitter.on_action_set_preferred_sizes">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_set_preferred_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;set_preferred_sizes&#39; action from the Enaml </span>
+<span class="sd">        widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_preferred_sizes</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s">&#39;preferred_sizes&#39;</span><span class="p">])</span>
+    
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Widget Update Methods </span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="WxSplitter.set_splitter_widget_ids"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.splitter.Splitter.html#enaml.wx.wx_splitter.WxSplitter.set_splitter_widget_ids">[docs]</a>    <span class="k">def</span> <span class="nf">set_splitter_widget_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget_ids</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the splitter widget ids for the underlying widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_splitter_widget_ids</span> <span class="o">=</span> <span class="n">widget_ids</span>
+</div>
+<div class="viewcode-block" id="WxSplitter.set_orientation"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.splitter.Splitter.html#enaml.wx.wx_splitter.WxSplitter.set_orientation">[docs]</a>    <span class="k">def</span> <span class="nf">set_orientation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orientation</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Update the orientation of the splitter.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">wx_orientation</span> <span class="o">=</span> <span class="n">_ORIENTATION_MAP</span><span class="p">[</span><span class="n">orientation</span><span class="p">]</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">SetOrientation</span><span class="p">(</span><span class="n">wx_orientation</span><span class="p">)</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">SizeWindows</span><span class="p">()</span>
+    </div>
+<div class="viewcode-block" id="WxSplitter.set_live_drag"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.splitter.Splitter.html#enaml.wx.wx_splitter.WxSplitter.set_live_drag">[docs]</a>    <span class="k">def</span> <span class="nf">set_live_drag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">live_drag</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Updates the drag state of the splitter.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">live_drag</span><span class="p">:</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">WindowStyle</span> <span class="o">|=</span> <span class="n">wx</span><span class="o">.</span><span class="n">SP_LIVE_UPDATE</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">WindowStyle</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">wx</span><span class="o">.</span><span class="n">SP_LIVE_UPDATE</span>
+</div>
+<div class="viewcode-block" id="WxSplitter.set_preferred_sizes"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.splitter.Splitter.html#enaml.wx.wx_splitter.WxSplitter.set_preferred_sizes">[docs]</a>    <span class="k">def</span> <span class="nf">set_preferred_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sizes</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the initial sizes for the children.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># XXX We&#39;re punting here for now. What we need to do is implement</span>
+        <span class="c"># QSplitter::setSizes</span>
+        <span class="k">return</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.wx.wx_splitter</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Sep 12, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

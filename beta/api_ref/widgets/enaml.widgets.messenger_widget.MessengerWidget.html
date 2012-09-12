@@ -70,6 +70,7 @@
 <li><a class="reference internal" href="#">MessengerWidget</a><ul>
 <li><a class="reference internal" href="#backends">Backends</a><ul>
 <li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
 </ul>
 </li>
 </ul>
@@ -528,6 +529,288 @@ to be super() friendly.</p>
 <dl class="attribute">
 <dt id="enaml.qt.qt_messenger_widget.QtMessengerWidget.__weakref__">
 <tt class="descname">__weakref__</tt><a class="headerlink" href="#enaml.qt.qt_messenger_widget.QtMessengerWidget.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="wx">
+<h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-45ae5f3a8b0768ed5130ff40f15bbbf849619935.png" alt="Inheritance diagram of enaml.wx.wx_messenger_widget.WxMessengerWidget" usemap="#inheritance6b901dd98f" class="inheritance"/>
+<map id="inheritance6b901dd98f" name="inheritance6b901dd98f">
+<area shape="rect" id="node1" href="#enaml.wx.wx_messenger_widget.WxMessengerWidget" title="WxMessengerWidget" alt="" coords="5,5,160,35"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.wx.wx_messenger_widget.WxMessengerWidget">
+<em class="property">class </em><tt class="descclassname">enaml.wx.wx_messenger_widget.</tt><tt class="descname">WxMessengerWidget</tt><big>(</big><em>parent</em>, <em>widget_id</em>, <em>session</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_messenger_widget.html#WxMessengerWidget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_messenger_widget.WxMessengerWidget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>The base class of the Wx widgets wrappers for a Wx Enaml client.</p>
+<dl class="method">
+<dt id="enaml.wx.wx_messenger_widget.WxMessengerWidget.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>parent</em>, <em>widget_id</em>, <em>session</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_messenger_widget.html#WxMessengerWidget.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_messenger_widget.WxMessengerWidget.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize a WxMessengerWidget</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>parent</strong> (<em>WxMessengerWidget or None</em>) &#8211; The parent widget of this widget, or None if this widget has
+no parent.</li>
+<li><strong>widget_id</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The identifier string for this widget.</li>
+<li><strong>session</strong> (<em>WxClientSession</em>) &#8211; The client session object to use for communicating with the
+server widget.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_messenger_widget.WxMessengerWidget.handle_action">
+<tt class="descname">handle_action</tt><big>(</big><em>action</em>, <em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_messenger_widget.html#WxMessengerWidget.handle_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_messenger_widget.WxMessengerWidget.handle_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle an action sent from the server widget</p>
+<p>This is called by the WxClientSession object when the server
+widget sends a message to this widget.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>action</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The action to be performed by the widget.</li>
+<li><strong>content</strong> (<em>ObjectDict</em>) &#8211; The content dictionary for the action.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_messenger_widget.WxMessengerWidget.send_action">
+<tt class="descname">send_action</tt><big>(</big><em>action</em>, <em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_messenger_widget.html#WxMessengerWidget.send_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_messenger_widget.WxMessengerWidget.send_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send an action to the server widget.</p>
+<p>This method can be called to send an unsolicited message of
+type &#8216;widget_action&#8217; to the server widget for this widget.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>action</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The action for the message.</li>
+<li><strong>content</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; The content of the message.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.wx.wx_messenger_widget.WxMessengerWidget.loopback_guard">
+<tt class="descname">loopback_guard</tt><a class="reference internal" href="../../_modules/enaml/wx/wx_messenger_widget.html#WxMessengerWidget.loopback_guard"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_messenger_widget.WxMessengerWidget.loopback_guard" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lazily creates and returns a LoopbackGuard for convenient 
+use by subclasses.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_messenger_widget.WxMessengerWidget.parent">
+<tt class="descname">parent</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_messenger_widget.html#WxMessengerWidget.parent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_messenger_widget.WxMessengerWidget.parent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the parent of this messenger widget.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (WxMessengerWidget or None) &#8211; The parent of this messenger widget, or None if it has no parent.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_messenger_widget.WxMessengerWidget.children">
+<tt class="descname">children</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_messenger_widget.html#WxMessengerWidget.children"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_messenger_widget.WxMessengerWidget.children" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the children of this widget.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (list) &#8211; The list of children of this widget. This list should not be modified in place by user code.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_messenger_widget.WxMessengerWidget.add_child">
+<tt class="descname">add_child</tt><big>(</big><em>child</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_messenger_widget.html#WxMessengerWidget.add_child"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_messenger_widget.WxMessengerWidget.add_child" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a child widget to this widget.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>child</strong> (<em>WxMessengerWidget</em>) &#8211; The child widget to add to this widget.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_messenger_widget.WxMessengerWidget.insert_child">
+<tt class="descname">insert_child</tt><big>(</big><em>index</em>, <em>child</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_messenger_widget.html#WxMessengerWidget.insert_child"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_messenger_widget.WxMessengerWidget.insert_child" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert a child widget into this widget.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>index</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The target index for the child widget.</li>
+<li><strong>child</strong> (<em>WxMessengerWidget</em>) &#8211; The child widget to insert into this widget.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_messenger_widget.WxMessengerWidget.remove_child">
+<tt class="descname">remove_child</tt><big>(</big><em>child</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_messenger_widget.html#WxMessengerWidget.remove_child"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_messenger_widget.WxMessengerWidget.remove_child" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove the child widget from this widget.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>child</strong> (<em>WxMessengerWidget</em>) &#8211; The child widget to remove from this widget.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_messenger_widget.WxMessengerWidget.find_child">
+<tt class="descname">find_child</tt><big>(</big><em>widget_id</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_messenger_widget.html#WxMessengerWidget.find_child"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_messenger_widget.WxMessengerWidget.find_child" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the child with the given widget id.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>widget_id</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The widget identifier for the target widget.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (WxMessengerWidget or None) &#8211; The child widget or None if its not found.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_messenger_widget.WxMessengerWidget.widget">
+<tt class="descname">widget</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_messenger_widget.html#WxMessengerWidget.widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_messenger_widget.WxMessengerWidget.widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the toolkit widget for this messenger widget.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (wxWindow) &#8211; The toolkit widget for this messenger widget, or None if it does not have a toolkit widget.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_messenger_widget.WxMessengerWidget.widget_id">
+<tt class="descname">widget_id</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_messenger_widget.html#WxMessengerWidget.widget_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_messenger_widget.WxMessengerWidget.widget_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the widget id for the messenger widget.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (str) &#8211; The widget identifier for this messenger widget.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_messenger_widget.WxMessengerWidget.create_widget">
+<tt class="descname">create_widget</tt><big>(</big><em>parent</em>, <em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_messenger_widget.html#WxMessengerWidget.create_widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_messenger_widget.WxMessengerWidget.create_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method which must be implemented by subclasses.</p>
+<p>This method is called by the create(...) method. It should 
+create and return the underlying Wx widget. Implementations
+of this method should <em>not</em> call the superclass version.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>parent</strong> (<em>wxWindow or None</em>) &#8211; The parent Wx widget for this control, or None if if the
+control does not have a parent.</li>
+<li><strong>tree</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; The dictionary representation of the tree for this object.
+This is provided in the even that the component needs to
+create a different type of widget based on the information
+in the tree.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_messenger_widget.WxMessengerWidget.create">
+<tt class="descname">create</tt><big>(</big><em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_messenger_widget.html#WxMessengerWidget.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_messenger_widget.WxMessengerWidget.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method called by the application when creating the UI.</p>
+<p>The default implementation of this method calls &#8216;create_widget&#8217;
+and assigns the results to the &#8216;widget&#8217; attribute, so subclasses
+must be sure to call the superclass method as the first order of
+business.</p>
+<p>This method is called by the application in a top-down fashion.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tree</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; The dictionary representation of the tree for this object.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_messenger_widget.WxMessengerWidget.init_layout">
+<tt class="descname">init_layout</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_messenger_widget.html#WxMessengerWidget.init_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_messenger_widget.WxMessengerWidget.init_layout" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method that allows widgets to do layout initialization.</p>
+<p>This method is called after all widgets in a tree have had
+their &#8216;create&#8217; method called. It is useful for doing any
+initialization related to layout.</p>
+<p>The default implementation of this method is a no-op in order
+to be super() friendly.</p>
+<p>This method is called by the application in a bottom-up order.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_messenger_widget.WxMessengerWidget.destroy">
+<tt class="descname">destroy</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_messenger_widget.html#WxMessengerWidget.destroy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_messenger_widget.WxMessengerWidget.destroy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Destroy this widget.</p>
+<dl class="docutils">
+<dt>Destruction is performed in the following order:</dt>
+<dd><ol class="first last arabic simple">
+<li>The &#8216;destroy&#8217; method is called on all children.</li>
+<li>The reference to the children are dropped.</li>
+<li>The object removes itself from its parent.</li>
+<li>The parent reference is set to None.</li>
+<li>The underyling Wx widget is hidden and destroyed.</li>
+<li>The object removes itself from the session.</li>
+</ol>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.wx.wx_messenger_widget.WxMessengerWidget.__weakref__">
+<tt class="descname">__weakref__</tt><a class="headerlink" href="#enaml.wx.wx_messenger_widget.WxMessengerWidget.__weakref__" title="Permalink to this definition">¶</a></dt>
 <dd><p>list of weak references to the object (if defined)</p>
 </dd></dl>
 

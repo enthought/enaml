@@ -226,8 +226,8 @@ Defaults to None.</td>
 </tbody>
 </table>
 <dl class="docutils">
-<dt><a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs</dt>
-<dd>Any other positional arguments needed to initialize the
+<dt>kwargs</dt>
+<dd>Any other positional or keyword arguments needed to initialize the
 component.</dd>
 </dl>
 </dd></dl>
@@ -400,16 +400,16 @@ fly.</p>
 <div class="section" id="enaml-ast-module">
 <h2><tt class="xref py py-mod docutils literal"><span class="pre">enaml_ast</span></tt> Module<a class="headerlink" href="#enaml-ast-module" title="Permalink to this headline">¶</a></h2>
 <p class="graphviz">
-<img src="../_images/inheritance-8d3edcf755eda38e7ecf80b8494d89c76d9977bc.png" alt="Inheritance diagram of enaml.core.enaml_ast" usemap="#inheritance0fedbfe3bb" class="inheritance"/>
+<img src="../_images/inheritance-f7cbd4bf07b268b6cb5457fa1f6629b64e342420.png" alt="Inheritance diagram of enaml.core.enaml_ast" usemap="#inheritance0fedbfe3bb" class="inheritance"/>
 <map id="inheritance0fedbfe3bb" name="inheritance0fedbfe3bb">
-<area shape="rect" id="node1" href="#enaml.core.enaml_ast.AttributeBinding" title="AttributeBinding" alt="" coords="146,5,273,35"/>
+<area shape="rect" id="node1" href="#enaml.core.enaml_ast.Python" title="Python" alt="" coords="173,5,245,35"/>
 <area shape="rect" id="node2" href="#enaml.core.enaml_ast.ASTNode" title="ASTNode" alt="" coords="5,165,85,195"/>
-<area shape="rect" id="node4" href="#enaml.core.enaml_ast.Instantiation" title="Instantiation" alt="" coords="158,59,261,88"/>
-<area shape="rect" id="node6" href="#enaml.core.enaml_ast.Declaration" title="Declaration" alt="" coords="162,112,257,141"/>
-<area shape="rect" id="node8" href="#enaml.core.enaml_ast.Python" title="Python" alt="" coords="173,165,245,195"/>
-<area shape="rect" id="node10" href="#enaml.core.enaml_ast.Module" title="Module" alt="" coords="173,219,245,248"/>
-<area shape="rect" id="node12" href="#enaml.core.enaml_ast.BoundExpression" title="BoundExpression" alt="" coords="143,272,276,301"/>
-<area shape="rect" id="node14" href="#enaml.core.enaml_ast.AttributeDeclaration" title="AttributeDeclaration" alt="" coords="133,325,286,355"/>
+<area shape="rect" id="node4" href="#enaml.core.enaml_ast.AttributeBinding" title="AttributeBinding" alt="" coords="146,59,273,88"/>
+<area shape="rect" id="node6" href="#enaml.core.enaml_ast.Instantiation" title="Instantiation" alt="" coords="158,112,261,141"/>
+<area shape="rect" id="node8" href="#enaml.core.enaml_ast.AttributeDeclaration" title="AttributeDeclaration" alt="" coords="133,165,286,195"/>
+<area shape="rect" id="node10" href="#enaml.core.enaml_ast.Declaration" title="Declaration" alt="" coords="162,219,257,248"/>
+<area shape="rect" id="node12" href="#enaml.core.enaml_ast.Module" title="Module" alt="" coords="173,272,245,301"/>
+<area shape="rect" id="node14" href="#enaml.core.enaml_ast.BoundExpression" title="BoundExpression" alt="" coords="143,325,276,355"/>
 </map>
 </p>
 <span class="target" id="module-enaml.core.enaml_ast"></span><dl class="class">
@@ -804,10 +804,10 @@ Enaml compiler is included on the base Declarative class.</p>
 </map>
 </p>
 <p class="graphviz">
-<img src="../_images/inheritance-581b82401c1d24b770e8512e20a0f30ff4b3e784.png" alt="Inheritance diagram of enaml.core.expressions.AbstractExpression, enaml.core.expressions.SimpleExpression, enaml.core.expressions.NotificationExpression, enaml.core.expressions.UpdateExpression, enaml.core.expressions.SubscriptionExpression, enaml.core.expressions.DelegationExpression" usemap="#inheritanceee44a8ece3" class="inheritance"/>
+<img src="../_images/inheritance-2c2ed94a55e42b2f2c3bb2acb7c030f973892b7c.png" alt="Inheritance diagram of enaml.core.expressions.AbstractExpression, enaml.core.expressions.SimpleExpression, enaml.core.expressions.NotificationExpression, enaml.core.expressions.UpdateExpression, enaml.core.expressions.SubscriptionExpression, enaml.core.expressions.DelegationExpression" usemap="#inheritanceee44a8ece3" class="inheritance"/>
 <map id="inheritanceee44a8ece3" name="inheritanceee44a8ece3">
-<area shape="rect" id="node1" href="#enaml.core.expressions.NotificationExpression" title="NotificationExpression" alt="" coords="203,5,370,35"/>
-<area shape="rect" id="node2" href="#enaml.core.expressions.AbstractExpression" title="AbstractExpression" alt="" coords="6,85,152,115"/>
+<area shape="rect" id="node1" href="#enaml.core.expressions.AbstractExpression" title="AbstractExpression" alt="" coords="6,85,152,115"/>
+<area shape="rect" id="node2" href="#enaml.core.expressions.NotificationExpression" title="NotificationExpression" alt="" coords="203,5,370,35"/>
 <area shape="rect" id="node5" href="#enaml.core.expressions.SubscriptionExpression" title="SubscriptionExpression" alt="" coords="200,59,373,88"/>
 <area shape="rect" id="node8" href="#enaml.core.expressions.UpdateExpression" title="UpdateExpression" alt="" coords="218,112,356,141"/>
 <area shape="rect" id="node10" href="#enaml.core.expressions.SimpleExpression" title="SimpleExpression" alt="" coords="219,165,354,195"/>
@@ -1625,7 +1625,7 @@ If the importer is not in the list, this is a no-op.</p>
 <dt id="enaml.core.inverters.AbstractInverter">
 <em class="property">class </em><tt class="descclassname">enaml.core.inverters.</tt><tt class="descname">AbstractInverter</tt><a class="reference internal" href="../_modules/enaml/core/inverters.html#AbstractInverter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.core.inverters.AbstractInverter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
-<p>An abstract base class which defined the api for creating code
+<p>An abstract base class which defines the api for creating code
 inverter objects. An inverter is responsible for converting a code
 list supplied by an expression into the inverse of that expression
 which applies the new value onto the expression. For example:</p>
@@ -1643,13 +1643,14 @@ which applies the new value onto the expression. For example:</p>
 by inserting the following names into the scope, which can be 
 retrieved with the LOAD_NAME op-code:</p>
 <blockquote>
-<div><p>_[expr] : The expression object
-_[obj]  : The component object which triggered the change
-_[name] : The attribute on the component which changed
-_[old]  : The old value of the attribute.
-_[new]  : The new value of the attribute which should be</p>
-<blockquote>
-<div>applied to the inverted expression.</div></blockquote>
+<div><ul class="simple">
+<li>[expr] : The expression object</li>
+<li>[obj]  : The component object which triggered the change</li>
+<li>[name] : The attribute on the component which changed</li>
+<li>[old]  : The old value of the attribute.</li>
+<li>[new]  : The new value of the attribute which should be 
+applied to the inverted expression.</li>
+</ul>
 </div></blockquote>
 <p>The generated expression should return True if it successfully 
 completed the operation, False otherwise.</p>

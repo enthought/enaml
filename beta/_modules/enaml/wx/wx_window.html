@@ -1,0 +1,296 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.wx.wx_window &mdash; enaml 0.3alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.3alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.3alpha documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.wx.wx_window</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.wx.wx_window</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2012, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">import</span> <span class="nn">wx</span>
+
+<span class="kn">from</span> <span class="nn">.wx_single_widget_sizer</span> <span class="kn">import</span> <span class="n">wxSingleWidgetSizer</span>
+<span class="kn">from</span> <span class="nn">.wx_widget_component</span> <span class="kn">import</span> <span class="n">WxWidgetComponent</span>
+
+
+<div class="viewcode-block" id="WxWindow"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.window.Window.html#enaml.wx.wx_window.WxWindow">[docs]</a><span class="k">class</span> <span class="nc">WxWindow</span><span class="p">(</span><span class="n">WxWidgetComponent</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A Wx implementation of an Enaml Window.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#: The storage for the central widget id</span>
+    <span class="n">_central_widget_id</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Setup Methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="WxWindow.create_widget"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.window.Window.html#enaml.wx.wx_window.WxWindow.create_widget">[docs]</a>    <span class="k">def</span> <span class="nf">create_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">tree</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Create the underlying wx.Frame widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">wx</span><span class="o">.</span><span class="n">Frame</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WxWindow.create"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.window.Window.html#enaml.wx.wx_window.WxWindow.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tree</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Create and initialize the window control.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">WxWindow</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_central_widget_id</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="s">&#39;central_widget_id&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_initial_size</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="s">&#39;initial_size&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_modality</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="s">&#39;modality&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">Bind</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">EVT_CLOSE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_close</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WxWindow.init_layout"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.window.Window.html#enaml.wx.wx_window.WxWindow.init_layout">[docs]</a>    <span class="k">def</span> <span class="nf">init_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Perform the layout initialization for the window control.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># A Window is a top-level component and `init_layout` is called </span>
+        <span class="c"># bottom-up, so the layout for all of the children has already</span>
+        <span class="c"># taken place. This is the proper time to grab the central </span>
+        <span class="c"># widget child, stick it the sizer, and fit the window.</span>
+        <span class="n">child</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_child</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_central_widget_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">child</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">sizer</span> <span class="o">=</span> <span class="n">wxSingleWidgetSizer</span><span class="p">()</span>
+            <span class="n">sizer</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">widget</span><span class="p">())</span>
+            <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">SetSizerAndFit</span><span class="p">(</span><span class="n">sizer</span><span class="p">)</span>
+            <span class="n">max_size</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">ClientToWindowSize</span><span class="p">(</span><span class="n">sizer</span><span class="o">.</span><span class="n">CalcMax</span><span class="p">())</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">SetMaxSize</span><span class="p">(</span><span class="n">max_size</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Event Handlers</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="WxWindow.on_close"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.window.Window.html#enaml.wx.wx_window.WxWindow.on_close">[docs]</a>    <span class="k">def</span> <span class="nf">on_close</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The event handler for the EVT_CLOSE event.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">Skip</span><span class="p">()</span>
+        <span class="c"># Make sure the frame is not modal when closing, or no other </span>
+        <span class="c"># windows will be unblocked.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">MakeModal</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_action</span><span class="p">(</span><span class="s">&#39;closed&#39;</span><span class="p">,</span> <span class="p">{})</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Message Handlers</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="WxWindow.on_action_close"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.window.Window.html#enaml.wx.wx_window.WxWindow.on_action_close">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_close</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;close&#39; action from the Enaml widget. </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="WxWindow.on_action_maximize"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.window.Window.html#enaml.wx.wx_window.WxWindow.on_action_maximize">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_maximize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;maximize&#39; action from the Enaml widget. </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maximize</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="WxWindow.on_action_minimize"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.window.Window.html#enaml.wx.wx_window.WxWindow.on_action_minimize">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_minimize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;minimize&#39; action from the Enaml widget. </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">minimize</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="WxWindow.on_action_restore"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.window.Window.html#enaml.wx.wx_window.WxWindow.on_action_restore">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_restore</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;restore&#39; action from the Enaml widget. </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">restore</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="WxWindow.on_action_set_icon"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.window.Window.html#enaml.wx.wx_window.WxWindow.on_action_set_icon">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_set_icon</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;set-icon&#39; action from the Enaml widget. </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</div>
+<div class="viewcode-block" id="WxWindow.on_action_set_title"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.window.Window.html#enaml.wx.wx_window.WxWindow.on_action_set_title">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_set_title</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;set-title&#39; action from the Enaml widget. </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">])</span>
+    </div>
+<div class="viewcode-block" id="WxWindow.on_action_set_modality"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.window.Window.html#enaml.wx.wx_window.WxWindow.on_action_set_modality">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_set_modality</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;set-modality&#39; action from the Enaml widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_modality</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s">&#39;modality&#39;</span><span class="p">])</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Widget Update Methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="WxWindow.close"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.window.Window.html#enaml.wx.wx_window.WxWindow.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Close the window</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="WxWindow.maximize"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.window.Window.html#enaml.wx.wx_window.WxWindow.maximize">[docs]</a>    <span class="k">def</span> <span class="nf">maximize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Maximize the window.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">Maximize</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WxWindow.minimize"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.window.Window.html#enaml.wx.wx_window.WxWindow.minimize">[docs]</a>    <span class="k">def</span> <span class="nf">minimize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Minimize the window.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">Iconize</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WxWindow.restore"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.window.Window.html#enaml.wx.wx_window.WxWindow.restore">[docs]</a>    <span class="k">def</span> <span class="nf">restore</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Restore the window after a minimize or maximize.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">Maximize</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WxWindow.set_icon"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.window.Window.html#enaml.wx.wx_window.WxWindow.set_icon">[docs]</a>    <span class="k">def</span> <span class="nf">set_icon</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">icon</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the window icon.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</div>
+<div class="viewcode-block" id="WxWindow.set_central_widget_id"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.window.Window.html#enaml.wx.wx_window.WxWindow.set_central_widget_id">[docs]</a>    <span class="k">def</span> <span class="nf">set_central_widget_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the central widget id for the window.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_central_widget_id</span> <span class="o">=</span> <span class="n">widget_id</span>
+</div>
+<div class="viewcode-block" id="WxWindow.set_title"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.window.Window.html#enaml.wx.wx_window.WxWindow.set_title">[docs]</a>    <span class="k">def</span> <span class="nf">set_title</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the title of the window.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">SetTitle</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WxWindow.set_initial_size"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.window.Window.html#enaml.wx.wx_window.WxWindow.set_initial_size">[docs]</a>    <span class="k">def</span> <span class="nf">set_initial_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the initial size of the window.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">SetSize</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">Size</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="WxWindow.set_modality"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.window.Window.html#enaml.wx.wx_window.WxWindow.set_modality">[docs]</a>    <span class="k">def</span> <span class="nf">set_modality</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modality</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the modality of the window.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">modality</span> <span class="o">==</span> <span class="s">&#39;non_modal&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">MakeModal</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">MakeModal</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WxWindow.set_visible"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.window.Window.html#enaml.wx.wx_window.WxWindow.set_visible">[docs]</a>    <span class="k">def</span> <span class="nf">set_visible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the visibility on the window.</span>
+
+<span class="sd">        This is an overridden parent class method to set the visibility</span>
+<span class="sd">        at a later time, so that layout can be initialized before the</span>
+<span class="sd">        window is displayed.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># XXX this could be done better.</span>
+        <span class="n">wx</span><span class="o">.</span><span class="n">CallAfter</span><span class="p">(</span><span class="nb">super</span><span class="p">(</span><span class="n">WxWindow</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">set_visible</span><span class="p">,</span> <span class="n">visible</span><span class="p">)</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.wx.wx_window</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Sep 12, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

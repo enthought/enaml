@@ -17,3 +17,13 @@ Qt
     :parts: 1
 
 .. autoclass:: enaml.qt.qt_constraints_widget.QtConstraintsWidget
+
+
+Wx
+^^
+
+.. inheritance-diagram::
+    enaml.wx.wx_constraints_widget.WxConstraintsWidget
+    :parts: 1
+
+.. autoclass:: enaml.wx.wx_constraints_widget.WxConstraintsWidget

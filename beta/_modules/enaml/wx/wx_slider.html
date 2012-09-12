@@ -1,0 +1,423 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.wx.wx_slider &mdash; enaml 0.3alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.3alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.3alpha documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.wx.wx_slider</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.wx.wx_slider</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2012, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">import</span> <span class="nn">wx</span>
+<span class="kn">import</span> <span class="nn">wx.lib.newevent</span>
+
+<span class="kn">from</span> <span class="nn">.wx_constraints_widget</span> <span class="kn">import</span> <span class="n">WxConstraintsWidget</span>
+
+
+<span class="c">#: Horizontal tick mapping</span>
+<span class="n">_TICK_POSITION_MAP</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&#39;top&#39;</span><span class="p">:</span> <span class="n">wx</span><span class="o">.</span><span class="n">SL_TOP</span> <span class="o">|</span> <span class="n">wx</span><span class="o">.</span><span class="n">SL_AUTOTICKS</span><span class="p">,</span> 
+    <span class="s">&#39;bottom&#39;</span><span class="p">:</span> <span class="n">wx</span><span class="o">.</span><span class="n">SL_BOTTOM</span> <span class="o">|</span> <span class="n">wx</span><span class="o">.</span><span class="n">SL_AUTOTICKS</span><span class="p">,</span>
+    <span class="s">&#39;left&#39;</span><span class="p">:</span> <span class="n">wx</span><span class="o">.</span><span class="n">SL_LEFT</span> <span class="o">|</span> <span class="n">wx</span><span class="o">.</span><span class="n">SL_AUTOTICKS</span><span class="p">,</span> 
+    <span class="s">&#39;right&#39;</span><span class="p">:</span> <span class="n">wx</span><span class="o">.</span><span class="n">SL_RIGHT</span> <span class="o">|</span> <span class="n">wx</span><span class="o">.</span><span class="n">SL_AUTOTICKS</span><span class="p">,</span>
+    <span class="s">&#39;both&#39;</span><span class="p">:</span> <span class="n">wx</span><span class="o">.</span><span class="n">SL_BOTH</span> <span class="o">|</span> <span class="n">wx</span><span class="o">.</span><span class="n">SL_AUTOTICKS</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<span class="c">#: An OR&#39;d combination of all the tick flags.</span>
+<span class="n">_TICK_MASK</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">wx</span><span class="o">.</span><span class="n">SL_TOP</span> <span class="o">|</span> <span class="n">wx</span><span class="o">.</span><span class="n">SL_BOTTOM</span> <span class="o">|</span> <span class="n">wx</span><span class="o">.</span><span class="n">SL_LEFT</span> <span class="o">|</span> <span class="n">wx</span><span class="o">.</span><span class="n">SL_RIGHT</span> <span class="o">|</span> <span class="n">wx</span><span class="o">.</span><span class="n">SL_BOTH</span> <span class="o">|</span>
+    <span class="n">wx</span><span class="o">.</span><span class="n">SL_AUTOTICKS</span>
+<span class="p">)</span>
+
+
+<span class="c">#: A map adapting orientation to tick positions</span>
+<span class="n">_TICK_ADAPT_MAP</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&#39;vertical&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">&#39;left&#39;</span><span class="p">:</span> <span class="s">&#39;left&#39;</span><span class="p">,</span>
+        <span class="s">&#39;right&#39;</span><span class="p">:</span> <span class="s">&#39;right&#39;</span><span class="p">,</span>
+        <span class="s">&#39;both&#39;</span><span class="p">:</span> <span class="s">&#39;both&#39;</span><span class="p">,</span>
+        <span class="s">&#39;top&#39;</span><span class="p">:</span> <span class="s">&#39;left&#39;</span><span class="p">,</span>
+        <span class="s">&#39;bottom&#39;</span><span class="p">:</span> <span class="s">&#39;right&#39;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s">&#39;horizontal&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">&#39;left&#39;</span><span class="p">:</span> <span class="s">&#39;top&#39;</span><span class="p">,</span>
+        <span class="s">&#39;right&#39;</span><span class="p">:</span> <span class="s">&#39;bottom&#39;</span><span class="p">,</span>
+        <span class="s">&#39;both&#39;</span><span class="p">:</span> <span class="s">&#39;both&#39;</span><span class="p">,</span>
+        <span class="s">&#39;top&#39;</span><span class="p">:</span> <span class="s">&#39;top&#39;</span><span class="p">,</span>
+        <span class="s">&#39;bottom&#39;</span><span class="p">:</span> <span class="s">&#39;bottom&#39;</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+
+
+<span class="c">#: A map from string orientation to wx slider orientation</span>
+<span class="n">_ORIENTATION_MAP</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&#39;horizontal&#39;</span><span class="p">:</span> <span class="n">wx</span><span class="o">.</span><span class="n">SL_HORIZONTAL</span><span class="p">,</span>
+    <span class="s">&#39;vertical&#39;</span><span class="p">:</span> <span class="n">wx</span><span class="o">.</span><span class="n">SL_VERTICAL</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<span class="c">#: An OR&#39;d combination of all the orientation flags</span>
+<span class="n">_ORIENTATION_MASK</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">SL_HORIZONTAL</span> <span class="o">|</span> <span class="n">wx</span><span class="o">.</span><span class="n">SL_VERTICAL</span>
+
+
+<span class="c">#: A new event emitted by the custom slider control</span>
+<span class="n">wxSliderEvent</span><span class="p">,</span> <span class="n">EVT_SLIDER</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">lib</span><span class="o">.</span><span class="n">newevent</span><span class="o">.</span><span class="n">NewEvent</span><span class="p">()</span>
+
+
+<span class="k">class</span> <span class="nc">wxProperSlider</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">Slider</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A wx.Slider subclass which supports tracking.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#: The event types for the frequent thumb track event</span>
+    <span class="n">_tracking_evt</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">EVT_SCROLL_THUMBTRACK</span><span class="o">.</span><span class="n">evtType</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c">#: The event type for the thumb release event.</span>
+    <span class="n">_release_evt</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">EVT_SCROLL_THUMBRELEASE</span><span class="o">.</span><span class="n">evtType</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c">#: The event type for the scroll end event.</span>
+    <span class="n">_end_evt</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">EVT_SCROLL_CHANGED</span><span class="o">.</span><span class="n">evtType</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize a wxProperSlider.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        *args, **kwargs</span>
+<span class="sd">            The positional and keyword arguments for initializing a</span>
+<span class="sd">            wx.Slider.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">wxProperSlider</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tracking</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Bind</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">EVT_SCROLL</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">OnScroll</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">OnScroll</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; An event handler which handles all scroll events. </span>
+
+<span class="sd">        This handler determines whether or not a slider event sould be</span>
+<span class="sd">        emitted for the scroll changed, based on whether tracking is</span>
+<span class="sd">        enabled for the slider.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">evt_type</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">EventType</span>
+
+        <span class="c"># We never emit on the _end_event since that is windows-only</span>
+        <span class="k">if</span> <span class="n">evt_type</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_end_evt</span><span class="p">:</span>
+            <span class="k">return</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tracking</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">evt_type</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_release_evt</span><span class="p">:</span>
+                <span class="n">emit</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">emit</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">emit</span> <span class="o">=</span> <span class="n">evt_type</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tracking_evt</span>
+        
+        <span class="k">if</span> <span class="n">emit</span><span class="p">:</span>
+            <span class="n">evt</span> <span class="o">=</span> <span class="n">wxSliderEvent</span><span class="p">()</span>
+            <span class="n">wx</span><span class="o">.</span><span class="n">PostEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">evt</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">GetTracking</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Whether or not tracking is enabled for the slider.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : bool</span>
+<span class="sd">            True if tracking is enabled for the slider, False otherwise.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tracking</span>
+
+    <span class="k">def</span> <span class="nf">SetTracking</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tracking</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set whether tracking is enabled for the slider.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        tracking : bool</span>
+<span class="sd">            True if tracking should be enabled, False otherwise.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tracking</span> <span class="o">=</span> <span class="n">tracking</span>
+
+
+<div class="viewcode-block" id="WxSlider"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.wx.wx_slider.WxSlider">[docs]</a><span class="k">class</span> <span class="nc">WxSlider</span><span class="p">(</span><span class="n">WxConstraintsWidget</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A Wx implementation of an Enaml Slider.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Setup Methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="WxSlider.create_widget"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.wx.wx_slider.WxSlider.create_widget">[docs]</a>    <span class="k">def</span> <span class="nf">create_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">tree</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Create the underlying wxProperSlider widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">wxProperSlider</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WxSlider.create"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.wx.wx_slider.WxSlider.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tree</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Create and initialize the slider control.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># NOTE: The tick interval must be set *after* the tick position</span>
+        <span class="c"># or Wx will ignore the tick interval. grrr...</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">WxSlider</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="s">&#39;value&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_maximum</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="s">&#39;maximum&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_minimum</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="s">&#39;minimum&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_orientation</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="s">&#39;orientation&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_page_step</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="s">&#39;page_step&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_single_step</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="s">&#39;single_step&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_tick_position</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="s">&#39;tick_position&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_tick_interval</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="s">&#39;tick_interval&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_tracking</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="s">&#39;tracking&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">Bind</span><span class="p">(</span><span class="n">EVT_SLIDER</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_value_changed</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Message Handlers</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="WxSlider.on_action_set_value"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.wx.wx_slider.WxSlider.on_action_set_value">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_set_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;set_value&#39; action from the Enaml widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s">&#39;value&#39;</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="WxSlider.on_action_set_maximum"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.wx.wx_slider.WxSlider.on_action_set_maximum">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_set_maximum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;set_maximum&#39; action from the Enaml widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_maximum</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s">&#39;maximum&#39;</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="WxSlider.on_action_set_minimum"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.wx.wx_slider.WxSlider.on_action_set_minimum">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_set_minimum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;set_minimum&#39; action from the Enaml widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_minimum</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s">&#39;minimum&#39;</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="WxSlider.on_action_set_orientation"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.wx.wx_slider.WxSlider.on_action_set_orientation">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_set_orientation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;set_orientation&#39; action from the Enaml widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_orientation</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s">&#39;orientation&#39;</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="WxSlider.on_action_set_page_step"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.wx.wx_slider.WxSlider.on_action_set_page_step">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_set_page_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;set_page_step&#39; action from the Enaml widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_page_step</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s">&#39;page_step&#39;</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="WxSlider.on_action_set_single_step"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.wx.wx_slider.WxSlider.on_action_set_single_step">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_set_single_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;set_single_step&#39; action from the Enaml widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_single_step</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s">&#39;single_step&#39;</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="WxSlider.on_action_set_tick_interval"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.wx.wx_slider.WxSlider.on_action_set_tick_interval">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_set_tick_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;set_tick_interval&#39; action from the Enaml widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_tick_interval</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s">&#39;tick_interval&#39;</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="WxSlider.on_action_set_tick_position"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.wx.wx_slider.WxSlider.on_action_set_tick_position">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_set_tick_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;set_tick_position&#39; action from the Enaml widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_tick_position</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s">&#39;tick_position&#39;</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="WxSlider.on_action_set_tracking"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.wx.wx_slider.WxSlider.on_action_set_tracking">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_set_tracking</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;set_tracking&#39; action from the Enaml widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_tracking</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s">&#39;tracking&#39;</span><span class="p">])</span>
+    
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Signal Handlers</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="WxSlider.on_value_changed"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.wx.wx_slider.WxSlider.on_value_changed">[docs]</a>    <span class="k">def</span> <span class="nf">on_value_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Send the &#39;value_changed&#39; action to the Enaml widget when the </span>
+<span class="sd">        slider value has changed.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;value&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">GetValue</span><span class="p">()}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_action</span><span class="p">(</span><span class="s">&#39;value_changed&#39;</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Widget Update Methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="WxSlider.set_value"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.wx.wx_slider.WxSlider.set_value">[docs]</a>    <span class="k">def</span> <span class="nf">set_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the value of the underlying widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WxSlider.set_maximum"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.wx.wx_slider.WxSlider.set_maximum">[docs]</a>    <span class="k">def</span> <span class="nf">set_maximum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maximum</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the maximum value of the underlying widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span>
+        <span class="n">minimum</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetRange</span><span class="p">()</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">SetRange</span><span class="p">(</span><span class="n">minimum</span><span class="p">,</span> <span class="n">maximum</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WxSlider.set_minimum"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.wx.wx_slider.WxSlider.set_minimum">[docs]</a>    <span class="k">def</span> <span class="nf">set_minimum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minimum</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the minimum value of the underlying widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">maximum</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetRange</span><span class="p">()</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">SetRange</span><span class="p">(</span><span class="n">minimum</span><span class="p">,</span> <span class="n">maximum</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WxSlider.set_orientation"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.wx.wx_slider.WxSlider.set_orientation">[docs]</a>    <span class="k">def</span> <span class="nf">set_orientation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orientation</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the orientation of the underlying widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span>
+        <span class="n">style</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetWindowStyle</span><span class="p">()</span>
+        <span class="n">style</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">_ORIENTATION_MASK</span>
+        <span class="n">style</span> <span class="o">|=</span> <span class="n">_ORIENTATION_MAP</span><span class="p">[</span><span class="n">orientation</span><span class="p">]</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">SetWindowStyle</span><span class="p">(</span><span class="n">style</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WxSlider.set_page_step"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.wx.wx_slider.WxSlider.set_page_step">[docs]</a>    <span class="k">def</span> <span class="nf">set_page_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">page_step</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the page step of the underlying widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">SetPageSize</span><span class="p">(</span><span class="n">page_step</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WxSlider.set_single_step"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.wx.wx_slider.WxSlider.set_single_step">[docs]</a>    <span class="k">def</span> <span class="nf">set_single_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">single_step</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the single step of the underlying widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">SetLineSize</span><span class="p">(</span><span class="n">single_step</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WxSlider.set_tick_interval"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.wx.wx_slider.WxSlider.set_tick_interval">[docs]</a>    <span class="k">def</span> <span class="nf">set_tick_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interval</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the tick interval of the underlying widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">SetTickFreq</span><span class="p">(</span><span class="n">interval</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WxSlider.set_tick_position"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.wx.wx_slider.WxSlider.set_tick_position">[docs]</a>    <span class="k">def</span> <span class="nf">set_tick_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tick_position</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the tick position of the underlying widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span>
+        <span class="n">style</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetWindowStyle</span><span class="p">()</span>
+        <span class="n">style</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">_TICK_MASK</span>
+        <span class="k">if</span> <span class="n">tick_position</span> <span class="o">!=</span> <span class="s">&#39;no_ticks&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">style</span> <span class="o">&amp;</span> <span class="n">wx</span><span class="o">.</span><span class="n">SL_VERTICAL</span><span class="p">:</span>
+                <span class="n">tick_position</span> <span class="o">=</span> <span class="n">_TICK_ADAPT_MAP</span><span class="p">[</span><span class="s">&#39;vertical&#39;</span><span class="p">][</span><span class="n">tick_position</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">tick_position</span> <span class="o">=</span> <span class="n">_TICK_ADAPT_MAP</span><span class="p">[</span><span class="s">&#39;horizontal&#39;</span><span class="p">][</span><span class="n">tick_position</span><span class="p">]</span>
+            <span class="n">style</span> <span class="o">|=</span> <span class="n">_TICK_POSITION_MAP</span><span class="p">[</span><span class="n">tick_position</span><span class="p">]</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">SetWindowStyle</span><span class="p">(</span><span class="n">style</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WxSlider.set_tracking"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.wx.wx_slider.WxSlider.set_tracking">[docs]</a>    <span class="k">def</span> <span class="nf">set_tracking</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tracking</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the tracking of the underlying widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">SetTracking</span><span class="p">(</span><span class="n">tracking</span><span class="p">)</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.wx.wx_slider</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Sep 12, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

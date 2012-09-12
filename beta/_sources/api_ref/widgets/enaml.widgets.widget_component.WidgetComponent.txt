@@ -17,3 +17,13 @@ Qt
     :parts: 1
 
 .. autoclass:: enaml.qt.qt_widget_component.QtWidgetComponent
+
+
+Wx
+^^
+
+.. inheritance-diagram::
+    enaml.wx.wx_widget_component.WxWidgetComponent
+    :parts: 1
+
+.. autoclass:: enaml.wx.wx_widget_component.WxWidgetComponent

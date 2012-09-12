@@ -70,6 +70,7 @@
 <li><a class="reference internal" href="#">Splitter</a><ul>
 <li><a class="reference internal" href="#backends">Backends</a><ul>
 <li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
 </ul>
 </li>
 </ul>
@@ -181,12 +182,12 @@ in height.</p>
 <div class="section" id="qt">
 <h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
 <p class="graphviz">
-<img src="../../_images/inheritance-801b0f6c650f952af48c6ca17fa7dd72b29941cc.png" alt="Inheritance diagram of enaml.qt.qt_splitter.QtSplitter" usemap="#inheritance1a87bac1b3" class="inheritance"/>
+<img src="../../_images/inheritance-f988394e301d6d32928079e59c64ac6e91c12d18.png" alt="Inheritance diagram of enaml.qt.qt_splitter.QtSplitter" usemap="#inheritance1a87bac1b3" class="inheritance"/>
 <map id="inheritance1a87bac1b3" name="inheritance1a87bac1b3">
-<area shape="rect" id="node1" href="#enaml.qt.qt_splitter.QtSplitter" title="QtSplitter" alt="" coords="613,5,696,35"/>
-<area shape="rect" id="node2" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.qt.qt_constraints_widget.QtConstraintsWidget" title="QtConstraintsWidget" alt="" coords="410,5,566,35"/>
+<area shape="rect" id="node1" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.qt.qt_constraints_widget.QtConstraintsWidget" title="QtConstraintsWidget" alt="" coords="410,5,566,35"/>
+<area shape="rect" id="node5" href="#enaml.qt.qt_splitter.QtSplitter" title="QtSplitter" alt="" coords="613,5,696,35"/>
+<area shape="rect" id="node2" href="enaml.widgets.widget_component.WidgetComponent.html#enaml.qt.qt_widget_component.QtWidgetComponent" title="QtWidgetComponent" alt="" coords="206,5,362,35"/>
 <area shape="rect" id="node4" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget" title="QtMessengerWidget" alt="" coords="6,5,157,35"/>
-<area shape="rect" id="node5" href="enaml.widgets.widget_component.WidgetComponent.html#enaml.qt.qt_widget_component.QtWidgetComponent" title="QtWidgetComponent" alt="" coords="206,5,362,35"/>
 </map>
 </p>
 <dl class="class">
@@ -256,6 +257,86 @@ widget.</p>
 <p>For sizes not supplied by the user, either via None values or 
 a list which is too short, the current size for that element
 will be used in its place.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="wx">
+<h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-2d80a33e30122a284e7fe62344a155e38087141c.png" alt="Inheritance diagram of enaml.wx.wx_splitter.WxSplitter" usemap="#inheritanced86b9bc85c" class="inheritance"/>
+<map id="inheritanced86b9bc85c" name="inheritanced86b9bc85c">
+<area shape="rect" id="node1" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.wx.wx_constraints_widget.WxConstraintsWidget" title="WxConstraintsWidget" alt="" coords="419,5,578,35"/>
+<area shape="rect" id="node6" href="#enaml.wx.wx_splitter.WxSplitter" title="WxSplitter" alt="" coords="627,5,714,35"/>
+<area shape="rect" id="node2" href="enaml.widgets.widget_component.WidgetComponent.html#enaml.wx.wx_widget_component.WxWidgetComponent" title="WxWidgetComponent" alt="" coords="209,5,370,35"/>
+<area shape="rect" id="node4" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.wx.wx_messenger_widget.WxMessengerWidget" title="WxMessengerWidget" alt="" coords="5,5,160,35"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.wx.wx_splitter.WxSplitter">
+<em class="property">class </em><tt class="descclassname">enaml.wx.wx_splitter.</tt><tt class="descname">WxSplitter</tt><big>(</big><em>parent</em>, <em>widget_id</em>, <em>session</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_splitter.html#WxSplitter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_splitter.WxSplitter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.wx.wx_constraints_widget.WxConstraintsWidget" title="enaml.wx.wx_constraints_widget.WxConstraintsWidget"><tt class="xref py py-class docutils literal"><span class="pre">enaml.wx.wx_constraints_widget.WxConstraintsWidget</span></tt></a></p>
+<p>A Wx implementation of an Enaml Splitter.</p>
+<dl class="method">
+<dt id="enaml.wx.wx_splitter.WxSplitter.create_widget">
+<tt class="descname">create_widget</tt><big>(</big><em>parent</em>, <em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_splitter.html#WxSplitter.create_widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_splitter.WxSplitter.create_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the underlying wxSplitter widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_splitter.WxSplitter.create">
+<tt class="descname">create</tt><big>(</big><em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_splitter.html#WxSplitter.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_splitter.WxSplitter.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create and initialize the splitter control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_splitter.WxSplitter.init_layout">
+<tt class="descname">init_layout</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_splitter.html#WxSplitter.init_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_splitter.WxSplitter.init_layout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the layout initialization for the splitter.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_splitter.WxSplitter.on_action_set_orientation">
+<tt class="descname">on_action_set_orientation</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_splitter.html#WxSplitter.on_action_set_orientation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_splitter.WxSplitter.on_action_set_orientation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_orientation&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_splitter.WxSplitter.on_action_set_live_drag">
+<tt class="descname">on_action_set_live_drag</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_splitter.html#WxSplitter.on_action_set_live_drag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_splitter.WxSplitter.on_action_set_live_drag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_live_drag&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_splitter.WxSplitter.on_action_set_preferred_sizes">
+<tt class="descname">on_action_set_preferred_sizes</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_splitter.html#WxSplitter.on_action_set_preferred_sizes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_splitter.WxSplitter.on_action_set_preferred_sizes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_preferred_sizes&#8217; action from the Enaml 
+widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_splitter.WxSplitter.set_splitter_widget_ids">
+<tt class="descname">set_splitter_widget_ids</tt><big>(</big><em>widget_ids</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_splitter.html#WxSplitter.set_splitter_widget_ids"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_splitter.WxSplitter.set_splitter_widget_ids" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the splitter widget ids for the underlying widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_splitter.WxSplitter.set_orientation">
+<tt class="descname">set_orientation</tt><big>(</big><em>orientation</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_splitter.html#WxSplitter.set_orientation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_splitter.WxSplitter.set_orientation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the orientation of the splitter.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_splitter.WxSplitter.set_live_drag">
+<tt class="descname">set_live_drag</tt><big>(</big><em>live_drag</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_splitter.html#WxSplitter.set_live_drag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_splitter.WxSplitter.set_live_drag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the drag state of the splitter.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_splitter.WxSplitter.set_preferred_sizes">
+<tt class="descname">set_preferred_sizes</tt><big>(</big><em>sizes</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_splitter.html#WxSplitter.set_preferred_sizes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_splitter.WxSplitter.set_preferred_sizes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the initial sizes for the children.</p>
 </dd></dl>
 
 </dd></dl>

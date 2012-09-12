@@ -70,6 +70,7 @@
 <li><a class="reference internal" href="#">MainWindow</a><ul>
 <li><a class="reference internal" href="#backends">Backends</a><ul>
 <li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
 </ul>
 </li>
 </ul>
@@ -152,12 +153,12 @@ available space.</p>
 <div class="section" id="qt">
 <h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
 <p class="graphviz">
-<img src="../../_images/inheritance-e3d4370c0c8abe8fdaf60c123e22a0471a1a6667.png" alt="Inheritance diagram of enaml.qt.qt_main_window.QtMainWindow" usemap="#inheritancec00d2262cd" class="inheritance"/>
+<img src="../../_images/inheritance-929d6264288443b2f824d58c3228496c0058b94e.png" alt="Inheritance diagram of enaml.qt.qt_main_window.QtMainWindow" usemap="#inheritancec00d2262cd" class="inheritance"/>
 <map id="inheritancec00d2262cd" name="inheritancec00d2262cd">
-<area shape="rect" id="node1" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget" title="QtMessengerWidget" alt="" coords="6,5,157,35"/>
-<area shape="rect" id="node2" href="enaml.widgets.widget_component.WidgetComponent.html#enaml.qt.qt_widget_component.QtWidgetComponent" title="QtWidgetComponent" alt="" coords="206,5,362,35"/>
-<area shape="rect" id="node5" href="enaml.widgets.window.Window.html#enaml.qt.qt_window.QtWindow" title="QtWindow" alt="" coords="411,5,498,35"/>
-<area shape="rect" id="node4" href="#enaml.qt.qt_main_window.QtMainWindow" title="QtMainWindow" alt="" coords="548,5,666,35"/>
+<area shape="rect" id="node1" href="#enaml.qt.qt_main_window.QtMainWindow" title="QtMainWindow" alt="" coords="548,5,666,35"/>
+<area shape="rect" id="node2" href="enaml.widgets.window.Window.html#enaml.qt.qt_window.QtWindow" title="QtWindow" alt="" coords="411,5,498,35"/>
+<area shape="rect" id="node4" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget" title="QtMessengerWidget" alt="" coords="6,5,157,35"/>
+<area shape="rect" id="node5" href="enaml.widgets.widget_component.WidgetComponent.html#enaml.qt.qt_widget_component.QtWidgetComponent" title="QtWidgetComponent" alt="" coords="206,5,362,35"/>
 </map>
 </p>
 <dl class="class">
@@ -198,6 +199,61 @@ available space.</p>
 <dl class="method">
 <dt id="enaml.qt.qt_main_window.QtMainWindow.set_tool_bar_ids">
 <tt class="descname">set_tool_bar_ids</tt><big>(</big><em>bar_ids</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_main_window.html#QtMainWindow.set_tool_bar_ids"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_main_window.QtMainWindow.set_tool_bar_ids" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the tool bar ids for the underlying widget.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="wx">
+<h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-3aa3f32bb11c73a2c3e4525d0c4966dc6779deb7.png" alt="Inheritance diagram of enaml.wx.wx_main_window.WxMainWindow" usemap="#inheritance9475562265" class="inheritance"/>
+<map id="inheritance9475562265" name="inheritance9475562265">
+<area shape="rect" id="node1" href="#enaml.wx.wx_main_window.WxMainWindow" title="WxMainWindow" alt="" coords="558,5,680,35"/>
+<area shape="rect" id="node2" href="enaml.widgets.window.Window.html#enaml.wx.wx_window.WxWindow" title="WxWindow" alt="" coords="418,5,510,35"/>
+<area shape="rect" id="node4" href="enaml.widgets.widget_component.WidgetComponent.html#enaml.wx.wx_widget_component.WxWidgetComponent" title="WxWidgetComponent" alt="" coords="209,5,370,35"/>
+<area shape="rect" id="node5" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.wx.wx_messenger_widget.WxMessengerWidget" title="WxMessengerWidget" alt="" coords="5,5,160,35"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.wx.wx_main_window.WxMainWindow">
+<em class="property">class </em><tt class="descclassname">enaml.wx.wx_main_window.</tt><tt class="descname">WxMainWindow</tt><big>(</big><em>parent</em>, <em>widget_id</em>, <em>session</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_main_window.html#WxMainWindow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_main_window.WxMainWindow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.window.Window.html#enaml.wx.wx_window.WxWindow" title="enaml.wx.wx_window.WxWindow"><tt class="xref py py-class docutils literal"><span class="pre">enaml.wx.wx_window.WxWindow</span></tt></a></p>
+<p>A Wx implementation of an Enaml MainWindow.</p>
+<dl class="method">
+<dt id="enaml.wx.wx_main_window.WxMainWindow.create_widget">
+<tt class="descname">create_widget</tt><big>(</big><em>parent</em>, <em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_main_window.html#WxMainWindow.create_widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_main_window.WxMainWindow.create_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the underlying wx.Frame widget and dock manager.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_main_window.WxMainWindow.create">
+<tt class="descname">create</tt><big>(</big><em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_main_window.html#WxMainWindow.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_main_window.WxMainWindow.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create and initialize the main window control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_main_window.WxMainWindow.init_layout">
+<tt class="descname">init_layout</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_main_window.html#WxMainWindow.init_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_main_window.WxMainWindow.init_layout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform the layout initialization for the main window.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_main_window.WxMainWindow.set_menu_bar_id">
+<tt class="descname">set_menu_bar_id</tt><big>(</big><em>menu_bar_id</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_main_window.html#WxMainWindow.set_menu_bar_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_main_window.WxMainWindow.set_menu_bar_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the menu bar id for the underlying widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_main_window.WxMainWindow.set_dock_pane_ids">
+<tt class="descname">set_dock_pane_ids</tt><big>(</big><em>pane_ids</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_main_window.html#WxMainWindow.set_dock_pane_ids"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_main_window.WxMainWindow.set_dock_pane_ids" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the dock pane ids for the underlying widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_main_window.WxMainWindow.set_tool_bar_ids">
+<tt class="descname">set_tool_bar_ids</tt><big>(</big><em>bar_ids</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_main_window.html#WxMainWindow.set_tool_bar_ids"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_main_window.WxMainWindow.set_tool_bar_ids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the tool bar ids for the underlying widget.</p>
 </dd></dl>
 

@@ -17,3 +17,13 @@ Qt
     :parts: 1
 
 .. autoclass:: enaml.qt.qt_check_box.QtCheckBox
+
+
+Wx
+^^
+
+.. inheritance-diagram::
+    enaml.wx.wx_check_box.WxCheckBox
+    :parts: 1
+
+.. autoclass:: enaml.wx.wx_check_box.WxCheckBox

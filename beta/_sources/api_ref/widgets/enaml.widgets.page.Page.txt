@@ -17,3 +17,13 @@ Qt
     :parts: 1
 
 .. autoclass:: enaml.qt.qt_page.QtPage
+
+
+Wx
+^^
+
+.. inheritance-diagram::
+    enaml.wx.wx_page.WxPage
+    :parts: 1
+
+.. autoclass:: enaml.wx.wx_page.WxPage

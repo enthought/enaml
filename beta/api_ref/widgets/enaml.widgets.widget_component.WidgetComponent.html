@@ -70,6 +70,7 @@
 <li><a class="reference internal" href="#">WidgetComponent</a><ul>
 <li><a class="reference internal" href="#backends">Backends</a><ul>
 <li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
 </ul>
 </li>
 </ul>
@@ -188,10 +189,10 @@ client should determine and inteliigent maximum size.</p>
 <div class="section" id="qt">
 <h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
 <p class="graphviz">
-<img src="../../_images/inheritance-5e17a0a69507f79e6657ef21b72dba3b8b736de4.png" alt="Inheritance diagram of enaml.qt.qt_widget_component.QtWidgetComponent" usemap="#inheritanced4c2410a4d" class="inheritance"/>
+<img src="../../_images/inheritance-6d21e518a4288d161aa4360601988b536aacaff4.png" alt="Inheritance diagram of enaml.qt.qt_widget_component.QtWidgetComponent" usemap="#inheritanced4c2410a4d" class="inheritance"/>
 <map id="inheritanced4c2410a4d" name="inheritanced4c2410a4d">
-<area shape="rect" id="node1" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget" title="QtMessengerWidget" alt="" coords="6,5,157,35"/>
-<area shape="rect" id="node2" href="#enaml.qt.qt_widget_component.QtWidgetComponent" title="QtWidgetComponent" alt="" coords="206,5,362,35"/>
+<area shape="rect" id="node1" href="#enaml.qt.qt_widget_component.QtWidgetComponent" title="QtWidgetComponent" alt="" coords="206,5,362,35"/>
+<area shape="rect" id="node2" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget" title="QtMessengerWidget" alt="" coords="6,5,157,35"/>
 </map>
 </p>
 <dl class="class">
@@ -379,6 +380,192 @@ widget.</p>
 <tt class="descname">set_show_focus_rect</tt><big>(</big><em>show</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_widget_component.html#QtWidgetComponent.set_show_focus_rect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_widget_component.QtWidgetComponent.set_show_focus_rect" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets whether or not to show the focus rectangle around
 the widget. This is currently only supported on OSX.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="wx">
+<h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-081f2828a519b0a13734a733bf20f668fc1c4c51.png" alt="Inheritance diagram of enaml.wx.wx_widget_component.WxWidgetComponent" usemap="#inheritance396ffe186d" class="inheritance"/>
+<map id="inheritance396ffe186d" name="inheritance396ffe186d">
+<area shape="rect" id="node1" href="#enaml.wx.wx_widget_component.WxWidgetComponent" title="WxWidgetComponent" alt="" coords="209,5,370,35"/>
+<area shape="rect" id="node2" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.wx.wx_messenger_widget.WxMessengerWidget" title="WxMessengerWidget" alt="" coords="5,5,160,35"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.wx.wx_widget_component.WxWidgetComponent">
+<em class="property">class </em><tt class="descclassname">enaml.wx.wx_widget_component.</tt><tt class="descname">WxWidgetComponent</tt><big>(</big><em>parent</em>, <em>widget_id</em>, <em>session</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_widget_component.html#WxWidgetComponent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_widget_component.WxWidgetComponent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.wx.wx_messenger_widget.WxMessengerWidget" title="enaml.wx.wx_messenger_widget.WxMessengerWidget"><tt class="xref py py-class docutils literal"><span class="pre">enaml.wx.wx_messenger_widget.WxMessengerWidget</span></tt></a></p>
+<p>A Wx implementation of an Enaml WidgetComponent.</p>
+<dl class="method">
+<dt id="enaml.wx.wx_widget_component.WxWidgetComponent.create_widget">
+<tt class="descname">create_widget</tt><big>(</big><em>parent</em>, <em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_widget_component.html#WxWidgetComponent.create_widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_widget_component.WxWidgetComponent.create_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the underlying wx.Panel widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_widget_component.WxWidgetComponent.create">
+<tt class="descname">create</tt><big>(</big><em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_widget_component.html#WxWidgetComponent.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_widget_component.WxWidgetComponent.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create and initialize the widget control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_widget_component.WxWidgetComponent.on_action_set_enabled">
+<tt class="descname">on_action_set_enabled</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_widget_component.html#WxWidgetComponent.on_action_set_enabled"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_widget_component.WxWidgetComponent.on_action_set_enabled" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_enabled&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_widget_component.WxWidgetComponent.on_action_set_visible">
+<tt class="descname">on_action_set_visible</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_widget_component.html#WxWidgetComponent.on_action_set_visible"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_widget_component.WxWidgetComponent.on_action_set_visible" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_visible&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_widget_component.WxWidgetComponent.on_action_set_bgcolor">
+<tt class="descname">on_action_set_bgcolor</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_widget_component.html#WxWidgetComponent.on_action_set_bgcolor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_widget_component.WxWidgetComponent.on_action_set_bgcolor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_bgcolor&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_widget_component.WxWidgetComponent.on_action_set_fgcolor">
+<tt class="descname">on_action_set_fgcolor</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_widget_component.html#WxWidgetComponent.on_action_set_fgcolor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_widget_component.WxWidgetComponent.on_action_set_fgcolor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_fgcolor&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_widget_component.WxWidgetComponent.on_action_set_font">
+<tt class="descname">on_action_set_font</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_widget_component.html#WxWidgetComponent.on_action_set_font"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_widget_component.WxWidgetComponent.on_action_set_font" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_font&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_widget_component.WxWidgetComponent.on_action_set_minimum_size">
+<tt class="descname">on_action_set_minimum_size</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_widget_component.html#WxWidgetComponent.on_action_set_minimum_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_widget_component.WxWidgetComponent.on_action_set_minimum_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_minimum_size&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_widget_component.WxWidgetComponent.on_action_set_maximum_size">
+<tt class="descname">on_action_set_maximum_size</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_widget_component.html#WxWidgetComponent.on_action_set_maximum_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_widget_component.WxWidgetComponent.on_action_set_maximum_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_maximum_size&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_widget_component.WxWidgetComponent.on_action_set_show_focus_rect">
+<tt class="descname">on_action_set_show_focus_rect</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_widget_component.html#WxWidgetComponent.on_action_set_show_focus_rect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_widget_component.WxWidgetComponent.on_action_set_show_focus_rect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_show_focus_rect&#8217; action from the Enaml 
+widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_widget_component.WxWidgetComponent.set_minimum_size">
+<tt class="descname">set_minimum_size</tt><big>(</big><em>min_size</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_widget_component.html#WxWidgetComponent.set_minimum_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_widget_component.WxWidgetComponent.set_minimum_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the minimum size on the underlying widget.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>min_size</strong> (<em>(int, int)</em>) &#8211; The minimum size allowable for the widget. A value of
+(-1, -1) indicates the default min size.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_widget_component.WxWidgetComponent.set_maximum_size">
+<tt class="descname">set_maximum_size</tt><big>(</big><em>max_size</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_widget_component.html#WxWidgetComponent.set_maximum_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_widget_component.WxWidgetComponent.set_maximum_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the maximum size on the underlying widget.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>max_size</strong> (<em>(int, int)</em>) &#8211; The minimum size allowable for the widget. A value of
+(-1, -1) indicates the default max size.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_widget_component.WxWidgetComponent.set_enabled">
+<tt class="descname">set_enabled</tt><big>(</big><em>enabled</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_widget_component.html#WxWidgetComponent.set_enabled"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_widget_component.WxWidgetComponent.set_enabled" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the enabled state on the underlying widget.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>enabled</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; Whether or not the widget is enabled.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_widget_component.WxWidgetComponent.set_visible">
+<tt class="descname">set_visible</tt><big>(</big><em>visible</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_widget_component.html#WxWidgetComponent.set_visible"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_widget_component.WxWidgetComponent.set_visible" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the visibility state on the underlying widget.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>visible</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; Whether or not the widget is visible.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_widget_component.WxWidgetComponent.set_bgcolor">
+<tt class="descname">set_bgcolor</tt><big>(</big><em>bgcolor</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_widget_component.html#WxWidgetComponent.set_bgcolor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_widget_component.WxWidgetComponent.set_bgcolor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the background color on the underlying widget.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>bgcolor</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The background color of the widget as a CSS color string.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_widget_component.WxWidgetComponent.set_fgcolor">
+<tt class="descname">set_fgcolor</tt><big>(</big><em>fgcolor</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_widget_component.html#WxWidgetComponent.set_fgcolor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_widget_component.WxWidgetComponent.set_fgcolor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the foreground color on the underlying widget.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>fgcolor</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The foreground color of the widget as a CSS color string.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_widget_component.WxWidgetComponent.set_font">
+<tt class="descname">set_font</tt><big>(</big><em>font</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_widget_component.html#WxWidgetComponent.set_font"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_widget_component.WxWidgetComponent.set_font" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the font on the underlying widget.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>font</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The font for the widget as a CSS font string.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_widget_component.WxWidgetComponent.set_show_focus_rect">
+<tt class="descname">set_show_focus_rect</tt><big>(</big><em>show</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_widget_component.html#WxWidgetComponent.set_show_focus_rect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_widget_component.WxWidgetComponent.set_show_focus_rect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets whether or not to show the focus rectangle around
+the widget.</p>
+<p>This is currently not supported on Wx.</p>
 </dd></dl>
 
 </dd></dl>

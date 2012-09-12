@@ -17,3 +17,13 @@ Qt
     :parts: 1
 
 .. autoclass:: enaml.qt.qt_scroll_area.QtScrollArea
+
+
+Wx
+^^
+
+.. inheritance-diagram::
+    enaml.wx.wx_scroll_area.WxScrollArea
+    :parts: 1
+
+.. autoclass:: enaml.wx.wx_scroll_area.WxScrollArea

@@ -17,3 +17,13 @@ Qt
     :parts: 1
 
 .. autoclass:: enaml.qt.qt_tool_bar.QtToolBar
+
+
+Wx
+^^
+
+.. inheritance-diagram::
+    enaml.wx.wx_tool_bar.WxToolBar
+    :parts: 1
+
+.. autoclass:: enaml.wx.wx_tool_bar.WxToolBar

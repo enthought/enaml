@@ -17,3 +17,13 @@ Qt
     :parts: 1
 
 .. autoclass:: enaml.qt.qt_push_button.QtPushButton
+
+
+Wx
+^^
+
+.. inheritance-diagram::
+    enaml.wx.wx_push_button.WxPushButton
+    :parts: 1
+
+.. autoclass:: enaml.wx.wx_push_button.WxPushButton

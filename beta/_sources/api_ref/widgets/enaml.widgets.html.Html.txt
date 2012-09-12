@@ -17,3 +17,13 @@ Qt
     :parts: 1
 
 .. autoclass:: enaml.qt.qt_html.QtHtml
+
+
+Wx
+^^
+
+.. inheritance-diagram::
+    enaml.wx.wx_html.WxHtml
+    :parts: 1
+
+.. autoclass:: enaml.wx.wx_html.WxHtml

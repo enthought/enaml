@@ -95,18 +95,22 @@
 <span class="sd">        name : str</span>
 <span class="sd">            A unique, human-friendly name for the Session that will be</span>
 <span class="sd">            created.</span>
-<span class="sd">        </span>
+
 <span class="sd">        description : str</span>
 <span class="sd">            A brief description of the Session that will be created.</span>
-<span class="sd">        </span>
+
 <span class="sd">        session_class : Session subclass</span>
 <span class="sd">            A concrete subclass of Session that will be created by this</span>
 <span class="sd">            factory.</span>
-<span class="sd">        </span>
-<span class="sd">        *args, **kwargs</span>
-<span class="sd">            Optional positional and keyword arguments to pass to the</span>
-<span class="sd">            initialize() method of the Session that gets created.</span>
-<span class="sd">        </span>
+
+<span class="sd">        args</span>
+<span class="sd">            Optional positional arguments to pass to the initialize() method</span>
+<span class="sd">            of the Session that gets created.</span>
+
+<span class="sd">        kwargs</span>
+<span class="sd">            Optional keyword arguments to pass to the initialize() method of</span>
+<span class="sd">            the Session that gets created.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">description</span>

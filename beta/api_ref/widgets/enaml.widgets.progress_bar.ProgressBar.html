@@ -70,6 +70,7 @@
 <li><a class="reference internal" href="#">ProgressBar</a><ul>
 <li><a class="reference internal" href="#backends">Backends</a><ul>
 <li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
 </ul>
 </li>
 </ul>
@@ -175,12 +176,12 @@ to bind any event handlers necessary.</p>
 <div class="section" id="qt">
 <h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
 <p class="graphviz">
-<img src="../../_images/inheritance-d6c44c0d9218263d032007b69f5b968e5de7043d.png" alt="Inheritance diagram of enaml.qt.qt_progress_bar.QtProgressBar" usemap="#inheritanced7aaae831c" class="inheritance"/>
+<img src="../../_images/inheritance-b7244813a21582a837c525b61ed1cad53d986d8e.png" alt="Inheritance diagram of enaml.qt.qt_progress_bar.QtProgressBar" usemap="#inheritanced7aaae831c" class="inheritance"/>
 <map id="inheritanced7aaae831c" name="inheritanced7aaae831c">
-<area shape="rect" id="node1" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget" title="QtMessengerWidget" alt="" coords="6,5,157,35"/>
+<area shape="rect" id="node1" href="#enaml.qt.qt_progress_bar.QtProgressBar" title="QtProgressBar" alt="" coords="614,5,727,35"/>
+<area shape="rect" id="node2" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.qt.qt_constraints_widget.QtConstraintsWidget" title="QtConstraintsWidget" alt="" coords="410,5,566,35"/>
+<area shape="rect" id="node4" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget" title="QtMessengerWidget" alt="" coords="6,5,157,35"/>
 <area shape="rect" id="node5" href="enaml.widgets.widget_component.WidgetComponent.html#enaml.qt.qt_widget_component.QtWidgetComponent" title="QtWidgetComponent" alt="" coords="206,5,362,35"/>
-<area shape="rect" id="node2" href="#enaml.qt.qt_progress_bar.QtProgressBar" title="QtProgressBar" alt="" coords="614,5,727,35"/>
-<area shape="rect" id="node3" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.qt.qt_constraints_widget.QtConstraintsWidget" title="QtConstraintsWidget" alt="" coords="410,5,566,35"/>
 </map>
 </p>
 <dl class="class">
@@ -233,6 +234,73 @@ to bind any event handlers necessary.</p>
 <dl class="method">
 <dt id="enaml.qt.qt_progress_bar.QtProgressBar.set_value">
 <tt class="descname">set_value</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_progress_bar.html#QtProgressBar.set_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_progress_bar.QtProgressBar.set_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the value of the progress bar</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="wx">
+<h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-1acdb92281df738a537a7de37b4a22bb1812461a.png" alt="Inheritance diagram of enaml.wx.wx_progress_bar.WxProgressBar" usemap="#inheritance14b7b08ee9" class="inheritance"/>
+<map id="inheritance14b7b08ee9" name="inheritance14b7b08ee9">
+<area shape="rect" id="node1" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.wx.wx_constraints_widget.WxConstraintsWidget" title="WxConstraintsWidget" alt="" coords="419,5,578,35"/>
+<area shape="rect" id="node4" href="#enaml.wx.wx_progress_bar.WxProgressBar" title="WxProgressBar" alt="" coords="627,5,744,35"/>
+<area shape="rect" id="node2" href="enaml.widgets.widget_component.WidgetComponent.html#enaml.wx.wx_widget_component.WxWidgetComponent" title="WxWidgetComponent" alt="" coords="209,5,370,35"/>
+<area shape="rect" id="node6" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.wx.wx_messenger_widget.WxMessengerWidget" title="WxMessengerWidget" alt="" coords="5,5,160,35"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.wx.wx_progress_bar.WxProgressBar">
+<em class="property">class </em><tt class="descclassname">enaml.wx.wx_progress_bar.</tt><tt class="descname">WxProgressBar</tt><big>(</big><em>parent</em>, <em>widget_id</em>, <em>session</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_progress_bar.html#WxProgressBar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_progress_bar.WxProgressBar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.wx.wx_constraints_widget.WxConstraintsWidget" title="enaml.wx.wx_constraints_widget.WxConstraintsWidget"><tt class="xref py py-class docutils literal"><span class="pre">enaml.wx.wx_constraints_widget.WxConstraintsWidget</span></tt></a></p>
+<p>A Wx implementation of an Enaml ProgressBar.</p>
+<dl class="method">
+<dt id="enaml.wx.wx_progress_bar.WxProgressBar.create_widget">
+<tt class="descname">create_widget</tt><big>(</big><em>parent</em>, <em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_progress_bar.html#WxProgressBar.create_widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_progress_bar.WxProgressBar.create_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the underlying wx.Gauge widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_progress_bar.WxProgressBar.create">
+<tt class="descname">create</tt><big>(</big><em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_progress_bar.html#WxProgressBar.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_progress_bar.WxProgressBar.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create and initialize the progress bar control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_progress_bar.WxProgressBar.on_action_set_minimum">
+<tt class="descname">on_action_set_minimum</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_progress_bar.html#WxProgressBar.on_action_set_minimum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_progress_bar.WxProgressBar.on_action_set_minimum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_minimum&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_progress_bar.WxProgressBar.on_action_set_maximum">
+<tt class="descname">on_action_set_maximum</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_progress_bar.html#WxProgressBar.on_action_set_maximum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_progress_bar.WxProgressBar.on_action_set_maximum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_maximum&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_progress_bar.WxProgressBar.on_action_set_value">
+<tt class="descname">on_action_set_value</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_progress_bar.html#WxProgressBar.on_action_set_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_progress_bar.WxProgressBar.on_action_set_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_value&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_progress_bar.WxProgressBar.set_minimum">
+<tt class="descname">set_minimum</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_progress_bar.html#WxProgressBar.set_minimum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_progress_bar.WxProgressBar.set_minimum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the minimum value of the progress bar</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_progress_bar.WxProgressBar.set_maximum">
+<tt class="descname">set_maximum</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_progress_bar.html#WxProgressBar.set_maximum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_progress_bar.WxProgressBar.set_maximum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the maximum value of the progress bar</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_progress_bar.WxProgressBar.set_value">
+<tt class="descname">set_value</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_progress_bar.html#WxProgressBar.set_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_progress_bar.WxProgressBar.set_value" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the value of the progress bar</p>
 </dd></dl>
 

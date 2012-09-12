@@ -70,6 +70,7 @@
 <li><a class="reference internal" href="#">SpinBox</a><ul>
 <li><a class="reference internal" href="#backends">Backends</a><ul>
 <li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
 </ul>
 </li>
 </ul>
@@ -208,12 +209,12 @@ to bind any event handlers necessary.</p>
 <div class="section" id="qt">
 <h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
 <p class="graphviz">
-<img src="../../_images/inheritance-1d1e6572a3e214068a5875a61e92f715cbbfeb44.png" alt="Inheritance diagram of enaml.qt.qt_spin_box.QtSpinBox" usemap="#inheritancebf38afd2f2" class="inheritance"/>
+<img src="../../_images/inheritance-2de4155ac7d47db7167fcb434d65c5c10754e156.png" alt="Inheritance diagram of enaml.qt.qt_spin_box.QtSpinBox" usemap="#inheritancebf38afd2f2" class="inheritance"/>
 <map id="inheritancebf38afd2f2" name="inheritancebf38afd2f2">
-<area shape="rect" id="node1" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget" title="QtMessengerWidget" alt="" coords="6,5,157,35"/>
+<area shape="rect" id="node1" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.qt.qt_constraints_widget.QtConstraintsWidget" title="QtConstraintsWidget" alt="" coords="410,5,566,35"/>
+<area shape="rect" id="node5" href="#enaml.qt.qt_spin_box.QtSpinBox" title="QtSpinBox" alt="" coords="613,5,702,35"/>
 <area shape="rect" id="node2" href="enaml.widgets.widget_component.WidgetComponent.html#enaml.qt.qt_widget_component.QtWidgetComponent" title="QtWidgetComponent" alt="" coords="206,5,362,35"/>
-<area shape="rect" id="node4" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.qt.qt_constraints_widget.QtConstraintsWidget" title="QtConstraintsWidget" alt="" coords="410,5,566,35"/>
-<area shape="rect" id="node6" href="#enaml.qt.qt_spin_box.QtSpinBox" title="QtSpinBox" alt="" coords="613,5,702,35"/>
+<area shape="rect" id="node4" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget" title="QtMessengerWidget" alt="" coords="6,5,157,35"/>
 </map>
 </p>
 <dl class="class">
@@ -348,6 +349,155 @@ widget.</p>
 <dl class="method">
 <dt id="enaml.qt.qt_spin_box.QtSpinBox.set_wrapping">
 <tt class="descname">set_wrapping</tt><big>(</big><em>wrapping</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_spin_box.html#QtSpinBox.set_wrapping"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_spin_box.QtSpinBox.set_wrapping" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the widget&#8217;s wrapping flag.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="wx">
+<h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-6a7a342ab3963b74954e01e021e54ecea6cef1ad.png" alt="Inheritance diagram of enaml.wx.wx_spin_box.WxSpinBox" usemap="#inheritance0fe0a3a8eb" class="inheritance"/>
+<map id="inheritance0fe0a3a8eb" name="inheritance0fe0a3a8eb">
+<area shape="rect" id="node1" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.wx.wx_constraints_widget.WxConstraintsWidget" title="WxConstraintsWidget" alt="" coords="419,5,578,35"/>
+<area shape="rect" id="node6" href="#enaml.wx.wx_spin_box.WxSpinBox" title="WxSpinBox" alt="" coords="627,5,720,35"/>
+<area shape="rect" id="node2" href="enaml.widgets.widget_component.WidgetComponent.html#enaml.wx.wx_widget_component.WxWidgetComponent" title="WxWidgetComponent" alt="" coords="209,5,370,35"/>
+<area shape="rect" id="node4" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.wx.wx_messenger_widget.WxMessengerWidget" title="WxMessengerWidget" alt="" coords="5,5,160,35"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.wx.wx_spin_box.WxSpinBox">
+<em class="property">class </em><tt class="descclassname">enaml.wx.wx_spin_box.</tt><tt class="descname">WxSpinBox</tt><big>(</big><em>parent</em>, <em>widget_id</em>, <em>session</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_spin_box.html#WxSpinBox"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_spin_box.WxSpinBox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.wx.wx_constraints_widget.WxConstraintsWidget" title="enaml.wx.wx_constraints_widget.WxConstraintsWidget"><tt class="xref py py-class docutils literal"><span class="pre">enaml.wx.wx_constraints_widget.WxConstraintsWidget</span></tt></a></p>
+<p>A Wx implementation of an Enaml SpinBox.</p>
+<dl class="method">
+<dt id="enaml.wx.wx_spin_box.WxSpinBox.create_widget">
+<tt class="descname">create_widget</tt><big>(</big><em>parent</em>, <em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_spin_box.html#WxSpinBox.create_widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_spin_box.WxSpinBox.create_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the underlying wxProperSpinBox widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_spin_box.WxSpinBox.create">
+<tt class="descname">create</tt><big>(</big><em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_spin_box.html#WxSpinBox.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_spin_box.WxSpinBox.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create and initialize the slider control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_spin_box.WxSpinBox.on_value_changed">
+<tt class="descname">on_value_changed</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_spin_box.html#WxSpinBox.on_value_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_spin_box.WxSpinBox.on_value_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The event handler for the &#8216;EVT_SPIN_BOX&#8217; event.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_spin_box.WxSpinBox.on_action_set_maximum">
+<tt class="descname">on_action_set_maximum</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_spin_box.html#WxSpinBox.on_action_set_maximum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_spin_box.WxSpinBox.on_action_set_maximum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handler for the &#8216;set_maximum&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_spin_box.WxSpinBox.on_action_set_minimum">
+<tt class="descname">on_action_set_minimum</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_spin_box.html#WxSpinBox.on_action_set_minimum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_spin_box.WxSpinBox.on_action_set_minimum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handler for the &#8216;set_minimum&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_spin_box.WxSpinBox.on_action_set_value">
+<tt class="descname">on_action_set_value</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_spin_box.html#WxSpinBox.on_action_set_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_spin_box.WxSpinBox.on_action_set_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handler for the &#8216;set_value&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_spin_box.WxSpinBox.on_action_set_prefix">
+<tt class="descname">on_action_set_prefix</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_spin_box.html#WxSpinBox.on_action_set_prefix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_spin_box.WxSpinBox.on_action_set_prefix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handler for the &#8216;set_prefix&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_spin_box.WxSpinBox.on_action_set_suffix">
+<tt class="descname">on_action_set_suffix</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_spin_box.html#WxSpinBox.on_action_set_suffix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_spin_box.WxSpinBox.on_action_set_suffix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handler for the &#8216;set_suffix&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_spin_box.WxSpinBox.on_action_set_special_value_text">
+<tt class="descname">on_action_set_special_value_text</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_spin_box.html#WxSpinBox.on_action_set_special_value_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_spin_box.WxSpinBox.on_action_set_special_value_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handler for the &#8216;set_special_value_text&#8217; action from the
+Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_spin_box.WxSpinBox.on_action_set_single_step">
+<tt class="descname">on_action_set_single_step</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_spin_box.html#WxSpinBox.on_action_set_single_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_spin_box.WxSpinBox.on_action_set_single_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handler for the &#8216;set_single_step&#8217; action from the Enaml
+widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_spin_box.WxSpinBox.on_action_set_read_only">
+<tt class="descname">on_action_set_read_only</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_spin_box.html#WxSpinBox.on_action_set_read_only"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_spin_box.WxSpinBox.on_action_set_read_only" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handler for the &#8216;set_read_only&#8217; action from the Enaml
+widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_spin_box.WxSpinBox.on_action_set_wrapping">
+<tt class="descname">on_action_set_wrapping</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_spin_box.html#WxSpinBox.on_action_set_wrapping"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_spin_box.WxSpinBox.on_action_set_wrapping" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handler for the &#8216;set_wrapping&#8217; action from the Enaml 
+widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_spin_box.WxSpinBox.set_maximum">
+<tt class="descname">set_maximum</tt><big>(</big><em>maximum</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_spin_box.html#WxSpinBox.set_maximum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_spin_box.WxSpinBox.set_maximum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the widget&#8217;s maximum value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_spin_box.WxSpinBox.set_minimum">
+<tt class="descname">set_minimum</tt><big>(</big><em>minimum</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_spin_box.html#WxSpinBox.set_minimum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_spin_box.WxSpinBox.set_minimum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the widget&#8217;s minimum value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_spin_box.WxSpinBox.set_value">
+<tt class="descname">set_value</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_spin_box.html#WxSpinBox.set_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_spin_box.WxSpinBox.set_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the spin box&#8217;s value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_spin_box.WxSpinBox.set_prefix">
+<tt class="descname">set_prefix</tt><big>(</big><em>prefix</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_spin_box.html#WxSpinBox.set_prefix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_spin_box.WxSpinBox.set_prefix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the prefix for the spin box.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_spin_box.WxSpinBox.set_suffix">
+<tt class="descname">set_suffix</tt><big>(</big><em>suffix</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_spin_box.html#WxSpinBox.set_suffix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_spin_box.WxSpinBox.set_suffix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the suffix for the spin box.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_spin_box.WxSpinBox.set_special_value_text">
+<tt class="descname">set_special_value_text</tt><big>(</big><em>text</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_spin_box.html#WxSpinBox.set_special_value_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_spin_box.WxSpinBox.set_special_value_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the special value text for the spin box.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_spin_box.WxSpinBox.set_single_step">
+<tt class="descname">set_single_step</tt><big>(</big><em>step</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_spin_box.html#WxSpinBox.set_single_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_spin_box.WxSpinBox.set_single_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the widget&#8217;s single step value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_spin_box.WxSpinBox.set_read_only">
+<tt class="descname">set_read_only</tt><big>(</big><em>read_only</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_spin_box.html#WxSpinBox.set_read_only"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_spin_box.WxSpinBox.set_read_only" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the widget&#8217;s read only flag.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_spin_box.WxSpinBox.set_wrapping">
+<tt class="descname">set_wrapping</tt><big>(</big><em>wrapping</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_spin_box.html#WxSpinBox.set_wrapping"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_spin_box.WxSpinBox.set_wrapping" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the widget&#8217;s wrapping flag.</p>
 </dd></dl>
 

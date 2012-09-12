@@ -70,6 +70,7 @@
 <li><a class="reference internal" href="#">ToolBar</a><ul>
 <li><a class="reference internal" href="#backends">Backends</a><ul>
 <li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
 </ul>
 </li>
 </ul>
@@ -219,12 +220,12 @@ orientation of the slider unless overridden by the user.</p>
 <div class="section" id="qt">
 <h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
 <p class="graphviz">
-<img src="../../_images/inheritance-c01e49642911c3bff62bd2c264b9196e8f09106e.png" alt="Inheritance diagram of enaml.qt.qt_tool_bar.QtToolBar" usemap="#inheritancef6b138122c" class="inheritance"/>
+<img src="../../_images/inheritance-46f9768230579170b248bc3f76ac343863155b65.png" alt="Inheritance diagram of enaml.qt.qt_tool_bar.QtToolBar" usemap="#inheritancef6b138122c" class="inheritance"/>
 <map id="inheritancef6b138122c" name="inheritancef6b138122c">
-<area shape="rect" id="node1" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget" title="QtMessengerWidget" alt="" coords="6,5,157,35"/>
+<area shape="rect" id="node1" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.qt.qt_constraints_widget.QtConstraintsWidget" title="QtConstraintsWidget" alt="" coords="410,5,566,35"/>
+<area shape="rect" id="node4" href="#enaml.qt.qt_tool_bar.QtToolBar" title="QtToolBar" alt="" coords="613,5,699,35"/>
 <area shape="rect" id="node2" href="enaml.widgets.widget_component.WidgetComponent.html#enaml.qt.qt_widget_component.QtWidgetComponent" title="QtWidgetComponent" alt="" coords="206,5,362,35"/>
-<area shape="rect" id="node4" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.qt.qt_constraints_widget.QtConstraintsWidget" title="QtConstraintsWidget" alt="" coords="410,5,566,35"/>
-<area shape="rect" id="node6" href="#enaml.qt.qt_tool_bar.QtToolBar" title="QtToolBar" alt="" coords="613,5,699,35"/>
+<area shape="rect" id="node6" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget" title="QtMessengerWidget" alt="" coords="6,5,157,35"/>
 </map>
 </p>
 <dl class="class">
@@ -339,6 +340,123 @@ widget.</p>
 <dt id="enaml.qt.qt_tool_bar.QtToolBar.set_orientation">
 <tt class="descname">set_orientation</tt><big>(</big><em>orientation</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_tool_bar.html#QtToolBar.set_orientation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_tool_bar.QtToolBar.set_orientation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the orientation of the underlying widget.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="wx">
+<h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-76245731408e2297be1ae26180061d34625c9f6b.png" alt="Inheritance diagram of enaml.wx.wx_tool_bar.WxToolBar" usemap="#inheritance775937590e" class="inheritance"/>
+<map id="inheritance775937590e" name="inheritance775937590e">
+<area shape="rect" id="node1" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.wx.wx_constraints_widget.WxConstraintsWidget" title="WxConstraintsWidget" alt="" coords="419,5,578,35"/>
+<area shape="rect" id="node6" href="#enaml.wx.wx_tool_bar.WxToolBar" title="WxToolBar" alt="" coords="627,5,717,35"/>
+<area shape="rect" id="node2" href="enaml.widgets.widget_component.WidgetComponent.html#enaml.wx.wx_widget_component.WxWidgetComponent" title="WxWidgetComponent" alt="" coords="209,5,370,35"/>
+<area shape="rect" id="node4" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.wx.wx_messenger_widget.WxMessengerWidget" title="WxMessengerWidget" alt="" coords="5,5,160,35"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.wx.wx_tool_bar.WxToolBar">
+<em class="property">class </em><tt class="descclassname">enaml.wx.wx_tool_bar.</tt><tt class="descname">WxToolBar</tt><big>(</big><em>parent</em>, <em>widget_id</em>, <em>session</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_tool_bar.html#WxToolBar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_tool_bar.WxToolBar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.wx.wx_constraints_widget.WxConstraintsWidget" title="enaml.wx.wx_constraints_widget.WxConstraintsWidget"><tt class="xref py py-class docutils literal"><span class="pre">enaml.wx.wx_constraints_widget.WxConstraintsWidget</span></tt></a></p>
+<p>A Wx implementation of an Enaml ToolBar.</p>
+<dl class="method">
+<dt id="enaml.wx.wx_tool_bar.WxToolBar.create_widget">
+<tt class="descname">create_widget</tt><big>(</big><em>parent</em>, <em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_tool_bar.html#WxToolBar.create_widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_tool_bar.WxToolBar.create_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the underlying tool bar widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_tool_bar.WxToolBar.create">
+<tt class="descname">create</tt><big>(</big><em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_tool_bar.html#WxToolBar.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_tool_bar.WxToolBar.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create and initialize the underlying tool bar control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_tool_bar.WxToolBar.init_layout">
+<tt class="descname">init_layout</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_tool_bar.html#WxToolBar.init_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_tool_bar.WxToolBar.init_layout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the layout for the toolbar.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_tool_bar.WxToolBar.on_action_set_movable">
+<tt class="descname">on_action_set_movable</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_tool_bar.html#WxToolBar.on_action_set_movable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_tool_bar.WxToolBar.on_action_set_movable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_movable&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_tool_bar.WxToolBar.on_action_set_floatable">
+<tt class="descname">on_action_set_floatable</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_tool_bar.html#WxToolBar.on_action_set_floatable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_tool_bar.WxToolBar.on_action_set_floatable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_floatable&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_tool_bar.WxToolBar.on_action_set_floating">
+<tt class="descname">on_action_set_floating</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_tool_bar.html#WxToolBar.on_action_set_floating"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_tool_bar.WxToolBar.on_action_set_floating" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_floating&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_tool_bar.WxToolBar.on_action_set_dock_area">
+<tt class="descname">on_action_set_dock_area</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_tool_bar.html#WxToolBar.on_action_set_dock_area"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_tool_bar.WxToolBar.on_action_set_dock_area" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_dock_area&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_tool_bar.WxToolBar.on_action_set_allowed_dock_areas">
+<tt class="descname">on_action_set_allowed_dock_areas</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_tool_bar.html#WxToolBar.on_action_set_allowed_dock_areas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_tool_bar.WxToolBar.on_action_set_allowed_dock_areas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_allowed_dock_areas&#8217; action from the Enaml
+widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_tool_bar.WxToolBar.set_visible">
+<tt class="descname">set_visible</tt><big>(</big><em>visible</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_tool_bar.html#WxToolBar.set_visible"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_tool_bar.WxToolBar.set_visible" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden parent class visibility setter which properly
+handles the visibility of the tool bar.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_tool_bar.WxToolBar.set_item_ids">
+<tt class="descname">set_item_ids</tt><big>(</big><em>item_ids</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_tool_bar.html#WxToolBar.set_item_ids"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_tool_bar.WxToolBar.set_item_ids" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the item ids for the underlying widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_tool_bar.WxToolBar.set_orientation">
+<tt class="descname">set_orientation</tt><big>(</big><em>orientation</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_tool_bar.html#WxToolBar.set_orientation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_tool_bar.WxToolBar.set_orientation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the orientation of the underlying widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_tool_bar.WxToolBar.set_movable">
+<tt class="descname">set_movable</tt><big>(</big><em>movable</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_tool_bar.html#WxToolBar.set_movable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_tool_bar.WxToolBar.set_movable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the movable state on the underlying widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_tool_bar.WxToolBar.set_floatable">
+<tt class="descname">set_floatable</tt><big>(</big><em>floatable</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_tool_bar.html#WxToolBar.set_floatable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_tool_bar.WxToolBar.set_floatable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the floatable state on the underlying widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_tool_bar.WxToolBar.set_floating">
+<tt class="descname">set_floating</tt><big>(</big><em>floating</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_tool_bar.html#WxToolBar.set_floating"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_tool_bar.WxToolBar.set_floating" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the floating staet on the underlying widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_tool_bar.WxToolBar.set_dock_area">
+<tt class="descname">set_dock_area</tt><big>(</big><em>dock_area</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_tool_bar.html#WxToolBar.set_dock_area"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_tool_bar.WxToolBar.set_dock_area" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the dock area on the underyling widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_tool_bar.WxToolBar.set_allowed_dock_areas">
+<tt class="descname">set_allowed_dock_areas</tt><big>(</big><em>dock_areas</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_tool_bar.html#WxToolBar.set_allowed_dock_areas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_tool_bar.WxToolBar.set_allowed_dock_areas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the allowed dock areas on the underlying widget.</p>
 </dd></dl>
 
 </dd></dl>

@@ -17,3 +17,13 @@ Qt
     :parts: 1
 
 .. autoclass:: enaml.qt.qt_menu.QtMenu
+
+
+Wx
+^^
+
+.. inheritance-diagram::
+    enaml.wx.wx_menu.WxMenu
+    :parts: 1
+
+.. autoclass:: enaml.wx.wx_menu.WxMenu

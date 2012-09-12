@@ -17,3 +17,13 @@ Qt
     :parts: 1
 
 .. autoclass:: enaml.qt.qt_container.QtContainer
+
+
+Wx
+^^
+
+.. inheritance-diagram::
+    enaml.wx.wx_container.WxContainer
+    :parts: 1
+
+.. autoclass:: enaml.wx.wx_container.WxContainer

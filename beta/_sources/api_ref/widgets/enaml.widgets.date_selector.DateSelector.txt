@@ -17,3 +17,13 @@ Qt
     :parts: 1
 
 .. autoclass:: enaml.qt.qt_date_selector.QtDateSelector
+
+
+Wx
+^^
+
+.. inheritance-diagram::
+    enaml.wx.wx_date_selector.WxDateSelector
+    :parts: 1
+
+.. autoclass:: enaml.wx.wx_date_selector.WxDateSelector

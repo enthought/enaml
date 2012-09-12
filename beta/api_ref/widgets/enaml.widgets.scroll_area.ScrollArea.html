@@ -70,6 +70,7 @@
 <li><a class="reference internal" href="#">ScrollArea</a><ul>
 <li><a class="reference internal" href="#backends">Backends</a><ul>
 <li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
 </ul>
 </li>
 </ul>
@@ -169,12 +170,12 @@ initialize a client widget.</p>
 <div class="section" id="qt">
 <h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
 <p class="graphviz">
-<img src="../../_images/inheritance-7755c30cd2d57328a04df0108e3771c9303169a6.png" alt="Inheritance diagram of enaml.qt.qt_scroll_area.QtScrollArea" usemap="#inheritance5c2f685fa5" class="inheritance"/>
+<img src="../../_images/inheritance-067f35b63cabdc45ca03c64839040f8c035bbdd4.png" alt="Inheritance diagram of enaml.qt.qt_scroll_area.QtScrollArea" usemap="#inheritance5c2f685fa5" class="inheritance"/>
 <map id="inheritance5c2f685fa5" name="inheritance5c2f685fa5">
-<area shape="rect" id="node1" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget" title="QtMessengerWidget" alt="" coords="6,5,157,35"/>
-<area shape="rect" id="node2" href="enaml.widgets.widget_component.WidgetComponent.html#enaml.qt.qt_widget_component.QtWidgetComponent" title="QtWidgetComponent" alt="" coords="206,5,362,35"/>
-<area shape="rect" id="node4" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.qt.qt_constraints_widget.QtConstraintsWidget" title="QtConstraintsWidget" alt="" coords="410,5,566,35"/>
-<area shape="rect" id="node6" href="#enaml.qt.qt_scroll_area.QtScrollArea" title="QtScrollArea" alt="" coords="613,5,715,35"/>
+<area shape="rect" id="node1" href="#enaml.qt.qt_scroll_area.QtScrollArea" title="QtScrollArea" alt="" coords="613,5,715,35"/>
+<area shape="rect" id="node2" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.qt.qt_constraints_widget.QtConstraintsWidget" title="QtConstraintsWidget" alt="" coords="410,5,566,35"/>
+<area shape="rect" id="node4" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget" title="QtMessengerWidget" alt="" coords="6,5,157,35"/>
+<area shape="rect" id="node5" href="enaml.widgets.widget_component.WidgetComponent.html#enaml.qt.qt_widget_component.QtWidgetComponent" title="QtWidgetComponent" alt="" coords="206,5,362,35"/>
 </map>
 </p>
 <dl class="class">
@@ -229,6 +230,75 @@ widget.</p>
 <dl class="method">
 <dt id="enaml.qt.qt_scroll_area.QtScrollArea.set_vertical_scrollbar">
 <tt class="descname">set_vertical_scrollbar</tt><big>(</big><em>policy</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_scroll_area.html#QtScrollArea.set_vertical_scrollbar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_scroll_area.QtScrollArea.set_vertical_scrollbar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the vertical scrollbar policy of the widget.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="wx">
+<h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-b482b84447c8164cd3eae3f88845b9c02d41ba48.png" alt="Inheritance diagram of enaml.wx.wx_scroll_area.WxScrollArea" usemap="#inheritancedbc586f670" class="inheritance"/>
+<map id="inheritancedbc586f670" name="inheritancedbc586f670">
+<area shape="rect" id="node1" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.wx.wx_constraints_widget.WxConstraintsWidget" title="WxConstraintsWidget" alt="" coords="419,5,578,35"/>
+<area shape="rect" id="node4" href="#enaml.wx.wx_scroll_area.WxScrollArea" title="WxScrollArea" alt="" coords="627,5,733,35"/>
+<area shape="rect" id="node2" href="enaml.widgets.widget_component.WidgetComponent.html#enaml.wx.wx_widget_component.WxWidgetComponent" title="WxWidgetComponent" alt="" coords="209,5,370,35"/>
+<area shape="rect" id="node6" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.wx.wx_messenger_widget.WxMessengerWidget" title="WxMessengerWidget" alt="" coords="5,5,160,35"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.wx.wx_scroll_area.WxScrollArea">
+<em class="property">class </em><tt class="descclassname">enaml.wx.wx_scroll_area.</tt><tt class="descname">WxScrollArea</tt><big>(</big><em>parent</em>, <em>widget_id</em>, <em>session</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_scroll_area.html#WxScrollArea"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_scroll_area.WxScrollArea" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.wx.wx_constraints_widget.WxConstraintsWidget" title="enaml.wx.wx_constraints_widget.WxConstraintsWidget"><tt class="xref py py-class docutils literal"><span class="pre">enaml.wx.wx_constraints_widget.WxConstraintsWidget</span></tt></a></p>
+<p>A Wx implementation of an Enaml ScrollArea.</p>
+<dl class="method">
+<dt id="enaml.wx.wx_scroll_area.WxScrollArea.create_widget">
+<tt class="descname">create_widget</tt><big>(</big><em>parent</em>, <em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_scroll_area.html#WxScrollArea.create_widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_scroll_area.WxScrollArea.create_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the underlying wxScrolledWindow widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_scroll_area.WxScrollArea.create">
+<tt class="descname">create</tt><big>(</big><em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_scroll_area.html#WxScrollArea.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_scroll_area.WxScrollArea.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create and initialize the scroll area widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_scroll_area.WxScrollArea.init_layout">
+<tt class="descname">init_layout</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_scroll_area.html#WxScrollArea.init_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_scroll_area.WxScrollArea.init_layout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the layout initialization for the scroll area.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_scroll_area.WxScrollArea.on_action_set_horizontal_scrollbar">
+<tt class="descname">on_action_set_horizontal_scrollbar</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_scroll_area.html#WxScrollArea.on_action_set_horizontal_scrollbar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_scroll_area.WxScrollArea.on_action_set_horizontal_scrollbar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_horizontal_scrollbar&#8217; action from the Enaml
+widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_scroll_area.WxScrollArea.on_action_set_vertical_scrollbar">
+<tt class="descname">on_action_set_vertical_scrollbar</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_scroll_area.html#WxScrollArea.on_action_set_vertical_scrollbar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_scroll_area.WxScrollArea.on_action_set_vertical_scrollbar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_vertical_scrollbar&#8217; action from the Enaml
+widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_scroll_area.WxScrollArea.set_scroll_widget_id">
+<tt class="descname">set_scroll_widget_id</tt><big>(</big><em>widget_id</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_scroll_area.html#WxScrollArea.set_scroll_widget_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_scroll_area.WxScrollArea.set_scroll_widget_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the scroll widget id for the underlying widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_scroll_area.WxScrollArea.set_horizontal_scrollbar">
+<tt class="descname">set_horizontal_scrollbar</tt><big>(</big><em>policy</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_scroll_area.html#WxScrollArea.set_horizontal_scrollbar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_scroll_area.WxScrollArea.set_horizontal_scrollbar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the horizontal scrollbar policy of the widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_scroll_area.WxScrollArea.set_vertical_scrollbar">
+<tt class="descname">set_vertical_scrollbar</tt><big>(</big><em>policy</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_scroll_area.html#WxScrollArea.set_vertical_scrollbar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_scroll_area.WxScrollArea.set_vertical_scrollbar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the vertical scrollbar policy of the widget.</p>
 </dd></dl>
 

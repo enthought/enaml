@@ -17,3 +17,13 @@ Qt
     :parts: 1
 
 .. autoclass:: enaml.qt.qt_mdi_window.QtMdiWindow
+
+
+Wx
+^^
+
+.. inheritance-diagram::
+    enaml.wx.wx_mdi_window.WxMdiWindow
+    :parts: 1
+
+.. autoclass:: enaml.wx.wx_mdi_window.WxMdiWindow
