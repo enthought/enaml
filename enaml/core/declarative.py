@@ -104,8 +104,8 @@ class Declarative(HasStrictTraits):
             this component, or None if the component has no parent.
             Defaults to None.
 
-        **kwargs
-            Any other positional arguments needed to initialize the
+        kwargs
+            Any other positional or keyword arguments needed to initialize the
             component.
 
         """
