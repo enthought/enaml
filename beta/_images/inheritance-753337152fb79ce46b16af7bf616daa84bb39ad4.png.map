@@ -1,6 +1,0 @@
-<map id="inheritance4cce7f3f98" name="inheritance4cce7f3f98">
-<area shape="rect" id="node1" href="#enamldoc.sphinx_ext.EnamlComponentDocumenter" title="enamldoc.sphinx_ext.EnamlComponentDocumenter" alt="" coords="361,33,561,49"/>
-<area shape="rect" id="node7" href="#enamldoc.sphinx_ext.DeclarativeDocumenter" title="enamldoc.sphinx_ext.DeclarativeDocumenter" alt="" coords="589,18,765,34"/>
-<area shape="rect" id="node8" href="#enamldoc.sphinx_ext.EnamlDocstringSignatureMixin" title="enamldoc.sphinx_ext.EnamlDocstringSignatureMixin" alt="" coords="360,3,562,19"/>
-<area shape="rect" id="node13" href="#enamldoc.sphinx_ext.EnamlModuleDocumenter" title="enamldoc.sphinx_ext.EnamlModuleDocumenter" alt="" coords="369,63,553,79"/>
-</map>

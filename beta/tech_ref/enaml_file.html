@@ -27,7 +27,10 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../_static/et.ico"/>
-    <link rel="top" title="enaml 0.3alpha documentation" href="../index.html" /> 
+    <link rel="top" title="enaml 0.3alpha documentation" href="../index.html" />
+    <link rel="up" title="Enaml Technical Reference" href="index.html" />
+    <link rel="next" title="Enaml Grammar Reference" href="grammar_ref.html" />
+    <link rel="prev" title="Enaml Technical Reference" href="index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -42,7 +45,14 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="grammar_ref.html" title="Enaml Grammar Reference"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Enaml Technical Reference"
+             accesskey="P">previous</a> |</li>
         <li><a href="../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Enaml Technical Reference</a> &raquo;</li>
   
     <li><a href="#">Writing .enaml Files</a></li>
   
@@ -57,7 +67,7 @@
 <h3>Page Contents</h3>
 <ul>
 <li><a class="reference internal" href="#">Writing .enaml Files</a><ul>
-<li><a class="reference internal" href="#enaml-components-and-layout">Enaml Components and Layout</a></li>
+<li><a class="reference internal" href="#enaml-widgets-and-layout">Enaml Widgets and Layout</a></li>
 <li><a class="reference internal" href="#binding-operators">Binding Operators</a></li>
 <li><a class="reference internal" href="#scoping-rules">Scoping Rules</a></li>
 </ul>
@@ -94,77 +104,76 @@
 <h1>Writing .enaml Files<a class="headerlink" href="#writing-enaml-files" title="Permalink to this headline">¶</a></h1>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
-<p class="last">This documentation is not current and does not reflect the way
-Enaml currently works.</p>
+<p class="last">This documentation is not entirely current and may not reflect the
+way Enaml currently works.</p>
 </div>
 <p>Enaml files contain a domain-specific language for specifying a user-interface
 and dynamically binding and computing values based on user interaction.</p>
 <p>A simple example of an Enaml file might look something like this:</p>
-<div class="highlight-python"><pre>from enaml.converters import IntConverter
+<div class="highlight-python"><pre>#------------------------------------------------------------------------------
+#  Copyright (c) 2012, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+""" An example of the `Form` widget.
 
-enamldef PersonWindow(model):
-    Window -&gt; main_window:
-        title &lt;&lt; model.name
-        Form -&gt; person_form:
+A `Form` is a simple subclass of `Container` which automatically lays
+out it children in two columns, neatly aligning the widget edges. If
+a `Form` has an odd number of children, the last child will span both
+columns. The typical use case of a `Form` alternates `Label` and `Field`
+instances, but there is not restriction on the types of children used
+with a form, except that they be constrainable.
+
+"""
+from enaml.layout.api import hbox
+from enaml.widgets.api import Window, Form, Container, Label, Slider, Field
+
+
+enamldef Main(Window):
+    Form:
+        Label:
+            text = 'First Name'
+        Field:
+            pass
+        Label:
+            text = 'Last Name'
+        Field:
+            pass
+        Label:
+            text = 'Age'
+        Container:
+            padding = 0
+            constraints = [
+                hbox(lbl, sldr),
+                lbl.v_center == sldr.v_center,
+            ]
             Label:
-                text = 'Name:'
-            Field:
-                value := model.name
-                hug_width = 'ignore'
-            Label:
-                text = 'Age:'
-            Field:
-                value := model.age
-                converter = IntConverter()
-                hug_width = 'ignore'
-            Label:
-                text = 'Address:'
-            Field:
-                value := model.address
-                hug_width = 'ignore'
-            
+                id: lbl
+                text &lt;&lt; '%d' % sldr.value
+                constraints = [width == 25]
+            Slider:
+                id: sldr
+        Field:
+            placeholder = 'Odd Number Child'
+
 </pre>
 </div>
-<p>We could then use this with a Traits model as follows:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">HasTraits</span><span class="p">,</span> <span class="n">Str</span><span class="p">,</span> <span class="n">Int</span>
-<span class="kn">import</span> <span class="nn">enaml</span>
-
-<span class="k">with</span> <span class="n">enaml</span><span class="o">.</span><span class="n">imports</span><span class="p">():</span>
-    <span class="kn">from</span> <span class="nn">person_example</span> <span class="kn">import</span> <span class="n">PersonWindow</span>
-
-<span class="k">class</span> <span class="nc">Person</span><span class="p">(</span><span class="n">HasTraits</span><span class="p">):</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="n">Str</span>
-    <span class="n">age</span> <span class="o">=</span> <span class="n">Int</span>
-    <span class="n">address</span> <span class="o">=</span> <span class="n">Str</span>
-
-<span class="n">p</span> <span class="o">=</span> <span class="n">Person</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;Bob&#39;</span><span class="p">,</span> <span class="n">age</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
-<span class="n">view</span> <span class="o">=</span> <span class="n">PersonWindow</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
-<span class="n">view</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-</div>
-<p>Looking at this example, you will see that an Enaml file consists of one or
-more <tt class="docutils literal"><span class="pre">enamldef</span></tt> blocks containing a widget tree that describes the layout of
-that part of the UI.  The widgets have attributes which are bound to expressions
-in various ways, allowing simple reactivity.  Widgets can be assigned names using
-the <tt class="docutils literal"><span class="pre">-&gt;</span></tt> operator and then their attributes are available to other parts of
-the UI.</p>
 <p>On the Python side, the Enaml code can be imported using a <tt class="docutils literal"><span class="pre">with</span></tt> statement
 to add the Enaml import hooks.  The <tt class="docutils literal"><span class="pre">enamldef</span></tt> blocks are then available as
 module-level functions that can be called normally from Python code.  Building
-the UI is then a matter of calling an Enaml <tt class="docutils literal"><span class="pre">enamldef</span></tt> to build the view, and then
-calling <tt class="docutils literal"><span class="pre">show()</span></tt> on the view to display it and start the application event loop.
-The parameters passed in to the Enaml <tt class="docutils literal"><span class="pre">enamldef</span></tt> block from the Python side can be
-any Python or Enaml objects that would make sense to use within the Enaml code.
-For example, if you use an attribute of an object in the Enaml code, then passing
-an object without that attribute will raise an <tt class="docutils literal"><span class="pre">AttributeError</span></tt> just as if you
-did the same thing in a Python function.</p>
-<div class="section" id="enaml-components-and-layout">
-<h2>Enaml Components and Layout<a class="headerlink" href="#enaml-components-and-layout" title="Permalink to this headline">¶</a></h2>
+the UI is then a matter of calling an Enaml <tt class="docutils literal"><span class="pre">enamldef</span></tt> to build the view, and
+returning that view from a <tt class="docutils literal"><span class="pre">Session</span></tt> instance. The parameters passed in to
+the Enaml <tt class="docutils literal"><span class="pre">enamldef</span></tt> block from the Python side can be any Python or Enaml
+objects that would make sense to use within the Enaml code. For example, if you
+use an attribute of an object in the Enaml code, then passing an object without
+that attribute will raise an <tt class="docutils literal"><span class="pre">AttributeError</span></tt> just as if you did the same
+thing in a Python function.</p>
+<div class="section" id="enaml-widgets-and-layout">
+<h2>Enaml Widgets and Layout<a class="headerlink" href="#enaml-widgets-and-layout" title="Permalink to this headline">¶</a></h2>
 <p>Enaml widgets come in two basic types: Containers and Controls.  Controls
 are conceptually single UI elements with no other Enaml widgets inside them,
 such as labels, fields, and buttons.  Containers are widgets which contain other
 widgets, usually including information about how to layout the widgets that they
-contain.  Examples of containers include top-level windows, dialogs and forms.</p>
+contain.  Examples of containers include top-level windows, scroll areas and forms.</p>
 <p>Enaml uses constraints-based layout implemented by the Cassowary layout system.
 Constraints are specified as a system of linear inequalities together with an
 error function which is minimized according to a modified version of the Simplex
@@ -218,9 +227,9 @@ an integer value.</dd>
 <dd>A flexible spacer that has a hard minimum but also a weaker preference
 to be no larger than that minimum.</dd>
 </dl>
-<p><tt class="docutils literal"><span class="pre">horizontal(*items)</span></tt></p>
+<p><tt class="docutils literal"><span class="pre">horizontal(*items)</span></tt> or <tt class="docutils literal"><span class="pre">hbox(*items)</span></tt></p>
 <dl class="docutils">
-<dt><tt class="docutils literal"><span class="pre">vertical(*items)</span></tt></dt>
+<dt><tt class="docutils literal"><span class="pre">vertical(*items)</span></tt> or <tt class="docutils literal"><span class="pre">vbox(*items)</span></tt></dt>
 <dd>These two functions take a list of symbols, widgets and spacers and
 create a series of constraints that specify a sequential horizontal
 or vertical layout where the sides of each object in sequence abut
@@ -249,14 +258,18 @@ Non-attribute expressions here are a runtime error. The value of the
 view property and value of the attribute are synced, but the type
 checking of the view property is enforced.</dd>
 <dt><cite>&lt;&lt;</cite></dt>
-<dd><em>Binding</em>. RHS can be any expression. The expression will be parsed for
-dependencies, and any dependency which is a trait attribute on a
+<dd><em>Subscription</em>. RHS can be any expression. The expression will be parsed
+for dependencies, and any dependency which is a trait attribute on a
 HasTraits class will have a listener attached. When the listener fires,
 the expression will be re-evaluated and the value of the view property
 will be updated.</dd>
 <dt><cite>&gt;&gt;</cite></dt>
-<dd><em>Notification</em>. RHS can be any expression. The expression will be
-evaluated any time the view property changes.</dd>
+<dd><em>Update</em>. RHS must be a simple attribute expression. The attribute will
+receive the view property&#8217;s value any time it changes.</dd>
+<dt><cite>::</cite></dt>
+<dd><em>Notification</em>. RHS can be any expression. Additionally, an indented
+block of code can also be used. The expression/block will be evaluated any
+time the view property changes.</dd>
 </dl>
 </div>
 <div class="section" id="scoping-rules">
@@ -293,7 +306,14 @@ natural.</li>
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="grammar_ref.html" title="Enaml Grammar Reference"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Enaml Technical Reference"
+             >previous</a> |</li>
         <li><a href="../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" >Enaml Technical Reference</a> &raquo;</li>
   
     <li><a href="#">Writing .enaml Files</a></li>
   

@@ -1,0 +1,421 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.core.inverters &mdash; enaml 0.3alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.3alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.3alpha documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.core.inverters</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.core.inverters</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
+
+<span class="kn">from</span> <span class="nn">.byteplay</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">LOAD_NAME</span><span class="p">,</span> <span class="n">CALL_FUNCTION</span><span class="p">,</span> <span class="n">ROT_THREE</span><span class="p">,</span> <span class="n">LOAD_CONST</span><span class="p">,</span> <span class="n">LOAD_ATTR</span><span class="p">,</span> <span class="n">ROT_TWO</span><span class="p">,</span>
+    <span class="n">BUILD_TUPLE</span><span class="p">,</span> <span class="n">RETURN_VALUE</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Abstract Inverter</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="AbstractInverter"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.inverters.AbstractInverter">[docs]</a><span class="k">class</span> <span class="nc">AbstractInverter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; An abstract base class which defined the api for creating code</span>
+<span class="sd">    inverter objects. An inverter is responsible for converting a code</span>
+<span class="sd">    list supplied by an expression into the inverse of that expression</span>
+<span class="sd">    which applies the new value onto the expression. For example:</span>
+
+<span class="sd">    The expression:</span>
+<span class="sd">                    getattr(foo, &#39;bar&#39;)</span>
+<span class="sd">    </span>
+<span class="sd">    Becomes:</span>
+<span class="sd">                    setattr(foo, &#39;bar&#39;, value)</span>
+<span class="sd">    </span>
+<span class="sd">    Likewise, the expression:</span>
+<span class="sd">                    [spam.ham[0] for spam in foo][0].bar</span>
+
+<span class="sd">    Would be translated into:</span>
+<span class="sd">                    [spam.ham[0] for spam in foo][0].bar = value</span>
+
+<span class="sd">    The value, among other information, is provided by the expression </span>
+<span class="sd">    by inserting the following names into the scope, which can be </span>
+<span class="sd">    retrieved with the LOAD_NAME op-code:</span>
+<span class="sd">        </span>
+<span class="sd">        _[expr] : The expression object</span>
+<span class="sd">        _[obj]  : The component object which triggered the change</span>
+<span class="sd">        _[name] : The attribute on the component which changed</span>
+<span class="sd">        _[old]  : The old value of the attribute.</span>
+<span class="sd">        _[new]  : The new value of the attribute which should be</span>
+<span class="sd">                  applied to the inverted expression.</span>
+<span class="sd">    </span>
+<span class="sd">    The generated expression should return True if it successfully </span>
+<span class="sd">    completed the operation, False otherwise.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">ABCMeta</span>
+
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractInverter.get_inverted_code"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.inverters.AbstractInverter.get_inverted_code">[docs]</a>    <span class="k">def</span> <span class="nf">get_inverted_code</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code_list</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Generates the byteplay code operations which represent</span>
+<span class="sd">        the inverted expression. If the inverter is unable to invert</span>
+<span class="sd">        the given expression, it should return None.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        code_list : list of (op_code, op_arg)</span>
+<span class="sd">            The list of byteplay code operations for the expression.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : list of (op_code, op_arg) or None</span>
+<span class="sd">            A new list of code ops for the inverted expression, or </span>
+<span class="sd">            None if the inverter is unable to invert the expression.</span>
+<span class="sd">            The generated code, when executed, should return True if</span>
+<span class="sd">            the operation was successful, False otherwise. Exceptions</span>
+<span class="sd">            raised by the user code should be propagated.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Abstract Attribute Inverter </span>
+<span class="c">#------------------------------------------------------------------------------</span></div></div>
+<div class="viewcode-block" id="AbstractAttributeInverter"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.inverters.AbstractAttributeInverter">[docs]</a><span class="k">class</span> <span class="nc">AbstractAttributeInverter</span><span class="p">(</span><span class="n">AbstractInverter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; An AbstractInverter subclass which converts a bytecode expression</span>
+<span class="sd">    ending in LOAD_ATTR into an appropriate expression which calls a </span>
+<span class="sd">    delegate to do the setattr operation.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="AbstractAttributeInverter.get_inverted_code"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.inverters.AbstractAttributeInverter.get_inverted_code">[docs]</a>    <span class="k">def</span> <span class="nf">get_inverted_code</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code_list</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Generates and returns a new code list for expressions ending</span>
+<span class="sd">        in a LOAD_ATTR op_code.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">attr_code</span><span class="p">,</span> <span class="n">attr_arg</span> <span class="o">=</span> <span class="n">code_list</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">attr_code</span> <span class="o">==</span> <span class="n">LOAD_ATTR</span><span class="p">:</span>
+            <span class="n">handler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_setattr_handler</span><span class="p">()</span>
+            <span class="n">new_code</span> <span class="o">=</span> <span class="n">code_list</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">new_code</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+                <span class="p">(</span><span class="n">LOAD_CONST</span><span class="p">,</span> <span class="n">handler</span><span class="p">),</span>
+                <span class="p">(</span><span class="n">ROT_TWO</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
+                <span class="p">(</span><span class="n">LOAD_CONST</span><span class="p">,</span> <span class="n">attr_arg</span><span class="p">),</span>
+                <span class="p">(</span><span class="n">LOAD_NAME</span><span class="p">,</span> <span class="s">&#39;_[new]&#39;</span><span class="p">),</span>
+                <span class="p">(</span><span class="n">CALL_FUNCTION</span><span class="p">,</span> <span class="mh">0x0003</span><span class="p">),</span>
+                <span class="p">(</span><span class="n">RETURN_VALUE</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
+            <span class="p">])</span>
+            <span class="k">return</span> <span class="n">new_code</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractAttributeInverter.get_setattr_handler"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.inverters.AbstractAttributeInverter.get_setattr_handler">[docs]</a>    <span class="k">def</span> <span class="nf">get_setattr_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns a function which accepts three arguments: an object,</span>
+<span class="sd">        an attribute name, and a value, and performs a setattr operation</span>
+<span class="sd">        with the items. The function that performs the operation should </span>
+<span class="sd">        return True on success and False on failure. This method must be </span>
+<span class="sd">        implemented by subclasses.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Generic Attribute Inverter</span>
+<span class="c">#------------------------------------------------------------------------------</span></div></div>
+<div class="viewcode-block" id="GenericAttributeInverter"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.inverters.GenericAttributeInverter">[docs]</a><span class="k">class</span> <span class="nc">GenericAttributeInverter</span><span class="p">(</span><span class="n">AbstractAttributeInverter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A concrete implementation of AbstractAttributeInverter which </span>
+<span class="sd">    performs the attribute operation using the builtin setattr.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_attribute_inverter</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Performs a setattr on the object and returns True.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">True</span>
+
+<div class="viewcode-block" id="GenericAttributeInverter.get_setattr_handler"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.inverters.GenericAttributeInverter.get_setattr_handler">[docs]</a>    <span class="k">def</span> <span class="nf">get_setattr_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the builtin setattr function which is used to </span>
+<span class="sd">        perform the set attribute operation.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_attribute_inverter</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Abstract Call Inverter</span>
+<span class="c">#------------------------------------------------------------------------------</span></div></div>
+<div class="viewcode-block" id="AbstractCallInverter"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.inverters.AbstractCallInverter">[docs]</a><span class="k">class</span> <span class="nc">AbstractCallInverter</span><span class="p">(</span><span class="n">AbstractInverter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; An AbstractInverter subclass which converts a bytecode expression</span>
+<span class="sd">    ending in a CALL_FUNCTION into an appropriate expression which calls a </span>
+<span class="sd">    delegate to do the setattr operation.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_call_wrapper</span><span class="p">(</span><span class="n">handler</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A call inverter helper function which takes the handler</span>
+<span class="sd">        and returns a closure which will unpack the stack arguments, </span>
+<span class="sd">        calls the handler, the return its value.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">closure</span><span class="p">(</span><span class="n">func_obj</span><span class="p">,</span> <span class="n">arg_tuple</span><span class="p">,</span> <span class="n">arg_spec</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+            <span class="n">nargs</span> <span class="o">=</span> <span class="n">arg_spec</span> <span class="o">&amp;</span> <span class="mh">0xFF</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="n">arg_tuple</span><span class="p">[:</span><span class="n">nargs</span><span class="p">]</span>
+            <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">arg_tuple</span><span class="p">[</span><span class="n">nargs</span><span class="p">::</span><span class="mi">2</span><span class="p">],</span> <span class="n">arg_tuple</span><span class="p">[</span><span class="n">nargs</span><span class="o">+</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]))</span>
+            <span class="k">return</span> <span class="n">handler</span><span class="p">(</span><span class="n">func_obj</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">closure</span>
+
+<div class="viewcode-block" id="AbstractCallInverter.get_inverted_code"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.inverters.AbstractCallInverter.get_inverted_code">[docs]</a>    <span class="k">def</span> <span class="nf">get_inverted_code</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code_list</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Generates and returns a new code list for expressions ending</span>
+<span class="sd">        in a CALL_FUNCTION op_code.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">func_code</span><span class="p">,</span> <span class="n">func_arg</span> <span class="o">=</span> <span class="n">code_list</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">func_code</span> <span class="o">==</span> <span class="n">CALL_FUNCTION</span><span class="p">:</span>
+            <span class="n">handler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_call_wrapper</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_call_handler</span><span class="p">())</span>
+            <span class="n">new_code</span> <span class="o">=</span> <span class="n">code_list</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">n_stack_args</span> <span class="o">=</span> <span class="p">(</span><span class="n">func_arg</span> <span class="o">&amp;</span> <span class="mh">0xFF</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">((</span><span class="n">func_arg</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFF</span><span class="p">)</span>
+            <span class="n">new_code</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+                <span class="p">(</span><span class="n">BUILD_TUPLE</span><span class="p">,</span> <span class="n">n_stack_args</span><span class="p">),</span>
+                <span class="p">(</span><span class="n">LOAD_CONST</span><span class="p">,</span> <span class="n">handler</span><span class="p">),</span>
+                <span class="p">(</span><span class="n">ROT_THREE</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
+                <span class="p">(</span><span class="n">LOAD_CONST</span><span class="p">,</span> <span class="n">func_arg</span><span class="p">),</span>
+                <span class="p">(</span><span class="n">LOAD_NAME</span><span class="p">,</span> <span class="s">&#39;_[new]&#39;</span><span class="p">),</span>
+                <span class="p">(</span><span class="n">CALL_FUNCTION</span><span class="p">,</span> <span class="mh">0x0004</span><span class="p">),</span>
+                <span class="p">(</span><span class="n">RETURN_VALUE</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
+            <span class="p">])</span>
+            <span class="k">return</span> <span class="n">new_code</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractCallInverter.get_call_handler"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.inverters.AbstractCallInverter.get_call_handler">[docs]</a>    <span class="k">def</span> <span class="nf">get_call_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns a function which accepts four arguments: the object</span>
+<span class="sd">        that would have been called, the arguments being passed, the</span>
+<span class="sd">        keyword arguments being passed, and the value that should be</span>
+<span class="sd">        applied. The function that performs the operation should return</span>
+<span class="sd">        True on success and False on failure. This method must be </span>
+<span class="sd">        implemented by subclasses.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Getattr Inverter</span>
+<span class="c">#------------------------------------------------------------------------------</span></div></div>
+<div class="viewcode-block" id="GetattrInverter"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.inverters.GetattrInverter">[docs]</a><span class="k">class</span> <span class="nc">GetattrInverter</span><span class="p">(</span><span class="n">AbstractCallInverter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A concrete implementation of AbstractCallInverter which inverts</span>
+<span class="sd">    a call to getattr into a call to setattr.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_getattr_inverter</span><span class="p">(</span><span class="n">func_obj</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Performs the getattr inversion provided that the function</span>
+<span class="sd">        being called is the builtin getattr with an appropriate arg</span>
+<span class="sd">        spec.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">func_obj</span> <span class="ow">is</span> <span class="nb">getattr</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">value</span><span class="p">)</span>
+                <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">return</span> <span class="bp">False</span>
+
+<div class="viewcode-block" id="GetattrInverter.get_call_handler"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.inverters.GetattrInverter.get_call_handler">[docs]</a>    <span class="k">def</span> <span class="nf">get_call_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns a function which accepts four arguments: the object</span>
+<span class="sd">        that would have been called, the arguments being passed, the</span>
+<span class="sd">        keyword arguments being passed, and the value that should be</span>
+<span class="sd">        applied.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getattr_inverter</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Abstract Name Inverter</span>
+<span class="c">#------------------------------------------------------------------------------</span></div></div>
+<div class="viewcode-block" id="AbstractNameInverter"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.inverters.AbstractNameInverter">[docs]</a><span class="k">class</span> <span class="nc">AbstractNameInverter</span><span class="p">(</span><span class="n">AbstractInverter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; An AbstractInverter subclass which converts a bytecode expression</span>
+<span class="sd">    which consists soley of a LOAD_NAME op_code into an appropriate </span>
+<span class="sd">    expression which calls a delegate to do the setattr operation.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="AbstractNameInverter.get_inverted_code"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.inverters.AbstractNameInverter.get_inverted_code">[docs]</a>    <span class="k">def</span> <span class="nf">get_inverted_code</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code_list</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Generates and returns a new code list for expressions which</span>
+<span class="sd">        consist solely of a LOAD_NAME op_code.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">name_code</span><span class="p">,</span> <span class="n">name_arg</span> <span class="o">=</span> <span class="n">code_list</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">name_code</span> <span class="o">==</span> <span class="n">LOAD_NAME</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">code_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">handler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_name_handler</span><span class="p">()</span>
+            <span class="n">new_code</span> <span class="o">=</span> <span class="n">code_list</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">new_code</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+                <span class="p">(</span><span class="n">LOAD_CONST</span><span class="p">,</span> <span class="n">handler</span><span class="p">),</span>
+                <span class="p">(</span><span class="n">LOAD_NAME</span><span class="p">,</span> <span class="s">&#39;_[expr]&#39;</span><span class="p">),</span>
+                <span class="p">(</span><span class="n">LOAD_NAME</span><span class="p">,</span> <span class="s">&#39;_[obj]&#39;</span><span class="p">),</span>
+                <span class="p">(</span><span class="n">LOAD_NAME</span><span class="p">,</span> <span class="s">&#39;_[name]&#39;</span><span class="p">),</span>
+                <span class="p">(</span><span class="n">LOAD_CONST</span><span class="p">,</span> <span class="n">name_arg</span><span class="p">),</span>
+                <span class="p">(</span><span class="n">LOAD_NAME</span><span class="p">,</span> <span class="s">&#39;_[new]&#39;</span><span class="p">),</span>
+                <span class="p">(</span><span class="n">CALL_FUNCTION</span><span class="p">,</span> <span class="mh">0x0005</span><span class="p">),</span>
+                <span class="p">(</span><span class="n">RETURN_VALUE</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
+            <span class="p">])</span>
+            <span class="k">return</span> <span class="n">new_code</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractNameInverter.get_name_handler"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.inverters.AbstractNameInverter.get_name_handler">[docs]</a>    <span class="k">def</span> <span class="nf">get_name_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns a function which accepts five arguments: the </span>
+<span class="sd">        expression object which owns this inverter, the object which </span>
+<span class="sd">        owns the attribute that changed, the name of the attribute that</span>
+<span class="sd">        changed, the name on which to store the value, and the value </span>
+<span class="sd">        which should be stored. The function that performs the operation</span>
+<span class="sd">        should return True on success and False on failure. This method </span>
+<span class="sd">        must be implemented by subclasses.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Generic Name Inverter</span>
+<span class="c">#------------------------------------------------------------------------------</span></div></div>
+<div class="viewcode-block" id="ImplicitAttrInverter"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.inverters.ImplicitAttrInverter">[docs]</a><span class="k">class</span> <span class="nc">ImplicitAttrInverter</span><span class="p">(</span><span class="n">AbstractNameInverter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A concrete implementation of AbstractNameInverter which inverts</span>
+<span class="sd">    a name access into a setattr operation on an implicit attribute</span>
+<span class="sd">    in the component hierarchy.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_name_inverter</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">store_name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Performs the name inversion by walking the component tree</span>
+<span class="sd">        looking for an object which has an attribute of the right</span>
+<span class="sd">        name. Will return False if no valid target is found, if the </span>
+<span class="sd">        name references an identifier, or if the assignment would </span>
+<span class="sd">        result in a direct cycle.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">store_name</span> <span class="ow">in</span> <span class="n">expr</span><span class="o">.</span><span class="n">identifiers</span> <span class="ow">or</span> <span class="n">attr</span> <span class="o">==</span> <span class="n">store_name</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">while</span> <span class="n">obj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">store_name</span><span class="p">):</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">store_name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+                <span class="k">return</span> <span class="bp">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">obj</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">parent</span>
+        <span class="k">return</span> <span class="bp">False</span>
+
+<div class="viewcode-block" id="ImplicitAttrInverter.get_name_handler"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.inverters.ImplicitAttrInverter.get_name_handler">[docs]</a>    <span class="k">def</span> <span class="nf">get_name_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns a function which accepts five arguments: the </span>
+<span class="sd">        expression object which owns this inverter, the object which </span>
+<span class="sd">        owns the attribute that changed, the name of the attribute that</span>
+<span class="sd">        changed, the new value of that attribute, and the name onto </span>
+<span class="sd">        which the value should be applied.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name_inverter</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.core.inverters</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Sep 12, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

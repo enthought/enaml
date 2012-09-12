@@ -1,14 +1,39 @@
 enaml.core
 ==========
 
-The :py:mod:`enaml.core` package contains all of the core functionality of the
-Enaml toolkit.
+The :py:mod:`enaml.core` package contains all of Enaml's core functionality.
 
 
-:mod:`import_hooks` Module
---------------------------
+:mod:`compiler_helpers` Module
+------------------------------
 
-.. automodule:: enaml.core.import_hooks
+.. automodule:: enaml.core.compiler_helpers
+
+
+:mod:`declarative` Module
+-------------------------
+.. automodule:: enaml.core.declarative
+
+
+:mod:`enaml_ast` Module
+-----------------------
+
+.. inheritance-diagram:: enaml.core.enaml_ast
+    :parts: 1
+
+.. automodule:: enaml.core.enaml_ast
+
+
+:mod:`enaml_compiler` Module
+----------------------------
+
+.. automodule:: enaml.core.enaml_compiler
+
+
+:mod:`enaml_def` Module
+-----------------------
+
+.. automodule:: enaml.core.enaml_def
 
 
 :mod:`expressions` Module
@@ -33,25 +58,16 @@ Enaml toolkit.
     :no-undoc-members:
 
 
-:mod:`item_model` Module
----------------------------------
+:mod:`import_hooks` Module
+--------------------------
 
-.. autoclass:: enaml.core.item_model.AbstractItemModel
-
-.. autoclass:: enaml.core.item_model.AbstractTableModel
-
-.. autoclass:: enaml.core.item_model.AbstractListModel
-
-.. autoclass:: enaml.core.item_model.ModelIndex
+.. automodule:: enaml.core.import_hooks
 
 
-:mod:`enaml_ast` Module
+:mod:`inverters` Module
 -----------------------
 
-.. inheritance-diagram:: enaml.core.enaml_ast
-    :parts: 1
-
-.. automodule:: enaml.core.enaml_ast
+.. automodule:: enaml.core.inverters
 
 
 :mod:`lexer` Module
@@ -66,12 +82,38 @@ Enaml toolkit.
         annotate_indentation_state, synthesize_indentation_tokens,
         add_endmarker
 
+
+:mod:`monitors` Module
+----------------------
+
+.. automodule:: enaml.core.monitors
+
+
+:mod:`operator_context` Module
+------------------------------
+
+.. automodule:: enaml.core.operator_context
+
+
+:mod:`operators` Module
+-----------------------
+.. automodule:: enaml.core.operators
+
+
 :mod:`parser` Module
 --------------------
 
 .. automodule:: enaml.core.parser
 
-:mod:`enaml_compiler` Module
-----------------------------
 
-.. automodule:: enaml.core.enaml_compiler
+:mod:`signaling` Module
+-----------------------
+
+.. automodule:: enaml.core.signaling
+
+
+:mod:`trait_types` Module
+-------------------------
+
+.. automodule:: enaml.core.trait_types
+

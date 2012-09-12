@@ -1,0 +1,303 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.core.signaling &mdash; enaml 0.3alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.3alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.3alpha documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.core.signaling</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.core.signaling</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">bisect</span> <span class="kn">import</span> <span class="n">insort</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">count</span>
+<span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">MethodType</span>
+<span class="kn">from</span> <span class="nn">weakref</span> <span class="kn">import</span> <span class="n">ref</span><span class="p">,</span> <span class="n">WeakKeyDictionary</span>
+
+<span class="kn">from</span> <span class="nn">enaml.utils</span> <span class="kn">import</span> <span class="n">WeakMethod</span>
+
+
+<span class="n">ConnItem</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s">&#39;ConnItem&#39;</span><span class="p">,</span> <span class="s">&#39;priority counter cb_ref dispatcher&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Signal"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.signaling.Signal">[docs]</a><span class="k">class</span> <span class="nc">Signal</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A descriptor which provides notification functionality similar</span>
+<span class="sd">    to Qt signals.</span>
+
+<span class="sd">    A Signal is used by creating an instance in the body of a class</span>
+<span class="sd">    definition. Connecting to the signal is done through an instance </span>
+<span class="sd">    of that class using the connect/disconnect methods. A signal is </span>
+<span class="sd">    emitted by calling the emit method with any given arguments.</span>
+
+<span class="sd">    Only weak references are kept to the connected handlers. In the</span>
+<span class="sd">    case of bound methods, the lifetime of the connection is tied</span>
+<span class="sd">    to the lifetime of the underlying object and not the method </span>
+<span class="sd">    itself.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;_instances&#39;</span><span class="p">,)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize a Signal.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_instances</span> <span class="o">=</span> <span class="n">WeakKeyDictionary</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The data descriptor getter. </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : Signal or SignalInstance</span>
+<span class="sd">            If the descriptor is accessed through the class, then this</span>
+<span class="sd">            Signal will be returned. Otherwise, the SignalInstance for </span>
+<span class="sd">            the object will be returned.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="n">instances</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instances</span>
+        <span class="k">if</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">instances</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">instances</span><span class="p">[</span><span class="n">obj</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">instances</span><span class="p">[</span><span class="n">obj</span><span class="p">]</span> <span class="o">=</span> <span class="n">SignalInstance</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">res</span>
+
+    <span class="k">def</span> <span class="nf">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The data descriptor setter. </span>
+
+<span class="sd">        Attempting to assign to a Signal will raise an AttributeError.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;can&#39;t set read only Signal&quot;</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">__delete__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The data descriptor deleter. </span>
+
+<span class="sd">        This removes any SignalInstance for the given object, which will</span>
+<span class="sd">        remove all connected handlers.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_instances</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="SignalInstance"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.signaling.SignalInstance">[docs]</a><span class="k">class</span> <span class="nc">SignalInstance</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A signal implementation object. </span>
+
+<span class="sd">    Instances of this class are created on an as-needed basis by the</span>
+<span class="sd">    Signal descriptor. A single instance of this class is created per</span>
+<span class="sd">    instance of the class which owns the Signal descriptor. This class</span>
+<span class="sd">    manages the actual connected handlers for the object.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;_remove&#39;</span><span class="p">,</span> <span class="s">&#39;_counter&#39;</span><span class="p">,</span> <span class="s">&#39;_items&#39;</span><span class="p">,</span> <span class="s">&#39;__weakref__&#39;</span><span class="p">)</span>
+    
+<div class="viewcode-block" id="SignalInstance.__init__"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.signaling.SignalInstance.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize a SignalInstance.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="n">cb_ref</span><span class="p">,</span> <span class="n">thisref</span><span class="o">=</span><span class="n">ref</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
+            <span class="n">this</span> <span class="o">=</span> <span class="n">thisref</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">this</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">this</span><span class="o">.</span><span class="n">_remove_item</span><span class="p">(</span><span class="n">cb_ref</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_remove</span> <span class="o">=</span> <span class="n">remove</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_counter</span> <span class="o">=</span> <span class="n">count</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_items</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Private API</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+    <span class="k">def</span> <span class="nf">_remove_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cb_ref</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Remove a connection from the list of items.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        cb_ref : weakref</span>
+<span class="sd">            A weak reference to the callback to remove from the list</span>
+<span class="sd">            of connection items.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">[:]:</span>
+            <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">cb_ref</span> <span class="o">==</span> <span class="n">cb_ref</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+                <span class="k">return</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Public API</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="SignalInstance.emit"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.signaling.SignalInstance.emit">[docs]</a>    <span class="k">def</span> <span class="nf">emit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Emits the signal with the given arguments and keywords.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">[:]:</span>
+            <span class="n">callback</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">cb_ref</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">callback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">dispatcher</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">dispatcher</span>
+                <span class="k">if</span> <span class="n">dispatcher</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="n">dispatcher</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">callback</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="SignalInstance.connect"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.signaling.SignalInstance.connect">[docs]</a>    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">priority</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dispatcher</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Connects the given callback to the signal. </span>
+
+<span class="sd">        The callback will be called when the signal is emitted. It will </span>
+<span class="sd">        be passed any arguments that were emitted with the signal. A </span>
+<span class="sd">        callback can only be connected to the signal once. Multiple calls</span>
+<span class="sd">        to connect() for the same callback will replace the previous </span>
+<span class="sd">        connection.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        callback : callable</span>
+<span class="sd">            The callable object to invoke whenever the signal is</span>
+<span class="sd">            emitted. If the callback is not callable, and exception</span>
+<span class="sd">            will be raised.</span>
+
+<span class="sd">        priority : int, optional</span>
+<span class="sd">            The priority for the connection. A connection with a </span>
+<span class="sd">            higher priority will be run first. The default priority</span>
+<span class="sd">            is zero and negative priories are allowed.</span>
+<span class="sd">        </span>
+<span class="sd">        dispatcher : callable, optional</span>
+<span class="sd">            An optional callable to use as the dispatcher for the </span>
+<span class="sd">            connection. If provided, it should accept 3 arguments:</span>
+<span class="sd">            the callback for the connection, and the args and kwargs</span>
+<span class="sd">            that should be passed to the callback.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">MethodType</span><span class="p">):</span>
+            <span class="n">cb_ref</span> <span class="o">=</span> <span class="n">ref</span><span class="p">(</span><span class="n">WeakMethod</span><span class="p">(</span><span class="n">callback</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_remove</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cb_ref</span> <span class="o">=</span> <span class="n">ref</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_remove</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_remove_item</span><span class="p">(</span><span class="n">cb_ref</span><span class="p">)</span>
+        <span class="n">counter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_counter</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+        <span class="n">conn</span> <span class="o">=</span> <span class="n">ConnItem</span><span class="p">(</span><span class="n">priority</span><span class="p">,</span> <span class="n">counter</span><span class="p">,</span> <span class="n">cb_ref</span><span class="p">,</span> <span class="n">dispatcher</span><span class="p">)</span>
+        <span class="n">insort</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">,</span> <span class="n">conn</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="SignalInstance.disconnect"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.signaling.SignalInstance.disconnect">[docs]</a>    <span class="k">def</span> <span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Disconnects the given callback from the signal. </span>
+
+<span class="sd">        If the callback was not previously connected, this method has </span>
+<span class="sd">        no effect.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        callback : callable</span>
+<span class="sd">            The callable object to disconnect from the signal. If the</span>
+<span class="sd">            callback is not callable, and exception will be raised.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">MethodType</span><span class="p">):</span>
+            <span class="n">cb_ref</span> <span class="o">=</span> <span class="n">ref</span><span class="p">(</span><span class="n">WeakMethod</span><span class="p">(</span><span class="n">callback</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cb_ref</span> <span class="o">=</span> <span class="n">ref</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_remove_item</span><span class="p">(</span><span class="n">cb_ref</span><span class="p">)</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.core.signaling</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Sep 12, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

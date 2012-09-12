@@ -1,0 +1,292 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.application &mdash; enaml 0.3alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.3alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.3alpha documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.application</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.application</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2012, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+
+<div class="viewcode-block" id="Application"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.application.Application">[docs]</a><span class="k">class</span> <span class="nc">Application</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; The application object which manages the top-level communication</span>
+<span class="sd">    protocol for serving Enaml views.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#: A message dispatch table used to speed up message routing</span>
+    <span class="n">_message_routes</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">&#39;discover&#39;</span><span class="p">:</span> <span class="s">&#39;_on_message_discover&#39;</span><span class="p">,</span>
+        <span class="s">&#39;start_session&#39;</span><span class="p">:</span> <span class="s">&#39;_on_message_start_session&#39;</span><span class="p">,</span>
+        <span class="s">&#39;end_session&#39;</span><span class="p">:</span> <span class="s">&#39;_on_message_end_session&#39;</span><span class="p">,</span>
+        <span class="s">&#39;snapshot&#39;</span><span class="p">:</span> <span class="s">&#39;_dispatch_session_message&#39;</span><span class="p">,</span>
+        <span class="s">&#39;widget_action&#39;</span><span class="p">:</span> <span class="s">&#39;_dispatch_session_message&#39;</span><span class="p">,</span>
+        <span class="s">&#39;widget_action_response&#39;</span><span class="p">:</span> <span class="s">&#39;_dispatch_session_message&#39;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+<div class="viewcode-block" id="Application.__init__"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.application.Application.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">factories</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize an Enaml Application.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        factories : iterable</span>
+<span class="sd">            An iterable of SessionFactory instances that will be used</span>
+<span class="sd">            to create the sessions for the application.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_all_factories</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_named_factories</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sessions</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_factories</span><span class="p">(</span><span class="n">factories</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Message Handling</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+    <span class="k">def</span> <span class="nf">_on_message_discover</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;discover&#39; message type.</span>
+
+<span class="sd">        This handler will create the list of session info objects and</span>
+<span class="sd">        send the reponse to the client.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        request : BaseRequest</span>
+<span class="sd">            The request object containing the message sent by client.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sessions</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span><span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="n">fact</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s">&#39;description&#39;</span><span class="p">:</span> <span class="n">fact</span><span class="o">.</span><span class="n">description</span><span class="p">}</span> 
+            <span class="k">for</span> <span class="n">fact</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_factories</span>
+        <span class="p">]</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;sessions&#39;</span><span class="p">:</span> <span class="n">sessions</span><span class="p">}</span>
+        <span class="n">request</span><span class="o">.</span><span class="n">send_ok_response</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="n">content</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_on_message_start_session</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;start_session&#39; message type.</span>
+
+<span class="sd">        This handler will create a new session object for the requested</span>
+<span class="sd">        session type and respond to the client with the new session id.</span>
+<span class="sd">        If the session type is invalid, the handler will reply with an</span>
+<span class="sd">        appropriate error message.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        request : BaseRequest</span>
+<span class="sd">            The request object containing the message sent by client.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">message</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_named_factories</span><span class="p">:</span>
+            <span class="n">request</span><span class="o">.</span><span class="n">send_error_response</span><span class="p">(</span><span class="s">&#39;Invalid session name&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># XXX Do we want to move this to a call later, and do some</span>
+            <span class="c"># checking on the number of open sessions etc?</span>
+            <span class="n">factory</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_named_factories</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="n">session</span> <span class="o">=</span> <span class="n">factory</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+            <span class="n">session_id</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">session_id</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sessions</span><span class="p">[</span><span class="n">session_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">session</span>
+            <span class="c"># XXX Do we want to open() immediately, or wait util the </span>
+            <span class="c"># first snapshot request comes in for the session?</span>
+            <span class="n">session</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;session&#39;</span><span class="p">:</span> <span class="n">session_id</span><span class="p">}</span>
+            <span class="n">request</span><span class="o">.</span><span class="n">send_ok_response</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="n">content</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_on_message_end_session</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;end_session&#39; message type.</span>
+
+<span class="sd">        This handler will close down the existing session and send a</span>
+<span class="sd">        reponse to the client. If the session id is not valid, an</span>
+<span class="sd">        appropriate error message will be sent back to the client.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        request : BaseRequest</span>
+<span class="sd">            The request object containing the message sent by client.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">session_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">session</span>
+        <span class="k">if</span> <span class="n">session_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sessions</span><span class="p">:</span>
+            <span class="n">request</span><span class="o">.</span><span class="n">send_error_response</span><span class="p">(</span><span class="s">&#39;Invalid session id&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">session</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sessions</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">session_id</span><span class="p">)</span>
+            <span class="n">session</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="n">request</span><span class="o">.</span><span class="n">send_ok_response</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_dispatch_session_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle a message type that should be routed to a session.</span>
+
+<span class="sd">        This handler will lookup the session for the given session id</span>
+<span class="sd">        and route the message to that object. If the id is invalid, </span>
+<span class="sd">        then an appropriate error message will be sent to the client.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        request : BaseRequest</span>
+<span class="sd">            The request object containing the message sent by client.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">session_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">session</span>
+        <span class="k">if</span> <span class="n">session_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sessions</span><span class="p">:</span>
+            <span class="n">request</span><span class="o">.</span><span class="n">send_error_response</span><span class="p">(</span><span class="s">&#39;Invalid session id&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">session</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sessions</span><span class="p">[</span><span class="n">session_id</span><span class="p">]</span>
+            <span class="n">session</span><span class="o">.</span><span class="n">handle_request</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Public API</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="Application.add_factories"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.application.Application.add_factories">[docs]</a>    <span class="k">def</span> <span class="nf">add_factories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">factories</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Add session factories to the application.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        factories : iterable</span>
+<span class="sd">            An iterable of SessionFactory instances to add to the </span>
+<span class="sd">            application.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">all_factories</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_factories</span>
+        <span class="n">named_factories</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_named_factories</span>
+        <span class="k">for</span> <span class="n">factory</span> <span class="ow">in</span> <span class="n">factories</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">name</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">named_factories</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Multiple session factories named `</span><span class="si">%s</span><span class="s">`; &#39;</span> <span class="o">%</span> <span class="n">name</span>
+                <span class="n">msg</span> <span class="o">+=</span> <span class="s">&#39;replacing previous value.&#39;</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                <span class="n">old_factory</span> <span class="o">=</span> <span class="n">named_factories</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+                <span class="n">all_factories</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">old_factory</span><span class="p">)</span>
+            <span class="n">all_factories</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">factory</span><span class="p">)</span>
+            <span class="n">named_factories</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">factory</span>
+</div>
+<div class="viewcode-block" id="Application.handle_request"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.application.Application.handle_request">[docs]</a>    <span class="k">def</span> <span class="nf">handle_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Route and process a message for the Enaml application.</span>
+
+<span class="sd">        This method should be called by the running event loop when it</span>
+<span class="sd">        receives a message from a client. The event loop should guard </span>
+<span class="sd">        this call in a try-except block. Any exceptions raised should </span>
+<span class="sd">        be considered as failures in the structure of the message and</span>
+<span class="sd">        handled appropriately.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        request : BaseRequest</span>
+<span class="sd">            The request object which wraps a message sent by a client.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">msg_type</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">msg_type</span>
+        <span class="n">route</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_message_routes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">msg_type</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">route</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">route</span><span class="p">)(</span><span class="n">request</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">request</span><span class="o">.</span><span class="n">send_error_response</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s">&#39;Invalid message type&#39;</span><span class="p">)</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.application</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Sep 12, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

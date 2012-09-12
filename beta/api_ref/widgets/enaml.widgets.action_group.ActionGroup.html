@@ -1,0 +1,358 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>ActionGroup &mdash; enaml 0.3alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.3alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.3alpha documentation" href="../../index.html" />
+    <link rel="up" title="Widgets" href="../enaml.widgets.html" />
+    <link rel="next" title="Calendar" href="enaml.widgets.calendar.Calendar.html" />
+    <link rel="prev" title="Action" href="enaml.widgets.action.Action.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.calendar.Calendar.html" title="Calendar"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.action.Action.html" title="Action"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" accesskey="U">Widgets</a> &raquo;</li>
+  
+    <li><a href="#">ActionGroup</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">ActionGroup</a><ul>
+<li><a class="reference internal" href="#backends">Backends</a><ul>
+<li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/api_ref/widgets/enaml.widgets.action_group.ActionGroup.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="actiongroup">
+<h1>ActionGroup<a class="headerlink" href="#actiongroup" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="enaml.widgets.action_group.ActionGroup">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.action_group.</tt><tt class="descname">ActionGroup</tt><big>(</big><em>parent=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/action_group.html#ActionGroup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.action_group.ActionGroup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.widgets.messenger_widget.MessengerWidget" title="enaml.widgets.messenger_widget.MessengerWidget"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.messenger_widget.MessengerWidget</span></tt></a></p>
+<p>A non visible widget used to group actions.</p>
+<p>An action group can be used in a MenuBar or a ToolBar to group a 
+related set of Actions and apply common operations to the set. The
+primary use of an action group is to make any checkable actions in
+the group mutually exclusive.</p>
+<dl class="attribute">
+<dt id="enaml.widgets.action_group.ActionGroup.exclusive">
+<tt class="descname">exclusive</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.action_group.ActionGroup.exclusive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether or not the actions in this group are exclusive.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.action_group.ActionGroup.enabled">
+<tt class="descname">enabled</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.action_group.ActionGroup.enabled" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether or not the actions in this group are enabled.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.action_group.ActionGroup.visible">
+<tt class="descname">visible</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.action_group.ActionGroup.visible" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether or not the actions in this group are visible.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.action_group.ActionGroup.actions">
+<tt class="descname">actions</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.action_group.ActionGroup.actions" title="Permalink to this definition">¶</a></dt>
+<dd><p>A read only property which returns the actions for this group.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.action_group.ActionGroup.snapshot">
+<tt class="descname">snapshot</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/action_group.html#ActionGroup.snapshot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.action_group.ActionGroup.snapshot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the snapshot dict for the ActionGroup.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.action_group.ActionGroup.bind">
+<tt class="descname">bind</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/action_group.html#ActionGroup.bind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.action_group.ActionGroup.bind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Binds the change handlers for the ActionGroup.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.action_group.ActionGroup.__implements__">
+<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.widgets.action_group.ActionGroup.__implements__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="backends">
+<h2>Backends<a class="headerlink" href="#backends" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="qt">
+<h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-ec137d701055296cafd04cbbee0a5cde9e5368a6.png" alt="Inheritance diagram of enaml.qt.qt_action_group.QtActionGroup" usemap="#inheritance774c8dd20a" class="inheritance"/>
+<map id="inheritance774c8dd20a" name="inheritance774c8dd20a">
+<area shape="rect" id="node1" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget" title="QtMessengerWidget" alt="" coords="6,5,157,35"/>
+<area shape="rect" id="node2" href="#enaml.qt.qt_action_group.QtActionGroup" title="QtActionGroup" alt="" coords="205,5,323,35"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.qt.qt_action_group.QtActionGroup">
+<em class="property">class </em><tt class="descclassname">enaml.qt.qt_action_group.</tt><tt class="descname">QtActionGroup</tt><big>(</big><em>parent</em>, <em>widget_id</em>, <em>session</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_action_group.html#QtActionGroup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_action_group.QtActionGroup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget" title="enaml.qt.qt_messenger_widget.QtMessengerWidget"><tt class="xref py py-class docutils literal"><span class="pre">enaml.qt.qt_messenger_widget.QtMessengerWidget</span></tt></a></p>
+<p>A Qt implementation of an Enaml ActionGroup.</p>
+<dl class="method">
+<dt id="enaml.qt.qt_action_group.QtActionGroup.create_widget">
+<tt class="descname">create_widget</tt><big>(</big><em>parent</em>, <em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_action_group.html#QtActionGroup.create_widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_action_group.QtActionGroup.create_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the underlying action group widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_action_group.QtActionGroup.create">
+<tt class="descname">create</tt><big>(</big><em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_action_group.html#QtActionGroup.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_action_group.QtActionGroup.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create and initialize the underlying control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_action_group.QtActionGroup.init_layout">
+<tt class="descname">init_layout</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_action_group.html#QtActionGroup.init_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_action_group.QtActionGroup.init_layout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the layout for the underlying control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_action_group.QtActionGroup.on_action_set_exclusive">
+<tt class="descname">on_action_set_exclusive</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_action_group.html#QtActionGroup.on_action_set_exclusive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_action_group.QtActionGroup.on_action_set_exclusive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_exclusive&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_action_group.QtActionGroup.on_action_set_enabled">
+<tt class="descname">on_action_set_enabled</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_action_group.html#QtActionGroup.on_action_set_enabled"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_action_group.QtActionGroup.on_action_set_enabled" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_enabled&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_action_group.QtActionGroup.on_action_set_visible">
+<tt class="descname">on_action_set_visible</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_action_group.html#QtActionGroup.on_action_set_visible"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_action_group.QtActionGroup.on_action_set_visible" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_visible&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_action_group.QtActionGroup.set_action_ids">
+<tt class="descname">set_action_ids</tt><big>(</big><em>action_ids</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_action_group.html#QtActionGroup.set_action_ids"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_action_group.QtActionGroup.set_action_ids" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the action ids for the underlying control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_action_group.QtActionGroup.set_exclusive">
+<tt class="descname">set_exclusive</tt><big>(</big><em>exclusive</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_action_group.html#QtActionGroup.set_exclusive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_action_group.QtActionGroup.set_exclusive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the exclusive state of the underlying control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_action_group.QtActionGroup.set_enabled">
+<tt class="descname">set_enabled</tt><big>(</big><em>enabled</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_action_group.html#QtActionGroup.set_enabled"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_action_group.QtActionGroup.set_enabled" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the enabled state of the underlying control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_action_group.QtActionGroup.set_visible">
+<tt class="descname">set_visible</tt><big>(</big><em>visible</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_action_group.html#QtActionGroup.set_visible"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_action_group.QtActionGroup.set_visible" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the visible state of the underlying control.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="wx">
+<h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-4dd4c48d163f4dd2c579fb63f4d36f5ad18b1c14.png" alt="Inheritance diagram of enaml.wx.wx_action_group.WxActionGroup" usemap="#inheritancea9757b4379" class="inheritance"/>
+<map id="inheritancea9757b4379" name="inheritancea9757b4379">
+<area shape="rect" id="node2" href="#enaml.wx.wx_action_group.WxActionGroup" title="WxActionGroup" alt="" coords="208,5,330,35"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.wx.wx_action_group.WxActionGroup">
+<em class="property">class </em><tt class="descclassname">enaml.wx.wx_action_group.</tt><tt class="descname">WxActionGroup</tt><big>(</big><em>parent</em>, <em>widget_id</em>, <em>session</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_action_group.html#WxActionGroup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_action_group.WxActionGroup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">enaml.wx.wx_messenger_widget.WxMessengerWidget</span></tt></p>
+<p>A Wx implementation of an Enaml ActionGroup.</p>
+<dl class="method">
+<dt id="enaml.wx.wx_action_group.WxActionGroup.create_widget">
+<tt class="descname">create_widget</tt><big>(</big><em>parent</em>, <em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_action_group.html#WxActionGroup.create_widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_action_group.WxActionGroup.create_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the underlying action group widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_action_group.WxActionGroup.create">
+<tt class="descname">create</tt><big>(</big><em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_action_group.html#WxActionGroup.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_action_group.WxActionGroup.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create and initialize the underlying control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_action_group.WxActionGroup.init_layout">
+<tt class="descname">init_layout</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_action_group.html#WxActionGroup.init_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_action_group.WxActionGroup.init_layout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the layout for the underlying control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_action_group.WxActionGroup.on_action_set_exclusive">
+<tt class="descname">on_action_set_exclusive</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_action_group.html#WxActionGroup.on_action_set_exclusive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_action_group.WxActionGroup.on_action_set_exclusive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_exclusive&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_action_group.WxActionGroup.on_action_set_enabled">
+<tt class="descname">on_action_set_enabled</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_action_group.html#WxActionGroup.on_action_set_enabled"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_action_group.WxActionGroup.on_action_set_enabled" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_enabled&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_action_group.WxActionGroup.on_action_set_visible">
+<tt class="descname">on_action_set_visible</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_action_group.html#WxActionGroup.on_action_set_visible"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_action_group.WxActionGroup.on_action_set_visible" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_visible&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_action_group.WxActionGroup.set_action_ids">
+<tt class="descname">set_action_ids</tt><big>(</big><em>action_ids</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_action_group.html#WxActionGroup.set_action_ids"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_action_group.WxActionGroup.set_action_ids" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the action ids for the underlying control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_action_group.WxActionGroup.set_exclusive">
+<tt class="descname">set_exclusive</tt><big>(</big><em>exclusive</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_action_group.html#WxActionGroup.set_exclusive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_action_group.WxActionGroup.set_exclusive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the exclusive state of the underlying control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_action_group.WxActionGroup.set_enabled">
+<tt class="descname">set_enabled</tt><big>(</big><em>enabled</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_action_group.html#WxActionGroup.set_enabled"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_action_group.WxActionGroup.set_enabled" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the enabled state of the underlying control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_action_group.WxActionGroup.set_visible">
+<tt class="descname">set_visible</tt><big>(</big><em>visible</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_action_group.html#WxActionGroup.set_visible"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_action_group.WxActionGroup.set_visible" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the visible state of the underlying control.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.calendar.Calendar.html" title="Calendar"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.action.Action.html" title="Action"
+             >previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" >Widgets</a> &raquo;</li>
+  
+    <li><a href="#">ActionGroup</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Sep 12, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

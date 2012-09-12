@@ -1,0 +1,6 @@
+<map id="inheritance5c2f685fa5" name="inheritance5c2f685fa5">
+<area shape="rect" id="node1" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget" title="QtMessengerWidget" alt="" coords="6,5,157,35"/>
+<area shape="rect" id="node2" href="enaml.widgets.widget_component.WidgetComponent.html#enaml.qt.qt_widget_component.QtWidgetComponent" title="QtWidgetComponent" alt="" coords="206,5,362,35"/>
+<area shape="rect" id="node4" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.qt.qt_constraints_widget.QtConstraintsWidget" title="QtConstraintsWidget" alt="" coords="410,5,566,35"/>
+<area shape="rect" id="node6" href="#enaml.qt.qt_scroll_area.QtScrollArea" title="QtScrollArea" alt="" coords="613,5,715,35"/>
+</map>

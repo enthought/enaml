@@ -1,0 +1,472 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.session &mdash; enaml 0.3alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.3alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.3alpha documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.session</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.session</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2012, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Iterable</span>
+
+<span class="kn">from</span> <span class="nn">.message</span> <span class="kn">import</span> <span class="n">Message</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">id_generator</span>
+
+
+<span class="c">#: The global message id generator for Session objects.</span>
+<span class="n">_session_message_id_gen</span> <span class="o">=</span> <span class="n">id_generator</span><span class="p">(</span><span class="s">&#39;smsg_&#39;</span><span class="p">)</span>
+
+
+<span class="c">#: The global session id generator for Session objects.</span>
+<span class="n">_session_id_gen</span> <span class="o">=</span> <span class="n">id_generator</span><span class="p">(</span><span class="s">&#39;sid_&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Session"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.session.Session">[docs]</a><span class="k">class</span> <span class="nc">Session</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; An object representing the session between a client and its </span>
+<span class="sd">    Enaml views.</span>
+
+<span class="sd">    The session object is what ensures that each client has their</span>
+<span class="sd">    own individual instances of views, so that the only state that</span>
+<span class="sd">    is shared between clients is that which is explicitly provided</span>
+<span class="sd">    by the developer.</span>
+
+<span class="sd">    The session object is also responsible for manage communication</span>
+<span class="sd">    between an Enaml widget and the server which is connected to the</span>
+<span class="sd">    client.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">ABCMeta</span>
+
+    <span class="c">#: A message dispatch table used to speed up message routing</span>
+    <span class="n">_message_routes</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">&#39;snapshot&#39;</span><span class="p">:</span> <span class="s">&#39;_on_message_snapshot&#39;</span><span class="p">,</span>
+        <span class="s">&#39;widget_action&#39;</span><span class="p">:</span> <span class="s">&#39;_dispatch_widget_message&#39;</span><span class="p">,</span>
+        <span class="s">&#39;widget_action_response&#39;</span><span class="p">:</span> <span class="s">&#39;_dispatch_widget_message&#39;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+<div class="viewcode-block" id="Session.__init__"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.session.Session.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">push_handler</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize a Session.</span>
+
+<span class="sd">        The Session class cannot be used directly. It must be subclassed</span>
+<span class="sd">        and the subclass must implement the `on_open` method. The user</span>
+<span class="sd">        can also optionally implement the `init` and `on_close` methods.</span>
+<span class="sd">        This __init__ method should never be overridden.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        push_handler : BasePushHandler</span>
+<span class="sd">            The push handler to use when pushing messages from a server</span>
+<span class="sd">            widget back to the client.</span>
+
+<span class="sd">        username : str</span>
+<span class="sd">            The username associated with this session.</span>
+<span class="sd">        </span>
+<span class="sd">        args : tuple</span>
+<span class="sd">            Additional arguments passed to the `init` method.</span>
+<span class="sd">        </span>
+<span class="sd">        kwargs : tuple</span>
+<span class="sd">            Additional keyword arguments passed to the `init` method.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_push_handler</span> <span class="o">=</span> <span class="n">push_handler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_username</span> <span class="o">=</span> <span class="n">username</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_session_id</span> <span class="o">=</span> <span class="n">_session_id_gen</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_session_views</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_widgets</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Message Handling</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+    <span class="k">def</span> <span class="nf">_on_message_snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;snapshot&#39; message type.</span>
+
+<span class="sd">        This handler will create the list of snapshot objects for the</span>
+<span class="sd">        current views being managed by the session and send an a</span>
+<span class="sd">        response to the client.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        request : BaseRequest</span>
+<span class="sd">            The request object containing the message sent by client.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">snapshot</span> <span class="o">=</span> <span class="p">[</span><span class="n">view</span><span class="o">.</span><span class="n">snapshot</span><span class="p">()</span> <span class="k">for</span> <span class="n">view</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_session_views</span><span class="p">]</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;snapshot&#39;</span><span class="p">:</span> <span class="n">snapshot</span><span class="p">}</span>
+        <span class="n">request</span><span class="o">.</span><span class="n">send_ok_response</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="n">content</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_dispatch_widget_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Route a &#39;widget_action&#39; message to the target widget.</span>
+
+<span class="sd">        This handler will lookup the widget using the given widget</span>
+<span class="sd">        id and pass the action and message content to the action</span>
+<span class="sd">        handler on the widget. If the widget does not exist, then</span>
+<span class="sd">        an error response will be sent to the client.</span>
+
+<span class="sd">        TODO - handle the &quot;widget_action_response&quot; message type.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        request : BaseRequest</span>
+<span class="sd">            The request object containing the message sent by client.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">message</span>
+        <span class="k">if</span> <span class="n">message</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">msg_type</span> <span class="o">==</span> <span class="s">&#39;widget_action&#39;</span><span class="p">:</span>
+            <span class="n">widget_id</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">widget_id</span>
+            <span class="k">if</span> <span class="n">widget_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widgets</span><span class="p">:</span>
+                <span class="n">request</span><span class="o">.</span><span class="n">send_error_response</span><span class="p">(</span><span class="s">&#39;Invalid widget id&#39;</span><span class="p">)</span>
+                <span class="k">return</span>
+            <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widgets</span><span class="p">[</span><span class="n">widget_id</span><span class="p">]</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">handle_action</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">action</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+            <span class="n">request</span><span class="o">.</span><span class="n">send_ok_response</span><span class="p">()</span>
+        <span class="c"># XXX handle msg_type &#39;widget_action_response&#39;</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Abstract API</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="Session.on_open"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.session.Session.on_open">[docs]</a>    <span class="k">def</span> <span class="nf">on_open</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Called by the application when the session is opened.</span>
+
+<span class="sd">        This method must be implemented in a subclass and is used to </span>
+<span class="sd">        create the Enaml view objects for the session. This method will</span>
+<span class="sd">        only be called once during the session lifetime.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : iterable</span>
+<span class="sd">            An iterable of Enaml component trees which are the views</span>
+<span class="sd">            for this session. </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+<div class="viewcode-block" id="Session.on_close"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.session.Session.on_close">[docs]</a>    <span class="k">def</span> <span class="nf">on_close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Called by the application when the session is closed.</span>
+
+<span class="sd">        This method may be optionally implemented by subclasses so that</span>
+<span class="sd">        they can perform custom cleaup. After this method returns, the </span>
+<span class="sd">        session should be considered invalid. This method is only called</span>
+<span class="sd">        once during the session lifetime. </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</div>
+<div class="viewcode-block" id="Session.init"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.session.Session.init">[docs]</a>    <span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Perform subclass specific initialization.</span>
+<span class="sd">        </span>
+<span class="sd">        This method may be optionally implemented by subclasses so that</span>
+<span class="sd">        they can perform custom initialization with the arguments passed</span>
+<span class="sd">        to the factory which created the session. This method is called </span>
+<span class="sd">        at the end of the `__init__` method.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        *args, **kwargs</span>
+<span class="sd">            The positional and keyword arguments that were provided</span>
+<span class="sd">            by the user to the SessionFactory which created this </span>
+<span class="sd">            session.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Public API</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Session.factory"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.session.Session.factory">[docs]</a>    <span class="k">def</span> <span class="nf">factory</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">sess_name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">sess_descr</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A utility classmethod that returns a SessionFactory.</span>
+<span class="sd">        </span>
+<span class="sd">        If the name or description are not given, they will be inferred</span>
+<span class="sd">        by looking for class attributes `name` and `description`. If </span>
+<span class="sd">        these do not exist, then the class name and docstring will be </span>
+<span class="sd">        used. If more control is needed, then the SessionFactory should </span>
+<span class="sd">        be manually created.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sess_name : str, optional</span>
+<span class="sd">            A unique, human friendly name for the session.</span>
+<span class="sd">        </span>
+<span class="sd">        sess_descr : str, optional</span>
+<span class="sd">            A brief description of the session.</span>
+<span class="sd">        </span>
+<span class="sd">        *args, **kwargs</span>
+<span class="sd">            Optional postional and keyword arguments to pass to the</span>
+<span class="sd">            Session&#39;s `init` method when it&#39;s created.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">.session_factory</span> <span class="kn">import</span> <span class="n">SessionFactory</span>
+        <span class="k">if</span> <span class="n">sess_name</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">sess_name</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="s">&#39;name&#39;</span><span class="p">,</span> <span class="n">cls</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sess_descr</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">sess_descr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="s">&#39;description&#39;</span><span class="p">,</span> <span class="n">cls</span><span class="o">.</span><span class="n">__doc__</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">sess_descr</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Session class must have a `description` class &#39;</span>
+                       <span class="s">&#39;attribute or a docstring to use the `factory` &#39;</span>
+                       <span class="s">&#39;classmethod. &#39;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="n">factory</span> <span class="o">=</span> <span class="n">SessionFactory</span><span class="p">(</span><span class="n">sess_name</span><span class="p">,</span> <span class="n">sess_descr</span><span class="p">,</span> <span class="n">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">factory</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Session.session_id"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.session.Session.session_id">[docs]</a>    <span class="k">def</span> <span class="nf">session_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The unique identifier for this session.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : str</span>
+<span class="sd">            A unique identifier string for this session.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_session_id</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Session.username"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.session.Session.username">[docs]</a>    <span class="k">def</span> <span class="nf">username</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The username associated with this session.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : str</span>
+<span class="sd">            The username for this session.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_username</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Session.session_views"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.session.Session.session_views">[docs]</a>    <span class="k">def</span> <span class="nf">session_views</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The Enaml views being managed by this session.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : tuple</span>
+<span class="sd">            The Enaml views in use for the session.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_session_views</span>
+    </div>
+<div class="viewcode-block" id="Session.send_action"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.session.Session.send_action">[docs]</a>    <span class="k">def</span> <span class="nf">send_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget_id</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Send an unsolicited message of type &#39;widget_action&#39; to a</span>
+<span class="sd">        client widget of this session. </span>
+
+<span class="sd">        This method is called by the MessengerWidget&#39;s which are owned </span>
+<span class="sd">        by this Session object. This should never be called directly by </span>
+<span class="sd">        user code.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        widget_id : str</span>
+<span class="sd">            The widget identifier for the widget sending the message.</span>
+
+<span class="sd">        action : str</span>
+<span class="sd">            The action to be performed by the client widget.</span>
+
+<span class="sd">        content : dict</span>
+<span class="sd">            The content dictionary for the action.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&#39;session&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_session_id</span><span class="p">,</span>
+            <span class="s">&#39;username&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_username</span><span class="p">,</span>
+            <span class="s">&#39;msg_type&#39;</span><span class="p">:</span> <span class="s">&#39;widget_action&#39;</span><span class="p">,</span>
+            <span class="s">&#39;msg_id&#39;</span><span class="p">:</span> <span class="n">_session_message_id_gen</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+        <span class="p">}</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;widget_id&#39;</span><span class="p">:</span> <span class="n">widget_id</span><span class="p">,</span> <span class="s">&#39;action&#39;</span><span class="p">:</span> <span class="n">action</span><span class="p">}</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">Message</span><span class="p">((</span><span class="n">header</span><span class="p">,</span> <span class="p">{},</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">content</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_push_handler</span><span class="o">.</span><span class="n">push_message</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Session.send_children_changed"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.session.Session.send_children_changed">[docs]</a>    <span class="k">def</span> <span class="nf">send_children_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget_id</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Send an unsolicited &#39;widget_children_changed&#39; message to</span>
+<span class="sd">        the client of this session.</span>
+
+<span class="sd">        This method is called by the MessengerWidget&#39;s which are owned </span>
+<span class="sd">        by this Session object. This should never be called directly by </span>
+<span class="sd">        user code.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        widget_id : str</span>
+<span class="sd">            The widget identifier for the widget sending the message.</span>
+
+<span class="sd">        content : dict</span>
+<span class="sd">            The content dictionary for the action.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&#39;session&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_session_id</span><span class="p">,</span>
+            <span class="s">&#39;username&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_username</span><span class="p">,</span>
+            <span class="s">&#39;msg_type&#39;</span><span class="p">:</span> <span class="s">&#39;widget_children_changed&#39;</span><span class="p">,</span>
+            <span class="s">&#39;msg_id&#39;</span><span class="p">:</span> <span class="n">_session_message_id_gen</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+        <span class="p">}</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;widget_id&#39;</span><span class="p">:</span> <span class="n">widget_id</span><span class="p">}</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">Message</span><span class="p">((</span><span class="n">header</span><span class="p">,</span> <span class="p">{},</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">content</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_push_handler</span><span class="o">.</span><span class="n">push_message</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Session.open"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.session.Session.open">[docs]</a>    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Called by the application when the session is opened.</span>
+
+<span class="sd">        This method should never be called by user code.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">views</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_open</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">views</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+            <span class="n">views</span> <span class="o">=</span> <span class="p">(</span><span class="n">views</span><span class="p">,)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">views</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">views</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_session_views</span> <span class="o">=</span> <span class="n">views</span>
+        <span class="k">for</span> <span class="n">view</span> <span class="ow">in</span> <span class="n">views</span><span class="p">:</span>
+            <span class="n">view</span><span class="o">.</span><span class="n">set_session</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Session.close"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.session.Session.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Called by the application when the session is closed.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">on_close</span><span class="p">()</span>
+        <span class="c"># XXX need to do explicit view destruction?</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_session_views</span> <span class="o">=</span> <span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Session.register_widget"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.session.Session.register_widget">[docs]</a>    <span class="k">def</span> <span class="nf">register_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A method called by a MessengerWidget when the Session is</span>
+<span class="sd">        assigned to the widget.</span>
+
+<span class="sd">        This allows the Session object to build a mapping of widget</span>
+<span class="sd">        identifiers to widgets for dispatching messages. This method</span>
+<span class="sd">        should never be called by user code.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        widget : MessengerWidget</span>
+<span class="sd">            The widget to which this session was applied.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_widgets</span><span class="p">[</span><span class="n">widget</span><span class="o">.</span><span class="n">widget_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">widget</span>
+</div>
+<div class="viewcode-block" id="Session.handle_request"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.session.Session.handle_request">[docs]</a>    <span class="k">def</span> <span class="nf">handle_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A method called by the application when the client sends</span>
+<span class="sd">        a request to the session.</span>
+
+<span class="sd">        This method should never be called by user code.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        request : BaseRequest</span>
+<span class="sd">            The request object generated by the client.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># The application has already verified that the msg_type is a </span>
+        <span class="c"># supported message type of the session. So if this results in</span>
+        <span class="c"># a KeyError, then it&#39;s a problem with the server.</span>
+        <span class="n">msg_type</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">msg_type</span>
+        <span class="n">route</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_message_routes</span><span class="p">[</span><span class="n">msg_type</span><span class="p">]</span>
+        <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">route</span><span class="p">)(</span><span class="n">request</span><span class="p">)</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.session</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Sep 12, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

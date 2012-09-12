@@ -1,48 +1,36 @@
 Writing .enaml Files
 ====================
 
-.. warning:: This documentation is not current and does not reflect the way
-    Enaml currently works.
+.. warning:: This documentation is not entirely current and may not reflect the
+    way Enaml currently works.
 
 Enaml files contain a domain-specific language for specifying a user-interface
 and dynamically binding and computing values based on user interaction.
 
 A simple example of an Enaml file might look something like this:
 
-.. literalinclude:: ../examples/person_example.enaml
+.. literalinclude:: ../../../examples/widgets/form.enaml
     :language: python
-
-We could then use this with a Traits model as follows:
-
-.. literalinclude:: ../examples/person_example.py
-    :language: python
-
-Looking at this example, you will see that an Enaml file consists of one or
-more ``enamldef`` blocks containing a widget tree that describes the layout of
-that part of the UI.  The widgets have attributes which are bound to expressions
-in various ways, allowing simple reactivity.  Widgets can be assigned names using
-the ``->`` operator and then their attributes are available to other parts of
-the UI.
 
 On the Python side, the Enaml code can be imported using a ``with`` statement
 to add the Enaml import hooks.  The ``enamldef`` blocks are then available as
 module-level functions that can be called normally from Python code.  Building
-the UI is then a matter of calling an Enaml ``enamldef`` to build the view, and then
-calling ``show()`` on the view to display it and start the application event loop.
-The parameters passed in to the Enaml ``enamldef`` block from the Python side can be
-any Python or Enaml objects that would make sense to use within the Enaml code.
-For example, if you use an attribute of an object in the Enaml code, then passing
-an object without that attribute will raise an ``AttributeError`` just as if you
-did the same thing in a Python function.
+the UI is then a matter of calling an Enaml ``enamldef`` to build the view, and
+returning that view from a ``Session`` instance. The parameters passed in to
+the Enaml ``enamldef`` block from the Python side can be any Python or Enaml
+objects that would make sense to use within the Enaml code. For example, if you
+use an attribute of an object in the Enaml code, then passing an object without
+that attribute will raise an ``AttributeError`` just as if you did the same
+thing in a Python function.
 
-Enaml Components and Layout
----------------------------
+Enaml Widgets and Layout
+------------------------
 
 Enaml widgets come in two basic types: Containers and Controls.  Controls
 are conceptually single UI elements with no other Enaml widgets inside them,
 such as labels, fields, and buttons.  Containers are widgets which contain other
 widgets, usually including information about how to layout the widgets that they
-contain.  Examples of containers include top-level windows, dialogs and forms.
+contain.  Examples of containers include top-level windows, scroll areas and forms.
 
 Enaml uses constraints-based layout implemented by the Cassowary layout system.
 Constraints are specified as a system of linear inequalities together with an
@@ -99,9 +87,9 @@ available to simply specifying layout.  These are:
         A flexible spacer that has a hard minimum but also a weaker preference
         to be no larger than that minimum.
 
-    ``horizontal(*items)``
+    ``horizontal(*items)`` or ``hbox(*items)``
 
-    ``vertical(*items)``
+    ``vertical(*items)`` or ``vbox(*items)``
         These two functions take a list of symbols, widgets and spacers and
         create a series of constraints that specify a sequential horizontal
         or vertical layout where the sides of each object in sequence abut
@@ -120,27 +108,31 @@ Binding Operators
 -----------------
 
 `=`
-  *Assignment*. RHS can be any expression. The assignment will be the
-  default value, but the value can be changed later through Python code or
-  expression execution.
+    *Assignment*. RHS can be any expression. The assignment will be the
+    default value, but the value can be changed later through Python code or
+    expression execution.
 
 `:=`
-  *Delegation*. RHS must be a simple attribute expression, like foo.bar .
-  Non-attribute expressions here are a runtime error. The value of the
-  view property and value of the attribute are synced, but the type
-  checking of the view property is enforced.
+    *Delegation*. RHS must be a simple attribute expression, like foo.bar .
+    Non-attribute expressions here are a runtime error. The value of the
+    view property and value of the attribute are synced, but the type
+    checking of the view property is enforced.
 
 `<<`
-  *Binding*. RHS can be any expression. The expression will be parsed for
-  dependencies, and any dependency which is a trait attribute on a
-  HasTraits class will have a listener attached. When the listener fires,
-  the expression will be re-evaluated and the value of the view property
-  will be updated.
+    *Subscription*. RHS can be any expression. The expression will be parsed
+    for dependencies, and any dependency which is a trait attribute on a
+    HasTraits class will have a listener attached. When the listener fires,
+    the expression will be re-evaluated and the value of the view property
+    will be updated.
 
 `>>`
-  *Notification*. RHS can be any expression. The expression will be
-  evaluated any time the view property changes.
+    *Update*. RHS must be a simple attribute expression. The attribute will
+    receive the view property's value any time it changes.
 
+`::`
+    *Notification*. RHS can be any expression. Additionally, an indented
+    block of code can also be used. The expression/block will be evaluated any
+    time the view property changes.
 
 Scoping Rules
 -------------

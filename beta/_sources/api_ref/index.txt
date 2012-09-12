@@ -4,7 +4,7 @@ Enaml API Reference
 ===================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
     Base <enaml>
     Core <enaml.core>

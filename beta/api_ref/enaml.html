@@ -67,7 +67,13 @@
 <h3>Page Contents</h3>
 <ul>
 <li><a class="reference internal" href="#">enaml</a><ul>
+<li><a class="reference internal" href="#module-enaml.application"><tt class="docutils literal"><span class="pre">application</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-enaml.colors"><tt class="docutils literal"><span class="pre">colors</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-enaml.message"><tt class="docutils literal"><span class="pre">message</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-enaml.request"><tt class="docutils literal"><span class="pre">request</span></tt> Module</a></li>
 <li><a class="reference internal" href="#module-enaml.runner"><tt class="docutils literal"><span class="pre">runner</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-enaml.session"><tt class="docutils literal"><span class="pre">session</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-enaml.session_factory"><tt class="docutils literal"><span class="pre">session_factory</span></tt> Module</a></li>
 <li><a class="reference internal" href="#module-enaml.utils"><tt class="docutils literal"><span class="pre">utils</span></tt> Module</a></li>
 </ul>
 </li>
@@ -101,8 +107,368 @@
             
   <div class="section" id="enaml">
 <h1>enaml<a class="headerlink" href="#enaml" title="Permalink to this headline">¶</a></h1>
-<p>The top-level enaml package contains some utility modules used throughout the
-Enaml library.</p>
+<p>The top-level enaml package contains modules used throughout the Enaml library.</p>
+<div class="section" id="module-enaml.application">
+<span id="application-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">application</span></tt> Module<a class="headerlink" href="#module-enaml.application" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="enaml.application.Application">
+<em class="property">class </em><tt class="descclassname">enaml.application.</tt><tt class="descname">Application</tt><big>(</big><em>factories</em><big>)</big><a class="reference internal" href="../_modules/enaml/application.html#Application"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.application.Application" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>The application object which manages the top-level communication
+protocol for serving Enaml views.</p>
+<dl class="method">
+<dt id="enaml.application.Application.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>factories</em><big>)</big><a class="reference internal" href="../_modules/enaml/application.html#Application.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.application.Application.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize an Enaml Application.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>factories</strong> (<em>iterable</em>) &#8211; An iterable of SessionFactory instances that will be used
+to create the sessions for the application.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.application.Application.add_factories">
+<tt class="descname">add_factories</tt><big>(</big><em>factories</em><big>)</big><a class="reference internal" href="../_modules/enaml/application.html#Application.add_factories"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.application.Application.add_factories" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add session factories to the application.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>factories</strong> (<em>iterable</em>) &#8211; An iterable of SessionFactory instances to add to the
+application.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.application.Application.handle_request">
+<tt class="descname">handle_request</tt><big>(</big><em>request</em><big>)</big><a class="reference internal" href="../_modules/enaml/application.html#Application.handle_request"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.application.Application.handle_request" title="Permalink to this definition">¶</a></dt>
+<dd><p>Route and process a message for the Enaml application.</p>
+<p>This method should be called by the running event loop when it
+receives a message from a client. The event loop should guard 
+this call in a try-except block. Any exceptions raised should 
+be considered as failures in the structure of the message and
+handled appropriately.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>request</strong> (<em>BaseRequest</em>) &#8211; The request object which wraps a message sent by a client.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.application.Application.__weakref__">
+<tt class="descname">__weakref__</tt><a class="headerlink" href="#enaml.application.Application.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-enaml.colors">
+<span id="colors-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">colors</span></tt> Module<a class="headerlink" href="#module-enaml.colors" title="Permalink to this headline">¶</a></h2>
+<p>A utility module for dealing with colors.</p>
+<dl class="function">
+<dt id="enaml.colors.parse_color">
+<tt class="descclassname">enaml.colors.</tt><tt class="descname">parse_color</tt><big>(</big><em>color</em><big>)</big><a class="reference internal" href="../_modules/enaml/colors.html#parse_color"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.colors.parse_color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse a color string into a tuple of RGBA values.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>color</strong> (<a class="reference external" href="http://docs.python.org/library/string.html#string" title="(in Python v2.7)"><em>string</em></a>) &#8211; A CSS3 string representation of the color.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (tuple or None) &#8211; A tuple of RGBA values. All values are floats in the range 0.0 - 1.0. If the string is invalid, None will be returned.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="enaml.colors.composite_colors">
+<tt class="descclassname">enaml.colors.</tt><tt class="descname">composite_colors</tt><big>(</big><em>first</em>, <em>second</em><big>)</big><a class="reference internal" href="../_modules/enaml/colors.html#composite_colors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.colors.composite_colors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Composite two colors together using their given alpha.</p>
+<p>The first color will be composited on top of the second color.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>first</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a>) &#8211; The rgba tuple of the first color. All values are floats in
+the range 0.0 - 1.0.</li>
+<li><strong>second</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a>) &#8211; The rgba tuple of the second color. The format of this tuple
+is the same as the first color.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>result</strong> (tuple) &#8211; The composited rgba color tuple.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-enaml.message">
+<span id="message-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">message</span></tt> Module<a class="headerlink" href="#module-enaml.message" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="enaml.message.Message">
+<em class="property">class </em><tt class="descclassname">enaml.message.</tt><tt class="descname">Message</tt><a class="reference internal" href="../_modules/enaml/message.html#Message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.message.Message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">tuple</span></tt></p>
+<p>A tuple subclass which represents an Enaml protocol message.</p>
+<p>This subclass adds convenience properties for accessing the
+message parts by name instead of postion. It also wraps each
+part of the message as an ObjectDict instead of a plain dict.</p>
+<dl class="staticmethod">
+<dt id="enaml.message.Message.__new__">
+<em class="property">static </em><tt class="descname">__new__</tt><big>(</big><em>parts</em><big>)</big><a class="reference internal" href="../_modules/enaml/message.html#Message.__new__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.message.Message.__new__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new Message.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parts</strong> (<em>iterable</em>) &#8211; An iterable of the four parts to the Enaml message:
+header, parent_header metadata, and content.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.message.Message.header">
+<tt class="descname">header</tt><a class="reference internal" href="../_modules/enaml/message.html#Message.header"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.message.Message.header" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the header of the message as an ObjectDict.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.message.Message.parent_header">
+<tt class="descname">parent_header</tt><a class="reference internal" href="../_modules/enaml/message.html#Message.parent_header"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.message.Message.parent_header" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the parent header of the message as an ObjectDict.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.message.Message.metadata">
+<tt class="descname">metadata</tt><a class="reference internal" href="../_modules/enaml/message.html#Message.metadata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.message.Message.metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the metadata of the message as an ObjectDict.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.message.Message.content">
+<tt class="descname">content</tt><a class="reference internal" href="../_modules/enaml/message.html#Message.content"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.message.Message.content" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the content of the message as an ObjectDict.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-enaml.request">
+<span id="request-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">request</span></tt> Module<a class="headerlink" href="#module-enaml.request" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="enaml.request.BaseRequest">
+<em class="property">class </em><tt class="descclassname">enaml.request.</tt><tt class="descname">BaseRequest</tt><a class="reference internal" href="../_modules/enaml/request.html#BaseRequest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.request.BaseRequest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>An object which represents a request sent by a client.</p>
+<p>This is a base class which contains abstract methods and properties
+which must be implemented by subclasses. Concrete instance of this
+class are passed by a server to its Application instance for 
+handling.</p>
+<dl class="attribute">
+<dt id="enaml.request.BaseRequest.__metaclass__">
+<tt class="descname">__metaclass__</tt><a class="headerlink" href="#enaml.request.BaseRequest.__metaclass__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">ABCMeta</span></tt></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.request.BaseRequest.message">
+<tt class="descname">message</tt><a class="reference internal" href="../_modules/enaml/request.html#BaseRequest.message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.request.BaseRequest.message" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Message object for this request.</p>
+<dl class="docutils">
+<dt>result <span class="classifier-delimiter">:</span> <span class="classifier">Message</span></dt>
+<dd>The Message instance pertaining to this request.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.request.BaseRequest.add_callback">
+<tt class="descname">add_callback</tt><big>(</big><em>callback</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/enaml/request.html#BaseRequest.add_callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.request.BaseRequest.add_callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a callback to the event queue to be called later.</p>
+<p>This is used by the request handlers to defer long running 
+work until a future time, at which point the results will
+be pushed to the client.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>callback</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#callable" title="(in Python v2.7)"><em>callable</em></a>) &#8211; A callable which should be invoked by the event loop at
+some future time. This method must return immediately.</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>args</dt>
+<dd>The positional arguments to pass to the callable when it is
+invoked.</dd>
+<dt>kwargs</dt>
+<dd>The keyword arguments to pass to the callable when it is invoked.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.request.BaseRequest.send_response">
+<tt class="descname">send_response</tt><big>(</big><em>message</em><big>)</big><a class="reference internal" href="../_modules/enaml/request.html#BaseRequest.send_response"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.request.BaseRequest.send_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send the given message to the client as a reply.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message</strong> (<em>Message</em>) &#8211; A Message instance to send to the client as a reply to
+this particular request.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<ul class="last simple">
+<li>Calling this method effectively closes the request and further 
+calls to this method will raise an error.</li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.request.BaseRequest.push_handler">
+<tt class="descname">push_handler</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/request.html#BaseRequest.push_handler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.request.BaseRequest.push_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an object that can be used to push unsolicited 
+messages to this client.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (BasePushHandler) &#8211; A PushHandler instance which can be used to push messages to this client, without the client initiating a request.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.request.BaseRequest.send_ok_response">
+<tt class="descname">send_ok_response</tt><big>(</big><em>metadata=None</em>, <em>content=None</em><big>)</big><a class="reference internal" href="../_modules/enaml/request.html#BaseRequest.send_ok_response"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.request.BaseRequest.send_ok_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>A convenience method to send an &#8220;ok&#8221; message reponse for 
+this given request.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>metadata</strong> (<em>dict, optional</em>) &#8211; Any metadata to send with the response.</li>
+<li><strong>content</strong> (<em>dict, optional</em>) &#8211; Additional content to send with the response.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.request.BaseRequest.send_error_response">
+<tt class="descname">send_error_response</tt><big>(</big><em>status_msg</em>, <em>metadata=None</em>, <em>content=None</em><big>)</big><a class="reference internal" href="../_modules/enaml/request.html#BaseRequest.send_error_response"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.request.BaseRequest.send_error_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>A convenience method to send an &#8220;error&#8221; message response for 
+this request.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>status_msg</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The status message to use in the error response.</li>
+<li><strong>metadata</strong> (<em>dict, optional</em>) &#8211; Any metadata to send with the response.</li>
+<li><strong>content</strong> (<em>dict, optional</em>) &#8211; Additional content to send with the response.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.request.BaseRequest.__weakref__">
+<tt class="descname">__weakref__</tt><a class="headerlink" href="#enaml.request.BaseRequest.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="enaml.request.BasePushHandler">
+<em class="property">class </em><tt class="descclassname">enaml.request.</tt><tt class="descname">BasePushHandler</tt><a class="reference internal" href="../_modules/enaml/request.html#BasePushHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.request.BasePushHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>An object used to push a message to a client.</p>
+<p>Instances of this class should remain functional for the lifetime
+of the client connection.</p>
+<dl class="attribute">
+<dt id="enaml.request.BasePushHandler.__metaclass__">
+<tt class="descname">__metaclass__</tt><a class="headerlink" href="#enaml.request.BasePushHandler.__metaclass__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">ABCMeta</span></tt></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.request.BasePushHandler.push_message">
+<tt class="descname">push_message</tt><big>(</big><em>message</em><big>)</big><a class="reference internal" href="../_modules/enaml/request.html#BasePushHandler.push_message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.request.BasePushHandler.push_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Push the given message to the client.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message</strong> (<em>Message</em>) &#8211; The Message instance that should be pushed to the client.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.request.BasePushHandler.add_callback">
+<tt class="descname">add_callback</tt><big>(</big><em>callback</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/enaml/request.html#BasePushHandler.add_callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.request.BasePushHandler.add_callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a callback to the event queue to be called later.</p>
+<p>This is used as a convenience for Session objects to provide
+a way to run callables in a deferred fashion. It does not 
+imply any communication with the client. It is merely an
+abstract entry point into the server&#8217;s event loop.</p>
+<p>Call it a concession to practicality over purity - SCC</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>callback</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#callable" title="(in Python v2.7)"><em>callable</em></a>) &#8211; A callable which should be invoked by the event loop at
+some future time. This method must return immediately.</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>args</dt>
+<dd>The positional arguments to pass to the callable when it is
+invoked.</dd>
+<dt>kwargs</dt>
+<dd>The keyword arguments to pass to the callable when it is invoked.</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.request.BasePushHandler.__weakref__">
+<tt class="descname">__weakref__</tt><a class="headerlink" href="#enaml.request.BasePushHandler.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 <div class="section" id="module-enaml.runner">
 <span id="runner-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">runner</span></tt> Module<a class="headerlink" href="#module-enaml.runner" title="Permalink to this headline">¶</a></h2>
 <p>Command-line tool to run .enaml files.</p>
@@ -127,6 +493,323 @@ an incompatibility with the -t option.</p>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-enaml.session">
+<span id="session-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">session</span></tt> Module<a class="headerlink" href="#module-enaml.session" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="enaml.session.Session">
+<em class="property">class </em><tt class="descclassname">enaml.session.</tt><tt class="descname">Session</tt><big>(</big><em>push_handler</em>, <em>username</em>, <em>args</em>, <em>kwargs</em><big>)</big><a class="reference internal" href="../_modules/enaml/session.html#Session"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.session.Session" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>An object representing the session between a client and its 
+Enaml views.</p>
+<p>The session object is what ensures that each client has their
+own individual instances of views, so that the only state that
+is shared between clients is that which is explicitly provided
+by the developer.</p>
+<p>The session object is also responsible for manage communication
+between an Enaml widget and the server which is connected to the
+client.</p>
+<dl class="attribute">
+<dt id="enaml.session.Session.__metaclass__">
+<tt class="descname">__metaclass__</tt><a class="headerlink" href="#enaml.session.Session.__metaclass__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">ABCMeta</span></tt></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.session.Session.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>push_handler</em>, <em>username</em>, <em>args</em>, <em>kwargs</em><big>)</big><a class="reference internal" href="../_modules/enaml/session.html#Session.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.session.Session.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize a Session.</p>
+<p>The Session class cannot be used directly. It must be subclassed
+and the subclass must implement the <cite>on_open</cite> method. The user
+can also optionally implement the <cite>init</cite> and <cite>on_close</cite> methods.
+This __init__ method should never be overridden.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>push_handler</strong> (<em>BasePushHandler</em>) &#8211; The push handler to use when pushing messages from a server
+widget back to the client.</li>
+<li><strong>username</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The username associated with this session.</li>
+<li><strong>args</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a>) &#8211; Additional arguments passed to the <cite>init</cite> method.</li>
+<li><strong>kwargs</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a>) &#8211; Additional keyword arguments passed to the <cite>init</cite> method.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.session.Session.on_open">
+<tt class="descname">on_open</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/session.html#Session.on_open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.session.Session.on_open" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called by the application when the session is opened.</p>
+<p>This method must be implemented in a subclass and is used to 
+create the Enaml view objects for the session. This method will
+only be called once during the session lifetime.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (iterable) &#8211; An iterable of Enaml component trees which are the views for this session.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.session.Session.on_close">
+<tt class="descname">on_close</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/session.html#Session.on_close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.session.Session.on_close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called by the application when the session is closed.</p>
+<p>This method may be optionally implemented by subclasses so that
+they can perform custom cleaup. After this method returns, the 
+session should be considered invalid. This method is only called
+once during the session lifetime.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.session.Session.init">
+<tt class="descname">init</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/enaml/session.html#Session.init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.session.Session.init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform subclass specific initialization.</p>
+<p>This method may be optionally implemented by subclasses so that
+they can perform custom initialization with the arguments passed
+to the factory which created the session. This method is called 
+at the end of the <cite>__init__</cite> method.</p>
+<dl class="docutils">
+<dt>args</dt>
+<dd>The positional arguments that were provided by the user to the
+SessionFactory which created this session.</dd>
+<dt>kwargs</dt>
+<dd>The keyword arguments that were provided by the user to the
+SessionFactory which created this session.</dd>
+</dl>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="enaml.session.Session.factory">
+<em class="property">classmethod </em><tt class="descname">factory</tt><big>(</big><em>sess_name=None</em>, <em>sess_descr=None</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/enaml/session.html#Session.factory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.session.Session.factory" title="Permalink to this definition">¶</a></dt>
+<dd><p>A utility classmethod that returns a SessionFactory.</p>
+<p>If the name or description are not given, they will be inferred
+by looking for class attributes <cite>name</cite> and <cite>description</cite>. If 
+these do not exist, then the class name and docstring will be 
+used. If more control is needed, then the SessionFactory should 
+be manually created.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>sess_name</strong> (<em>str, optional</em>) &#8211; A unique, human friendly name for the session.</li>
+<li><strong>sess_descr</strong> (<em>str, optional</em>) &#8211; A brief description of the session.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>args</dt>
+<dd>Optional postional arguments to pass to the Session&#8217;s <cite>init</cite>
+method when it&#8217;s created.</dd>
+<dt>kwargs</dt>
+<dd>Optional keyword arguments to pass to the Session&#8217;s <cite>init</cite>
+method when it&#8217;s created.</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.session.Session.session_id">
+<tt class="descname">session_id</tt><a class="reference internal" href="../_modules/enaml/session.html#Session.session_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.session.Session.session_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>The unique identifier for this session.</p>
+<dl class="docutils">
+<dt>result <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>A unique identifier string for this session.</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.session.Session.username">
+<tt class="descname">username</tt><a class="reference internal" href="../_modules/enaml/session.html#Session.username"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.session.Session.username" title="Permalink to this definition">¶</a></dt>
+<dd><p>The username associated with this session.</p>
+<dl class="docutils">
+<dt>result <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>The username for this session.</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.session.Session.session_views">
+<tt class="descname">session_views</tt><a class="reference internal" href="../_modules/enaml/session.html#Session.session_views"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.session.Session.session_views" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Enaml views being managed by this session.</p>
+<dl class="docutils">
+<dt>result <span class="classifier-delimiter">:</span> <span class="classifier">tuple</span></dt>
+<dd>The Enaml views in use for the session.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.session.Session.send_action">
+<tt class="descname">send_action</tt><big>(</big><em>widget_id</em>, <em>action</em>, <em>content</em><big>)</big><a class="reference internal" href="../_modules/enaml/session.html#Session.send_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.session.Session.send_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send an unsolicited message of type &#8216;widget_action&#8217; to a
+client widget of this session.</p>
+<p>This method is called by the MessengerWidget&#8217;s which are owned 
+by this Session object. This should never be called directly by 
+user code.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>widget_id</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The widget identifier for the widget sending the message.</li>
+<li><strong>action</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The action to be performed by the client widget.</li>
+<li><strong>content</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; The content dictionary for the action.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.session.Session.send_children_changed">
+<tt class="descname">send_children_changed</tt><big>(</big><em>widget_id</em>, <em>content</em><big>)</big><a class="reference internal" href="../_modules/enaml/session.html#Session.send_children_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.session.Session.send_children_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send an unsolicited &#8216;widget_children_changed&#8217; message to
+the client of this session.</p>
+<p>This method is called by the MessengerWidget&#8217;s which are owned 
+by this Session object. This should never be called directly by 
+user code.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>widget_id</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The widget identifier for the widget sending the message.</li>
+<li><strong>content</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; The content dictionary for the action.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.session.Session.open">
+<tt class="descname">open</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/session.html#Session.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.session.Session.open" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called by the application when the session is opened.</p>
+<p>This method should never be called by user code.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.session.Session.close">
+<tt class="descname">close</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/session.html#Session.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.session.Session.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called by the application when the session is closed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.session.Session.register_widget">
+<tt class="descname">register_widget</tt><big>(</big><em>widget</em><big>)</big><a class="reference internal" href="../_modules/enaml/session.html#Session.register_widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.session.Session.register_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method called by a MessengerWidget when the Session is
+assigned to the widget.</p>
+<p>This allows the Session object to build a mapping of widget
+identifiers to widgets for dispatching messages. This method
+should never be called by user code.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>widget</strong> (<em>MessengerWidget</em>) &#8211; The widget to which this session was applied.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.session.Session.handle_request">
+<tt class="descname">handle_request</tt><big>(</big><em>request</em><big>)</big><a class="reference internal" href="../_modules/enaml/session.html#Session.handle_request"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.session.Session.handle_request" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method called by the application when the client sends
+a request to the session.</p>
+<p>This method should never be called by user code.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>request</strong> (<em>BaseRequest</em>) &#8211; The request object generated by the client.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.session.Session.__weakref__">
+<tt class="descname">__weakref__</tt><a class="headerlink" href="#enaml.session.Session.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-enaml.session_factory">
+<span id="session-factory-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">session_factory</span></tt> Module<a class="headerlink" href="#module-enaml.session_factory" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="enaml.session_factory.SessionFactory">
+<em class="property">class </em><tt class="descclassname">enaml.session_factory.</tt><tt class="descname">SessionFactory</tt><big>(</big><em>name</em>, <em>description</em>, <em>session_class</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/enaml/session_factory.html#SessionFactory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.session_factory.SessionFactory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>A class whose instances are used by an Enaml Application to 
+create Session instances.</p>
+<dl class="method">
+<dt id="enaml.session_factory.SessionFactory.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>name</em>, <em>description</em>, <em>session_class</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/enaml/session_factory.html#SessionFactory.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.session_factory.SessionFactory.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize a SessionFactory.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; A unique, human-friendly name for the Session that will be
+created.</li>
+<li><strong>description</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; A brief description of the Session that will be created.</li>
+<li><strong>session_class</strong> (<em>Session subclass</em>) &#8211; A concrete subclass of Session that will be created by this
+factory.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>args</dt>
+<dd>Optional positional arguments to pass to the initialize() method
+of the Session that gets created.</dd>
+<dt>kwargs</dt>
+<dd>Optional keyword arguments to pass to the initialize() method of
+the Session that gets created.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.session_factory.SessionFactory.__call__">
+<tt class="descname">__call__</tt><big>(</big><em>request</em><big>)</big><a class="reference internal" href="../_modules/enaml/session_factory.html#SessionFactory.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.session_factory.SessionFactory.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called by the Enaml Application to create an instance of 
+the Session.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>request</strong> (<em>BaseRequest</em>) &#8211; The request with message type &#8216;start_session&#8217; sent by
+client to start a new session.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (Session) &#8211; A new instance of the Session type provided to the factory.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.session_factory.SessionFactory.__weakref__">
+<tt class="descname">__weakref__</tt><a class="headerlink" href="#enaml.session_factory.SessionFactory.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>

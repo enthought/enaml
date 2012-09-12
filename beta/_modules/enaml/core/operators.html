@@ -1,0 +1,232 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.core.operators &mdash; enaml 0.3alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.3alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.3alpha documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.core.operators</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.core.operators</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">.expressions</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">SimpleExpression</span><span class="p">,</span> <span class="n">NotificationExpression</span><span class="p">,</span> <span class="n">SubscriptionExpression</span><span class="p">,</span> 
+    <span class="n">DelegationExpression</span><span class="p">,</span> <span class="n">UpdateExpression</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.inverters</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">GenericAttributeInverter</span><span class="p">,</span> <span class="n">GetattrInverter</span><span class="p">,</span> <span class="n">ImplicitAttrInverter</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.monitors</span> <span class="kn">import</span> <span class="n">TraitAttributeMonitor</span><span class="p">,</span> <span class="n">TraitGetattrMonitor</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Builtin Enaml Operators</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#: Operators are passed a number of arguments from the Enaml runtime </span>
+<span class="c">#: engine in order to perform their work. The arguments are, in order:</span>
+<span class="c">#:</span>
+<span class="c">#:      cmpnt : Declarative</span>
+<span class="c">#:          The Declarative instance which owns the expression which</span>
+<span class="c">#:          is being bound.</span>
+<span class="c">#:</span>
+<span class="c">#:      attr : string</span>
+<span class="c">#:          The name of the attribute on the component which is being</span>
+<span class="c">#:          bound.</span>
+<span class="c">#:</span>
+<span class="c">#:      code : types.CodeType</span>
+<span class="c">#:          The compiled code object for the Python expression given</span>
+<span class="c">#:          given by the user. It is compiled with mode=&#39;eval&#39;.</span>
+<span class="c">#:</span>
+<span class="c">#:      identifiers : dict</span>
+<span class="c">#:          The dictionary of identifiers available to the expression.</span>
+<span class="c">#:          This dictionary is shared amongst all expressions within</span>
+<span class="c">#:          a given lexical scope. It should therefore not be modified</span>
+<span class="c">#:          or copied since identifiers may continue to be added to </span>
+<span class="c">#:          this dict as runtime execution continues.</span>
+<span class="c">#:</span>
+<span class="c">#:      f_globals : dict</span>
+<span class="c">#:          The dictionary of globals available to the expression. </span>
+<span class="c">#:          The same rules about sharing and copying that apply to</span>
+<span class="c">#:          the identifiers dict, apply here as well.</span>
+<span class="c">#:</span>
+<span class="c">#:      operators : OperatorContext</span>
+<span class="c">#:          The operator context used when looking up the operator.</span>
+<span class="c">#:          For the standard operators, this context is passed along</span>
+<span class="c">#:          to the generated expressions.</span>
+<span class="c">#:</span>
+<span class="c">#: Operators may do whatever they please with the information provided</span>
+<span class="c">#: to them. The default operators in Enaml use this information to </span>
+<span class="c">#: create and bind Enaml expression objects to the component. However,</span>
+<span class="c">#: this is not a requirement and developers who are extending Enaml</span>
+<span class="c">#: are free to get creative with the operators.</span>
+
+
+<div class="viewcode-block" id="op_simple"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.operators.op_simple">[docs]</a><span class="k">def</span> <span class="nf">op_simple</span><span class="p">(</span><span class="n">cmpnt</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">identifiers</span><span class="p">,</span> <span class="n">f_globals</span><span class="p">,</span> <span class="n">operators</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; The default Enaml operator for &#39;=&#39; expressions. It binds an</span>
+<span class="sd">    instance of SimpleExpression to the component.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">expr</span> <span class="o">=</span> <span class="n">SimpleExpression</span><span class="p">(</span><span class="n">cmpnt</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">identifiers</span><span class="p">,</span> <span class="n">f_globals</span><span class="p">,</span> <span class="n">operators</span><span class="p">)</span>
+    <span class="n">cmpnt</span><span class="o">.</span><span class="n">_bind_expression</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">expr</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="op_notify"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.operators.op_notify">[docs]</a><span class="k">def</span> <span class="nf">op_notify</span><span class="p">(</span><span class="n">cmpnt</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">identifiers</span><span class="p">,</span> <span class="n">f_globals</span><span class="p">,</span> <span class="n">operators</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; The default Enaml operator for &#39;::&#39; expressions. It binds an</span>
+<span class="sd">    instance of NotificationExpression to the component.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">expr</span> <span class="o">=</span> <span class="n">NotificationExpression</span><span class="p">(</span><span class="n">cmpnt</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">identifiers</span><span class="p">,</span> <span class="n">f_globals</span><span class="p">,</span> <span class="n">operators</span><span class="p">)</span>
+    <span class="n">cmpnt</span><span class="o">.</span><span class="n">_bind_expression</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">notify_only</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="op_update"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.operators.op_update">[docs]</a><span class="k">def</span> <span class="nf">op_update</span><span class="p">(</span><span class="n">cmpnt</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">identifiers</span><span class="p">,</span> <span class="n">f_globals</span><span class="p">,</span> <span class="n">operators</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; The default Enaml operator for &#39;&gt;&gt;&#39; expressions. It binds an</span>
+<span class="sd">    instance of UpdateExpression to the component.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">inverters</span> <span class="o">=</span> <span class="p">[</span><span class="n">GenericAttributeInverter</span><span class="p">,</span> <span class="n">GetattrInverter</span><span class="p">,</span> <span class="n">ImplicitAttrInverter</span><span class="p">]</span>
+    <span class="n">expr</span> <span class="o">=</span> <span class="n">UpdateExpression</span><span class="p">(</span><span class="n">inverters</span><span class="p">,</span> <span class="n">cmpnt</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">identifiers</span><span class="p">,</span> <span class="n">f_globals</span><span class="p">,</span> <span class="n">operators</span><span class="p">)</span>
+    <span class="n">cmpnt</span><span class="o">.</span><span class="n">_bind_expression</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">notify_only</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="op_subscribe"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.operators.op_subscribe">[docs]</a><span class="k">def</span> <span class="nf">op_subscribe</span><span class="p">(</span><span class="n">cmpnt</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">identifiers</span><span class="p">,</span> <span class="n">f_globals</span><span class="p">,</span> <span class="n">operators</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; The default Enaml operator for &#39;&lt;&lt;&#39; expressions. It binds an</span>
+<span class="sd">    instance of SubscriptionExpression to the component using monitors</span>
+<span class="sd">    which understand traits attribute access via dotted notation and</span>
+<span class="sd">    the builtin getattr function.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">monitors</span> <span class="o">=</span> <span class="p">[</span><span class="n">TraitAttributeMonitor</span><span class="p">,</span> <span class="n">TraitGetattrMonitor</span><span class="p">]</span>
+    <span class="n">expr</span> <span class="o">=</span> <span class="n">SubscriptionExpression</span><span class="p">(</span><span class="n">monitors</span><span class="p">,</span> <span class="n">cmpnt</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">identifiers</span><span class="p">,</span> <span class="n">f_globals</span><span class="p">,</span> <span class="n">operators</span><span class="p">)</span>
+    <span class="n">cmpnt</span><span class="o">.</span><span class="n">_bind_expression</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">expr</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="op_delegate"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.operators.op_delegate">[docs]</a><span class="k">def</span> <span class="nf">op_delegate</span><span class="p">(</span><span class="n">cmpnt</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">identifiers</span><span class="p">,</span> <span class="n">f_globals</span><span class="p">,</span> <span class="n">operators</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; The default Enaml operator for &#39;:=&#39; expressions. It binds an</span>
+<span class="sd">    instance of DelegationExpression to the component using monitors</span>
+<span class="sd">    which understand traits attribute access via dotted notation and</span>
+<span class="sd">    the builtin getattr function, and inverters which understand the</span>
+<span class="sd">    dotted attribute access, implicit attribute access, and also the</span>
+<span class="sd">    builtin getattr function.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">inverters</span> <span class="o">=</span> <span class="p">[</span><span class="n">GenericAttributeInverter</span><span class="p">,</span> <span class="n">GetattrInverter</span><span class="p">,</span> <span class="n">ImplicitAttrInverter</span><span class="p">]</span>
+    <span class="n">monitors</span> <span class="o">=</span> <span class="p">[</span><span class="n">TraitAttributeMonitor</span><span class="p">,</span> <span class="n">TraitGetattrMonitor</span><span class="p">]</span>
+    <span class="n">expr</span> <span class="o">=</span> <span class="n">DelegationExpression</span><span class="p">(</span><span class="n">inverters</span><span class="p">,</span> <span class="n">monitors</span><span class="p">,</span> <span class="n">cmpnt</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">identifiers</span><span class="p">,</span> <span class="n">f_globals</span><span class="p">,</span> <span class="n">operators</span><span class="p">)</span>
+    <span class="n">cmpnt</span><span class="o">.</span><span class="n">_bind_expression</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">expr</span><span class="p">)</span>
+
+</div>
+<span class="n">OPERATORS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&#39;__operator_Equal__&#39;</span><span class="p">:</span> <span class="n">op_simple</span><span class="p">,</span>
+    <span class="s">&#39;__operator_LessLess__&#39;</span><span class="p">:</span> <span class="n">op_subscribe</span><span class="p">,</span>
+    <span class="s">&#39;__operator_ColonEqual__&#39;</span><span class="p">:</span> <span class="n">op_delegate</span><span class="p">,</span>
+    <span class="s">&#39;__operator_ColonColon__&#39;</span><span class="p">:</span> <span class="n">op_notify</span><span class="p">,</span>
+    <span class="s">&#39;__operator_GreaterGreater__&#39;</span><span class="p">:</span> <span class="n">op_update</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.core.operators</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Sep 12, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>
