@@ -1,0 +1,43 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2012, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+""" An example of the `IntField` stdlib widget.
+
+An `FloatField` is a stdlib widget based on a `Field` widget which uses an
+`FloatValidator` to perform validation on the text input.
+
+"""
+from enaml.widgets.api import Window, Form, Label, Field, CheckBox
+from enaml.stdlib.fields import FloatField
+
+
+enamldef Main(Window):
+    Form:
+        Label:
+            text = 'FloatField'
+        FloatField:
+            maximum := max_field.value
+            minimum := min_field.value
+            allow_exponent := exponent_field.checked
+            value ::
+                print 'Value changed to:', value
+        
+        Label:
+            text = 'Maximum'
+        FloatField:
+            id: max_field
+            value = 100.0
+        
+        Label:
+            text = 'Minimum'
+        FloatField:
+            id: min_field
+            value = 0.0
+        
+        Label:
+            text = 'Allow Exponents'
+        CheckBox:
+            id: exponent_field
+            checked = True 
+        
