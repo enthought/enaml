@@ -1,9 +1,9 @@
 Align Example
 ===============================================================================
 
-:download:`align.enaml <../../../examples/widgets/align.enaml>`
+:download:`align.enaml <../../../examples/layout/basic/align.enaml>`
 
-.. literalinclude:: ../../../examples/widgets/align.enaml
+.. literalinclude:: ../../../examples/layout/basic/align.enaml
     :language: python
 
 ::

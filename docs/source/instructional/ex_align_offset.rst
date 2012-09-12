@@ -1,9 +1,9 @@
 AlignOffset Example
 ===============================================================================
 
-:download:`align_offset.enaml <../../../examples/widgets/align_offset.enaml>`
+:download:`align_offset.enaml <../../../examples/layout/basic/align_offset.enaml>`
 
-.. literalinclude:: ../../../examples/widgets/align_offset.enaml
+.. literalinclude:: ../../../examples/layout/basic/align_offset.enaml
     :language: python
 
 ::

@@ -1,9 +1,9 @@
 Vbox Example
 ===============================================================================
 
-:download:`vbox.enaml <../../../examples/widgets/vbox.enaml>`
+:download:`vbox.enaml <../../../examples/layout/basic/vbox.enaml>`
 
-.. literalinclude:: ../../../examples/widgets/vbox.enaml
+.. literalinclude:: ../../../examples/layout/basic/vbox.enaml
     :language: python
 
 ::

@@ -1,9 +1,9 @@
 HboxSpacing Example
 ===============================================================================
 
-:download:`hbox_spacing.enaml <../../../examples/widgets/hbox_spacing.enaml>`
+:download:`hbox_spacing.enaml <../../../examples/layout/basic/hbox_spacing.enaml>`
 
-.. literalinclude:: ../../../examples/widgets/hbox_spacing.enaml
+.. literalinclude:: ../../../examples/layout/basic/hbox_spacing.enaml
     :language: python
 
 ::

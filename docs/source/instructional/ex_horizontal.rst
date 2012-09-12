@@ -1,9 +1,9 @@
 Horizontal Example
 ===============================================================================
 
-:download:`horizontal.enaml <../../../examples/widgets/horizontal.enaml>`
+:download:`horizontal.enaml <../../../examples/layout/basic/horizontal.enaml>`
 
-.. literalinclude:: ../../../examples/widgets/horizontal.enaml
+.. literalinclude:: ../../../examples/layout/basic/horizontal.enaml
     :language: python
 
 ::

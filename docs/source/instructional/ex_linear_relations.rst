@@ -1,9 +1,9 @@
 LinearRelations Example
 ===============================================================================
 
-:download:`linear_relations.enaml <../../../examples/widgets/linear_relations.enaml>`
+:download:`linear_relations.enaml <../../../examples/layout/basic/linear_relations.enaml>`
 
-.. literalinclude:: ../../../examples/widgets/linear_relations.enaml
+.. literalinclude:: ../../../examples/layout/basic/linear_relations.enaml
     :language: python
 
 ::

@@ -1,9 +1,9 @@
 Hbox Example
 ===============================================================================
 
-:download:`hbox.enaml <../../../examples/widgets/hbox.enaml>`
+:download:`hbox.enaml <../../../examples/layout/basic/hbox.enaml>`
 
-.. literalinclude:: ../../../examples/widgets/hbox.enaml
+.. literalinclude:: ../../../examples/layout/basic/hbox.enaml
     :language: python
 
 ::

@@ -1,9 +1,9 @@
 Vertical Example
 ===============================================================================
 
-:download:`vertical.enaml <../../../examples/widgets/vertical.enaml>`
+:download:`vertical.enaml <../../../examples/layout/basic/vertical.enaml>`
 
-.. literalinclude:: ../../../examples/widgets/vertical.enaml
+.. literalinclude:: ../../../examples/layout/basic/vertical.enaml
     :language: python
 
 ::

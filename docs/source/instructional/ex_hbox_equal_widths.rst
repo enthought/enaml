@@ -1,9 +1,9 @@
 HboxEqualWidths Example
 ===============================================================================
 
-:download:`hbox_equal_widths.enaml <../../../examples/widgets/hbox_equal_widths.enaml>`
+:download:`hbox_equal_widths.enaml <../../../examples/layout/basic/hbox_equal_widths.enaml>`
 
-.. literalinclude:: ../../../examples/widgets/hbox_equal_widths.enaml
+.. literalinclude:: ../../../examples/layout/basic/hbox_equal_widths.enaml
     :language: python
 
 ::
