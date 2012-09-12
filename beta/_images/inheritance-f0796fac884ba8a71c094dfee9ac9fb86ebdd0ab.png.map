@@ -1,7 +1,0 @@
-<map id="inheritanceff66dada8c" name="inheritanceff66dada8c">
-<area shape="rect" id="node1" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.qt.qt_constraints_widget.QtConstraintsWidget" title="QtConstraintsWidget" alt="" coords="363,5,500,31"/>
-<area shape="rect" id="node5" href="enaml.widgets.container.Container.html#enaml.qt.qt_container.QtContainer" title="QtContainer" alt="" coords="543,5,631,31"/>
-<area shape="rect" id="node2" href="enaml.widgets.widget_component.WidgetComponent.html#enaml.qt.qt_widget_component.QtWidgetComponent" title="QtWidgetComponent" alt="" coords="182,5,320,31"/>
-<area shape="rect" id="node4" href="#enaml.qt.qt_group_box.QtGroupBox" title="QtGroupBox" alt="" coords="674,5,763,31"/>
-<area shape="rect" id="node7" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget" title="QtMessengerWidget" alt="" coords="5,5,138,31"/>
-</map>

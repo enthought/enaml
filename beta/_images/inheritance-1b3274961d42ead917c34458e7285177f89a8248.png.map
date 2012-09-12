@@ -1,8 +1,0 @@
-<map id="inheritanceee44a8ece3" name="inheritanceee44a8ece3">
-<area shape="rect" id="node1" href="#enaml.core.expressions.UpdateExpression" title="UpdateExpression" alt="" coords="218,5,356,35"/>
-<area shape="rect" id="node2" href="#enaml.core.expressions.AbstractExpression" title="AbstractExpression" alt="" coords="6,85,152,115"/>
-<area shape="rect" id="node4" href="#enaml.core.expressions.SimpleExpression" title="SimpleExpression" alt="" coords="219,59,354,88"/>
-<area shape="rect" id="node6" href="#enaml.core.expressions.NotificationExpression" title="NotificationExpression" alt="" coords="203,112,370,141"/>
-<area shape="rect" id="node9" href="#enaml.core.expressions.SubscriptionExpression" title="SubscriptionExpression" alt="" coords="200,165,373,195"/>
-<area shape="rect" id="node8" href="#enaml.core.expressions.DelegationExpression" title="DelegationExpression" alt="" coords="422,165,583,195"/>
-</map>
