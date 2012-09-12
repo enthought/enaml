@@ -1,0 +1,227 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.qt.qt_splitter &mdash; enaml 0.3alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.3alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.3alpha documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.qt.qt_splitter</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.qt.qt_splitter</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c"># All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">.qt.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span>
+<span class="kn">from</span> <span class="nn">.qt.QtGui</span> <span class="kn">import</span> <span class="n">QSplitter</span>
+<span class="kn">from</span> <span class="nn">.qt_constraints_widget</span> <span class="kn">import</span> <span class="n">QtConstraintsWidget</span>
+
+
+<span class="n">_ORIENTATION_MAP</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&#39;horizontal&#39;</span><span class="p">:</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Horizontal</span><span class="p">,</span>
+    <span class="s">&#39;vertical&#39;</span><span class="p">:</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Vertical</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="QtSplitter"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.splitter.Splitter.html#enaml.qt.qt_splitter.QtSplitter">[docs]</a><span class="k">class</span> <span class="nc">QtSplitter</span><span class="p">(</span><span class="n">QtConstraintsWidget</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A Qt implementation of an Enaml Splitter.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#: Storage for the splitter widget ids</span>
+    <span class="n">_splitter_widget_ids</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Setup methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="QtSplitter.create_widget"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.splitter.Splitter.html#enaml.qt.qt_splitter.QtSplitter.create_widget">[docs]</a>    <span class="k">def</span> <span class="nf">create_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">tree</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates the underlying QSplitter control.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">QSplitter</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtSplitter.create"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.splitter.Splitter.html#enaml.qt.qt_splitter.QtSplitter.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tree</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Create and initialize the underlying control.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">QtSplitter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_splitter_widget_ids</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="s">&#39;splitter_widget_ids&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_orientation</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="s">&#39;orientation&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_live_drag</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="s">&#39;live_drag&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_preferred_sizes</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="s">&#39;preferred_sizes&#39;</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="QtSplitter.init_layout"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.splitter.Splitter.html#enaml.qt.qt_splitter.QtSplitter.init_layout">[docs]</a>    <span class="k">def</span> <span class="nf">init_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the layout initialization for the splitter.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">QtSplitter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">init_layout</span><span class="p">()</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span>
+        <span class="n">find_child</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_child</span>
+        <span class="k">for</span> <span class="n">widget_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_splitter_widget_ids</span><span class="p">:</span>
+            <span class="n">child</span> <span class="o">=</span> <span class="n">find_child</span><span class="p">(</span><span class="n">widget_id</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">child</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">widget</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">widget</span><span class="p">())</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Message Handler Methods </span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="QtSplitter.on_action_set_orientation"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.splitter.Splitter.html#enaml.qt.qt_splitter.QtSplitter.on_action_set_orientation">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_set_orientation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;set_orientation&#39; action from the Enaml widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_orientation</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s">&#39;orientation&#39;</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="QtSplitter.on_action_set_live_drag"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.splitter.Splitter.html#enaml.qt.qt_splitter.QtSplitter.on_action_set_live_drag">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_set_live_drag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;set_live_drag&#39; action from the Enaml widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_live_drag</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s">&#39;live_drag&#39;</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="QtSplitter.on_action_set_preferred_sizes"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.splitter.Splitter.html#enaml.qt.qt_splitter.QtSplitter.on_action_set_preferred_sizes">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_set_preferred_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;set_preferred_sizes&#39; action from the Enaml </span>
+<span class="sd">        widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_preferred_sizes</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s">&#39;preferred_sizes&#39;</span><span class="p">])</span>
+    
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Widget Update Methods </span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="QtSplitter.set_splitter_widget_ids"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.splitter.Splitter.html#enaml.qt.qt_splitter.QtSplitter.set_splitter_widget_ids">[docs]</a>    <span class="k">def</span> <span class="nf">set_splitter_widget_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget_ids</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the splitter widget ids for the underlying widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_splitter_widget_ids</span> <span class="o">=</span> <span class="n">widget_ids</span>
+</div>
+<div class="viewcode-block" id="QtSplitter.set_orientation"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.splitter.Splitter.html#enaml.qt.qt_splitter.QtSplitter.set_orientation">[docs]</a>    <span class="k">def</span> <span class="nf">set_orientation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orientation</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Update the orientation of the QSplitter.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">q_orientation</span> <span class="o">=</span> <span class="n">_ORIENTATION_MAP</span><span class="p">[</span><span class="n">orientation</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">setOrientation</span><span class="p">(</span><span class="n">q_orientation</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtSplitter.set_live_drag"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.splitter.Splitter.html#enaml.qt.qt_splitter.QtSplitter.set_live_drag">[docs]</a>    <span class="k">def</span> <span class="nf">set_live_drag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">live_drag</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Update the dragging mode of the QSplitter.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">setOpaqueResize</span><span class="p">(</span><span class="n">live_drag</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtSplitter.set_preferred_sizes"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.splitter.Splitter.html#enaml.qt.qt_splitter.QtSplitter.set_preferred_sizes">[docs]</a>    <span class="k">def</span> <span class="nf">set_preferred_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sizes</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the preferred sizes for the children.</span>
+
+<span class="sd">        For sizes not supplied by the user, either via None values or </span>
+<span class="sd">        a list which is too short, the current size for that element</span>
+<span class="sd">        will be used in its place.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span>
+        <span class="n">curr_sizes</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">sizes</span><span class="p">()[:]</span>
+        <span class="n">max_idx</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">curr_sizes</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">sizes</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">max_idx</span><span class="p">):</span>
+            <span class="n">size</span> <span class="o">=</span> <span class="n">sizes</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">curr_sizes</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">size</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">setSizes</span><span class="p">(</span><span class="n">curr_sizes</span><span class="p">)</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.qt.qt_splitter</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Sep 12, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

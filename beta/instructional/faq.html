@@ -1,0 +1,160 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Help and Troubleshooting &mdash; enaml 0.3alpha documentation</title>
+    
+    <link rel="stylesheet" href="../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.3alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../_static/et.ico"/>
+    <link rel="top" title="enaml 0.3alpha documentation" href="../index.html" />
+    <link rel="up" title="Enaml Getting Started Guide and Tutorials" href="index.html" />
+    <link rel="next" title="Enaml API Reference" href="../api_ref/index.html" />
+    <link rel="prev" title="NestedContainers Example" href="ex_nested_containers.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../api_ref/index.html" title="Enaml API Reference"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="ex_nested_containers.html" title="NestedContainers Example"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
+  
+    <li><a href="#">Help and Troubleshooting</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Help and Troubleshooting</a><ul>
+<li><a class="reference internal" href="#faq-s">FAQ&#8217;s</a><ul>
+<li><a class="reference internal" href="#all-of-a-sudden-enaml-quit-compiling-what-happened">All of a sudden, Enaml quit compiling, what happened?</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/instructional/faq.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="help-and-troubleshooting">
+<h1>Help and Troubleshooting<a class="headerlink" href="#help-and-troubleshooting" title="Permalink to this headline">¶</a></h1>
+<p>For the curious, there is the <a class="reference internal" href="#faq"><em>FAQ&#8217;s</em></a> section.</p>
+<div class="section" id="faq-s">
+<span id="faq"></span><h2>FAQ&#8217;s<a class="headerlink" href="#faq-s" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="all-of-a-sudden-enaml-quit-compiling-what-happened">
+<h3>All of a sudden, Enaml quit compiling, what happened?<a class="headerlink" href="#all-of-a-sudden-enaml-quit-compiling-what-happened" title="Permalink to this headline">¶</a></h3>
+<p>Did you just use EPD or enpkg to install or update your Python distribution? If
+so, it&#8217;s possible one or more of the Enaml <a class="reference internal" href="overview.html#dependencies"><em>Prerequisites</em></a> got bumped
+out. Try running <tt class="docutils literal"><span class="pre">python</span> <span class="pre">setup.py</span> <span class="pre">install</span></tt> or <tt class="docutils literal"><span class="pre">python</span> <span class="pre">setup.py</span> <span class="pre">develop</span></tt> in
+the packages Enaml needs if they are not included in your distrubtion. For
+example, <tt class="docutils literal"><span class="pre">casuarius</span></tt> is necessary for Enaml but not included in the EPD
+during beta development of Enaml (because <tt class="docutils literal"><span class="pre">casuarius</span></tt> is also under
+development.)</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../api_ref/index.html" title="Enaml API Reference"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="ex_nested_containers.html" title="NestedContainers Example"
+             >previous</a> |</li>
+        <li><a href="../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
+  
+    <li><a href="#">Help and Troubleshooting</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Sep 12, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

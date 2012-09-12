@@ -1,0 +1,618 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.core.enaml_compiler &mdash; enaml 0.3alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.3alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.3alpha documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.core.enaml_compiler</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.core.enaml_compiler</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">import</span> <span class="nn">ast</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">types</span>
+
+<span class="kn">from</span> <span class="nn">.byteplay</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Code</span><span class="p">,</span> <span class="n">LOAD_FAST</span><span class="p">,</span> <span class="n">CALL_FUNCTION</span><span class="p">,</span> <span class="n">LOAD_GLOBAL</span><span class="p">,</span> <span class="n">STORE_FAST</span><span class="p">,</span> <span class="n">LOAD_CONST</span><span class="p">,</span>
+    <span class="n">LOAD_ATTR</span><span class="p">,</span> <span class="n">STORE_SUBSCR</span><span class="p">,</span> <span class="n">RETURN_VALUE</span><span class="p">,</span> <span class="n">POP_TOP</span><span class="p">,</span> <span class="n">MAKE_FUNCTION</span><span class="p">,</span> <span class="n">STORE_NAME</span><span class="p">,</span>
+    <span class="n">LOAD_NAME</span><span class="p">,</span> <span class="n">DUP_TOP</span><span class="p">,</span> <span class="n">SetLineno</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="c"># Increment this number whenever the compiler changes the code which it</span>
+<span class="c"># generates. This number is used by the import hooks to know which version</span>
+<span class="c"># of a .enamlc file is valid for the Enaml compiler version in use. If </span>
+<span class="c"># this number is not incremented on change, it may result in .enamlc</span>
+<span class="c"># files which fail on import.</span>
+<span class="c">#</span>
+<span class="c"># Version History</span>
+<span class="c"># ---------------</span>
+<span class="c"># 1 : Initial compiler version - 2 February 2012</span>
+<span class="c"># 2 : Update line number handling - 26 March 2012</span>
+<span class="c">#     When compiling code objects with mode=&#39;eval&#39;, Python ignores the </span>
+<span class="c">#     line number specified by the ast. The workaround is to compile the </span>
+<span class="c">#     code object, then make a new copy of it with the proper firstlineno </span>
+<span class="c">#     set via the types.CodeType constructor.</span>
+<span class="c"># 3 : Update the generated code to remove the toolkit - 21 June 2012</span>
+<span class="c">#     This updates the compiler for the coming switch to async UI&#39;s</span>
+<span class="c">#     which will see the removal of the Toolkit concept. The only</span>
+<span class="c">#     magic scope maintained is for that of operators.</span>
+<span class="c"># 4 : Update component building - 27 July 2012</span>
+<span class="c">#     This updates the compiler to handle the new Enaml creation semantics</span>
+<span class="c">#     that don&#39;t rely on __enaml_call__. Instead the parent is passed </span>
+<span class="c">#     directly to the component cls which is a subclass of Declarative.</span>
+<span class="c">#     That class handles calling the builder functions upon instance</span>
+<span class="c">#     creation. This allows us to get rid of the EnamlDef class and</span>
+<span class="c">#     make enamldef constructs proper subclasses of Declarative.</span>
+<span class="c"># 5 : Change the import names - 28 July 2012</span>
+<span class="c">#     This changes the imported helper name from _make_decl_subclass_ </span>
+<span class="c">#     to _make_enamldef_helper_ which is more descriptive, but equally </span>
+<span class="c">#     mangled. It also updates the method name used on the Declarative</span>
+<span class="c">#     component for adding attribute from _add_decl_attr to the more</span>
+<span class="c">#     descriptive _add_user_attribute. Finally, it adds the eval_compile </span>
+<span class="c">#     function for compiling Python code in &#39;eval&#39; mode with proper line </span>
+<span class="c">#     number handling.</span>
+<span class="n">COMPILER_VERSION</span> <span class="o">=</span> <span class="mi">5</span>
+
+
+<span class="c"># The Enaml compiler translates an Enaml AST into Python bytecode.</span>
+<span class="c">#</span>
+<span class="c"># Given this sample declaration in Enaml::</span>
+<span class="c">#          </span>
+<span class="c"># FooWindow(Window):</span>
+<span class="c">#     id: foo</span>
+<span class="c">#     a = &#39;12&#39;</span>
+<span class="c">#     PushButton:</span>
+<span class="c">#         id: btn</span>
+<span class="c">#         text = &#39;clickme&#39;</span>
+<span class="c">#</span>
+<span class="c"># The compiler generate bytecode that would corresponds to the following</span>
+<span class="c"># Python code (though the function object is never assigned to a name in</span>
+<span class="c"># the global namespace).</span>
+<span class="c">#</span>
+<span class="c"># def FooWindow(instance, identifiers, operators):</span>
+<span class="c">#     f_globals = globals()</span>
+<span class="c">#     eval_ = eval</span>
+<span class="c">#     _var_1 = instance</span>
+<span class="c">#     identifiers[&#39;foo&#39;] = _var_1</span>
+<span class="c">#     op = eval_(&#39;__operator_Equal__&#39;, operators)</span>
+<span class="c">#     op(_var_1, &#39;a&#39;, &lt;code for &#39;12&#39;&gt;, identifiers, f_globals, operators)</span>
+<span class="c">#     _var_2 = eval_(&#39;PushButton&#39;, f_globals)(_var_1)</span>
+<span class="c">#     identifiers[&#39;btn&#39;] = _var_2</span>
+<span class="c">#     op = eval_(&#39;__operator_Equal__&#39;, operators)</span>
+<span class="c">#     op(_var_2, &#39;text&#39;, &lt;code for &#39;clickme&#39;&gt;, identifiers, f_globals, operators)</span>
+<span class="c">#     return _var_1</span>
+<span class="c">#</span>
+<span class="c"># FooWindow = _make_enamldef_helper_(&#39;FooWindow&#39;, Window, FooWindow)</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Compiler Helpers</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Code that will be executed at the top of every enaml module</span>
+<span class="n">STARTUP</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;from enaml.core.compiler_helpers import _make_enamldef_helper_&#39;</span><span class="p">]</span>
+
+
+<span class="c"># Cleanup code that will be included in every compiled enaml module</span>
+<span class="n">CLEANUP</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;del _make_enamldef_helper_&#39;</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">_var_name_generator</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; Returns a generator that generates sequential variable names for</span>
+<span class="sd">    use in a code block.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="s">&#39;_var_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">count</span><span class="o">.</span><span class="n">next</span><span class="p">())</span>
+
+
+<div class="viewcode-block" id="update_firstlineno"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.enaml_compiler.update_firstlineno">[docs]</a><span class="k">def</span> <span class="nf">update_firstlineno</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">firstlineno</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Returns a new code object with an updated first line number.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">types</span><span class="o">.</span><span class="n">CodeType</span><span class="p">(</span>
+        <span class="n">code</span><span class="o">.</span><span class="n">co_argcount</span><span class="p">,</span> <span class="n">code</span><span class="o">.</span><span class="n">co_nlocals</span><span class="p">,</span> <span class="n">code</span><span class="o">.</span><span class="n">co_stacksize</span><span class="p">,</span> <span class="n">code</span><span class="o">.</span><span class="n">co_flags</span><span class="p">,</span>
+        <span class="n">code</span><span class="o">.</span><span class="n">co_code</span><span class="p">,</span> <span class="n">code</span><span class="o">.</span><span class="n">co_consts</span><span class="p">,</span> <span class="n">code</span><span class="o">.</span><span class="n">co_names</span><span class="p">,</span> <span class="n">code</span><span class="o">.</span><span class="n">co_varnames</span><span class="p">,</span>
+        <span class="n">code</span><span class="o">.</span><span class="n">co_filename</span><span class="p">,</span> <span class="n">code</span><span class="o">.</span><span class="n">co_name</span><span class="p">,</span> <span class="n">firstlineno</span><span class="p">,</span> <span class="n">code</span><span class="o">.</span><span class="n">co_lnotab</span><span class="p">,</span> 
+        <span class="n">code</span><span class="o">.</span><span class="n">co_freevars</span><span class="p">,</span> <span class="n">code</span><span class="o">.</span><span class="n">co_cellvars</span><span class="p">,</span>
+    <span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="eval_compile"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.enaml_compiler.eval_compile">[docs]</a><span class="k">def</span> <span class="nf">eval_compile</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">lineno</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Compile the item in eval mode, updating the lineno as necessary.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    item : string or ast</span>
+<span class="sd">        A string of Python code, or a Python AST object.</span>
+
+<span class="sd">    filename : string</span>
+<span class="sd">        The string filename to use when compiling.</span>
+
+<span class="sd">    lineno : int</span>
+<span class="sd">        The line number to use for the returned code object.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">code</span> <span class="o">=</span> <span class="nb">compile</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;eval&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">update_firstlineno</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">lineno</span><span class="p">)</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Node Visitor</span>
+<span class="c">#------------------------------------------------------------------------------</span></div>
+<span class="k">class</span> <span class="nc">_NodeVisitor</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A node visitor class that is used as base class for the various</span>
+<span class="sd">    Enaml compilers.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">visit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;  The main visitor dispatch method.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;visit_</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">node</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="n">method</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_visit</span>
+        <span class="n">method</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">default_visit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The default visitor method. Raises an error since there </span>
+<span class="sd">        should not be any unhandled nodes.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Unhandled Node </span><span class="si">%s</span><span class="s">.&#39;</span> <span class="o">%</span> <span class="n">node</span><span class="p">)</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Declaration Compiler</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="DeclarationCompiler"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.enaml_compiler.DeclarationCompiler">[docs]</a><span class="k">class</span> <span class="nc">DeclarationCompiler</span><span class="p">(</span><span class="n">_NodeVisitor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A visitor which compiles a Declaration node into a code object.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="DeclarationCompiler.compile"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.enaml_compiler.DeclarationCompiler.compile">[docs]</a>    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The main entry point of the DeclarationCompiler.</span>
+
+<span class="sd">        This compiler compiles the given Declaration node into a code </span>
+<span class="sd">        object for a builder function.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        node : Declaration</span>
+<span class="sd">            The Declaration node to compiler.</span>
+
+<span class="sd">        filename : str</span>
+<span class="sd">            The string filename to use for the generated code objects.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">compiler</span> <span class="o">=</span> <span class="n">cls</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">compiler</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+        <span class="n">code_ops</span> <span class="o">=</span> <span class="n">compiler</span><span class="o">.</span><span class="n">code_ops</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="n">Code</span><span class="p">(</span>
+            <span class="n">code_ops</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[</span><span class="s">&#39;instance&#39;</span><span class="p">,</span> <span class="s">&#39;identifiers&#39;</span><span class="p">,</span> <span class="s">&#39;operators&#39;</span><span class="p">],</span> <span class="bp">False</span><span class="p">,</span> 
+            <span class="bp">False</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">doc</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">code</span>
+</div>
+<div class="viewcode-block" id="DeclarationCompiler.__init__"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.enaml_compiler.DeclarationCompiler.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize a DeclarationCompiler.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        filename : str</span>
+<span class="sd">            The filename string to use for the generated code object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">code_ops</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extend_ops</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">code_ops</span><span class="o">.</span><span class="n">extend</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name_gen</span> <span class="o">=</span> <span class="n">_var_name_generator</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name_stack</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">push_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_stack</span><span class="o">.</span><span class="n">append</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pop_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_stack</span><span class="o">.</span><span class="n">pop</span>
+</div>
+<div class="viewcode-block" id="DeclarationCompiler.curr_name"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.enaml_compiler.DeclarationCompiler.curr_name">[docs]</a>    <span class="k">def</span> <span class="nf">curr_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the current variable name on the stack.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_stack</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</div>
+<div class="viewcode-block" id="DeclarationCompiler.visit_Declaration"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.enaml_compiler.DeclarationCompiler.visit_Declaration">[docs]</a>    <span class="k">def</span> <span class="nf">visit_Declaration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates the bytecode ops for a declaration node. </span>
+
+<span class="sd">        This node visitor pulls the passed in root into a local var</span>
+<span class="sd">        and stores it&#39;s identifier if one is given. It also loads</span>
+<span class="sd">        in the commonly used local variables `f_globals`, and `eval_`.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_gen</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+        <span class="n">extend_ops</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extend_ops</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">push_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="n">extend_ops</span><span class="p">([</span>
+            <span class="c"># f_globals = globals()</span>
+            <span class="p">(</span><span class="n">LOAD_GLOBAL</span><span class="p">,</span> <span class="s">&#39;globals&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">CALL_FUNCTION</span><span class="p">,</span> <span class="mh">0x0000</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">STORE_FAST</span><span class="p">,</span> <span class="s">&#39;f_globals&#39;</span><span class="p">),</span>
+            <span class="c"># eval_ = eval</span>
+            <span class="p">(</span><span class="n">LOAD_GLOBAL</span><span class="p">,</span> <span class="s">&#39;eval&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">STORE_FAST</span><span class="p">,</span> <span class="s">&#39;eval_&#39;</span><span class="p">),</span>
+            <span class="c"># _var_1 = instance</span>
+            <span class="p">(</span><span class="n">LOAD_FAST</span><span class="p">,</span> <span class="s">&#39;instance&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">STORE_FAST</span><span class="p">,</span> <span class="n">name</span><span class="p">),</span>
+        <span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">identifier</span><span class="p">:</span>
+            <span class="n">extend_ops</span><span class="p">([</span>
+                <span class="c"># identifiers[&#39;foo&#39;] = _var_1</span>
+                <span class="p">(</span><span class="n">LOAD_FAST</span><span class="p">,</span> <span class="n">name</span><span class="p">),</span>
+                <span class="p">(</span><span class="n">LOAD_FAST</span><span class="p">,</span> <span class="s">&#39;identifiers&#39;</span><span class="p">),</span>
+                <span class="p">(</span><span class="n">LOAD_CONST</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">identifier</span><span class="p">),</span>
+                <span class="p">(</span><span class="n">STORE_SUBSCR</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
+            <span class="p">])</span>
+        
+        <span class="n">visit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">visit</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">body</span><span class="p">:</span>
+            <span class="n">visit</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        
+        <span class="n">extend_ops</span><span class="p">([</span>
+            <span class="c"># return _var_1</span>
+            <span class="p">(</span><span class="n">LOAD_FAST</span><span class="p">,</span> <span class="n">name</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">RETURN_VALUE</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
+        <span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pop_name</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="DeclarationCompiler.visit_AttributeDeclaration"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.enaml_compiler.DeclarationCompiler.visit_AttributeDeclaration">[docs]</a>    <span class="k">def</span> <span class="nf">visit_AttributeDeclaration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates the bytecode ops for an attribute declaration. </span>
+
+<span class="sd">        The attributes will have already been added to the subclass, so</span>
+<span class="sd">        this visitor just dispatches to any default bindings which may</span>
+<span class="sd">        exist on the attribute declaration, since the binding happens</span>
+<span class="sd">        at instantiation time via operators.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">default</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">default</span>
+        <span class="k">if</span> <span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">default</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="DeclarationCompiler.visit_AttributeBinding"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.enaml_compiler.DeclarationCompiler.visit_AttributeBinding">[docs]</a>    <span class="k">def</span> <span class="nf">visit_AttributeBinding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates the bytecode ops for an attribute binding. </span>
+
+<span class="sd">        This visitor handles loading and calling the appropriate </span>
+<span class="sd">        operator.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span>
+        <span class="n">op_code</span> <span class="o">=</span> <span class="n">eval_compile</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">binding</span><span class="o">.</span><span class="n">op</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">binding</span><span class="o">.</span><span class="n">lineno</span><span class="p">)</span>
+        <span class="n">py_ast</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">binding</span><span class="o">.</span><span class="n">expr</span><span class="o">.</span><span class="n">py_ast</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">py_ast</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+            <span class="n">expr_code</span> <span class="o">=</span> <span class="nb">compile</span><span class="p">(</span><span class="n">py_ast</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;exec&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">expr_code</span> <span class="o">=</span> <span class="n">eval_compile</span><span class="p">(</span><span class="n">py_ast</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">py_ast</span><span class="o">.</span><span class="n">lineno</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extend_ops</span><span class="p">([</span>
+            <span class="c"># op = eval(&#39;__operator_Equal__&#39;, operators)</span>
+            <span class="c"># op(item, &#39;a&#39;, code, identifiers, f_globals, operators)</span>
+            <span class="p">(</span><span class="n">LOAD_FAST</span><span class="p">,</span> <span class="s">&#39;eval_&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">LOAD_CONST</span><span class="p">,</span> <span class="n">op_code</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">LOAD_FAST</span><span class="p">,</span> <span class="s">&#39;operators&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">CALL_FUNCTION</span><span class="p">,</span> <span class="mh">0x0002</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">LOAD_FAST</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">curr_name</span><span class="p">()),</span>
+            <span class="p">(</span><span class="n">LOAD_CONST</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">name</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">LOAD_CONST</span><span class="p">,</span> <span class="n">expr_code</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">LOAD_FAST</span><span class="p">,</span> <span class="s">&#39;identifiers&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">LOAD_FAST</span><span class="p">,</span> <span class="s">&#39;f_globals&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">LOAD_FAST</span><span class="p">,</span> <span class="s">&#39;operators&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">CALL_FUNCTION</span><span class="p">,</span> <span class="mh">0x0006</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">POP_TOP</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
+        <span class="p">])</span>
+</div>
+<div class="viewcode-block" id="DeclarationCompiler.visit_Instantiation"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.enaml_compiler.DeclarationCompiler.visit_Instantiation">[docs]</a>    <span class="k">def</span> <span class="nf">visit_Instantiation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Create the bytecode ops for a component instantiation. </span>
+
+<span class="sd">        This visitor handles calling another derived component and </span>
+<span class="sd">        storing its identifier, if given.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">extend_ops</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extend_ops</span>
+        <span class="n">parent_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">curr_name</span><span class="p">()</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_gen</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">push_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">op_code</span> <span class="o">=</span> <span class="n">eval_compile</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">lineno</span><span class="p">)</span>
+        <span class="n">extend_ops</span><span class="p">([</span>
+            <span class="c"># _var_2 = eval(&#39;PushButton&#39;, f_globals)(parent)</span>
+            <span class="p">(</span><span class="n">LOAD_FAST</span><span class="p">,</span> <span class="s">&#39;eval_&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">LOAD_CONST</span><span class="p">,</span> <span class="n">op_code</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">LOAD_FAST</span><span class="p">,</span> <span class="s">&#39;f_globals&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">CALL_FUNCTION</span><span class="p">,</span> <span class="mh">0x0002</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">LOAD_FAST</span><span class="p">,</span> <span class="n">parent_name</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">CALL_FUNCTION</span><span class="p">,</span> <span class="mh">0x0001</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">STORE_FAST</span><span class="p">,</span> <span class="n">name</span><span class="p">),</span>
+        <span class="p">])</span>
+        
+        <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">identifier</span><span class="p">:</span>
+            <span class="n">extend_ops</span><span class="p">([</span>
+                <span class="c"># identifiers[&#39;btn&#39;] = _var_2</span>
+                <span class="p">(</span><span class="n">LOAD_FAST</span><span class="p">,</span> <span class="n">name</span><span class="p">),</span>
+                <span class="p">(</span><span class="n">LOAD_FAST</span><span class="p">,</span> <span class="s">&#39;identifiers&#39;</span><span class="p">),</span>
+                <span class="p">(</span><span class="n">LOAD_CONST</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">identifier</span><span class="p">),</span>
+                <span class="p">(</span><span class="n">STORE_SUBSCR</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
+            <span class="p">])</span>
+
+        <span class="n">visit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">visit</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">body</span><span class="p">:</span>
+            <span class="n">visit</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">pop_name</span><span class="p">()</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Enaml Compiler</span>
+<span class="c">#------------------------------------------------------------------------------</span></div></div>
+<div class="viewcode-block" id="EnamlCompiler"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.enaml_compiler.EnamlCompiler">[docs]</a><span class="k">class</span> <span class="nc">EnamlCompiler</span><span class="p">(</span><span class="n">_NodeVisitor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A visitor that will compile an enaml module ast node.</span>
+<span class="sd">    </span>
+<span class="sd">    The entry point is the `compile` classmethod which will compile</span>
+<span class="sd">    the ast into an appropriate python code object for a module.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="EnamlCompiler.compile"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.enaml_compiler.EnamlCompiler.compile">[docs]</a>    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">module_ast</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The main entry point of the compiler.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        module_ast : Instance(enaml_ast.Module)</span>
+<span class="sd">            The enaml module ast node that should be compiled.</span>
+<span class="sd">        </span>
+<span class="sd">        filename : str</span>
+<span class="sd">            The string filename of the module ast being compiled.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">compiler</span> <span class="o">=</span> <span class="n">cls</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">compiler</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">module_ast</span><span class="p">)</span>
+
+        <span class="n">module_ops</span> <span class="o">=</span> <span class="p">[(</span><span class="n">SetLineno</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+        <span class="n">extend_ops</span> <span class="o">=</span> <span class="n">module_ops</span><span class="o">.</span><span class="n">extend</span>
+
+        <span class="c"># Generate the startup code for the module</span>
+        <span class="k">for</span> <span class="n">start</span> <span class="ow">in</span> <span class="n">STARTUP</span><span class="p">:</span>
+            <span class="n">start_code</span> <span class="o">=</span> <span class="nb">compile</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;exec&#39;</span><span class="p">)</span>
+            <span class="c"># Skip the SetLineo and ReturnValue codes</span>
+            <span class="n">extend_ops</span><span class="p">(</span><span class="n">Code</span><span class="o">.</span><span class="n">from_code</span><span class="p">(</span><span class="n">start_code</span><span class="p">)</span><span class="o">.</span><span class="n">code</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
+
+        <span class="c"># Add in the code ops for the module</span>
+        <span class="n">extend_ops</span><span class="p">(</span><span class="n">compiler</span><span class="o">.</span><span class="n">code_ops</span><span class="p">)</span>
+
+        <span class="c"># Generate the cleanup code for the module</span>
+        <span class="k">for</span> <span class="n">end</span> <span class="ow">in</span> <span class="n">CLEANUP</span><span class="p">:</span>
+            <span class="n">end_code</span> <span class="o">=</span> <span class="nb">compile</span><span class="p">(</span><span class="n">end</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;exec&#39;</span><span class="p">)</span>
+            <span class="c"># Skip the SetLineo and ReturnValue codes</span>
+            <span class="n">extend_ops</span><span class="p">(</span><span class="n">Code</span><span class="o">.</span><span class="n">from_code</span><span class="p">(</span><span class="n">end_code</span><span class="p">)</span><span class="o">.</span><span class="n">code</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
+        
+        <span class="c"># Add in the final return value ops</span>
+        <span class="n">extend_ops</span><span class="p">([</span>
+            <span class="p">(</span><span class="n">LOAD_CONST</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">RETURN_VALUE</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
+        <span class="p">])</span>
+
+        <span class="c"># Generate and return the module code object.</span>
+        <span class="n">mod_code</span> <span class="o">=</span> <span class="n">Code</span><span class="p">(</span>
+            <span class="n">module_ops</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[],</span> <span class="bp">False</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">,</span>  <span class="n">filename</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">mod_code</span><span class="o">.</span><span class="n">to_code</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="EnamlCompiler.__init__"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.enaml_compiler.EnamlCompiler.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize an EnamlCompiler.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        filename : str</span>
+<span class="sd">            The string filename of the module ast being compiled.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">code_ops</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extend_ops</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">code_ops</span><span class="o">.</span><span class="n">extend</span>
+</div>
+<div class="viewcode-block" id="EnamlCompiler.visit_Module"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.enaml_compiler.EnamlCompiler.visit_Module">[docs]</a>    <span class="k">def</span> <span class="nf">visit_Module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The Module node visitor method. </span>
+
+<span class="sd">        This visitor dispatches to all of the body nodes of the module.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">body</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="EnamlCompiler.visit_Python"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.enaml_compiler.EnamlCompiler.visit_Python">[docs]</a>    <span class="k">def</span> <span class="nf">visit_Python</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The Python node visitor method.</span>
+<span class="sd">        </span>
+<span class="sd">        This visitor adds a chunk of raw Python into the module.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">py_code</span> <span class="o">=</span> <span class="nb">compile</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">py_ast</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;exec&#39;</span><span class="p">)</span>
+        <span class="n">bpc</span> <span class="o">=</span> <span class="n">Code</span><span class="o">.</span><span class="n">from_code</span><span class="p">(</span><span class="n">py_code</span><span class="p">)</span>
+        <span class="c"># Skip the SetLineo and ReturnValue codes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extend_ops</span><span class="p">(</span><span class="n">bpc</span><span class="o">.</span><span class="n">code</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="EnamlCompiler.visit_Declaration"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.enaml_compiler.EnamlCompiler.visit_Declaration">[docs]</a>    <span class="k">def</span> <span class="nf">visit_Declaration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The Declaration node visitor. </span>
+
+<span class="sd">        This generates the bytecode ops whic create a new type for the </span>
+<span class="sd">        enamldef and then adds the user defined attributes and events.</span>
+<span class="sd">        It also dispatches to the DeclarationCompiler which will create</span>
+<span class="sd">        the builder function for the new type.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">extend_ops</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extend_ops</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span>
+
+        <span class="n">func_code</span> <span class="o">=</span> <span class="n">DeclarationCompiler</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+        <span class="n">base_code</span> <span class="o">=</span> <span class="n">eval_compile</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">py_ast</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">lineno</span><span class="p">)</span>
+
+        <span class="n">extend_ops</span><span class="p">([</span>
+            <span class="p">(</span><span class="n">SetLineno</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">lineno</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">LOAD_NAME</span><span class="p">,</span> <span class="s">&#39;_make_enamldef_helper_&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">LOAD_CONST</span><span class="p">,</span> <span class="n">name</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">LOAD_NAME</span><span class="p">,</span> <span class="s">&#39;eval&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">LOAD_CONST</span><span class="p">,</span> <span class="n">base_code</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">LOAD_NAME</span><span class="p">,</span> <span class="s">&#39;globals&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">CALL_FUNCTION</span><span class="p">,</span> <span class="mh">0x0000</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">CALL_FUNCTION</span><span class="p">,</span> <span class="mh">0x0002</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">LOAD_CONST</span><span class="p">,</span> <span class="n">func_code</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">MAKE_FUNCTION</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">CALL_FUNCTION</span><span class="p">,</span> <span class="mh">0x0003</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">STORE_NAME</span><span class="p">,</span> <span class="n">name</span><span class="p">),</span>
+        <span class="p">])</span>
+
+        <span class="c"># We now have a new Declarative subclass stored at &#39;name&#39; to</span>
+        <span class="c"># which we need to add any user defined attributes and events.</span>
+        <span class="n">extend_ops</span><span class="p">([</span>
+            <span class="p">(</span><span class="n">LOAD_NAME</span><span class="p">,</span> <span class="n">name</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">LOAD_ATTR</span><span class="p">,</span> <span class="s">&#39;_add_user_attribute&#39;</span><span class="p">),</span>
+        <span class="p">])</span>
+
+        <span class="c"># This loop adds the ops to add the user attrs and events.</span>
+        <span class="k">for</span> <span class="n">child_node</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">body</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">child_node</span><span class="p">)</span><span class="o">.</span><span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;AttributeDeclaration&#39;</span><span class="p">:</span>
+                <span class="n">extend_ops</span><span class="p">([</span>
+                    <span class="p">(</span><span class="n">SetLineno</span><span class="p">,</span> <span class="n">child_node</span><span class="o">.</span><span class="n">lineno</span><span class="p">),</span>
+                    <span class="p">(</span><span class="n">DUP_TOP</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
+                    <span class="p">(</span><span class="n">LOAD_CONST</span><span class="p">,</span> <span class="n">child_node</span><span class="o">.</span><span class="n">name</span><span class="p">),</span>
+                <span class="p">])</span>
+                <span class="n">attr_type</span> <span class="o">=</span> <span class="n">child_node</span><span class="o">.</span><span class="n">type</span>
+                <span class="k">if</span> <span class="n">attr_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="n">attr_type_code</span> <span class="o">=</span> <span class="n">eval_compile</span><span class="p">(</span>
+                        <span class="n">attr_type</span><span class="o">.</span><span class="n">py_ast</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">attr_type</span><span class="o">.</span><span class="n">lineno</span>
+                    <span class="p">)</span>
+                    <span class="n">extend_ops</span><span class="p">([</span>
+                        <span class="p">(</span><span class="n">LOAD_NAME</span><span class="p">,</span> <span class="s">&#39;eval&#39;</span><span class="p">),</span>
+                        <span class="p">(</span><span class="n">LOAD_CONST</span><span class="p">,</span> <span class="n">attr_type_code</span><span class="p">),</span>
+                        <span class="p">(</span><span class="n">LOAD_NAME</span><span class="p">,</span> <span class="s">&#39;globals&#39;</span><span class="p">),</span>
+                        <span class="p">(</span><span class="n">CALL_FUNCTION</span><span class="p">,</span> <span class="mh">0x0000</span><span class="p">),</span>
+                        <span class="p">(</span><span class="n">CALL_FUNCTION</span><span class="p">,</span> <span class="mh">0x0002</span><span class="p">),</span>
+                        <span class="p">(</span><span class="n">LOAD_CONST</span><span class="p">,</span> <span class="n">child_node</span><span class="o">.</span><span class="n">is_event</span><span class="p">),</span>
+                        <span class="p">(</span><span class="n">CALL_FUNCTION</span><span class="p">,</span> <span class="mh">0x0003</span><span class="p">),</span>
+                        <span class="p">(</span><span class="n">POP_TOP</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
+                    <span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">extend_ops</span><span class="p">([</span>
+                        <span class="p">(</span><span class="n">LOAD_NAME</span><span class="p">,</span> <span class="s">&#39;object&#39;</span><span class="p">),</span>
+                        <span class="p">(</span><span class="n">LOAD_CONST</span><span class="p">,</span> <span class="n">child_node</span><span class="o">.</span><span class="n">is_event</span><span class="p">),</span>
+                        <span class="p">(</span><span class="n">CALL_FUNCTION</span><span class="p">,</span> <span class="mh">0x0003</span><span class="p">),</span>
+                        <span class="p">(</span><span class="n">POP_TOP</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
+                    <span class="p">])</span>
+
+        <span class="n">extend_ops</span><span class="p">([(</span><span class="n">POP_TOP</span><span class="p">,</span> <span class="bp">None</span><span class="p">)])</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.core.enaml_compiler</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Sep 12, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,500 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Container &mdash; enaml 0.3alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.3alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.3alpha documentation" href="../../index.html" />
+    <link rel="up" title="Widgets" href="../enaml.widgets.html" />
+    <link rel="next" title="Form" href="enaml.widgets.form.Form.html" />
+    <link rel="prev" title="Window" href="enaml.widgets.window.Window.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.form.Form.html" title="Form"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.window.Window.html" title="Window"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" accesskey="U">Widgets</a> &raquo;</li>
+  
+    <li><a href="#">Container</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Container</a><ul>
+<li><a class="reference internal" href="#backends">Backends</a><ul>
+<li><a class="reference internal" href="#qt">Qt</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/api_ref/widgets/enaml.widgets.container.Container.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="container">
+<h1>Container<a class="headerlink" href="#container" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="enaml.widgets.container.Container">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.container.</tt><tt class="descname">Container</tt><big>(</big><em>parent=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/container.html#Container"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.container.Container" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.widgets.constraints_widget.ConstraintsWidget" title="enaml.widgets.constraints_widget.ConstraintsWidget"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.constraints_widget.ConstraintsWidget</span></tt></a></p>
+<p>A ConstraintsWidget subclass that provides functionality for 
+laying out constrainable children according to their system of 
+constraints.</p>
+<p>The Container is the canonical component used to arrange child
+widgets using constraints-based layout. Given a heierarchy of
+components, the top-most Container will be charged with the actual
+layout of the decendents. This allows constraints to cross the 
+boundaries of Containers, enabling powerful and flexible layouts.</p>
+<p>There are widgets whose boundaries constraints may not cross. Some
+examples of these would be a ScrollArea or a TabGroup. See the 
+documentation of a given container component as to whether or not
+constraints may cross its boundaries.</p>
+<dl class="attribute">
+<dt id="enaml.widgets.container.Container.share_layout">
+<tt class="descname">share_layout</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.container.Container.share_layout" title="Permalink to this definition">¶</a></dt>
+<dd><p>A boolean which indicates whether or not to allow the layout
+ownership of this container to be transferred to an ancestor.
+This is False by default, which means that every container
+get its own layout solver. This improves speed and reduces
+memory use (by keeping a solver&#8217;s internal tableaux small)
+but at the cost of not being able to share constraints
+across Container boundaries. This flag must be explicitly
+marked as True to enable sharing.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.container.Container.contents_left">
+<tt class="descname">contents_left</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.container.Container.contents_left" title="Permalink to this definition">¶</a></dt>
+<dd><p>A read-only symbolic object that represents the internal left
+boundary of the content area of the container.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.container.Container.contents_right">
+<tt class="descname">contents_right</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.container.Container.contents_right" title="Permalink to this definition">¶</a></dt>
+<dd><p>A read-only symbolic object that represents the internal right
+boundary of the content area of the container.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.container.Container.contents_top">
+<tt class="descname">contents_top</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.container.Container.contents_top" title="Permalink to this definition">¶</a></dt>
+<dd><p>A read-only symbolic object that represents the internal top
+boundary of the content area of the container.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.container.Container.contents_bottom">
+<tt class="descname">contents_bottom</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.container.Container.contents_bottom" title="Permalink to this definition">¶</a></dt>
+<dd><p>A read-only symbolic object that represents the internal bottom
+boundary of the content area of the container.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.container.Container.contents_width">
+<tt class="descname">contents_width</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.container.Container.contents_width" title="Permalink to this definition">¶</a></dt>
+<dd><p>A read-only symbolic object that represents the internal width of
+the content area of the container.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.container.Container.contents_height">
+<tt class="descname">contents_height</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.container.Container.contents_height" title="Permalink to this definition">¶</a></dt>
+<dd><p>A read-only symbolic object that represents the internal height of
+the content area of the container.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.container.Container.contents_v_center">
+<tt class="descname">contents_v_center</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.container.Container.contents_v_center" title="Permalink to this definition">¶</a></dt>
+<dd><p>A read-only symbolic object that represents the internal center
+along the vertical direction the content area of the container.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.container.Container.contents_h_center">
+<tt class="descname">contents_h_center</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.container.Container.contents_h_center" title="Permalink to this definition">¶</a></dt>
+<dd><p>A read-only symbolic object that represents the internal center
+along the horizontal direction of the content area of the container.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.container.Container.padding">
+<tt class="descname">padding</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.container.Container.padding" title="Permalink to this definition">¶</a></dt>
+<dd><p>A box object which holds the padding for this component. The
+padding is the amount of space between the outer boundary box
+and the content box. The default padding is (10, 10, 10, 10).
+Certain subclasses, such as GroupBox, may provide additional
+margin than what is specified by the padding.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.container.Container.widgets">
+<tt class="descname">widgets</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.container.Container.widgets" title="Permalink to this definition">¶</a></dt>
+<dd><p>A read only property which returns this container&#8217;s widgets.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.container.Container.hug_width">
+<tt class="descname">hug_width</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.container.Container.hug_width" title="Permalink to this definition">¶</a></dt>
+<dd><p>Containers freely exapnd in width and height. The size hint
+constraints for a Container are used when the container is
+not sharing its layout. In these cases, expansion of the
+container is typically desired.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.container.Container.bind">
+<tt class="descname">bind</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/container.html#Container.bind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.container.Container.bind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bind the necessary change handlers for the control.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.container.Container.__implements__">
+<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.widgets.container.Container.__implements__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="backends">
+<h2>Backends<a class="headerlink" href="#backends" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="qt">
+<h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-e895c87f58b5d658f8c2e3034d322e644a132ae1.png" alt="Inheritance diagram of enaml.qt.qt_container.QtContainer" usemap="#inheritance4fd8a93c6b" class="inheritance"/>
+<map id="inheritance4fd8a93c6b" name="inheritance4fd8a93c6b">
+<area shape="rect" id="node1" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.qt.qt_constraints_widget.QtConstraintsWidget" title="QtConstraintsWidget" alt="" coords="410,5,566,35"/>
+<area shape="rect" id="node4" href="#enaml.qt.qt_container.QtContainer" title="QtContainer" alt="" coords="614,5,714,35"/>
+<area shape="rect" id="node2" href="enaml.widgets.widget_component.WidgetComponent.html#enaml.qt.qt_widget_component.QtWidgetComponent" title="QtWidgetComponent" alt="" coords="206,5,362,35"/>
+<area shape="rect" id="node6" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget" title="QtMessengerWidget" alt="" coords="6,5,157,35"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.qt.qt_container.QtContainer">
+<em class="property">class </em><tt class="descclassname">enaml.qt.qt_container.</tt><tt class="descname">QtContainer</tt><big>(</big><em>parent</em>, <em>widget_id</em>, <em>session</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_container.html#QtContainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_container.QtContainer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.qt.qt_constraints_widget.QtConstraintsWidget" title="enaml.qt.qt_constraints_widget.QtConstraintsWidget"><tt class="xref py py-class docutils literal"><span class="pre">enaml.qt.qt_constraints_widget.QtConstraintsWidget</span></tt></a></p>
+<p>A Qt implementation of an Enaml Container.</p>
+<dl class="method">
+<dt id="enaml.qt.qt_container.QtContainer.create_widget">
+<tt class="descname">create_widget</tt><big>(</big><em>parent</em>, <em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_container.html#QtContainer.create_widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_container.QtContainer.create_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the underlying QContainer widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_container.QtContainer.create">
+<tt class="descname">create</tt><big>(</big><em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_container.html#QtContainer.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_container.QtContainer.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create and initialize the underlying widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_container.QtContainer.init_layout">
+<tt class="descname">init_layout</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_container.html#QtContainer.init_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_container.QtContainer.init_layout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes the layout for the container.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_container.QtContainer.relayout">
+<tt class="descname">relayout</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_container.html#QtContainer.relayout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_container.QtContainer.relayout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rebuilds the constraints layout for this widget if it owns
+the responsibility for laying out its descendents.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_container.QtContainer.refresh">
+<tt class="descname">refresh</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_container.html#QtContainer.refresh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_container.QtContainer.refresh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes a layout pass over the descendents if this widget owns
+the responsibility for their layout.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_container.QtContainer.refresh_sizes">
+<tt class="descname">refresh_sizes</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_container.html#QtContainer.refresh_sizes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_container.QtContainer.refresh_sizes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Refresh the min/max/best sizes for the underlying widget.</p>
+<p>This method is normally called automatically at the proper
+times. It should not normally need to be called by user code.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_container.QtContainer.replace_constraints">
+<tt class="descname">replace_constraints</tt><big>(</big><em>old_cns</em>, <em>new_cns</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_container.html#QtContainer.replace_constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_container.QtContainer.replace_constraints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replace constraints in the given layout.</p>
+<p>This method can be used to selectively add/remove/replace 
+constraints in the layout system, when it is more efficient 
+than performing a full relayout.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>old_cns</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; The list of casuarius constraints to remove from the
+the current layout system.</li>
+<li><strong>new_cns</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; The list of casuarius constraints to add to the
+current layout system.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_container.QtContainer.layout">
+<tt class="descname">layout</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_container.html#QtContainer.layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_container.QtContainer.layout" title="Permalink to this definition">¶</a></dt>
+<dd><p>The callback invoked by the layout manager when there are
+new layout values available.</p>
+<p>This iterates over the layout table and calls the geometry
+updater functions.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_container.QtContainer.contents_margins">
+<tt class="descname">contents_margins</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_container.html#QtContainer.contents_margins"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_container.QtContainer.contents_margins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the contents margins for the container.</p>
+<p>The contents margins are added to the user provided padding
+to determine the final offset from a layout box boundary to
+the corresponding content line. The default content margins
+are zero. This method can be reimplemented by subclasses to
+supply different margins.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (tuple) &#8211; A tuple of &#8216;top&#8217;, &#8216;right&#8217;, &#8216;bottom&#8217;, &#8216;left&#8217; contents margins to use for computing the contents constraints.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_container.QtContainer.contents_constraints">
+<tt class="descname">contents_constraints</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_container.html#QtContainer.contents_constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_container.QtContainer.contents_constraints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the contents constraints for the container.</p>
+<p>The contents contraints are generated by combining the user 
+padding with the margins returned by &#8216;contents_margins&#8217; method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (list) &#8211; The list of casuarius constraints for the content.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_container.QtContainer.refresh_contents_constraints">
+<tt class="descname">refresh_contents_constraints</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_container.html#QtContainer.refresh_contents_constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_container.QtContainer.refresh_contents_constraints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform a refresh of the contents constraints for the 
+container.</p>
+<p>This will replace the old contents constraints with the new
+contents constraints.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_container.QtContainer.transfer_layout_ownership">
+<tt class="descname">transfer_layout_ownership</tt><big>(</big><em>owner</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_container.html#QtContainer.transfer_layout_ownership"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_container.QtContainer.transfer_layout_ownership" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method which can be called by other components in the
+hierarchy to gain ownership responsibility for the layout 
+of the children of this container. By default, the transfer
+is allowed and is the mechanism which allows constraints to
+cross widget boundaries. Subclasses should reimplement this 
+method if different behavior is desired.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>owner</strong> (<em>Declarative</em>) &#8211; The component which has taken ownership responsibility
+for laying out the children of this component. All
+relayout and refresh requests will be forwarded to this
+component.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>results</strong> (bool) &#8211; True if the transfer was allowed, False otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_container.QtContainer.will_transfer">
+<tt class="descname">will_transfer</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_container.html#QtContainer.will_transfer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_container.QtContainer.will_transfer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether or not the container expects to transfer its layout
+ownership to its parent.</p>
+<p>This method is predictive in nature and exists so that layout
+managers are not senslessly created during the bottom-up layout
+initialization pass. It is declared public so that subclasses 
+can override the behavior if necessary.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_container.QtContainer.compute_min_size">
+<tt class="descname">compute_min_size</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_container.html#QtContainer.compute_min_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_container.QtContainer.compute_min_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the minimum size of the container which would 
+allow all constraints to be satisfied.</p>
+<p>If this container does not own its layout then it will return 
+an invalid QSize.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (QSize) &#8211; A (potentially) invalid QSize which is the minimum size required to satisfy all constraints.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_container.QtContainer.compute_best_size">
+<tt class="descname">compute_best_size</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_container.html#QtContainer.compute_best_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_container.QtContainer.compute_best_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the best size of the container.</p>
+<p>The best size of the container is obtained by computing the min
+size of the layout using a strength which is much weaker than a
+normal resize. This takes into account the size of any widgets 
+which have their resist clip property set to &#8216;weak&#8217; while still 
+allowing the window to be resized smaller by the user. If this
+container does not own its layout then it will return an
+invalid QSize.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (QSize) &#8211; A (potentially) invalid QSize which is the minimum size required to satisfy all constraints.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_container.QtContainer.compute_max_size">
+<tt class="descname">compute_max_size</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_container.html#QtContainer.compute_max_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_container.QtContainer.compute_max_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the maximum size of the container which would 
+allow all constraints to be satisfied.</p>
+<p>If this container does not own its layout then it will return 
+an invalid QSize.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (QSize) &#8211; A (potentially) invalid QSize which is the maximum size allowable while still satisfying all constraints.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.form.Form.html" title="Form"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.window.Window.html" title="Window"
+             >previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" >Widgets</a> &raquo;</li>
+  
+    <li><a href="#">Container</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Sep 12, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,202 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.widgets.notebook &mdash; enaml 0.3alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.3alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.3alpha documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.widgets.notebook</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.widgets.notebook</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2012, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">Bool</span><span class="p">,</span> <span class="n">Property</span><span class="p">,</span> <span class="n">cached_property</span>
+
+<span class="kn">from</span> <span class="nn">.constraints_widget</span> <span class="kn">import</span> <span class="n">ConstraintsWidget</span>
+<span class="kn">from</span> <span class="nn">.page</span> <span class="kn">import</span> <span class="n">Page</span>
+
+
+<div class="viewcode-block" id="Notebook"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.notebook.Notebook.html#enaml.widgets.notebook.Notebook">[docs]</a><span class="k">class</span> <span class="nc">Notebook</span><span class="p">(</span><span class="n">ConstraintsWidget</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A component which displays its children as tabbed pages.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#: The style of tabs to use in the notebook. Preferences style</span>
+    <span class="c">#: tabs are appropriate for configuration dialogs and the like.</span>
+    <span class="c">#: Document style tabs are appropriate for multi-page editing</span>
+    <span class="c">#: in code editors and the like.</span>
+    <span class="n">tab_style</span> <span class="o">=</span> <span class="n">Enum</span><span class="p">(</span><span class="s">&#39;document&#39;</span><span class="p">,</span> <span class="s">&#39;preferences&#39;</span><span class="p">)</span>
+
+    <span class="c">#: The position of tabs in the notebook.</span>
+    <span class="n">tab_position</span> <span class="o">=</span> <span class="n">Enum</span><span class="p">(</span><span class="s">&#39;top&#39;</span><span class="p">,</span> <span class="s">&#39;bottom&#39;</span><span class="p">,</span> <span class="s">&#39;left&#39;</span><span class="p">,</span> <span class="s">&#39;right&#39;</span><span class="p">)</span>
+
+    <span class="c">#: Whether or not the tabs in the notebook should be closable.</span>
+    <span class="n">tabs_closable</span> <span class="o">=</span> <span class="n">Bool</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="c">#: Whether or not the tabs in the notebook should be movable.</span>
+    <span class="n">tabs_movable</span> <span class="o">=</span> <span class="n">Bool</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="c">#: A read only property which returns the notebook&#39;s Pages.</span>
+    <span class="n">pages</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">depends_on</span><span class="o">=</span><span class="s">&#39;children[]&#39;</span><span class="p">)</span>
+
+    <span class="c">#: How strongly a component hugs it&#39;s contents&#39; width. A Notebook</span>
+    <span class="c">#: ignores its width hug by default, so it expands freely in width.</span>
+    <span class="n">hug_width</span> <span class="o">=</span> <span class="s">&#39;ignore&#39;</span>
+
+    <span class="c">#: How strongly a component hugs it&#39;s contents&#39; height. A Notebook</span>
+    <span class="c">#: ignores its height hug by default, so it expands freely in height.</span>
+    <span class="n">hug_height</span> <span class="o">=</span> <span class="s">&#39;ignore&#39;</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Initialization</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="Notebook.snapshot"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.notebook.Notebook.html#enaml.widgets.notebook.Notebook.snapshot">[docs]</a>    <span class="k">def</span> <span class="nf">snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the snapshot for the control.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">snap</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">Notebook</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">snapshot</span><span class="p">()</span>
+        <span class="n">snap</span><span class="p">[</span><span class="s">&#39;page_ids&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_snap_page_ids</span><span class="p">()</span>
+        <span class="n">snap</span><span class="p">[</span><span class="s">&#39;tab_style&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_style</span>
+        <span class="n">snap</span><span class="p">[</span><span class="s">&#39;tab_position&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_position</span>
+        <span class="n">snap</span><span class="p">[</span><span class="s">&#39;tabs_closable&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabs_closable</span>
+        <span class="n">snap</span><span class="p">[</span><span class="s">&#39;tabs_movable&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabs_movable</span>
+        <span class="k">return</span> <span class="n">snap</span>
+</div>
+<div class="viewcode-block" id="Notebook.bind"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.notebook.Notebook.html#enaml.widgets.notebook.Notebook.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Bind the change handlers for the control.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Notebook</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">bind</span><span class="p">()</span>
+        <span class="n">attrs</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s">&#39;tab_style&#39;</span><span class="p">,</span> <span class="s">&#39;tab_position&#39;</span><span class="p">,</span> <span class="s">&#39;tabs_closable&#39;</span><span class="p">,</span> <span class="s">&#39;tabs_movable&#39;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">publish_attributes</span><span class="p">(</span><span class="o">*</span><span class="n">attrs</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Private API</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span> <span class="nf">_get_pages</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The getter for the &#39;pages&#39; property.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : tuple</span>
+<span class="sd">            The tuple of Page instances defined as children of this</span>
+<span class="sd">            Notebook.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">isinst</span> <span class="o">=</span> <span class="nb">isinstance</span>
+        <span class="n">pages</span> <span class="o">=</span> <span class="p">(</span><span class="n">child</span> <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span> <span class="k">if</span> <span class="n">isinst</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">Page</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">pages</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_snap_page_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the widget ids of the notebook&#39;s pages.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">page</span><span class="o">.</span><span class="n">widget_id</span> <span class="k">for</span> <span class="n">page</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pages</span><span class="p">]</span>
+</pre></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.widgets.notebook</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Sep 12, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

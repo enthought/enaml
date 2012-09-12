@@ -1,0 +1,19 @@
+MenuBar
+==============================
+
+.. currentmodule:: enaml.widgets.menu_bar
+
+.. autoclass:: MenuBar
+
+
+Backends
+--------
+
+Qt
+^^
+
+.. inheritance-diagram::
+    enaml.qt.qt_menu_bar.QtMenuBar
+    :parts: 1
+
+.. autoclass:: enaml.qt.qt_menu_bar.QtMenuBar

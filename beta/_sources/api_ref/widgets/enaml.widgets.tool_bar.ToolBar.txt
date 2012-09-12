@@ -1,0 +1,19 @@
+ToolBar
+==============================
+
+.. currentmodule:: enaml.widgets.tool_bar
+
+.. autoclass:: ToolBar
+
+
+Backends
+--------
+
+Qt
+^^
+
+.. inheritance-diagram::
+    enaml.qt.qt_tool_bar.QtToolBar
+    :parts: 1
+
+.. autoclass:: enaml.qt.qt_tool_bar.QtToolBar

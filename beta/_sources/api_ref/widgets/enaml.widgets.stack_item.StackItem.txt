@@ -1,0 +1,19 @@
+StackItem
+==================================
+
+.. currentmodule:: enaml.widgets.stack_item
+
+.. autoclass:: StackItem
+
+
+Backends
+--------
+
+Qt
+^^
+
+.. inheritance-diagram::
+    enaml.qt.qt_stack_item.QtStackItem
+    :parts: 1
+
+.. autoclass:: enaml.qt.qt_stack_item.QtStackItem

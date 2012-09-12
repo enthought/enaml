@@ -1,0 +1,249 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>MainWindow &mdash; enaml 0.3alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.3alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.3alpha documentation" href="../../index.html" />
+    <link rel="up" title="Widgets" href="../enaml.widgets.html" />
+    <link rel="next" title="MdiWindow" href="enaml.widgets.mdi_window.MdiWindow.html" />
+    <link rel="prev" title="ToolBar" href="enaml.widgets.tool_bar.ToolBar.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.mdi_window.MdiWindow.html" title="MdiWindow"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.tool_bar.ToolBar.html" title="ToolBar"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" accesskey="U">Widgets</a> &raquo;</li>
+  
+    <li><a href="#">MainWindow</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">MainWindow</a><ul>
+<li><a class="reference internal" href="#backends">Backends</a><ul>
+<li><a class="reference internal" href="#qt">Qt</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/api_ref/widgets/enaml.widgets.main_window.MainWindow.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="mainwindow">
+<h1>MainWindow<a class="headerlink" href="#mainwindow" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="enaml.widgets.main_window.MainWindow">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.main_window.</tt><tt class="descname">MainWindow</tt><big>(</big><em>parent=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/main_window.html#MainWindow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.main_window.MainWindow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.window.Window.html#enaml.widgets.window.Window" title="enaml.widgets.window.Window"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.window.Window</span></tt></a></p>
+<p>A top level main window widget.</p>
+<p>MainWindow widgets are top level widgets which provide additional
+functionality beyond frame decoration. A MainWindow may optionally
+contain a MenuBar, any number of ToolBars, a StatusBar, and any
+number of DockPanes. Like Window, a MainWindow can have at most one
+central Container widget, which will be expanded to fit into the 
+available space.</p>
+<dl class="attribute">
+<dt id="enaml.widgets.main_window.MainWindow.menu_bar">
+<tt class="descname">menu_bar</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.main_window.MainWindow.menu_bar" title="Permalink to this definition">¶</a></dt>
+<dd><p>A read only property which returns the window&#8217;s MenuBar.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.main_window.MainWindow.tool_bars">
+<tt class="descname">tool_bars</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.main_window.MainWindow.tool_bars" title="Permalink to this definition">¶</a></dt>
+<dd><p>A read only property which returns the window&#8217;s ToolBars.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.main_window.MainWindow.dock_panes">
+<tt class="descname">dock_panes</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.main_window.MainWindow.dock_panes" title="Permalink to this definition">¶</a></dt>
+<dd><p>A read only property which returns the window&#8217;s DockPanes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.main_window.MainWindow.snapshot">
+<tt class="descname">snapshot</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/main_window.html#MainWindow.snapshot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.main_window.MainWindow.snapshot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the snapshot for the MainWindow.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.main_window.MainWindow.__implements__">
+<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.widgets.main_window.MainWindow.__implements__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="backends">
+<h2>Backends<a class="headerlink" href="#backends" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="qt">
+<h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-6a7545933a1d10e617413abc7e96259267d748d9.png" alt="Inheritance diagram of enaml.qt.qt_main_window.QtMainWindow" usemap="#inheritancec00d2262cd" class="inheritance"/>
+<map id="inheritancec00d2262cd" name="inheritancec00d2262cd">
+<area shape="rect" id="node1" href="enaml.widgets.window.Window.html#enaml.qt.qt_window.QtWindow" title="QtWindow" alt="" coords="411,5,498,35"/>
+<area shape="rect" id="node6" href="#enaml.qt.qt_main_window.QtMainWindow" title="QtMainWindow" alt="" coords="548,5,666,35"/>
+<area shape="rect" id="node2" href="enaml.widgets.widget_component.WidgetComponent.html#enaml.qt.qt_widget_component.QtWidgetComponent" title="QtWidgetComponent" alt="" coords="206,5,362,35"/>
+<area shape="rect" id="node4" href="enaml.widgets.messenger_widget.MessengerWidget.html#enaml.qt.qt_messenger_widget.QtMessengerWidget" title="QtMessengerWidget" alt="" coords="6,5,157,35"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.qt.qt_main_window.QtMainWindow">
+<em class="property">class </em><tt class="descclassname">enaml.qt.qt_main_window.</tt><tt class="descname">QtMainWindow</tt><big>(</big><em>parent</em>, <em>widget_id</em>, <em>session</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_main_window.html#QtMainWindow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_main_window.QtMainWindow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.window.Window.html#enaml.qt.qt_window.QtWindow" title="enaml.qt.qt_window.QtWindow"><tt class="xref py py-class docutils literal"><span class="pre">enaml.qt.qt_window.QtWindow</span></tt></a></p>
+<p>A Qt implementation of an Enaml MainWindow.</p>
+<dl class="method">
+<dt id="enaml.qt.qt_main_window.QtMainWindow.create_widget">
+<tt class="descname">create_widget</tt><big>(</big><em>parent</em>, <em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_main_window.html#QtMainWindow.create_widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_main_window.QtMainWindow.create_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the underlying widget QMainWindow widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_main_window.QtMainWindow.create">
+<tt class="descname">create</tt><big>(</big><em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_main_window.html#QtMainWindow.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_main_window.QtMainWindow.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create and initialize the underlying widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_main_window.QtMainWindow.init_layout">
+<tt class="descname">init_layout</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_main_window.html#QtMainWindow.init_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_main_window.QtMainWindow.init_layout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the layout for the underlying widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_main_window.QtMainWindow.set_menu_bar_id">
+<tt class="descname">set_menu_bar_id</tt><big>(</big><em>menu_bar_id</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_main_window.html#QtMainWindow.set_menu_bar_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_main_window.QtMainWindow.set_menu_bar_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the menu bar id for the underlying widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_main_window.QtMainWindow.set_dock_pane_ids">
+<tt class="descname">set_dock_pane_ids</tt><big>(</big><em>pane_ids</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_main_window.html#QtMainWindow.set_dock_pane_ids"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_main_window.QtMainWindow.set_dock_pane_ids" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the dock pane ids for the underlying widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_main_window.QtMainWindow.set_tool_bar_ids">
+<tt class="descname">set_tool_bar_ids</tt><big>(</big><em>bar_ids</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_main_window.html#QtMainWindow.set_tool_bar_ids"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_main_window.QtMainWindow.set_tool_bar_ids" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the tool bar ids for the underlying widget.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.mdi_window.MdiWindow.html" title="MdiWindow"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.tool_bar.ToolBar.html" title="ToolBar"
+             >previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" >Widgets</a> &raquo;</li>
+  
+    <li><a href="#">MainWindow</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Sep 12, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

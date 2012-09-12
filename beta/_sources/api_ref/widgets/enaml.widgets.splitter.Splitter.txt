@@ -1,0 +1,19 @@
+Splitter
+===============================
+
+.. currentmodule:: enaml.widgets.splitter
+
+.. autoclass:: Splitter
+
+
+Backends
+--------
+
+Qt
+^^
+
+.. inheritance-diagram::
+    enaml.qt.qt_splitter.QtSplitter
+    :parts: 1
+
+.. autoclass:: enaml.qt.qt_splitter.QtSplitter

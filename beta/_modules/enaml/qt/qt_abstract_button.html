@@ -1,0 +1,238 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.qt.qt_abstract_button &mdash; enaml 0.3alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.3alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.3alpha documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.qt.qt_abstract_button</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.qt.qt_abstract_button</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2012, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">.qt.QtCore</span> <span class="kn">import</span> <span class="n">QSize</span>
+<span class="kn">from</span> <span class="nn">.qt_constraints_widget</span> <span class="kn">import</span> <span class="n">QtConstraintsWidget</span>
+<span class="c">#from .qt_image import QtImage</span>
+
+
+<div class="viewcode-block" id="QtAbstractButton"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.abstract_button.AbstractButton.html#enaml.qt.qt_abstract_button.QtAbstractButton">[docs]</a><span class="k">class</span> <span class="nc">QtAbstractButton</span><span class="p">(</span><span class="n">QtConstraintsWidget</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A Qt implementation of the Enaml AbstractButton class.</span>
+
+<span class="sd">    This class can serve as a base class for widgets that implement </span>
+<span class="sd">    button behavior such as CheckBox, RadioButton and PushButtons. </span>
+<span class="sd">    It is not meant to be used directly.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Setup Methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="QtAbstractButton.create_widget"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.abstract_button.AbstractButton.html#enaml.qt.qt_abstract_button.QtAbstractButton.create_widget">[docs]</a>    <span class="k">def</span> <span class="nf">create_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">tree</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; This method must be implemented by subclasses to create </span>
+<span class="sd">        the proper button widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+<div class="viewcode-block" id="QtAbstractButton.create"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.abstract_button.AbstractButton.html#enaml.qt.qt_abstract_button.QtAbstractButton.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tree</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Create and initialize the abstract button widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">QtAbstractButton</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_checkable</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="s">&#39;checkable&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_checked</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="s">&#39;checked&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="s">&#39;text&#39;</span><span class="p">])</span>
+        <span class="c">#self.set_icon(tree[&#39;icon&#39;])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_icon_size</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="s">&#39;icon_size&#39;</span><span class="p">])</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_clicked</span><span class="p">)</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">toggled</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_toggled</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Signal Handlers</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="QtAbstractButton.on_clicked"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.abstract_button.AbstractButton.html#enaml.qt.qt_abstract_button.QtAbstractButton.on_clicked">[docs]</a>    <span class="k">def</span> <span class="nf">on_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The signal handler for the &#39;clicked&#39; signal.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;checked&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_action</span><span class="p">(</span><span class="s">&#39;clicked&#39;</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtAbstractButton.on_toggled"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.abstract_button.AbstractButton.html#enaml.qt.qt_abstract_button.QtAbstractButton.on_toggled">[docs]</a>    <span class="k">def</span> <span class="nf">on_toggled</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The signal handler for the &#39;toggled&#39; signal.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;checked&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_action</span><span class="p">(</span><span class="s">&#39;toggled&#39;</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Message Handlers</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="QtAbstractButton.on_action_set_checked"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.abstract_button.AbstractButton.html#enaml.qt.qt_abstract_button.QtAbstractButton.on_action_set_checked">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_set_checked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;set_checked&#39; action from the Enaml widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_checked</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s">&#39;checked&#39;</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="QtAbstractButton.on_action_set_text"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.abstract_button.AbstractButton.html#enaml.qt.qt_abstract_button.QtAbstractButton.on_action_set_text">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_set_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;set_text&#39; action from the Enaml widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s">&#39;text&#39;</span><span class="p">])</span>
+        <span class="c"># Trigger a relayout since the size hint likely changed</span>
+</div>
+<div class="viewcode-block" id="QtAbstractButton.on_action_set_icon_size"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.abstract_button.AbstractButton.html#enaml.qt.qt_abstract_button.QtAbstractButton.on_action_set_icon_size">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_set_icon_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;set_icon_size&#39; action from the Enaml widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_icon_size</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s">&#39;icon_size&#39;</span><span class="p">])</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Widget update methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="QtAbstractButton.set_checkable"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.abstract_button.AbstractButton.html#enaml.qt.qt_abstract_button.QtAbstractButton.set_checkable">[docs]</a>    <span class="k">def</span> <span class="nf">set_checkable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checkable</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets whether or not the widget is checkable.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="n">checkable</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtAbstractButton.set_checked"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.abstract_button.AbstractButton.html#enaml.qt.qt_abstract_button.QtAbstractButton.set_checked">[docs]</a>    <span class="k">def</span> <span class="nf">set_checked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checked</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the widget&#39;s checked state with the provided value.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span>
+        <span class="c"># This handles the case where, by default, Qt will not allow</span>
+        <span class="c"># all of the radio buttons in a group to be disabled. By </span>
+        <span class="c"># temporarily turning off auto-exclusivity, we are able to</span>
+        <span class="c"># handle that case.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">checked</span> <span class="ow">and</span> <span class="n">widget</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()</span> <span class="ow">and</span> <span class="n">widget</span><span class="o">.</span><span class="n">autoExclusive</span><span class="p">():</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">setAutoExclusive</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="n">checked</span><span class="p">)</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">setAutoExclusive</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="n">checked</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtAbstractButton.set_text"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.abstract_button.AbstractButton.html#enaml.qt.qt_abstract_button.QtAbstractButton.set_text">[docs]</a>    <span class="k">def</span> <span class="nf">set_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the widget&#39;s text with the provided value.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtAbstractButton.set_icon"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.abstract_button.AbstractButton.html#enaml.qt.qt_abstract_button.QtAbstractButton.set_icon">[docs]</a>    <span class="k">def</span> <span class="nf">set_icon</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">icon</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the widget&#39;s icon to the provided image.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span>
+        <span class="c">#self._icon = QtImage(icon)</span>
+        <span class="c">#self.widget.setIcon(self._icon.as_QIcon())</span>
+</div>
+<div class="viewcode-block" id="QtAbstractButton.set_icon_size"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.abstract_button.AbstractButton.html#enaml.qt.qt_abstract_button.QtAbstractButton.set_icon_size">[docs]</a>    <span class="k">def</span> <span class="nf">set_icon_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">icon_size</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the widget&#39;s icon size to the provided size.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">setIconSize</span><span class="p">(</span><span class="n">QSize</span><span class="p">(</span><span class="o">*</span><span class="n">icon_size</span><span class="p">))</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.3alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.qt.qt_abstract_button</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Sep 12, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>
