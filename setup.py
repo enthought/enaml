@@ -1,12 +1,11 @@
 # Copyright (c) 2012 by Enthought, Inc.
 # All rights reserved.
-
 from setuptools import setup, find_packages
 
 
 setup(
     name='enaml',
-    version='0.2.1',
+    version='0.3.0alpha',
     author='Enthought, Inc',
     author_email='info@enthought.com',
     url='https://github.com/enthought/enaml',
