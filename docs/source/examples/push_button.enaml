@@ -1,7 +1,0 @@
-enamldef MainWindow:
-    Window:
-        title = "Push button example"
-        constraints = [vertical(top, button, bottom),
-                        horizontal(left, button, right)]
-        PushButton -> button:
-            text = "Press me"

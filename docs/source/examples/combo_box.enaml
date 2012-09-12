@@ -1,8 +1,0 @@
-enamldef MainWindow:
-    Window:
-        title = 'ComboBox example'
-        constraints = [vertical(top, combo_box, bottom),
-                       horizontal(left, combo_box, right)]
-        ComboBox -> combo_box:
-            items = ['first choice', 'second choice']
-            value = 'first choice'
