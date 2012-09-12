@@ -1,9 +1,9 @@
-Area Splitter Example
+Splitter Example
 ===============================================================================
 
-:download:`splitter.enaml <../../../examples/containers/splitter.enaml>`
+:download:`splitter.enaml <../../../examples/widgets/splitter.enaml>`
 
-.. literalinclude:: ../../../examples/containers/splitter.enaml
+.. literalinclude:: ../../../examples/widgets/splitter.enaml
     :language: python
 
 ::
