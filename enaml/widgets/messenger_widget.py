@@ -209,7 +209,7 @@ class MessengerWidget(Declarative):
 
         Parameters
         ----------
-        *attrs
+        attrs
             The string names of the attributes to publish to the client.
             The values of these attributes are expected to be JSON
             serializable. More complex values should use their own 
@@ -227,7 +227,7 @@ class MessengerWidget(Declarative):
 
         Parameters
         ----------
-        **attrs
+        attrs
             The attributes which should be set on the component from
             within a loopback guard context.
 
