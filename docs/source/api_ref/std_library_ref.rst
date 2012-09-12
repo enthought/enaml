@@ -17,10 +17,3 @@ of validation:
 .. autoenaml_decl:: enaml.stdlib.fields.FloatField
 .. autoenaml_decl:: enaml.stdlib.fields.RegexField
 
-
-.. _std-lib-stacked:
-
-Stacked
--------------------------------------------------------------------------------
-.. autoenaml_decl:: enaml.stdlib.stacked.Stacked
-

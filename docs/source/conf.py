@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 # -*- coding: utf-8 -*-
 #
-# traitsml documentation build configuration file, created by
+# Enaml documentation build configuration file, created by
 # sphinx-quickstart on Mon Aug 22 09:16:47 2011.
 #
 # This file is execfile()d with the current directory set to its containing dir.
@@ -271,7 +271,7 @@ man_pages = [
 # -- Options for Epub output ---------------------------------------------------
 
 # Bibliographic Dublin Core info.
-epub_title = u'enaml'
+epub_title = u'Enaml'
 epub_author = u'Chris Colbert'
 epub_publisher = u'Enthought, Inc.'
 epub_copyright = u'2012, Enthought, Inc.'
