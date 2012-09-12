@@ -21,6 +21,8 @@ user-facing views and the underlying graphical toolkits.
     enaml.widgets.constraints_widget.ConstraintsWidget
     enaml.widgets.abstract_button.AbstractButton
     enaml.widgets.container.Container
+    enaml.widgets.action.Action
+    enaml.widgets.action_group.ActionGroup
     enaml.widgets.bounded_date.BoundedDate
     enaml.widgets.bounded_datetime.BoundedDatetime
     enaml.widgets.calendar.Calendar
@@ -32,9 +34,11 @@ user-facing views and the underlying graphical toolkits.
     enaml.widgets.form.Form
     enaml.widgets.group_box.GroupBox
     enaml.widgets.html.Html
-    enaml.widgets.image.Image
     enaml.widgets.image_view.ImageView
     enaml.widgets.label.Label
+    enaml.widgets.mdi_area.MdiArea
+    enaml.widgets.menu.Menu
+    enaml.widgets.menu_bar.MenuBar
     enaml.widgets.notebook.Notebook
     enaml.widgets.page.Page
     enaml.widgets.progress_bar.ProgressBar
@@ -43,8 +47,14 @@ user-facing views and the underlying graphical toolkits.
     enaml.widgets.scroll_area.ScrollArea
     enaml.widgets.slider.Slider
     enaml.widgets.spin_box.SpinBox
+    enaml.widgets.splitter.Splitter
+    enaml.widgets.stack.Stack
+    enaml.widgets.stack_item.StackItem
     enaml.widgets.text_editor.TextEditor
+    enaml.widgets.tool_bar.ToolBar
     enaml.widgets.window.Window
+    enaml.widgets.main_window.MainWindow
+    enaml.widgets.mdi_window.MdiWindow
     :parts: 1
 
 
@@ -62,6 +72,8 @@ Abstract base widgets
     enaml.widgets.widget_component.WidgetComponent
     enaml.widgets.constraints_widget.ConstraintsWidget
     enaml.widgets.abstract_button.AbstractButton
+    enaml.widgets.bounded_date.BoundedDate
+    enaml.widgets.bounded_datetime.BoundedDatetime
 
 Standard widgets
 ^^^^^^^^^^^^^^^^
@@ -70,8 +82,6 @@ Standard widgets
     :toctree: widgets
     :template: widget.rst
 
-    enaml.widgets.bounded_date.BoundedDate
-    enaml.widgets.bounded_datetime.BoundedDatetime
     enaml.widgets.calendar.Calendar
     enaml.widgets.check_box.CheckBox
     enaml.widgets.combo_box.ComboBox
@@ -79,11 +89,14 @@ Standard widgets
     enaml.widgets.datetime_selector.DatetimeSelector
     enaml.widgets.field.Field
     enaml.widgets.label.Label
+    enaml.widgets.menu.Menu
+    enaml.widgets.menu_bar.MenuBar
     enaml.widgets.progress_bar.ProgressBar
     enaml.widgets.push_button.PushButton
     enaml.widgets.radio_button.RadioButton
     enaml.widgets.slider.Slider
     enaml.widgets.spin_box.SpinBox
+
 
 Special widgets
 ^^^^^^^^^^^^^^^
@@ -93,9 +106,11 @@ Special widgets
     :template: widget.rst
 
     enaml.widgets.html.Html
-    enaml.widgets.text_editor.TextEditor
     enaml.widgets.image_view.ImageView
-    
+    enaml.widgets.text_editor.TextEditor
+    enaml.widgets.tool_bar.ToolBar
+
+
 Window widgets
 ^^^^^^^^^^^^^^^^^
 
@@ -103,7 +118,10 @@ Window widgets
     :toctree: widgets
     :template: widget.rst
 
+    enaml.widgets.main_window.MainWindow
+    enaml.widgets.mdi_window.MdiWindow
     enaml.widgets.window.Window
+
 
 Container and Layout widgets
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -115,9 +133,13 @@ Container and Layout widgets
     enaml.widgets.container.Container
     enaml.widgets.form.Form
     enaml.widgets.group_box.GroupBox
+    enaml.widgets.mdi_area.MdiArea
     enaml.widgets.notebook.Notebook
     enaml.widgets.page.Page
     enaml.widgets.scroll_area.ScrollArea
+    enaml.widgets.splitter.Splitter
+    enaml.widgets.stack.Stack
+    enaml.widgets.stack_item.StackItem
 
 
 Standard library
@@ -131,4 +153,5 @@ library.  These are not top-level classes implemented in Python, but are instead
    :maxdepth: 2
 
     Standard Widget Library <std_library_ref>
+
 
