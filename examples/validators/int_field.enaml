@@ -1,0 +1,44 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2012, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+""" An example of the `IntField` stdlib widget.
+
+An `IntField` is a stdlib widget based on a `Field` widget which uses an
+`IntValidator` to perform validation on the text input.
+
+"""
+from enaml.widgets.api import Window, Form, Label, Field, ComboBox
+from enaml.stdlib.fields import IntField
+
+
+enamldef Main(Window):
+    Form:
+        Label:
+            text = 'IntField'
+        IntField:
+            maximum := max_field.value
+            minimum := min_field.value
+            base := int(base_field.selected_item)
+            value ::
+                print 'Value changed to:', value
+        
+        Label:
+            text = 'Maximum'
+        IntField:
+            id: max_field
+            value = 100
+        
+        Label:
+            text = 'Minimum'
+        IntField:
+            id: min_field
+            value = 0
+        
+        Label:
+            text = 'Base'
+        ComboBox:
+            id: base_field
+            items = ["2", "8", "10", "16"]
+            index = 2
+        
