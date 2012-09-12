@@ -3,12 +3,19 @@
 Welcome to Enaml's documentation!
 ====================================
 
-**E**\naml is **N**\ot **A** **M**\arkup **L**\anguage. |Enaml| is a tool for
-building *durable visual layers that hold up well under heavy use*. It is a
-declarative language based on Python, analogous to Qt's QML, that makes
-development of GUI's for Python both easy and effective. |Enaml| currently
-supports wxWidgets as a backend via wxPython, and Qt as a backend via PySide
-and PyQt4. However, it is not tied to a single widget toolkit.
+**E**\naml is **N**\ot **A** **M**\arkup **L**\anguage. |Enaml| is a library for
+building beautiful user interfaces with minimal effort. Enaml uses a constraint based layout
+system allowing users to easily express complex UI layouts. Applications written can transparently
+run on multiple backends (Wx and Qt) and on multiple operating systems (Windows, OSX, Linux).
+
+Other great enaml features include
+
+    1) Architecture design that encourages Model View seperation
+    2) Subscription based operators that allow state/events to freely flow between model and views
+    3) Ability to easy subclass widgets to override functionality of inbuilt widgets
+    4) Support for custom UI widgets
+    5) Class based widget design encourages re-use of UI code
+    6) Well documented code base that is easy to understand
 
 .. warning:: |Enaml| is currently under heavy development and the
     documentation is not always up-to-date. Please recompile in order to
