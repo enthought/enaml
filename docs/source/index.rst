@@ -17,10 +17,6 @@ Other great enaml features include
     5) Class based widget design encourages re-use of UI code
     6) Well documented code base that is easy to understand
 
-.. warning:: |Enaml| is currently under heavy development and the
-    documentation is not always up-to-date. Please recompile in order to
-    have the latest changes from the source code.
-
 
 .. toctree::
     :maxdepth: 2

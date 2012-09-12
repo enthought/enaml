@@ -1,9 +1,9 @@
 ButtonRing Example
 ===============================================================================
 
-:download:`button_ring.enaml <../../../examples/widgets/button_ring.enaml>`
+:download:`button_ring.enaml <../../../examples/layout/advanced/button_ring.enaml>`
 
-.. literalinclude:: ../../../examples/widgets/button_ring.enaml
+.. literalinclude:: ../../../examples/layout/advanced/button_ring.enaml
     :language: python
 
 ::

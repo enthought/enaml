@@ -1,9 +1,9 @@
 NestedBoxes Example
 ===============================================================================
 
-:download:`nested_boxes.enaml <../../../examples/widgets/nested_boxes.enaml>`
+:download:`nested_boxes.enaml <../../../examples/layout/advanced/nested_boxes.enaml>`
 
-.. literalinclude:: ../../../examples/widgets/nested_boxes.enaml
+.. literalinclude:: ../../../examples/layout/advanced/nested_boxes.enaml
     :language: python
 
 ::

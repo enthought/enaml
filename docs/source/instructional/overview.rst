@@ -68,4 +68,3 @@ Alternatively you can work in developing mode::
 
     python setup.py develop
 
-Next, take a look at the :ref:`tutorials.<tutorials-home>`

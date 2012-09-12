@@ -1,9 +1,9 @@
 ManualVbox Example
 ===============================================================================
 
-:download:`manual_vbox.enaml <../../../examples/widgets/manual_vbox.enaml>`
+:download:`manual_vbox.enaml <../../../examples/layout/advanced/manual_vbox.enaml>`
 
-.. literalinclude:: ../../../examples/widgets/manual_vbox.enaml
+.. literalinclude:: ../../../examples/layout/advanced/manual_vbox.enaml
     :language: python
 
 ::

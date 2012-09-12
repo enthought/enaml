@@ -1,17 +1,11 @@
 Help and Troubleshooting
 ===============================================================================
 
-For the curious, there is the :ref:`FAQ` section. For the frustrated, we present you
-your very own :ref:`WTF` section.
+For the curious, there is the :ref:`FAQ` section. 
 
 .. _FAQ:
 
 FAQ's
--------------------------------------------------------------------------------
-
-.. _WTF:
-
-WTF's
 -------------------------------------------------------------------------------
 
 All of a sudden, |Enaml| quit compiling, what happened?

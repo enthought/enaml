@@ -1,9 +1,9 @@
 FindReplace Example
 ===============================================================================
 
-:download:`find_replace.enaml <../../../examples/widgets/find_replace.enaml>`
+:download:`find_replace.enaml <../../../examples/layout/advanced/find_replace.enaml>`
 
-.. literalinclude:: ../../../examples/widgets/find_replace.enaml
+.. literalinclude:: ../../../examples/layout/advanced/find_replace.enaml
     :language: python
 
 ::
