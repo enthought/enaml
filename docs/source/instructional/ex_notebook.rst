@@ -10,4 +10,6 @@ Notebook Example
 
  $ enaml-run notebook.enaml
 
-.. image:: images/notebook.png
+.. image:: images/notebook1.png
+.. image:: images/notebook2.png
+.. image:: images/notebook3.png
