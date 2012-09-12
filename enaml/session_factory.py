@@ -15,18 +15,22 @@ class SessionFactory(object):
         name : str
             A unique, human-friendly name for the Session that will be
             created.
-        
+
         description : str
             A brief description of the Session that will be created.
-        
+
         session_class : Session subclass
             A concrete subclass of Session that will be created by this
             factory.
-        
-        *args, **kwargs
-            Optional positional and keyword arguments to pass to the
-            initialize() method of the Session that gets created.
-        
+
+        args
+            Optional positional arguments to pass to the initialize() method
+            of the Session that gets created.
+
+        kwargs
+            Optional keyword arguments to pass to the initialize() method of
+            the Session that gets created.
+
         """
         self.name = name
         self.description = description

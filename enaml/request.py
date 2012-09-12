@@ -52,9 +52,12 @@ class BaseRequest(object):
             A callable which should be invoked by the event loop at 
             some future time. This method must return immediately.
 
-        *args, **kwargs
-            The positional and keyword arguments to pass to the 
-            callable when it is invoked.
+        args
+            The positional arguments to pass to the callable when it is
+            invoked.
+
+        kwargs
+            The keyword arguments to pass to the callable when it is invoked.
 
         """
         raise NotImplementedError
@@ -192,9 +195,12 @@ class BasePushHandler(object):
             A callable which should be invoked by the event loop at 
             some future time. This method must return immediately.
 
-        *args, **kwargs
-            The positional and keyword arguments to pass to the 
-            callable when it is invoked.
+        args
+            The positional arguments to pass to the callable when it is
+            invoked.
+
+        kwargs
+            The keyword arguments to pass to the callable when it is invoked.
 
         """
         raise NotImplementedError

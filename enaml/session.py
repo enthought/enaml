@@ -159,10 +159,13 @@ class Session(object):
         
         Parameters
         ----------
-        *args, **kwargs
-            The positional and keyword arguments that were provided
-            by the user to the SessionFactory which created this 
-            session.
+        args
+            The positional arguments that were provided by the user to the
+            SessionFactory which created this session.
+
+        kwargs
+            The keyword arguments that were provided by the user to the
+            SessionFactory which created this session.
 
         """
         pass
@@ -188,9 +191,13 @@ class Session(object):
         sess_descr : str, optional
             A brief description of the session.
         
-        *args, **kwargs
-            Optional postional and keyword arguments to pass to the
-            Session's `init` method when it's created.
+        args
+            Optional postional arguments to pass to the Session's `init`
+            method when it's created.
+
+        kwargs
+            Optional keyword arguments to pass to the Session's `init`
+            method when it's created.
         
         """
         from .session_factory import SessionFactory
