@@ -14,7 +14,7 @@ from .byteplay import (
 # Abstract Inverter
 #------------------------------------------------------------------------------
 class AbstractInverter(object):
-    """ An abstract base class which defined the api for creating code
+    """ An abstract base class which defines the api for creating code
     inverter objects. An inverter is responsible for converting a code
     list supplied by an expression into the inverse of that expression
     which applies the new value onto the expression. For example:
@@ -34,13 +34,13 @@ class AbstractInverter(object):
     The value, among other information, is provided by the expression 
     by inserting the following names into the scope, which can be 
     retrieved with the LOAD_NAME op-code:
-        
-        _[expr] : The expression object
-        _[obj]  : The component object which triggered the change
-        _[name] : The attribute on the component which changed
-        _[old]  : The old value of the attribute.
-        _[new]  : The new value of the attribute which should be
-                  applied to the inverted expression.
+
+        * [expr] : The expression object
+        * [obj]  : The component object which triggered the change
+        * [name] : The attribute on the component which changed
+        * [old]  : The old value of the attribute.
+        * [new]  : The new value of the attribute which should be 
+          applied to the inverted expression.
     
     The generated expression should return True if it successfully 
     completed the operation, False otherwise.
