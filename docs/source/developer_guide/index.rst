@@ -7,3 +7,4 @@ Developer's Guide
    :maxdepth: 2
 
    developers_corner
+   Testing <enaml.tests>
