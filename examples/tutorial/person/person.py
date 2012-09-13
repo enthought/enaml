@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import HasTraits, Str, Range, on_trait_change
+from traits.api import HasTraits, Str, Range, Bool, on_trait_change
 
 import enaml
 from enaml.stdlib.sessions import simple_app
@@ -19,16 +19,19 @@ class Person(HasTraits):
 
     age = Range(low=0)
 
+    debug = Bool(False)
+
     @on_trait_change('age')
     def debug_print(self):
         """ Prints out a debug message whenever the person's age changes.
 
         """
-        templ = "{first} {last} is {age} years old."
-        s = templ.format(
-            first=self.first_name, last=self.last_name, age=self.age,
-        )
-        print s
+        if self.debug:
+            templ = "{first} {last} is {age} years old."
+            s = templ.format(
+                first=self.first_name, last=self.last_name, age=self.age,
+            )
+            print s
 
 
 if __name__ == '__main__':
@@ -36,6 +39,7 @@ if __name__ == '__main__':
         from person_view import PersonView
     
     john = Person(first_name='John', last_name='Doe', age=42)
+    john.debug = True
     app = simple_app(
         'john', 'A view of the Person john', PersonView, person=john
     ) 
