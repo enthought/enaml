@@ -1,9 +1,9 @@
 Hello World Example
 ===============================================================================
 
-:download:`hello_world_view.enaml <../../../examples/old/hello_world/hello_world_view.enaml>`
+:download:`hello_world_view.enaml <../../../examples/tutorial/hello_world/hello_world_view.enaml>`
 
-.. literalinclude:: ../../../examples/old/hello_world/hello_world_view.enaml
+.. literalinclude:: ../../../examples/tutorial/hello_world/hello_world_view.enaml
     :language: python
 
 ::
@@ -12,9 +12,9 @@ Hello World Example
 
 .. image:: images/hello_world.png
 
-:download:`hello_world.py<../../../examples/old/hello_world/hello_world.py>`
+:download:`hello_world.py<../../../examples/tutorial/hello_world/hello_world.py>`
 
-.. literalinclude:: ../../../examples/old/hello_world/hello_world.py
+.. literalinclude:: ../../../examples/tutorial/hello_world/hello_world.py
     :language: python
 
 ::
