@@ -17,8 +17,7 @@ Here is our minimalist .enaml file describing a message-displaying GUI
 .. literalinclude:: ../../../examples/tutorial/hello_world/hello_world_view.enaml
     :language: python
 
-Use the special helper function ``enaml-run`` to run it from the command line
-with ::
+Use the ``enaml-run`` utility to run it from the command line with ::
 
     $ enaml-run hello_world_view.enaml
 
@@ -33,33 +32,32 @@ Enaml Definitions
 
 An |Enaml| view is made up of a series of component *definitions* that look a
 lot like Python classes. In the first line of code, we are defining a new
-component, ``Main``, which derives from ``MainWindow``, a component in the
+component, ``Main``, which derives from ``Window``, a builtin widget in the
 |Enaml| standard library.
 
 ::
 
     enamldef Main(Window):
 
-With the this line of code, we have defined the start of a *definition
-block*.
+With this line of code, we have defined the start of a *definition block*.
  
 In general, we could call this almost anything we want, as long as it is a
 Python-valid name. In this case, however, by giving it the special name "Main"
-we get to run it from the command line with the special ``enaml-run``
-tool. ``enaml-run`` looks for a component named "Main" or a function named
-"main" and runs it as a standalone application.
+we get to run it from the command line with the ``enaml-run`` tool. 
+``enaml-run`` looks for a component named "Main" or a function named "main" 
+in an ".enaml" file and runs it as a standalone application.
 
 
 Definition Structure
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Inside a definition block, the view is defined in a hierarchical tree of view
-components. `As in Python
+Inside a definition block, the view is defined in a hierarchical tree of 
+widgets. `As in Python
 <http://docs.python.org/reference/lexical_analysis.html#indentation>`_ ,
 indentation is used to specify code block structure. That is, statements
 beginning at a certain indentation level refer to the header line at the next
-lower indentation level. So in our simple example, the ``Container:`` belongs to
-``Main`` and the ``Label:`` belongs to ``Container``::
+lower indentation level. So in our simple example, the ``Container`` belongs to
+``Main`` and the ``Label`` belongs to the ``Container``::
 
     enamldef Main(Window):
         attr message = "Hello, world!"
@@ -68,14 +66,15 @@ lower indentation level. So in our simple example, the ``Container:`` belongs to
                 text = message
 
 
-Our view is made up of a ``Window`` containing a ``Container`` which in
-turn contains a ``Label``, whose ``text`` attribute we set equal to ``message``
-attribute of ``Main``, which can be passed in by the
-calling function, but which has a default of ``Hello, world!``.  (We'll discuss
-this in more detail in the :ref:`next tutorial <john-doe>` .)
+The view is made up of a ``Window`` containing a ``Container`` which in
+turn contains a ``Label``, whose ``text`` attribute is set equal to the
+``message`` attribute of ``Main``, which has a default value of 
+``Hello, world!``. This default value can be changed by the calling function.
+(We'll discuss this in more detail in the :ref:`next tutorial <john-doe>`.)
 
-Just like regular Python objects, you need to import any Enaml widgets that
-you are using from the enaml.widgets module.
+Just like regular Python objects, the widgets used in an Enaml UI must be
+defined and/or imported before they can be used. The widgets used in this
+tutorial are imported from ``enaml.widgets.api``.
 
 
 Using the |Enaml| view in Python
@@ -95,16 +94,18 @@ the |Enaml| view.
         from hello_world_view import Main
 
 Enaml is an inherently asynchronous toolkit, with a server running an
-application which offers UI sessions that a client can view.  For this simple
+application which offers UI sessions that a client may view.  For this simple
 example, we'll be working with the client and server both running locally and
-in the same process.  Enaml has some utility methods to help with common
+in the same process.  Enaml has some utility functions to help with common
 situations.
 
-The first thing we do is create the application which offers the ``Main`` view
-as a session::
+The first thing we do is create the application object which offers the 
+``Main`` view as a session::
 
-    app = simple_app('main', 'A customized hello world example', Main,
-        message="Hello, world, from Python!")
+    app = simple_app(
+        'main', 'A customized hello world example', Main,
+        message="Hello, world, from Python!"
+    )
 
 The first two arguments are a name and brief description of the session offered
 by the application.  The third is the view that we want to use to create this
@@ -112,7 +113,7 @@ session, in this case ``Main``.  Everything beyond this is optional, but we want
 to override the default message for the view with a customized one.
 
 For writing traditional single-process GUI applications, this pattern will
-satisfy the majority of your use-cases.
+satisfy the majority of use-cases.
 
 Now that we have an application, we need a server object to serve it, and a
 client to display it.  In this case we use the Qt local server and client::
@@ -120,7 +121,7 @@ client to display it.  In this case we use the Qt local server and client::
     server = QtLocalServer(app)
     client = server.local_client()
 
-We need to start the client sessions we are interested on the client::
+Once we have a client, we need to tell it to start the sessions of interest::
 
     client.start_session('main')
 
