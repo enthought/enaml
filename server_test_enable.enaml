@@ -10,7 +10,7 @@ enamldef Main(MainWindow):
         constraints = [
             vbox(
                 hbox(
-                    #vbox(remote_label, remote_canvas),
+                    vbox(remote_label, remote_canvas),
                     vbox(local_label, local_canvas),
                 ),
                 combo,
@@ -19,16 +19,16 @@ enamldef Main(MainWindow):
                     change_mode_button, spacer, share_button,
                 ),
             ),
-            #remote_canvas.width == local_canvas.width,
-            #remote_canvas.height >= 50,
+            remote_canvas.width == local_canvas.width,
+            remote_canvas.height >= 50,
             local_canvas.height >= 50
         ]
-        #Label:
-        #    id: remote_label
-        #    text = "Remote Canvas"
-        #Canvas:
-        #    id: remote_canvas
-        #    component << model.plot
+        Label:
+            id: remote_label
+            text = "Remote Canvas"
+        RemoteCanvas:
+            id: remote_canvas
+            component << model.plot
         Label:
             id: local_label
             text = "Local Canvas"

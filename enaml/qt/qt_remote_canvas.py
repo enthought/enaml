@@ -30,7 +30,7 @@ class QtRemoteCanvas(QtConstraintsWidget):
         """
         # Need to create the widget here, since I need access to the component
         super(QtRemoteCanvas, self).create(tree)
-        self.widget.resized.connect(self.on_resize)
+        self.widget().resized.connect(self.on_resize)
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -45,7 +45,7 @@ class QtRemoteCanvas(QtConstraintsWidget):
         w, h = canvas._size
         img = QImage(data, w, h, stride, QImage.Format_ARGB32)
         
-        self.widget.setPixmap(QPixmap.fromImage(img))
+        self.widget().setPixmap(QPixmap.fromImage(img))
 
     #--------------------------------------------------------------------------
     # Signal Handlers
@@ -55,7 +55,7 @@ class QtRemoteCanvas(QtConstraintsWidget):
         regenerated.
 
         """
-        size = self.widget.size()
+        size = self.widget().size()
         content = {'size': (size.width(), size.height())}
         self.send_action('size_changed', content)
 
