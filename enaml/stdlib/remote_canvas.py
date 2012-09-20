@@ -63,8 +63,7 @@ class RemoteCanvas(ConstraintsWidget):
     # Initialization
     #--------------------------------------------------------------------------
     def bind(self):
-        """ A method called after initialization which allows the widget
-        to bind any event handlers necessary.
+        """ Bind the change handlers for the control
 
         """
         super(RemoteCanvas, self).bind()

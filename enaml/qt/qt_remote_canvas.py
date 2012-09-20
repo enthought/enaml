@@ -3,8 +3,6 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 
-from enable.api import Window as EnableWindow
-
 from .qt.QtCore import QSize
 from .qt.QtGui import QImage, QPixmap
 from .qt_resizing_widgets import _resizable
@@ -25,7 +23,7 @@ class QtRemoteCanvas(QtConstraintsWidget):
         return QCanvasWidget(parent)
 
     def create(self, tree):
-        """ Initialize the widget's attributes.
+        """ Create and initialize the underlying widget.
 
         """
         # Need to create the widget here, since I need access to the component
@@ -36,7 +34,7 @@ class QtRemoteCanvas(QtConstraintsWidget):
     # Message Handlers
     #--------------------------------------------------------------------------
     def on_action_set_canvas(self, content):
-        """ Handle the 'set_date' action from the Enaml widget.
+        """ Handle the 'set_canvas' action from the Enaml widget.
     
         """
         canvas = content['canvas']

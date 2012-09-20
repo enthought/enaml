@@ -26,7 +26,7 @@ class Canvas(ConstraintsWidget):
     # Initialization
     #--------------------------------------------------------------------------
     def snapshot(self):
-        """ Return the dictionary of creation attributes for the control.
+        """ Returns the snapshot for the control
 
         """
         snap = super(Canvas, self).snapshot()
@@ -34,8 +34,7 @@ class Canvas(ConstraintsWidget):
         return snap
 
     def bind(self):
-        """ A method called after initialization which allows the widget
-        to bind any event handlers necessary.
+        """ Bind the change handlers for the control
 
         """
         super(Canvas, self).bind()

@@ -3,20 +3,22 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 
-from enable.api import Window as EnableWindow
-
 from .qt_constraints_widget import QtConstraintsWidget
 
 
 class QtCanvas(QtConstraintsWidget):
-    """ A Qt4 wrapper around an image canvas.
+    """ A Qt4 wrapper around a canvas that exports a Qt widget.
 
     """
     def create_widget(self, parent, tree):
-        """ Initialize the widget's attributes.
+        """ Creates the underlying Qt widget using Enable's
+            EnableWindow wrapper
 
         """
-        # Need to create the widget here, since I need access to the component
         component = tree['component']
+
+        # Need to create the widget here, since I need access to the component
+        from enable.api import Window as EnableWindow
         self._window = EnableWindow(parent, component=component)
+
         return self._window.control
