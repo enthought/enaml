@@ -7,7 +7,6 @@ from .action_group import ActionGroup
 from .bounded_date import BoundedDate
 from .bounded_datetime import BoundedDatetime
 from .calendar import Calendar
-from .canvas import Canvas
 from .check_box import CheckBox
 from .combo_box import ComboBox
 from .container import Container
@@ -30,7 +29,6 @@ from .page import Page
 from .progress_bar import ProgressBar
 from .push_button import PushButton
 from .radio_button import RadioButton
-from .remote_canvas import RemoteCanvas
 from .scroll_area import ScrollArea
 from .slider import Slider
 from .spin_box import SpinBox

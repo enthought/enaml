@@ -5,7 +5,7 @@
 from traits.api import Instance
 from enable.component import Component as EnableComponent
 
-from .constraints_widget import ConstraintsWidget
+from ..widgets.constraints_widget import ConstraintsWidget
 
 class Canvas(ConstraintsWidget):
     """ An extremely simple widget for displaying an enable canvas

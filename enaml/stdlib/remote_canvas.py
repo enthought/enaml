@@ -6,7 +6,7 @@ from traits.api import Instance, Tuple
 from enable.component import Component
 from enable.kiva_graphics_context import GraphicsContext
 
-from .constraints_widget import ConstraintsWidget
+from ..widgets.constraints_widget import ConstraintsWidget
 from ..noncomponents.image import ImageFromArray
 
 

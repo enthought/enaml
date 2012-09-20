@@ -1,5 +1,6 @@
-from enaml.widgets.api import (MainWindow, Label, Container, PushButton, 
-        ComboBox, Canvas, RemoteCanvas)
+from enaml.widgets.api import (MainWindow, Label, Container, PushButton, ComboBox)
+from enaml.stdlib.canvas import Canvas
+from enaml.stdlib.remote_canvas import RemoteCanvas
 from enaml.layout.api import hbox, vbox, spacer
 
 
