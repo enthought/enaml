@@ -17,6 +17,19 @@ class Messenger(object):
     the Session which owns this messenger.
 
     """
+    #: A readonly property which returns the instance's class name.
+    #: This name is used as the key in the client session's factory dictionary.
+    @property
+    def class_name(self):
+        return type(self).__name__
+
+    #: A readonly property which returns the instance's base class names.
+    # XXX this is needed mainly for compatibility with the Declarative
+    # infrastructure - remove?
+    @property
+    def base_names(self):
+        return [type(self).__name__]
+
     #: The default object id generator. This can be overridden in a
     #: subclass to provide custom unique messenger identifiers.
     object_id_generator = id_generator('o')
@@ -55,7 +68,7 @@ class Messenger(object):
                 raise TypeError(msg % type(session).__name__)
             # XXX unregister messenger?
             self.__session_ref = ref(session)
-            session.register_widget(self)
+            session.register_widget(self) #XXX should be 'register_object'
 
         def deleter(self):
             # XXX unregister messenger?
@@ -134,6 +147,8 @@ class Messenger(object):
 
         """
         snap = super(Messenger, self).snapshot()
+        snap['class'] = self.class_name
+        snap['bases'] = self.base_names
         snap['object_id'] = self.object_id
         return snap
 
