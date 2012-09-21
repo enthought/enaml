@@ -53,9 +53,12 @@ class Messenger(object):
             if not isinstance(session, Session):
                 msg = 'Expected a Session. Got object of type `%s` instead.'
                 raise TypeError(msg % type(session).__name__)
+            # XXX unregister messenger?
             self.__session_ref = ref(session)
+            session.register_widget(self)
 
         def deleter(self):
+            # XXX unregister messenger?
             self.__session_ref = lambda: None
 
         return (getter, setter, deleter)
@@ -65,6 +68,9 @@ class Messenger(object):
     #: with reference cycles.
     session = property(*session())
 
+    #--------------------------------------------------------------------------
+    # Messaging/Session API
+    #--------------------------------------------------------------------------
     def handle_action(self, action, content):
         """ Handle an action sent from the client of this messenger.
 
@@ -119,3 +125,24 @@ class Messenger(object):
         else:
             session.send_action(self.object_id, action, content)
 
+
+    #--------------------------------------------------------------------------
+    # Public API
+    #--------------------------------------------------------------------------
+    def snapshot(self):
+        """ A method which takes a snapshot of the current state of the object.
+
+        """
+        snap = super(Messenger, self).snapshot()
+        snap['object_id'] = self.object_id
+        return snap
+
+    def bind(self):
+        """ A method which is called when a widget is published in a session
+        
+        The intent of this is to provide a hook for subclasses to bind trait
+        notifications and other callbacks to send messages through the session.
+        This is assumed to be called only once.
+        
+        """
+        pass
