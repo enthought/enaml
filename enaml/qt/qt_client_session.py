@@ -20,8 +20,8 @@ class QtClientSession(object):
     #: A message routing table to speed up dispatching.
     _message_routes = {
         'snapshot_response': '_on_message_snapshot_response',
-        'widget_action': '_dispatch_widget_message',
-        'widget_action_response': '_dispatch_widget_message',
+        'object_action': '_dispatch_widget_message',
+        'object_action_response': '_dispatch_widget_message',
         'widget_children_changed': '_on_message_widget_children_changed',
     }
 
@@ -114,8 +114,8 @@ class QtClientSession(object):
             The Message object sent from the server.
 
         """
-        if message.header.msg_type == 'widget_action':
-            widget_id = message.metadata.widget_id
+        if message.header.msg_type == 'object_action':
+            widget_id = message.metadata.object_id
             if widget_id not in self._widgets:
                 msg = 'Invalid widget id from server: %s'
                 logging.error(msg % widget_id)
@@ -285,10 +285,10 @@ class QtClientSession(object):
             'session': self._session_id,
             'username': self._username,
             'msg_id': _qtsession_message_id_gen.next(),
-            'msg_type': 'widget_action',
+            'msg_type': 'object_action',
             'version': '1.0',
         }
-        metadata = {'widget_id': widget_id, 'action': action}
+        metadata = {'object_id': widget_id, 'action': action}
         message = Message((header, {}, metadata, content))
         self._router.appMessagePosted.emit(message)
 

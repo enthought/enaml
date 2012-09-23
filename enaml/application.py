@@ -16,8 +16,8 @@ class Application(object):
         'start_session': '_on_message_start_session',
         'end_session': '_on_message_end_session',
         'snapshot': '_dispatch_session_message',
-        'widget_action': '_dispatch_session_message',
-        'widget_action_response': '_dispatch_session_message',
+        'object_action': '_dispatch_session_message',
+        'object_action_response': '_dispatch_session_message',
     }
 
     def __init__(self, factories):

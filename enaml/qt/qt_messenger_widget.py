@@ -67,7 +67,8 @@ class QtMessengerWidget(object):
             # XXX show a dialog here?
             msg = "Unhandled action sent to `%s` from server: %s"
             logging.warn(msg % (self.widget_id(), action))
-
+            print content
+            
     def send_action(self, action, content):
         """ Send an action to the server widget.
 

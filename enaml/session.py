@@ -5,6 +5,8 @@
 from abc import ABCMeta, abstractmethod
 from collections import Iterable
 
+from enaml.core.object import Object
+
 from .message import Message
 from .utils import id_generator
 
@@ -36,8 +38,8 @@ class Session(object):
     #: A message dispatch table used to speed up message routing
     _message_routes = {
         'snapshot': '_on_message_snapshot',
-        'widget_action': '_dispatch_widget_message',
-        'widget_action_response': '_dispatch_widget_message',
+        'object_action': '_dispatch_object_message',
+        'object_action_response': '_dispatch_object_message',
     }
 
     def __init__(self, push_handler, username, args, kwargs):
@@ -67,8 +69,7 @@ class Session(object):
         self._push_handler = push_handler
         self._username = username
         self._session_id = _session_id_gen.next()
-        self._session_views = []
-        self._widgets = {}
+        self._session_objects = []
         self.init(*args, **kwargs)
 
     #--------------------------------------------------------------------------
@@ -77,9 +78,9 @@ class Session(object):
     def _on_message_snapshot(self, request):
         """ Handle the 'snapshot' message type.
 
-        This handler will create the list of snapshot objects for the
-        current views being managed by the session and send an a
-        response to the client.
+        This handler will create a list of snapshots for the current 
+        objects being managed by the session and send a repsonse to 
+        the client.
 
         Parameters
         ----------
@@ -87,19 +88,19 @@ class Session(object):
             The request object containing the message sent by client.
 
         """
-        snapshot = [view.snapshot() for view in self._session_views]
+        snapshot = [obj.snapshot() for obj in self._session_objects]
         content = {'snapshot': snapshot}
         request.send_ok_response(content=content)
 
-    def _dispatch_widget_message(self, request):
-        """ Route a 'widget_action' message to the target widget.
+    def _dispatch_object_message(self, request):
+        """ Route an 'object_action' message to the target object.
 
-        This handler will lookup the widget using the given widget
-        id and pass the action and message content to the action
-        handler on the widget. If the widget does not exist, then
-        an error response will be sent to the client.
+        This handler will lookup the object using the given object id 
+        and pass the action and message content to the action handler 
+        on the object. If the object does not exist, then an error 
+        response will be sent to the client.
 
-        TODO - handle the "widget_action_response" message type.
+        TODO - handle the "object_action_response" message type.
         
         Parameters
         ----------
@@ -108,15 +109,44 @@ class Session(object):
 
         """
         message = request.message
-        if message.header.msg_type == 'widget_action':
-            widget_id = message.metadata.widget_id
-            if widget_id not in self._widgets:
-                request.send_error_response('Invalid widget id')
+        if message.header.msg_type == 'object_action':
+            object_id = message.metadata.object_id
+            obj = Object.lookup_object(object_id)
+            if obj is None:
+                request.send_error_response('Invalid object id')
                 return
-            widget = self._widgets[widget_id]
-            widget.handle_action(message.metadata.action, message.content)
+            obj.handle_action(message.metadata.action, message.content)
             request.send_ok_response()
-        # XXX handle msg_type 'widget_action_response'
+        # XXX handle msg_type 'object_action_response'
+
+    def _on_object_action(self, object_id, action, content):
+        """ The signal handler for the `action` signal on an Object. 
+
+        This handler is connected to the `action` signal of the objects
+        being used by this Session. It converts the action signal into
+        a message to the client.
+        
+        Parameters
+        ----------
+        object_id : str
+            The object identifier for the object emitting the action.
+
+        action : str
+            The action to performed by the object.
+
+        content : dict
+            The content dictionary for the action.
+
+        """
+        header = {
+            'session': self._session_id,
+            'username': self._username,
+            'msg_type': 'object_action',
+            'msg_id': _session_message_id_gen.next()
+        }
+        metadata = {'object_id': object_id, 'action': action}
+        message = Message((header, {}, metadata, content))
+        self._push_handler.push_message(message)
 
     #--------------------------------------------------------------------------
     # Abstract API
@@ -125,15 +155,14 @@ class Session(object):
     def on_open(self):
         """ Called by the application when the session is opened.
 
-        This method must be implemented in a subclass and is used to 
-        create the Enaml view objects for the session. This method will
-        only be called once during the session lifetime.
+        This method must be implemented in a subclass and is called to 
+        create the Enaml objects for the session. This method will only
+        be called once during the session lifetime.
         
         Returns
         -------
         result : iterable
-            An iterable of Enaml component trees which are the views
-            for this session. 
+            An iterable of Enaml objects for this session. 
 
         """
         raise NotImplementedError
@@ -160,8 +189,8 @@ class Session(object):
         Parameters
         ----------
         args
-            The positional arguments that were provided by the user to the
-            SessionFactory which created this session.
+            The positional arguments that were provided by the user to 
+            the SessionFactory which created this session.
 
         kwargs
             The keyword arguments that were provided by the user to the
@@ -173,46 +202,6 @@ class Session(object):
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
-    @classmethod
-    def factory(cls, sess_name=None, sess_descr=None, *args, **kwargs):
-        """ A utility classmethod that returns a SessionFactory.
-        
-        If the name or description are not given, they will be inferred
-        by looking for class attributes `name` and `description`. If 
-        these do not exist, then the class name and docstring will be 
-        used. If more control is needed, then the SessionFactory should 
-        be manually created.
-
-        Parameters
-        ----------
-        sess_name : str, optional
-            A unique, human friendly name for the session.
-        
-        sess_descr : str, optional
-            A brief description of the session.
-        
-        args
-            Optional postional arguments to pass to the Session's `init`
-            method when it's created.
-
-        kwargs
-            Optional keyword arguments to pass to the Session's `init`
-            method when it's created.
-        
-        """
-        from .session_factory import SessionFactory
-        if sess_name is None:
-            sess_name = getattr(cls, 'name', cls.__name__)
-        if sess_descr is None:
-            sess_descr = getattr(cls, 'description', cls.__doc__)
-            if sess_descr is None:
-                msg = ('Session class must have a `description` class '
-                       'attribute or a docstring to use the `factory` '
-                       'classmethod. ')
-                raise AttributeError(msg)
-        factory = SessionFactory(sess_name, sess_descr, cls, *args, **kwargs)
-        return factory
-
     @property
     def session_id(self):
         """ The unique identifier for this session.
@@ -238,73 +227,16 @@ class Session(object):
         return self._username
 
     @property
-    def session_views(self):
-        """ The Enaml views being managed by this session.
+    def session_objects(self):
+        """ The Enaml objects being managed by this session.
 
         Returns
         -------
         result : tuple
-            The Enaml views in use for the session.
+            The Enaml objects in use for the session.
 
         """
-        return self._session_views
-    
-    def send_action(self, widget_id, action, content):
-        """ Send an unsolicited message of type 'widget_action' to a
-        client widget of this session. 
-
-        This method is called by the MessengerWidget's which are owned 
-        by this Session object. This should never be called directly by 
-        user code.
-        
-        Parameters
-        ----------
-        widget_id : str
-            The widget identifier for the widget sending the message.
-
-        action : str
-            The action to be performed by the client widget.
-
-        content : dict
-            The content dictionary for the action.
-
-        """
-        header = {
-            'session': self._session_id,
-            'username': self._username,
-            'msg_type': 'widget_action',
-            'msg_id': _session_message_id_gen.next()
-        }
-        metadata = {'widget_id': widget_id, 'action': action}
-        message = Message((header, {}, metadata, content))
-        self._push_handler.push_message(message)
-
-    def send_children_changed(self, widget_id, content):
-        """ Send an unsolicited 'widget_children_changed' message to
-        the client of this session.
-
-        This method is called by the MessengerWidget's which are owned 
-        by this Session object. This should never be called directly by 
-        user code.
-        
-        Parameters
-        ----------
-        widget_id : str
-            The widget identifier for the widget sending the message.
-
-        content : dict
-            The content dictionary for the action.
-
-        """
-        header = {
-            'session': self._session_id,
-            'username': self._username,
-            'msg_type': 'widget_children_changed',
-            'msg_id': _session_message_id_gen.next()
-        }
-        metadata = {'widget_id': widget_id}
-        message = Message((header, {}, metadata, content))
-        self._push_handler.push_message(message)
+        return self._session_objects
 
     def open(self):
         """ Called by the application when the session is opened.
@@ -312,38 +244,24 @@ class Session(object):
         This method should never be called by user code.
         
         """
-        views = self.on_open()
-        if not isinstance(views, Iterable):
-            views = (views,)
+        objs = self.on_open()
+        if not isinstance(objs, Iterable):
+            objs = (objs,)
         else:
-            views = tuple(views)
-        self._session_views = views
-        for view in views:
-            view.set_session(self)
+            objs = tuple(objs)
+        self._session_objects = objs
+        handler = self._on_object_action
+        for obj in objs:
+            obj.initialize()
+            for obj in obj.traverse():
+                obj.action.connect(handler)
 
     def close(self):
         """ Called by the application when the session is closed.
 
         """
         self.on_close()
-        # XXX need to do explicit view destruction?
-        self._session_views = ()
-
-    def register_widget(self, widget):
-        """ A method called by a MessengerWidget when the Session is
-        assigned to the widget.
-
-        This allows the Session object to build a mapping of widget
-        identifiers to widgets for dispatching messages. This method
-        should never be called by user code.
-
-        Parameters
-        ----------
-        widget : MessengerWidget
-            The widget to which this session was applied.
-
-        """
-        self._widgets[widget.widget_id] = widget
+        # XXX Explicity close the client connection
 
     def handle_request(self, request):
         """ A method called by the application when the client sends

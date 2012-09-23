@@ -25,8 +25,8 @@ class QtLocalClient(object):
         'start_session_response': '_on_message_start_session_response',
         'end_session_response': '_on_message_end_session_response',
         'snapshot_response': '_dispatch_session_message',
-        'widget_action': '_dispatch_session_message',
-        'widget_action_response': '_dispatch_session_message',
+        'object_action': '_dispatch_session_message',
+        'object_action_response': '_dispatch_session_message',
         'widget_children_changed': '_dispatch_session_message',
     }
 
