@@ -63,7 +63,7 @@ def simple_session(sess_name, sess_descr, sess_callable, *args, **kwargs):
 
 
 def view_factory(sess_name=None, sess_descr=None):
-    """ A decorator that creates a session factory from a function.
+    """ A decorator that creates a session factory from a callable.
      
     This can be used in the following ways:
         
@@ -72,7 +72,7 @@ def view_factory(sess_name=None, sess_descr=None):
             ...
             return View(...)
         
-        @view_factory('my-views', 'This is several view')
+        @view_factory('my-views', 'This is several views')
         def views(...):
             ...
             return [View1(...), View2(...)]
@@ -96,51 +96,34 @@ def view_factory(sess_name=None, sess_descr=None):
     return _wrapper
 
 
-def simple_app(sess_name, sess_descr, sess_callable, *args, **kwargs):
-    """ Utility function which creates an application from a component.
-    
-    This is suitable for use in simple applications, particularly 
-    "traditional" GUI applications running a single main view in a 
-    single process.
-    
-    Parameters
-    ----------
-    sess_name : str
-        An unique, human-friendly name for the session.
-    
-    sess_descr : str
-        An brief description of the session.
-    
-    sess_callable : callable
-        A callable which returns a component or iterable of components
-        for the session.
-
-    *args, **kwargs
-        Optional positional and keyword arguments to pass to the 
-        callable when the session is opened.
-    
-    """
-    from enaml.application import Application
-    factory = simple_session(
-        sess_name, sess_descr, sess_callable, *args, **kwargs
-    )
-    app = Application([factory])
-    return app
-
-
-def show_simple_view(view):
+def show_simple_view(view, toolkit='qt', description=''):
     """ Display a simple view to the screen in the local process.
 
     Parameters
     ----------
-    view : Declarative
-        The top level Declarative component to use as the view.
+    view : Object
+        The top level Object to use as the view.
+
+    toolkit : string, optional
+        The toolkit backend to use to display the view. Currently
+        supported values are 'qt' and 'wx'. The default is 'qt'.
+        Note that not all functionality is available on Wx.
+
+    description : string, optional
+        An optional description to give to the session.
 
     """
-    from enaml.qt.qt_local_server import QtLocalServer
-    app = simple_app('main', '', lambda: view)
-    server = QtLocalServer(app)
-    client = server.local_client()
-    client.start_session('main')
-    server.start()
+    f = lambda: view
+    if toolkit == 'qt':
+        from enaml.qt.qt_application import QtApplication
+        app = QtApplication([simple_session('main', description, f)])
+    # the wx refactor is not yet complete
+    #elif toolkit == 'wx':
+    #    from enaml.wx.wx_application import WxApplication
+    #    app = WxApplication([simple_session('main', description, f)])
+    else:
+        raise ValueError('Unknown toolkit `%s`' % toolkit)
+    app.start_session('main')
+    app.start()
+    return app
 
