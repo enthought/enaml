@@ -1,0 +1,21 @@
+
+
+from enaml.widgets.api import Window, PushButton, Container
+
+
+enamldef View(Window):
+    Container:
+        PushButton:
+            text = 'Foo'
+        PushButton:
+            text = 'Bar'
+        PushButton:
+            text = 'Baz'
+
+
+def main():
+    from enaml.qt_application import QtApplication
+    view = View()
+    app = QtApplication([view])
+    app.start()
+
