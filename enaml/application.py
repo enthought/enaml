@@ -184,12 +184,12 @@ class Application(object):
             raise ValueError('Invalid session id')
         return session.snapshot()
 
-    def dispatch_object_message(self, object_id, action, content):
-        """ Dispatch a message to an object with the given id.
+    def dispatch_action(self, object_id, action, content):
+        """ Dispatch an action to an object with the given id.
 
         This method can be called by subclasses when they receive an
         object action message from a client object. If the object does
-        not exist, an exception will be raise.
+        not exist, an exception will be raised.
 
         Parameters
         ----------

@@ -3,7 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import logging
-#from weakref import WeakValueDictionary
+from weakref import WeakValueDictionary
 
 from enaml.utils import LoopbackGuard
 
@@ -12,11 +12,47 @@ class QtObject(object):
     """ The most base class of all client objects for Qt.
 
     """
-    _objects = {}# WeakValueDictionary()
+    _objects = WeakValueDictionary()
 
     @classmethod
     def lookup_object(cls, object_id):
         return cls._objects.get(object_id)
+
+    @classmethod
+    def build(cls, parent, tree, pipe, factories):
+        """ Build out a widget tree using the provided info.
+
+        parent : QtObject or None
+
+        tree : dict
+
+        pipe : QActionPipe
+
+        """
+        object_id = tree['object_id']
+        self = cls(object_id, parent, pipe)
+        self.create(tree)
+        for child_t in tree['children']:
+            for base in child_t['bases']:
+                if base in factories:
+                    object_cls = factories[base]()
+                    obj = object_cls.build(self, child_t, pipe, factories)
+                    self.add_child(obj)
+                    break
+        self.initialize()
+        return self
+        
+    def initialize(self):
+        for child in self.children():
+            child.initialize()
+        self.init_layout()
+
+    def __new__(cls, object_id, *args, **kwargs):
+        if object_id in cls._objects:
+            raise ValueError('Duplicate object id')
+        self = super(QtObject, cls).__new__(cls)
+        cls._objects[object_id] = self
+        return self
 
     def __init__(self, object_id, parent=None, pipe=None):
         """ Initialize a QtObject.
@@ -34,7 +70,6 @@ class QtObject(object):
             The action pipe to use for sending actions to Enaml objects.
 
         """
-        QtObject._objects[object_id] = self
         self._object_id = object_id
         self._parent = parent
         self._pipe = pipe
