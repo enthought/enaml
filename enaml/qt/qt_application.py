@@ -36,11 +36,25 @@ class QtApplication(Application):
 
         """
         super(QtApplication, self).__init__(factories)
+        
+        # The QApplication instance being used by this application. An
+        # existing application instance will be reused.
         self._qapp = QApplication.instance() or QApplication([])
+
+        # The pipe to use for messages sent by Object instances.
         self._enaml_pipe = epipe = QActionPipe()
+
+        # The pipe to use for messages sent by QtObject instances.
         self._qt_pipe = qpipe = QActionPipe()
+
+        # The builder object to use for building out QtObject trees.
         self._qt_builder = builder or QtBuilder()
+
+        # A dict mapping session id -> QtObject list for the active 
+        # sessions of the application.
         self._qt_objects = defaultdict(list)
+
+        # Hook up the signal handlers for the pipes.
         epipe.actionPosted.connect(self._on_enaml_action, Qt.QueuedConnection)
         qpipe.actionPosted.connect(self._on_qt_action, Qt.QueuedConnection)
 
