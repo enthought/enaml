@@ -8,7 +8,7 @@ from .qt_factories import QT_FACTORIES
 
 
 class QtBuilder(object):
-    """ An object which manages building Qt object tree from a Enaml
+    """ An object which manages building a QtObject tree from an Enaml
     snapshot dict.
 
     """
@@ -50,6 +50,7 @@ class QtBuilder(object):
             for base in tree['bases']:
                 if base in factories:
                     obj_cls = factories[base]()
+                    break
         if obj_cls is None:
             msg =  'Unhandled object type: %s:%s'
             item_class = tree['class']
