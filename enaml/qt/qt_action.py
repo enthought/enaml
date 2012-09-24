@@ -3,10 +3,10 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt.QtGui import QAction, QKeySequence
-from .qt_messenger_widget import QtMessengerWidget
+from .qt_object import QtObject
 
 
-class QtAction(QtMessengerWidget):
+class QtAction(QtObject):
     """ A Qt implementation of an Enaml Action.
 
     """

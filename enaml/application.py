@@ -2,7 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta, abstractmethod, abstractproperty
 import logging
 import uuid
 
@@ -64,20 +64,31 @@ class Application(object):
     #--------------------------------------------------------------------------
     # Abstract API
     #--------------------------------------------------------------------------
-    @abstractmethod
+    @abstractproperty
     def pipe_interface(self):
-        """ An abstractmethod which returns the ActionPipeInterface for
-        the application.
+        """ Get the ActionPipeInterface for this application.
+
+        Returns
+        -------
+        result : ActionPipeInterface
+            An implementor of ActionPipeInterface which can be used by
+            Enaml Object instances to send messages to their clients.
 
         """
         raise NotImplementedError
 
     @abstractmethod
     def start(self):
+        """ Start the application's main event loop.
+
+        """
         raise NotImplementedError
 
     @abstractmethod
     def stop(self):
+        """ Stop the application's main event loop.
+
+        """
         raise NotImplementedError
 
     #--------------------------------------------------------------------------
@@ -145,7 +156,7 @@ class Application(object):
         session_id = uuid.uuid4().hex
         session = factory(session_id)
         self._sessions[session_id] = session
-        session.open(self.pipe_interface())
+        session.open(self.pipe_interface)
         return session_id
 
     def end_session(self, session_id):

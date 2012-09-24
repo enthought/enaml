@@ -2,12 +2,14 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from collections import defaultdict
+
 from enaml.application import Application
 
 from .qt.QtCore import Qt
 from .qt.QtGui import QApplication
 from .q_action_pipe import QActionPipe
-from .qt_factories import QT_FACTORIES
+from .qt_builder import QtBuilder
 from .qt_object import QtObject
 
 
@@ -18,7 +20,7 @@ class QtApplication(Application):
     runs in the local process.
 
     """
-    def __init__(self, factories, qt_factories=None):
+    def __init__(self, factories, builder=None):
         """ Initialize a QtApplication.
 
         Parameters
@@ -27,41 +29,39 @@ class QtApplication(Application):
             An iterable of SessionFactory instances to pass to the
             superclass constructor.
 
+        builder : QtBuilder or None
+            An optional QtBuilder instance to manage the building of
+            QtObject instances for this application. If not provided,
+            a default builder will be used.
+
         """
         super(QtApplication, self).__init__(factories)
         self._qapp = QApplication.instance() or QApplication([])
-        self._enaml_pipe = QActionPipe()
-        self._qt_pipe = QActionPipe()
-        self._qt_factories = qt_factories or QT_FACTORIES
-        self._qt_objects = []
-
-        conn = Qt.QueuedConnection
-        self._enaml_pipe.actionPosted.connect(self._on_enaml_action, conn)
-        self._qt_pipe.actionPosted.connect(self._on_qt_action, conn)
+        self._enaml_pipe = epipe = QActionPipe()
+        self._qt_pipe = qpipe = QActionPipe()
+        self._qt_builder = builder or QtBuilder()
+        self._qt_objects = defaultdict(list)
+        epipe.actionPosted.connect(self._on_enaml_action, Qt.QueuedConnection)
+        qpipe.actionPosted.connect(self._on_qt_action, Qt.QueuedConnection)
 
     #--------------------------------------------------------------------------
     # Abstract API Implementation
     #--------------------------------------------------------------------------
+    @property
     def pipe_interface(self):
+        """ Get the ActionPipeInterface for this application.
+
+        Returns
+        -------
+        result : ActionPipeInterface
+            An implementor of ActionPipeInterface which can be used by
+            Enaml Object instances to send messages to their clients.
+
+        """
         return self._enaml_pipe
 
-    def start_session(self, name):
-        sid = super(QtApplication, self).start_session(name)
-        factories = self._qt_factories
-        for item in self.snapshot(sid):
-            for base in item['bases']:
-                if base in factories:
-                    object_cls = factories[base]()
-                    obj = object_cls.build(None, item, self._qt_pipe, factories)
-                    self._qt_objects.append(obj)
-                    break
-        return sid
-
     def start(self):
-        """ Start the sever's main loop.
-
-        This will enter the main GUI event loop and block until a call
-        to 'stop' is made, at which point this method will return.
+        """ Start the application's main event loop.
 
         """
         app = self._qapp
@@ -71,10 +71,7 @@ class QtApplication(Application):
             app._in_event_loop = False
 
     def stop(self):
-        """ Stop the server's main loop.
-
-        Calling this method will cause a previous call to 'start' to 
-        unblock and return.
+        """ Stop the application's main event loop.
 
         """
         app = self._qapp
@@ -84,6 +81,38 @@ class QtApplication(Application):
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
+    def start_session(self, name):
+        """ Start a new session of the given name.
+
+        This is an overridden parent class method which will build out
+        the Qt client object tree for the session. It will be displayed
+        when the application is started.
+
+        """
+        sid = super(QtApplication, self).start_session(name)
+        pipe = self._qt_pipe
+        builder = self._qt_builder
+        objects = self._qt_objects[sid]
+        for item in self.snapshot(sid):
+            obj = builder.build(item, None, pipe)
+            if obj is not None:
+                obj.initialize()
+                objects.append(obj)
+        return sid
+
+    def end_session(self, session_id):
+        """ End the session with the given session id.
+
+        This is an overridden parent class method which will removes
+        the references to the Qt client object trees for the session.
+
+        """
+        super(QtApplication, self).end_session(session_id)
+        self._qt_objects.pop(session_id, None)
+        # XXX decide lifetime issues!
+        # XXX this is the most reliable way to cleanup.
+        import gc; gc.collect()
+
     def dispatch_qt_action(self, object_id, action, content):
         """ Dispatch an action to a qt object with the given id.
 
@@ -104,7 +133,11 @@ class QtApplication(Application):
         """
         obj = QtObject.lookup_object(object_id)
         if obj is None:
-            raise ValueError('Invalid object id')
+            # XXX disable for now to avoid annoying lifetime error 
+            # messages
+            #print action, content
+            #raise ValueError('Invalid object id')
+            return
         obj.handle_action(action, content)
 
     #--------------------------------------------------------------------------

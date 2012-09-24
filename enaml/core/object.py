@@ -363,11 +363,9 @@ class Object(HasStrictTraits):
     def handle_action(self, action, content):
         """ Handle the specified action with the given content.
 
-        This method tells the object to handle a specific action. This
-        method can be thought of as the inverse of the `action` signal.
-        That is, this method can be called to get the object to do work.
-        The default behavior of the method is to dispatch the action to 
-        a handler method named `on_action_<action>` where <action> is
+        This method tells the object to handle a specific action. The 
+        default behavior of the method is to dispatch the action to a 
+        handler method named `on_action_<action>` where <action> is
         substituted with the provided action.
 
         Parameters
@@ -375,7 +373,7 @@ class Object(HasStrictTraits):
         action : str
             The action to be performed by the object.
 
-        content : ObjectDict
+        content : dict
             The content dictionary for the action.
 
         """

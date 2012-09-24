@@ -1,16 +1,19 @@
-
+from enaml.application import Application
 from enaml.session import Session
 from enaml.session_factory import SessionFactory
 from enaml.qt.qt_application import QtApplication
 from enaml.widgets.api import Window, PushButton, Container, Slider
+from enaml.core.declarative import Declarative
 
 
 enamldef View(Window):
     Container:
         PushButton:
             text << str(sldr.value)
+            clicked :: Application.instance().end_session(sid)
         PushButton:
             text = 'Bar'
+            clicked :: print sid
         PushButton:
             text = 'Baz'
             clicked :: print 'I was clicked'
@@ -18,9 +21,13 @@ enamldef View(Window):
             id: sldr
 
 
+sid = None
+
 class FooSession(Session):
 
     def on_open(self):
+        global sid
+        sid = self.session_id
         return View()
 
 

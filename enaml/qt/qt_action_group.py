@@ -3,7 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt.QtGui import QActionGroup
-from .qt_messenger_widget import QtMessengerWidget
+from .qt_object import QtObject
 
 
 class QCustomActionGroup(QActionGroup):
@@ -59,7 +59,7 @@ class QCustomActionGroup(QActionGroup):
                         action.setChecked(False)
 
 
-class QtActionGroup(QtMessengerWidget):
+class QtActionGroup(QtObject):
     """ A Qt implementation of an Enaml ActionGroup.
 
     """

@@ -12,42 +12,92 @@ class QtObject(object):
     """ The most base class of all client objects for Qt.
 
     """
+    #: Class level storage for QtObject instances. QtObjects are added 
+    #: to this dict as they are created. Instances are stored weakly.
     _objects = WeakValueDictionary()
 
     @classmethod
     def lookup_object(cls, object_id):
+        """ A classmethod which finds the object with the given id.
+
+        Parameters
+        ----------
+        object_id : str
+            The identifier for the object to lookup.
+
+        Returns
+        -------
+        result : QtObject or None
+            The QtObject for the given identifier, or None if no object
+            is found.
+
+        """
         return cls._objects.get(object_id)
 
     @classmethod
-    def build(cls, parent, tree, pipe, factories):
-        """ Build out a widget tree using the provided info.
+    def construct(cls, tree, parent, pipe):
+        """ Construct the QtObject instance for the given parameters.
+
+        This classmethod is called by the QtBuilder object used by the
+        application. When called, it will create a new instance of the 
+        class by extracting the object id from the snapshot and calling 
+        the class constructor. It then invokes the `create` method on
+        the new instance. This classmethod exists for cases where it is
+        necessary to define custom construction behavior. A subclass 
+        may reimplement this method as required.
+
+        Parameters
+        ----------
+        tree : dict
+            An Enaml snapshot dict representing an object tree from this
+            object downward.
 
         parent : QtObject or None
-
-        tree : dict
+            The parent QtObject to use for this object, or None if this
+            object is top-level.
 
         pipe : QActionPipe
+            The QActionPipe to use for sending messages to the Enaml
+            widget.
+
+        Returns
+        -------
+        result : QtObject
+            The QtObject instance for these parameters.
+
+        Notes
+        -----
+        This method does *not* construct the children for this object.
+        That responsibility lies with the QtBuilder object which calls
+        this constructor.
 
         """
         object_id = tree['object_id']
         self = cls(object_id, parent, pipe)
         self.create(tree)
-        for child_t in tree['children']:
-            for base in child_t['bases']:
-                if base in factories:
-                    object_cls = factories[base]()
-                    obj = object_cls.build(self, child_t, pipe, factories)
-                    self.add_child(obj)
-                    break
-        self.initialize()
         return self
-        
-    def initialize(self):
-        for child in self.children():
-            child.initialize()
-        self.init_layout()
 
     def __new__(cls, object_id, *args, **kwargs):
+        """ Create a new QtObject.
+
+        If the provided object id already exists, an exception will be
+        raised.
+
+        Parameters
+        ----------
+        object_id : str
+            The unique object identifier assigned to this object.
+
+        *args, **kwargs
+            Additional positional and keyword arguments needed to 
+            initialize a QtObject.
+
+        Returns
+        -------
+        result : QtObject
+            A new QtObject instance.
+
+        """
         if object_id in cls._objects:
             raise ValueError('Duplicate object id')
         self = super(QtObject, cls).__new__(cls)
@@ -76,51 +126,7 @@ class QtObject(object):
         self._children = []
         self._children_map = {}
         self._widget = None
-
-    #--------------------------------------------------------------------------
-    # Messaging/Session API
-    #--------------------------------------------------------------------------
-    def handle_action(self, action, content):
-        """ Handle an action sent from the server widget
-
-        This is called by the QtClientSession object when the server
-        widget sends a message to this widget.
-
-        Parameters
-        ----------
-        action : str
-            The action to be performed by the widget.
-
-        content : ObjectDict
-            The content dictionary for the action.
-
-        """
-        handler_name = 'on_action_' + action
-        handler = getattr(self, handler_name, None)
-        if handler is not None:
-            handler(content)
-        else:
-            msg = "Unhandled action sent to `%s` from server: %s"
-            logging.warn(msg % (self.widget_id(), action))
-            
-    def send_action(self, action, content):
-        """ Send an action to the server widget.
-
-        This method can be called to send an unsolicited message of
-        type 'widget_action' to the server widget for this widget.
-
-        Parameters
-        ----------
-        action : str
-            The action for the message.
-
-        content : dict
-            The content of the message.
-
-        """
-        pipe = self._pipe
-        if pipe is not None:
-            pipe.send(self._object_id, action, content)
+        self._initialized = False
 
     #--------------------------------------------------------------------------
     # Properties
@@ -138,117 +144,37 @@ class QtObject(object):
         return guard
 
     #--------------------------------------------------------------------------
-    # Public API
+    # Object Methods
     #--------------------------------------------------------------------------
-    def parent(self):
-        """ Get the parent of this messenger widget.
-
-        Returns
-        -------
-        result : QtMessengerWidget or None
-            The parent of this messenger widget, or None if it has
-            no parent.
-
-        """
-        return self._parent
-
-    def children(self):
-        """ Get the children of this widget.
-
-        Returns
-        -------
-        result : list
-            The list of children of this widget. This list should not
-            be modified in place by user code.
-
-        """
-        return self._children
-
-    def add_child(self, child):
-        """ Add a child widget to this widget.
-
-        Parameters
-        ----------
-        child : QtMessengerWidget
-            The child widget to add to this widget.
-
-        """
-        # XXX handle reparenting and duplicate adding
-        self._children.append(child)
-        self._children_map[child.widget_id()] = child
-
-    def insert_child(self, index, child):
-        """ Insert a child widget into this widget.
-
-        Parameters
-        ----------
-        index : int
-            The target index for the child widget.
-
-        child : QtMessengerWidget
-            The child widget to insert into this widget.
-
-        """
-        # XXX handle reparenting and duplicates
-        self._children.insert(index, child)
-        self._children_map[child.widget_id()] = child
-
-    def remove_child(self, child):
-        """ Remove the child widget from this widget.
-
-        Parameters
-        ----------
-        child : QtMessengerWidget
-            The child widget to remove from this widget.
-
-        """
-        # XXX handle unparenting
-        children = self._children
-        if child in children:
-            children.remove(child)
-            self._children_map.pop(child.widget_id(), None)
-
-    def find_child(self, widget_id):
-        """ Find the child with the given widget id.
-
-        Parameters
-        ----------
-        widget_id : str
-            The widget identifier for the target widget.
-
-        Returns
-        -------
-        result : QtMessengerWidget or None
-            The child widget or None if its not found.
-
-        """
-        return self._children_map.get(widget_id)
-
-    def widget(self):
-        """ Get the toolkit widget for this messenger widget.
-
-        Returns
-        -------
-        result : QWidget
-            The toolkit widget for this messenger widget, or None if
-            it does not have a toolkit widget.
-
-        """
-        return self._widget
-
-    def widget_id(self):
-        """ Get the widget id for the messenger widget.
+    def object_id(self):
+        """ Get the object id for the object.
 
         Returns
         -------
         result : str
-            The widget identifier for this messenger widget.
+            The unique identifier for this object.
 
         """
         return self._object_id
 
-    def object_id(self):
+    def widget_id(self):
+        """ A backwards compatibility method. New code should call the
+        `object_id` method.
+
+        """
         return self._object_id
+
+    def widget(self):
+        """ Get the toolkit-specific object for this object.
+
+        Returns
+        -------
+        result : QObject
+            The toolkit object for this object, or None if it does not 
+            have a toolkit object.
+
+        """
+        return self._widget
 
     def create_widget(self, parent, tree):
         """ A method which must be implemented by subclasses.
@@ -292,6 +218,32 @@ class QtObject(object):
         parent_widget = parent.widget() if parent else None
         self._widget = self.create_widget(parent_widget, tree)
 
+    def initialized(self):
+        """ Get whether or not this object is initialized.
+
+        Returns
+        -------
+        result : bool
+            True if this object has been initialized, False otherwise.
+
+        """
+        return self._initialized
+
+    def initialize(self):
+        """ A method called by the application to initialize the UI.
+
+        This method is called by the application to allow the object
+        tree perform any post-create initialization required. This 
+        method should only be called once. Multiple calls to this
+        method are ignored.
+
+        """
+        if not self._initialized:
+            for child in self.children():
+                child.initialize()
+            self.init_layout()
+            self._initialized = True
+
     def init_layout(self):
         """ A method that allows widgets to do layout initialization.
 
@@ -319,6 +271,7 @@ class QtObject(object):
             6. The object removes itself from the session.
 
         """
+        # XXX revisit this!!
         children = self._children
         self._children = []
         self._children_map = {}
@@ -336,8 +289,134 @@ class QtObject(object):
             widget.setParent(None)
         self._widget = None
 
-        session = self._session
-        if session is not None:
-            session.widget_destroyed(self._widget_id)
-            self._session = None
+    #--------------------------------------------------------------------------
+    # Parenting Methods
+    #--------------------------------------------------------------------------
+    def parent(self):
+        """ Get the parent of this QtObject.
+
+        Returns
+        -------
+        result : QtObject or None
+            The parent object of this object, or None if it has no 
+            parent.
+
+        """
+        return self._parent
+
+    def children(self):
+        """ Get the children of this object.
+
+        Returns
+        -------
+        result : list
+            The list of children of this object. This list should not
+            be modified in place by user code.
+
+        """
+        return self._children
+
+    def add_child(self, child):
+        """ Add a child widget to this object.
+
+        Parameters
+        ----------
+        child : QtObject
+            The child object to add to this object.
+
+        """
+        # XXX handle reparenting and duplicate adding
+        self._children.append(child)
+        self._children_map[child.object_id()] = child
+
+    def insert_child(self, index, child):
+        """ Insert a child object into this object.
+
+        Parameters
+        ----------
+        index : int
+            The target index for the child object.
+
+        child : QtObject
+            The child object to insert into this object.
+
+        """
+        # XXX handle reparenting and duplicates
+        self._children.insert(index, child)
+        self._children_map[child.object_id()] = child
+
+    def remove_child(self, child):
+        """ Remove the child object from this object.
+
+        Parameters
+        ----------
+        child : QtObject
+            The child object to remove from this object.
+
+        """
+        # XXX handle unparenting
+        children = self._children
+        if child in children:
+            children.remove(child)
+            self._children_map.pop(child.object_id(), None)
+
+    def find_child(self, object_id):
+        """ Find the child with the given object id.
+
+        Parameters
+        ----------
+        object_id : str
+            The object identifier for the target object.
+
+        Returns
+        -------
+        result : QtObject or None
+            The child object or None if it is not found.
+
+        """
+        return self._children_map.get(object_id)
+
+    #--------------------------------------------------------------------------
+    # Messaging Methods
+    #--------------------------------------------------------------------------
+    def handle_action(self, action, content):
+        """ Handle an action sent from an Enaml widget.
+
+        This method tells the object to handle a specific action. The 
+        default behavior of the method is to dispatch the action to a 
+        handler method named `on_action_<action>` where <action> is
+        substituted with the provided action.
+
+        Parameters
+        ----------
+        action : str
+            The action to be performed by the object.
+
+        content : dict
+            The content dictionary for the action.
+
+        """
+        handler_name = 'on_action_' + action
+        handler = getattr(self, handler_name, None)
+        if handler is not None:
+            handler(content)
+        else:
+            msg = "Unhandled action '%s' for QtObject %s:%s"
+            logging.warn(msg % (action, type(self).__name__, self._object_id))
+            
+    def send_action(self, action, content):
+        """ Send an action on the action pipe for this object.
+
+        Parameters
+        ----------
+        action : str
+            The name of the action performed.
+
+        content : dict
+            The content data for the action.
+
+        """
+        pipe = self._pipe
+        if pipe is not None:
+            pipe.send(self._object_id, action, content)
 
