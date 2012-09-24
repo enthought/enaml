@@ -2,6 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from abc import ABCMeta, abstractmethod
 from collections import deque
 import logging
 import re
@@ -14,8 +15,16 @@ from traits.api import (
 
 from enaml.utils import LoopbackGuard, id_generator
 
-from .signaling import Signal
 from .trait_types import EnamlEvent
+
+
+class ActionPipeInterface(object):
+
+    __metaclass__ = ABCMeta
+
+    @abstractmethod
+    def send(self, object_id, action, content):
+        raise NotImplementedError
 
 
 class Object(HasStrictTraits):
@@ -91,7 +100,7 @@ class Object(HasStrictTraits):
     #: A signal emitted when an action has been taken by the object that
     #: may be of interest to external listeners. The payload will be the
     #: object id, the action name, and the content dict.
-    action = Signal()
+    action_pipe = Instance(ActionPipeInterface)
 
     #: A loopback guard which can be used to prevent a signal loopback 
     #: cycle when setting attributes from within an action handler.
@@ -380,11 +389,7 @@ class Object(HasStrictTraits):
             logging.warn(msg % (action, self.class_name, self.object_id))
 
     def send_action(self, action, content):
-        """ A convenience method for emitting the `action` signal.
-
-        This method simply emits the `action` signal for the object with
-        the provided action and content. This is a convenience for the 
-        developer to eliminate the boiler plate of emitting the signal.
+        """ Send an action on the action pipe for this object.
 
         Parameters
         ----------
@@ -395,7 +400,9 @@ class Object(HasStrictTraits):
             The content data for the action.
 
         """
-        self.action.emit(self.object_id, action, content)
+        pipe = self.action_pipe
+        if pipe is not None:
+            pipe.send(self.object_id, action, content)
 
     def snapshot(self):
         """ Create a snapshot of the tree starting from this object.

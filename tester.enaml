@@ -1,5 +1,7 @@
 
-
+from enaml.session import Session
+from enaml.session_factory import SessionFactory
+from enaml.qt.qt_application import QtApplication
 from enaml.widgets.api import Window, PushButton, Container, Slider
 
 
@@ -16,9 +18,15 @@ enamldef View(Window):
             id: sldr
 
 
+class FooSession(Session):
+
+    def on_open(self):
+        return View()
+
+
 def main():
-    from enaml.qt_application import QtApplication
-    view = View()
-    app = QtApplication([view])
+    fact = SessionFactory('main', '', FooSession)
+    app = QtApplication([fact])
+    app.start_session('main')
     app.start()
 

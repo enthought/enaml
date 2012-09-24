@@ -2,7 +2,11 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from abc import ABCMeta, abstractmethod
 import logging
+import uuid
+
+from enaml.core.object import Object
 
 
 class Application(object):
@@ -10,15 +14,37 @@ class Application(object):
     protocol for serving Enaml views.
 
     """
-    #: A message dispatch table used to speed up message routing
-    _message_routes = {
-        'discover': '_on_message_discover',
-        'start_session': '_on_message_start_session',
-        'end_session': '_on_message_end_session',
-        'snapshot': '_dispatch_session_message',
-        'object_action': '_dispatch_session_message',
-        'object_action_response': '_dispatch_session_message',
-    }
+    __metaclass__ = ABCMeta
+
+    #: The singleton application instance
+    _instance = None
+
+    @staticmethod
+    def instance():
+        """ Get the global Application instance.
+
+        Returns
+        -------
+        result : Application or None
+            The global application instance, or None if one has not yet
+            been created.
+
+        """
+        return Application._instance
+
+    def __new__(cls, *args, **kwargs):
+        """ Create a new Enaml Application.
+
+        There may be only one application instance in existence at any
+        point in time. Attempting to create a new Application when one
+        exists will raise an exception.
+
+        """
+        if Application.instance() is not None:
+            raise RuntimeError('An Application instance already exists')
+        self = super(Application, cls).__new__(cls)
+        Application._instance = self
+        return self
 
     def __init__(self, factories):
         """ Initialize an Enaml Application.
@@ -34,100 +60,25 @@ class Application(object):
         self._named_factories = {}
         self._sessions = {}
         self.add_factories(factories)
-
+    
     #--------------------------------------------------------------------------
-    # Message Handling
+    # Abstract API
     #--------------------------------------------------------------------------
-    def _on_message_discover(self, request):
-        """ Handle the 'discover' message type.
-
-        This handler will create the list of session info objects and
-        send the reponse to the client.
-
-        Parameters
-        ----------
-        request : BaseRequest
-            The request object containing the message sent by client.
+    @abstractmethod
+    def pipe_interface(self):
+        """ An abstractmethod which returns the ActionPipeInterface for
+        the application.
 
         """
-        sessions = [
-            {'name': fact.name, 'description': fact.description} 
-            for fact in self._all_factories
-        ]
-        content = {'sessions': sessions}
-        request.send_ok_response(content=content)
+        raise NotImplementedError
 
-    def _on_message_start_session(self, request):
-        """ Handle the 'start_session' message type.
+    @abstractmethod
+    def start(self):
+        raise NotImplementedError
 
-        This handler will create a new session object for the requested
-        session type and respond to the client with the new session id.
-        If the session type is invalid, the handler will reply with an
-        appropriate error message.
-
-        Parameters
-        ----------
-        request : BaseRequest
-            The request object containing the message sent by client.
-
-        """
-        message = request.message
-        name = message.content.name
-        if name not in self._named_factories:
-            request.send_error_response('Invalid session name')
-        else:
-            # XXX Do we want to move this to a call later, and do some
-            # checking on the number of open sessions etc?
-            factory = self._named_factories[name]
-            session = factory(request)
-            session_id = session.session_id
-            self._sessions[session_id] = session
-            # XXX Do we want to open() immediately, or wait util the 
-            # first snapshot request comes in for the session?
-            session.open()
-            content = {'session': session_id}
-            request.send_ok_response(content=content)
-
-    def _on_message_end_session(self, request):
-        """ Handle the 'end_session' message type.
-
-        This handler will close down the existing session and send a
-        reponse to the client. If the session id is not valid, an
-        appropriate error message will be sent back to the client.
-
-        Parameters
-        ----------
-        request : BaseRequest
-            The request object containing the message sent by client.
-
-        """
-        session_id = request.message.header.session
-        if session_id not in self._sessions:
-            request.send_error_response('Invalid session id')
-        else:
-            session = self._sessions.pop(session_id)
-            session.close()
-            request.send_ok_response()
-
-    def _dispatch_session_message(self, request):
-        """ Handle a message type that should be routed to a session.
-
-        This handler will lookup the session for the given session id
-        and route the message to that object. If the id is invalid, 
-        then an appropriate error message will be sent to the client.
-
-        Parameters
-        ----------
-        request : BaseRequest
-            The request object containing the message sent by client.
-
-        """
-        session_id = request.message.header.session
-        if session_id not in self._sessions:
-            request.send_error_response('Invalid session id')
-        else:
-            session = self._sessions[session_id]
-            session.handle_request(request)
+    @abstractmethod
+    def stop(self):
+        raise NotImplementedError
 
     #--------------------------------------------------------------------------
     # Public API
@@ -155,25 +106,119 @@ class Application(object):
             all_factories.append(factory)
             named_factories[name] = factory
 
-    def handle_request(self, request):
-        """ Route and process a message for the Enaml application.
+    def discover(self):
+        """ Get a dictionary of session information for the application.
 
-        This method should be called by the running event loop when it
-        receives a message from a client. The event loop should guard 
-        this call in a try-except block. Any exceptions raised should 
-        be considered as failures in the structure of the message and
-        handled appropriately.
+        Returns
+        -------
+        result : list
+            A list of dicts of information about the available sessions.
+
+        """
+        info = [
+            {'name': fact.name, 'description': fact.description} 
+            for fact in self._all_factories
+        ]
+        return info
+
+    def start_session(self, name):
+        """ Start a new session of the given name.
+
+        This method will create a new session object for the requested
+        session type and return the new session_id. If the session name
+        is invalid, an exception will be raised.
 
         Parameters
         ----------
-        request : BaseRequest
-            The request object which wraps a message sent by a client.
+        name : str
+            The name of the session to start.
+
+        Returns
+        -------
+        result : str
+            The unique identifier for the created session.
 
         """
-        msg_type = request.message.header.msg_type
-        route = self._message_routes.get(msg_type)
-        if route is not None:
-            getattr(self, route)(request)
-        else:
-            request.send_error_response(request, 'Invalid message type')
+        if name not in self._named_factories:
+            raise ValueError('Invalid session name')
+        factory = self._named_factories[name]
+        session_id = uuid.uuid4().hex
+        session = factory(session_id)
+        self._sessions[session_id] = session
+        session.open(self.pipe_interface())
+        return session_id
+
+    def end_session(self, session_id):
+        """ End the session with the given session id.
+
+        This method will close down the existing session. If the session
+        id is not valid, an exception will be raised.
+
+        Parameters
+        ----------
+        session_id : str
+            The unique identifier for the session to close.
+
+        """
+        if session_id not in self._sessions:
+            raise ValueError('Invalid session id')
+        session = self._sessions.pop(session_id)
+        session.close()
+
+    def snapshot(self, session_id):
+        """ Get a snapshot of the Session with the given session_id.
+
+        Parameters
+        ----------
+        session_id : str
+            The unique identifier for the given session.
+
+        Returns
+        -------
+        result : list
+            A list of snapshot dictionaries for the given session.
+
+        """
+        session = self._sessions.get(session_id)
+        if session is None:
+            raise ValueError('Invalid session id')
+        return session.snapshot()
+
+    def dispatch_object_message(self, object_id, action, content):
+        """ Dispatch a message to an object with the given id.
+
+        This method can be called by subclasses when they receive an
+        object action message from a client object. If the object does
+        not exist, an exception will be raise.
+
+        Parameters
+        ----------
+        object_id : str
+            The unique identifier for the object.
+
+        action : str
+            The action to be performed by the object.
+
+        content : dict
+            The dictionary of content needed to perform the action.
+
+        """
+        obj = Object.lookup_object(object_id)
+        if obj is None:
+            raise ValueError('Invalid object id')
+        obj.handle_action(action, content)
+
+    def destroy(self):
+        """ Destroy this application instance. 
+
+        Only after an application is destroyed will it be possible to 
+        create a new application instance.
+
+        """
+        for session in self._sessions.itervalues():
+            session.close()
+        self._all_factories = []
+        self._named_factories = {}
+        self._sessions = {}
+        Application._instance = None
 
