@@ -3,6 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import logging
+from enaml.core.object import Object
 
 from .qt.qt.QtCore import QTimer, Signal, QObject, Qt
 from .qt.qt.QtGui import QApplication
@@ -204,4 +205,14 @@ class QtApplication(CoreApplication):
         # Run the layout initialization bottom-up
         for widget, tree in reversed(created):
             widget.init_layout()
+
+    def send_action(self, object_id, action, content):
+        obj = Object.lookup_object(object_id)
+        if obj is not None:
+            obj.handle_action(action, content)
+
+    def handle_action(self, object_id, action, content):
+        obj = self._widgets.get(object_id)
+        if obj is not None:
+            obj.handle_action(action, content)
 

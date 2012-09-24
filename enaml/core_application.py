@@ -148,7 +148,7 @@ class CoreApplication(object):
                 self.call_on_main(self.__process_task, task)
 
     def _on_object_action(self, object_id, action, content):
-        pass
+        self.handle_action(object_id, action, content)
 
     def register(self, obj):
         objs = self._objects
@@ -156,6 +156,7 @@ class CoreApplication(object):
             objs.add(obj)
             handler = self._on_object_action
             for _obj in obj.traverse():
+                _obj.initialize()
                 _obj.action.connect(handler)
 
     def unregister(self, obj):
@@ -168,7 +169,7 @@ class CoreApplication(object):
 
     def snapshot(self):
         return [obj.snapshot() for obj in self._objects]
-    
+
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------

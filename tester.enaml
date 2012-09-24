@@ -1,16 +1,19 @@
 
 
-from enaml.widgets.api import Window, PushButton, Container
+from enaml.widgets.api import Window, PushButton, Container, Slider
 
 
 enamldef View(Window):
     Container:
         PushButton:
-            text = 'Foo'
+            text << str(sldr.value)
         PushButton:
             text = 'Bar'
         PushButton:
             text = 'Baz'
+            clicked :: print 'I was clicked'
+        Slider:
+            id: sldr
 
 
 def main():
