@@ -156,9 +156,7 @@ class Session(object):
             objs = tuple(objs)
         self._session_objects = objs
         for obj in objs:
-            obj.initialize()
-            for obj in obj.traverse():
-                obj.action_pipe = pipe_interface
+            obj.initialize(pipe_interface)
 
     def close(self):
         """ Called by the application when the session is closed.

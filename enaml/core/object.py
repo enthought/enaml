@@ -207,7 +207,7 @@ class Object(HasStrictTraits):
     #--------------------------------------------------------------------------
     # Initialization Methods
     #--------------------------------------------------------------------------
-    def initialize(self):
+    def initialize(self, pipe_interface=None):
         """ A method called by the external user of the object tree.
 
         This method should only be called after the entire object tree
@@ -216,14 +216,21 @@ class Object(HasStrictTraits):
         need only be called on the top-level object. This method should
         only be called once. Multiple calls to this method are ignored.
 
+        Parameters
+        ----------
+        pipe : ActionPipeInterface, optional
+            An optional action pipe interface for objects in this tree
+            to use for sending messages action messages.
+
         """
         if self.initialized:
             return
         for child in self._children:
-            child.initialize()
+            child.initialize(pipe_interface)
         self.init()
         self.initialized = True
         self.bind()
+        self.action_pipe = pipe_interface
 
     def bind(self):
         """ A method called at the end of initialization.
