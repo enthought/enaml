@@ -2,8 +2,29 @@ from enaml.application import Application
 from enaml.session import Session
 from enaml.session_factory import SessionFactory
 from enaml.qt.qt_application import QtApplication
-from enaml.widgets.api import Window, PushButton, Container, Slider
+from enaml.widgets.api import Window, PushButton, Container, Slider, ProgressBar
 from enaml.core.declarative import Declarative
+
+
+enamldef TimedProgress(ProgressBar):
+    event run
+    event _timeout
+    attr _running: bool = False
+    run ::
+        if not _running:
+            _timeout()
+    _timeout ::
+        if value < 100:
+            self._running = True
+            self.value += 1
+            Application.instance().timed_call(100, _timeout)
+        else:
+            self.value = 0
+            self._running = False
+
+
+def printer():
+    print 'printer'
 
 
 enamldef View(Window):
@@ -13,12 +34,17 @@ enamldef View(Window):
             clicked :: Application.instance().end_session(sid)
         PushButton:
             text = 'Bar'
-            clicked :: print sid
+            clicked :: prog.run()
         PushButton:
             text = 'Baz'
-            clicked :: print 'I was clicked'
+            clicked :: 
+                print 'before'
+                Application.instance().timed_call(1000, printer)
+                print 'after'
         Slider:
             id: sldr
+        TimedProgress:
+            id: prog
 
 
 sid = None
