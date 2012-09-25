@@ -22,6 +22,16 @@ def check_box_factory():
     return WxCheckBox
 
 
+def client_panel_factory():
+    from .wx_client_panel import WxClientPanel
+    return WxClientPanel
+
+
+def client_widget_factory():
+    from .wx_client_widget import WxClientWidget
+    return WxClientWidget
+
+
 def combo_box_factory():
     from .wx_combo_box import WxComboBox
     return WxComboBox
@@ -157,6 +167,8 @@ WX_FACTORIES = {
     'ActionGroup': action_group_factory,
     'Calendar': calendar_factory,
     'CheckBox': check_box_factory,
+    'ClientPanel': client_panel_factory,
+    'ClientWidget': client_widget_factory,
     'ComboBox': combo_box_factory,
     'Container': container_factory,
     'DateSelector': date_selector_factory,

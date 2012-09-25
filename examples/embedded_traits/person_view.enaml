@@ -1,0 +1,38 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+#from enaml.widgets.messenger_widget import MessengerWidget
+from enaml.widgets.api import Window, Container, Label, Field, Form, ClientWidget, ClientPanel
+from enaml.stdlib.fields import IntField
+
+enamldef PersonForm(Form):
+    attr person
+    Label:
+        text = 'First Name'
+    Field:
+        text := person.first_name
+    Label:
+        text = 'Last Name'
+    Field:
+        text := person.last_name
+    Label:
+        text = 'Age'
+    IntField:
+        value := person.age
+
+
+enamldef PersonView(ClientPanel):
+    id: view
+    attr person
+    
+    proxy_id = 'panel'
+    
+    Container:
+        PersonForm:
+            person := view.person
+        ClientWidget:
+            proxy_id = 'person'
+            hug_width = 'ignore'
+
+            

@@ -8,6 +8,8 @@ from .bounded_date import BoundedDate
 from .bounded_datetime import BoundedDatetime
 from .calendar import Calendar
 from .check_box import CheckBox
+from .client_panel import ClientPanel
+from .client_widget import ClientWidget
 from .combo_box import ComboBox
 from .container import Container
 from .date_selector import DateSelector
