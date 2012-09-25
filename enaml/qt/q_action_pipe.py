@@ -54,7 +54,6 @@ class QActionPipe(QObject):
         """
         return bytes
 
-    @abstractmethod
     def decode_binary(self, encoded_bytes):
         """ Decode arbitrary binary data appropriately for this pipe.
 
