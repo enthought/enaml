@@ -43,7 +43,6 @@ class Session(object):
         """
         self._session_id = session_id
         self._session_objects = []
-        self._pipe_interface = None
         self.init(*args, **kwargs)
 
     #--------------------------------------------------------------------------
@@ -140,15 +139,14 @@ class Session(object):
         """ Called by the application when the session is opened.
 
         This method should never be called by user code.
-        
+
         Parameters
         ----------
         pipe_interface : ActionPipeInterface
-            A concreted implementation of ActionPipeInterface for use
+            A concrete implementation of ActionPipeInterface for use
             with the Object instances owned by this session.
-
+        
         """
-        self._pipe_interface = pipe_interface
         objs = self.on_open()
         if not isinstance(objs, Iterable):
             objs = (objs,)
@@ -156,7 +154,10 @@ class Session(object):
             objs = tuple(objs)
         self._session_objects = objs
         for obj in objs:
-            obj.initialize(pipe_interface)
+            # Apply the pipe before initialization so that the pipe is
+            # inherited by every object in the tree.
+            obj.action_pipe = pipe_interface
+            obj.initialize()
 
     def close(self):
         """ Called by the application when the session is closed.
