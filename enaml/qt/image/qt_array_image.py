@@ -28,7 +28,7 @@ class QtArrayImage(QtAbstractImage):
         """ Initializes the array data for the image.
 
         """
-        super(QtArrayImage, self).initialize(tree)
+        super(QtArrayImage, self).create(tree)
         data = self._session.decode_binary(tree['data'])
         size = tree['size']
         format = tree['format']

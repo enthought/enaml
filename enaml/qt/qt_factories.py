@@ -170,6 +170,11 @@ def tool_bar_factory():
 def window_factory():
     from .qt_window import QtWindow
     return QtWindow
+    
+    
+def url_image_factory():
+    from .image.qt_location_image import QtURLImage
+    return QtURLImage
 
 
 QT_FACTORIES = {
@@ -207,5 +212,6 @@ QT_FACTORIES = {
     'TextEditor': text_editor_factory,
     'ToolBar': tool_bar_factory,
     'Window': window_factory,
+    'URLImage': url_image_factory,
 }
 

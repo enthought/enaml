@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from .qt.QtGui import QWidget, QPainter
 from .qt_constraints_widget import QtConstraintsWidget
-from .image.qt_image import QtImage
+from .image.qt_abstract_image import QtAbstractImage
 
 
 class QImageView(QWidget):
@@ -200,6 +200,9 @@ class QtImageView(QtConstraintsWidget):
     #: in the control changes.
     _cached_size_hint = None
     
+    #: the image_id of the image
+    _image_id = None
+
     #: the internally cached QtImage instance
     _image = None
 
@@ -210,7 +213,10 @@ class QtImageView(QtConstraintsWidget):
         """ Creates the underlying QImageView control.
 
         """
-        self.widget = QImageView(self.parent_widget)
+        return QImageView(parent)
+    
+    def create(self, tree):
+        super(QtImageView, self).create(tree)
         self.set_scale_to_fit(tree['scale_to_fit'])
         self.set_preserve_aspect_ratio(tree['preserve_aspect_ratio'])
         self.set_allow_upscaling(tree['allow_upscaling'])
@@ -244,6 +250,12 @@ class QtImageView(QtConstraintsWidget):
 
         """
         self.set_image_id(content['image_id'])
+    
+    def on_action_snap_image_response(self, content):
+        """ Handle the 'set__image_id' action from the Enaml widget.
+
+        """
+        self.set_image_id(content['image_id'])
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -253,29 +265,33 @@ class QtImageView(QtConstraintsWidget):
         control.
 
         """
-        self.widget.setScaledContents(scale_to_fit)
+        self.widget().setScaledContents(scale_to_fit)
 
     def set_preserve_aspect_ratio(self, preserve):
         """ Sets whether or not to preserve the aspect ratio of the 
         image when scaling.
 
         """
-        self.widget.setPreserveAspectRatio(preserve)
+        self.widget().setPreserveAspectRatio(preserve)
 
     def set_allow_upscaling(self, allow):
         """ Sets whether or not the image will scale beyond its natural
         size.
 
         """
-        self.widget.setAllowUpscaling(allow)
+        self.widget().setAllowUpscaling(allow)
 
     def set_image_id(self, image_id):
         """ Finds the image in the session and sets it on the underlying
         widget.
 
         """
-        image = QtImage.lookup_object(image_id)
+        self._image_id = image_id
+        image = QtAbstractImage.lookup_object(image_id)
         if image is not None:
-            self.widget.setPixmap(image.widget)
+            self.widget().setPixmap(image.widget)
             self._image = image
+            self.relayout()
+        else:
+            self.send_action('snap_image', {})
 

@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Bool, Str, Instance, Property
+from traits.api import Bool, Str, Instance, Property, cached_property
 
 from enaml.noncomponents.image.abstract_image import AbstractImage
 
@@ -17,7 +17,7 @@ class ImageView(ConstraintsWidget):
     image = Instance(AbstractImage)
     
     #: The image to display in the control
-    _image_id = Property(Str, depends_on='image.object_id')
+    image_id = Property(Str, depends_on='image')
     
     #: Whether or not to scale the image with the size of the component.
     scale_to_fit = Bool(False)
@@ -45,7 +45,7 @@ class ImageView(ConstraintsWidget):
         snap['scale_to_fit'] = self.scale_to_fit
         snap['preserve_aspect_ratio'] = self.preserve_aspect_ratio
         snap['allow_upscaling'] = self.allow_upscaling
-        snap['image_id'] = self._image_id
+        snap['image_id'] = self.image_id
         return snap
 
     def bind(self):
@@ -59,10 +59,19 @@ class ImageView(ConstraintsWidget):
             'image_id'
         )
 
+    def on_action_snap_image(self, content):
+        """ A change handler invoked when the image changes.
+        
+        """
+        snap = self.image.snapshot()
+        self.send_action('snap_image_response', snap)
+            
+
     #--------------------------------------------------------------------------
     # Traits Handlers
     #--------------------------------------------------------------------------
-    def _get__image_id(self):
+    @cached_property
+    def _get_image_id(self):
         """ Extract the object_id from the Image
         
         """

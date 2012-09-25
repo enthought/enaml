@@ -22,7 +22,7 @@ class QtLocationImage(QtAbstractImage):
         """ Initializes the location of the image.
 
         """
-        super(QtLocationImage, self).initialize(tree)
+        super(QtLocationImage, self).create(tree)
         self.set_location(tree['location'])
     
     #--------------------------------------------------------------------------
@@ -48,7 +48,7 @@ class QtLocationImage(QtAbstractImage):
         
         """
         self._location = location
-        self.reload()
+        self.load_image()
 
 
 class QtURLImage(QtLocationImage):
@@ -69,6 +69,7 @@ class QtURLImage(QtLocationImage):
         """ Download the image data from the supplied URL
         
         """
+        print self._location
         if self._location is not None:
             response = urllib.urlopen(self._location)
             # read in data in megabyte-sized chunks
@@ -78,6 +79,7 @@ class QtURLImage(QtLocationImage):
                 if not chunk:
                     break
                 data.append(chunk)
+            print data[0][:10]
             return b''.join(data)
 
 

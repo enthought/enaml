@@ -2,7 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Str, URL, File
+from traits.api import Str, File
 
 from .abstract_image import AbstractImage
 
@@ -48,7 +48,8 @@ class URLImage(LocationImage):
     """
     # this uses the same server-side implementation as FileImage, but
     # the client implementation will be different.
-    location = URL
+    #location = Str
+    pass
 
 
 class FileImage(LocationImage):

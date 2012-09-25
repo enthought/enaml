@@ -2,7 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from enaml.core.objec import Object
+from enaml.core.object import Object
 
 class AbstractImage(Object):
     """ An abstract base class for image classes.

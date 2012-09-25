@@ -2,7 +2,8 @@ from enaml.application import Application
 from enaml.session import Session
 from enaml.session_factory import SessionFactory
 from enaml.qt.qt_application import QtApplication
-from enaml.widgets.api import Window, PushButton, Container, Slider, ProgressBar
+from enaml.widgets.api import Window, PushButton, Container, Slider, ProgressBar, ImageView
+from enaml.noncomponents.image.location_image import URLImage
 from enaml.core.declarative import Declarative
 
 
@@ -28,6 +29,8 @@ def printer():
 
 
 enamldef View(Window):
+    id: view
+    attr image
     Container:
         PushButton:
             text << str(sldr.value)
@@ -45,7 +48,8 @@ enamldef View(Window):
             id: sldr
         TimedProgress:
             id: prog
-
+        ImageView:
+            image = view.image
 
 sid = None
 
@@ -54,7 +58,10 @@ class FooSession(Session):
     def on_open(self):
         global sid
         sid = self.session_id
-        return View()
+        image = URLImage()
+        image.location = 'http://farm6.staticflickr.com/5276/7400311000_088cb63717_m.jpg'
+
+        return [image, View(image=image)]
 
 
 def main():

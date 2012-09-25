@@ -16,7 +16,7 @@ class QtDataImage(QtAbstractImage):
         """ Initializes the data for the image.
 
         """
-        super(QtDataImage, self).initialize(tree)
+        super(QtDataImage, self).create(tree)
         self.set_data(self._pipe.decode_binary(tree['data']))
     
     #--------------------------------------------------------------------------
