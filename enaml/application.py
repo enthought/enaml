@@ -3,10 +3,100 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from abc import ABCMeta, abstractmethod, abstractproperty
+from heapq import heappush, heappop
+from itertools import count
 import logging
+from threading import Lock
 import uuid
 
 from enaml.core.object import Object
+    
+
+class ScheduledTask(object):
+    """ An object representing a task in the scheduler. 
+
+    """
+    #: A sentinel object indicating that the result of the task is
+    #: undefined or that the task has not yet been executed.
+    undefined = object()
+
+    def __init__(self, callback, args, kwargs):
+        """ Initialize a ScheduledTask.
+
+        Parameters
+        ----------
+        callback : callable
+            The callable to run when the task is executed.
+        
+        args : tuple
+            The tuple of positional arguments to pass to the callback.
+
+        kwargs : dict
+            The dict of keyword arguments to pass to the callback.
+        
+        """
+        self._callback = callback
+        self._args = args
+        self._kwargs = kwargs
+        self._result = self.undefined
+        self._valid = True
+        self._pending = True
+        self._notify = None
+
+    #--------------------------------------------------------------------------
+    # Private API
+    #--------------------------------------------------------------------------
+    def _execute(self):
+        """ Execute the underlying task. This should only been called
+        by the scheduler loop.
+
+        """
+        try:
+            if self._valid:
+                self._result = self._callback(*self._args, **self._kwargs)
+                if self._notify is not None:
+                    self._notify(self._result)
+        finally:
+            self._notify = None
+            self._pending = False
+
+    #--------------------------------------------------------------------------
+    # Public API 
+    #--------------------------------------------------------------------------
+    def notify(self, callback):
+        """ Set a callback to be run when the task is executed.
+
+        Parameters
+        ----------
+        callback : callable
+            A callable which accepts a single argument which is the
+            results of the task. It will be invoked immediate after
+            the task is executed, on the main event loop thread.
+
+        """
+        self._notify = callback
+
+    def pending(self):
+        """ Returns True if this task is pending execution, False
+        otherwise.
+
+        """
+        return self._pending
+
+    def unschedule(self):
+        """ Unschedule the task so that it will not be executed. If
+        the task has already been executed, this call has no effect.
+
+        """
+        self._valid = False
+
+    def result(self):
+        """ Returns the result of the task, or ScheduledTask.undefined
+        if the task has not yet been executed, was unscheduled before 
+        execution, or raised an exception on execution.
+
+        """
+        return self._result
 
 
 class Application(object):
@@ -16,7 +106,7 @@ class Application(object):
     """
     __metaclass__ = ABCMeta
 
-    #: The singleton application instance
+    #: Private storage for the singleton application instance.
     _instance = None
 
     @staticmethod
@@ -40,7 +130,7 @@ class Application(object):
         exists will raise an exception.
 
         """
-        if Application.instance() is not None:
+        if Application._instance is not None:
             raise RuntimeError('An Application instance already exists')
         self = super(Application, cls).__new__(cls)
         Application._instance = self
@@ -59,8 +149,34 @@ class Application(object):
         self._all_factories = []
         self._named_factories = {}
         self._sessions = {}
+        self._task_heap = []
+        self._counter = count()
+        self._heap_lock = Lock()
         self.add_factories(factories)
+        
+    #--------------------------------------------------------------------------
+    # Private API
+    #--------------------------------------------------------------------------
+    def _process_task(self, task):
+        """ Processes the given task, then dispatches the next task.
+
+        """
+        try:
+            task._execute()
+        finally:
+            self._next_task()
     
+    def _next_task(self):
+        """ Pulls the next task off the heap and processes it on the 
+        main gui thread.
+
+        """
+        heap = self._task_heap
+        with self._heap_lock:
+            if heap:
+                priority, ignored, task = heappop(heap)
+                self.deferred_call(self._process_task, task)
+
     #--------------------------------------------------------------------------
     # Abstract API
     #--------------------------------------------------------------------------
@@ -91,9 +207,103 @@ class Application(object):
         """
         raise NotImplementedError
 
+    @abstractmethod
+    def deferred_call(self, callback, *args, **kwargs):
+        """ Invoke a callable on the next cycle of the main event loop
+        thread.
+
+        Parameters
+        ----------
+        callback : callable
+            The callable object to execute at some point in the future.
+
+        *args, **kwargs
+            Any additional positional and keyword arguments to pass to 
+            the callback.
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def timed_call(self, ms, callback, *args, **kwargs):
+        """ Invoke a callable on the main event loop thread at a 
+        specified time in the future.
+
+        Parameters
+        ----------
+        ms : int
+            The time to delay, in milliseconds, before executing the
+            callable.
+
+        callback : callable
+            The callable object to execute at some point in the future.
+
+        *args, **kwargs
+            Any additional positional and keyword arguments to pass to 
+            the callback.
+
+        """
+        raise NotImplementedError
+
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
+    def schedule(self, callback, args=None, kwargs=None, priority=0):
+        """ Schedule a callable to be executed on the event loop thread.
+
+        This call is thread-safe.
+
+        Parameters
+        ----------
+        callback : callable
+            The callable object to be executed.
+
+        args : tuple, optional
+            The positional arguments to pass to the callable.
+
+        kwargs : dict, optional
+            The keyword arguments to pass to the callable.
+
+        priority : int, optional
+            The queue priority for the callable. The lowest priority is
+            0 and indicates the callable will be placed at the end of 
+            the queue. There is no highest priority. The default is 0.
+
+        Returns
+        -------
+        result : ScheduledTask
+            A task object which can be used to unschedule the task or
+            retrieve the results of the callback after the task has
+            been executed.
+            
+        """
+        if args is None:
+            args = ()
+        if kwargs is None:
+            kwargs = {}
+        task = ScheduledTask(callback, args, kwargs)
+        heap = self._task_heap
+        with self._heap_lock:
+            needs_start = len(heap) == 0
+            item = (priority, self._counter.next(), task)
+            heappush(heap, item)
+        if needs_start:
+            self.deferred_call(self._next_task)
+        return task
+
+    def has_pending_tasks(self):
+        """ Get whether or not the application has pending tasks.
+
+        Returns
+        -------
+        result : bool
+            True if there are pending tasks. False otherwise.
+
+        """
+        with self._heap_lock:
+            has_pending = len(self._heap) > 0
+        return has_pending
+
     def add_factories(self, factories):
         """ Add session factories to the application.
 
@@ -199,8 +409,8 @@ class Application(object):
         """ Dispatch an action to an object with the given id.
 
         This method can be called by subclasses when they receive an
-        object action message from a client object. If the object does
-        not exist, an exception will be raised.
+        action message from a client object. If the object does not 
+        exist, an exception will be raised.
 
         Parameters
         ----------
@@ -222,8 +432,8 @@ class Application(object):
     def destroy(self):
         """ Destroy this application instance. 
 
-        Only after an application is destroyed will it be possible to 
-        create a new application instance.
+        Once an application is created, it must be destroyed before a
+        new application can be instantiated.
 
         """
         for session in self._sessions.itervalues():

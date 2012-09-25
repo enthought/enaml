@@ -9,6 +9,7 @@ from enaml.application import Application
 from .qt.QtCore import Qt
 from .qt.QtGui import QApplication
 from .q_action_pipe import QActionPipe
+from .q_deferred_caller import QDeferredCaller
 from .qt_builder import QtBuilder
 from .qt_object import QtObject
 
@@ -36,25 +37,12 @@ class QtApplication(Application):
 
         """
         super(QtApplication, self).__init__(factories)
-        
-        # The QApplication instance being used by this application. An
-        # existing application instance will be reused.
         self._qapp = QApplication.instance() or QApplication([])
-
-        # The pipe to use for messages sent by Object instances.
+        self._qcaller = QDeferredCaller()
         self._enaml_pipe = epipe = QActionPipe()
-
-        # The pipe to use for messages sent by QtObject instances.
         self._qt_pipe = qpipe = QActionPipe()
-
-        # The builder object to use for building out QtObject trees.
         self._qt_builder = builder or QtBuilder()
-
-        # A dict mapping session id -> QtObject list for the active 
-        # sessions of the application.
         self._qt_objects = defaultdict(list)
-
-        # Hook up the signal handlers for the pipes.
         epipe.actionPosted.connect(self._on_enaml_action, Qt.QueuedConnection)
         qpipe.actionPosted.connect(self._on_qt_action, Qt.QueuedConnection)
 
@@ -91,6 +79,42 @@ class QtApplication(Application):
         app = self._qapp
         app.exit()
         app._in_event_loop = False
+
+    def deferred_call(self, callback, *args, **kwargs):
+        """ Invoke a callable on the next cycle of the main event loop
+        thread.
+
+        Parameters
+        ----------
+        callback : callable
+            The callable object to execute at some point in the future.
+
+        *args, **kwargs
+            Any additional positional and keyword arguments to pass to 
+            the callback.
+
+        """
+        self._qcaller.deferredCall(callback, *args, **kwargs)
+
+    def timed_call(self, ms, callback, *args, **kwargs):
+        """ Invoke a callable on the main event loop thread at a 
+        specified time in the future.
+
+        Parameters
+        ----------
+        ms : int
+            The time to delay, in milliseconds, before executing the
+            callable.
+            
+        callback : callable
+            The callable object to execute at some point in the future.
+
+        *args, **kwargs
+            Any additional positional and keyword arguments to pass to 
+            the callback.
+
+        """
+        self._qcaller.timedCall(ms, callback, *args, **kwargs)
 
     #--------------------------------------------------------------------------
     # Public API
@@ -169,4 +193,3 @@ class QtApplication(Application):
         """
         self.dispatch_action(object_id, action, content)
 
-    
