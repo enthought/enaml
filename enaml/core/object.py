@@ -19,11 +19,30 @@ from .trait_types import EnamlEvent
 
 
 class ActionPipeInterface(object):
+    """ An abstract base class defining an action pipe interface.
 
+    Concrete implementations of this interface can be used by Object
+    instances to sent messages to their client objects.
+
+    """
     __metaclass__ = ABCMeta
 
     @abstractmethod
     def send(self, object_id, action, content):
+        """ Send an action to the client of an object.
+
+        Parameters
+        ----------
+        object_id : str
+            The object id for the Object sending the message.
+
+        action : str
+            The action that should be take by the client object.
+
+        content : dict
+            The dictionary of content needed to perform the action.
+
+        """
         raise NotImplementedError
 
 
@@ -352,7 +371,7 @@ class Object(HasStrictTraits):
 
         """
         if self.initialized:
-            # Old can sometimes be None due to `cached_property` oddities
+            # 'old' can be None due to `cached_property` oddities
             old = old or ()
             old_set = set(old)
             new_set = set(new)

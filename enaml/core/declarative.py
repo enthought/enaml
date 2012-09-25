@@ -16,7 +16,7 @@ _OVERRIDE_ALLOWED = (UserAttribute, UserEvent)
 
 
 class Declarative(Object):
-    """ The most base class of the Enaml declartive objects.
+    """ The most base class of the Enaml declarative objects.
 
     This class provides the core functionality required of declarative
     Enaml types. It can be used directly in a declarative Enaml object
