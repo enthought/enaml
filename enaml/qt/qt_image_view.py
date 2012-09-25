@@ -4,6 +4,7 @@
 #------------------------------------------------------------------------------
 from .qt.QtGui import QWidget, QPainter
 from .qt_constraints_widget import QtConstraintsWidget
+from .image.qt_image import QtImage
 
 
 class QImageView(QWidget):
@@ -198,25 +199,22 @@ class QtImageView(QtConstraintsWidget):
     #: or not a size hint updated event should be emitted when the image
     #: in the control changes.
     _cached_size_hint = None
+    
+    #: the internally cached QtImage instance
+    _image = None
 
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create_widget(self, parent, tree):
         """ Creates the underlying QImageView control.
 
         """
         self.widget = QImageView(self.parent_widget)
-
-    def initialize(self, attrs):
-        """ Initializes the attributes on the underlying control.
-
-        """
-        super(QtImageView, self).initialize()
-        self.set_scale_to_fit(attrs['scale_to_fit'])
-        self.set_preserve_aspect_ratio(attrs['preserve_aspect_ratio'])
-        self.set_allow_upscaling(attrs['allow_upscaling'])
-        #self.set_image(shell.image)
+        self.set_scale_to_fit(tree['scale_to_fit'])
+        self.set_preserve_aspect_ratio(tree['preserve_aspect_ratio'])
+        self.set_allow_upscaling(tree['allow_upscaling'])
+        self.set_image_id(tree['image_id'])
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -241,11 +239,11 @@ class QtImageView(QtConstraintsWidget):
         """
         self.set_allow_upscaling(content['allow_upscaling'])
     
-    def on_action_set_image(self, content):
-        """ Handle the 'set_image' action from the Enaml widget.
+    def on_action_set_image_id(self, content):
+        """ Handle the 'set__image_id' action from the Enaml widget.
 
         """
-        self.set_image(content['image'])
+        self.set_image_id(content['image_id'])
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -271,9 +269,13 @@ class QtImageView(QtConstraintsWidget):
         """
         self.widget.setAllowUpscaling(allow)
 
-    def set_image(self, image):
-        """ Sets the image on the underlying QLabel.
+    def set_image_id(self, image_id):
+        """ Finds the image in the session and sets it on the underlying
+        widget.
 
         """
-        return
+        image = QtImage.lookup_object(image_id)
+        if image is not None:
+            self.widget.setPixmap(image.widget)
+            self._image = image
 
