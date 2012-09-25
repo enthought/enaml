@@ -63,10 +63,7 @@ class Include(Declarative):
         """
         parent = self.parent
         if parent is not None:
-            if self.destroy_old:
-                parent.delete_children(children)
-            else:
-                parent.remove_children(children)
+            parent.remove_children(children, self.destroy_old)
         else:
             if self.destroy_old:
                 for child in children:

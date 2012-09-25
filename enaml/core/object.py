@@ -356,7 +356,7 @@ class Object(HasStrictTraits):
         new = tuple(curr[:index]) + tuple(children) + tuple(curr[index:])
         self._children = new
 
-    def remove_children(self, children):
+    def remove_children(self, children, destroy=True):
         """ Remove the given children from this object.
 
         The given children will be removed from the children of this 
@@ -368,22 +368,9 @@ class Object(HasStrictTraits):
         children : iterable of Object
             The children to remove from this object.
 
-        """
-        children_set = set(children)
-        new = []
-        for child in self._children:
-            if child in children_set:
-                child._parent = None
-            else:
-                new.append(child)
-        self._children = tuple(new)
-
-    def delete_children(self, children):
-        """ Remove and destroy the given children from this object.
-
-        The given children will be removed from the children of this
-        object and then destroyed. Any given child which is not a 
-        child of this object will be ignored.
+        destroy : bool, optional
+            Whether or not to destroy the removed children. The default
+            is True.
 
         """
         old = []
@@ -395,8 +382,9 @@ class Object(HasStrictTraits):
             else:
                 new.append(child)
         self._children = tuple(new)
-        for child in old:
-            child.destroy()
+        if destroy:
+            for child in old:
+                child.destroy()
 
     def _children_changed(self, old, new):
         """ A change handler invoked when the tuple of children changes.
