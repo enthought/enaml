@@ -17,7 +17,7 @@ class QtDataImage(QtAbstractImage):
 
         """
         super(QtDataImage, self).initialize(tree)
-        self.set_data(self._session.decode_binary(tree['data']))
+        self.set_data(self._pipe.decode_binary(tree['data']))
     
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -26,7 +26,7 @@ class QtDataImage(QtAbstractImage):
         """ Handle the 'set_data' action from the Enaml widget
 
         """
-        self.set_data(self._session.decode_binary(content['data']))
+        self.set_data(self._pipe.decode_binary(content['data']))
     
     #--------------------------------------------------------------------------
     # Widget Update Methods

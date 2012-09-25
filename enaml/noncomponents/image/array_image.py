@@ -58,7 +58,7 @@ class ArrayImage(AbstractImage):
             The raw bytes of the image.
         format : str
             The optional channel format of the raw image. If this is not
-            provided, then the class will attempt to guess the mimetype based
+            provided, then the class will attempt to guess the format based
             on the data.
         
         Messages
