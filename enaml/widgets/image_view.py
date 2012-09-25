@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Bool, Instance
+from traits.api import Bool, Str, Instance, Property
 
 from enaml.noncomponents.image.abstract_image import AbstractImage
 
@@ -15,6 +15,9 @@ class ImageView(ConstraintsWidget):
     """
     #: The image to display in the control
     image = Instance(AbstractImage)
+    
+    #: The image to display in the control
+    _image_id = Property(Str, depends_on='image.object_id')
     
     #: Whether or not to scale the image with the size of the component.
     scale_to_fit = Bool(False)
@@ -42,7 +45,7 @@ class ImageView(ConstraintsWidget):
         snap['scale_to_fit'] = self.scale_to_fit
         snap['preserve_aspect_ratio'] = self.preserve_aspect_ratio
         snap['allow_upscaling'] = self.allow_upscaling
-        snap['image'] = self.image.as_dict()
+        snap['image_id'] = self._image_id
         return snap
 
     def bind(self):
@@ -52,16 +55,16 @@ class ImageView(ConstraintsWidget):
         """
         super(ImageView, self).bind()
         self.publish_attributes(
-            'scale_to_fit', 'preserve_aspect_ratio', 'allow_upscaling'
+            'scale_to_fit', 'preserve_aspect_ratio', 'allow_upscaling',
+            'image_id'
         )
-        self.on_trait_change(self._send_image, 'image')
 
     #--------------------------------------------------------------------------
-    # Message Handling
+    # Traits Handlers
     #--------------------------------------------------------------------------
-    def _send_image(self):
-        """ Sends the image data, encoded in a base64 format
-
+    def _get__image_id(self):
+        """ Extract the object_id from the Image
+        
         """
-        return
-
+        if self.image is not None:
+            return self.image.object_id
