@@ -205,7 +205,7 @@ class Object(HasStrictTraits):
         objects[object_id] = self
         return self
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, **kwargs):
         """ Initialize an Object.
 
         Parameters
@@ -215,7 +215,7 @@ class Object(HasStrictTraits):
             None if the object has no parent. Defaults to None.
 
         """
-        super(Object, self).__init__()
+        super(Object, self).__init__(**kwargs)
         self.set_parent(parent)
     
     #--------------------------------------------------------------------------
