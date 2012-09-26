@@ -154,9 +154,10 @@ class Object(HasStrictTraits):
     #: fired. It should not be manipulated by user code.
     initialized = Bool(False)
 
-    #: A signal emitted when an action has been taken by the object that
-    #: may be of interest to external listeners. The payload will be the
-    #: object id, the action name, and the content dict.
+    #: A pipe interface to use for sending messages by the object. If
+    #: the pipe is None the object will walk up the ancestor tree in
+    #: order to find a pipe to use. To silence an object, set this
+    #: attribute to a null pipe interface.
     action_pipe = Instance(ActionPipeInterface)
 
     #: A loopback guard which can be used to prevent a signal loopback 
@@ -264,7 +265,7 @@ class Object(HasStrictTraits):
     #--------------------------------------------------------------------------
     # Initialization Methods
     #--------------------------------------------------------------------------
-    def initialize(self, pipe_interface=None):
+    def initialize(self):
         """ A method called by the external user of the object tree.
 
         This method should only be called after the entire object tree
@@ -273,21 +274,24 @@ class Object(HasStrictTraits):
         need only be called on the top-level object. This method should
         only be called once. Multiple calls to this method are ignored.
 
-        Parameters
-        ----------
-        pipe : ActionPipeInterface, optional
-            An optional action pipe interface for objects in this tree
-            to use for sending messages action messages.
-
         """
+        # Note: The order of operations here is highly important. Be
+        # sure the side effects are understood before changing it.
         if self.initialized:
             return
+        # Refresh the pipe before initializing the children, so they 
+        # when they do the same, the only have to hop 1 time at max.
+        self.inherit_pipe()
         for child in self._children:
-            child.initialize(pipe_interface)
+            child.initialize()
+        # This event may cause arbitrary side effects. A good example is
+        # the Include type, which will possibly add a bunch of children
+        # to its parent as a result. This means a bunch of trait change
+        # notification may be run. Only set the initialized flag to True
+        # and bind the change handlers after the even has quieted down.
         self.init()
         self.initialized = True
         self.bind()
-        self.action_pipe = pipe_interface
 
     def bind(self):
         """ A method called at the end of initialization.
@@ -302,23 +306,24 @@ class Object(HasStrictTraits):
     def destroy(self):
         """ Explicity destroy this object and all of its children.
 
-        This method sets the `intialized` flag to False, sets the parent 
-        reference to None, destroys all of the children, and then sets
-        the children reference to an empty tuple. This will break the 
-        explicit reference cycles introduced by Object.
+        This method sends the 'destroy' action to the client, sets the 
+        `intialized` flag to False, sets the parent reference to None,
+        sets the children to an empty tuple, then destroys the children. 
 
         """
+        self.send_action('destroy', {})
         self.initialized = False
-        if self._parent is not None:
-            if self._parent.initialized:
+        parent = self._parent
+        if parent is not None:
+            if parent.initialized:
                 self.set_parent(None)
             else:
                 self._parent = None
-        for child in self._children:
-            child.destroy()
+        children = self._children
         self._children = ()
-        self.send_action('destroy', {})
-
+        for child in children:
+            child.destroy()
+    
     #--------------------------------------------------------------------------
     # Parenting Methods
     #--------------------------------------------------------------------------
@@ -327,7 +332,8 @@ class Object(HasStrictTraits):
 
         If the parent is not None, the child will be appended to the end
         of the parent's children. If the parent is already the parent of
-        this object, then this method is a no-op.
+        this object, then this method is a no-op. If this object already
+        has a parent, then it will be properly re-parented.
 
         Parameters
         ----------
@@ -339,23 +345,17 @@ class Object(HasStrictTraits):
         old_parent = self._parent
         if parent is old_parent:
             return
-
         if parent is not None and not parent.allow_children:
             msg = 'Parent Object `%s` does not allow children'
             raise ValueError(msg % parent)
         if parent is self:
             raise ValueError('Cannot use `self` as Object parent')
-
         self._parent = parent
         if old_parent is not None:
             children = old_parent._children
-            try:
+            if self in children:
                 idx = children.index(self)
-            except ValueError:
-                pass
-            else:
-                old_parent._children = children[:idx] + children[idx+1:]
-
+                old_parent._children = children[:idx] + children[idx + 1:]
         if parent is not None:
             parent._children += (self,)
 
@@ -375,37 +375,60 @@ class Object(HasStrictTraits):
         if not self.allow_children:
             msg = 'Parent Object `%s` does not allow children'
             raise ValueError(msg % self)
-        
         children = list(children)
         children_set = set(children)
-
         if self in children_set:
             raise ValueError('Cannot use `self` as Object child')
         if len(children) != len(children_set):
             raise ValueError('Cannot have duplicate children')
-
         for child in children:
             old_parent = child._parent
             if old_parent is not self:
                 child._parent = self
                 if old_parent is not None:
                     okids = old_parent._children
-                    try:
+                    if child in okids:
                         idx = okids.index(child)
-                    except ValueError:
-                        pass
-                    else:
-                        old_parent._children = okids[:idx] + okids[idx+1:]
-
+                        old_parent._children = okids[:idx] + okids[idx + 1:]
         curr = [c for c in self._children if c not in children_set]
         new = tuple(curr[:index]) + tuple(children) + tuple(curr[index:])
         self._children = new
 
+    def remove_children(self, children, destroy=True):
+        """ Remove the given children from this object.
+
+        The given children will be removed from the children of this 
+        object and their parent will be set to None. Any given child
+        which is not a child of this object will be ignored.
+
+        Parameters
+        ----------
+        children : iterable of Object
+            The children to remove from this object.
+
+        destroy : bool, optional
+            Whether or not to destroy the removed children. The default
+            is True.
+
+        """
+        old = []
+        new = []
+        children_set = set(children)
+        for child in self._children:
+            if child in children_set:
+                old.append(child)
+            else:
+                new.append(child)
+        self._children = tuple(new)
+        if destroy:
+            for child in old:
+                child.destroy()
+
     def _children_changed(self, old, new):
         """ A change handler invoked when the tuple of children changes.
 
-        If the object is fully initialized, then the `action` signal 
-        will be emitted with a `children_changed` action.
+        If the object is fully initialized, then a `children_changed` 
+        action will be generated and sent to the client.
 
         """
         if self.initialized:
@@ -416,6 +439,7 @@ class Object(HasStrictTraits):
             removed = old_set - new_set
             added = new_set - old_set
             content = {}
+            # XXX i'm not fond of these snappable checks
             content['order'] = [c.object_id for c in new if c.snappable]
             content['removed'] = [c.object_id for c in removed if c.snappable]
             content['added'] = [c.snapshot() for c in added if c.snappable]
@@ -450,6 +474,24 @@ class Object(HasStrictTraits):
             msg = "Unhandled action '%s' for Object %s:%s"
             logging.warn(msg % (action, self.class_name, self.object_id))
 
+    def inherit_pipe(self):
+        """ Inherit the action pipe from the ancestors of this object.
+
+        If the `action_pipe` for this instance is None, then this method
+        will walk the tree of ancestors until it finds an object with a 
+        non null `action_pipe`. That pipe will then be used as the pipe
+        for this object.
+
+        """
+        if self.action_pipe is None:
+            parent = self._parent
+            while parent is not None:
+                pipe = parent.action_pipe
+                if pipe is not None:
+                    self.action_pipe = pipe
+                    return
+                parent = parent._parent
+
     def send_action(self, action, content):
         """ Send an action on the action pipe for this object.
 
@@ -463,6 +505,9 @@ class Object(HasStrictTraits):
 
         """
         pipe = self.action_pipe
+        if pipe is None:
+            self.inherit_pipe()
+            pipe = self.action_pipe
         if pipe is not None:
             pipe.send(self.object_id, action, content)
 

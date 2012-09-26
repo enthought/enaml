@@ -3,7 +3,6 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import logging
-from weakref import WeakValueDictionary
 
 from enaml.utils import LoopbackGuard
 
@@ -13,8 +12,10 @@ class QtObject(object):
 
     """
     #: Class level storage for QtObject instances. QtObjects are added 
-    #: to this dict as they are created. Instances are stored weakly.
-    _objects = WeakValueDictionary()
+    #: to this dict as they are created. Instances are stored strongly
+    #: so that orphaned widgets are not garbage collected until they 
+    #: are explicitly destroyed.
+    _objects = {}
 
     @classmethod
     def lookup_object(cls, object_id):
@@ -35,7 +36,7 @@ class QtObject(object):
         return cls._objects.get(object_id)
 
     @classmethod
-    def construct(cls, tree, parent, pipe):
+    def construct(cls, tree, parent, pipe, builder):
         """ Construct the QtObject instance for the given parameters.
 
         This classmethod is called by the QtBuilder object used by the
@@ -56,9 +57,12 @@ class QtObject(object):
             The parent QtObject to use for this object, or None if this
             object is top-level.
 
-        pipe : QActionPipe
+        pipe : QActionPipe or None
             The QActionPipe to use for sending messages to the Enaml
-            widget.
+            object, or None if messaging is not desired.
+
+        builder : QtBuilder
+            The QtBuilder instance that is building this object.
 
         Returns
         -------
@@ -73,7 +77,7 @@ class QtObject(object):
 
         """
         object_id = tree['object_id']
-        self = cls(object_id, parent, pipe)
+        self = cls(object_id, parent, pipe, builder)
         self.create(tree)
         return self
 
@@ -104,7 +108,7 @@ class QtObject(object):
         cls._objects[object_id] = self
         return self
 
-    def __init__(self, object_id, parent=None, pipe=None):
+    def __init__(self, object_id, parent, pipe, builder):
         """ Initialize a QtObject.
 
         Parameters
@@ -116,13 +120,17 @@ class QtObject(object):
             The parent object of this object, or None if this object
             has no parent.
 
-        pipe : QActionPipe
+        pipe : QActionPipe or None
             The action pipe to use for sending actions to Enaml objects.
+
+        builder : QtBuilder
+            The QtBuilder instance that built this object.
 
         """
         self._object_id = object_id
         self._parent = parent
         self._pipe = pipe
+        self._builder = builder
         self._children = []
         self._children_map = {}
         self._widget = None
@@ -287,7 +295,10 @@ class QtObject(object):
         if widget is not None:
             widget.hide()
             widget.setParent(None)
+            widget.deleteLater()
         self._widget = None
+
+        QtObject._objects.pop(self._object_id, None)
 
     #--------------------------------------------------------------------------
     # Parenting Methods
@@ -420,3 +431,44 @@ class QtObject(object):
         if pipe is not None:
             pipe.send(self._object_id, action, content)
 
+    #--------------------------------------------------------------------------
+    # Action Handlers
+    #--------------------------------------------------------------------------
+    def on_action_children_changed(self, content):
+        """ Handle the 'children_changed' action from the Enaml object.
+
+        This method will unparent the removed children and add the new
+        children. If a given new child does not exist, it will be built.
+        Subclasses that need more control should reimplement this method.
+
+        """
+        find_child = self.find_child
+        remove_child = self.remove_child
+        for obj_id in content['removed']:
+            child = find_child(obj_id)
+            if child is not None:
+                remove_child(child)
+
+        lookup = QtObject.lookup_object
+        builder = self._builder
+        pipe = self._pipe
+        for tree in content['added']:
+            obj_id = tree['object_id']
+            child = lookup(obj_id)
+            if child is not None:
+                child.reparent(self)
+            else:
+                builder.build(tree, self, pipe)
+
+    def on_action_destroy(self, content):
+        """ Handle the 'destroy' action from the Enaml object.
+
+        This method will call the `destroy` method on the object.
+
+        """
+        self.destroy()
+
+    def reparent(self, parent):
+        self.widget().setParent(parent.widget())
+        self.widget().show()
+        parent.add_child(self)

@@ -18,6 +18,7 @@ from .form import Form
 from .group_box import GroupBox
 from .html import Html
 from .image_view import ImageView
+from .include import Include
 from .label import Label
 from .main_window import MainWindow
 from .mdi_area import MdiArea

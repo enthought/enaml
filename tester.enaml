@@ -2,8 +2,9 @@ from enaml.application import Application
 from enaml.session import Session
 from enaml.session_factory import SessionFactory
 from enaml.qt.qt_application import QtApplication
-from enaml.widgets.api import Window, PushButton, Container, Slider, ProgressBar, ImageView
 from enaml.noncomponents.image.location_image import URLImage
+from enaml.widgets.api import Field, Window, PushButton, Container, Slider, \
+    ProgressBar, Include, ImageView
 from enaml.core.declarative import Declarative
 
 
@@ -27,11 +28,14 @@ enamldef TimedProgress(ProgressBar):
 def printer():
     print 'printer'
 
+from enaml.layout.api import vbox
 
 enamldef View(Window):
     id: view
     attr image
     Container:
+        hug_height = 'ignore'
+        constraints << [vbox(*widgets)]
         PushButton:
             text << str(sldr.value)
             clicked :: Application.instance().end_session(sid)
@@ -44,12 +48,31 @@ enamldef View(Window):
                 print 'before'
                 Application.instance().timed_call(1000, printer)
                 print 'after'
+        PushButton:
+            id: add
+            text = 'Add'
+            clicked :: inc.objects.extend([Field() for _ in range(10)])
+            #clicked :: Field(parent)
+        PushButton:
+            text = 'Remove'
+            clicked :: del inc.objects[len(inc.objects)/2:]
+            #clicked :: add.set_parent(inc2.parent)
         Slider:
             id: sldr
+        Include:
+            id: inc
+            objects = [Field(), Field(), Field()]
         TimedProgress:
             id: prog
         ImageView:
             image = view.image
+        Container:
+            hug_height = 'strong'
+            constraints << [vbox(*widgets)]
+            PushButton:
+                text = 'foo'
+
+
 
 sid = None
 
