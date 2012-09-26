@@ -19,7 +19,7 @@ class QtAbstractImage(QtObject):
         populate the QPixmap.
         
         """
-        self.widget = QPixmap()
+        self._widget = QPixmap()
 
 
     

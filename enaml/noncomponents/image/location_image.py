@@ -48,8 +48,7 @@ class URLImage(LocationImage):
     """
     # this uses the same server-side implementation as FileImage, but
     # the client implementation will be different.
-    #location = Str
-    pass
+    location = Str
 
 
 class FileImage(LocationImage):

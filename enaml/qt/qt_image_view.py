@@ -92,7 +92,9 @@ class QImageView(QWidget):
         # Finally, draw the pixmap into the calculated rect.
         painter = QPainter(self)
         painter.setRenderHint(QPainter.SmoothPixmapTransform)
+        print 'about to paint'
         painter.drawPixmap(paint_x, paint_y, paint_width, paint_height, pixmap)
+        print 'painted'
 
     #--------------------------------------------------------------------------
     # Public API
@@ -246,16 +248,21 @@ class QtImageView(QtConstraintsWidget):
         self.set_allow_upscaling(content['allow_upscaling'])
     
     def on_action_set_image_id(self, content):
-        """ Handle the 'set__image_id' action from the Enaml widget.
+        """ Handle the 'set_image_id' action from the Enaml widget.
 
         """
         self.set_image_id(content['image_id'])
     
     def on_action_snap_image_response(self, content):
-        """ Handle the 'set__image_id' action from the Enaml widget.
+        """ Handle the 'snap_image_response' action from the Enaml widget.
 
         """
-        self.set_image_id(content['image_id'])
+        obj_id = content['object_id']
+        image = QtAbstractImage.lookup_object(obj_id)
+        if image is None:
+            image = self._builder.build(content, None, self._pipe)
+        self.set_image(image)
+        
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -289,9 +296,19 @@ class QtImageView(QtConstraintsWidget):
         self._image_id = image_id
         image = QtAbstractImage.lookup_object(image_id)
         if image is not None:
-            self.widget().setPixmap(image.widget)
-            self._image = image
-            self.relayout()
+            self.set_image()
         else:
+            # we don't have the image in the client, so ask for it...
             self.send_action('snap_image', {})
+    
+    def set_image(self, image):
+        """ Set the pixmap to the image's pixmap.
+        
+        """
+        print 'here'
+        self.widget().setPixmap(image.widget())
+        self._image = image
+        self.relayout()
+        print 'done set_image'
+        
 

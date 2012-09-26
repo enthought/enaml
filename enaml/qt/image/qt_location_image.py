@@ -32,6 +32,7 @@ class QtLocationImage(QtAbstractImage):
         """ Handle the 'set_location' action from the Enaml widget
 
         """
+        print 'set location', content
         self.set_location(content['location'])
     
     def on_action_reload(self, content):
@@ -55,6 +56,7 @@ class QtURLImage(QtLocationImage):
     """ A Qt4 implementation of an Enaml URLImage
     
     """
+    _data = None
     
     def load_image(self):
         """ Get the image data and load it into the QPixmap
@@ -62,8 +64,11 @@ class QtURLImage(QtLocationImage):
         We rely on Qt's automatic filetype detection for the data.
         
         """
+        print 'loading image'
         data = self._get_data()
-        self.widget.loadFromData(data)
+        self.widget().loadFromData(data)
+        print 'data set', self.widget().size()
+        self._data = data
     
     def _get_data(self):
         """ Download the image data from the supplied URL
@@ -95,4 +100,4 @@ class QtFileImage(QtLocationImage):
         
         """
         if self._location is not None:
-            self.widget.load(self.location)
+            self.widget().load(self.location)

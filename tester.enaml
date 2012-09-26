@@ -32,7 +32,6 @@ from enaml.layout.api import vbox
 
 enamldef View(Window):
     id: view
-    attr image
     Container:
         hug_height = 'ignore'
         constraints << [vbox(*widgets)]
@@ -64,8 +63,18 @@ enamldef View(Window):
             objects = [Field(), Field(), Field()]
         TimedProgress:
             id: prog
+        Field:
+            text = 'http://farm6.staticflickr.com/5276/7400311000_088cb63717_m.jpg'
+            text ::
+                print self.text
+                image = image_view.image
+                image.location = self.text
+                print image_view, image, image.location
+                print 'ought to have fired location change...'
         ImageView:
-            image = view.image
+            id: image_view
+            image = URLImage(location='http://farm6.staticflickr.com/5276/7400311000_088cb63717_m.jpg')
+            
         Container:
             hug_height = 'strong'
             constraints << [vbox(*widgets)]
@@ -81,10 +90,11 @@ class FooSession(Session):
     def on_open(self):
         global sid
         sid = self.session_id
-        image = URLImage()
-        image.location = 'http://farm6.staticflickr.com/5276/7400311000_088cb63717_m.jpg'
+        image = URLImage(
+            location = 'http://farm6.staticflickr.com/5276/7400311000_088cb63717_m.jpg'
+        )
 
-        return [image, View(image=image)]
+        return [View()]#image=image)]
 
 
 def main():
