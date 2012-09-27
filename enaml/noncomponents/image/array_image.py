@@ -44,6 +44,7 @@ class ArrayImage(AbstractImage):
         snap['data'] = self.session.encode_binary(self.data.data)
         snap['format'] = self.format
         snap['size'] = self.data.shape[:2:-1]
+        return snap
 
     #--------------------------------------------------------------------------
     # Messaging Methods

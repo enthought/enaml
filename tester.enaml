@@ -2,7 +2,7 @@ from enaml.application import Application
 from enaml.session import Session
 from enaml.session_factory import SessionFactory
 from enaml.qt.qt_application import QtApplication
-from enaml.noncomponents.image.location_image import URLImage
+from enaml.noncomponents.image.location_image import FileImage
 from enaml.widgets.api import Field, Window, PushButton, Container, Slider, \
     ProgressBar, Include, ImageView
 from enaml.core.declarative import Declarative
@@ -64,17 +64,15 @@ enamldef View(Window):
         TimedProgress:
             id: prog
         Field:
-            text = 'http://farm6.staticflickr.com/5276/7400311000_088cb63717_m.jpg'
+            text = 'deepfield.jpg'
             text ::
-                print self.text
                 image = image_view.image
                 image.location = self.text
-                print image_view, image, image.location
-                print 'ought to have fired location change...'
         ImageView:
             id: image_view
-            image = URLImage(location='http://farm6.staticflickr.com/5276/7400311000_088cb63717_m.jpg')
-            
+            image = FileImage(location='deepfield.jpg')
+            scale_to_fit = True
+            constraints = [height <= 400, width <= 600]
         Container:
             hug_height = 'strong'
             constraints << [vbox(*widgets)]
@@ -90,11 +88,7 @@ class FooSession(Session):
     def on_open(self):
         global sid
         sid = self.session_id
-        image = URLImage(
-            location = 'http://farm6.staticflickr.com/5276/7400311000_088cb63717_m.jpg'
-        )
-
-        return [View()]#image=image)]
+        return [View()]
 
 
 def main():

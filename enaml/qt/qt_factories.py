@@ -175,6 +175,21 @@ def window_factory():
 def url_image_factory():
     from .image.qt_location_image import QtURLImage
     return QtURLImage
+    
+    
+def file_image_factory():
+    from .image.qt_location_image import QtFileImage
+    return QtFileImage
+    
+    
+def data_image_factory():
+    from .image.qt_data_image import QtDataImage
+    return QtDataImage
+    
+    
+def array_image_factory():
+    from .image.qt_array_image import QtArrayImage
+    return QtArrayImage
 
 
 QT_FACTORIES = {
@@ -213,5 +228,8 @@ QT_FACTORIES = {
     'ToolBar': tool_bar_factory,
     'Window': window_factory,
     'URLImage': url_image_factory,
+    'FileImage': file_image_factory,
+    'DataImage': data_image_factory,
+    'ArrayImage': array_image_factory,
 }
 

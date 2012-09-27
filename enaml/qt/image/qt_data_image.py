@@ -8,6 +8,7 @@ class QtDataImage(QtAbstractImage):
     """ A Qt4 implementation of an Enaml DataImage.
     
     """
+    _data = None
     
     #--------------------------------------------------------------------------
     # Setup methods
@@ -35,4 +36,8 @@ class QtDataImage(QtAbstractImage):
         """ Set the data on the QPixmap
         
         """
-        self.widget.loadFromData(data)
+        print data[:10]
+        self.widget().loadFromData(data)
+        self.refresh()
+        self._data = data
+        

@@ -1,0 +1,61 @@
+from enaml.application import Application
+from enaml.session import Session
+from enaml.session_factory import SessionFactory
+from enaml.qt.qt_application import QtApplication
+from enaml.noncomponents.image.location_image import URLImage, FileImage
+from enaml.noncomponents.image.data_image import DataImage
+from enaml.widgets.api import Field, Window, Container, ImageView
+from enaml.core.declarative import Declarative
+
+from enaml.layout.api import vbox
+
+enamldef View(Window):
+    id: viewer
+    attr image
+    Container:
+        hug_height = 'ignore'
+        constraints << [vbox(*widgets)]
+        ImageView:
+            id: attr_view
+            image := viewer.image
+            scale_to_fit = True
+            constraints = [height <= 400, width <= 600]
+        Field:
+            text = 'http://farm6.staticflickr.com/5276/7400311000_088cb63717_m.jpg'
+            text ::
+                url_view.image.location = self.text
+        ImageView:
+            id: file_view
+            image = URLImage(location='http://farm6.staticflickr.com/5276/7400311000_088cb63717_m.jpg')
+            scale_to_fit = True
+            constraints = [height <= 400, width <= 600]
+        Field:
+            text = 'deepfield.jpg'
+            text ::
+                file_view.image.location = self.text
+        ImageView:
+            id: file_view
+            image = FileImage(location='deepfield.jpg')
+            scale_to_fit = True
+            constraints = [height <= 400, width <= 600]
+
+
+
+sid = None
+
+class FooSession(Session):
+
+    def on_open(self):
+        global sid
+        sid = self.session_id
+        image = DataImage.from_file('deepfield.jpg')
+
+        return [View(image=image)]
+
+
+def main():
+    fact = SessionFactory('main', '', FooSession)
+    app = QtApplication([fact])
+    app.start_session('main')
+    app.start()
+

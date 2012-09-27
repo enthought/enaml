@@ -2,7 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt.QtGui import QWidget, QPainter
+from .qt.QtGui import QWidget, QPainter, QPixmap
 from .qt_constraints_widget import QtConstraintsWidget
 from .image.qt_abstract_image import QtAbstractImage
 
@@ -92,9 +92,7 @@ class QImageView(QWidget):
         # Finally, draw the pixmap into the calculated rect.
         painter = QPainter(self)
         painter.setRenderHint(QPainter.SmoothPixmapTransform)
-        print 'about to paint'
         painter.drawPixmap(paint_x, paint_y, paint_width, paint_height, pixmap)
-        print 'painted'
 
     #--------------------------------------------------------------------------
     # Public API
@@ -223,6 +221,7 @@ class QtImageView(QtConstraintsWidget):
         self.set_preserve_aspect_ratio(tree['preserve_aspect_ratio'])
         self.set_allow_upscaling(tree['allow_upscaling'])
         self.set_image_id(tree['image_id'])
+        
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -294,6 +293,8 @@ class QtImageView(QtConstraintsWidget):
 
         """
         self._image_id = image_id
+        if image_id is None:
+            return
         image = QtAbstractImage.lookup_object(image_id)
         if image is not None:
             self.set_image()
@@ -302,13 +303,22 @@ class QtImageView(QtConstraintsWidget):
             self.send_action('snap_image', {})
     
     def set_image(self, image):
-        """ Set the pixmap to the image's pixmap.
+        """ Set the pixmap to the image's QImage.
         
         """
-        print 'here'
-        self.widget().setPixmap(image.widget())
+        if self._image is not None:
+            self._image.remove_view(self)
+        image.add_view(self)
         self._image = image
+        self.refresh_image()
+    
+    def refresh_image(self):
+        """ Update the pixmap in response to a change in the image
+        
+        """
+        pixmap = QPixmap.fromImage(self._image.widget())
+        self.widget().setPixmap(pixmap)
         self.relayout()
-        print 'done set_image'
+        
         
 

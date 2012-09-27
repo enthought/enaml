@@ -35,11 +35,11 @@ class QtLocationImage(QtAbstractImage):
         print 'set location', content
         self.set_location(content['location'])
     
-    def on_action_reload(self, content):
-        """ Handle the 'reload' action from the Enaml widget
+    def on_action_refresh(self, content):
+        """ Handle the 'refresh' action from the Enaml widget
 
         """
-        self.load_image()
+        self.refresh()
     
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -49,7 +49,7 @@ class QtLocationImage(QtAbstractImage):
         
         """
         self._location = location
-        self.load_image()
+        self.refresh()
 
 
 class QtURLImage(QtLocationImage):
@@ -58,16 +58,15 @@ class QtURLImage(QtLocationImage):
     """
     _data = None
     
-    def load_image(self):
+    def refresh(self):
         """ Get the image data and load it into the QPixmap
         
         We rely on Qt's automatic filetype detection for the data.
         
         """
-        print 'loading image'
         data = self._get_data()
         self.widget().loadFromData(data)
-        print 'data set', self.widget().size()
+        super(QtURLImage, self).refresh()
         self._data = data
     
     def _get_data(self):
@@ -93,11 +92,12 @@ class QtFileImage(QtLocationImage):
     
     """
     
-    def load_image(self):
+    def refresh(self):
         """ Get the image data and load it into the QPixmap
         
         We rely on Qt's automatic filetype detection for the data.
         
         """
         if self._location is not None:
-            self.widget().load(self.location)
+            self.widget().load(self._location)
+        super(QtFileImage, self).refresh()

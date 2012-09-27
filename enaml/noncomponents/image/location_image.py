@@ -37,7 +37,7 @@ class LocationImage(AbstractImage):
         
         """
         # XXX Should make this an EnamlEvent?
-        self.send_action('reload', {})
+        self.send_action('refresh', {})
 
 
 class URLImage(LocationImage):

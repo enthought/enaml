@@ -31,7 +31,7 @@ class DataImage(AbstractImage):
         with open(filename, 'rb') as fp:
             data = fp.read()
         mimetype = mimetypes.guess_type(filename)[0] or infer_mimetype(data)
-        cls(data=data, mimetype=mimetype)
+        return cls(data=data, mimetype=mimetype)
     
     def snapshot(self):
         """ Create a snapshot of the current state of the DataImage
@@ -49,8 +49,9 @@ class DataImage(AbstractImage):
         
         """
         snap = super(DataImage, self).snapshot()
-        snap['data'] = self.action_pipe.encode_binary(self.data.data)
+        snap['data'] = self.action_pipe.encode_binary(self.data)
         snap['mimetype'] = self.mimetype
+        return snap
     
     def bind(self):
         super(DataImage, self).bind()

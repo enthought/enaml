@@ -11,8 +11,11 @@ class QtArrayImage(QtAbstractImage):
     """ A Qt4 implementation of an Enaml ArrayImage.
     
     """
-    #: A QImage holding the current image data
-    _image = None
+    #: the current image array
+    _data = None
+    
+    #: the current image format
+    _format = None
     
     #: a class variable mapping Enaml image formats to Qt4 image QImage.Formats
     _qt_formats = {
@@ -58,9 +61,9 @@ class QtArrayImage(QtAbstractImage):
         if format == 'RGBA':
             data = self._shuffle_channels(data)
         height, width = size
-        image = QImage(data.data, height, width, self._qt_formats[format])
-        self.widget.convertFromImage(image)
-        self._image = image
+        self._widget = QImage(data.data, height, width, self._qt_formats[format])
+        self.refresh()
+        self._data = data
     
     #--------------------------------------------------------------------------
     # Internal Methods
