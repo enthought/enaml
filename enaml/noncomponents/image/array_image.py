@@ -41,9 +41,12 @@ class ArrayImage(AbstractImage):
         
         """
         snap = super(ArrayImage, self).snapshot()
-        snap['data'] = self.session.encode_binary(self.data.data)
-        snap['format'] = self.format
-        snap['size'] = self.data.shape[:2:-1]
+        if self.data is not None:
+            snap['data'] = self.action_pipe.encode_binary(self.data.data)
+            if self.format is None:
+                self._infer_format()
+            snap['format'] = self.format
+            snap['size'] = self.data.shape[1::-1]
         return snap
 
     #--------------------------------------------------------------------------
@@ -76,15 +79,15 @@ class ArrayImage(AbstractImage):
             The width and height of the image.
         
         """
-        self._data = data
+        self.data = data
         if format is None:
             self._infer_format()
         else:
             self.format = format
         content = {
-            'data': self.session.encode_binary(data.data),
+            'data': self.action_pipe.encode_binary(data.data),
             'format': self.format,
-            'size': self.data.shape[:2:-1],
+            'size': self.data.shape[1::-1],
         }
         self.send_action('set_image_array', content)
         
@@ -97,7 +100,7 @@ class ArrayImage(AbstractImage):
         We assume that NxMx3 arrays are RGB, and the NxMx4 arrays are RGBA.
         
         """
-        if self._data is not None:
+        if self.data is not None:
             if self.data.shape[-1] == 3:
                 self.format = 'RGB'
             elif self.data.shape[-1] == 4:

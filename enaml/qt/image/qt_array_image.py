@@ -2,7 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from numpy import array, empty_like
+from numpy import ndarray, empty_like
 
 from ..qt.QtGui import QImage
 from .qt_abstract_image import QtAbstractImage
@@ -19,9 +19,9 @@ class QtArrayImage(QtAbstractImage):
     
     #: a class variable mapping Enaml image formats to Qt4 image QImage.Formats
     _qt_formats = {
-        'RGB': QImage.Format_RGB,
-        'RGBA': QImage.Format_ARGB,
-        'ARGB': QImage.Format_ARGB,
+        'RGB': QImage.Format_RGB888,
+        'RGBA': QImage.Format_ARGB32,
+        'ARGB': QImage.Format_ARGB32,
     }
     
     #--------------------------------------------------------------------------
@@ -32,10 +32,11 @@ class QtArrayImage(QtAbstractImage):
 
         """
         super(QtArrayImage, self).create(tree)
-        data = self._session.decode_binary(tree['data'])
-        size = tree['size']
-        format = tree['format']
-        self.set_image_array(data, format, size)
+        if 'data' in tree:
+            data = self._pipe.decode_binary(tree['data'])
+            size = tree['size']
+            format = tree['format']
+            self.set_image_array(data, format, size)
     
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -44,7 +45,7 @@ class QtArrayImage(QtAbstractImage):
         """ Handle the 'set_image_array' action from the Enaml widget
 
         """
-        data = self._session.decode_binary(content['data'])
+        data = self._pipe.decode_binary(content['data'])
         format = content['format']
         size = content['size']
         self.set_image_array(data, format, size)
@@ -56,7 +57,7 @@ class QtArrayImage(QtAbstractImage):
         """ Set the image array into a QImage, and load the QImage in a QPixmap
         
         """
-        data = array(data, dtype='uint8')
+        data = ndarray(shape=(len(data),), buffer=data, dtype='uint8')
         data.shape = (size[1], size[0], -1)
         if format == 'RGBA':
             data = self._shuffle_channels(data)
