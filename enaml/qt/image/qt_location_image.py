@@ -32,7 +32,6 @@ class QtLocationImage(QtAbstractImage):
         """ Handle the 'set_location' action from the Enaml widget
 
         """
-        print 'set location', content
         self.set_location(content['location'])
     
     def on_action_refresh(self, content):
@@ -73,7 +72,6 @@ class QtURLImage(QtLocationImage):
         """ Download the image data from the supplied URL
         
         """
-        print self._location
         if self._location is not None:
             response = urllib.urlopen(self._location)
             # read in data in megabyte-sized chunks
@@ -83,7 +81,6 @@ class QtURLImage(QtLocationImage):
                 if not chunk:
                     break
                 data.append(chunk)
-            print data[0][:10]
             return b''.join(data)
 
 

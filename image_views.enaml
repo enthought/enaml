@@ -25,7 +25,7 @@ enamldef View(Window):
             text ::
                 url_view.image.location = self.text
         ImageView:
-            id: file_view
+            id: url_view
             image = URLImage(location='http://farm6.staticflickr.com/5276/7400311000_088cb63717_m.jpg')
             scale_to_fit = True
             constraints = [height <= 400, width <= 600]

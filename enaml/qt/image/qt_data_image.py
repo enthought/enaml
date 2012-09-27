@@ -36,7 +36,6 @@ class QtDataImage(QtAbstractImage):
         """ Set the data on the QPixmap
         
         """
-        print data[:10]
         self.widget().loadFromData(data)
         self.refresh()
         self._data = data

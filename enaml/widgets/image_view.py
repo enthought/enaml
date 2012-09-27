@@ -46,7 +46,6 @@ class ImageView(ConstraintsWidget):
         snap['preserve_aspect_ratio'] = self.preserve_aspect_ratio
         snap['allow_upscaling'] = self.allow_upscaling
         snap['image_id'] = self.image_id
-        print 'snap', self.image_id
         return snap
 
     def bind(self):
@@ -73,14 +72,12 @@ class ImageView(ConstraintsWidget):
         
         snap = self.image.snapshot()
         self.send_action('snap_image_response', snap)
-        print snap
             
 
     #--------------------------------------------------------------------------
     # Traits Handlers
     #--------------------------------------------------------------------------    
     def _image_changed(self):
-        print self.image
         if not self.image.initialized():
             self.image.initialize()
     
