@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 
 magic_numbers = {
-    b'\x89PNG0d\x0a\x1a\x0a': 'image/png',
+    b'\x89PNG\x0d\x0a\x1a\x0a': 'image/png',
     b'\xFF\xD8\xFF': 'image/jpeg',
     b'GIF87a': 'image/gif',
     b'GIF89a': 'image/gif',
