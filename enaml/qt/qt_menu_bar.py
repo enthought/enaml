@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 import sys
 
-from .qt.QtGui import QMainWindow, QMenuBar
+from .qt.QtGui import QMainWindow, QMenuBar, QMenu
 from .qt_widget_component import QtWidgetComponent
 
 
@@ -57,6 +57,30 @@ class QtMenuBar(QtWidgetComponent):
             if child is not None:
                 widget.addMenu(child.widget())
         
+    #--------------------------------------------------------------------------
+    # Child Events
+    #--------------------------------------------------------------------------
+    def child_added(self, child):
+        """ Handle the child added event for a QtMenuBar.
+
+        This handler ensures that the child is inserted in the proper
+        place in the menu bar.
+
+        """
+        child.initialize()
+        index = self.index_of(child)
+        if index != -1:
+            before = None
+            children = self.children()
+            if index < len(children) - 1:
+                temp = children[index + 1].widget()
+                if isinstance(temp, QMenu):
+                    before = temp.menuAction()
+            widget = self.widget()
+            child_widget = child.widget()
+            if isinstance(child_widget, QMenu):
+                widget.insertMenu(before, child_widget)
+
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
