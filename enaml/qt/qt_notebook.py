@@ -278,11 +278,10 @@ class QtNotebook(QtConstraintsWidget):
         proper location in the notebook.
 
         """
-        if self.initialized():
-            child.initialize()
-            index = self.index_of(child)
-            if index != -1:
-                self.widget().insertPage(index, child.widget())
+        child.initialize()
+        index = self.index_of(child)
+        if index != -1:
+            self.widget().insertPage(index, child.widget())
 
     #--------------------------------------------------------------------------
     # Message Handlers
