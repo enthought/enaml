@@ -69,8 +69,12 @@ class QtAbstractButton(QtConstraintsWidget):
         """ Handle the 'set_text' action from the Enaml widget.
 
         """
+        item = self.widget_item()
+        old_hint = item.sizeHint()
         self.set_text(content['text'])
-        # Trigger a relayout since the size hint likely changed
+        new_hint = item.sizeHint()
+        if old_hint != new_hint:
+            self.size_hint_updated()
 
     def on_action_set_icon_size(self, content):
         """ Handle the 'set_icon_size' action from the Enaml widget.
