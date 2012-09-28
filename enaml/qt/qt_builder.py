@@ -58,8 +58,6 @@ class QtBuilder(object):
             logging.error(msg % (item_class, item_bases))
             return
         obj = obj_cls.construct(tree, parent, pipe, self)
-        if parent is not None:
-            parent.add_child(obj)
         for child in tree['children']:
             self.build(child, obj, pipe)
         return obj

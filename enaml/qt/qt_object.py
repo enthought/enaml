@@ -6,9 +6,12 @@ import logging
 
 from enaml.utils import LoopbackGuard
 
+from .qt.QtCore import Qt
+
 
 class QtObject(object):
-    """ The most base class of all client objects for Qt.
+    """ The most base class of all client objects for the Enaml Qt 
+    implementation.
 
     """
     #: Class level storage for QtObject instances. QtObjects are added 
@@ -128,13 +131,14 @@ class QtObject(object):
 
         """
         self._object_id = object_id
-        self._parent = parent
         self._pipe = pipe
         self._builder = builder
+        self._parent = None
         self._children = []
         self._children_map = {}
         self._widget = None
         self._initialized = False
+        self.set_parent(parent)
 
     #--------------------------------------------------------------------------
     # Properties
@@ -268,35 +272,28 @@ class QtObject(object):
         pass
 
     def destroy(self):
-        """ Destroy this widget.
+        """ Destroy this object.
 
-        Destruction is performed in the following order:
-            1. The 'destroy' method is called on all children.
-            2. The reference to the children are dropped.
-            3. The object removes itself from its parent.
-            4. The parent reference is set to None.
-            5. The underyling Qt widget is hidden and unparented.
-            6. The object removes itself from the session.
+        After an object is destroyed, it is no longer usable and should
+        be discarded. All internal references to the object will be 
+        removed.
 
         """
-        # XXX revisit this!!
+        self._initialized = False
+
         children = self._children
         self._children = []
         self._children_map = {}
         for child in children:
             child.destroy()
 
-        parent = self._parent
-        if parent is not None:
-            parent.remove_child(self)
-        self._parent = None
+        self.set_parent(None)
 
         widget = self._widget
+        self._widget = None
         if widget is not None:
-            widget.hide()
             widget.setParent(None)
             widget.deleteLater()
-        self._widget = None
 
         QtObject._objects.pop(self._object_id, None)
 
@@ -327,49 +324,69 @@ class QtObject(object):
         """
         return self._children
 
-    def add_child(self, child):
-        """ Add a child widget to this object.
+    def set_parent(self, parent):
+        """ Set the parent for this object.
+
+        Parameters
+        ----------
+        parent : QtObject or None
+            The parent of this object, or None if it has no parent.
+
+        """
+        curr = self._parent
+        if curr is parent or parent is self:
+            return
+        self._parent = parent
+        if curr is not None:
+            if self in curr._children:
+                curr._children.remove(self)
+                curr._children_map.pop(self._object_id, None)
+                curr.child_removed(self)
+        if parent is not None:
+            parent._children.append(self)
+            parent._children_map[self._object_id] = self
+            parent.child_added(self)
+
+    def child_removed(self, child):
+        """ Called when a child is removed from this object.
+
+        The default implementation of this method unparents the toolkit
+        widget if the parent of the child is None and the initialized 
+        flag is True. Subclasses which need more control may reimplement
+        this method.
 
         Parameters
         ----------
         child : QtObject
-            The child object to add to this object.
+            The child object removed from this object.
 
         """
-        # XXX handle reparenting and duplicate adding
-        self._children.append(child)
-        self._children_map[child.object_id()] = child
+        if self._initialized:
+            if child._parent is None:
+                widget = child._widget
+                if widget is not None:
+                    widget.setParent(None)
 
-    def insert_child(self, index, child):
-        """ Insert a child object into this object.
+    def child_added(self, child):
+        """ Called when a child is added to this object.
 
-        Parameters
-        ----------
-        index : int
-            The target index for the child object.
-
-        child : QtObject
-            The child object to insert into this object.
-
-        """
-        # XXX handle reparenting and duplicates
-        self._children.insert(index, child)
-        self._children_map[child.object_id()] = child
-
-    def remove_child(self, child):
-        """ Remove the child object from this object.
+        The default implementation ensures that the toolkit widget is 
+        properly parented if the initialized flag is True. Subclasses
+        which need more control may reimplement this method.
 
         Parameters
         ----------
         child : QtObject
-            The child object to remove from this object.
+            The child object added to this object.
 
         """
-        # XXX handle unparenting
-        children = self._children
-        if child in children:
-            children.remove(child)
-            self._children_map.pop(child.object_id(), None)
+        if self._initialized:
+            widget = child._widget
+            if widget is not None:
+                widget.setParent(self._widget)
+                if widget.isWidgetType():
+                    if not widget.testAttribute(Qt.WA_WState_ExplicitShowHide):
+                        widget.setAttribute(Qt.WA_WState_Hidden, False)
 
     def find_child(self, object_id):
         """ Find the child with the given object id.
@@ -443,11 +460,10 @@ class QtObject(object):
 
         """
         find_child = self.find_child
-        remove_child = self.remove_child
         for obj_id in content['removed']:
             child = find_child(obj_id)
             if child is not None:
-                remove_child(child)
+                child.set_parent(None)
 
         lookup = QtObject.lookup_object
         builder = self._builder
@@ -456,7 +472,7 @@ class QtObject(object):
             obj_id = tree['object_id']
             child = lookup(obj_id)
             if child is not None:
-                child.reparent(self)
+                child.set_parent(self)
             else:
                 builder.build(tree, self, pipe)
 
@@ -468,7 +484,3 @@ class QtObject(object):
         """
         self.destroy()
 
-    def reparent(self, parent):
-        self.widget().setParent(parent.widget())
-        self.widget().show()
-        parent.add_child(self)
