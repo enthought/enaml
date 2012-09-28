@@ -374,7 +374,7 @@ class QtObject(object):
         """ Set the parent for this object.
 
         The appropriate `child_removed` and `child_added` events will
-        be called on the next cycle of the event loop.
+        be emitted if this parent is already initialized.
 
         Parameters
         ----------
@@ -396,19 +396,20 @@ class QtObject(object):
             if self in curr._children:
                 curr._children.remove(self)
                 curr._children_map.pop(self._object_id, None)
-                QtObject.deferred_call(curr.child_removed, self)
+                if curr._initialized:
+                    QtObject.deferred_call(curr.child_removed, self)
         if parent is not None:
             parent._children.append(self)
             parent._children_map[self._object_id] = self
-            QtObject.deferred_call(parent.child_added, self)
+            if parent._initialized:
+                QtObject.deferred_call(parent.child_added, self)
 
     def child_removed(self, child):
         """ Called when a child is removed from this object.
 
         The default implementation of this method unparents the toolkit
-        widget if the parent of the child is None and the initialized 
-        flag is True. Subclasses which need more control may reimplement
-        this method.
+        widget if the parent of the child is None. Subclasses which need 
+        more control may reimplement this method.
 
         Parameters
         ----------
@@ -416,18 +417,17 @@ class QtObject(object):
             The child object removed from this object.
 
         """
-        if self._initialized:
-            if child._parent is None:
-                widget = child._widget
-                if widget is not None:
-                    widget.setParent(None)
+        if child._parent is None:
+            widget = child._widget
+            if widget is not None:
+                widget.setParent(None)
 
     def child_added(self, child):
         """ Called when a child is added to this object.
 
         The default implementation ensures that the toolkit widget is 
-        properly parented if the initialized flag is True. Subclasses
-        which need more control may reimplement this method.
+        properly parented. Subclasses which need more control may 
+        reimplement this method.
 
         Parameters
         ----------
@@ -435,13 +435,13 @@ class QtObject(object):
             The child object added to this object.
 
         """
-        if self._initialized:
-            widget = child._widget
-            if widget is not None:
-                widget.setParent(self._widget)
-                if widget.isWidgetType():
-                    if not widget.testAttribute(Qt.WA_WState_ExplicitShowHide):
-                        widget.setAttribute(Qt.WA_WState_Hidden, False)
+        child.initialize()
+        widget = child._widget
+        if widget is not None:
+            widget.setParent(self._widget)
+            if widget.isWidgetType():
+                if not widget.testAttribute(Qt.WA_WState_ExplicitShowHide):
+                    widget.setAttribute(Qt.WA_WState_Hidden, False)
 
     def find_child(self, object_id):
         """ Find the child with the given object id.
