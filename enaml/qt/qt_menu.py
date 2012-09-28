@@ -49,6 +49,40 @@ class QtMenu(QtWidgetComponent):
                     widget.addActions(child_widget.actions())
 
     #--------------------------------------------------------------------------
+    # Child Events
+    #--------------------------------------------------------------------------
+    def child_added(self, child):
+        """ Handle the child added event for a QtMenu.
+
+        This handler ensures that the child is inserted in the proper
+        place in the menu.
+
+        """
+        child.initialize()
+        index = self.index_of(child)
+        if index != -1:
+            before = None
+            children = self.children()
+            if index < len(children) - 1:
+                temp = children[index + 1].widget()
+                if isinstance(temp, QMenu):
+                    before = temp.menuAction()
+                elif isinstance(temp, QAction):
+                    before = temp
+                elif isinstance(temp, QActionGroup):
+                    actions = temp.actions()
+                    if actions:
+                        before = actions[0]
+            widget = self.widget()
+            child_widget = child.widget()
+            if isinstance(child_widget, QMenu):
+                widget.insertMenu(before, child_widget)
+            elif isinstance(child_widget, QAction):
+                widget.insertAction(before, child_widget)
+            elif isinstance(child_widget, QActionGroup):
+                widget.insertActions(before, child_widget.actions())
+
+    #--------------------------------------------------------------------------
     # Message Handling
     #--------------------------------------------------------------------------
     def on_action_set_title(self, content):
