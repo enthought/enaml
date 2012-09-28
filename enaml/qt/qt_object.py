@@ -7,6 +7,7 @@ import logging
 from enaml.utils import LoopbackGuard
 
 from .qt.QtCore import Qt
+from q_deferred_caller import QDeferredCaller
 
 
 class QtObject(object):
@@ -19,6 +20,9 @@ class QtObject(object):
     #: so that orphaned widgets are not garbage collected until they 
     #: are explicitly destroyed.
     _objects = {}
+
+    #: A class level deferred caller. Created on demand.
+    _deferred_caller = None
 
     @classmethod
     def lookup_object(cls, object_id):
@@ -83,6 +87,48 @@ class QtObject(object):
         self = cls(object_id, parent, pipe, builder)
         self.create(tree)
         return self
+
+    @classmethod
+    def deferred_call(cls, callback, *args, **kwargs):
+        """ Execute the callback on the main gui thread.
+
+        Parameters
+        ----------
+        callback : callable
+            The callable object to execute on the main thread.
+
+        *args, **kwargs
+            Any additional positional and keyword arguments to pass to
+            the callback.
+
+        """
+        caller = cls._deferred_caller
+        if caller is None:
+            caller = cls._deferred_caller = QDeferredCaller()
+        caller.deferredCall(callback, *args, **kwargs)
+
+    @classmethod
+    def timed_call(cls, ms, callback, *args, **kwargs):
+        """ Execute a callback on timer in the main gui thread.
+
+        Parameters
+        ----------
+        ms : int
+            The time to delay, in milliseconds, before executing the
+            callable.
+
+        callback : callable
+            The callable object to execute at on the timer.
+
+        *args, **kwargs
+            Any additional positional and keyword arguments to pass to
+            the callback.
+
+        """
+        caller = cls._deferred_caller
+        if caller is None:
+            caller = cls._deferred_caller = QDeferredCaller()
+        caller.timedCall(ms, callback, *args, **kwargs)
 
     def __new__(cls, object_id, *args, **kwargs):
         """ Create a new QtObject.
@@ -327,12 +373,21 @@ class QtObject(object):
     def set_parent(self, parent):
         """ Set the parent for this object.
 
+        The appropriate `child_removed` and `child_added` events will
+        be called on the next cycle of the event loop.
+
         Parameters
         ----------
         parent : QtObject or None
             The parent of this object, or None if it has no parent.
 
         """
+        # Note: The added/removed events must be executed on the next
+        # cycle of the event loop. It's possible that this method is
+        # being called from the `construct` class method, and hence
+        # the child of this widget will not yet exist. This means that
+        # any added/removed event handlers that rely on the child widget
+        # already existing will fail.
         curr = self._parent
         if curr is parent or parent is self:
             return
@@ -341,11 +396,11 @@ class QtObject(object):
             if self in curr._children:
                 curr._children.remove(self)
                 curr._children_map.pop(self._object_id, None)
-                curr.child_removed(self)
+                QtObject.deferred_call(curr.child_removed, self)
         if parent is not None:
             parent._children.append(self)
             parent._children_map[self._object_id] = self
-            parent.child_added(self)
+            QtObject.deferred_call(parent.child_added, self)
 
     def child_removed(self, child):
         """ Called when a child is removed from this object.
@@ -404,6 +459,25 @@ class QtObject(object):
         """
         return self._children_map.get(object_id)
 
+    def index_of(self, child):
+        """ Return the index of the given child.
+
+        Parameters
+        ----------
+        child : QtObject
+            The child of interest.
+
+        Returns
+        -------
+        result : int
+            The index of the given child, or -1 if it is not found.
+
+        """
+        children = self._children
+        if child in children:
+            return children.index(child)
+        return -1
+
     #--------------------------------------------------------------------------
     # Messaging Methods
     #--------------------------------------------------------------------------
@@ -459,12 +533,15 @@ class QtObject(object):
         Subclasses that need more control should reimplement this method.
 
         """
+        # Unparent the children being removed. If they are going to be
+        # destroyed, Enaml will send that message after this one.
         find_child = self.find_child
         for obj_id in content['removed']:
             child = find_child(obj_id)
             if child is not None:
                 child.set_parent(None)
 
+        # Build or reparent the children being added.
         lookup = QtObject.lookup_object
         builder = self._builder
         pipe = self._pipe
@@ -475,6 +552,23 @@ class QtObject(object):
                 child.set_parent(self)
             else:
                 builder.build(tree, self, pipe)
+
+        # Update the ordering of the children based on the order given
+        # in the message. If the given order does not include all of
+        # the current children, then the ones not included will be
+        # appended to the end of the new list in an undefined order.
+        ordered = []
+        unordered = set(self._children)
+        push = ordered.append
+        pop = unordered.discard
+        find_child = self.find_child
+        for obj_id in content['order']:
+            child = find_child(obj_id)
+            if child is not None:
+                push(child)
+                pop(child)
+        ordered.extend(unordered)
+        self._children = ordered
 
     def on_action_destroy(self, content):
         """ Handle the 'destroy' action from the Enaml object.
