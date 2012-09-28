@@ -165,6 +165,9 @@ class QtContainer(QtConstraintsWidget):
     #: A list of the current contents constraints for the widget. 
     _contents_cns = []
 
+    #: A list of the current size hint constraints for the widget.
+    _size_hint_cns = []
+
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
@@ -218,8 +221,13 @@ class QtContainer(QtConstraintsWidget):
 
         """
         if self._owns_layout:
+            item = self.widget_item()
+            old_hint = item.sizeHint()
             self.init_layout()
             self.refresh()
+            new_hint = item.sizeHint()
+            if old_hint != new_hint:
+                self.size_hint_updated()
         else:
             self._layout_owner.relayout()
 
@@ -266,13 +274,14 @@ class QtContainer(QtConstraintsWidget):
         if self._owns_layout:
             manager = self._layout_manager
             if manager is not None:
+                item = self.widget_item()
+                old_hint = item.sizeHint()
                 manager.replace_constraints(old_cns, new_cns)
                 self.refresh_sizes()
                 self.refresh()
-                # XXX I don't really like this parent refresh hack
-                parent = self.parent()
-                if isinstance(parent, QtConstraintsWidget):
-                    parent.refresh()
+                new_hint = item.sizeHint()
+                if old_hint != new_hint:
+                    self.size_hint_updated()
         else:
             self._layout_owner.replace_constraints(old_cns, new_cns)
 
@@ -315,6 +324,16 @@ class QtContainer(QtConstraintsWidget):
         """
         return (0, 0, 0, 0)
 
+    def contents_margins_updated(self):
+        """ Notify the layout system that the contents margins of this
+        widget have been updated.
+
+        """
+        old_cns = self._contents_cns
+        self._contents_cns = []
+        new_cns = self.contents_constraints()
+        self.replace_constraints(old_cns, new_cns)
+    
     def contents_constraints(self):
         """ Create the contents constraints for the container.
 
@@ -349,19 +368,6 @@ class QtContainer(QtConstraintsWidget):
             ]
             self._contents_cns = cns
         return cns
-
-    def refresh_contents_constraints(self):
-        """ Perform a refresh of the contents constraints for the 
-        container.
-
-        This will replace the old contents constraints with the new
-        contents constraints.
-
-        """
-        old_cns = self._contents_cns
-        self._contents_cns = []
-        new_cns = self.contents_constraints()
-        self.replace_constraints(old_cns, new_cns)
 
     #--------------------------------------------------------------------------
     # Private Layout Handling

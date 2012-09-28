@@ -109,7 +109,7 @@ class QtGroupBox(QtContainer):
         self.set_title(content['title'])
         new_margins = widget.contentsMargins()
         if old_margins != new_margins:
-            self.refresh_contents_constraints()
+            self.contents_margins_updated()
 
     def on_action_set_title_align(self, content):
         """ Handle the 'set_title_align' action from the Enaml widget.
