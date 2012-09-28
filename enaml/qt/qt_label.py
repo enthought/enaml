@@ -38,7 +38,6 @@ class QtLabel(QtConstraintsWidget):
         self.set_text(content['text'])
         new_hint = item.sizeHint()
         if old_hint != new_hint:
-            print 'updating', self, old_hint, new_hint
             self.size_hint_updated()
 
     #--------------------------------------------------------------------------
