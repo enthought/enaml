@@ -164,8 +164,8 @@ class LoopbackContext(object):
 
 
 class LoopbackGuard(object):
-    """ A guard object used by the MessengerWidget to protect against
-    loopback conditions while updating attributes on the component.
+    """ A guard object used by objects to protect against loopback 
+    conditions while updating attributes on the component.
 
     Instances of this class are callable and return a guarding 
     context manager for the provided lock items.

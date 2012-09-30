@@ -2,18 +2,48 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from abc import ABCMeta, abstractmethod
 from collections import deque
 import logging
 import re
+from weakref import WeakValueDictionary
 
 from traits.api import (
-    HasStrictTraits, ReadOnly, Str, Property, WeakRef, List, Instance, Bool,
-    Disallow,
+    HasStrictTraits, ReadOnly, Str, Property, Tuple, Instance, Bool, Disallow, 
+    cached_property
 )
 
-from enaml.utils import id_generator
+from enaml.utils import LoopbackGuard, id_generator
 
 from .trait_types import EnamlEvent
+
+
+class ActionPipeInterface(object):
+    """ An abstract base class defining an action pipe interface.
+
+    Concrete implementations of this interface can be used by Object
+    instances to sent messages to their client objects.
+
+    """
+    __metaclass__ = ABCMeta
+
+    @abstractmethod
+    def send(self, object_id, action, content):
+        """ Send an action to the client of an object.
+
+        Parameters
+        ----------
+        object_id : str
+            The object id for the Object sending the message.
+
+        action : str
+            The action that should be take by the client object.
+
+        content : dict
+            The dictionary of content needed to perform the action.
+
+        """
+        raise NotImplementedError
 
 
 class Object(HasStrictTraits):
@@ -24,9 +54,9 @@ class Object(HasStrictTraits):
     tree walking and searching support.
 
     """
-    #: The default object id generator. This can be overridden in a
-    #: subclass to provide custom unique messenger identifiers.
-    object_id_generator = id_generator('o')
+    #: The class level object id generator. This can be overridden 
+    #: in a subclass to provide custom unique messenger identifiers.
+    object_id_generator = id_generator('o_')
 
     #: A read-only attribute which holds the object id. By default, the
     #: id is *not* a uuid. This choice was made to reduce the size of 
@@ -34,6 +64,10 @@ class Object(HasStrictTraits):
     #: would significantly increase their size. If true uniqueness is
     #: required, then the object id generator can be overridden.
     object_id = ReadOnly
+
+    #: A backwards compatibility alias for `object_id`. New code should
+    #: access `object_id` directly.
+    widget_id = Property(fget=lambda self: self.object_id)
 
     #: An optional name to give to this object to assist in finding it
     #: in the tree. See e.g. the 'find' method. Note that there is no 
@@ -49,26 +83,89 @@ class Object(HasStrictTraits):
     base_names = Property
 
     #: A read-only property which returns the parent of this object.
-    #: The internal reference to the parent is kept weakly.
     parent = Property(depends_on='_parent')
 
     #: The internal storage for the parent of this object.
-    _parent = WeakRef('Object', allow_none=True)
+    _parent = Instance('Object')
 
     #: A read-only property which returns the tuple of children for
     #: this object.The list of children for this object. 
-    children = Property(depends_on='_children[]')
+    children = Property(depends_on='_children')
 
-    #: The internal storage for the list of children for this object.
-    _children = List(Instance('Object'))
+    #: The internal storage for the tuple of children for this object.
+    _children = Tuple
 
-    #: An event fired when a child has been added to this object. The
-    #: payload will be the child that was added.
-    child_added = EnamlEvent
+    #: A boolean flag indicating whether this object allows children.
+    #: If the flag is False, then attempting to use this object as the
+    #: parent of another object will raise an exception. The default
+    #: behavior is to allow children.
+    allow_children = Bool(True)
 
-    #: An event fired when a child is removed from this object. The
-    #: payload will be the child that was removed.
-    child_removed = EnamlEvent
+    #: A boolean flag indicating whether this object is snappable. Only
+    #: snappable objects are included in the `children` field of their
+    #: their parent's snapshot. Objects are snappable by default.
+    snappable = Bool(True)
+
+    #: An event fired during the initialization pass. This allows any 
+    #: listeners to perform work which depends on the object tree being
+    #: in a complete and stable state.
+    init = EnamlEvent
+
+    #: A boolean flag which indicates whether this Object instance has
+    #: been initialized. This is set to True after the `init` event is
+    #: fired. It should not be manipulated by user code.
+    initialized = Bool(False)
+
+    #: A pipe interface to use for sending messages by the object. If
+    #: the pipe is None the object will walk up the ancestor tree in
+    #: order to find a pipe to use. To silence an object, set this
+    #: attribute to a null pipe interface.
+    action_pipe = Instance(ActionPipeInterface)
+
+    #: A loopback guard which can be used to prevent a signal loopback 
+    #: cycle when setting attributes from within an action handler.
+    loopback_guard = Instance(LoopbackGuard, ())
+
+    #: Class level storage for Object instances. Objects are added to
+    #: this dict as they are created. The instances are stored weakly.
+    _objects = WeakValueDictionary()
+
+    @classmethod
+    def lookup_object(cls, object_id):
+        """ A classmethod which finds the object with the given id.
+
+        Parameters
+        ----------
+        object_id : str
+            The identifier for the object to lookup.
+
+        Returns
+        -------
+        result : Object or None
+            The Object for given identifier, or None if no object
+            is found.
+
+        """
+        return cls._objects.get(object_id)
+
+    def __new__(cls, *args, **kwargs):
+        """ Create a new Object.
+
+        Parameters
+        ----------
+        *args, **kwargs
+            The positional and keyword arguments needed to initialize
+            the object.
+
+        """
+        self = super(Object, cls).__new__(cls)
+        object_id = cls.object_id_generator.next()
+        objects = cls._objects
+        if object_id in objects:
+            raise ValueError('Duplicate object id `%s`' % object_id)
+        self.object_id = object_id
+        objects[object_id] = self
+        return self
 
     def __init__(self, parent=None):
         """ Initialize an Object.
@@ -82,7 +179,7 @@ class Object(HasStrictTraits):
         """
         super(Object, self).__init__()
         self.set_parent(parent)
-
+    
     #--------------------------------------------------------------------------
     # Property Methods
     #--------------------------------------------------------------------------
@@ -118,60 +215,215 @@ class Object(HasStrictTraits):
         """
         return self._parent
 
+    @cached_property
     def _get_children(self):
         """ The property getter for the 'children' attribute.
 
         This property getter returns a tuple of the object's children.
 
         """
-        return tuple(self._children)
+        return self._children
 
+    #--------------------------------------------------------------------------
+    # Initialization Methods
+    #--------------------------------------------------------------------------
+    def initialize(self):
+        """ A method called by the external user of the object tree.
+
+        This method should only be called after the entire object tree
+        is built, but before it is put in use for message passing. This
+        method performs a bottom-up traversal of the object tree, so it
+        need only be called on the top-level object. This method should
+        only be called once. Multiple calls to this method are ignored.
+
+        """
+        # Note: The order of operations here is highly important. Be
+        # sure the side effects are understood before changing it.
+        if self.initialized:
+            return
+        # Refresh the pipe before initializing the children, so they 
+        # when they do the same, the only have to hop 1 time at max.
+        self.inherit_pipe()
+        for child in self._children:
+            child.initialize()
+        # This event may cause arbitrary side effects. A good example is
+        # the Include type, which will possibly add a bunch of children
+        # to its parent as a result. This means a bunch of trait change
+        # notification may be run. Only set the initialized flag to True
+        # and bind the change handlers after the even has quieted down.
+        self.init()
+        self.initialized = True
+        self.bind()
+
+    def bind(self):
+        """ A method called at the end of initialization.
+
+        The intent of this method is to allow a widget to hook up its
+        trait change notification handlers which will be responsible 
+        for sending actions. The default implementation is a no-op.
+
+        """
+        pass
+
+    def destroy(self):
+        """ Explicity destroy this object and all of its children.
+
+        This method sends the 'destroy' action to the client, sets the 
+        `intialized` flag to False, sets the parent reference to None,
+        sets the children to an empty tuple, then destroys the children. 
+
+        """
+        self.send_action('destroy', {})
+        self.initialized = False
+        parent = self._parent
+        if parent is not None:
+            if parent.initialized:
+                self.set_parent(None)
+            else:
+                self._parent = None
+        children = self._children
+        self._children = ()
+        for child in children:
+            child.destroy()
+    
     #--------------------------------------------------------------------------
     # Parenting Methods
     #--------------------------------------------------------------------------
     def set_parent(self, parent):
         """ Set the parent for this object.
 
+        If the parent is not None, the child will be appended to the end
+        of the parent's children. If the parent is already the parent of
+        this object, then this method is a no-op. If this object already
+        has a parent, then it will be properly re-parented.
+
         Parameters
         ----------
-        parent : Object, None
+        parent : Object or None
             The Object instance to use for the parent, or None if this
             object should be de-parented.
 
         """
         old_parent = self._parent
-        if parent is old_parent or parent is self:
+        if parent is old_parent:
             return
+        if parent is not None and not parent.allow_children:
+            msg = 'Parent Object `%s` does not allow children'
+            raise ValueError(msg % parent)
+        if parent is self:
+            raise ValueError('Cannot use `self` as Object parent')
         self._parent = parent
         if old_parent is not None:
-            try:
-                old_parent._children.remove(self)
-            except ValueError:
-                pass
-            else:
-                old_parent.child_removed(self)
+            children = old_parent._children
+            if self in children:
+                idx = children.index(self)
+                old_parent._children = children[:idx] + children[idx + 1:]
         if parent is not None:
-            parent._children.append(self)
-            parent.child_added(self)
+            parent._children += (self,)
+
+    def insert_children(self, index, children):
+        """ Insert children into this object at the given index. 
+
+        The children will be automatically parented and inserted into
+        the tuple of children. If any children are already children of
+        this object, then they will be moved to the appropriate index.
+
+        Parameters
+        ----------
+        children : iterable of Object
+            The children to add to this object.
+
+        """
+        if not self.allow_children:
+            msg = 'Parent Object `%s` does not allow children'
+            raise ValueError(msg % self)
+        children = list(children)
+        children_set = set(children)
+        if self in children_set:
+            raise ValueError('Cannot use `self` as Object child')
+        if len(children) != len(children_set):
+            raise ValueError('Cannot have duplicate children')
+        for child in children:
+            old_parent = child._parent
+            if old_parent is not self:
+                child._parent = self
+                if old_parent is not None:
+                    okids = old_parent._children
+                    if child in okids:
+                        idx = okids.index(child)
+                        old_parent._children = okids[:idx] + okids[idx + 1:]
+        curr = [c for c in self._children if c not in children_set]
+        new = tuple(curr[:index]) + tuple(children) + tuple(curr[index:])
+        self._children = new
+
+    def remove_children(self, children, destroy=True):
+        """ Remove the given children from this object.
+
+        The given children will be removed from the children of this 
+        object and their parent will be set to None. Any given child
+        which is not a child of this object will be ignored.
+
+        Parameters
+        ----------
+        children : iterable of Object
+            The children to remove from this object.
+
+        destroy : bool, optional
+            Whether or not to destroy the removed children. The default
+            is True.
+
+        """
+        old = []
+        new = []
+        children_set = set(children)
+        for child in self._children:
+            if child in children_set:
+                old.append(child)
+            else:
+                new.append(child)
+        self._children = tuple(new)
+        if destroy:
+            for child in old:
+                child.destroy()
+
+    def _children_changed(self, old, new):
+        """ A change handler invoked when the tuple of children changes.
+
+        If the object is fully initialized, then a `children_changed` 
+        action will be generated and sent to the client.
+
+        """
+        if self.initialized:
+            # 'old' can be None due to `cached_property` oddities
+            old = old or ()
+            old_set = set(old)
+            new_set = set(new)
+            removed = old_set - new_set
+            added = new_set - old_set
+            content = {}
+            # XXX i'm not fond of these snappable checks
+            content['order'] = [c.object_id for c in new if c.snappable]
+            content['removed'] = [c.object_id for c in removed if c.snappable]
+            content['added'] = [c.snapshot() for c in added if c.snappable]
+            self.send_action('children_changed', content)
 
     #--------------------------------------------------------------------------
     # Messaging Methods
     #--------------------------------------------------------------------------
     def handle_action(self, action, content):
-        """ Handle an action sent from the client of this messenger.
+        """ Handle the specified action with the given content.
 
-        This is called by the messenger's Session object when the client
-        of the messenger sends it a message. The default behavior of the 
-        method is to dispatch the message to a handler method named with
-        the name 'on_action_<action>' where <action> is substituted with
-        the message action.
+        This method tells the object to handle a specific action. The 
+        default behavior of the method is to dispatch the action to a 
+        handler method named `on_action_<action>` where <action> is
+        substituted with the provided action.
 
         Parameters
         ----------
         action : str
-            The action to be performed by the messenger.
+            The action to be performed by the object.
 
-        content : ObjectDict
+        content : dict
             The content dictionary for the action.
 
         """
@@ -180,39 +432,56 @@ class Object(HasStrictTraits):
         if handler is not None:
             handler(content)
         else:
-            # XXX probably want to raise an exception so the Session
-            # can convert it into an error response.
             # XXX make this logging more configurable
-            msg = "Unhandled action '%s' sent to messenger %s:%s"
-            name = type(self.__name__)
-            logging.warn(msg % (action, name, self.object_id))
+            msg = "Unhandled action '%s' for Object %s:%s"
+            logging.warn(msg % (action, self.class_name, self.object_id))
+
+    def inherit_pipe(self):
+        """ Inherit the action pipe from the ancestors of this object.
+
+        If the `action_pipe` for this instance is None, then this method
+        will walk the tree of ancestors until it finds an object with a 
+        non null `action_pipe`. That pipe will then be used as the pipe
+        for this object.
+
+        """
+        if self.action_pipe is None:
+            parent = self._parent
+            while parent is not None:
+                pipe = parent.action_pipe
+                if pipe is not None:
+                    self.action_pipe = pipe
+                    return
+                parent = parent._parent
 
     def send_action(self, action, content):
-        """ Send an action to the client of this messenger.
-
-        This method can be called to send an unsolicited message of
-        type 'action' to the client of this messenger.
+        """ Send an action on the action pipe for this object.
 
         Parameters
         ----------
         action : str
-            The action for the message.
+            The name of the action performed.
 
         content : dict
-            The content of the message.
+            The content data for the action.
 
         """
-        session = self.session
-        if session is None:
-            # XXX make this logging more configurable
-            msg = 'No Session object for messenger %s:%s'
-            name = type(self).__name__
-            logging.warn(msg % (name, self.object_id))
-        else:
-            session.send_action(self.object_id, action, content)
+        pipe = self.action_pipe
+        if pipe is None:
+            self.inherit_pipe()
+            pipe = self.action_pipe
+        if pipe is not None:
+            pipe.send(self.object_id, action, content)
 
     def snapshot(self):
         """ Create a snapshot of the tree starting from this object.
+
+        Parameters
+        ----------
+        child_filter : callable, optional
+            An optional filter func to limit the children which are
+            included in the snapshot. The default is None indicates
+            that all children are included in the snapshot.
 
         Returns
         -------
@@ -222,6 +491,7 @@ class Object(HasStrictTraits):
         """
         snap = {}
         snap['object_id'] = self.object_id
+        snap['widget_id'] = self.widget_id # backwards compatibility
         snap['class'] = self.class_name
         snap['bases'] = self.base_names
         snap['name'] = self.name
@@ -233,17 +503,73 @@ class Object(HasStrictTraits):
 
         This method is called to retrieve the children to include with
         the snapshot of the component. The default implementation just
-        returns the tuple of `children`. Subclasses should reimplement
-        this method if they need more control.
+        returns the `children` of this object whose `snappable` method
+        returns True. Subclasses should reimplement this method if they
+        need more control.
 
         Returns
         -------
         result : iterable
-            An iterable of children to include in the component
-            snapshot.
+            An iterable of children to include in the object snapshot.
 
         """
-        return self.children
+        return [child for child in self._children if child.snappable]
+
+    def publish_attributes(self, *attrs):
+        """ A convenience method provided for subclasses to use to 
+        publish changes to attributes as actions performed.
+
+        The action name is created by prefixing 'set_' to the name of
+        the changed attribute. This method is suitable for most cases
+        of simple attribute publishing. More complex cases will need
+        to implement their own dispatching handlers. The handler for
+        the changes will only emit the `action` signal if the attribute
+        name is not held by the loopback guard.
+
+        Parameters
+        ----------
+        *attrs
+            The string names of the attributes to publish to the client.
+            The values of these attributes should be JSON serializable. 
+            More complex values should use their own dispatch handlers.
+
+        """
+        otc = self.on_trait_change
+        handler = self._publish_attr_handler
+        for attr in attrs:
+            otc(handler, attr)
+
+    def set_guarded(self, **attrs):
+        """ A convenience method provided for subclasses to set a
+        sequence of attributes from within a loopback guard.
+
+        Parameters
+        ----------
+        **attrs
+            The attributes which should be set on the object from
+            within a loopback guard context.
+
+        """
+        with self.loopback_guard(*attrs):
+            for name, value in attrs.iteritems():
+                setattr(self, name, value)
+
+    def _publish_attr_handler(self, name, new):
+        """ A private handler which will emit the `action` signal in
+        response to a trait change event.
+
+        The action will be created by prefixing the attribute name with
+        'set_'. The value of the attribute should be JSON serializable.
+        The content of the message will have the name of the attribute 
+        as a key, and the value as its value. If the loopback guard is 
+        held for the given name, then the signal will not be emitted,
+        helping to avoid potential loopbacks.
+
+        """
+        if name not in self.loopback_guard:
+            action = 'set_' + name
+            content = {name: new}
+            self.send_action(action, content)
 
     #--------------------------------------------------------------------------
     # Tree Methods

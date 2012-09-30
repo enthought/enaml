@@ -269,6 +269,21 @@ class QtNotebook(QtConstraintsWidget):
                 widget.addPage(child.widget())
 
     #--------------------------------------------------------------------------
+    # Child Events
+    #--------------------------------------------------------------------------
+    def child_added(self, child):
+        """ Handle the child added event for the Notebook.
+
+        This event handler makes sure the new page is inserted at the
+        proper location in the notebook.
+
+        """
+        child.initialize()
+        index = self.index_of(child)
+        if index != -1:
+            self.widget().insertPage(index, child.widget())
+
+    #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
     def on_action_set_tab_style(self, content):

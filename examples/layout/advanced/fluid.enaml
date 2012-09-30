@@ -50,6 +50,7 @@ enamldef Main(Window):
         PushButton:
             id: remove_button
             text = 'Remove'
+            clicked :: print 'removed'
         PushButton:
             id: change_mode_button
             text = 'Change Mode'

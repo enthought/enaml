@@ -20,7 +20,7 @@ on any subclass of `ConstraintsWidget`. They need not be confined to a
 """
 import numpy as np
 from enaml.widgets.api import MainWindow, Container, PushButton, Label
-
+from enaml.widgets.include import Include
 
 def gen_constraints(comps, top, left, width, height):
     """ A helper function which generates radial constraints.
@@ -79,13 +79,14 @@ enamldef SimpleButton(PushButton):
 
 
 enamldef Main(MainWindow):
-    attr buttons = [SimpleButton(text=str(i)) for i in range(50)]
     Container:
         id: cntr
-        inited :: children.extend(buttons)
         constraints << gen_constraints(
-            buttons, top, left, width, height,
+            inc.objects, top, left, width, height,
         ) + [width >= 200, height >= 200]
+        Include:
+            id: inc
+            objects = [SimpleButton(text=str(i)) for i in range(50)]
         Label:
             id: lbl
             # Constraints can also be directly defined on a component. 
