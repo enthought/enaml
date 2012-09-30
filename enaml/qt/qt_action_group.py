@@ -109,6 +109,7 @@ class QtActionGroup(QtObject):
         # the insert location. Qt will handle duplicates and ordering
         # automatically. This pushes the linear time position lookup
         # down to the C++ level where it will be faster.
+        child.initialize()
         if isinstance(child, QtAction):
             widget = self.widget()
             widget.addAction(child.widget())
