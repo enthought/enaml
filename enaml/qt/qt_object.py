@@ -6,8 +6,8 @@ import logging
 
 from enaml.utils import LoopbackGuard
 
-from .qt.QtCore import Qt
-from q_deferred_caller import QDeferredCaller
+from .qt.QtCore import Qt, QObject
+from .q_deferred_caller import QDeferredCaller
 
 
 class QtObject(object):
@@ -235,7 +235,7 @@ class QtObject(object):
         return self._widget
 
     def create_widget(self, parent, tree):
-        """ A method which must be implemented by subclasses.
+        """ A method which should be reimplemented by subclasses.
 
         This method is called by the create(...) method. It should 
         create and return the underlying Qt widget. Implementations 
@@ -243,9 +243,9 @@ class QtObject(object):
 
         Parameters
         ----------
-        parent : QWidget or None
-            The parent Qt widget for this control, or None if if the
-            control does not have a parent.
+        parent : QObject or None
+            The parent Qt toolkit object for this control, or None if
+            the control does not have a parent.
 
         tree : dict
             The dictionary representation of the tree for this object.
@@ -254,7 +254,7 @@ class QtObject(object):
             in the tree.
 
         """
-        raise NotImplementedError
+        return QObject()
 
     def create(self, tree):
         """ A method called by the application when creating the UI.

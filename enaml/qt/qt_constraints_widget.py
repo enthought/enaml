@@ -276,7 +276,7 @@ class QtConstraintsWidget(QtWidgetComponent):
 
         """
         # The return function is a hyper optimized (for Python) closure
-        # that will is called on every resize to update the geometry of
+        # that will be called on every resize to update the geometry of
         # the widget. According to cProfile, executing the body of this 
         # closure is 2x faster than the call to QWidgetItem.setGeometry. 
         # The previous version of this method, `update_layout_geometry`, 

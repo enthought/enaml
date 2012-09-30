@@ -4,6 +4,7 @@
 #------------------------------------------------------------------------------
 from .qt.QtGui import QWidget
 from .q_single_widget_layout import QSingleWidgetLayout
+from .qt_container import QtContainer
 from .qt_widget_component import QtWidgetComponent
 
 
@@ -53,9 +54,6 @@ class QtStackItem(QtWidgetComponent):
     """ A Qt implementation of an Enaml StackItem.
 
     """
-    #: The storage for the stack widget id
-    _stack_widget_id = None
-
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
@@ -65,21 +63,15 @@ class QtStackItem(QtWidgetComponent):
         """
         return QStackItem(parent)
 
-    def create(self, tree):
-        """ Create and initialize the underlying widget.
-
-        """
-        super(QtStackItem, self).create(tree)
-        self.set_stack_widget_id(tree['stack_widget_id'])
-
     def init_layout(self):
         """ Initialize the layout for the underyling widget.
 
         """
         super(QtStackItem, self).init_layout()
-        child = self.find_child(self._stack_widget_id)
-        if child is not None:
-            self.widget().setStackWidget(child.widget())
+        for child in self.children():
+            if isinstance(child, QtContainer):
+                self.widget().setStackWidget(child.widget())
+                break
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -91,11 +83,5 @@ class QtStackItem(QtWidgetComponent):
         the visibility is controlled entirely by the parent stack.
 
         """
-        pass 
-
-    def set_stack_widget_id(self, widget_id):
-        """ Set the stack widget id for the underlying control.
-
-        """
-        self._stack_widget_id = widget_id
+        pass
 

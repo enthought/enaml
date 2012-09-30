@@ -5,6 +5,7 @@
 from .qt.QtCore import QTimer 
 from .qt.QtGui import QStackedWidget, QPixmap
 from .qt_constraints_widget import QtConstraintsWidget
+from .qt_stack_item import QtStackItem
 from .q_pixmap_painter import QPixmapPainter
 from .q_pixmap_transition import (
     QDirectedTransition, QSlideTransition, QWipeTransition, QIrisTransition, 
@@ -202,9 +203,6 @@ class QtStack(QtConstraintsWidget):
     """ A Qt implementation of an Enaml Stack.
 
     """
-    #: Storage for the stack item ids
-    _stack_item_ids = []
-
     #: The initial selected index in the stack.
     _initial_index = 0
 
@@ -219,7 +217,6 @@ class QtStack(QtConstraintsWidget):
 
         """
         super(QtStack, self).create(tree)
-        self.set_stack_item_ids(tree['stack_item_ids'])
         self.set_transition(tree['transition'])
         self._initial_index = tree['index']
 
@@ -229,10 +226,8 @@ class QtStack(QtConstraintsWidget):
         """
         super(QtStack, self).init_layout()
         widget = self.widget()
-        find_child = self.find_child
-        for widget_id in self._stack_item_ids:
-            child = find_child(widget_id)
-            if child is not None:
+        for child in self.children():
+            if isinstance(child, QtStackItem):
                 widget.addWidget(child.widget())
         # Bypass the transition effect during initialization.
         widget.setCurrentIndex(self._initial_index)
@@ -255,12 +250,6 @@ class QtStack(QtConstraintsWidget):
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
-    def set_stack_item_ids(self, item_ids):
-        """ Set the stack item ids for the underlying widget.
-
-        """
-        self._stack_item_ids = item_ids
-
     def set_index(self, index):
         """ Set the current index of the underlying widget.
 

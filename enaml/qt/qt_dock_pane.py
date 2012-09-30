@@ -4,6 +4,7 @@
 #------------------------------------------------------------------------------
 from .qt.QtCore import Qt, Signal
 from .qt.QtGui import QDockWidget, QWidget
+from .qt_container import QtContainer
 from .qt_widget_component import QtWidgetComponent
 
 
@@ -15,6 +16,7 @@ _DOCK_AREA_MAP = {
     'left': Qt.LeftDockWidgetArea,
     'all': Qt.AllDockWidgetAreas,
 }
+
 
 #: A mapping from Qt dock areas to Enaml dock areas.
 _DOCK_AREA_INV_MAP = {
@@ -157,9 +159,6 @@ class QtDockPane(QtWidgetComponent):
     """ A Qt implementation of an Enaml DockPane.
 
     """
-    #: Storage for the dock widget id
-    _dock_widget_id = None
-
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
@@ -174,7 +173,6 @@ class QtDockPane(QtWidgetComponent):
 
         """
         super(QtDockPane, self).create(tree)
-        self.set_dock_widget_id(tree['dock_widget_id'])
         self.set_title(tree['title'])
         self.set_title_bar_visible(tree['title_bar_visible'])
         self.set_title_bar_orientation(tree['title_bar_orientation'])
@@ -194,9 +192,10 @@ class QtDockPane(QtWidgetComponent):
 
         """
         super(QtDockPane, self).init_layout()
-        child = self.find_child(self._dock_widget_id)
-        if child is not None:
-            self.widget().setWidget(child.widget())
+        for child in self.children():
+            if isinstance(child, QtContainer):
+                self.widget().setWidget(child.widget())
+                break
 
     #--------------------------------------------------------------------------
     # Signal Handlers
@@ -300,12 +299,6 @@ class QtDockPane(QtWidgetComponent):
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
-    def set_dock_widget_id(self, dock_widget_id):
-        """ Set the dock widget id for the underlying widget.
-
-        """
-        self._dock_widget_id = dock_widget_id
-
     def set_title(self, title):
         """ Set the title on the underlying widget.
 

@@ -3,6 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt.QtGui import QActionGroup
+from .qt_action import QtAction
 from .qt_object import QtObject
 
 
@@ -63,9 +64,6 @@ class QtActionGroup(QtObject):
     """ A Qt implementation of an Enaml ActionGroup.
 
     """
-    #: Store for the action ids
-    _action_ids = []
-
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
@@ -80,7 +78,6 @@ class QtActionGroup(QtObject):
 
         """
         super(QtActionGroup, self).create(tree)
-        self.set_action_ids(tree['action_ids'])
         self.set_exclusive(tree['exclusive'])
         self.set_enabled(tree['enabled'])
         self.set_visible(tree['visible'])
@@ -91,10 +88,8 @@ class QtActionGroup(QtObject):
         """
         super(QtActionGroup, self).init_layout()
         widget = self.widget()
-        find_child = self.find_child
-        for action_id in self._action_ids:
-            child = find_child(action_id)
-            if child is not None:
+        for child in self.children():
+            if isinstance(child, QtAction):
                 widget.addAction(child.widget())
 
     #--------------------------------------------------------------------------
@@ -121,12 +116,6 @@ class QtActionGroup(QtObject):
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
-    def set_action_ids(self, action_ids):
-        """ Set the action ids for the underlying control.
-
-        """
-        self._action_ids = action_ids
-
     def set_exclusive(self, exclusive):
         """ Set the exclusive state of the underlying control.
 

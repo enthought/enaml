@@ -5,7 +5,9 @@
 import sys
 
 from .qt.QtCore import Qt, Signal
-from .qt.QtGui import QToolBar, QAction, QActionGroup, QMainWindow 
+from .qt.QtGui import QToolBar, QMainWindow
+from .qt_action import QtAction
+from .qt_action_group import QtActionGroup
 from .qt_constraints_widget import QtConstraintsWidget
 
 
@@ -18,6 +20,7 @@ _DOCK_AREA_MAP = {
     'all': Qt.AllToolBarAreas,
 }
 
+
 #: A mapping from Qt tool bar areas to Enaml dock areas
 _DOCK_AREA_INV_MAP = {
     Qt.TopToolBarArea: 'top',
@@ -26,6 +29,7 @@ _DOCK_AREA_INV_MAP = {
     Qt.LeftToolBarArea: 'left',
     Qt.AllToolBarAreas: 'all',
 }
+
 
 #: A mapping from Enaml orientation to Qt Orientation
 _ORIENTATION_MAP = {
@@ -130,9 +134,6 @@ class QtToolBar(QtConstraintsWidget):
     """ A Qt implementation of an Enaml ToolBar.
 
     """
-    #: Storage for the tool bar item ids. 
-    _item_ids = []
-
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
@@ -164,15 +165,11 @@ class QtToolBar(QtConstraintsWidget):
         """
         super(QtToolBar, self).init_layout()
         widget = self.widget()
-        find_child = self.find_child
-        for item_id in self._item_ids:
-            child = find_child(item_id)
-            if child is not None:
-                child_widget = child.widget()
-                if isinstance(child_widget, QAction):
-                    widget.addAction(child_widget)
-                elif isinstance(child_widget, QActionGroup):
-                    widget.addActions(child_widget.actions())
+        for child in self.children():
+            if isinstance(child, QtAction):
+                widget.addAction(child.widget())
+            elif isinstance(child, QtActionGroup):
+                widget.addActions(child.widget().actions())
 
     #--------------------------------------------------------------------------
     # Signal Handlers
@@ -235,12 +232,6 @@ class QtToolBar(QtConstraintsWidget):
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
-    def set_item_ids(self, item_ids):
-        """ Set the item ids for the underlying widget.
-
-        """
-        self._item_ids = item_ids
-
     def set_movable(self, movable):
         """ Set the movable state on the underlying widget.
 

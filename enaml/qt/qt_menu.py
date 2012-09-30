@@ -2,7 +2,9 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt.QtGui import QMenu, QAction, QActionGroup
+from .qt.QtGui import QMenu
+from .qt_action import QtAction
+from .qt_action_group import QtActionGroup
 from .qt_widget_component import QtWidgetComponent
 
 
@@ -10,9 +12,6 @@ class QtMenu(QtWidgetComponent):
     """ A Qt implementation of an Enaml Menu.
 
     """
-    #: Storage for the menu item ids
-    _item_ids = []
-
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
@@ -27,7 +26,6 @@ class QtMenu(QtWidgetComponent):
 
         """
         super(QtMenu, self).create(tree)
-        self.set_item_ids(tree['item_ids'])
         self.set_title(tree['title'])
 
     def init_layout(self):
@@ -36,17 +34,13 @@ class QtMenu(QtWidgetComponent):
         """
         super(QtMenu, self).init_layout()
         widget = self.widget()
-        find_child = self.find_child
-        for item_id in self._item_ids:
-            child = find_child(item_id)
-            if child is not None:
-                child_widget = child.widget()
-                if isinstance(child_widget, QMenu):
-                    widget.addMenu(child_widget)
-                elif isinstance(child_widget, QAction):
-                    widget.addAction(child_widget)
-                elif isinstance(child_widget, QActionGroup):
-                    widget.addActions(child_widget.actions())
+        for child in self.children():
+            if isinstance(child, QtMenu):
+                widget.addMenu(child.widget())
+            elif isinstance(child, QtAction):
+                widget.addAction(child.widget())
+            elif isinstance(child, QtActionGroup):
+                widget.addActions(child.widget().actions())
 
     #--------------------------------------------------------------------------
     # Child Events
@@ -64,23 +58,22 @@ class QtMenu(QtWidgetComponent):
             before = None
             children = self.children()
             if index < len(children) - 1:
-                temp = children[index + 1].widget()
-                if isinstance(temp, QMenu):
-                    before = temp.menuAction()
-                elif isinstance(temp, QAction):
-                    before = temp
-                elif isinstance(temp, QActionGroup):
-                    actions = temp.actions()
+                temp = children[index + 1]
+                if isinstance(temp, QtMenu):
+                    before = temp.widget().menuAction()
+                elif isinstance(temp, QtAction):
+                    before = temp.widget()
+                elif isinstance(temp, QtActionGroup):
+                    actions = temp.widget().actions()
                     if actions:
                         before = actions[0]
             widget = self.widget()
-            child_widget = child.widget()
-            if isinstance(child_widget, QMenu):
-                widget.insertMenu(before, child_widget)
-            elif isinstance(child_widget, QAction):
-                widget.insertAction(before, child_widget)
-            elif isinstance(child_widget, QActionGroup):
-                widget.insertActions(before, child_widget.actions())
+            if isinstance(child, QtMenu):
+                widget.insertMenu(before, child.widget())
+            elif isinstance(child, QtAction):
+                widget.insertAction(before, child.widget())
+            elif isinstance(child, QtActionGroup):
+                widget.insertActions(before, child.widget().actions())
 
     #--------------------------------------------------------------------------
     # Message Handling
@@ -94,12 +87,6 @@ class QtMenu(QtWidgetComponent):
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
-    def set_item_ids(self, item_ids):
-        """ Set the item ids of the underlying widget..
-
-        """
-        self._item_ids = item_ids
-
     def set_visible(self, visible):
         """ Set the visibility on the underlying widget.
 

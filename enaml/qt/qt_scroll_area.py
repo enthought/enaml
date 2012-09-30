@@ -5,6 +5,7 @@
 from .qt.QtGui import QScrollArea
 from .qt.QtCore import Qt
 from .qt_constraints_widget import QtConstraintsWidget
+from .qt_container import QtContainer
 
 
 SCROLLBAR_MAP = {
@@ -18,9 +19,6 @@ class QtScrollArea(QtConstraintsWidget):
     """ A Qt implementation of an Enaml ScrollArea.
 
     """
-    #: Storage for the scroll widget id
-    _scroll_widget_id = None
-
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
@@ -38,7 +36,6 @@ class QtScrollArea(QtConstraintsWidget):
 
         """
         super(QtScrollArea, self).create(tree)
-        self.set_scroll_widget_id(tree['scroll_widget_id'])
         self.set_horizontal_scrollbar(tree['horizontal_scrollbar'])
         self.set_vertical_scrollbar(tree['vertical_scrollbar'])
 
@@ -46,10 +43,12 @@ class QtScrollArea(QtConstraintsWidget):
         """ Initialize the layout of the underlying widget.
 
         """
-        child = self.find_child(self._scroll_widget_id)
-        if child is not None:
-            self.widget().setWidget(child.widget())
-
+        super(QtScrollArea, self).init_layout()
+        for child in self.children():
+            if isinstance(child, QtContainer):
+                self.widget().setWidget(child.widget())
+                break
+    
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
@@ -70,12 +69,6 @@ class QtScrollArea(QtConstraintsWidget):
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
-    def set_scroll_widget_id(self, widget_id):
-        """ Set the scroll widget id for the underlying widget.
-
-        """
-        self._scroll_widget_id = widget_id
-    
     def set_horizontal_scrollbar(self, policy):
         """ Set the horizontal scrollbar policy of the widget.
 
