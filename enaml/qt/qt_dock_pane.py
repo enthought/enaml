@@ -198,6 +198,21 @@ class QtDockPane(QtWidgetComponent):
                 break
 
     #--------------------------------------------------------------------------
+    # Child Events 
+    #--------------------------------------------------------------------------
+    def child_added(self, child):
+        """ Handle the child added event for a QtMenu.
+
+        This handler ensures that the proper dock widget is used for the
+        dock pane.
+
+        """
+        child.initialize()
+        index = self.index_of(child)
+        if index == 0:
+            self.widget().setWidget(child.widget())
+
+    #--------------------------------------------------------------------------
     # Signal Handlers
     #--------------------------------------------------------------------------
     def on_closed(self):
