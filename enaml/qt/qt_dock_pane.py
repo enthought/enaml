@@ -208,9 +208,10 @@ class QtDockPane(QtWidgetComponent):
 
         """
         child.initialize()
-        index = self.index_of(child)
-        if index == 0:
-            self.widget().setWidget(child.widget())
+        for child in self.children():
+            if isinstance(child, QtContainer):
+                self.widget().setWidget(child.widget())
+                break
 
     #--------------------------------------------------------------------------
     # Signal Handlers
