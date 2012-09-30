@@ -148,7 +148,6 @@ class QtToolBar(QtConstraintsWidget):
 
         """
         super(QtToolBar, self).create(tree)
-        self.set_item_ids(tree['item_ids'])
         self.set_movable(tree['movable'])
         self.set_floatable(tree['floatable'])
         self.set_floating(tree['floating'])
