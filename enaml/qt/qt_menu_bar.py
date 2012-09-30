@@ -57,15 +57,39 @@ class QtMenuBar(QtWidgetComponent):
 
         """
         child.initialize()
+        before = self.find_next_action(child)
+        if isinstance(child, QtMenu):
+            self.widget().insertMenu(before, child.widget())
+
+    #--------------------------------------------------------------------------
+    # Utility Methods
+    #--------------------------------------------------------------------------
+    def find_next_action(self, child):
+        """ Get the QAction instance which comes immediately after the
+        actions of the given child.
+
+        Parameters
+        ----------
+        child : QtMenu
+            The child menu of interest.
+
+        Returns
+        -------
+        result : QAction or None
+            The QAction which comes immediately after the actions of the
+            given child, or None if no actions follow the child.
+
+        """
+        # The target action must be tested for membership against the 
+        # current actions on the menu bar itself, since this method may 
+        # be called after a child is added, but before the actions for 
+        # the child have actually added to the menu.
         index = self.index_of(child)
         if index != -1:
-            before = None
-            children = self.children()
-            if index < len(children) - 1:
-                temp = children[index + 1]
-                if isinstance(temp, QtMenu):
-                    before = temp.widget().menuAction()
-            widget = self.widget()
-            if isinstance(child, QtMenu):
-                widget.insertMenu(before, child.widget())
+            actions = set(self.widget().actions())
+            for child in self.children()[index + 1:]:
+                if isinstance(child, QtMenu):
+                    target = child.widget().menuAction()
+                    if target in actions:
+                        return target
 

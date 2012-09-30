@@ -168,7 +168,60 @@ class QtToolBar(QtConstraintsWidget):
             if isinstance(child, QtAction):
                 widget.addAction(child.widget())
             elif isinstance(child, QtActionGroup):
-                widget.addActions(child.widget().actions())
+                widget.addActions(child.actions())
+
+    #--------------------------------------------------------------------------
+    # Child Events
+    #--------------------------------------------------------------------------
+    def child_added(self, child):
+        """ Handle the child added event for a QtToolBar.
+
+        This handler ensures that the child is inserted in the proper
+        place in the tool bar.
+
+        """
+        child.initialize()
+        before = self.find_next_action(child)
+        if isinstance(child, QtAction):
+            self.widget().insertAction(before, child.widget())
+        elif isinstance(child, QtActionGroup):
+            self.widget().insertActions(before, child.actions())
+
+    #--------------------------------------------------------------------------
+    # Utility Methods
+    #--------------------------------------------------------------------------
+    def find_next_action(self, child):
+        """ Get the QAction instance which comes immediately after the
+        actions of the given child.
+
+        Parameters
+        ----------
+        child : QtActionGroup, or QtAction
+            The child of interest.
+
+        Returns
+        -------
+        result : QAction or None
+            The QAction which comes immediately after the actions of the
+            given child, or None if no actions follow the child.
+
+        """
+        # The target action must be tested for membership against the 
+        # current actions on the tool bar itself, since this method may 
+        # be called after a child is added, but before the actions for 
+        # the child have actually been added to the tool bar.
+        index = self.index_of(child)
+        if index != -1:
+            actions = set(self.widget().actions())
+            for child in self.children()[index + 1:]:
+                target = None
+                if isinstance(child, QtAction):
+                    target = child.widget()
+                elif isinstance(child, QtActionGroup):
+                    acts = child.actions()
+                    target = acts[0] if acts else None
+                if target in actions:
+                    return target
 
     #--------------------------------------------------------------------------
     # Signal Handlers

@@ -40,7 +40,7 @@ class QtMenu(QtWidgetComponent):
             elif isinstance(child, QtAction):
                 widget.addAction(child.widget())
             elif isinstance(child, QtActionGroup):
-                widget.addActions(child.widget().actions())
+                widget.addActions(child.actions())
 
     #--------------------------------------------------------------------------
     # Child Events
@@ -53,27 +53,51 @@ class QtMenu(QtWidgetComponent):
 
         """
         child.initialize()
+        before = self.find_next_action(child)
+        if isinstance(child, QtMenu):
+            self.widget().insertMenu(before, child.widget())
+        elif isinstance(child, QtAction):
+            self.widget().insertAction(before, child.widget())
+        elif isinstance(child, QtActionGroup):
+            self.widget().insertActions(before, child.actions())
+
+    #--------------------------------------------------------------------------
+    # Utility Methods
+    #--------------------------------------------------------------------------
+    def find_next_action(self, child):
+        """ Get the QAction instance which comes immediately after the
+        actions of the given child.
+
+        Parameters
+        ----------
+        child : QtMenu, QtActionGroup, or QtAction
+            The child of interest.
+
+        Returns
+        -------
+        result : QAction or None
+            The QAction which comes immediately after the actions of the
+            given child, or None if no actions follow the child.
+
+        """
+        # The target action must be tested for membership against the 
+        # current actions on the menu itself, since this method may be
+        # called after a child is added, but before the actions for the
+        # child have actually been added to the menu.
         index = self.index_of(child)
         if index != -1:
-            before = None
-            children = self.children()
-            if index < len(children) - 1:
-                temp = children[index + 1]
-                if isinstance(temp, QtMenu):
-                    before = temp.widget().menuAction()
-                elif isinstance(temp, QtAction):
-                    before = temp.widget()
-                elif isinstance(temp, QtActionGroup):
-                    actions = temp.widget().actions()
-                    if actions:
-                        before = actions[0]
-            widget = self.widget()
-            if isinstance(child, QtMenu):
-                widget.insertMenu(before, child.widget())
-            elif isinstance(child, QtAction):
-                widget.insertAction(before, child.widget())
-            elif isinstance(child, QtActionGroup):
-                widget.insertActions(before, child.widget().actions())
+            actions = set(self.widget().actions())
+            for child in self.children()[index + 1:]:
+                target = None
+                if isinstance(child, QtMenu):
+                    target = child.widget().menuAction()
+                elif isinstance(child, QtAction):
+                    target = child.widget()
+                elif isinstance(child, QtActionGroup):
+                    acts = child.actions()
+                    target = acts[0] if acts else None
+                if target in actions:
+                    return target
 
     #--------------------------------------------------------------------------
     # Message Handling
