@@ -16,18 +16,7 @@ class MdiWindow(WidgetComponent):
 
     """
     #: A read only property which returns the pane's dock widget.
-    mdi_widget = Property(depends_on='children[]')
-
-    #--------------------------------------------------------------------------
-    # Initialization
-    #--------------------------------------------------------------------------
-    def snapshot(self):
-        """ Returns the snapshot dict for the DockPane.
-
-        """
-        snap = super(MdiWindow, self).snapshot()
-        snap['mdi_widget_id'] = self._snap_mdi_widget_id()
-        return snap
+    mdi_widget = Property(depends_on='children')
 
     #--------------------------------------------------------------------------
     # Private API
@@ -45,12 +34,4 @@ class MdiWindow(WidgetComponent):
         for child in self.children:
             if isinstance(child, WidgetComponent):
                 return child
-
-    def _snap_mdi_widget_id(self):
-        """ Returns the widget id for the mdi widget or None.
-
-        """
-        mdi_widget = self.mdi_widget
-        if mdi_widget is not None:
-            return mdi_widget.widget_id
 

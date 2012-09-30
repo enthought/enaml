@@ -76,7 +76,6 @@ class ToolBar(ConstraintsWidget):
 
         """
         snap = super(ToolBar, self).snapshot()
-        snap['item_ids'] = self._snap_item_ids()
         snap['movable'] = self.movable
         snap['floatable'] = self.floatable
         snap['floating'] = self.floating
@@ -113,12 +112,6 @@ class ToolBar(ConstraintsWidget):
         allowed = (Action, ActionGroup)
         items = (child for child in self.children if isinst(child, allowed))
         return tuple(items)
-
-    def _snap_item_ids(self):
-        """ Returns the list of widget ids for the tool bar items.
-
-        """
-        return [item.widget_id for item in self.items]
 
     #--------------------------------------------------------------------------
     # Property Methods

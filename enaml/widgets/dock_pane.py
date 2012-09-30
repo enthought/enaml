@@ -50,7 +50,7 @@ class DockPane(WidgetComponent):
     )
 
     #: A read only property which returns the pane's dock widget.
-    dock_widget = Property(depends_on='children[]')
+    dock_widget = Property(depends_on='children')
 
     #: An event fired when the user closes the pane by clicking on the 
     #: dock pane's close button.
@@ -64,7 +64,6 @@ class DockPane(WidgetComponent):
 
         """
         snap = super(DockPane, self).snapshot()
-        snap['dock_widget_id'] = self._snap_dock_widget_id()
         snap['title'] = self.title
         snap['title_bar_visible'] = self.title_bar_visible
         snap['title_bar_orientation'] = self.title_bar_orientation
@@ -101,14 +100,6 @@ class DockPane(WidgetComponent):
         for child in self.children:
             if isinstance(child, Container):
                 return child
-
-    def _snap_dock_widget_id(self):
-        """ Returns the widget id for the dock widget or None.
-
-        """
-        dock_widget = self.dock_widget
-        if dock_widget is not None:
-            return dock_widget.widget_id
 
     #--------------------------------------------------------------------------
     # Message Handling

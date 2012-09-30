@@ -28,7 +28,7 @@ class ActionGroup(Declarative):
     visible = Bool(True)
 
     #: A read only property which returns the actions for this group.
-    actions = Property(depends_on='children[]')
+    actions = Property(depends_on='children')
 
     #--------------------------------------------------------------------------
     # Initialization
@@ -38,7 +38,6 @@ class ActionGroup(Declarative):
 
         """
         snap = super(ActionGroup, self).snapshot()
-        snap['action_ids'] = self._snap_action_ids()
         snap['exclusive'] = self.exclusive
         snap['enabled'] = self.enabled
         snap['visible'] = self.visible
@@ -67,10 +66,4 @@ class ActionGroup(Declarative):
         isinst = isinstance
         items = (child for child in self.children if isinst(child, Action))
         return tuple(items)
-
-    def _snap_action_ids(self):
-        """ Returns the list of widget ids for the group's actions.
-
-        """
-        return [action.widget_id for action in self.actions]
 

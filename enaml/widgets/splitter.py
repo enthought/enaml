@@ -30,7 +30,7 @@ class Splitter(ConstraintsWidget):
     
     #: A read only property which returns the splitter widgets being
     #: managed by the splitter.
-    splitter_widgets = Property(depends_on='children[]')
+    splitter_widgets = Property(depends_on='children')
 
     #: How strongly a component hugs it's contents' width. A Splitter
     #: container ignores its width hug by default, so it expands freely
@@ -50,7 +50,6 @@ class Splitter(ConstraintsWidget):
 
         """
         snap = super(Splitter, self).snapshot()
-        snap['splitter_widget_ids'] = self._snap_splitter_widget_ids()
         snap['orientation'] = self.orientation
         snap['live_drag'] = self.live_drag
         snap['preferred_sizes'] = self.preferred_sizes
@@ -80,10 +79,4 @@ class Splitter(ConstraintsWidget):
         isinst = isinstance
         pages = (child for child in self.children if isinst(child, Container))
         return tuple(pages)
-
-    def _snap_splitter_widget_ids(self):
-        """ Returns the widget ids of the splitters's split widgets.
-
-        """
-        return [widget.widget_id for widget in self.splitter_widgets]
 

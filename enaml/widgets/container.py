@@ -110,7 +110,7 @@ class Container(ConstraintsWidget):
     padding = CoercingInstance(Box, (10, 10, 10, 10))
 
     #: A read only property which returns this container's widgets.
-    widgets = Property(depends_on='children[]')
+    widgets = Property(depends_on='children')
 
     #: Containers freely exapnd in width and height. The size hint 
     #: constraints for a Container are used when the container is
