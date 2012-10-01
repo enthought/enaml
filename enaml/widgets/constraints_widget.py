@@ -182,6 +182,12 @@ class ConstraintsWidget(WidgetComponent):
         then the action is sent immediately.
 
         """
+        # The relayout action is deferred until the next cycle of the
+        # event loop for two reasons: 1) So that multiple relayout 
+        # requests can be collapsed into a single action. 2) So that
+        # all child events (which are fired synchronously) can finish
+        # processing and send their actions to the client before the
+        # relayout request is sent. 
         app = Application.instance()
         if app is None:
             self.send_action('relayout', self._layout_info())
