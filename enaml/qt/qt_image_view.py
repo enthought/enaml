@@ -307,8 +307,8 @@ class QtImageView(QtConstraintsWidget):
         
         """
         if self._image is not None:
-            self._image.remove_view(self)
-        image.add_view(self)
+            self._image.refresh.disconnect(self.refresh_image)
+        image.refresh.connect(self.refresh_image)
         self._image = image
         self.refresh_image()
     
