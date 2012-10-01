@@ -265,9 +265,9 @@ class Application(object):
             The keyword arguments to pass to the callable.
 
         priority : int, optional
-            The queue priority for the callable. The lowest priority is
-            0 and indicates the callable will be placed at the end of 
-            the queue. There is no highest priority. The default is 0.
+            The queue priority for the callable. Smaller values indicate
+            lower priority, larger values indicate higher priority. The
+            default priority is zero.
 
         Returns
         -------
@@ -285,7 +285,7 @@ class Application(object):
         heap = self._task_heap
         with self._heap_lock:
             needs_start = len(heap) == 0
-            item = (priority, self._counter.next(), task)
+            item = (-priority, self._counter.next(), task)
             heappush(heap, item)
         if needs_start:
             self.deferred_call(self._next_task)
