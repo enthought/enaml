@@ -35,15 +35,7 @@ class QtMdiWindow(QtWidgetComponent):
         super(QtMdiWindow, self).init_layout()
         for child in self.children():
             if isinstance(child, QtWidgetComponent):
-                # We need to unparent the underlying widget before adding 
-                # it to the subwindow. Otherwise, children like QMainWindow
-                # will persist as top-level non-mdi widgets.
-                child_widget = child.widget()
-                child_widget.setParent(None)
-                self.widget().setWidget(child_widget)
-                # On OSX, the resize gripper will be obscured unless we
-                # lower the widget in the window's stacking order.
-                child_widget.lower()
+                self._set_window_widget(child.widget())
                 break
 
     #--------------------------------------------------------------------------
@@ -55,9 +47,30 @@ class QtMdiWindow(QtWidgetComponent):
         """
         for child in self.children():
             if isinstance(child, QtWidgetComponent):
-                child_widget = child.widget()
-                child_widget.setParent(None)
-                self.widget().setWidget(child_widget)
-                child_widget.lower()
+                self._set_window_widget(child.widget())
                 break
+
+    #--------------------------------------------------------------------------
+    # Private API
+    #--------------------------------------------------------------------------
+    def _set_window_widget(self, widget):
+        """ A private method which set the child widget on the window.
+
+        Parameters
+        ----------
+        widget : QWidget
+            The child widget to use in the window.
+
+        """
+        # We need to unparent the underlying widget before adding 
+        # it to the subwindow. Otherwise, children like QMainWindow
+        # will persist as top-level non-mdi widgets.
+        widget.setParent(None)
+        # We need to first set the window widget to None, or Qt will
+        # complain if a widget is already set on the window.
+        self.widget().setWidget(None)
+        self.widget().setWidget(widget)
+        # On OSX, the resize gripper will be obscured unless we
+        # lower the widget in the window's stacking order.
+        widget.lower()
 
