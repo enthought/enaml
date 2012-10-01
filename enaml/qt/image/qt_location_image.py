@@ -34,12 +34,6 @@ class QtLocationImage(QtAbstractImage):
         """
         self.set_location(content['location'])
     
-    def on_action_refresh(self, content):
-        """ Handle the 'refresh' action from the Enaml widget
-
-        """
-        self.refresh()
-    
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------

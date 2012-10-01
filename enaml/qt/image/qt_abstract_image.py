@@ -13,7 +13,7 @@ class QtAbstractImage(QtObject):
     This class is not meant to be instantiated.
     
     """
-    refresh = Signal()
+    refreshed = Signal()
     
     #--------------------------------------------------------------------------
     # Setup methods
@@ -25,7 +25,7 @@ class QtAbstractImage(QtObject):
         populate the QPixmap.
         
         """
-        widget = QImage()
+        return QImage()
     
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -34,5 +34,15 @@ class QtAbstractImage(QtObject):
         """ Handle the 'refresh' action from the Enaml widget
 
         """
-        self.refresh.emit()
+        self.refresh()
 
+    #--------------------------------------------------------------------------
+    # Widget Update Methods
+    #--------------------------------------------------------------------------
+    def refresh(self):
+        """ Refresh the image
+        
+        The abstract image just calls the refreshed Signal
+        
+        """
+        self.refreshed.emit()
