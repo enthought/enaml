@@ -8,6 +8,7 @@ from weakref import WeakKeyDictionary
 from .qt.QtCore import Qt
 from .qt.QtGui import QTabWidget, QTabBar, QResizeEvent, QApplication
 from .qt_constraints_widget import QtConstraintsWidget
+from .qt_page import QtPage
 
 
 TAB_POSITIONS = {
@@ -227,9 +228,6 @@ class QtNotebook(QtConstraintsWidget):
     """ A Qt implementation of an Enaml Notebook.
 
     """
-    #: Storage for the widget ids of the notebook pages.
-    _page_ids = []
-
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
@@ -250,7 +248,6 @@ class QtNotebook(QtConstraintsWidget):
 
         """
         super(QtNotebook, self).create(tree)
-        self.set_page_ids(tree['page_ids'])
         self.set_tab_style(tree['tab_style'])
         self.set_tab_position(tree['tab_position'])
         self.set_tabs_closable(tree['tabs_closable'])
@@ -262,11 +259,24 @@ class QtNotebook(QtConstraintsWidget):
         """
         super(QtNotebook, self).init_layout()
         widget = self.widget()
-        find_child = self.find_child
-        for page_id in self._page_ids:
-            child = find_child(page_id)
-            if child is not None:
+        for child in self.children():
+            if isinstance(child, QtPage):
                 widget.addPage(child.widget())
+
+    #--------------------------------------------------------------------------
+    # Child Events
+    #--------------------------------------------------------------------------
+    def child_added(self, child):
+        """ Handle the child added event for the Notebook.
+
+        This event handler makes sure the new page is inserted at the
+        proper location in the notebook.
+
+        """
+        child.initialize()
+        index = self.index_of(child)
+        if index != -1:
+            self.widget().insertPage(index, child.widget())
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -298,12 +308,6 @@ class QtNotebook(QtConstraintsWidget):
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
-    def set_page_ids(self, page_ids):
-        """ Set the page ids for the underlying widget.
-
-        """
-        self._page_ids = page_ids
-
     def set_tab_style(self, style):
         """ Set the tab style for the tab bar in the widget.
 

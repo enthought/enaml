@@ -10,9 +10,6 @@ class QtMdiWindow(QtWidgetComponent):
     """ A Qt implementation of an Enaml MdiWindow.
 
     """
-    #: Storage for the mdi widget id.
-    _mdi_widget_id = None
-
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
@@ -31,36 +28,37 @@ class QtMdiWindow(QtWidgetComponent):
         widget.layout().setSizeConstraint(QLayout.SetMinAndMaxSize)
         return widget
 
-    def create(self, tree):
-        """ Create and initialize the underlying control.
-
-        """
-        super(QtMdiWindow, self).create(tree)
-        self.set_mdi_widget_id(tree['mdi_widget_id'])
-
     def init_layout(self):
         """ Initialize the layout for the underlying control.
 
         """
         super(QtMdiWindow, self).init_layout()
-        child = self.find_child(self._mdi_widget_id)
-        if child is not None:
-            # We need to unparent the underlying widget before adding 
-            # it to the subwindow. Otherwise, children like QMainWindow
-            # will persist as top-level non-mdi widgets.
-            child_widget = child.widget()
-            child_widget.setParent(None)
-            self.widget().setWidget(child_widget)
-            # On OSX, the resize gripper will be obscured unless we
-            # lower the widget in the window's stacking order.
-            child_widget.lower()
+        for child in self.children():
+            if isinstance(child, QtWidgetComponent):
+                # We need to unparent the underlying widget before adding 
+                # it to the subwindow. Otherwise, children like QMainWindow
+                # will persist as top-level non-mdi widgets.
+                child_widget = child.widget()
+                child_widget.setParent(None)
+                self.widget().setWidget(child_widget)
+                # On OSX, the resize gripper will be obscured unless we
+                # lower the widget in the window's stacking order.
+                child_widget.lower()
+                break
 
     #--------------------------------------------------------------------------
-    # Widget Update Methods
+    # Child Events 
     #--------------------------------------------------------------------------
-    def set_mdi_widget_id(self, widget_id):
-        """ Set the widget id for the mdi widget.
+    def child_added(self, child):
+        """ Handle the child added event for a QtMdiWindow.
 
         """
-        self._mdi_widget_id = widget_id
+        child.initialize()
+        for child in self.children():
+            if isinstance(child, QtWidgetComponent):
+                child_widget = child.widget()
+                child_widget.setParent(None)
+                self.widget().setWidget(child_widget)
+                child_widget.lower()
+                break
 

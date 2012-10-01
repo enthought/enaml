@@ -33,8 +33,12 @@ class QtLabel(QtConstraintsWidget):
         """ Handle the 'set_text' action from the Enaml widget.
 
         """
-        # XXX trigger a relayout if the size hint has changed.
+        item = self.widget_item()
+        old_hint = item.sizeHint()
         self.set_text(content['text'])
+        new_hint = item.sizeHint()
+        if old_hint != new_hint:
+            self.size_hint_updated()
 
     #--------------------------------------------------------------------------
     # Widget Update Methods

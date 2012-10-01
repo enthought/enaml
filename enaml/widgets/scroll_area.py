@@ -27,7 +27,7 @@ class ScrollArea(ConstraintsWidget):
 
     #: A read only property which returns the scroll area's scroll 
     #: widget.
-    scroll_widget = Property(depends_on='children[]')
+    scroll_widget = Property(depends_on='children')
 
     #: How strongly a component hugs it's contents' width. Scroll
     #: areas do not hug their width and are free to expand.
@@ -46,7 +46,6 @@ class ScrollArea(ConstraintsWidget):
 
         """
         snap = super(ScrollArea, self).snapshot()
-        snap['scroll_widget_id'] = self._snap_scroll_widget_id()
         snap['horizontal_scrollbar'] = self.horizontal_scrollbar
         snap['vertical_scrollbar'] = self.vertical_scrollbar
         return snap
@@ -76,12 +75,4 @@ class ScrollArea(ConstraintsWidget):
         for child in self.children:
             if isinstance(child, Container):
                 return child
-
-    def _snap_scroll_widget_id(self):
-        """ Returns the widget id for the scroll widget or None.
-
-        """
-        scroll_widget = self.scroll_widget
-        if scroll_widget is not None:
-            return scroll_widget.widget_id
 

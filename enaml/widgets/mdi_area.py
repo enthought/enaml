@@ -18,7 +18,7 @@ class MdiArea(ConstraintsWidget):
 
     """
     #: A read only property which returns the area's MdiWindows.
-    mdi_windows = Property(depends_on='children[]')
+    mdi_windows = Property(depends_on='children')
 
     #: An MdiArea expands freely in width and height by default.
     hug_width = 'ignore'
@@ -27,17 +27,6 @@ class MdiArea(ConstraintsWidget):
     #: An MdiArea resists clipping only weakly by default.
     resist_width = 'weak'
     resist_height = 'weak'
-    
-    #--------------------------------------------------------------------------
-    # Initialization 
-    #--------------------------------------------------------------------------
-    def snapshot(self):
-        """ Returns the snapshot for the MainWindow.
-
-        """
-        snap = super(MdiArea, self).snapshot()
-        snap['mdi_window_ids'] = self._snap_mdi_window_ids()
-        return snap
 
     #--------------------------------------------------------------------------
     # Private API
@@ -56,10 +45,4 @@ class MdiArea(ConstraintsWidget):
         isinst = isinstance
         windows = (c for c in self.children if isinst(c, MdiWindow))
         return tuple(windows)
-
-    def _snap_mdi_window_ids(self):
-        """ Returns the widget ids for the mdi windows.
-
-        """
-        return [window.widget_id for window in self.mdi_windows]
 

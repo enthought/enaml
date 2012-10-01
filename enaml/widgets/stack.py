@@ -24,7 +24,7 @@ class Stack(ConstraintsWidget):
     transition = Dict
 
     #: A read only property which returns the stack's StackItems
-    stack_items = Property(depends_on='children[]')
+    stack_items = Property(depends_on='children')
 
     #--------------------------------------------------------------------------
     # Initialization
@@ -34,7 +34,6 @@ class Stack(ConstraintsWidget):
 
         """
         snap = super(Stack, self).snapshot()
-        snap['stack_item_ids'] = self._snap_stack_item_ids()
         snap['index'] = self.index
         snap['transition'] = self.transition
         return snap
@@ -63,10 +62,4 @@ class Stack(ConstraintsWidget):
         isinst = isinstance
         items = (child for child in self.children if isinst(child, StackItem))
         return tuple(items)
-
-    def _snap_stack_item_ids(self):
-        """ Returns the widget ids of the stack's stack items.
-
-        """
-        return [item.widget_id for item in self.stack_items]
 

@@ -28,7 +28,7 @@ class Notebook(ConstraintsWidget):
     tabs_movable = Bool(True)
 
     #: A read only property which returns the notebook's Pages.
-    pages = Property(depends_on='children[]')
+    pages = Property(depends_on='children')
 
     #: How strongly a component hugs it's contents' width. A Notebook
     #: ignores its width hug by default, so it expands freely in width.
@@ -46,7 +46,6 @@ class Notebook(ConstraintsWidget):
 
         """
         snap = super(Notebook, self).snapshot()
-        snap['page_ids'] = self._snap_page_ids()
         snap['tab_style'] = self.tab_style
         snap['tab_position'] = self.tab_position
         snap['tabs_closable'] = self.tabs_closable
@@ -80,10 +79,4 @@ class Notebook(ConstraintsWidget):
         isinst = isinstance
         pages = (child for child in self.children if isinst(child, Page))
         return tuple(pages)
-
-    def _snap_page_ids(self):
-        """ Returns the widget ids of the notebook's pages.
-
-        """
-        return [page.widget_id for page in self.pages]
 
