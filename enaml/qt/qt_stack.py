@@ -233,6 +233,17 @@ class QtStack(QtConstraintsWidget):
         widget.setCurrentIndex(self._initial_index)
 
     #--------------------------------------------------------------------------
+    # Child Events
+    #--------------------------------------------------------------------------
+    def child_added(self, child):
+        """ Handle the child added event for a QtStack.
+
+        """
+        if isinstance(child, QtStackItem):
+            self.widget().addWidget(child.widget())
+            self.size_hint_updated()
+    
+    #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
     def on_action_set_index(self, content):

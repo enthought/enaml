@@ -278,6 +278,18 @@ class QtPage(QtWidgetComponent):
                 break
     
     #--------------------------------------------------------------------------
+    # Child Events
+    #--------------------------------------------------------------------------
+    def child_added(self, child):
+        """ Handle the child added event for a QtPage.
+
+        """
+        for child in self.children():
+            if isinstance(child, QtContainer):
+                self.widget().setPageWidget(child.widget())
+                break
+
+    #--------------------------------------------------------------------------
     # Signal Handlers
     #--------------------------------------------------------------------------
     def on_page_closed(self):

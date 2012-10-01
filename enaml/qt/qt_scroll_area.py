@@ -48,6 +48,18 @@ class QtScrollArea(QtConstraintsWidget):
             if isinstance(child, QtContainer):
                 self.widget().setWidget(child.widget())
                 break
+
+    #--------------------------------------------------------------------------
+    # Child Events
+    #--------------------------------------------------------------------------
+    def child_added(self, child):
+        """ Handle the child added event for a QtScrollArea.
+
+        """
+        for child in self.children():
+            if isinstance(child, QtContainer):
+                self.widget().setWidget(child.widget())
+                break
     
     #--------------------------------------------------------------------------
     # Message Handlers

@@ -74,6 +74,18 @@ class QtStackItem(QtWidgetComponent):
                 break
 
     #--------------------------------------------------------------------------
+    # Child Events
+    #--------------------------------------------------------------------------
+    def child_added(self, child):
+        """ Handle the child added event for a QtStackItem.
+
+        """
+        for child in self.children():
+            if isinstance(child, QtContainer):
+                self.widget().setStackWidget(child.widget())
+                break
+    
+    #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
     def set_visible(self, visible):

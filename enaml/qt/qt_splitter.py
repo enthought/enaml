@@ -47,6 +47,17 @@ class QtSplitter(QtConstraintsWidget):
                 widget.addWidget(child.widget())
 
     #--------------------------------------------------------------------------
+    # Child Events
+    #--------------------------------------------------------------------------
+    def child_added(self, child):
+        """ Handle the child added event for a QtSplitter.
+
+        """
+        if isinstance(child, QtContainer):
+            self.widget().addWidget(child.widget())
+            self.size_hint_updated()
+
+    #--------------------------------------------------------------------------
     # Message Handler Methods 
     #--------------------------------------------------------------------------
     def on_action_set_orientation(self, content):
