@@ -2,12 +2,41 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+import functools
 import logging
 
 from enaml.utils import LoopbackGuard
 
-from .qt.QtCore import Qt, QObject
+from .qt.QtCore import QObject
 from .q_deferred_caller import QDeferredCaller
+
+
+def deferred_updates(func):
+    """ A method decorator which will defer widget updates.
+
+    When used as a decorator for a QtObject, this will disable updates
+    on the underlying widget, and re-enable them on the next cycle of
+    the event loop after the method returns.
+
+    Parameters
+    ----------
+    func : function
+        A function object defined as a method on a QtObject.
+
+    """
+    @functools.wraps(func)
+    def closure(self, *args, **kwargs):
+        widget = self.widget()
+        if widget is not None and widget.isWidgetType():
+            widget.setUpdatesEnabled(False)
+            try:
+                res = func(self, *args, **kwargs)
+            finally:
+                QtObject.deferred_call(widget.setUpdatesEnabled, True)
+        else:
+            res = func(self, *args, **kwargs)
+        return res
+    return closure
 
 
 class QtObject(object):
@@ -181,7 +210,6 @@ class QtObject(object):
         self._builder = builder
         self._parent = None
         self._children = []
-        self._children_map = {}
         self._widget = None
         self._initialized = False
         self.set_parent(parent)
@@ -329,7 +357,6 @@ class QtObject(object):
 
         children = self._children
         self._children = []
-        self._children_map = {}
         for child in children:
             child.destroy()
 
@@ -370,11 +397,14 @@ class QtObject(object):
         """
         return self._children
 
+    @deferred_updates
     def set_parent(self, parent):
         """ Set the parent for this object.
 
-        The appropriate `child_removed` and `child_added` events will
-        be emitted if this parent is already initialized.
+        If the parent is already initialized, then the `child_removed`
+        and `child_added` events will be emitted on the parent. Updates
+        on the widget are disabled until after the child events on the
+        parent have been processed.
 
         Parameters
         ----------
@@ -384,23 +414,22 @@ class QtObject(object):
         """
         # Note: The added/removed events must be executed on the next
         # cycle of the event loop. It's possible that this method is
-        # being called from the `construct` class method, and hence
-        # the child of this widget will not yet exist. This means that
-        # any added/removed event handlers that rely on the child widget
-        # already existing will fail.
+        # being called from the `construct` class method and the child
+        # of the widget will not yet exist. This means that child event
+        # handlers that rely on the child widget existing will fail.
         curr = self._parent
         if curr is parent or parent is self:
             return
+
         self._parent = parent
         if curr is not None:
             if self in curr._children:
                 curr._children.remove(self)
-                curr._children_map.pop(self._object_id, None)
                 if curr._initialized:
                     QtObject.deferred_call(curr.child_removed, self)
+
         if parent is not None:
             parent._children.append(self)
-            parent._children_map[self._object_id] = self
             if parent._initialized:
                 QtObject.deferred_call(parent.child_added, self)
 
@@ -435,29 +464,9 @@ class QtObject(object):
             The child object added to this object.
 
         """
-        child.initialize()
         widget = child._widget
         if widget is not None:
             widget.setParent(self._widget)
-            if widget.isWidgetType():
-                if not widget.testAttribute(Qt.WA_WState_ExplicitShowHide):
-                    widget.setAttribute(Qt.WA_WState_Hidden, False)
-
-    def find_child(self, object_id):
-        """ Find the child with the given object id.
-
-        Parameters
-        ----------
-        object_id : str
-            The object identifier for the target object.
-
-        Returns
-        -------
-        result : QtObject or None
-            The child object or None if it is not found.
-
-        """
-        return self._children_map.get(object_id)
 
     def index_of(self, child):
         """ Return the index of the given child.
@@ -525,49 +534,50 @@ class QtObject(object):
     #--------------------------------------------------------------------------
     # Action Handlers
     #--------------------------------------------------------------------------
+    @deferred_updates
     def on_action_children_changed(self, content):
         """ Handle the 'children_changed' action from the Enaml object.
 
         This method will unparent the removed children and add the new
-        children. If a given new child does not exist, it will be built.
-        Subclasses that need more control should reimplement this method.
+        children to this object. If a given new child does not exist, it
+        will be built. Subclasses that need more control may reimplement
+        this method. The default implementation disables updates on the
+        widget while adding children and reenables them on the next cyle
+        of the event loop.
 
         """
-        # Unparent the children being removed. If they are going to be
-        # destroyed, Enaml will send that message after this one.
-        find_child = self.find_child
-        for obj_id in content['removed']:
-            child = find_child(obj_id)
-            if child is not None:
+        # Unparent the children being removed. Destroying a widget is
+        # handled through a separate message.
+        lookup = QtObject.lookup_object
+        for object_id in content['removed']:
+            child = lookup(object_id)
+            if child is not None and child._parent is self:
                 child.set_parent(None)
 
         # Build or reparent the children being added.
-        lookup = QtObject.lookup_object
-        builder = self._builder
         pipe = self._pipe
+        builder = self._builder
         for tree in content['added']:
-            obj_id = tree['object_id']
-            child = lookup(obj_id)
+            object_id = tree['object_id']
+            child = lookup(object_id)
             if child is not None:
                 child.set_parent(self)
             else:
-                builder.build(tree, self, pipe)
+                child = builder.build(tree, self, pipe)
+                child.initialize()
 
         # Update the ordering of the children based on the order given
         # in the message. If the given order does not include all of
         # the current children, then the ones not included will be
         # appended to the end of the new list in an undefined order.
         ordered = []
-        unordered = set(self._children)
-        push = ordered.append
-        pop = unordered.discard
-        find_child = self.find_child
-        for obj_id in content['order']:
-            child = find_child(obj_id)
-            if child is not None:
-                push(child)
-                pop(child)
-        ordered.extend(unordered)
+        curr_set = set(self._children)
+        for object_id in content['order']:
+            child = lookup(object_id)
+            if child is not None and child._parent is self:
+                ordered.append(child)
+                curr_set.discard(child)
+        ordered.extend(curr_set)
         self._children = ordered
 
     def on_action_destroy(self, content):
