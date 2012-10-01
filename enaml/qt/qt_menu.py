@@ -52,7 +52,6 @@ class QtMenu(QtWidgetComponent):
         place in the menu.
 
         """
-        child.initialize()
         before = self.find_next_action(child)
         if isinstance(child, QtMenu):
             self.widget().insertMenu(before, child.widget())

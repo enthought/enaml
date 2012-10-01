@@ -180,7 +180,6 @@ class QtToolBar(QtConstraintsWidget):
         place in the tool bar.
 
         """
-        child.initialize()
         before = self.find_next_action(child)
         if isinstance(child, QtAction):
             self.widget().insertAction(before, child.widget())

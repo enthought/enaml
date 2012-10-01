@@ -53,7 +53,6 @@ class QtMdiWindow(QtWidgetComponent):
         """ Handle the child added event for a QtMdiWindow.
 
         """
-        child.initialize()
         for child in self.children():
             if isinstance(child, QtWidgetComponent):
                 child_widget = child.widget()

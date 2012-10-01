@@ -37,7 +37,6 @@ class QtMdiArea(QtConstraintsWidget):
         """ Handle the child added event for a QtMdiArea.
 
         """
-        child.initialize()
         if isinstance(child, QtMdiWindow):
             self.widget().addSubWindow(child.widget())
 

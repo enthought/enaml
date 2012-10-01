@@ -207,7 +207,6 @@ class QtDockPane(QtWidgetComponent):
         dock pane.
 
         """
-        child.initialize()
         for child in self.children():
             if isinstance(child, QtContainer):
                 self.widget().setWidget(child.widget())
