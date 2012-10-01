@@ -42,7 +42,10 @@ class ArrayImage(AbstractImage):
         """
         snap = super(ArrayImage, self).snapshot()
         if self.data is not None:
-            snap['data'] = self.action_pipe.encode_binary(self.data.data)
+            if self.action_pipe is not None:
+                snap['data'] = self.action_pipe.encode_binary(self.data.data)
+            else:
+                snap['data'] = self.data.data
             if self.format is None:
                 self._infer_format()
             snap['format'] = self.format

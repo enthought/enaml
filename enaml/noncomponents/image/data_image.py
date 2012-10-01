@@ -49,7 +49,10 @@ class DataImage(AbstractImage):
         
         """
         snap = super(DataImage, self).snapshot()
-        snap['data'] = self.action_pipe.encode_binary(self.data)
+        if self.action_pipe is not None:
+            snap['data'] = self.action_pipe.encode_binary(self.data)
+        else:
+            snap['data'] = self.data
         snap['mimetype'] = self.mimetype
         return snap
     
@@ -83,8 +86,13 @@ class DataImage(AbstractImage):
     #--------------------------------------------------------------------------
     # Traits Handlers
     #--------------------------------------------------------------------------
-    def _set_data(self):
+    def _data_changed(self):
         """ The stored image data changed
         
+        We treat the magic number as being a truer representation of the image
+        mimetype than file extensions or user-supplied mimetypes.
+        
         """
-        self.mimetype = infer_mimetype(self.data)
+        mimetype = infer_mimetype(self.data)
+        if mimetype is not None:
+            self.mimetype = mimetype
