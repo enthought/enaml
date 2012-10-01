@@ -46,3 +46,19 @@ class QtMdiWindow(QtWidgetComponent):
                 child_widget.lower()
                 break
 
+    #--------------------------------------------------------------------------
+    # Child Events 
+    #--------------------------------------------------------------------------
+    def child_added(self, child):
+        """ Handle the child added event for a QtMdiWindow.
+
+        """
+        child.initialize()
+        for child in self.children():
+            if isinstance(child, QtWidgetComponent):
+                child_widget = child.widget()
+                child_widget.setParent(None)
+                self.widget().setWidget(child_widget)
+                child_widget.lower()
+                break
+
