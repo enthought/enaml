@@ -58,8 +58,6 @@ class ImageView(ConstraintsWidget):
             'scale_to_fit', 'preserve_aspect_ratio', 'allow_upscaling',
             'image_id'
         )
-        if self.image is not None:
-            self.image.bind()
 
     def on_action_snap_image(self, content):
         """ A change handler invoked when the image changes.
@@ -78,8 +76,8 @@ class ImageView(ConstraintsWidget):
     # Traits Handlers
     #--------------------------------------------------------------------------    
     def _image_changed(self):
-        if not self.image.initialized():
-            self.image.initialize()
+        # ensure image is initialized - it may not be if this is first use
+        self.image.initialize()
     
     @cached_property
     def _get_image_id(self):
