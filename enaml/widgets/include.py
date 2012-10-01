@@ -36,74 +36,59 @@ class Include(Declarative):
     #: XXX provide a snaphshot method!
     snappable = False
 
-    def _ensure_parents(self):
-        """ Update the parents for the current list of objects.
+    def _init_changed(self):
+        """ A change handler for the `init` event of the Include.
 
-        This is a private method which is called internally as needed.
-        It should not be invoked directly by user code.
-
-        """
-        objects = self.objects
-        parent = self.parent
-        if parent is None:
-            for obj in objects:
-                obj.set_parent(None)
-        else:
-            idx = parent.children.index(self)
-            parent.insert_children(idx + 1, objects)
-        for obj in objects:
-            obj.initialize()
-
-    def _unparent(self, children):
-        """ Unparent the given children, destroying if needed.
-
-        This is a private method which is called internally as needed.
-        It should not be invoked directly by user code.
+        This handler ensures that the current objects are parented and
+        properly initialized during the initialization pass.
 
         """
         parent = self.parent
         if parent is not None:
-            parent.remove_children(children, self.destroy_old)
-        else:
-            if self.destroy_old:
-                for child in children:
-                    child.destroy()
+            objects = self.objects
+            parent.insert_children(self, objects)
+            # During an initialization pass, the parent is not yet fully
+            # initialized and will therefore not initialize any children
+            # which are being added. It is the repsonsibility of the
+            # Include to initially initialize the objects.
+            for child in objects:
+                child.initialize()
 
-    def _init_changed(self):
-        """ Handle the `init` event for the include.
+    def _parent_changed(self, parent):
+        """ A change handler for the `parent` of the Include.
 
-        This handler ensures that the current objects are parented.
+        This handler will reparent the list of objects provided that
+        the Include is fully initialized.
 
         """
-        self._ensure_parents()
+        if self.initialized:
+            objects = self.objects
+            if parent is None:
+                for child in objects:
+                    child.set_parent(None)
+            else:
+                parent.insert_children(self, objects)
 
     def _objects_changed(self, old, new):
-        """ Handle the `objects` list changing in its entirety.
+        """ A change handler for the `objects` list of the Include.
 
-        This handler unparents the objects no longer in its control and
-        the ensures the current objects are properly parented.
+        This handler will replace the old children with the new children
+        in a single atomic operation.
 
         """
-        new_set = set(new)
-        remove = []
-        for obj in old:
-            if obj not in new_set:
-                remove.append(obj)
-        self._unparent(remove)
-        self._ensure_parents()
+        parent = self.parent
+        if parent is not None:
+            parent.replace_children(old, self, new, self.destroy_old)
 
-    def _objects_items_changed(self, evt):
+    def _objects_items_changed(self, event):
         """ Handle the `objects` list changing in-place.
 
-        This handler unparents the objects no longer in its control and
-        the ensures the current objects are properly parented.
+        This handler will replace the old children with the new children
+        in a single atomic operation.
 
         """
-        new_set = set(self.objects)
-        remove = []
-        for obj in evt.removed:
-            if obj not in new_set:
-                remove.append(obj)
-        self._unparent(remove)
-        self._ensure_parents()
+        parent = self.parent
+        if parent is not None:
+            old = event.removed
+            parent.replace_children(old, self, self.objects, self.destroy_old)
 
