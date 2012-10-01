@@ -4,8 +4,8 @@
 #------------------------------------------------------------------------------
 from .qt.QtCore import Signal
 from .qt.QtGui import QWidget
-from .qt_notebook import QNotebook
 from .q_single_widget_layout import QSingleWidgetLayout
+from .qt_container import QtContainer
 from .qt_widget_component import QtWidgetComponent
 
 
@@ -48,6 +48,8 @@ class QPage(QWidget):
             be found.
 
         """
+        # Avoid a circular import with the qt_notebook module
+        from .qt_notebook import QNotebook
         # Depending on where we are during initialization, the notebook
         # will be either our parent or grandparent because of how the
         # QTabWidget reparents things internally.
@@ -246,9 +248,6 @@ class QtPage(QtWidgetComponent):
     """ A Qt implementation of an Enaml notebook Page.
 
     """
-    #: The storage for the page widget id
-    _page_widget_id = None
-
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
@@ -263,7 +262,6 @@ class QtPage(QtWidgetComponent):
 
         """
         super(QtPage, self).create(tree)
-        self.set_page_widget_id(tree['page_widget_id'])
         self.set_title(tree['title'])
         self.set_tool_tip(tree['tool_tip'])
         self.set_closable(tree['closable'])
@@ -274,10 +272,11 @@ class QtPage(QtWidgetComponent):
 
         """
         super(QtPage, self).init_layout()
-        child = self.find_child(self._page_widget_id)
-        if child is not None:
-            self.widget().setPageWidget(child.widget())
-
+        for child in self.children():
+            if isinstance(child, QtContainer):
+                self.widget().setPageWidget(child.widget())
+                break
+    
     #--------------------------------------------------------------------------
     # Signal Handlers
     #--------------------------------------------------------------------------
@@ -340,12 +339,6 @@ class QtPage(QtWidgetComponent):
 
         """
         self.widget().setTabEnabled(enabled)
-
-    def set_page_widget_id(self, widget_id):
-        """ Set the page widget id for the underlying control.
-
-        """
-        self._page_widget_id = widget_id
 
     def set_title(self, title):
         """ Set the title of the tab for this page.

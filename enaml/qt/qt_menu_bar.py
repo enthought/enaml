@@ -4,7 +4,8 @@
 #------------------------------------------------------------------------------
 import sys
 
-from .qt.QtGui import QMainWindow, QMenuBar, QMenu
+from .qt.QtGui import QMainWindow, QMenuBar
+from .qt_menu import QtMenu
 from .qt_widget_component import QtWidgetComponent
 
 
@@ -12,9 +13,6 @@ class QtMenuBar(QtWidgetComponent):
     """ A Qt implementation of an Enaml MenuBar.
 
     """
-    #: Storage for the menu ids.
-    _menu_ids = []
-
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
@@ -38,23 +36,14 @@ class QtMenuBar(QtWidgetComponent):
             menu_bar = QMenuBar(parent)
         return menu_bar
 
-    def create(self, tree):
-        """ Create and initialize the underlying control.
-
-        """
-        super(QtMenuBar, self).create(tree)
-        self.set_menu_ids(tree['menu_ids'])
-
     def init_layout(self):
         """ Initialize the layout for the underlying control.
 
         """
         super(QtMenuBar, self).init_layout()
         widget = self.widget()
-        find_child = self.find_child
-        for menu_id in self._menu_ids:
-            child = find_child(menu_id)
-            if child is not None:
+        for child in self.children():
+            if isinstance(child, QtMenu):
                 widget.addMenu(child.widget())
         
     #--------------------------------------------------------------------------
@@ -68,25 +57,39 @@ class QtMenuBar(QtWidgetComponent):
 
         """
         child.initialize()
-        index = self.index_of(child)
-        if index != -1:
-            before = None
-            children = self.children()
-            if index < len(children) - 1:
-                temp = children[index + 1].widget()
-                if isinstance(temp, QMenu):
-                    before = temp.menuAction()
-            widget = self.widget()
-            child_widget = child.widget()
-            if isinstance(child_widget, QMenu):
-                widget.insertMenu(before, child_widget)
+        before = self.find_next_action(child)
+        if isinstance(child, QtMenu):
+            self.widget().insertMenu(before, child.widget())
 
     #--------------------------------------------------------------------------
-    # Widget Update Methods
+    # Utility Methods
     #--------------------------------------------------------------------------
-    def set_menu_ids(self, menu_ids):
-        """ Set the menu ids for the underlying control.
+    def find_next_action(self, child):
+        """ Get the QAction instance which comes immediately after the
+        actions of the given child.
+
+        Parameters
+        ----------
+        child : QtMenu
+            The child menu of interest.
+
+        Returns
+        -------
+        result : QAction or None
+            The QAction which comes immediately after the actions of the
+            given child, or None if no actions follow the child.
 
         """
-        self._menu_ids = menu_ids
+        # The target action must be tested for membership against the 
+        # current actions on the menu bar itself, since this method may 
+        # be called after a child is added, but before the actions for 
+        # the child have actually added to the menu.
+        index = self.index_of(child)
+        if index != -1:
+            actions = set(self.widget().actions())
+            for child in self.children()[index + 1:]:
+                if isinstance(child, QtMenu):
+                    target = child.widget().menuAction()
+                    if target in actions:
+                        return target
 

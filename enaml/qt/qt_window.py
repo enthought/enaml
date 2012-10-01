@@ -5,7 +5,7 @@
 from .qt.QtCore import QSize, Signal
 from .qt.QtGui import QFrame, QLayout
 from .q_single_widget_layout import QSingleWidgetLayout
-from .qt_utils import deferred_call
+from .qt_container import QtContainer
 from .qt_widget_component import QtWidgetComponent
 
 
@@ -180,9 +180,6 @@ class QtWindow(QtWidgetComponent):
     """ A Qt implementation of an Enaml Window.
 
     """
-    #: The storage for the central widget id
-    _central_widget_id = None
-
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
@@ -197,7 +194,6 @@ class QtWindow(QtWidgetComponent):
 
         """
         super(QtWindow, self).create(tree)
-        self.set_central_widget_id(tree['central_widget_id'])
         self.set_title(tree['title'])
         self.set_initial_size(tree['initial_size'])
         self.widget().closed.connect(self.on_closed)
@@ -206,10 +202,12 @@ class QtWindow(QtWidgetComponent):
         """ Perform layout initialization for the control.
 
         """
-        child = self.find_child(self._central_widget_id)
-        if child is not None:
-            self.widget().setCentralWidget(child.widget())
-
+        super(QtWindow, self).init_layout()
+        for child in self.children():
+            if isinstance(child, QtContainer):
+                self.widget().setCentralWidget(child.widget())
+                break
+    
     #--------------------------------------------------------------------------
     # Signal Handlers
     #--------------------------------------------------------------------------
@@ -291,12 +289,6 @@ class QtWindow(QtWidgetComponent):
         """
         pass 
 
-    def set_central_widget_id(self, widget_id):
-        """ Set the central widge id for the window.
-
-        """
-        self._central_widget_id = widget_id
-
     def set_title(self, title):
         """ Set the title of the window.
 
@@ -320,5 +312,5 @@ class QtWindow(QtWidgetComponent):
 
         """
         # XXX this could be done better.
-        deferred_call(super(QtWindow, self).set_visible, visible)
+        QtWindow.deferred_call(super(QtWindow, self).set_visible, visible)
 

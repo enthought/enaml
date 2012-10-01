@@ -5,6 +5,7 @@
 from .qt.QtCore import Qt
 from .qt.QtGui import QSplitter
 from .qt_constraints_widget import QtConstraintsWidget
+from .qt_container import QtContainer
 
 
 _ORIENTATION_MAP = {
@@ -17,9 +18,6 @@ class QtSplitter(QtConstraintsWidget):
     """ A Qt implementation of an Enaml Splitter.
 
     """
-    #: Storage for the splitter widget ids
-    _splitter_widget_ids = []
-
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
@@ -34,7 +32,6 @@ class QtSplitter(QtConstraintsWidget):
 
         """
         super(QtSplitter, self).create(tree)
-        self.set_splitter_widget_ids(tree['splitter_widget_ids'])
         self.set_orientation(tree['orientation'])
         self.set_live_drag(tree['live_drag'])
         self.set_preferred_sizes(tree['preferred_sizes'])
@@ -45,10 +42,8 @@ class QtSplitter(QtConstraintsWidget):
         """
         super(QtSplitter, self).init_layout()
         widget = self.widget()
-        find_child = self.find_child
-        for widget_id in self._splitter_widget_ids:
-            child = find_child(widget_id)
-            if child is not None:
+        for child in self.children():
+            if isinstance(child, QtContainer):
                 widget.addWidget(child.widget())
 
     #--------------------------------------------------------------------------
@@ -76,12 +71,6 @@ class QtSplitter(QtConstraintsWidget):
     #--------------------------------------------------------------------------
     # Widget Update Methods 
     #--------------------------------------------------------------------------
-    def set_splitter_widget_ids(self, widget_ids):
-        """ Set the splitter widget ids for the underlying widget.
-
-        """
-        self._splitter_widget_ids = widget_ids
-
     def set_orientation(self, orientation):
         """ Update the orientation of the QSplitter.
 

@@ -45,6 +45,44 @@ class ActionPipeInterface(object):
         """
         raise NotImplementedError
 
+    @abstractmethod
+    def encode_binary(self, bytes):
+        """ Encode arbitrary binary data appropriately for this pipe.
+
+        For pipes that can handle native Python types, this may be a no-op.
+
+        Parameters
+        ----------
+        bytes : bytes
+            The raw bytes to encode.
+
+        Returns
+        -------
+        encoded_bytes : str
+            The encoded bytes, suitable for transmission over the pipe.
+            
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def decode_binary(self, encoded_bytes):
+        """ Decode arbitrary binary data appropriately for this pipe.
+
+        For pipes that can handle native Python types, this may be a no-op.
+
+        Parameters
+        ----------
+        encoded_bytes : str
+            The raw bytes to decode.
+
+        Returns
+        -------
+        bytes : bytes
+            The decoded bytes, suitable for use.
+            
+        """
+        raise NotImplementedError
+
 
 class Object(HasStrictTraits):
     """ The most base class of the Enaml object hierarchy.
@@ -167,7 +205,7 @@ class Object(HasStrictTraits):
         objects[object_id] = self
         return self
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, **kwargs):
         """ Initialize an Object.
 
         Parameters
@@ -177,7 +215,7 @@ class Object(HasStrictTraits):
             None if the object has no parent. Defaults to None.
 
         """
-        super(Object, self).__init__()
+        super(Object, self).__init__(**kwargs)
         self.set_parent(parent)
     
     #--------------------------------------------------------------------------

@@ -37,7 +37,7 @@ class Window(WidgetComponent):
     closed = EnamlEvent
 
     #: Returns the central widget in use for the Window
-    central_widget = Property(depends_on='children[]')
+    central_widget = Property(depends_on='children')
 
     #: The titlebar icon.
     # XXX needs to be implemented
@@ -51,7 +51,6 @@ class Window(WidgetComponent):
 
         """
         snap = super(Window, self).snapshot()
-        snap['central_widget_id'] = self._snap_central_widget_id()
         snap['title'] = self.title
         snap['initial_size'] = self.initial_size
         snap['modality'] = self.modality
@@ -81,14 +80,6 @@ class Window(WidgetComponent):
         for child in self.children:
             if isinstance(child, Container):
                 return child
-
-    def _snap_central_widget_id(self):
-        """ Returns the widget id of the central widget or None.
-
-        """
-        widget = self.central_widget
-        if widget is not None:
-            return widget.widget_id
 
     #--------------------------------------------------------------------------
     # Message Handling

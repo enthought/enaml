@@ -3,6 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt.QtGui import QActionGroup
+from .qt_action import QtAction
 from .qt_object import QtObject
 
 
@@ -63,9 +64,6 @@ class QtActionGroup(QtObject):
     """ A Qt implementation of an Enaml ActionGroup.
 
     """
-    #: Store for the action ids
-    _action_ids = []
-
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
@@ -80,7 +78,6 @@ class QtActionGroup(QtObject):
 
         """
         super(QtActionGroup, self).create(tree)
-        self.set_action_ids(tree['action_ids'])
         self.set_exclusive(tree['exclusive'])
         self.set_enabled(tree['enabled'])
         self.set_visible(tree['visible'])
@@ -91,11 +88,53 @@ class QtActionGroup(QtObject):
         """
         super(QtActionGroup, self).init_layout()
         widget = self.widget()
-        find_child = self.find_child
-        for action_id in self._action_ids:
-            child = find_child(action_id)
-            if child is not None:
+        for child in self.children():
+            if isinstance(child, QtAction):
                 widget.addAction(child.widget())
+
+    #--------------------------------------------------------------------------
+    # Child Events
+    #--------------------------------------------------------------------------
+    def child_added(self, child):
+        """ Handle the child added event for a QtMenu.
+
+        This handler ensures that the action for this child is inserted 
+        in the proper location.
+
+        """
+        # An action group is just a container for actions. The parent 
+        # of the action group is the actual consumer of the action and 
+        # is where the new action is inserted. The easiest way to handle
+        # this is to tell Qt to insert all the actions of this group at 
+        # the insert location. Qt will handle duplicates and ordering
+        # automatically. This pushes the linear time position lookup
+        # down to the C++ level where it will be faster.
+        child.initialize()
+        if isinstance(child, QtAction):
+            widget = self.widget()
+            widget.addAction(child.widget())
+            parent = self.parent()
+            if parent is not None:
+                before = parent.find_next_action(self)
+                parent.widget().insertActions(before, self.actions())
+
+    #--------------------------------------------------------------------------
+    # Utility Methods
+    #--------------------------------------------------------------------------
+    def actions(self):
+        """ Get the QAction children for this action group.
+
+        Returns
+        -------
+        result : list
+            The list of QAction instances which are children of this 
+            action group. Unlike the list returned by the `actions`
+            method of the QActionGroup, the children in this list will 
+            have the correct order.
+
+        """
+        children = self.children()
+        return [c.widget() for c in children if isinstance(c, QtAction)]
 
     #--------------------------------------------------------------------------
     # Message Handling
@@ -121,12 +160,6 @@ class QtActionGroup(QtObject):
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
-    def set_action_ids(self, action_ids):
-        """ Set the action ids for the underlying control.
-
-        """
-        self._action_ids = action_ids
-
     def set_exclusive(self, exclusive):
         """ Set the exclusive state of the underlying control.
 

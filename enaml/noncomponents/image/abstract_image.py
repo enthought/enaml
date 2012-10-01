@@ -2,29 +2,12 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from abc import ABCMeta, abstractmethod
+from enaml.core.object import Object
 
-class AbstractImage(object):
-    """ An abstract api for an image class.
+class AbstractImage(Object):
+    """ An abstract base class for image classes.
+    
+    This class is provided simply as a base class for other classes.
     
     """
-    __metaclass__ = ABCMeta
-    
-    #--------------------------------------------------------------------------
-    # Abstract API
-    #--------------------------------------------------------------------------
-    @abstractmethod
-    def as_dict(self):
-        """ Return the image as a JSON-serializable dict
-
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def from_dict(self, image_dict):
-        """ Receive a JSON representation of an image and convert it into the
-        appropriate Python object
-
-        """
-        raise NotImplementedError
-    
+    allow_children = False

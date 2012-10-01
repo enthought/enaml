@@ -4,15 +4,13 @@
 #------------------------------------------------------------------------------
 from .qt.QtGui import QMdiArea
 from .qt_constraints_widget import QtConstraintsWidget
+from .qt_mdi_window import QtMdiWindow
 
 
 class QtMdiArea(QtConstraintsWidget):
     """ A Qt implementation of an Enaml MdiArea.
 
     """
-    #: Storage for the mdi window ids.
-    _mdi_window_ids = []
-
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
@@ -22,31 +20,24 @@ class QtMdiArea(QtConstraintsWidget):
         """
         return QMdiArea(parent)
 
-    def create(self, tree):
-        """ Create and initialize the underlying control.
-
-        """
-        super(QtMdiArea, self).create(tree)
-        self.set_mdi_window_ids(tree['mdi_window_ids'])
-
     def init_layout(self):
         """ Initialize the layout for the underlying control.
 
         """
         super(QtMdiArea, self).init_layout()
         widget = self.widget()
-        find_child = self.find_child
-        for window_id in self._mdi_window_ids:
-            child = find_child(window_id)
-            if child is not None:
+        for child in self.children():
+            if isinstance(child, QtMdiWindow):
                 widget.addSubWindow(child.widget())
 
     #--------------------------------------------------------------------------
-    # Widget Update Methods
+    # Child Events
     #--------------------------------------------------------------------------
-    def set_mdi_window_ids(self, window_ids):
-        """ Set the widget ids for the mdi windows.
+    def child_added(self, child):
+        """ Handle the child added event for a QtMdiArea.
 
         """
-        self._mdi_window_ids = window_ids
+        child.initialize()
+        if isinstance(child, QtMdiWindow):
+            self.widget().addSubWindow(child.widget())
 

@@ -1,0 +1,106 @@
+from enaml.application import Application
+from enaml.session import Session
+from enaml.session_factory import SessionFactory
+from enaml.qt.qt_application import QtApplication
+from enaml.noncomponents.image.location_image import URLImage, FileImage
+from enaml.noncomponents.image.data_image import DataImage
+from enaml.noncomponents.image.array_image import ArrayImage
+from enaml.widgets.api import Field, Window, Container, ImageView, PushButton
+from enaml.core.declarative import Declarative
+
+from enaml.layout.api import vbox
+
+enamldef AnimatedImageView(ImageView):
+    event run
+    event _update
+    attr arr
+    attr count = 0
+    attr _running: bool = False
+    run ::
+        if not self._running:
+            self._running = True
+            _update()
+        else:
+            self._running = False
+    _update ::
+        if self._running:
+            self.count += 1
+            fill_array(self.arr, self.count)
+            image.set_image_array(self.arr, 'RGB')
+            Application.instance().timed_call(20, _update)
+
+
+enamldef View(Window):
+    id: viewer
+    attr image
+    attr array_data
+    Container:
+        hug_height = 'ignore'
+        constraints << [vbox(*widgets)]
+        ImageView:
+            id: attr_view
+            image := viewer.image
+            scale_to_fit = True
+            constraints = [height <= 400, width <= 600]
+        PushButton:
+            id: animation_control
+            checkable = True
+            text = 'Stop' if checked else 'Run'
+            toggled ::
+                animated_view.run()
+        AnimatedImageView:
+            id: animated_view
+            image = ArrayImage()
+            arr = array_data
+            scale_to_fit = True
+            constraints = [height <= 400, width <= 600]
+        Field:
+            text = 'http://farm6.staticflickr.com/5276/7400311000_088cb63717_m.jpg'
+            text ::
+                url_view.image.location = self.text
+        ImageView:
+            id: url_view
+            image = URLImage(location='http://farm6.staticflickr.com/5276/7400311000_088cb63717_m.jpg')
+            scale_to_fit = True
+            constraints = [height <= 400, width <= 600]
+        Field:
+            text = 'deepfield.jpg'
+            text ::
+                file_view.image.location = self.text
+        ImageView:
+            id: file_view
+            image = FileImage(location='deepfield.jpg')
+            scale_to_fit = True
+            constraints = [height <= 400, width <= 600]
+
+
+
+sid = None
+
+def fill_array(arr, t):
+    import numpy as np
+    x, y = np.mgrid[-5:5:256j,-5:5:256j]
+    r = np.hypot(x,y)
+    z = (r+np.sin(r**2))*np.cos(np.pi*t/50)**2*255/8.
+    arr[:,:,:] = z[:,:,np.newaxis]
+
+
+class FooSession(Session):
+
+    def on_open(self):
+        import numpy as np
+        global sid
+        sid = self.session_id
+        image = DataImage.from_file('deepfield.jpg')
+        arr = np.zeros(shape=(256, 256, 3), dtype='uint8')
+        fill_array(arr, 0)
+
+        return [View(image=image, array_data=arr)]
+
+
+def main():
+    fact = SessionFactory('main', '', FooSession)
+    app = QtApplication([fact])
+    app.start_session('main')
+    app.start()
+

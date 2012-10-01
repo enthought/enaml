@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Bool, Instance
+from traits.api import Bool, Str, Instance, Property, cached_property
 
 from enaml.noncomponents.image.abstract_image import AbstractImage
 
@@ -15,6 +15,9 @@ class ImageView(ConstraintsWidget):
     """
     #: The image to display in the control
     image = Instance(AbstractImage)
+    
+    #: The image to display in the control
+    image_id = Property(Str, depends_on='image')
     
     #: Whether or not to scale the image with the size of the component.
     scale_to_fit = Bool(False)
@@ -42,7 +45,7 @@ class ImageView(ConstraintsWidget):
         snap['scale_to_fit'] = self.scale_to_fit
         snap['preserve_aspect_ratio'] = self.preserve_aspect_ratio
         snap['allow_upscaling'] = self.allow_upscaling
-        snap['image'] = self.image.as_dict()
+        snap['image_id'] = self.image_id
         return snap
 
     def bind(self):
@@ -52,16 +55,34 @@ class ImageView(ConstraintsWidget):
         """
         super(ImageView, self).bind()
         self.publish_attributes(
-            'scale_to_fit', 'preserve_aspect_ratio', 'allow_upscaling'
+            'scale_to_fit', 'preserve_aspect_ratio', 'allow_upscaling',
+            'image_id'
         )
-        self.on_trait_change(self._send_image, 'image')
 
-    #--------------------------------------------------------------------------
-    # Message Handling
-    #--------------------------------------------------------------------------
-    def _send_image(self):
-        """ Sends the image data, encoded in a base64 format
-
+    def on_action_snap_image(self, content):
+        """ A change handler invoked when the image changes.
+        
         """
-        return
+        if self.image is None:
+            return
+        if self.image.action_pipe is None:
+            self.image.action_pipe = self.action_pipe
+        
+        snap = self.image.snapshot()
+        self.send_action('snap_image_response', snap)
+            
 
+    #--------------------------------------------------------------------------
+    # Traits Handlers
+    #--------------------------------------------------------------------------    
+    def _image_changed(self):
+        # ensure image is initialized - it may not be if this is first use
+        self.image.initialize()
+    
+    @cached_property
+    def _get_image_id(self):
+        """ Extract the object_id from the Image
+        
+        """
+        if self.image is not None:
+            return self.image.object_id

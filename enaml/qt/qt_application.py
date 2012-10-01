@@ -17,7 +17,7 @@ from .qt_object import QtObject
 class QtApplication(Application):
     """ A concrete implementation of an Enaml application. 
 
-    A QtApplication uses the Qt4 toolkit to implement an Enaml UI that
+    A QtApplication uses the Qt toolkit to implement an Enaml UI that
     runs in the local process.
 
     """
