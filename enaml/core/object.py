@@ -3,7 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from abc import ABCMeta, abstractmethod
-from collections import deque
+from collections import defaultdict, deque, namedtuple
 import logging
 import re
 from weakref import WeakValueDictionary
@@ -44,6 +44,72 @@ class ActionPipeInterface(object):
 
         """
         raise NotImplementedError
+
+
+#: A namedtuple which contains information about a child change event.
+#: The `added` and `removed` slots will be sets of Objects which were
+#: added and removed. The `current` slot will be a tuple of Objects.
+#: Instances of this object are created by the ChildEventContext.
+ChildEvent = namedtuple('ChildEvent', 'added removed current')
+
+
+class ChildEventContext(object):
+    """ A context manager which will emit a child event on an Object.
+
+    This context manager will automatically emit the child event on an
+    Object when the context is exited. This context manager can also be 
+    safetly nested; only the top-level context for a given object will
+    emit the child event, effectively collapsing all transient state.
+
+    """
+    #: Class level storage for tracking nested context managers.
+    _counters = defaultdict(int)
+
+    def __init__(self, parent):
+        """ Initialize a ChildEventContext.
+
+        Parameters
+        ----------
+        parent : Object
+            The Object on which to emit a child event on context exit.
+
+        """
+        self._parent = parent
+        self._old = ()
+
+    def __enter__(self):
+        """ Enter the child event context.
+
+        This method will snap the current child state of the parent and
+        use it to diff the state on context exit.
+
+        """
+        parent = self._parent
+        self._old = parent.children
+        self._counters[parent] += 1
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        """ Exit the child event context.
+
+        If this context manager is the top-level manager for the parent
+        object *and* no exception occured in the context, then a child
+        event will be emitted on the parent. Any exception raised during
+        the context is propagated.
+
+        """
+        parent = self._parent
+        counters = self._counters
+        counters[parent] -= 1
+        if counters[parent] == 0:
+            del counters[parent]
+            if exc_type is None and parent.initialized:
+                current = parent.children
+                old_set = set(self._old)
+                curr_set = set(current)
+                removed = old_set - curr_set
+                added = curr_set - old_set
+                evt = ChildEvent(added, removed, current)
+                parent.child_event(evt)
 
 
 class Object(HasStrictTraits):
@@ -295,68 +361,108 @@ class Object(HasStrictTraits):
         If the parent is not None, the child will be appended to the end
         of the parent's children. If the parent is already the parent of
         this object, then this method is a no-op. If this object already
-        has a parent, then it will be properly re-parented.
+        has a parent, then it will be properly reparented.
 
         Parameters
         ----------
         parent : Object or None
             The Object instance to use for the parent, or None if this
-            object should be de-parented.
+            object should be unparented.
 
         """
         old_parent = self._parent
         if parent is old_parent:
             return
+
         if parent is not None and not parent.allow_children:
             msg = 'Parent Object `%s` does not allow children'
             raise ValueError(msg % parent)
         if parent is self:
             raise ValueError('Cannot use `self` as Object parent')
+
         self._parent = parent
         if old_parent is not None:
-            children = old_parent._children
-            if self in children:
-                idx = children.index(self)
-                old_parent._children = children[:idx] + children[idx + 1:]
-        if parent is not None:
-            parent._children += (self,)
+            old_kids = old_parent._children
+            if self in old_kids:
+                idx = old_kids.index(self)
+                new_kids = old_kids[:idx] + old_kids[idx + 1:]
+                with ChildEventContext(old_parent):
+                    old_parent._children = new_kids
 
-    def insert_children(self, index, children):
-        """ Insert children into this object at the given index. 
+        if parent is not None:
+            with ChildEventContext(parent):
+                parent._children += (self,)
+                # Initialize the child from within the child event 
+                # context since it may have arbitrary side effects, 
+                # including adding more children to its parent.
+                if parent.initialized:
+                    self.initialize()
+
+    def insert_children(self, before, insert):
+        """ Insert children into this object at the given location. 
 
         The children will be automatically parented and inserted into
-        the tuple of children. If any children are already children of
-        this object, then they will be moved to the appropriate index.
+        the object's children. If any children are already children of
+        this object, then they will be moved appropriately.
 
         Parameters
         ----------
-        children : iterable of Object
-            The children to add to this object.
+        before : Object or None
+            A child object to use as the marker for inserting the new
+            children. The new children will be inserted directly before
+            this marker. If the Object is None or not a child, then the
+            new children will be added to the end of the children.
+
+        insert : iterable
+            An iterable of Object children to insert into this object.
 
         """
         if not self.allow_children:
             msg = 'Parent Object `%s` does not allow children'
             raise ValueError(msg % self)
-        children = list(children)
-        children_set = set(children)
-        if self in children_set:
+
+        insert_list = list(insert)
+        insert_set = set(insert_list)
+
+        if self in insert_set:
             raise ValueError('Cannot use `self` as Object child')
-        if len(children) != len(children_set):
+        if len(insert_list) != len(insert_set):
             raise ValueError('Cannot have duplicate children')
-        for child in children:
+        
+        new = []
+        added = False
+        for child in self._children:
+            if child in insert_set:
+                continue
+            if child is before:
+                new.extend(insert_list)
+                added = True
+            new.append(child)
+        if not added:
+            new.extend(insert_list)
+
+        for child in insert_list:
             old_parent = child._parent
             if old_parent is not self:
                 child._parent = self
                 if old_parent is not None:
-                    okids = old_parent._children
-                    if child in okids:
-                        idx = okids.index(child)
-                        old_parent._children = okids[:idx] + okids[idx + 1:]
-        curr = [c for c in self._children if c not in children_set]
-        new = tuple(curr[:index]) + tuple(children) + tuple(curr[index:])
-        self._children = new
+                    old_kids = old_parent._children
+                    if child in old_kids:
+                        idx = old_kids.index(child)
+                        new_kids = old_kids[:idx] + old_kids[idx + 1:]
+                        with ChildEventContext(old_parent):
+                            old_parent._children = new_kids
 
-    def remove_children(self, children, destroy=True):
+        with ChildEventContext(self):
+            self._children = tuple(new)
+            if self.initialized:
+                # Initialize the children from within the child event 
+                # context since they may have arbitrary side effects, 
+                # including adding more children to their parent.
+                for child in insert_list:
+                    child.initialize()
+
+    def remove_children(self, remove, destroy=True):
         """ Remove the given children from this object.
 
         The given children will be removed from the children of this 
@@ -365,8 +471,8 @@ class Object(HasStrictTraits):
 
         Parameters
         ----------
-        children : iterable of Object
-            The children to remove from this object.
+        remove : iterable
+            An iterable of Object children to remove from this object.
 
         destroy : bool, optional
             Whether or not to destroy the removed children. The default
@@ -375,37 +481,114 @@ class Object(HasStrictTraits):
         """
         old = []
         new = []
-        children_set = set(children)
+        remove_set = set(remove)
         for child in self._children:
-            if child in children_set:
+            if child in remove_set:
                 old.append(child)
             else:
                 new.append(child)
-        self._children = tuple(new)
+
         if destroy:
             for child in old:
+                # Set the child's parent to None so that destroy does
+                # not recurse back into a child manipulation method.
+                child._parent = None
                 child.destroy()
+        else:
+            for child in old:
+                child._parent = None
 
-    def _children_changed(self, old, new):
-        """ A change handler invoked when the tuple of children changes.
+        with ChildEventContext(self):
+            self._children = tuple(new)
 
-        If the object is fully initialized, then a `children_changed` 
-        action will be generated and sent to the client.
+    def replace_children(self, remove, before, insert, destroy=True):
+        """ Perform an 'atomic' remove and insert children operation.
+
+        This method can be used to combine a remove and insert child
+        operation into a transactions which will emit only a single
+        child event. This will be more efficient than calling the
+        `remove_children` method followed by `insert_children`.
+
+        Parameters
+        ----------
+        remove : iterable
+            An iterable of Object children to remove from this object.
+
+        before : Object or None
+            A child object to use as the marker for inserting the new
+            children. The new children will be inserted directly before
+            this marker. If the Object is None or not a child, then the
+            new children will be added to the end of the children.
+
+        insert : iterable
+            An iterable of Object children to insert into this object.
+
+        destroy : bool, optional
+            Whether or not to destroy the removed children. The default
+            is True.
 
         """
-        if self.initialized:
-            # 'old' can be None due to `cached_property` oddities
-            old = old or ()
-            old_set = set(old)
-            new_set = set(new)
-            removed = old_set - new_set
-            added = new_set - old_set
-            content = {}
-            # XXX i'm not fond of these snappable checks
-            content['order'] = [c.object_id for c in new if c.snappable]
-            content['removed'] = [c.object_id for c in removed if c.snappable]
-            content['added'] = [c.snapshot() for c in added if c.snappable]
-            self.send_action('children_changed', content)
+        if not self.allow_children:
+            msg = 'Parent Object `%s` does not allow children'
+            raise ValueError(msg % self)
+
+        remove_list = list(remove)
+        insert_list = list(insert)
+        remove_set = set(remove_list)
+        insert_set = set(insert_list)
+
+        if self in insert_set:
+            raise ValueError('Cannot use `self` as Object child')
+        if len(insert_list) != len(insert_set):
+            raise ValueError('Cannot have duplicate children')
+
+        old = []
+        new = []
+        added = False
+        for child in self._children:
+            if child in remove_set:
+                if child not in insert_set:
+                    old.append(child)
+                continue
+            if child in insert_set:
+                continue
+            if child is before:
+                new.extend(insert_list)
+                added = True
+            new.append(child)
+        if not added:
+            new.extend(insert_list)
+
+        if destroy:
+            for child in old:
+                # Set the child's parent to None so that destroy does
+                # not recurse back into a child manipulation method.
+                child._parent = None
+                child.destroy()
+        else:
+            for child in old:
+                child._parent = None
+
+        for child in insert_list:
+            old_parent = child._parent
+            if old_parent is not self:
+                child._parent = self
+                if old_parent is not None:
+                    old_kids = old_parent._children
+                    if child in old_kids:
+                        idx = old_kids.index(child)
+                        new_kids = old_kids[:idx] + old_kids[idx + 1:]
+                        with ChildEventContext(old_parent):
+                            old_parent._children = new_kids
+
+        with ChildEventContext(self):
+            self._children = tuple(new)
+            if self.initialized:
+                # Initialize the children from within the child event 
+                # context since they may have arbitrary side effects, 
+                # including adding more children to their parent.
+                for child in insert_list:
+                    child.initialize()
 
     #--------------------------------------------------------------------------
     # Messaging Methods
@@ -457,6 +640,8 @@ class Object(HasStrictTraits):
     def send_action(self, action, content):
         """ Send an action on the action pipe for this object.
 
+        The action will only be sent if the object is fully initialized.
+
         Parameters
         ----------
         action : str
@@ -466,12 +651,13 @@ class Object(HasStrictTraits):
             The content data for the action.
 
         """
-        pipe = self.action_pipe
-        if pipe is None:
-            self.inherit_pipe()
+        if self.initialized:
             pipe = self.action_pipe
-        if pipe is not None:
-            pipe.send(self.object_id, action, content)
+            if pipe is None:
+                self.inherit_pipe()
+                pipe = self.action_pipe
+            if pipe is not None:
+                pipe.send(self.object_id, action, content)
 
     def snapshot(self):
         """ Create a snapshot of the tree starting from this object.
@@ -554,6 +740,33 @@ class Object(HasStrictTraits):
             for name, value in attrs.iteritems():
                 setattr(self, name, value)
 
+    def child_event(self, event):
+        """ Handle a `ChildEvent` posted to this object.
+
+        This event handler is called by a `ChildEventContext` when the
+        children have changed for this object. It is called *after* the
+        trait change notifications for `children` have fired and *after*
+        all child initialization is complete. It is only called if the 
+        object is fully initialized. The default implementation of this
+        method sends a `children_changed` action to the client. If a
+        subclass requires more control, it may reimplement this method.
+
+        Parameters
+        ----------
+        event : ChildEvent
+            The child event for the children change of this object.
+
+        """
+        content = {}
+        added = event.added
+        removed = event.removed
+        current = event.current
+        # XXX i'm not fond of these snappable checks
+        content['order'] = [c.object_id for c in current if c.snappable]
+        content['removed'] = [c.object_id for c in removed if c.snappable]
+        content['added'] = [c.snapshot() for c in added if c.snappable]
+        self.send_action('children_changed', content)
+
     def _publish_attr_handler(self, name, new):
         """ A private handler which will emit the `action` signal in
         response to a trait change event.
@@ -563,7 +776,7 @@ class Object(HasStrictTraits):
         The content of the message will have the name of the attribute 
         as a key, and the value as its value. If the loopback guard is 
         held for the given name, then the signal will not be emitted,
-        helping to avoid potential loopbacks.
+        helping to avoid potential loopbacks. 
 
         """
         if name not in self.loopback_guard:
