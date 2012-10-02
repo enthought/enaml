@@ -364,10 +364,6 @@ class QtObject(object):
 
         widget = self._widget
         if widget is not None:
-            # XXX not sure if we should be doing this. It would be better
-            # have each relevant widget override the destroy() method and
-            # disconnect their handlers.
-            widget.blockSignals(True)
             widget.setParent(None)
             self._widget = None
 
@@ -521,6 +517,8 @@ class QtObject(object):
     def send_action(self, action, content):
         """ Send an action on the action pipe for this object.
 
+        The action will only be sent if the object is fully initialized.
+
         Parameters
         ----------
         action : str
@@ -530,9 +528,10 @@ class QtObject(object):
             The content data for the action.
 
         """
-        pipe = self._pipe
-        if pipe is not None:
-            pipe.send(self._object_id, action, content)
+        if self._initialized:
+            pipe = self._pipe
+            if pipe is not None:
+                pipe.send(self._object_id, action, content)
 
     #--------------------------------------------------------------------------
     # Action Handlers
