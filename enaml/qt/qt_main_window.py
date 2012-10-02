@@ -2,6 +2,8 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+import sys
+
 from .qt.QtCore import Qt, Signal
 from .qt.QtGui import QMainWindow
 from .qt_container import QtContainer
@@ -86,6 +88,11 @@ class QtMainWindow(QtWindow):
     """ A Qt implementation of an Enaml MainWindow.
     
     """
+    #: A private flag used to track the visible state changes sent from
+    #: the Enaml widget. This is needed on OSX when dynamically adding
+    #: a tool bar in order to work around a visibility bug in Qt.
+    _visible_hint = False
+
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
@@ -121,17 +128,17 @@ class QtMainWindow(QtWindow):
             elif isinstance(child, QtContainer):
                 containers.append(child)
 
-        # Setup the menu bar
+        # Setup the menu bar. All but the first are ignored.
         for child in menu_bars:
             main_window.setMenuBar(child.widget())
             break
 
-        # Setup the central widget
+        # Setup the central widget. All but the first are ignored.
         for child in containers:
             main_window.setCentralWidget(child.widget())
             break
 
-        # Setup the tool bars
+        # Setup the tool bars.
         for child in tool_bars:
             bar_widget = child.widget()
             # XXX slight hack. When adding the toolbar to the main 
@@ -144,10 +151,79 @@ class QtMainWindow(QtWindow):
             if floating:
                 QtMainWindow.deferred_call(bar_widget.setFloating, True)
 
-        # Setup the dock panes
+        # Setup the dock panes.
         for child in dock_panes:
             dock_widget = child.widget()
             main_window.addDockWidget(dock_widget.dockArea(), dock_widget)
 
         # Setup the status bar
+
+    #--------------------------------------------------------------------------
+    # Child Events
+    #--------------------------------------------------------------------------
+    def child_added(self, child):
+        """ Handle the child added event for a QtMainWindow.
+
+        """
+        main_window = self.widget()
+
+        # Add a child QtMenuBar. It's not known if the given child is 
+        # the first QtMenuBar child in the list of children. So, the
+        # list is scanned and the first one found is set as the menu
+        # bar for the window.
+        if isinstance(child, QtMenuBar):
+            for child in self.children():
+                if isinstance(child, QtMenuBar):
+                    main_window.setMenuBar(child.widget())
+                    break
+
+        # Add a child QtContainer. It's not known if the given child is 
+        # the first QtContainer child in the list of children. So, the
+        # list is scanned and the first one found is set as the central
+        # widget for the window.
+        elif isinstance(child, QtContainer):
+            for child in self.children():
+                if isinstance(child, QtContainer):
+                    main_window.setCentralWidget(child.widget())
+                    break
+
+        # Add a child QtToolBar. There are two hacks involved in adding
+        # a tool bar. The first is the same hack that is perfomed in the
+        # `init_layout` method for a floating tool bar. The second is
+        # specific to OSX. On the platform, adding a tool bar to main
+        # window which is already visible but does not have any current
+        # tool bars will cause the main window to be hidden. This will
+        # only occur the *first* time a tool bar is added to the window.
+        # The hack below is workaround which should be sufficient for
+        # most use cases. A bug should really be filed against Qt for
+        # this one, as it's reproducible outside of Enaml.
+        elif isinstance(child, QtToolBar):
+            bar_widget = child.widget()
+            reshow = False
+            if sys.platform == 'darwin':
+                reshow = self._visible_hint and not main_window.isVisible()
+            floating = bar_widget.isFloating()
+            main_window.addToolBar(bar_widget.toolBarArea(), bar_widget)
+            if floating:
+                QtMainWindow.deferred_call(bar_widget.setFloating, True)
+            if reshow:
+                main_window.setVisible(True)
+
+        # Add a child QtDockPane.
+        elif isinstance(child, QtDockPane):
+            dock_widget = child.widget()
+            main_window.addDockWidget(dock_widget.dockArea(), dock_widget)
+
+    #--------------------------------------------------------------------------
+    # Widget Update Methods
+    #--------------------------------------------------------------------------
+    def set_visible(self, visible):
+        """ Set the visibility of the underlying control.
+
+        This is an overridden parent class method which keeps track of
+        the visible flag set by the Enaml widget.
+
+        """
+        self._visible_hint = visible
+        super(QtMainWindow, self).set_visible(visible)
 
