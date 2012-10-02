@@ -2,7 +2,7 @@
 # Copyright (c) 2011, Enthought, Inc.
 # All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Bool, List, Either, Int, Enum, Property, cached_property
+from traits.api import Bool, Enum, Property, cached_property
 
 from .constraints_widget import ConstraintsWidget
 from .split_item import SplitItem
@@ -23,10 +23,6 @@ class Splitter(ConstraintsWidget):
     #: (True), or if a simple indicator is drawn until the drag handle
     #: is released (False). The default is True.
     live_drag = Bool(True)
-    
-    #: A list of preferred sizes for each compartment of the splitter, 
-    #: or None if there is no preference for the size.
-    preferred_sizes = List(Either(None, Int))
     
     #: A read only property which returns the split items being managed
     #: by the splitter.
@@ -52,7 +48,6 @@ class Splitter(ConstraintsWidget):
         snap = super(Splitter, self).snapshot()
         snap['orientation'] = self.orientation
         snap['live_drag'] = self.live_drag
-        snap['preferred_sizes'] = self.preferred_sizes
         return snap
 
     def bind(self):
@@ -60,7 +55,7 @@ class Splitter(ConstraintsWidget):
 
         """
         super(Splitter, self).bind()
-        self.publish_attributes('orientation', 'live_drag', 'preferred_sizes')
+        self.publish_attributes('orientation', 'live_drag')
 
     #--------------------------------------------------------------------------
     # Private API
