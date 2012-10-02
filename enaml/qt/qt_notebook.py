@@ -267,10 +267,7 @@ class QtNotebook(QtConstraintsWidget):
     # Child Events
     #--------------------------------------------------------------------------
     def child_added(self, child):
-        """ Handle the child added event for the Notebook.
-
-        This event handler makes sure the new page is inserted at the
-        proper location in the notebook.
+        """ Handle the child added event for a QtNotebook.
 
         """
         index = self.index_of(child)

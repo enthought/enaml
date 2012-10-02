@@ -203,9 +203,6 @@ class QtDockPane(QtWidgetComponent):
     def child_added(self, child):
         """ Handle the child added event for a QtDockPane.
 
-        This handler ensures that the proper dock widget is used for the
-        dock pane.
-
         """
         for child in self.children():
             if isinstance(child, QtContainer):

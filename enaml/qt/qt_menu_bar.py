@@ -52,9 +52,6 @@ class QtMenuBar(QtWidgetComponent):
     def child_added(self, child):
         """ Handle the child added event for a QtMenuBar.
 
-        This handler ensures that the child is inserted in the proper
-        place in the menu bar.
-
         """
         before = self.find_next_action(child)
         if isinstance(child, QtMenu):

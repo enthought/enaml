@@ -176,9 +176,6 @@ class QtToolBar(QtConstraintsWidget):
     def child_added(self, child):
         """ Handle the child added event for a QtToolBar.
 
-        This handler ensures that the child is inserted in the proper
-        place in the tool bar.
-
         """
         before = self.find_next_action(child)
         if isinstance(child, QtAction):

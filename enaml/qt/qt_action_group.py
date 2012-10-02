@@ -96,10 +96,7 @@ class QtActionGroup(QtObject):
     # Child Events
     #--------------------------------------------------------------------------
     def child_added(self, child):
-        """ Handle the child added event for a QtMenu.
-
-        This handler ensures that the action for this child is inserted 
-        in the proper location.
+        """ Handle the child added event for a QtActionGroup.
 
         """
         # An action group is just a container for actions. The parent 
