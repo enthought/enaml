@@ -5,7 +5,7 @@
 import sys
 from weakref import WeakKeyDictionary
 
-from .qt.QtCore import Qt
+from .qt.QtCore import Qt, QEvent, Signal
 from .qt.QtGui import QTabWidget, QTabBar, QResizeEvent, QApplication
 from .qt_constraints_widget import QtConstraintsWidget
 from .qt_page import QtPage
@@ -29,6 +29,11 @@ class QNotebook(QTabWidget):
     """ A custom QTabWidget which handles children of type QPage.
 
     """
+    #: A signal emitted when a LayoutRequest event is posted to the
+    #: notebook widget. This will typically occur when the size hint
+    #: of the notebook is no longer valid.
+    layoutRequested = Signal()
+
     def __init__(self, *args, **kwargs):
         """ Initialize a QNotebook.
 
@@ -78,6 +83,19 @@ class QNotebook(QTabWidget):
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
+    def event(self, event):
+        """ A custom event handler which handles LayoutRequest events.
+
+        When a LayoutRequest event is posted to this widget, it will
+        emit the `layoutRequested` signal. This allows an external
+        consumer of this widget to update their external layout.
+
+        """
+        res = super(QNotebook, self).event(event)
+        if event.type() == QEvent.LayoutRequest:
+            self.layoutRequested.emit()
+        return res
+
     def showPage(self, page):
         """ Show a hidden QPage instance in the notebook.
 
@@ -262,6 +280,7 @@ class QtNotebook(QtConstraintsWidget):
         for child in self.children():
             if isinstance(child, QtPage):
                 widget.addPage(child.widget())
+        widget.layoutRequested.connect(self.on_layout_requested)
 
     #--------------------------------------------------------------------------
     # Child Events
@@ -273,6 +292,15 @@ class QtNotebook(QtConstraintsWidget):
         index = self.index_of(child)
         if index != -1:
             self.widget().insertPage(index, child.widget())
+
+    #--------------------------------------------------------------------------
+    # Signal Handlers
+    #--------------------------------------------------------------------------
+    def on_layout_requested(self):
+        """ Handle the `layoutRequested` signal from the QNotebook.
+
+        """
+        self.size_hint_updated()
 
     #--------------------------------------------------------------------------
     # Message Handlers
