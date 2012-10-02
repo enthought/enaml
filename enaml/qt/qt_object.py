@@ -363,10 +363,14 @@ class QtObject(object):
         self.set_parent(None)
 
         widget = self._widget
-        self._widget = None
         if widget is not None:
+            # Disconnect all signals before setting the widget reference
+            # to None. Destroying a widget may cause focus change which
+            # may emit events and signals before the widget is destroyed.
+            QObject.disconnect(widget, None, None, None)
             widget.setParent(None)
             widget.deleteLater()
+            self._widget = None
 
         QtObject._objects.pop(self._object_id, None)
 
@@ -452,7 +456,7 @@ class QtObject(object):
                 widget.setParent(None)
 
     def child_added(self, child):
-        """ Called when a child is added to this object.
+        """ A method called when a child is added to this object.
 
         The default implementation ensures that the toolkit widget is 
         properly parented. Subclasses which need more control may 
