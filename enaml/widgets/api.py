@@ -33,6 +33,7 @@ from .radio_button import RadioButton
 from .scroll_area import ScrollArea
 from .slider import Slider
 from .spin_box import SpinBox
+from .split_item import SplitItem
 from .splitter import Splitter
 from .stack import Stack
 from .stack_item import StackItem
