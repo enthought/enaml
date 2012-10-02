@@ -364,12 +364,11 @@ class QtObject(object):
 
         widget = self._widget
         if widget is not None:
-            # Disconnect all signals before setting the widget reference
-            # to None. Destroying a widget may cause focus change which
-            # may emit events and signals before the widget is destroyed.
-            QObject.disconnect(widget, None, None, None)
+            # XXX not sure if we should be doing this. It would be better
+            # have each relevant widget override the destroy() method and
+            # disconnect their handlers.
+            widget.blockSignals(True)
             widget.setParent(None)
-            widget.deleteLater()
             self._widget = None
 
         QtObject._objects.pop(self._object_id, None)
