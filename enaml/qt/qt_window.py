@@ -104,7 +104,8 @@ class QWindow(QFrame):
 
         """
         layout = self.layout()
-        layout.removeWidget(self._central_widget)
+        if layout.count() > 0:
+            layout.removeWidget(self._central_widget)
         self._central_widget = widget
         layout.addWidget(widget)
 
@@ -208,6 +209,18 @@ class QtWindow(QtWidgetComponent):
                 self.widget().setCentralWidget(child.widget())
                 break
     
+    #--------------------------------------------------------------------------
+    # Child Events
+    #--------------------------------------------------------------------------
+    def child_added(self, child):
+        """ Handle the child added event for a QtWindow.
+
+        """
+        for child in self.children():
+            if isinstance(child, QtContainer):
+                self.widget().setCentralWidget(child.widget())
+                break
+
     #--------------------------------------------------------------------------
     # Signal Handlers
     #--------------------------------------------------------------------------
