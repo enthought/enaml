@@ -2,7 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt.QtCore import QTimer 
+from .qt.QtCore import QTimer, QEvent, Signal
 from .qt.QtGui import QStackedWidget, QPixmap
 from .qt_constraints_widget import QtConstraintsWidget
 from .qt_stack_item import QtStackItem
@@ -63,6 +63,11 @@ class QStack(QStackedWidget):
     """ A QStackedWidget subclass which adds support for transitions.
 
     """
+    #: A signal emitted when a LayoutRequest event is posted to the
+    #: stack widget. This will typically occur when the size hint of
+    #: the stack is no longer valid.
+    layoutRequested = Signal()
+
     def __init__(self, *args, **kwargs):
         """ Initialize a QStack.
 
@@ -150,6 +155,19 @@ class QStack(QStackedWidget):
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
+    def event(self, event):
+        """ A custom event handler which handles LayoutRequest events.
+
+        When a LayoutRequest event is posted to this widget, it will
+        emit the `layoutRequested` signal. This allows an external
+        consumer of this widget to update their external layout.
+
+        """
+        res = super(QStack, self).event(event)
+        if event.type() == QEvent.LayoutRequest:
+            self.layoutRequested.emit()
+        return res
+
     def transition(self):
         """ Get the transition installed on this widget.
 
@@ -231,6 +249,7 @@ class QtStack(QtConstraintsWidget):
                 widget.addWidget(child.widget())
         # Bypass the transition effect during initialization.
         widget.setCurrentIndex(self._initial_index)
+        widget.layoutRequested.connect(self.on_layout_requested)
 
     #--------------------------------------------------------------------------
     # Child Events
@@ -241,8 +260,16 @@ class QtStack(QtConstraintsWidget):
         """
         if isinstance(child, QtStackItem):
             self.widget().addWidget(child.widget())
-            self.size_hint_updated()
     
+    #--------------------------------------------------------------------------
+    # Signal Handlers
+    #--------------------------------------------------------------------------
+    def on_layout_requested(self):
+        """ Handle the `layoutRequested` signal from the QStack.
+
+        """
+        self.size_hint_updated()
+
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
