@@ -4,6 +4,7 @@
 #------------------------------------------------------------------------------
 import wx
 
+from .wx_container import WxContainer
 from .wx_single_widget_sizer import wxSingleWidgetSizer
 from .wx_widget_component import WxWidgetComponent
 
@@ -12,9 +13,6 @@ class WxWindow(WxWidgetComponent):
     """ A Wx implementation of an Enaml Window.
 
     """
-    #: The storage for the central widget id
-    _central_widget_id = None
-
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
@@ -29,7 +27,6 @@ class WxWindow(WxWidgetComponent):
 
         """
         super(WxWindow, self).create(tree)
-        self.set_central_widget_id(tree['central_widget_id'])
         self.set_title(tree['title'])
         self.set_initial_size(tree['initial_size'])
         self.set_modality(tree['modality'])
@@ -39,18 +36,33 @@ class WxWindow(WxWidgetComponent):
         """ Perform the layout initialization for the window control.
 
         """
-        # A Window is a top-level component and `init_layout` is called 
-        # bottom-up, so the layout for all of the children has already
-        # taken place. This is the proper time to grab the central 
-        # widget child, stick it the sizer, and fit the window.
-        child = self.find_child(self._central_widget_id)
-        if child is not None:
-            sizer = wxSingleWidgetSizer()
-            sizer.Add(child.widget())
-            widget = self.widget()
-            widget.SetSizerAndFit(sizer)
-            max_size = widget.ClientToWindowSize(sizer.CalcMax())
-            widget.SetMaxSize(max_size)
+        super(WxWindow, self).init_layout()
+        for child in self.children():
+            if isinstance(child, WxContainer):
+                sizer = wxSingleWidgetSizer()
+                sizer.Add(child.widget())
+                widget = self.widget()
+                widget.SetSizerAndFit(sizer)
+                max_size = widget.ClientToWindowSize(sizer.CalcMax())
+                widget.SetMaxSize(max_size)
+                break
+
+    #--------------------------------------------------------------------------
+    # Child Events
+    #--------------------------------------------------------------------------
+    def child_added(self, child):
+        """ Handle the child added event for a QtWindow.
+
+        """
+        for child in self.children():
+            if isinstance(child, WxContainer):
+                widget = self.widget()
+                sizer = widget.GetSizer()
+                sizer.Add(child.widget())
+                widget.Fit()
+                max_size = widget.ClientToWindowSize(sizer.CalcMax())
+                widget.SetMaxSize(max_size)
+                break
 
     #--------------------------------------------------------------------------
     # Event Handlers
@@ -142,12 +154,6 @@ class WxWindow(WxWidgetComponent):
 
         """
         pass
-
-    def set_central_widget_id(self, widget_id):
-        """ Set the central widget id for the window.
-
-        """
-        self._central_widget_id = widget_id
 
     def set_title(self, title):
         """ Set the title of the window.
