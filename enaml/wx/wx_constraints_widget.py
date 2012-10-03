@@ -69,6 +69,12 @@ class WxConstraintsWidget(WxWidgetComponent):
     #: are assumed to never change.
     _hard_cns = []
 
+    #: The list of size hint constraints to apply to the widget. These
+    #: constraints are computed once and then cached. If the size hint
+    #: of a widget changes at run time, then `size_hint_updated` should
+    #: be called to trigger an appropriate relayout of the widget.
+    _size_hint_cns = []
+
     #: The list of constraint dictionaries defined by the user on 
     #: the server side Enaml widget.
     _user_cns = []
@@ -145,7 +151,7 @@ class WxConstraintsWidget(WxWidgetComponent):
     def size_hint_constraints(self):
         """ Creates the list of size hint constraints for this widget.
 
-        This method using the provided size hint of the widget and the
+        This method uses the provided size hint of the widget and the
         policies for 'hug' and 'resist_clip' to generate casuarius 
         LinearConstraint objects which respect the size hinting of the
         widget.
@@ -159,32 +165,49 @@ class WxConstraintsWidget(WxWidgetComponent):
             A list of casuarius LinearConstraint instances.
 
         """
-        cns = []
-        push = cns.append
-        hint = self.widget().GetBestSize()
-        if hint.IsFullySpecified():
-            width_hint = hint.width
-            height_hint = hint.height
-            primitive = self.layout_box.primitive
-            width = primitive('width')
-            height = primitive('height')
-            hug_width, hug_height = self._hug
-            resist_width, resist_height = self._resist
-            if width_hint >= 0:
-                if hug_width != 'ignore':
-                    cn = (width == width_hint) | hug_width
-                    push(cn)
-                if resist_width != 'ignore':
-                    cn = (width >= width_hint) | resist_width
-                    push(cn)
-            if height_hint >= 0:
-                if hug_height != 'ignore':
-                    cn = (height == height_hint) | hug_height
-                    push(cn)
-                if resist_height != 'ignore':
-                    cn = (height >= height_hint) | resist_height
-                    push(cn)
+        cns = self._size_hint_cns
+        if not cns:
+            cns = self._size_hint_cns = []
+            push = cns.append
+            hint = self.widget().GetBestSize()
+            if hint.IsFullySpecified():
+                width_hint = hint.width
+                height_hint = hint.height
+                primitive = self.layout_box.primitive
+                width = primitive('width')
+                height = primitive('height')
+                hug_width, hug_height = self._hug
+                resist_width, resist_height = self._resist
+                if width_hint >= 0:
+                    if hug_width != 'ignore':
+                        cn = (width == width_hint) | hug_width
+                        push(cn)
+                    if resist_width != 'ignore':
+                        cn = (width >= width_hint) | resist_width
+                        push(cn)
+                if height_hint >= 0:
+                    if hug_height != 'ignore':
+                        cn = (height == height_hint) | hug_height
+                        push(cn)
+                    if resist_height != 'ignore':
+                        cn = (height >= height_hint) | resist_height
+                        push(cn)
         return cns
+
+    def size_hint_updated(self):
+        """ Notify the layout system that the size hint of this widget
+        has been updated.
+
+        """
+        # Only the ancestors of a widget care about its size hint,
+        # so this method attempts to replace the size hint constraints
+        # for the widget starting with its parent.
+        parent = self.parent()
+        if isinstance(parent, WxConstraintsWidget):
+            old_cns = self._size_hint_cns
+            self._size_hint_cns = []
+            new_cns = self.size_hint_constraints()
+            parent.replace_constraints(old_cns, new_cns)
 
     def hard_constraints(self):
         """ Generate the constraints which must always be applied.
