@@ -3,7 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .wx_action import EVT_ACTION_CHANGED
-from .wx_messenger_widget import WxMessengerWidget
+from .wx_object import WxObject
 
 
 class wxActionGroup(object):
@@ -225,7 +225,7 @@ class wxActionGroup(object):
                 action._SetGroupVisible(visible)
 
 
-class WxActionGroup(WxMessengerWidget):
+class WxActionGroup(WxObject):
     """ A Wx implementation of an Enaml ActionGroup.
 
     """

@@ -6,7 +6,7 @@ import wx
 
 from enaml.colors import parse_color
 
-from .wx_messenger_widget import WxMessengerWidget
+from .wx_object import WxObject
 
 
 def wx_parse_color(color):
@@ -33,7 +33,7 @@ def wx_parse_color(color):
     return wx_color
 
 
-class WxWidgetComponent(WxMessengerWidget):
+class WxWidgetComponent(WxObject):
     """ A Wx implementation of an Enaml WidgetComponent.
 
     """

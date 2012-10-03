@@ -7,7 +7,7 @@ from weakref import WeakValueDictionary
 import wx
 import wx.lib.newevent
 
-from .wx_messenger_widget import WxMessengerWidget
+from .wx_object import WxObject
 
 
 #: An event emitted when a wxAction has been triggered by the user. The
@@ -390,7 +390,7 @@ class wxAction(wx.EvtHandler):
             self._EmitChanged()
 
 
-class WxAction(WxMessengerWidget):
+class WxAction(WxObject):
     """ A Wx implementation of an Enaml Action.
 
     """
