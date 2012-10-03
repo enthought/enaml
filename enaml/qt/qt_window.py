@@ -103,11 +103,8 @@ class QWindow(QFrame):
             The widget to use as the content of the window.
 
         """
-        layout = self.layout()
-        if layout.count() > 0:
-            layout.removeWidget(self._central_widget)
         self._central_widget = widget
-        layout.addWidget(widget)
+        self.layout().addWidget(widget)
 
     def explicitMinimumSize(self):
         """ Return the explicit minimum size for this widget.
