@@ -37,6 +37,9 @@ class QtMdiArea(QtConstraintsWidget):
         """ Handle the child added event for a QtMdiArea.
 
         """
+        # The size hint of a QMdiArea is typically quite large and the
+        # size hint constraints are usually ignored. There is no need
+        # to notify of a change in size hint here.
         if isinstance(child, QtMdiWindow):
             self.widget().addSubWindow(child.widget())
 
