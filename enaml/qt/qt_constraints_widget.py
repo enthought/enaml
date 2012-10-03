@@ -151,7 +151,7 @@ class QtConstraintsWidget(QtWidgetComponent):
     def size_hint_constraints(self):
         """ Creates the list of size hint constraints for this widget.
 
-        This method using the provided size hint of the widget and the
+        This method uses the provided size hint of the widget and the
         policies for 'hug' and 'resist' to generate constraints which
         respect the size hinting of the widget.
 

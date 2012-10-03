@@ -54,7 +54,7 @@ class QDeferredCaller(QObject):
         self._posted.emit(f)
 
     def timedCall(self, ms, callback, *args, **kwargs):
-        """ Execute a callback on timer in the main gui thread.
+        """ Execute a callback on a timer in the main gui thread.
 
         Parameters
         ----------
