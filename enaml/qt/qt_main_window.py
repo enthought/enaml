@@ -165,6 +165,8 @@ class QtMainWindow(QtWindow):
         """ Handle the child added event for a QtMainWindow.
 
         """
+        # XXX there is quite a bit of duplicated code here. It would
+        # be nice to clean this up at some point.
         main_window = self.widget()
 
         # Add a child QtMenuBar. It's not known if the given child is 
