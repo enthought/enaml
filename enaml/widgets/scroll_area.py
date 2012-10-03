@@ -2,7 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Enum, Property, cached_property
+from traits.api import Enum, Property, Bool, cached_property
 
 from .constraints_widget import ConstraintsWidget
 from .container import Container
@@ -20,13 +20,16 @@ class ScrollArea(ConstraintsWidget):
 
     """
     #: The horizontal scrollbar policy.
-    horizontal_scrollbar = ScrollbarPolicy
+    horizontal_policy = ScrollbarPolicy
 
     #: The vertical scrollbar policy.
-    vertical_scrollbar = ScrollbarPolicy
+    vertical_policy = ScrollbarPolicy
 
-    #: A read only property which returns the scroll area's scroll 
-    #: widget.
+    #: Whether to resize the scroll widget when possible to avoid the 
+    #: need for scrollbars or to make use of extra space.
+    widget_resizable = Bool(True)
+
+    #: A read only property which returns the scrolled widget.
     scroll_widget = Property(depends_on='children')
 
     #: How strongly a component hugs it's contents' width. Scroll
@@ -46,8 +49,9 @@ class ScrollArea(ConstraintsWidget):
 
         """
         snap = super(ScrollArea, self).snapshot()
-        snap['horizontal_scrollbar'] = self.horizontal_scrollbar
-        snap['vertical_scrollbar'] = self.vertical_scrollbar
+        snap['horizontal_policy'] = self.horizontal_policy
+        snap['vertical_policy'] = self.vertical_policy
+        snap['widget_resizable'] = self.widget_resizable
         return snap
 
     def bind(self):
@@ -55,7 +59,7 @@ class ScrollArea(ConstraintsWidget):
 
         """
         super(ScrollArea, self).bind()
-        attrs = ('horizontal_scrollbar', 'vertical_scrollbar')
+        attrs = ('horizontal_policy', 'vertical_policy', 'widget_resizable')
         self.publish_attributes(*attrs)
 
     #--------------------------------------------------------------------------
