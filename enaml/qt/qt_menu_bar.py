@@ -45,7 +45,7 @@ class QtMenuBar(QtWidgetComponent):
         for child in self.children():
             if isinstance(child, QtMenu):
                 widget.addMenu(child.widget())
-        
+
     #--------------------------------------------------------------------------
     # Child Events
     #--------------------------------------------------------------------------
@@ -53,8 +53,8 @@ class QtMenuBar(QtWidgetComponent):
         """ Handle the child added event for a QtMenuBar.
 
         """
-        before = self.find_next_action(child)
         if isinstance(child, QtMenu):
+            before = self.find_next_action(child)
             self.widget().insertMenu(before, child.widget())
 
     #--------------------------------------------------------------------------
@@ -76,9 +76,9 @@ class QtMenuBar(QtWidgetComponent):
             given child, or None if no actions follow the child.
 
         """
-        # The target action must be tested for membership against the 
-        # current actions on the menu bar itself, since this method may 
-        # be called after a child is added, but before the actions for 
+        # The target action must be tested for membership against the
+        # current actions on the menu bar itself, since this method may
+        # be called after a child is added, but before the actions for
         # the child have actually added to the menu.
         index = self.index_of(child)
         if index != -1:
