@@ -5,7 +5,7 @@
 import wx
 
 from .wx_container import WxContainer
-from .wx_layout_request import EVT_COMMAND_LAYOUT_REQUEST
+from .wx_layout_request import EVT_COMMAND_LAYOUT_REQUESTED
 from .wx_single_widget_sizer import wxSingleWidgetSizer
 from .wx_widget_component import WxWidgetComponent
 
@@ -46,18 +46,11 @@ class WxWindow(WxWidgetComponent):
                 widget.GetSizer().Add(child.widget())
                 self._update_client_size_hints()
                 break
-        widget.Bind(EVT_COMMAND_LAYOUT_REQUEST, self._on_layout_request)
+        widget.Bind(EVT_COMMAND_LAYOUT_REQUESTED, self.on_layout_requested)
 
     #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
-    def _on_layout_request(self, event):
-        """ A private event handler for handling layout requests from
-        a descendant widget.
-
-        """
-        self._update_client_size_hints()
-
     def _update_client_size_hints(self):
         """ A private method for updating the client size hints.
 
@@ -108,6 +101,12 @@ class WxWindow(WxWidgetComponent):
         # windows will be unblocked.
         self.widget().MakeModal(False)
         self.send_action('closed', {})
+
+    def on_layout_requested(self, event):
+        """ Handle the layout request event from the central widget.
+
+        """
+        self._update_client_size_hints()
 
     #--------------------------------------------------------------------------
     # Message Handlers

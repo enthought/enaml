@@ -8,5 +8,5 @@ from wx.lib.newevent import NewCommandEvent
 #: A custom command event that can be posted to request a layout
 #: when a widget's geometry has changed. On Qt, this type of event
 #: is posted and handled automatically. This fills that gap.
-wxLayoutRequestEvent, EVT_COMMAND_LAYOUT_REQUEST = NewCommandEvent()
+wxEvtLayoutRequested, EVT_COMMAND_LAYOUT_REQUESTED = NewCommandEvent()
 

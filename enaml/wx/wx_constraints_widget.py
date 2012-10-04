@@ -2,11 +2,8 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import wx
-
 from casuarius import ConstraintVariable
 
-from .wx_layout_request import wxLayoutRequestEvent
 from .wx_widget_component import WxWidgetComponent
 
 
@@ -211,11 +208,7 @@ class WxConstraintsWidget(WxWidgetComponent):
             self._size_hint_cns = []
             new_cns = self.size_hint_constraints()
             parent.replace_constraints(old_cns, new_cns)
-        if parent is not None:
-            widget = parent.widget()
-            if widget:
-                event = wxLayoutRequestEvent(widget.GetId())
-                wx.PostEvent(widget, event)
+        self.update_geometry()
 
     def hard_constraints(self):
         """ Generate the constraints which must always be applied.
