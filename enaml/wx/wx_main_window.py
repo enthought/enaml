@@ -202,7 +202,8 @@ class wxMainWindow(wx.Frame):
         if old_bar is not menu_bar:
             super(wxMainWindow, self).SetMenuBar(menu_bar)
             # The menu bar must be refreshed after attachment
-            menu_bar.Update()
+            if menu_bar:
+                menu_bar.Update()
 
     def AddToolBar(self, tool_bar):
         """ Add a tool bar to the main window.
