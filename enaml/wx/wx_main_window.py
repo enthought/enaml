@@ -5,6 +5,10 @@
 import wx
 
 from .wx_action import wxAction
+from .wx_container import WxContainer
+from .wx_dock_pane import WxDockPane
+from .wx_menu_bar import WxMenuBar
+from .wx_tool_bar import WxToolBar
 from .wx_upstream import aui
 from .wx_window import WxWindow
 
@@ -17,11 +21,11 @@ class wxToolBarContainer(wx.Panel):
     # the tool bars is equally as bad. Unless we want to rewrite the
     # entire aui libary to do docking properly, we have to accept that
     # docking toolbars on wx are a no-go. That said, if the user defined
-    # multiple tool bars for their main window, it would be bad to only 
+    # multiple tool bars for their main window, it would be bad to only
     # show one of them, which is what we would get if we had the wx.Frame
     # manage the tool bars directly (since it only supports a single tool
     # bar). Instead, we put all of the tool bars in a vertical sizer and
-    # stick the entire thing at the top of the main window layout and 
+    # stick the entire thing at the top of the main window layout and
     # forbid it from being moved around. If better docking support is
     # desired, the user would be better off with Qt.
     def __init__(self, *args, **kwargs):
@@ -30,7 +34,7 @@ class wxToolBarContainer(wx.Panel):
         Parameters
         ----------
         *args, **kwargs
-            The positional and keyword arguments to initialize a 
+            The positional and keyword arguments to initialize a
             wx.Panel.
 
         """
@@ -74,7 +78,7 @@ class wxMainWindow(wx.Frame):
         """
         super(wxMainWindow, self).__init__(*args, **kwargs)
         flags = (
-            aui.AUI_MGR_DEFAULT | aui.AUI_MGR_LIVE_RESIZE | 
+            aui.AUI_MGR_DEFAULT | aui.AUI_MGR_LIVE_RESIZE |
             aui.AUI_MGR_USE_NATIVE_MINIFRAMES
         )
         self._manager = aui.AuiManager(self, agwFlags=flags)
@@ -86,11 +90,11 @@ class wxMainWindow(wx.Frame):
         self.Bind(aui.EVT_AUI_PANE_FLOATED, self.OnPaneFloated)
         self.Bind(aui.EVT_AUI_PANE_DOCKED, self.OnPaneDocked)
 
-        # Add a hidden dummy widget to the pane manager. This is a 
+        # Add a hidden dummy widget to the pane manager. This is a
         # workaround for a Wx bug where the laying out of the central
         # pane will have jitter on window resize (the computed layout
-        # origin of the central pane oscillates between (0, 0) and 
-        # (1, 1)) if there are no other panes in the layout. If we 
+        # origin of the central pane oscillates between (0, 0) and
+        # (1, 1)) if there are no other panes in the layout. If we
         # add a hidden pane with zero size, it prevents the jitter.
         self._hidden_widget = wx.Window(self)
         pane = aui.AuiPaneInfo()
@@ -227,7 +231,7 @@ class wxMainWindow(wx.Frame):
     def AddDockPane(self, dock_pane):
         """ Add a dock pane to the main window.
 
-        If the pane already exists in the main window, calling this 
+        If the pane already exists in the main window, calling this
         method is a no-op.
 
         Parameters
@@ -268,15 +272,6 @@ class WxMainWindow(WxWindow):
     """ A Wx implementation of an Enaml MainWindow.
 
     """
-    #: Storage for the menu bar id
-    _menu_bar_id = None
-
-    #: Storage for the widget ids of the tool bars
-    _tool_bar_ids = []
-
-    #: Storage for the widget ids of the dock panes
-    _dock_pane_ids = []
-
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
@@ -286,15 +281,6 @@ class WxMainWindow(WxWindow):
         """
         return wxMainWindow(parent)
 
-    def create(self, tree):
-        """ Create and initialize the main window control.
-
-        """
-        super(WxMainWindow, self).create(tree)
-        self.set_menu_bar_id(tree['menu_bar_id'])
-        self.set_dock_pane_ids(tree['dock_pane_ids'])
-        self.set_tool_bar_ids(tree['tool_bar_ids'])
-
     def init_layout(self):
         """ Perform the layout initialization for the main window.
 
@@ -303,56 +289,43 @@ class WxMainWindow(WxWindow):
         # since the layout initialization for Window is not appropriate
         # for MainWindow
         main_window = self.widget()
-        find_child = self.find_child
-
         main_window.BeginBatch()
 
+        menu_bars = []
+        tool_bars = []
+        dock_panes = []
+        containers = []
+        for child in self.children():
+            if isinstance(child, WxMenuBar):
+                menu_bars.append(child)
+            elif isinstance(child, WxToolBar):
+                tool_bars.append(child)
+            elif isinstance(child, WxDockPane):
+                dock_panes.append(child)
+            elif isinstance(child, WxContainer):
+                containers.append(child)
+
         # Setup the menu bar
-        menu_bar = find_child(self._menu_bar_id)
-        if menu_bar is not None:
-            main_window.SetMenuBar(menu_bar.widget())
+        for child in menu_bars:
+            main_window.SetMenuBar(child.widget())
+            break
 
         # Setup the central widget
-        central_child = find_child(self._central_widget_id)
-        if central_child is not None:
-            main_window.SetCentralWidget(central_child.widget())
+        for child in containers:
+            main_window.SetCentralWidget(child.widget())
+            break
 
         # Setup the tool bars
-        for tool_bar_id in self._tool_bar_ids:
-            tool_bar = find_child(tool_bar_id)
-            if tool_bar is not None:
-                main_window.AddToolBar(tool_bar.widget())
+        for child in tool_bars:
+            main_window.AddToolBar(child.widget())
 
         # Setup the dock panes
-        for dock_id in self._dock_pane_ids:
-            dock_pane = find_child(dock_id)
-            if dock_pane is not None:
-                main_window.AddDockPane(dock_pane.widget())
+        for child in dock_panes:
+            main_window.AddDockPane(child.widget())
 
         # Setup the status bar
         #self._status = status = wx.StatusBar(main_window)
         #main_window.SetStatusBar(status)
-        
+
         main_window.EndBatch()
-
-    #--------------------------------------------------------------------------
-    # Widget Update Methods
-    #--------------------------------------------------------------------------
-    def set_menu_bar_id(self, menu_bar_id):
-        """ Set the menu bar id for the underlying widget.
-
-        """
-        self._menu_bar_id = menu_bar_id
-
-    def set_dock_pane_ids(self, pane_ids):
-        """ Set the dock pane ids for the underlying widget.
-
-        """
-        self._dock_pane_ids = pane_ids
-
-    def set_tool_bar_ids(self, bar_ids):
-        """ Set the tool bar ids for the underlying widget.
-
-        """
-        self._tool_bar_ids = bar_ids
 
