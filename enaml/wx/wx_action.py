@@ -14,7 +14,7 @@ from .wx_object import WxObject
 #: payload of the event will have an 'IsChecked' attribute.
 wxActionTriggeredEvent, EVT_ACTION_TRIGGERED = wx.lib.newevent.NewEvent()
 
-#: An event emitted by a wxAction when it has been toggled by the user. 
+#: An event emitted by a wxAction when it has been toggled by the user.
 #: The payload of the event will have an 'IsChecked' attribute.
 wxActionToggledEvent, EVT_ACTION_TOGGLED = wx.lib.newevent.NewEvent()
 
@@ -41,7 +41,7 @@ class wxAction(wx.EvtHandler):
         Returns
         -------
         result : wxAction or None
-            The wxAction instance for the given id, or None if not 
+            The wxAction instance for the given id, or None if not
             action exists for that id.
 
         """
@@ -54,7 +54,7 @@ class wxAction(wx.EvtHandler):
         ----------
         parent : object or None
             The parent for this wxAction. The parent is not directly
-            used by the action, but is provided as a convenience for 
+            used by the action, but is provided as a convenience for
             other parts of the framework.
 
         """
@@ -126,7 +126,7 @@ class wxAction(wx.EvtHandler):
 
         Returns
         -------
-        result : object or None 
+        result : object or None
             The parent of this action or None.
 
         """
@@ -142,12 +142,12 @@ class wxAction(wx.EvtHandler):
 
         """
         self._parent = parent
-    
+
     def Trigger(self):
         """ A method called by the action owner when the user triggers
         the action.
 
-        This handler will emit the custom EVT_ACTION_TRIGGERED event. 
+        This handler will emit the custom EVT_ACTION_TRIGGERED event.
         User code should not typically call this method directly.
 
         """
@@ -211,7 +211,7 @@ class wxAction(wx.EvtHandler):
         if self._text != text:
             self._text = text
             self._EmitChanged()
-               
+
     def GetToolTip(self):
         """ Get the tool tip for the action.
 
@@ -270,7 +270,7 @@ class wxAction(wx.EvtHandler):
 
         """
         return self._checkable
-    
+
     def SetCheckable(self, checkable):
         """ Set whether or not the action is checkable.
 
@@ -294,7 +294,7 @@ class wxAction(wx.EvtHandler):
 
         """
         return self._checked
-    
+
     def SetChecked(self, checked):
         """ Set whether or not the action is checked.
 
@@ -421,6 +421,17 @@ class WxAction(WxObject):
         widget.EndBatch(emit=False)
         widget.Bind(EVT_ACTION_TRIGGERED, self.on_triggered)
         widget.Bind(EVT_ACTION_TOGGLED, self.on_toggled)
+
+    def destroy(self):
+        """ Removes the Action from its parent before destroying.
+
+        """
+        parent = self.parent()
+        if parent:
+            widget = parent.widget()
+            if widget:
+                widget.RemoveAction(self.widget())
+        super(WxAction, self).destroy()
 
     #--------------------------------------------------------------------------
     # Event Handlers
