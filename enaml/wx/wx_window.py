@@ -5,6 +5,7 @@
 import wx
 
 from .wx_container import WxContainer
+from .wx_layout_request import EVT_COMMAND_LAYOUT_REQUEST
 from .wx_single_widget_sizer import wxSingleWidgetSizer
 from .wx_widget_component import WxWidgetComponent
 
@@ -20,7 +21,9 @@ class WxWindow(WxWidgetComponent):
         """ Create the underlying wx.Frame widget.
 
         """
-        return wx.Frame(parent)
+        widget = wx.Frame(parent)
+        widget.SetSizer(wxSingleWidgetSizer())
+        return widget
 
     def create(self, tree):
         """ Create and initialize the window control.
@@ -37,15 +40,44 @@ class WxWindow(WxWidgetComponent):
 
         """
         super(WxWindow, self).init_layout()
+        widget = self.widget()
         for child in self.children():
             if isinstance(child, WxContainer):
-                sizer = wxSingleWidgetSizer()
-                sizer.Add(child.widget())
-                widget = self.widget()
-                widget.SetSizerAndFit(sizer)
-                max_size = widget.ClientToWindowSize(sizer.CalcMax())
-                widget.SetMaxSize(max_size)
+                widget.GetSizer().Add(child.widget())
+                self._update_client_size_hints()
                 break
+        widget.Bind(EVT_COMMAND_LAYOUT_REQUEST, self._on_layout_request)
+
+    #--------------------------------------------------------------------------
+    # Private API
+    #--------------------------------------------------------------------------
+    def _on_layout_request(self, event):
+        """ A private event handler for handling layout requests from
+        a descendant widget.
+
+        """
+        self._update_client_size_hints()
+
+    def _update_client_size_hints(self):
+        """ A private method for updating the client size hints.
+
+        This method will pull the current min and max client sizes from
+        the window sizer, translate them to window sizes, and update the
+        size hints on the window. If the current window size violates
+        the new size hints, it will be resized (since Wx is too brain
+        dead to handle that itself).
+
+        """
+        widget = self.widget()
+        sizer = widget.GetSizer()
+        min_w, min_h = widget.ClientToWindowSize(sizer.CalcMin())
+        max_w, max_h= widget.ClientToWindowSize(sizer.CalcMax())
+        widget.SetSizeHints(min_w, min_h, max_w, max_h)
+        cur_w, cur_h = widget.GetSize()
+        new_w = min(max_w, max(min_w, cur_w))
+        new_h = min(max_h, max(min_h, cur_h))
+        if cur_w != new_w or cur_h != new_h:
+            widget.SetSize(wx.Size(new_w, new_h))
 
     #--------------------------------------------------------------------------
     # Child Events
@@ -72,7 +104,7 @@ class WxWindow(WxWidgetComponent):
 
         """
         event.Skip()
-        # Make sure the frame is not modal when closing, or no other 
+        # Make sure the frame is not modal when closing, or no other
         # windows will be unblocked.
         self.widget().MakeModal(False)
         self.send_action('closed', {})
@@ -81,41 +113,41 @@ class WxWindow(WxWidgetComponent):
     # Message Handlers
     #--------------------------------------------------------------------------
     def on_action_close(self, content):
-        """ Handle the 'close' action from the Enaml widget. 
+        """ Handle the 'close' action from the Enaml widget.
 
         """
         self.close()
 
     def on_action_maximize(self, content):
-        """ Handle the 'maximize' action from the Enaml widget. 
+        """ Handle the 'maximize' action from the Enaml widget.
 
         """
         self.maximize()
 
     def on_action_minimize(self, content):
-        """ Handle the 'minimize' action from the Enaml widget. 
+        """ Handle the 'minimize' action from the Enaml widget.
 
         """
         self.minimize()
 
     def on_action_restore(self, content):
-        """ Handle the 'restore' action from the Enaml widget. 
+        """ Handle the 'restore' action from the Enaml widget.
 
         """
         self.restore()
 
     def on_action_set_icon(self, content):
-        """ Handle the 'set-icon' action from the Enaml widget. 
+        """ Handle the 'set-icon' action from the Enaml widget.
 
         """
         pass
 
     def on_action_set_title(self, content):
-        """ Handle the 'set-title' action from the Enaml widget. 
+        """ Handle the 'set-title' action from the Enaml widget.
 
         """
         self.set_title(content['title'])
-    
+
     def on_action_set_modality(self, content):
         """ Handle the 'set-modality' action from the Enaml widget.
 
