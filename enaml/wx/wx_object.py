@@ -45,9 +45,9 @@ class WxObject(object):
     implementation.
 
     """
-    #: Class level storage for WxObject instances. WxObjects are added 
+    #: Class level storage for WxObject instances. WxObjects are added
     #: to this dict as they are created. Instances are stored strongly
-    #: so that orphaned widgets are not garbage collected until they 
+    #: so that orphaned widgets are not garbage collected until they
     #: are explicitly destroyed.
     _objects = {}
 
@@ -77,11 +77,11 @@ class WxObject(object):
         """ Construct the WxObject instance for the given parameters.
 
         This classmethod is called by the WxBuilder object used by the
-        application. When called, it will create a new instance of the 
-        class by extracting the object id from the snapshot and calling 
+        application. When called, it will create a new instance of the
+        class by extracting the object id from the snapshot and calling
         the class constructor. It then invokes the `create` method on
         the new instance. This classmethod exists for cases where it is
-        necessary to define custom construction behavior. A subclass 
+        necessary to define custom construction behavior. A subclass
         may reimplement this method as required.
 
         Parameters
@@ -172,7 +172,7 @@ class WxObject(object):
             The unique object identifier assigned to this object.
 
         *args, **kwargs
-            Additional positional and keyword arguments needed to 
+            Additional positional and keyword arguments needed to
             initialize a WxObject.
 
         Returns
@@ -220,7 +220,7 @@ class WxObject(object):
     #--------------------------------------------------------------------------
     @property
     def loopback_guard(self):
-        """ Lazily creates and returns a LoopbackGuard for convenient 
+        """ Lazily creates and returns a LoopbackGuard for convenient
         use by subclasses.
 
         """
@@ -257,7 +257,7 @@ class WxObject(object):
         Returns
         -------
         result : wxEvtHandler
-            The toolkit object for this object, or None if it does not 
+            The toolkit object for this object, or None if it does not
             have a toolkit object.
 
         """
@@ -267,7 +267,7 @@ class WxObject(object):
         """ A method which should be reimplemented by subclasses.
 
         This method is called by the create(...) method. It should
-        create and return the underlying Wx widget. Implementations 
+        create and return the underlying Wx widget. Implementations
         of this method should *not* call the superclass version.
 
         Parameters
@@ -278,7 +278,7 @@ class WxObject(object):
 
         tree : dict
             The dictionary representation of the tree for this object.
-            This is provided in the even that the component needs to 
+            This is provided in the even that the component needs to
             create a different type of widget based on the information
             in the tree.
 
@@ -320,7 +320,7 @@ class WxObject(object):
         """ A method called by the application to initialize the UI.
 
         This method is called by the application to allow the object
-        tree perform any post-create initialization required. This 
+        tree perform any post-create initialization required. This
         method should only be called once. Multiple calls to this
         method are ignored.
 
@@ -342,7 +342,7 @@ class WxObject(object):
         to be super() friendly.
 
         This method is called by the application in a bottom-up order.
-        
+
         """
         pass
 
@@ -350,7 +350,7 @@ class WxObject(object):
         """ Destroy this object.
 
         After an object is destroyed, it is no longer usable and should
-        be discarded. All internal references to the object will be 
+        be discarded. All internal references to the object will be
         removed.
 
         """
@@ -379,7 +379,7 @@ class WxObject(object):
         Returns
         -------
         result : WxObject or None
-            The parent object of this object, or None if it has no 
+            The parent object of this object, or None if it has no
             parent.
 
         """
@@ -438,7 +438,7 @@ class WxObject(object):
 
         The default implementation of this method hides the toolkit
         widget if the parent of the child is None (since wx cannot
-        fully unparent a widget). Subclasses which need more control 
+        fully unparent a widget). Subclasses which need more control
         may reimplement this method.
 
         Parameters
@@ -455,8 +455,8 @@ class WxObject(object):
     def child_added(self, child):
         """ A method called when a child is added to this object.
 
-        The default implementation ensures that the toolkit widget is 
-        properly parented. Subclasses which need more control may 
+        The default implementation ensures that the toolkit widget is
+        properly parented. Subclasses which need more control may
         reimplement this method.
 
         Parameters
@@ -494,8 +494,8 @@ class WxObject(object):
     def handle_action(self, action, content):
         """ Handle an action sent from an Enaml widget.
 
-        This method tells the object to handle a specific action. The 
-        default behavior of the method is to dispatch the action to a 
+        This method tells the object to handle a specific action. The
+        default behavior of the method is to dispatch the action to a
         handler method named `on_action_<action>` where <action> is
         substituted with the provided action.
 
@@ -515,7 +515,7 @@ class WxObject(object):
         else:
             msg = "Unhandled action '%s' for WxObject %s:%s"
             logging.warn(msg % (action, type(self).__name__, self._object_id))
-            
+
     def send_action(self, action, content):
         """ Send an action on the action pipe for this object.
 
