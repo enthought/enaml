@@ -2,11 +2,13 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .wx_action import EVT_ACTION_CHANGED
+import wx
+
+from .wx_action import WxAction, EVT_ACTION_CHANGED
 from .wx_object import WxObject
 
 
-class wxActionGroup(object):
+class wxActionGroup(wx.EvtHandler):
     """ A simple object which keeps track of a group of actions.
 
     """
@@ -17,10 +19,11 @@ class wxActionGroup(object):
         ----------
         parent : object or None
             The parent for this wxActionGroup. The parent is not used
-            directly by the action, but is provided as a convenience 
+            directly by the action, but is provided as a convenience
             for other parts of the framework.
 
         """
+        super(wxActionGroup, self).__init__()
         self._parent = parent
         self._exclusive = True
         self._enabled = True
@@ -56,7 +59,7 @@ class wxActionGroup(object):
 
         Returns
         -------
-        result : object or None 
+        result : object or None
             The parent of this action group or None.
 
         """
@@ -140,7 +143,7 @@ class wxActionGroup(object):
         Returns
         -------
         result : wxAction or None
-            The currently checked action in the group, or None if 
+            The currently checked action in the group, or None if
             no action is checked.
 
         """
@@ -156,7 +159,7 @@ class wxActionGroup(object):
 
         """
         return self._exclusive
-    
+
     def SetExclusive(self, exclusive):
         """ Set whether or not the action group is exclusive.
 
@@ -229,9 +232,6 @@ class WxActionGroup(WxObject):
     """ A Wx implementation of an Enaml ActionGroup.
 
     """
-    #: Store for the action ids
-    _action_ids = []
-
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
@@ -246,7 +246,6 @@ class WxActionGroup(WxObject):
 
         """
         super(WxActionGroup, self).create(tree)
-        self.set_action_ids(tree['action_ids'])
         self.set_exclusive(tree['exclusive'])
         self.set_enabled(tree['enabled'])
         self.set_visible(tree['visible'])
@@ -257,11 +256,24 @@ class WxActionGroup(WxObject):
         """
         super(WxActionGroup, self).init_layout()
         widget = self.widget()
-        find_child = self.find_child
-        for action_id in self._action_ids:
-            child = find_child(action_id)
-            if child is not None:
+        for child in self.children():
+            if isinstance(child, WxAction):
                 widget.AddAction(child.widget())
+
+    def destroy(self):
+        """ Removes the action group from its parent before destroying.
+
+        An ActionGroup is simply a container for actions. The contained
+        actions are the objects actually removed from the parent.
+
+        """
+        parent = self.parent()
+        if parent:
+            widget = parent.widget()
+            if widget:
+                for action in self.widget().GetActions():
+                    widget.RemoveAction(action)
+        super(WxActionGroup, self).destroy()
 
     #--------------------------------------------------------------------------
     # Message Handling
@@ -283,16 +295,10 @@ class WxActionGroup(WxObject):
 
         """
         self.set_visible(content['visible'])
-    
+
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
-    def set_action_ids(self, action_ids):
-        """ Set the action ids for the underlying control.
-
-        """
-        self._action_ids = action_ids
-
     def set_exclusive(self, exclusive):
         """ Set the exclusive state of the underlying control.
 
