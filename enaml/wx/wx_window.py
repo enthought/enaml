@@ -81,12 +81,8 @@ class WxWindow(WxWidgetComponent):
         """
         for child in self.children():
             if isinstance(child, WxContainer):
-                widget = self.widget()
-                sizer = widget.GetSizer()
-                sizer.Add(child.widget())
-                widget.Fit()
-                max_size = widget.ClientToWindowSize(sizer.CalcMax())
-                widget.SetMaxSize(max_size)
+                self.widget().GetSizer().Add(child.widget())
+                self._update_client_size_hints()
                 break
 
     #--------------------------------------------------------------------------
