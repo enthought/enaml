@@ -338,7 +338,8 @@ class wxMenu(wx.Menu):
     def AddMenu(self, menu):
         """ Add a wx menu to the Menu.
 
-        If the menu already exists in this menu, this is a no-op.
+        If the menu already exists in this menu, it will be moved to
+        the end.
 
         Parameters
         ----------
@@ -348,31 +349,11 @@ class wxMenu(wx.Menu):
         """
         self.InsertMenu(None, menu)
 
-    def RemoveMenu(self, menu):
-        """ Remove a wx menu from the Menu.
-
-        If the menu does not exist in the menu, this is a no-op.
-
-        Parameters
-        ----------
-        menu : wxMenu
-            The wxMenu instance to remove from this menu.
-
-        """
-        all_items = self._all_items
-        if menu in all_items:
-            all_items.remove(menu)
-            menu.Unbind(EVT_MENU_CHANGED, handler=self.OnMenuChanged)
-            menu_item = self._menus_map.pop(menu, None)
-            if menu_item is not None:
-                self.RemoveItem(menu_item)
-                # Set the SubMenu to None or wx will destroy it.
-                menu_item.SetSubMenu(None)
-
     def InsertMenu(self, before, menu):
         """ Insert a wx menu into the Menu.
 
-        If the menu already exists in this menu, this is a no-op.
+        If the menu already exists in this menu, if will be moved to
+        the proper location.
 
         Parameters
         ----------
@@ -397,11 +378,40 @@ class wxMenu(wx.Menu):
                 menu_item = self._InsertMenuItem(index, menu)
                 self._menus_map[menu] = menu_item
             menu.Bind(EVT_MENU_CHANGED, self.OnMenuChanged)
+        else:
+            # XXX this is a potentially slow way to do things if the
+            # number of menus being moved around is large. But, the
+            # Wx apis don't appear to offer a better way, so this is
+            # what we get (as usual...).
+            self.RemoveMenu(menu)
+            self.InsertMenu(before, menu)
+
+    def RemoveMenu(self, menu):
+        """ Remove a wx menu from the Menu.
+
+        If the menu does not exist in the menu, this is a no-op.
+
+        Parameters
+        ----------
+        menu : wxMenu
+            The wxMenu instance to remove from this menu.
+
+        """
+        all_items = self._all_items
+        if menu in all_items:
+            all_items.remove(menu)
+            menu.Unbind(EVT_MENU_CHANGED, handler=self.OnMenuChanged)
+            menu_item = self._menus_map.pop(menu, None)
+            if menu_item is not None:
+                self.RemoveItem(menu_item)
+                # Set the SubMenu to None or wx will destroy it.
+                menu_item.SetSubMenu(None)
 
     def AddAction(self, action):
         """ Add a wx action to the Menu.
 
-        If the action already exists in the menu, this is a no-op.
+        If the action already exists in the menu, it will be moved to
+        the end.
 
         Parameters
         ----------
@@ -411,29 +421,27 @@ class wxMenu(wx.Menu):
         """
         self.InsertAction(None, action)
 
-    def RemoveAction(self, action):
-        """ Remove a wx action from the Menu.
+    def AddActions(self, actions):
+        """ Add multiple wx actions to the Menu.
 
-        If the action does not exist in the menu, this is a no-op.
+        If an action already exist in the menu, it will be moved to
+        the end.
 
         Parameters
         ----------
-        action : wxAction
-            The wxAction instance to remove from this menu.
+        actions : iterable
+            An iterable of wxAction instances to add to the menu.
 
         """
-        all_items = self._all_items
-        if action in all_items:
-            all_items.remove(action)
-            action.Unbind(EVT_ACTION_CHANGED, handler=self.OnActionChanged)
-            menu_item = self._actions_map.pop(action, None)
-            if menu_item is not None:
-                self.RemoveItem(menu_item)
+        insert = self.InsertAction
+        for action in actions:
+            insert(None, action)
 
     def InsertAction(self, before, action):
         """ Insert a wx action into the Menu.
 
-        If the action already exists in this menu, this is a no-op.
+        If the action already exists in the menu, it will be moved to
+        the proper location.
 
         Parameters
         ----------
@@ -458,6 +466,67 @@ class wxMenu(wx.Menu):
                 menu_item = self._InsertActionItem(index, action)
                 self._actions_map[action] = menu_item
             action.Bind(EVT_ACTION_CHANGED, self.OnActionChanged)
+        else:
+            # XXX this is a potentially slow way to do things if the
+            # number of actions being moved around is large. But, the
+            # Wx apis don't appear to offer a better way, so this is
+            # what we get (as usual...).
+            self.RemoveAction(action)
+            self.InsertAction(before, action)
+
+    def InsertActions(self, before, actions):
+        """ Insert multiple wx actions into the Menu.
+
+        If an action already exists in this menu, it will be moved to
+        the proper location.
+
+        Parameters
+        ----------
+        before : wxAction, wxMenu, or None
+            The item in the menu which should come directly after the
+            new actions.
+
+        actions : iterable
+            An iterable of wxAction instances to add to the menu.
+
+        """
+        insert = self.InsertAction
+        for action in actions:
+            insert(before, action)
+
+    def RemoveAction(self, action):
+        """ Remove a wx action from the Menu.
+
+        If the action does not exist in the menu, this is a no-op.
+
+        Parameters
+        ----------
+        action : wxAction
+            The wxAction instance to remove from this menu.
+
+        """
+        all_items = self._all_items
+        if action in all_items:
+            all_items.remove(action)
+            action.Unbind(EVT_ACTION_CHANGED, handler=self.OnActionChanged)
+            menu_item = self._actions_map.pop(action, None)
+            if menu_item is not None:
+                self.RemoveItem(menu_item)
+
+    def RemoveActions(self, actions):
+        """ Remove multiple actions from the Menu.
+
+        If an action does not exist in the menu, it will be ignored.
+
+        Parameters
+        ----------
+        actions : iterable
+            An iterable of wxAction instances to remove from the menu.
+
+        """
+        remove = self.RemoveAction
+        for action in actions:
+            remove(action)
 
 
 class WxMenu(WxWidgetComponent):
@@ -495,20 +564,7 @@ class WxMenu(WxWidgetComponent):
             elif isinstance(child, WxAction):
                 widget.AddAction(child.widget())
             elif isinstance(child, WxActionGroup):
-                for action in child.widget().GetActions():
-                    widget.AddAction(action)
-
-    def destroy(self):
-        """ Removes the Menu from its parent before destroying. Wx will
-        segfault if this is not done.
-
-        """
-        parent = self.parent()
-        if parent:
-            widget = parent.widget()
-            if widget:
-                widget.RemoveMenu(self.widget())
-        super(WxMenu, self).destroy()
+                widget.AddActions(child.actions())
 
     #--------------------------------------------------------------------------
     # Child Events
@@ -517,30 +573,24 @@ class WxMenu(WxWidgetComponent):
         """  Handle the child removed event for a WxMenu.
 
         """
-        widget = self.widget()
         if isinstance(child, WxMenu):
-            widget.RemoveMenu(child.widget())
+            self.widget().RemoveMenu(child.widget())
         elif isinstance(child, WxAction):
-            widget.RemoveAction(child.widget())
+            self.widget().RemoveAction(child.widget())
         elif isinstance(child, WxActionGroup):
-            cwidget = child.widget()
-            if cwidget:
-                for action in cwidget.GetActions():
-                    widget.RemoveAction(action)
+            self.widget().RemoveActions(child.actions())
 
     def child_added(self, child):
         """ Handle the child added event for a WxMenu.
 
         """
         before = self.find_next_action(child)
-        widget = self.widget()
         if isinstance(child, WxMenu):
-            widget.InsertMenu(before, child.widget())
+            self.widget().InsertMenu(before, child.widget())
         elif isinstance(child, WxAction):
-            widget.InsertAction(before, child.widget())
+            self.widget().InsertAction(before, child.widget())
         elif isinstance(child, WxActionGroup):
-            for action in child.widget().GetActions():
-                widget.InsertAction(before, action)
+            self.widget().InsertActions(before, child.actions())
 
     #--------------------------------------------------------------------------
     # Utility Methods
