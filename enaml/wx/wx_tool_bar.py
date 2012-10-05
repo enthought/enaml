@@ -348,7 +348,7 @@ class WxToolBar(WxConstraintsWidget):
     # Child Events
     #--------------------------------------------------------------------------
     def child_removed(self, child):
-        """  Handle the child removed event for a WxMenu.
+        """  Handle the child removed event for a WxToolBar.
 
         """
         if isinstance(child, WxAction):
@@ -357,7 +357,7 @@ class WxToolBar(WxConstraintsWidget):
             self.widget().RemoveActions(child.actions())
 
     def child_added(self, child):
-        """ Handle the child added event for a WxMenu.
+        """ Handle the child added event for a WxToolBar.
 
         """
         before = self.find_next_action(child)
