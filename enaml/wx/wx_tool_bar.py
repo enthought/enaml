@@ -4,8 +4,8 @@
 #------------------------------------------------------------------------------
 import wx
 
-from .wx_action import wxAction, EVT_ACTION_CHANGED
-from .wx_action_group import wxActionGroup
+from .wx_action import WxAction, wxAction, EVT_ACTION_CHANGED
+from .wx_action_group import WxActionGroup
 from .wx_constraints_widget import WxConstraintsWidget
 
 
@@ -138,7 +138,7 @@ class wxToolBar(wx.ToolBar):
             new_item = self._InsertAction(index, action)
             self._actions_map[action] = new_item
             self.Realize()
-            return 
+            return
 
         # All other state can be updated in-place.
         item.SetLabel(action.GetText())
@@ -149,38 +149,147 @@ class wxToolBar(wx.ToolBar):
                 item.Toggle()
         item.Enable(action.IsEnabled())
         self.Realize()
-    
+
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
-    def AddAction(self, action):
+    def AddAction(self, action, realize=True):
         """ Add an action to the tool bar.
 
-        If the action is already owned by the toolbar, this is a no-op.
+        If the action already exists in the toolbar, it will be moved
+        to the end.
 
         Parameters
         ----------
         action : wxAction
             The wxAction instance to add to the tool bar.
 
+        realize : bool, optional
+            Whether the toolbar should realize the change immediately.
+            If False, Realize() will need to be called manually once
+            all desired changes have been made. The default is True.
+
+        """
+        self.InsertAction(None, action, realize)
+
+    def AddActions(self, actions, realize=True):
+        """ Add multiple wx actions to the tool bar.
+
+        If an action already exists in the tool bar, it will be moved
+        to the end.
+
+        Parameters
+        ----------
+        actions : iterable
+            An iterable of wxAction instances to add to the tool bar.
+
+        realize : bool, optional
+            Whether the toolbar should realize the change immediately.
+            If False, Realize() will need to be called manually once
+            all desired changes have been made. The default is True.
+
+        """
+        insert = self.InsertAction
+        for action in actions:
+            insert(None, action, False)
+        if realize:
+            self.Realize()
+
+    def InsertAction(self, before, action, realize=True):
+        """ Insert a wx action into the tool bar.
+
+        If the action already exists in the tool bar, it will be moved
+        to the proper location.
+
+        Parameters
+        ----------
+        before : wxAction or None
+            The action in the tool bar which should come directly after
+            the new action.
+
+        action : wxAction
+            The wxAction instance to insert into this tool bar.
+
+        realize : bool, optional
+            Whether the toolbar should realize the change immediately.
+            If False, Realize() will need to be called manually once
+            all desired changes have been made. The default is True.
+
         """
         all_items = self._all_items
         if action not in all_items:
-            all_items.append(action)
+            if before in all_items:
+                index = all_items.index(before)
+            else:
+                index = len(all_items)
+            all_items.insert(index, action)
             if action.IsVisible():
-                index = len(self._actions_map)
+                max_index = len(self._actions_map)
+                index = min(index, max_index)
                 item = self._InsertAction(index, action)
-                self._actions_map[action] = item 
+                self._actions_map[action] = item
             action.Bind(EVT_ACTION_CHANGED, self.OnActionChanged)
+            if realize:
+                self.Realize()
+        else:
+            # XXX this is a potentially slow way to do things if the
+            # number of actions being moved around is large. But, the
+            # Wx apis don't appear to offer a better way, so this is
+            # what we get (as usual...).
+            self.RemoveAction(action)
+            self.InsertAction(before, action, realize)
+
+    def InsertActions(self, before, actions, realize=True):
+        """ Insert multiple wx actions into the Menu.
+
+        If an action already exists in this menu, it will be moved to
+        the proper location.
+
+        Parameters
+        ----------
+        before : wxAction, wxMenu, or None
+            The item in the menu which should come directly after the
+            new actions.
+
+        actions : iterable
+            An iterable of wxAction instances to add to the tool bar.
+
+        realize : bool, optional
+            Whether the toolbar should realize the change immediately.
+            If False, Realize() will need to be called manually once
+            all desired changes have been made. The default is True.
+
+        """
+        insert = self.InsertAction
+        for action in actions:
+            insert(before, action, False)
+        if realize:
+            self.Realize()
+
+    def RemoveAction(self, action):
+        """ Remove a wx action from the tool bar.
+
+        If the action does not exist in the tool bar, this is a no-op.
+
+        Parameters
+        ----------
+        action : wxAction
+            The wxAction instance to remove from this tool bar.
+
+        """
+        all_items = self._all_items
+        if action in all_items:
+            all_items.remove(action)
+            action.Unbind(EVT_ACTION_CHANGED, handler=self.OnActionChanged)
+            item = self._actions_map.pop(action, None)
+            if item is not None:
+                self.DeleteTool(item.GetId())
 
 
 class WxToolBar(WxConstraintsWidget):
     """ A Wx implementation of an Enaml ToolBar.
 
     """
-    #: Storage for the tool bar item ids. 
-    _item_ids = []
-
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
@@ -188,7 +297,7 @@ class WxToolBar(WxConstraintsWidget):
         """ Create the underlying tool bar widget.
 
         """
-        # The orientation of a tool bar can only be set at creation time. 
+        # The orientation of a tool bar can only be set at creation time.
         # Wx does not support changing it dynamically. It is only set if
         # the tool bar is a child of something other than a wx.Frame.
         # The style must include TB_FLAT or separators won't be drawn.
@@ -196,13 +305,13 @@ class WxToolBar(WxConstraintsWidget):
         if not isinstance(parent, wx.Frame):
             style |= _ORIENTATION_MAP[tree['orientation']]
         else:
-            style |= wx.HORIZONTAL 
+            style |= wx.HORIZONTAL
 
         tbar = wxToolBar(parent, style=style)
 
         # Setting the tool bar to double buffered avoids a ton of
         # flickering on Windows during resize events.
-        tbar.SetDoubleBuffered(True) 
+        tbar.SetDoubleBuffered(True)
 
         # For now, we set the bitmap size to 0 since we don't yet
         # support icons or images.
@@ -215,7 +324,6 @@ class WxToolBar(WxConstraintsWidget):
 
         """
         super(WxToolBar, self).create(tree)
-        self.set_item_ids(tree['item_ids'])
         self.set_orientation(tree['orientation'])
         self.set_movable(tree['movable'])
         self.set_floatable(tree['floatable'])
@@ -229,20 +337,65 @@ class WxToolBar(WxConstraintsWidget):
         """
         super(WxToolBar, self).init_layout()
         widget = self.widget()
-        find_child = self.find_child
-        for item_id in self._item_ids:
-            child = find_child(item_id)
-            if child is not None:
-                child_widget = child.widget()
-                if isinstance(child_widget, wxAction):
-                    widget.AddAction(child_widget)
-                elif isinstance(child_widget, wxActionGroup):
-                    for action in child_widget.GetActions():
-                        widget.AddAction(action)
-        # We must 'Realize()' the toolbar after adding items. We don't
-        # want this to be handled by the wxMainWindow, since the toolbar
-        # can be used on its own.
+        for child in self.children():
+            if isinstance(child, WxAction):
+                widget.AddAction(child.widget(), False)
+            elif isinstance(child, WxActionGroup):
+                widget.AddActions(child.actions(), False)
         widget.Realize()
+
+    #--------------------------------------------------------------------------
+    # Child Events
+    #--------------------------------------------------------------------------
+    def child_removed(self, child):
+        """  Handle the child removed event for a WxMenu.
+
+        """
+        if isinstance(child, WxAction):
+            self.widget().RemoveAction(child.widget())
+        elif isinstance(child, WxActionGroup):
+            self.widget().RemoveActions(child.actions())
+
+    def child_added(self, child):
+        """ Handle the child added event for a WxMenu.
+
+        """
+        before = self.find_next_action(child)
+        if isinstance(child, WxAction):
+            self.widget().InsertAction(before, child.widget())
+        elif isinstance(child, WxActionGroup):
+            self.widget().InsertActions(before, child.actions())
+
+    #--------------------------------------------------------------------------
+    # Utility Methods
+    #--------------------------------------------------------------------------
+    def find_next_action(self, child):
+        """ Get the wxAction instance which comes immediately after the
+        actions of the given child.
+
+        Parameters
+        ----------
+        child : WxActionGroup, or WxAction
+            The child of interest.
+
+        Returns
+        -------
+        result : wxAction or None
+            The wxAction which comes immediately after the actions of the
+            given child, or None if no actions follow the child.
+
+        """
+        index = self.index_of(child)
+        if index != -1:
+            for child in self.children()[index + 1:]:
+                target = None
+                if isinstance(child, WxAction):
+                    target = child.widget()
+                elif isinstance(child, WxActionGroup):
+                    acts = child.actions()
+                    target = acts[0] if acts else None
+                if target is not None:
+                    return target
 
     #--------------------------------------------------------------------------
     # Message Handling
@@ -288,12 +441,6 @@ class WxToolBar(WxConstraintsWidget):
         """
         # XXX implement me!
         pass
-
-    def set_item_ids(self, item_ids):
-        """ Set the item ids for the underlying widget.
-
-        """
-        self._item_ids = item_ids
 
     def set_orientation(self, orientation):
         """ Set the orientation of the underlying widget.
