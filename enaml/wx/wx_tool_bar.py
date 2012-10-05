@@ -285,6 +285,21 @@ class wxToolBar(wx.ToolBar):
             if item is not None:
                 self.DeleteTool(item.GetId())
 
+    def RemoveActions(self, actions):
+        """ Remove multiple actions from the tool bar.
+
+        If an action does not exist in the tool bar, it will be ignored.
+
+        Parameters
+        ----------
+        actions : iterable
+            An iterable of wxActions to remove from the tool bar.
+
+        """
+        remove = self.RemoveAction
+        for action in actions:
+            remove(action)
+
 
 class WxToolBar(WxConstraintsWidget):
     """ A Wx implementation of an Enaml ToolBar.
