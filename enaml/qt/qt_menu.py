@@ -8,6 +8,24 @@ from .qt_action_group import QtActionGroup
 from .qt_widget_component import QtWidgetComponent
 
 
+class QCustomMenu(QMenu):
+    """ A custom subclass of QMenu which adds some convenience apis.
+
+    """
+    def removeActions(self, actions):
+        """ Remove the given actions from the menu.
+
+        Parameters
+        ----------
+        actions : iterable
+            An iterable of QActions to remove from the menu.
+
+        """
+        remove = self.removeAction
+        for action in actions:
+            remove(action)
+
+
 class QtMenu(QtWidgetComponent):
     """ A Qt implementation of an Enaml Menu.
 
@@ -19,7 +37,7 @@ class QtMenu(QtWidgetComponent):
         """ Create the underlying menu widget.
 
         """
-        return QMenu(parent)
+        return QCustomMenu(parent)
 
     def create(self, tree):
         """ Create and initialize the underlying widget.
@@ -45,6 +63,17 @@ class QtMenu(QtWidgetComponent):
     #--------------------------------------------------------------------------
     # Child Events
     #--------------------------------------------------------------------------
+    def child_removed(self, child):
+        """  Handle the child removed event for a QtMenu.
+
+        """
+        if isinstance(child, QtMenu):
+            self.widget().removeAction(child.widget().menuAction())
+        elif isinstance(child, QtAction):
+            self.widget().removeAction(child.widget())
+        elif isinstance(child, QtActionGroup):
+            self.widget().removeActions(child.actions())
+
     def child_added(self, child):
         """ Handle the child added event for a QtMenu.
 
@@ -76,7 +105,7 @@ class QtMenu(QtWidgetComponent):
             given child, or None if no actions follow the child.
 
         """
-        # The target action must be tested for membership against the 
+        # The target action must be tested for membership against the
         # current actions on the menu itself, since this method may be
         # called after a child is added, but before the actions for the
         # child have actually been added to the menu.
@@ -113,7 +142,7 @@ class QtMenu(QtWidgetComponent):
         This is an overridden method which sets the visibility on the
         underlying QAction for the menu instead of on the menu itself.
 
-        """ 
+        """
         self.widget().menuAction().setVisible(visible)
 
     def set_title(self, title):
