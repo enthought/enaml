@@ -45,7 +45,7 @@ class QCustomToolBar(QToolBar):
     #: A signal emitted when the dock widget is floated.
     floated = Signal()
 
-    #: A signal emitted when the dock widget is docked. The payload 
+    #: A signal emitted when the dock widget is docked. The payload
     #: will be the new dock area.
     docked = Signal(object)
 
@@ -81,6 +81,19 @@ class QCustomToolBar(QToolBar):
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
+    def removeActions(self, actions):
+        """ Remove the given actions from the tool bar.
+
+        Parameters
+        ----------
+        actions : iterable
+            An iterable of QActions to remove from the tool bar.
+
+        """
+        remove = self.removeAction
+        for action in actions:
+            remove(action)
+
     def toolBarArea(self):
         """ Get the current tool bar area for the tool bar.
 
@@ -173,6 +186,15 @@ class QtToolBar(QtConstraintsWidget):
     #--------------------------------------------------------------------------
     # Child Events
     #--------------------------------------------------------------------------
+    def child_removed(self, child):
+        """  Handle the child removed event for a QtToolBar.
+
+        """
+        if isinstance(child, QtAction):
+            self.widget().removeAction(child.widget())
+        elif isinstance(child, QtActionGroup):
+            self.widget().removeActions(child.actions())
+
     def child_added(self, child):
         """ Handle the child added event for a QtToolBar.
 
@@ -202,9 +224,9 @@ class QtToolBar(QtConstraintsWidget):
             given child, or None if no actions follow the child.
 
         """
-        # The target action must be tested for membership against the 
-        # current actions on the tool bar itself, since this method may 
-        # be called after a child is added, but before the actions for 
+        # The target action must be tested for membership against the
+        # current actions on the tool bar itself, since this method may
+        # be called after a child is added, but before the actions for
         # the child have actually been added to the tool bar.
         index = self.index_of(child)
         if index != -1:
