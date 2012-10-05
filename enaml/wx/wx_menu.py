@@ -424,7 +424,7 @@ class wxMenu(wx.Menu):
     def AddActions(self, actions):
         """ Add multiple wx actions to the Menu.
 
-        If an action already exist in the menu, it will be moved to
+        If an action already exists in the menu, it will be moved to
         the end.
 
         Parameters
@@ -619,7 +619,7 @@ class WxMenu(WxWidgetComponent):
                 if isinstance(child, (WxMenu, WxAction)):
                     target = child.widget()
                 elif isinstance(child, WxActionGroup):
-                    acts = child.widget().GetActions()
+                    acts = child.actions()
                     target = acts[0] if acts else None
                 if target is not None:
                     return target
