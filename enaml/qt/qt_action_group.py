@@ -99,16 +99,15 @@ class QtActionGroup(QtObject):
         """ Handle the child added event for a QtActionGroup.
 
         """
-        # An action group is just a container for actions. The parent 
-        # of the action group is the actual consumer of the action and 
+        # An action group is just a container for actions. The parent
+        # of the action group is the actual consumer of the action and
         # is where the new action is inserted. The easiest way to handle
-        # this is to tell Qt to insert all the actions of this group at 
+        # this is to tell Qt to insert all the actions of this group at
         # the insert location. Qt will handle duplicates and ordering
         # automatically. This pushes the linear time position lookup
         # down to the C++ level where it will be faster.
         if isinstance(child, QtAction):
-            widget = self.widget()
-            widget.addAction(child.widget())
+            self.widget().addAction(child.widget())
             parent = self.parent()
             if parent is not None:
                 before = parent.find_next_action(self)
@@ -123,9 +122,9 @@ class QtActionGroup(QtObject):
         Returns
         -------
         result : list
-            The list of QAction instances which are children of this 
+            The list of QAction instances which are children of this
             action group. Unlike the list returned by the `actions`
-            method of the QActionGroup, the children in this list will 
+            method of the QActionGroup, the children in this list will
             have the correct order.
 
         """
@@ -152,7 +151,7 @@ class QtActionGroup(QtObject):
 
         """
         self.set_visible(content['visible'])
-    
+
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
