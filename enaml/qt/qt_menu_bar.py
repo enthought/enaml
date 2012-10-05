@@ -49,6 +49,13 @@ class QtMenuBar(QtWidgetComponent):
     #--------------------------------------------------------------------------
     # Child Events
     #--------------------------------------------------------------------------
+    def child_removed(self, child):
+        """ Handle the child removed event for a QtMenuBar.
+
+        """
+        if isinstance(child, QtMenu):
+            self.widget().removeAction(child.widget().menuAction())
+
     def child_added(self, child):
         """ Handle the child added event for a QtMenuBar.
 
