@@ -381,7 +381,7 @@ class WxObject(object):
             self._parent = None
 
         # Finally, destroy the underlying toolkit widget, since there
-        # should not longer be any public references to it.
+        # should no longer be any public references to it.
         widget = self._widget
         if widget:
             widget.Destroy()
