@@ -422,18 +422,6 @@ class WxAction(WxObject):
         widget.Bind(EVT_ACTION_TRIGGERED, self.on_triggered)
         widget.Bind(EVT_ACTION_TOGGLED, self.on_toggled)
 
-    def destroy(self):
-        """ Removes the Action from its parent before destroying. Wx
-        will segfault if this is not done.
-
-        """
-        parent = self.parent()
-        if parent:
-            widget = parent.widget()
-            if widget:
-                widget.RemoveAction(self.widget())
-        super(WxAction, self).destroy()
-
     #--------------------------------------------------------------------------
     # Event Handlers
     #--------------------------------------------------------------------------
