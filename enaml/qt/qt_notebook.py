@@ -131,7 +131,7 @@ class QNotebook(QTabWidget):
             self._hidden_pages[page] = index
 
     def addPage(self, page):
-        """ Add a QPage instance to the notebook. 
+        """ Add a QPage instance to the notebook.
 
         This method should be used in favor of the 'addTab' method.
 
@@ -172,6 +172,22 @@ class QNotebook(QTabWidget):
         else:
             page.hide()
             self._hidden_pages[page] = index
+
+    def removePage(self, page):
+        """ Remove a QPage instance from the notebook.
+
+        If the page does not exist in the notebook, this is a no-op.
+
+        Parameters
+        ----------
+        page : QPage
+            The QPage instance to remove from the notebook.
+
+        """
+        index = self.indexOf(page)
+        if index != -1:
+            self.removeTab(index)
+            page.hide()
 
     def setTabCloseButtonVisible(self, index, visible, refresh=True):
         """ Set whether the close button for the given tab is visible.
@@ -255,7 +271,7 @@ class QtNotebook(QtConstraintsWidget):
         """
         widget = QNotebook(parent)
         if sys.platform == 'darwin':
-            # On OSX, the widget item layout rect is too small. 
+            # On OSX, the widget item layout rect is too small.
             # Setting this attribute forces the widget item to
             # use the widget rect for layout.
             widget.setAttribute(Qt.WA_LayoutUsesWidgetRect, True)
@@ -285,13 +301,21 @@ class QtNotebook(QtConstraintsWidget):
     #--------------------------------------------------------------------------
     # Child Events
     #--------------------------------------------------------------------------
+    def child_removed(self, child):
+        """ Handle the child removed event for a QtNotebook.
+
+        """
+        if isinstance(child, QtPage):
+            self.widget().removePage(child.widget())
+
     def child_added(self, child):
         """ Handle the child added event for a QtNotebook.
 
         """
-        index = self.index_of(child)
-        if index != -1:
-            self.widget().insertPage(index, child.widget())
+        if isinstance(child, QtPage):
+            index = self.index_of(child)
+            if index != -1:
+                self.widget().insertPage(index, child.widget())
 
     #--------------------------------------------------------------------------
     # Signal Handlers
