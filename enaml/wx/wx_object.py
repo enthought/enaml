@@ -354,20 +354,41 @@ class WxObject(object):
         removed.
 
         """
+        # Destroy the children before destroying the underlying widget
+        # this gives the children the opportunity to perform cleanup
+        # with an intact parent before being destroyed. Destroying a
+        # child will cause it to be removed from the parent, so the
+        # list is copied to ensure proper iteration.
+        for child in self._children[:]:
+            child.destroy()
+        self._children = []
+
+        # Only after the children are destroyed is the intialized flag
+        # set to False. This allows a child which is being destroyed
+        # to fire off the child_removed event on the parent so that
+        # the parent can do cleanup before the child is destroyed.
         self._initialized = False
 
-        children = self._children
-        self._children = []
-        for child in children:
-            child.destroy()
+        # Fire the child_removed event immediately, so a child can be
+        # removed from any auxiliary container they parent may have
+        # placed it in, before the underlying widget is destroyed.
+        parent = self._parent
+        if parent is not None:
+            if self in parent._children:
+                parent._children.remove(self)
+                if parent._initialized:
+                    parent.child_removed(self)
+            self._parent = None
 
-        self.set_parent(None)
-
+        # Finally, destroy the underlying toolkit widget, since there
+        # should not longer be any public references to it.
         widget = self._widget
         if widget:
             widget.Destroy()
             self._widget = None
 
+        # Remove what should be the last remaining strong reference to
+        # `self` which will allow this object to be garbage collected.
         WxObject._objects.pop(self._object_id, None)
 
     #--------------------------------------------------------------------------
@@ -449,7 +470,7 @@ class WxObject(object):
         """
         if child._parent is None:
             widget = child._widget
-            if widget:
+            if widget and isinstance(widget, wx.Window):
                 widget.Hide()
 
     def child_added(self, child):
@@ -466,8 +487,10 @@ class WxObject(object):
 
         """
         widget = child._widget
-        if widget:
-            widget.Reparent(self._widget)
+        if widget and isinstance(widget, wx.Window):
+            parent = self._widget
+            if isinstance(parent, wx.Window):
+                widget.Reparent(parent)
 
     def index_of(self, child):
         """ Return the index of the given child.
