@@ -160,6 +160,22 @@ class wxDocumentNotebook(aui.AuiNotebook):
             page.Show(False)
             self._hidden_pages[page] = index
 
+    def RemoveWxPage(self, page):
+        """ Remove a wxPage instance from the notebook.
+
+        If the page does not exist in the notebook, this is a no-op.
+
+        Parameters
+        ----------
+        page : wxPage
+            The wxPage instance to remove from the notebook.
+
+        """
+        index = self.GetPageIndex(page)
+        if index != -1:
+            self.RemovePage(index)
+            page.Show(False)
+
 
 class wxPreferencesNotebook(wx.Notebook):
     """ A custom wx.Notebook which handles children of type wxPage.
@@ -281,6 +297,22 @@ class wxPreferencesNotebook(wx.Notebook):
             page.Show(False)
             self._hidden_pages[page] = index
 
+    def RemoveWxPage(self, page):
+        """ Remove a wxPage instance from the notebook.
+
+        If the page does not exist in the notebook, this is a no-op.
+
+        Parameters
+        ----------
+        page : wxPage
+            The wxPage instance to remove from the notebook.
+
+        """
+        index = self.GetPageIndex(page)
+        if index != -1:
+            self.RemovePage(index)
+            page.Show(False)
+
     def GetPageIndex(self, page):
         """ Returns the index of the page in the control.
 
@@ -373,14 +405,23 @@ class WxNotebook(WxConstraintsWidget):
     #--------------------------------------------------------------------------
     # Child Events
     #--------------------------------------------------------------------------
-    def child_added(self, child):
-        """ Handle the child added event for a QtNotebook.
+    def child_removed(self, child):
+        """ Handle the child removed event for a WxNotebook.
 
         """
-        index = self.index_of(child)
-        if index != -1:
-            self.widget().InsertWxPage(index, child.widget())
+        if isinstance(child, WxPage):
+            self.widget().RemoveWxPage(child.widget())
             self.size_hint_updated()
+
+    def child_added(self, child):
+        """ Handle the child added event for a WxNotebook.
+
+        """
+        if isinstance(child, WxPage):
+            index = self.index_of(child)
+            if index != -1:
+                self.widget().InsertWxPage(index, child.widget())
+                self.size_hint_updated()
 
     #--------------------------------------------------------------------------
     # Event Handlers
