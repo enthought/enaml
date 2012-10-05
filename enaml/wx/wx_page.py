@@ -253,7 +253,7 @@ class WxPage(WxWidgetComponent):
     # Child Events
     #--------------------------------------------------------------------------
     def child_added(self, child):
-        """ Handle the child added event for a QtPage.
+        """ Handle the child added event for a WxPage.
 
         """
         for child in self.children():

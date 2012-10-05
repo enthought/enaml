@@ -76,7 +76,7 @@ class WxWindow(WxWidgetComponent):
     # Child Events
     #--------------------------------------------------------------------------
     def child_added(self, child):
-        """ Handle the child added event for a QtWindow.
+        """ Handle the child added event for a WxWindow.
 
         """
         for child in self.children():
