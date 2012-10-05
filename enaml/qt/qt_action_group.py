@@ -95,17 +95,24 @@ class QtActionGroup(QtObject):
     #--------------------------------------------------------------------------
     # Child Events
     #--------------------------------------------------------------------------
+    def child_removed(self, child):
+        """ Handle the child removed event for a QtActionGroup.
+
+        """
+        if isinstance(child, QtAction):
+            action = child.widget()
+            self.widget().removeAction(action)
+            parent = self.parent()
+            if parent is not None:
+                parent.widget().removeAction(action)
+
     def child_added(self, child):
         """ Handle the child added event for a QtActionGroup.
 
         """
-        # An action group is just a container for actions. The parent
-        # of the action group is the actual consumer of the action and
-        # is where the new action is inserted. The easiest way to handle
-        # this is to tell Qt to insert all the actions of this group at
-        # the insert location. Qt will handle duplicates and ordering
-        # automatically. This pushes the linear time position lookup
-        # down to the C++ level where it will be faster.
+        # The easiest way to handle the insert is to tell the parent to
+        # insert all the current actions. It will work out the proper
+        # ordering automatically.
         if isinstance(child, QtAction):
             self.widget().addAction(child.widget())
             parent = self.parent()
