@@ -40,13 +40,13 @@ def deferred_updates(func):
 
 
 class QtObject(object):
-    """ The most base class of all client objects for the Enaml Qt 
+    """ The most base class of all client objects for the Enaml Qt
     implementation.
 
     """
-    #: Class level storage for QtObject instances. QtObjects are added 
+    #: Class level storage for QtObject instances. QtObjects are added
     #: to this dict as they are created. Instances are stored strongly
-    #: so that orphaned widgets are not garbage collected until they 
+    #: so that orphaned widgets are not garbage collected until they
     #: are explicitly destroyed.
     _objects = {}
 
@@ -76,11 +76,11 @@ class QtObject(object):
         """ Construct the QtObject instance for the given parameters.
 
         This classmethod is called by the QtBuilder object used by the
-        application. When called, it will create a new instance of the 
-        class by extracting the object id from the snapshot and calling 
+        application. When called, it will create a new instance of the
+        class by extracting the object id from the snapshot and calling
         the class constructor. It then invokes the `create` method on
         the new instance. This classmethod exists for cases where it is
-        necessary to define custom construction behavior. A subclass 
+        necessary to define custom construction behavior. A subclass
         may reimplement this method as required.
 
         Parameters
@@ -171,7 +171,7 @@ class QtObject(object):
             The unique object identifier assigned to this object.
 
         *args, **kwargs
-            Additional positional and keyword arguments needed to 
+            Additional positional and keyword arguments needed to
             initialize a QtObject.
 
         Returns
@@ -219,7 +219,7 @@ class QtObject(object):
     #--------------------------------------------------------------------------
     @property
     def loopback_guard(self):
-        """ Lazily creates and returns a LoopbackGuard for convenient 
+        """ Lazily creates and returns a LoopbackGuard for convenient
         use by subclasses.
 
         """
@@ -256,7 +256,7 @@ class QtObject(object):
         Returns
         -------
         result : QObject
-            The toolkit object for this object, or None if it does not 
+            The toolkit object for this object, or None if it does not
             have a toolkit object.
 
         """
@@ -265,8 +265,8 @@ class QtObject(object):
     def create_widget(self, parent, tree):
         """ A method which should be reimplemented by subclasses.
 
-        This method is called by the create(...) method. It should 
-        create and return the underlying Qt widget. Implementations 
+        This method is called by the create(...) method. It should
+        create and return the underlying Qt widget. Implementations
         of this method should *not* call the superclass version.
 
         Parameters
@@ -277,7 +277,7 @@ class QtObject(object):
 
         tree : dict
             The dictionary representation of the tree for this object.
-            This is provided in the even that the component needs to 
+            This is provided in the even that the component needs to
             create a different type of widget based on the information
             in the tree.
 
@@ -319,7 +319,7 @@ class QtObject(object):
         """ A method called by the application to initialize the UI.
 
         This method is called by the application to allow the object
-        tree perform any post-create initialization required. This 
+        tree perform any post-create initialization required. This
         method should only be called once. Multiple calls to this
         method are ignored.
 
@@ -341,7 +341,7 @@ class QtObject(object):
         to be super() friendly.
 
         This method is called by the application in a bottom-up order.
-        
+
         """
         pass
 
@@ -349,24 +349,47 @@ class QtObject(object):
         """ Destroy this object.
 
         After an object is destroyed, it is no longer usable and should
-        be discarded. All internal references to the object will be 
+        be discarded. All internal references to the object will be
         removed.
 
         """
+        # Destroy the children before destroying the underlying widget
+        # this gives the children the opportunity to perform cleanup
+        # with an intact parent before being destroyed. Destroying a
+        # child will cause it to be removed from the parent, so the
+        # list is copied to ensure proper iteration.
+        for child in self._children[:]:
+            child.destroy()
+        self._children = []
+
+        # Only after the children are destroyed is the intialized flag
+        # set to False. This allows a child which is being destroyed
+        # to fire off the child_removed event on the parent so that
+        # the parent can do cleanup before the child is destroyed.
         self._initialized = False
 
-        children = self._children
-        self._children = []
-        for child in children:
-            child.destroy()
+        # Fire the child_removed event immediately, so a child can be
+        # removed from any auxiliary container they parent may have
+        # placed it in, before the underlying widget is destroyed.
+        parent = self._parent
+        if parent is not None:
+            if self in parent._children:
+                parent._children.remove(self)
+                if parent._initialized:
+                    parent.child_removed(self)
+            self._parent = None
 
-        self.set_parent(None)
-
+        # Finally, unparent the underlying toolkit widget. Since there
+        # should not longer be any public references to it, it will be
+        # garbage collected and destroyed. This appears to be a safer
+        # approach than calling widget.deleteLater().
         widget = self._widget
         if widget is not None:
             widget.setParent(None)
             self._widget = None
 
+        # Remove what should be the last remaining strong reference to
+        # `self` which will allow this object to be garbage collected.
         QtObject._objects.pop(self._object_id, None)
 
     #--------------------------------------------------------------------------
@@ -378,7 +401,7 @@ class QtObject(object):
         Returns
         -------
         result : QtObject or None
-            The parent object of this object, or None if it has no 
+            The parent object of this object, or None if it has no
             parent.
 
         """
@@ -436,7 +459,7 @@ class QtObject(object):
         """ Called when a child is removed from this object.
 
         The default implementation of this method unparents the toolkit
-        widget if the parent of the child is None. Subclasses which need 
+        widget if the parent of the child is None. Subclasses which need
         more control may reimplement this method.
 
         Parameters
@@ -453,8 +476,8 @@ class QtObject(object):
     def child_added(self, child):
         """ A method called when a child is added to this object.
 
-        The default implementation ensures that the toolkit widget is 
-        properly parented. Subclasses which need more control may 
+        The default implementation ensures that the toolkit widget is
+        properly parented. Subclasses which need more control may
         reimplement this method.
 
         Parameters
@@ -492,8 +515,8 @@ class QtObject(object):
     def handle_action(self, action, content):
         """ Handle an action sent from an Enaml widget.
 
-        This method tells the object to handle a specific action. The 
-        default behavior of the method is to dispatch the action to a 
+        This method tells the object to handle a specific action. The
+        default behavior of the method is to dispatch the action to a
         handler method named `on_action_<action>` where <action> is
         substituted with the provided action.
 
@@ -513,7 +536,7 @@ class QtObject(object):
         else:
             msg = "Unhandled action '%s' for QtObject %s:%s"
             logging.warn(msg % (action, type(self).__name__, self._object_id))
-            
+
     def send_action(self, action, content):
         """ Send an action on the action pipe for this object.
 
