@@ -278,7 +278,7 @@ class WxActionGroup(WxObject):
         """ Handle the child added event for a WxActionGroup.
 
         """
-        # The easier way to handle the insert is to tell the parent to
+        # The easiest way to handle the insert is to tell the parent to
         # insert all the current actions. It will work out the proper
         # ordering automatically.
         if isinstance(child, WxAction):
