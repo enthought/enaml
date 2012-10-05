@@ -200,18 +200,6 @@ class WxMenuBar(WxWidgetComponent):
             if isinstance(child, WxMenu):
                 widget.AddMenu(child.widget())
 
-    def destroy(self):
-        """ Removes the MenuBar from its parent before destroying. Wx
-        will segfault is this is not done.
-
-        """
-        parent = self.parent()
-        if parent:
-            widget = parent.widget()
-            if widget:
-                widget.SetMenuBar(None)
-        super(WxMenuBar, self).destroy()
-
     #--------------------------------------------------------------------------
     # Child Events
     #--------------------------------------------------------------------------
