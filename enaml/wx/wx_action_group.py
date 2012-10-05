@@ -260,20 +260,50 @@ class WxActionGroup(WxObject):
             if isinstance(child, WxAction):
                 widget.AddAction(child.widget())
 
-    def destroy(self):
-        """ Removes the action group from its parent before destroying.
-
-        An ActionGroup is simply a container for actions. The contained
-        actions are the objects actually removed from the parent.
+    #--------------------------------------------------------------------------
+    # Child Events
+    #--------------------------------------------------------------------------
+    def child_removed(self, child):
+        """ Handle the child removed event for a WxActionGroup.
 
         """
-        parent = self.parent()
-        if parent:
-            widget = parent.widget()
-            if widget:
-                for action in self.widget().GetActions():
-                    widget.RemoveAction(action)
-        super(WxActionGroup, self).destroy()
+        if isinstance(child, WxAction):
+            action = child.widget()
+            self.widget().RemoveAction(action)
+            parent = self.parent()
+            if parent is not None:
+                parent.widget().RemoveAction(action)
+
+    def child_added(self, child):
+        """ Handle the child added event for a WxActionGroup.
+
+        """
+        # The easier way to handle the insert is to tell the parent to
+        # insert all the current actions. It will work out the proper
+        # ordering automatically.
+        if isinstance(child, WxAction):
+            parent = self.parent()
+            if parent is not None:
+                before = parent.find_next_action(self)
+                parent.widget().InsertActions(before, self.actions())
+
+    #--------------------------------------------------------------------------
+    # Utility Methods
+    #--------------------------------------------------------------------------
+    def actions(self):
+        """ Get the WxAction children for this action group.
+
+        Returns
+        -------
+        result : list
+            The list of wxAction instances which are children of this
+            action group. Unlike the list returned by the `GetActions`
+            method of the wxActionGroup, the children in this list will
+            have the correct order.
+
+        """
+        children = self.children()
+        return [c.widget() for c in children if isinstance(c, WxAction)]
 
     #--------------------------------------------------------------------------
     # Message Handling
