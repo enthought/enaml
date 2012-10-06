@@ -19,7 +19,7 @@ class QtHtml(QtControl, AbstractTkHtml):
         """ Creates the underlying widget to display HTML.
 
         """
-        self.widget = QtGui.QTextEdit(parent)
+        self.widget = QtGui.QTextBrowser(parent)
 
     def initialize(self):
         """ Initializes the attributes of the control.
