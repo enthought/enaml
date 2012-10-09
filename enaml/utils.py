@@ -285,9 +285,10 @@ def log_exceptions(func):
         try:
             res = func(*args, **kwargs)
         except Exception:
-            tb = traceback.format_exc()
-            message = 'Exception occured in `%s`:\n%s' % (func.__name__, tb)
-            logging.error(message)
+            # Get the logger for the wrapped function.
+            logger = logging.getLogger(func.__module__)
+            message = 'Exception occured in `%s`:' % func.__name__
+            logger.exception(message)
             res = None
         return res
     return closure
