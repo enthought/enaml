@@ -7,6 +7,9 @@ import logging
 from .wx_factories import WX_FACTORIES
 
 
+logger = logging.getLogger(__name__)
+
+
 class WxBuilder(object):
     """ An object which manages building a WxObject tree from an Enaml
     snapshot dict.
@@ -55,7 +58,7 @@ class WxBuilder(object):
             msg =  'Unhandled object type: %s:%s'
             item_class = tree['class']
             item_bases = tree['bases']
-            logging.error(msg % (item_class, item_bases))
+            logger.error(msg % (item_class, item_bases))
             return
         obj = obj_cls.construct(tree, parent, pipe, self)
         for child in tree['children']:

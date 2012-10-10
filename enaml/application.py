@@ -10,6 +10,9 @@ from threading import Lock
 import uuid
 
 from enaml.core.object import Object
+
+
+logger = logging.getLogger(__name__)
     
 
 class ScheduledTask(object):
@@ -321,7 +324,7 @@ class Application(object):
             if name in named_factories:
                 msg = 'Multiple session factories named `%s`; ' % name
                 msg += 'replacing previous value.'
-                logging.warn(msg)
+                logger.warn(msg)
                 old_factory = named_factories.pop(name)
                 all_factories.remove(old_factory)
             all_factories.append(factory)
