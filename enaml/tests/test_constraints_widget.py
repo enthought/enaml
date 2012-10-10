@@ -6,7 +6,7 @@ from unittest import TestCase
 
 from traits.api import TraitError
 
-from ..components.constraints_widget import ConstraintsWidget
+from ..widgets.constraints_widget import ConstraintsWidget
 
 
 class TestLayoutComponent(TestCase):
@@ -23,26 +23,21 @@ class TestLayoutComponent(TestCase):
         comp = ConstraintsWidget()
         self.assertEqual(comp.hug_width, 'strong')
         self.assertEqual(comp.hug_height, 'strong')
-        self.assertEqual(comp.hug, ('strong', 'strong'))
+        self.assertEqual(comp._layout_info()['hug'], ('strong', 'strong'))
         comp.hug_width = 'ignore'
-        self.assertEqual(comp.hug, ('ignore', 'strong'))
         comp.hug_height = 'medium'
-        self.assertEqual(comp.hug, ('ignore', 'medium'))
-        comp.hug = ('weak', 'required')
+        self.assertEqual(comp._layout_info()['hug'], ('ignore', 'medium'))
 
         for good_width in good_values:
             for good_height in good_values:
-                comp.hug = (good_width, good_height)
-                self.assertEqual(comp.hug_width, good_width)
-                self.assertEqual(comp.hug_height, good_height)
+                comp.hug_width = good_width
+                comp.hug_height = good_height
 
-        for good_width in good_values:
-            for bad_height in bad_values:
-                self.assertRaises(TraitError, comp.trait_set, hug=(good_width, bad_height))
+        for bad_height in bad_values:
+            self.assertRaises(TraitError, comp.trait_set, hug_height=bad_height)
 
-        for bad_width in good_values:
-            for good_height in bad_values:
-                self.assertRaises(TraitError, comp.trait_set, hug=(bad_width, good_height))
+        for bad_width in bad_values:
+            self.assertRaises(TraitError, comp.trait_set, hug_width=bad_width)
 
     def test_resist_clip_property(self):
         """ Test that the resist_clip property works correctly.
@@ -52,26 +47,16 @@ class TestLayoutComponent(TestCase):
         bad_values = ['Ignore', None, 'srong']
 
         comp = ConstraintsWidget()
-        self.assertEqual(comp.resist_clip_width, 'strong')
-        self.assertEqual(comp.resist_clip_height, 'strong')
-        self.assertEqual(comp.resist_clip, ('strong', 'strong'))
-        comp.resist_clip_width = 'ignore'
-        self.assertEqual(comp.resist_clip, ('ignore', 'strong'))
-        comp.resist_clip_height = 'medium'
-        self.assertEqual(comp.resist_clip, ('ignore', 'medium'))
-        comp.resist_clip = ('weak', 'required')
+        self.assertEqual(comp.resist_width, 'strong')
+        self.assertEqual(comp.resist_height, 'strong')
 
-        for good_width in good_values:
-            for good_height in good_values:
-                comp.resist_clip = (good_width, good_height)
-                self.assertEqual(comp.resist_clip_width, good_width)
-                self.assertEqual(comp.resist_clip_height, good_height)
+        for value in good_values:
+            comp.resist_width = value
+            comp.resist_height = value
 
-        for good_width in good_values:
-            for bad_height in bad_values:
-                self.assertRaises(TraitError, comp.trait_set, resist_clip=(good_width, bad_height))
+        for bad_height in bad_values:
+            self.assertRaises(TraitError, comp.trait_set, resist_height=bad_height)
 
-        for bad_width in good_values:
-            for good_height in bad_values:
-                self.assertRaises(TraitError, comp.trait_set, resist_clip=(bad_width, good_height))
+        for bad_width in bad_values:
+            self.assertRaises(TraitError, comp.trait_set, resist_width=bad_width)
 
