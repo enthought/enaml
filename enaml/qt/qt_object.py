@@ -11,6 +11,9 @@ from .qt.QtCore import QObject
 from .q_deferred_caller import QDeferredCaller
 
 
+logger = logging.getLogger(__name__)
+
+
 def deferred_updates(func):
     """ A method decorator which will defer widget updates.
 
@@ -535,7 +538,7 @@ class QtObject(object):
             handler(content)
         else:
             msg = "Unhandled action '%s' for QtObject %s:%s"
-            logging.warn(msg % (action, type(self).__name__, self._object_id))
+            logger.warn(msg % (action, type(self).__name__, self._object_id))
 
     def send_action(self, action, content):
         """ Send an action on the action pipe for this object.

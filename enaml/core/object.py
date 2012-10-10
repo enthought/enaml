@@ -18,6 +18,9 @@ from enaml.utils import LoopbackGuard, id_generator
 from .trait_types import EnamlEvent
 
 
+logger = logging.getLogger(__name__)
+
+
 class ActionPipeInterface(object):
     """ An abstract base class defining an action pipe interface.
 
@@ -615,9 +618,8 @@ class Object(HasStrictTraits):
         if handler is not None:
             handler(content)
         else:
-            # XXX make this logging more configurable
             msg = "Unhandled action '%s' for Object %s:%s"
-            logging.warn(msg % (action, self.class_name, self.object_id))
+            logger.warn(msg % (action, self.class_name, self.object_id))
 
     def inherit_pipe(self):
         """ Inherit the action pipe from the ancestors of this object.

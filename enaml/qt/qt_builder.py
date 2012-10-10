@@ -7,6 +7,9 @@ import logging
 from .qt_factories import QT_FACTORIES
 
 
+logger = logging.getLogger(__name__)
+
+
 class QtBuilder(object):
     """ An object which manages building a QtObject tree from an Enaml
     snapshot dict.
@@ -55,7 +58,7 @@ class QtBuilder(object):
             msg =  'Unhandled object type: %s:%s'
             item_class = tree['class']
             item_bases = tree['bases']
-            logging.error(msg % (item_class, item_bases))
+            logger.error(msg % (item_class, item_bases))
             return
         obj = obj_cls.construct(tree, parent, pipe, self)
         for child in tree['children']:
