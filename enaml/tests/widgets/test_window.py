@@ -12,7 +12,7 @@ class TestWindow(EnamlTestCase):
 
     def setUp(self):
         enaml_source = """
-from enaml.widgets import Window
+from enaml.widgets.api import Window
 
 enamldef MainView(Window):
     title = ""

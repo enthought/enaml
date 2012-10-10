@@ -16,7 +16,7 @@ class TestBoundedDate(EnamlTestCase):
         enaml_source = """
 from datetime import date
 
-from enaml.widgets import BoundedDate, Window
+from enaml.widgets.api import BoundedDate, Window
 
 minimum_date = date(1970,1,1)
 maximum_date = date.today()
@@ -24,8 +24,8 @@ current_date = date(1980,4,11)
 
 enamldef MainView(Window):
     BoundedDate:
-        min_date = minimum_date
-        max_date = maximum_date
+        minimum = minimum_date
+        maximum = maximum_date
         date = current_date
 """
         self.parse_and_create(enaml_source)

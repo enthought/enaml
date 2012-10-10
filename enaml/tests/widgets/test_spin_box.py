@@ -2,7 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from enaml.validation import IntValidator
+from enaml.validation.api import IntValidator
 
 from .enaml_test_case import EnamlTestCase
 
