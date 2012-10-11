@@ -26,6 +26,9 @@ class QtLabel(QtControl, AbstractTkLabel):
         """
         self.widget = QtGui.QLabel(parent)
 
+        # If we have HTML markup, open links externally
+        self.widget.setOpenExternalLinks(allow_markup)
+
     def initialize(self):
         """ Initializes the attributes on the underlying control.
 
