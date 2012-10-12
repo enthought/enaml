@@ -74,12 +74,20 @@ class WeakMethod(object):
     same as the standard weakref semantics.
 
     """
-    __slots__ = ('_key', '__weakref__')
+    __slots__ = ('_im_func', '_im_selfref', '_im_class', '__weakref__')
 
     #: An internal dict which maintains a strong reference to the
     #: the underlying weak method wrappers until the owner of the 
     #: method is destroyed.
-    _instances = defaultdict(list)
+    _instances = {}
+
+    @staticmethod
+    def _remove(wr_item):
+        """ A private weakref callback which will release the internal 
+        strong references to the WeakMethod instances for the object.
+
+        """
+        del WeakMethod._instances[wr_item]
 
     def __new__(cls, method):
         """ Create a new WeakMethod instance or return an equivalent 
@@ -91,17 +99,22 @@ class WeakMethod(object):
             The bound method which should be wrapped weakly.
 
         """
-        def remove(wr_item):
-            WeakMethod._instances.pop(wr_item, None)
-        sref = ref(method.im_self, remove)
-        key = (method.im_func, sref, method.im_class)
-        if sref in WeakMethod._instances:
-            for item in WeakMethod._instances[sref]:
-                if item._key == key:
-                    return item
+        im_selfref = ref(method.im_self)
+        items = WeakMethod._instances.get(im_selfref)
+        if items is None:
+            items = []
+            cbref = ref(method.im_self, WeakMethod._remove)
+            WeakMethod._instances[cbref] = items
+        im_func = method.im_func
+        im_class = method.im_class
+        for wm in items:
+            if wm._im_func is im_func and wm._im_class is im_class: 
+                return wm
         self = super(WeakMethod, cls).__new__(cls)
-        self._key = key
-        WeakMethod._instances[sref].append(self)
+        self._im_func = im_func
+        self._im_selfref = im_selfref
+        self._im_class = im_class
+        items.append(self)
         return self
 
     def __call__(self, *args, **kwargs):
@@ -109,23 +122,26 @@ class WeakMethod(object):
         method from its components.
 
         If the underlying instance object has been destroyed, this
-        method will return the default value.
+        method will return None.
 
         Parameters
         ----------
-        args
-            The positional arguments to pass to the method.
-
-        kwargs
-            The keyword arguments to pass to the method.
+        *args, **kwargs
+            The positional and keyword arguments to pass to the method.
 
         """
-        im_func, im_self_ref, im_class = self._key
-        im_self = im_self_ref()
+        im_self = self._im_selfref()
         if im_self is None:
             return
-        method = MethodType(im_func, im_self, im_class)
+        method = MethodType(self._im_func, im_self, self._im_class)
         return method(*args, **kwargs)
+
+
+# Use the faster version of WeakMethod if it's available
+try:
+    from enaml.extensions.weakmethod import WeakMethod
+except ImportError:
+    pass
 
 
 class LoopbackContext(object):

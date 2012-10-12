@@ -1,6 +1,21 @@
-# Copyright (c) 2012 by Enthought, Inc.
-# All rights reserved.
-from setuptools import setup, find_packages
+#------------------------------------------------------------------------------
+#  Copyright (c) 2012, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+import os
+from setuptools import setup, find_packages, Extension
+
+
+if os.environ.get('BUILD_ENAML_EXTENSIONS'):
+    ext_modules = [
+        Extension(
+            'enaml.extensions.weakmethod', 
+            ['enaml/extensions/weakmethod.cpp'], 
+            language='c++',
+        ),
+    ]
+else:
+    ext_modules = []
 
 
 setup(
@@ -17,9 +32,11 @@ setup(
     packages=find_packages(),
     package_data={'enaml.stdlib': ['*.enaml']},
     entry_points = dict(
-        console_scripts = [
-            "enaml-run = enaml.runner:main",
+        console_scripts=[
+            'enaml-run = enaml.runner:main',
         ],
     ),
-    test_suite = "enaml.test_collector",
+    ext_modules=ext_modules,
+    test_suite='enaml.test_collector',
 )
+
