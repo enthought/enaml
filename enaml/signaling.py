@@ -5,7 +5,8 @@
 from types import MethodType
 from weakref import ref
 
-from enaml.utils import WeakMethod, CallableRef
+from .callableref import CallableRef
+from .weakmethod import WeakMethod
 
 
 #: The key used to store the signals in an object's __dict__
