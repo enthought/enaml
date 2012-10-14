@@ -10,9 +10,6 @@ from functools import wraps
 import logging
 from random import shuffle
 from string import letters, digits
-import traceback
-from types import MethodType
-from weakref import ref
 
 
 def id_generator(stem):
@@ -21,7 +18,7 @@ def id_generator(stem):
     For a given stem, the returned generator is guaranteed to yield
     consecutively increasing identifiers using a randomly ordered
     base 62 charset. The identifiers are only guaranteed unique for a
-    given instance of the generator. The randomness is employed to 
+    given instance of the generator. The randomness is employed to
     improve the hashing characteristics of the returned identifiers.
 
     Parameters
@@ -41,12 +38,12 @@ def id_generator(stem):
     while True:
         yield stem + join(charset[digit] for digit in places)
         for idx, digit in enumerate_(places):
-            digit += 1 
+            digit += 1
             if digit == charsetlen:
                 places[idx] = 0
             else:
                 places[idx] = digit
-                break 
+                break
         if places[-1] == 0:
             push(1)
 
@@ -60,88 +57,6 @@ class abstractclassmethod(classmethod):
     def __init__(self, func):
         func.__isabstractmethod__ = True
         super(abstractclassmethod, self).__init__(func)
-
-
-class WeakMethod(object):
-    """ An object which weakly binds a method with a lifetime bound
-    to the lifetime of the underlying object. 
-
-    Instances of WeakMethod are also weakref-able with a lifetime which 
-    is also bound to lifetime of the method owner.
-
-    If multiple WeakMethods are requested for the same equivalent method
-    object, the same WeakMethod will be returned. This behavior is the
-    same as the standard weakref semantics.
-
-    """
-    __slots__ = ('_im_func', '_im_selfref', '_im_class', '__weakref__')
-
-    #: An internal dict which maintains a strong reference to the
-    #: the underlying weak method wrappers until the owner of the 
-    #: method is destroyed.
-    _instances = {}
-
-    @staticmethod
-    def _remove(wr_item):
-        """ A private weakref callback which will release the internal 
-        strong references to the WeakMethod instances for the object.
-
-        """
-        del WeakMethod._instances[wr_item]
-
-    def __new__(cls, method):
-        """ Create a new WeakMethod instance or return an equivalent 
-        which already exists.
-
-        Parameters
-        ----------
-        method : A bound method object
-            The bound method which should be wrapped weakly.
-
-        """
-        im_selfref = ref(method.im_self)
-        items = WeakMethod._instances.get(im_selfref)
-        if items is None:
-            items = []
-            cbref = ref(method.im_self, WeakMethod._remove)
-            WeakMethod._instances[cbref] = items
-        im_func = method.im_func
-        im_class = method.im_class
-        for wm in items:
-            if wm._im_func is im_func and wm._im_class is im_class: 
-                return wm
-        self = super(WeakMethod, cls).__new__(cls)
-        self._im_func = im_func
-        self._im_selfref = im_selfref
-        self._im_class = im_class
-        items.append(self)
-        return self
-
-    def __call__(self, *args, **kwargs):
-        """ Invoke the wrapped method by reconstructing the bound
-        method from its components.
-
-        If the underlying instance object has been destroyed, this
-        method will return None.
-
-        Parameters
-        ----------
-        *args, **kwargs
-            The positional and keyword arguments to pass to the method.
-
-        """
-        im_self = self._im_selfref()
-        if im_self is None:
-            return
-        method = MethodType(self._im_func, im_self, self._im_class)
-        return method(*args, **kwargs)
-
-
-# Use the faster version of WeakMethod if it's available
-try:
-    from enaml.extensions.weakmethod import WeakMethod
-except ImportError:
-    pass
 
 
 class LoopbackContext(object):
@@ -180,10 +95,10 @@ class LoopbackContext(object):
 
 
 class LoopbackGuard(object):
-    """ A guard object used by objects to protect against loopback 
+    """ A guard object used by objects to protect against loopback
     conditions while updating attributes on the component.
 
-    Instances of this class are callable and return a guarding 
+    Instances of this class are callable and return a guarding
     context manager for the provided lock items.
 
     """
@@ -235,8 +150,8 @@ class LoopbackGuard(object):
         this method directly.
 
         It is safe to call this method multiple times for the same
-        item, provided it is paired with an equivalent number of 
-        calls to release(...). The guard will be released when 
+        item, provided it is paired with an equivalent number of
+        calls to release(...). The guard will be released when
         the acquired count on the item reaches zeros.
 
         Parameters
@@ -257,8 +172,8 @@ class LoopbackGuard(object):
         this method directly.
 
         It is safe to call this method multiple times for the same
-        item, provided it is paired with an equivalent number of 
-        calls to acquire(...). The guard will be released when 
+        item, provided it is paired with an equivalent number of
+        calls to acquire(...). The guard will be released when
         the acquired count on the item reaches zeros.
 
         Parameters
