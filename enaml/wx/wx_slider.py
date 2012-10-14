@@ -10,9 +10,9 @@ from .wx_constraints_widget import WxConstraintsWidget
 
 #: Horizontal tick mapping
 _TICK_POSITION_MAP = {
-    'top': wx.SL_TOP | wx.SL_AUTOTICKS, 
+    'top': wx.SL_TOP | wx.SL_AUTOTICKS,
     'bottom': wx.SL_BOTTOM | wx.SL_AUTOTICKS,
-    'left': wx.SL_LEFT | wx.SL_AUTOTICKS, 
+    'left': wx.SL_LEFT | wx.SL_AUTOTICKS,
     'right': wx.SL_RIGHT | wx.SL_AUTOTICKS,
     'both': wx.SL_BOTH | wx.SL_AUTOTICKS,
 }
@@ -87,7 +87,7 @@ class wxProperSlider(wx.Slider):
         self.Bind(wx.EVT_SCROLL, self.OnScroll)
 
     def OnScroll(self, event):
-        """ An event handler which handles all scroll events. 
+        """ An event handler which handles all scroll events.
 
         This handler determines whether or not a slider event sould be
         emitted for the scroll changed, based on whether tracking is
@@ -99,7 +99,7 @@ class wxProperSlider(wx.Slider):
         # We never emit on the _end_event since that is windows-only
         if evt_type == self._end_evt:
             return
-        
+
         if self._tracking:
             if evt_type != self._release_evt:
                 emit = True
@@ -107,7 +107,7 @@ class wxProperSlider(wx.Slider):
                 emit = False
         else:
             emit = evt_type != self._tracking_evt
-        
+
         if emit:
             evt = wxSliderEvent()
             wx.PostEvent(self, evt)
@@ -222,12 +222,12 @@ class WxSlider(WxConstraintsWidget):
 
         """
         self.set_tracking(content['tracking'])
-    
+
     #--------------------------------------------------------------------------
-    # Signal Handlers
+    # Event Handlers
     #--------------------------------------------------------------------------
     def on_value_changed(self, event):
-        """ Send the 'value_changed' action to the Enaml widget when the 
+        """ Send the 'value_changed' action to the Enaml widget when the
         slider value has changed.
 
         """

@@ -9,7 +9,7 @@ from .wx_constraints_widget import WxConstraintsWidget
 
 class WxComboBox(WxConstraintsWidget):
     """ A Wx implementation of an Enaml ComboBox.
-    
+
     """
     #--------------------------------------------------------------------------
     # Setup Methods
@@ -22,7 +22,7 @@ class WxComboBox(WxConstraintsWidget):
 
     def create(self, tree):
         """ Create and initialize the combo box control.
-        
+
         """
         super(WxComboBox, self).create(tree)
         self.set_items(tree['items'])
@@ -45,7 +45,7 @@ class WxComboBox(WxConstraintsWidget):
         self.set_items(content['items'])
 
     #--------------------------------------------------------------------------
-    # Signal Handlers
+    # Event Handlers
     #--------------------------------------------------------------------------
     def on_index_changed(self, event):
         """ The signal handler for the index changed signal.
