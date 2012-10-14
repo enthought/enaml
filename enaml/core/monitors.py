@@ -7,24 +7,25 @@ from weakref import ref
 
 from traits.api import HasTraits, Disallow
 
+from enaml.signaling import Signal
+
 from .byteplay import (
-    CALL_FUNCTION, ROT_THREE, LOAD_CONST, LOAD_ATTR, ROT_TWO, BUILD_TUPLE, 
+    CALL_FUNCTION, ROT_THREE, LOAD_CONST, LOAD_ATTR, ROT_TWO, BUILD_TUPLE,
     UNPACK_SEQUENCE, POP_TOP, DUP_TOP,
 )
-from .signaling import Signal
 
 
 #------------------------------------------------------------------------------
 # Abstract Monitor
 #------------------------------------------------------------------------------
 class AbstractMonitor(object):
-    """ An abstract base class which defines the api for implementing 
-    an expression monitor. 
+    """ An abstract base class which defines the api for implementing
+    an expression monitor.
 
     An expression Monitor is responsible for generating bytecode which
     will be inserted into a Python expression and which inspects the
     Python stack during the evaluation to determine if it is appropriate
-    to attach some form of notifier to the constiuents. If a notifier is 
+    to attach some form of notifier to the constiuents. If a notifier is
     warranted, it should make the appropriate connections to emit the
     expression_changed signal when the expression has changed.
 
@@ -36,14 +37,14 @@ class AbstractMonitor(object):
 
     @abstractmethod
     def get_insertion_code(self, code_list):
-        """ Generates the byteplay code operations to be inserted into 
+        """ Generates the byteplay code operations to be inserted into
         the expression code object in order to monitor execution.
 
         Parameters
         ----------
         code_list : list of (op_code, op_arg)
             The list of byteplay code operations for the expression.
-            If no code need be generated, an empty list should be 
+            If no code need be generated, an empty list should be
             returned.
 
         Returns
@@ -55,7 +56,7 @@ class AbstractMonitor(object):
 
         Notes
         -----
-        The generated instertion code *must* have a net-zero effect on 
+        The generated instertion code *must* have a net-zero effect on
         the Python stack. This means that the inserted code should leave
         the stack exactly the way it found it. If this is not maintained,
         then random exceptions and/or crashes *will* result.
@@ -65,7 +66,7 @@ class AbstractMonitor(object):
 
     @abstractmethod
     def reset(self):
-        """ Unhook any previously connected notifiers. This method is 
+        """ Unhook any previously connected notifiers. This method is
         called by the owner expression when notifiers should be removed.
 
         """
@@ -76,15 +77,15 @@ class AbstractMonitor(object):
 # Abstract Attribute Monitor
 #------------------------------------------------------------------------------
 class AbstractAttributeMonitor(AbstractMonitor):
-    """ An abstract monitor which monitors the expression evaluation for 
-    attribute access and calls a method with the object and attribute 
+    """ An abstract monitor which monitors the expression evaluation for
+    attribute access and calls a method with the object and attribute
     which is being accessed.
-    
+
     """
     def get_insertion_code(self, code_list):
-        """ Generates the byteplay code operations to be inserted into 
+        """ Generates the byteplay code operations to be inserted into
         the expression code object to monitor attribute accesses. When
-        an attribute access occurs, the 'monitor_attribute' method will 
+        an attribute access occurs, the 'monitor_attribute' method will
         be called with the object and attribute name as arguments.
 
         """
@@ -94,7 +95,7 @@ class AbstractAttributeMonitor(AbstractMonitor):
             this = selfref()
             if this is not None:
                 this.monitor_attribute(obj, attr)
-        
+
         # The list of code segments that will be inserted into the
         # new bytecode for the expression.
         insertion_code = []
@@ -122,35 +123,35 @@ class AbstractAttributeMonitor(AbstractMonitor):
 
     @abstractmethod
     def monitor_attribute(self, obj, attr):
-        """ Hooks up any necessary monitors for the given object and 
-        attribute. 
+        """ Hooks up any necessary monitors for the given object and
+        attribute.
 
         Parameters
         ----------
         obj : object
             The object on which the attribute access is being performed.
-        
+
         attr : string
             The name of the attribute which is being accessed on the
             object.
-        
+
         """
         raise NotImplementedError
 
-    
+
 #------------------------------------------------------------------------------
 # Abstract Call Monitor
 #------------------------------------------------------------------------------
 class AbstractCallMonitor(AbstractMonitor):
-    """ An abstract monitor which monitors the expression evaluation for 
+    """ An abstract monitor which monitors the expression evaluation for
     function calls and calls a method with the object and arguments which
     are being called.
-    
+
     """
     def get_insertion_code(self, code_list):
-        """ Generates the byteplay code operations to be inserted into 
+        """ Generates the byteplay code operations to be inserted into
         the expression code object to monitor function calls. When an
-        attribute access occurs, the 'monitor_function' method will be 
+        attribute access occurs, the 'monitor_function' method will be
         called with the object, args, and kwargs.
 
         """
@@ -163,12 +164,12 @@ class AbstractCallMonitor(AbstractMonitor):
                 args = arg_tuple[:nargs]
                 kwargs = dict(zip(arg_tuple[nargs::2], arg_tuple[nargs+1::2]))
                 this.monitor_function(func_obj, args, kwargs)
-            # The UNPACK_SEQUENCE op_codes which will unpack these 
+            # The UNPACK_SEQUENCE op_codes which will unpack these
             # return values will unpack things onto the stack in the
             # reverse of how they are provided. So, we pre-reverse them
             # so they come out in the right order.
             return (tuple(reversed(arg_tuple)), func_obj)
-                
+
         # The list of code segments that will be inserted into the
         # new bytecode for the expression.
         insertion_code = []
@@ -178,18 +179,18 @@ class AbstractCallMonitor(AbstractMonitor):
             # is performed. The arguments on the stack are packed into
             # tuple. The code binder is then pushed onto the stack and
             # rotated under the func_obj and arg_tuple. The arg spec
-            # is then loaded and the code binder is invoked. The return 
-            # value of the code binder is the original func_obj and 
-            # arg_tuple. This return tuple is unpacked, and then the 
-            # arg_tuple is unpacked and the function call proceeds as 
+            # is then loaded and the code binder is invoked. The return
+            # value of the code binder is the original func_obj and
+            # arg_tuple. This return tuple is unpacked, and then the
+            # arg_tuple is unpacked and the function call proceeds as
             # normal.
             if op == CALL_FUNCTION:
-                # This computes the number of objects on the stack 
+                # This computes the number of objects on the stack
                 # between TOS and the object being called. Only the
                 # last 16bits of the op_arg are signifcant. The lowest
                 # 8 are the number of positional args on the stack,
                 # the upper 8 is the number of kwargs. For kwargs, the
-                # number of items on the stack is twice this number 
+                # number of items on the stack is twice this number
                 # since the values on the stack alternate name, value.
                 n_stack_args = (op_arg & 0xFF) + 2 * ((op_arg >> 8) & 0xFF)
                 code = [
@@ -202,11 +203,11 @@ class AbstractCallMonitor(AbstractMonitor):
                     (UNPACK_SEQUENCE, n_stack_args),
                 ]
                 insertion_code.append((idx, code))
-            
+
             # TODO - CALL_FUNCTION_VAR, CALL_FUNCTION_KW, CALL_FUNCTION_VAR_KW
 
         return insertion_code
-    
+
     @abstractmethod
     def monitor_function(self, func_obj, args, kwargs):
         """ Hooks up any necessary monitors for the given function object
@@ -216,13 +217,13 @@ class AbstractCallMonitor(AbstractMonitor):
         ----------
         func_obj : callable object
             The function-like object which is being called.
-        
+
         args : tuple
             The arguments being passed to the function.
 
         kwargs : dict
             The keyword arguments being passed to the function.
-        
+
         """
         raise NotImplementedError
 
@@ -231,7 +232,7 @@ class AbstractCallMonitor(AbstractMonitor):
 # Trait Notification Handler
 #------------------------------------------------------------------------------
 class _TraitNotificationHandler(object):
-    """ A thin class which makes it easier to manage the lifetime of 
+    """ A thin class which makes it easier to manage the lifetime of
     a trait notifier.
 
     """
@@ -246,7 +247,7 @@ class _TraitNotificationHandler(object):
 
         obj : HasTraits
             The HasTraits instance on which we are attaching a listener.
-        
+
         attr : string
             The trait attribute on the object to which we should listen.
 
@@ -276,7 +277,7 @@ class TraitHandlerMixin(object):
         super(TraitHandlerMixin, self).__init__(*args, **kwargs)
         # A dictionary which holds the notification handlers. A key
         # in the dictionary is an (obj_id, attr) tuple and the value
-        # is the notification handler for that pair. The object id 
+        # is the notification handler for that pair. The object id
         # is used to avoid ref cycles and potential hashing issues.
         self._handlers = {}
 
@@ -288,8 +289,8 @@ class TraitHandlerMixin(object):
         self._handlers.clear()
 
     def do_binding(self, obj, attr):
-        """ Hooks up a notifier to the object attribute pair if the 
-        object is a HasTraits instance and the attribute refers to 
+        """ Hooks up a notifier to the object attribute pair if the
+        object is a HasTraits instance and the attribute refers to
         a valid trait on the object.
 
         """
@@ -300,10 +301,10 @@ class TraitHandlerMixin(object):
         key = (id(obj), attr)
         if key in handlers:
             return
-        
+
         if isinstance(obj, HasTraits):
             # Only hook up a notifier if the attribute access refers to
-            # a proper trait. We check for Disallow trait types since 
+            # a proper trait. We check for Disallow trait types since
             # those can be returned by instances of HasStrictTraits
             trait = obj.trait(attr)
             if trait is not None and trait.trait_type is not Disallow:
@@ -321,17 +322,17 @@ class TraitAttributeMonitor(TraitHandlerMixin, AbstractAttributeMonitor):
     """
     def monitor_attribute(self, obj, attr):
         """ Hooks up any necessary trait change notifiers for the given
-        object and attribute. 
+        object and attribute.
 
         Parameters
         ----------
         obj : object
             The object on which the attribute access is being performed.
-        
+
         attr : string
             The name of the attribute which is being accessed on the
             object.
-        
+
         """
         self.do_binding(obj, attr)
 
@@ -355,21 +356,21 @@ class TraitGetattrMonitor(TraitHandlerMixin, AbstractCallMonitor):
             The function-like object which is being called. If this is
             not the builtin getattr, or if the call spec is invalid for
             getattr, this method is a no-op.
-        
+
         args : tuple
             The arguments being passed to the function.
 
         kwargs : dict
             The keyword arguments being passed to the function.
-        
+
         """
         n_args = len(args)
         if func_obj is not getattr or n_args < 2 or n_args > 3 or kwargs:
             return
-        
+
         obj, attr = args[0], args[1]
         if not isinstance(attr, basestring):
             return
-        
+
         self.do_binding(obj, attr)
 
