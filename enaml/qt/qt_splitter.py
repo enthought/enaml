@@ -5,7 +5,7 @@
 import sys
 
 from .qt.QtCore import Qt, QEvent, Signal
-from .qt.QtGui import QSplitter
+from .qt.QtGui import QSplitter, QSplitterHandle, QVBoxLayout, QFrame
 from .qt_constraints_widget import QtConstraintsWidget
 from .qt_split_item import QtSplitItem
 
@@ -14,6 +14,27 @@ _ORIENTATION_MAP = {
     'horizontal': Qt.Horizontal,
     'vertical': Qt.Vertical,
 }
+
+
+class QWinSplitterHandle(QSplitterHandle):
+    """ A custom QSplitterHandle which is used on win32 platforms.
+
+    The native Windows style draws the splitter handle the same color as
+    the widget background, which makes it invisible for most cases. This
+    subclass overlays a raised line on the splitter to provide a little
+    bit of visual feedback.
+
+    """
+    def __init__(self, orientation, parent=None):
+        super(QWinSplitterHandle, self).__init__(orientation, parent)
+        self._frame = frame = QFrame(self)
+        s = QFrame.VLine if orientation == Qt.Horizontal else QFrame.HLine
+        frame.setFrameStyle(s | QFrame.Raised)
+        l = QVBoxLayout()
+        l.addWidget(frame)
+        l.setSpacing(0)
+        l.setContentsMargins(0, 0, 0, 0)
+        self.setLayout(l)
 
 
 class QCustomSplitter(QSplitter):
@@ -28,6 +49,18 @@ class QCustomSplitter(QSplitter):
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
+    def createHandle(self):
+        """ A reimplemented virtual method to create splitter handles.
+
+        On win32 platforms, this will return a custom QSplitterHandle
+        which works around an issue with handle not drawing nicely. On
+        all other platforms, a normal QSplitterHandler widget.
+
+        """
+        if sys.platform == 'win32':
+            return QWinSplitterHandle(self.orientation(), self)
+        return QSplitterHandle(self.orientation(), self)
+
     def event(self, event):
         """ A custom event handler which handles LayoutRequest events.
 
@@ -80,11 +113,11 @@ class QtSplitter(QtConstraintsWidget):
         # generates WM_MOUSEMOVE messages which have a higher priority.
         # These messages (dragging the bar) generate size events in Qt
         # which are delivered immediately. This means that if handling
-        # the resize event from the drag takes too long (> ~800us) then 
+        # the resize event from the drag takes too long (> ~800us) then
         # another size event will arrive before the paint event, since
         # the new WM_MOUSEMOVE will be processed before the WM_PAINT.
-        # So on Windows, the `splitterMoved` signal, which is emitted 
-        # on every drag, is connected to a handler which will force a 
+        # So on Windows, the `splitterMoved` signal, which is emitted
+        # on every drag, is connected to a handler which will force a
         # repaint if opaque resize is turned on. Since paint event are
         # collapsed, the effect of this is to restore the order of event
         # processing.
@@ -123,7 +156,7 @@ class QtSplitter(QtConstraintsWidget):
             widget.repaint()
 
     #--------------------------------------------------------------------------
-    # Message Handler Methods 
+    # Message Handler Methods
     #--------------------------------------------------------------------------
     def on_action_set_orientation(self, content):
         """ Handle the 'set_orientation' action from the Enaml widget.
@@ -138,7 +171,7 @@ class QtSplitter(QtConstraintsWidget):
         self.set_live_drag(content['live_drag'])
 
     #--------------------------------------------------------------------------
-    # Widget Update Methods 
+    # Widget Update Methods
     #--------------------------------------------------------------------------
     def set_orientation(self, orientation):
         """ Update the orientation of the QSplitter.
@@ -156,7 +189,7 @@ class QtSplitter(QtConstraintsWidget):
     # def set_preferred_sizes(self, sizes):
     #     """ Set the preferred sizes for the children.
 
-    #     For sizes not supplied by the user, either via None values or 
+    #     For sizes not supplied by the user, either via None values or
     #     a list which is too short, the current size for that element
     #     will be used in its place.
 
