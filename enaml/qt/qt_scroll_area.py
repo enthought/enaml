@@ -95,6 +95,9 @@ class QtScrollArea(QtConstraintsWidget):
     """ A Qt implementation of an Enaml ScrollArea.
 
     """
+    #: A private cache of the old size hint for the scroll area.
+    _old_hint = None
+
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
@@ -144,7 +147,10 @@ class QtScrollArea(QtConstraintsWidget):
         """ Handle the `layoutRequested` signal from the QScrollArea.
 
         """
-        self.size_hint_updated()
+        new_hint = self.widget().sizeHint()
+        if new_hint != self._old_hint:
+            self._old_hint = new_hint
+            self.size_hint_updated()
 
     #--------------------------------------------------------------------------
     # Overrides
@@ -176,7 +182,7 @@ class QtScrollArea(QtConstraintsWidget):
         self.set_vertical_policy(content['vertical_policy'])
 
     def on_action_set_widget_resizable(self, content):
-        """ Handle the 'set_widget_resizable' action from the Enaml 
+        """ Handle the 'set_widget_resizable' action from the Enaml
         widget.
 
         """
