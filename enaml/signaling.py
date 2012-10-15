@@ -293,3 +293,10 @@ class BoundSignal(object):
             slot = CallableRef(WeakMethod(slot))
         _Disconnector(self._signal, self._objref)(slot)
 
+
+# Use the faster version of signaling if it's available.
+try:
+    from enaml.extensions.signaling import Signal, BoundSignal, _Disconnector
+except ImportError:
+    pass
+
