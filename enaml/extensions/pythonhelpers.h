@@ -7,7 +7,13 @@
 #include <structmember.h>
 
 
-namespace PythonHelpers 
+#ifndef Py_RETURN_NOTIMPLEMENTED
+#define Py_RETURN_NOTIMPLEMENTED \
+    return Py_INCREF(Py_NotImplemented), Py_NotImplemented
+#endif
+
+
+namespace PythonHelpers
 {
 
 /*-----------------------------------------------------------------------------
@@ -21,13 +27,33 @@ py_type_fail( const char* message )
 }
 
 
-PyObject* 
+PyObject*
 py_expected_type_fail( PyObject* pyobj, const char* expected_type )
 {
     PyErr_Format(
         PyExc_TypeError,
         "Expected object of type `%s`. Got object of type `%s` instead.",
         expected_type, pyobj->ob_type->tp_name
+    );
+    return 0;
+}
+
+
+PyObject*
+py_attr_fail( const char* message )
+{
+    PyErr_SetString( PyExc_AttributeError, message );
+    return 0;
+}
+
+
+PyObject*
+py_no_attr_fail( PyObject* pyobj, const char* attr )
+{
+    PyErr_Format(
+        PyExc_AttributeError,
+        "'%s' object has no attribute '%s'",
+        pyobj->ob_type->tp_name, attr
     );
     return 0;
 }
@@ -89,19 +115,82 @@ public:
         return 0;
     }
 
-    bool is_None()
+    bool is_None() const
     {
         return m_pyobj == Py_None;
     }
 
-    bool is_True()
+    bool is_True() const
     {
         return m_pyobj == Py_True;
     }
 
-    bool is_False()
+    bool is_False() const
     {
         return m_pyobj == Py_False;
+    }
+
+    bool load_dict( PyObjectPtr& out, bool forcecreate=false )
+    {
+        PyObject** dict = _PyObject_GetDictPtr( m_pyobj );
+        if( !dict )
+            return false;
+        if( forcecreate && !*dict )
+            *dict = PyDict_New();
+        out = PyObjectPtr( *dict, true );
+        return true;
+    }
+
+    int richcompare( PyObjectPtr& other, int opid, bool clear_err=true )
+    {
+        int r = PyObject_RichCompareBool( m_pyobj, other.m_pyobj, opid );
+        if( r == 1 )
+            return true;
+        if( r == 0 )
+            return false;
+        if( clear_err && PyErr_Occurred() )
+            PyErr_Clear();
+        return false;
+    }
+
+    bool has_attr( PyObjectPtr& attr )
+    {
+        return PyObject_HasAttr( m_pyobj, attr.get() );
+    }
+
+    bool has_attr( const char* attr )
+    {
+        return PyObject_HasAttrString( m_pyobj, attr );
+    }
+
+    bool has_attr( std::string& attr )
+    {
+        return has_attr( attr.c_str() );
+    }
+
+    PyObjectPtr get_attr( PyObjectPtr& attr )
+    {
+        return PyObjectPtr( PyObject_GetAttr( m_pyobj, attr.get() ) );
+    }
+
+    PyObjectPtr get_attr( const char* attr )
+    {
+        return PyObjectPtr( PyObject_GetAttrString( m_pyobj, attr ) );
+    }
+
+    PyObjectPtr get_attr( std::string& attr )
+    {
+        return get_attr( attr.c_str() );
+    }
+
+    PyObjectPtr operator()( PyObjectPtr& args ) const
+    {
+        return PyObjectPtr( PyObject_Call( m_pyobj, args.get(), 0 ) );
+    }
+
+    PyObjectPtr operator()( PyObjectPtr& args, PyObjectPtr& kwargs ) const
+    {
+        return PyObjectPtr( PyObject_Call( m_pyobj, args.get(), kwargs.get() ) );
     }
 
     operator void*() const
@@ -136,8 +225,18 @@ public:
 
     PyTuplePtr( const PyObjectPtr& objptr ) : PyObjectPtr( objptr ) { }
 
-    PyTuplePtr( PyObject* pytuple, bool takeref=false ) : 
+    PyTuplePtr( PyObject* pytuple, bool takeref=false ) :
         PyObjectPtr( pytuple, takeref ) { }
+
+    bool check()
+    {
+        return PyTuple_Check( m_pyobj );
+    }
+
+    bool check_exact()
+    {
+        return PyTuple_CheckExact( m_pyobj );
+    }
 
     Py_ssize_t size() const
     {
@@ -147,6 +246,15 @@ public:
     PyObjectPtr get_item( Py_ssize_t index ) const
     {
         return PyObjectPtr( PyTuple_GET_ITEM( m_pyobj, index ), true );
+    }
+
+    void set_item( Py_ssize_t index, PyObjectPtr& item )
+    {
+        PyObject* new_item = item.get();
+        PyObject* old_item = PyTuple_GET_ITEM( m_pyobj, index );
+        PyTuple_SET_ITEM( m_pyobj, index, new_item );
+        Py_XINCREF( new_item );
+        Py_XDECREF( old_item );
     }
 
 };
@@ -163,8 +271,18 @@ public:
 
     PyListPtr( const PyObjectPtr& objptr ) : PyObjectPtr( objptr ) { }
 
-    PyListPtr( PyObject* pylist, bool takeref=false ) : 
+    PyListPtr( PyObject* pylist, bool takeref=false ) :
         PyObjectPtr( pylist, takeref ) { }
+
+    bool check()
+    {
+        return PyList_Check( m_pyobj );
+    }
+
+    bool check_exact()
+    {
+        return PyList_CheckExact( m_pyobj );
+    }
 
     Py_ssize_t size() const
     {
@@ -176,11 +294,39 @@ public:
         return PyObjectPtr( PyList_GET_ITEM( m_pyobj, index ), true );
     }
 
+    void set_item( Py_ssize_t index, PyObjectPtr& item )
+    {
+        PyObject* new_item = item.get();
+        PyObject* old_item = PyList_GET_ITEM( m_pyobj, index );
+        PyList_SET_ITEM( m_pyobj, index, new_item );
+        Py_XINCREF( new_item );
+        Py_XDECREF( old_item );
+    }
+
+    bool del_item( Py_ssize_t index ) const
+    {
+        if( PySequence_DelItem( m_pyobj, index ) == -1 )
+            return false;
+        return true;
+    }
+
     bool append( PyObjectPtr& pyobj ) const
     {
         if( PyList_Append( m_pyobj, pyobj.get() ) == 0 )
             return true;
         return false;
+    }
+
+    Py_ssize_t index( PyObjectPtr& item ) const
+    {
+        Py_ssize_t maxidx = size();
+        for( Py_ssize_t idx = 0; idx < maxidx; idx++ )
+        {
+            PyObjectPtr other( get_item( idx ) );
+            if( item.richcompare( other, Py_EQ ) )
+                return idx;
+        }
+        return -1;
     }
 
 };
@@ -197,8 +343,18 @@ public:
 
     PyDictPtr( const PyObjectPtr& objptr ) : PyObjectPtr( objptr ) { }
 
-    PyDictPtr( PyObject* pydict, bool takeref=false ) : 
+    PyDictPtr( PyObject* pydict, bool takeref=false ) :
         PyObjectPtr( pydict, takeref ) { }
+
+    bool check()
+    {
+        return PyDict_Check( m_pyobj );
+    }
+
+    bool check_exact()
+    {
+        return PyDict_CheckExact( m_pyobj );
+    }
 
     Py_ssize_t size() const
     {
@@ -258,19 +414,6 @@ public:
         return del_item( key.c_str() );
     }
 
-    template<typename _FACTORY_T>
-    PyObjectPtr setdefault( PyObjectPtr& key ) const
-    {
-        PyObjectPtr value( get_item( key ) );
-        if( !value )
-        {
-            value = _FACTORY_T()();
-            if( !set_item( key, value ) )
-                value = 0;
-        }
-        return value;
-    }
-
 };
 
 
@@ -285,8 +428,13 @@ public:
 
     PyMethodPtr( const PyObjectPtr& objptr ) : PyObjectPtr( objptr ) { }
 
-    PyMethodPtr( PyObject* pymethod, bool takeref=false ) : 
+    PyMethodPtr( PyObject* pymethod, bool takeref=false ) :
         PyObjectPtr( pymethod, takeref ) { }
+
+    bool check()
+    {
+        return PyMethod_Check( m_pyobj );
+    }
 
     PyObjectPtr get_self() const
     {
@@ -303,11 +451,6 @@ public:
         return PyObjectPtr( PyMethod_GET_CLASS( m_pyobj ), true );
     }
 
-    PyObjectPtr operator()( PyTuplePtr& args, PyDictPtr& kwargs ) const
-    {
-        return PyObjectPtr( PyObject_Call( m_pyobj, args.get(), kwargs.get() ) );
-    }
-
 };
 
 
@@ -322,10 +465,20 @@ public:
 
     PyWeakrefPtr( const PyObjectPtr& objptr ) : PyObjectPtr( objptr ) { }
 
-    PyWeakrefPtr( PyObject* pyweakref, bool takeref=true ) : 
+    PyWeakrefPtr( PyObject* pyweakref, bool takeref=true ) :
         PyObjectPtr( pyweakref, takeref ) { }
 
-    PyObjectPtr operator()() const
+    bool check()
+    {
+        return PyWeakref_CheckRef( m_pyobj );
+    }
+
+    bool check_exact()
+    {
+        return PyWeakref_CheckRefExact( m_pyobj );
+    }
+
+    PyObjectPtr get_object() const
     {
         return PyObjectPtr( PyWeakref_GET_OBJECT( m_pyobj ), true );
     }
