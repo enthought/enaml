@@ -15,7 +15,7 @@ from .qt_object import QtObject
 
 
 class QtApplication(Application):
-    """ A concrete implementation of an Enaml application. 
+    """ A concrete implementation of an Enaml application.
 
     A QtApplication uses the Qt toolkit to implement an Enaml UI that
     runs in the local process.
@@ -90,14 +90,14 @@ class QtApplication(Application):
             The callable object to execute at some point in the future.
 
         *args, **kwargs
-            Any additional positional and keyword arguments to pass to 
+            Any additional positional and keyword arguments to pass to
             the callback.
 
         """
         self._qcaller.deferredCall(callback, *args, **kwargs)
 
     def timed_call(self, ms, callback, *args, **kwargs):
-        """ Invoke a callable on the main event loop thread at a 
+        """ Invoke a callable on the main event loop thread at a
         specified time in the future.
 
         Parameters
@@ -105,12 +105,12 @@ class QtApplication(Application):
         ms : int
             The time to delay, in milliseconds, before executing the
             callable.
-            
+
         callback : callable
             The callable object to execute at some point in the future.
 
         *args, **kwargs
-            Any additional positional and keyword arguments to pass to 
+            Any additional positional and keyword arguments to pass to
             the callback.
 
         """
@@ -154,7 +154,7 @@ class QtApplication(Application):
     def dispatch_qt_action(self, object_id, action, content):
         """ Dispatch an action to a qt object with the given id.
 
-        This method can be called when a message from an Enaml widget 
+        This method can be called when a message from an Enaml widget
         is received and needs to be delivered to the Qt client widget.
 
         Parameters
@@ -171,7 +171,7 @@ class QtApplication(Application):
         """
         obj = QtObject.lookup_object(object_id)
         if obj is None:
-            # XXX disable for now to avoid annoying lifetime error 
+            # XXX disable for now to avoid annoying lifetime error
             # messages
             #print action, content
             #raise ValueError('Invalid object id')
