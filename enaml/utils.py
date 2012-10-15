@@ -224,3 +224,7 @@ def log_exceptions(func):
         return res
     return closure
 
+
+# Backwards comatibility import. WeakMethod was moved to its own module.
+from .weakmethod import WeakMethod
+
