@@ -28,13 +28,20 @@ class QWinSplitterHandle(QSplitterHandle):
     def __init__(self, orientation, parent=None):
         super(QWinSplitterHandle, self).__init__(orientation, parent)
         self._frame = frame = QFrame(self)
-        s = QFrame.VLine if orientation == Qt.Horizontal else QFrame.HLine
-        frame.setFrameStyle(s | QFrame.Raised)
         l = QVBoxLayout()
         l.addWidget(frame)
         l.setSpacing(0)
         l.setContentsMargins(0, 0, 0, 0)
         self.setLayout(l)
+        self.updateFrame()
+
+    def updateFrame(self):
+        """ Update the internal frame style for the current orientation.
+
+        """
+        orientation = self.orientation()
+        s = QFrame.VLine if orientation == Qt.Horizontal else QFrame.HLine
+        self._frame.setFrameStyle(s | QFrame.Raised)
 
 
 class QCustomSplitter(QSplitter):
@@ -60,6 +67,22 @@ class QCustomSplitter(QSplitter):
         if sys.platform == 'win32':
             return QWinSplitterHandle(self.orientation(), self)
         return QSplitterHandle(self.orientation(), self)
+
+    def setOrientation(self, orientation):
+        """ Set the orientation of the splitter.
+
+        This overriden method will call the `updateFrame` method of the
+        splitter handles when running on win32 platforms. On any other
+        platform, this method simply calls the superclass method.
+
+        """
+        old = self.orientation()
+        if old != orientation:
+            super(QCustomSplitter, self).setOrientation(orientation)
+            if sys.platform == 'win32':
+                for idx in xrange(self.count()):
+                    handle = self.handle(idx)
+                    handle.updateFrame()
 
     def event(self, event):
         """ A custom event handler which handles LayoutRequest events.
@@ -163,6 +186,7 @@ class QtSplitter(QtConstraintsWidget):
 
         """
         self.set_orientation(content['orientation'])
+        self.size_hint_updated()
 
     def on_action_set_live_drag(self, content):
         """ Handle the 'set_live_drag' action from the Enaml widget.
