@@ -13,6 +13,16 @@ if os.environ.get('BUILD_ENAML_EXTENSIONS'):
             ['enaml/extensions/weakmethod.cpp'], 
             language='c++',
         ),
+        Extension(
+            'enaml.extensions.callableref', 
+            ['enaml/extensions/callableref.cpp'], 
+            language='c++',
+        ),
+        Extension(
+           'enaml.extensions.signaling',
+           ['enaml/extensions/signaling.cpp'],
+           language='c++',
+        ),
     ]
 else:
     ext_modules = []
