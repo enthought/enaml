@@ -12,7 +12,7 @@ from .lexer import syntax_error, EnamlLexer, ParsingError
 
 
 #------------------------------------------------------------------------------
-# Parser Setup 
+# Parser Setup
 #------------------------------------------------------------------------------
 # Lexer tokens which need to be exposed to the parser
 tokens = EnamlLexer.tokens
@@ -92,7 +92,7 @@ except AttributeError:
         return call
 
 
-# The disallowed ast node types for ast.Store contexts and 
+# The disallowed ast node types for ast.Store contexts and
 # the associated message tag for error reporting.
 context_disallowed = {
     ast.Lambda: 'lambda',
@@ -150,7 +150,7 @@ augassign_table = {
 
 
 class FakeToken(object):
-    """ A fake token used to store the lexer before calling the 
+    """ A fake token used to store the lexer before calling the
     syntax error functions.
 
     """
@@ -161,7 +161,7 @@ class FakeToken(object):
 
 def translate_operator(op):
     """ Converts a symbolic operator into a string of the form
-    __operator_<name>__ where <name> is result of translating the 
+    __operator_<name>__ where <name> is result of translating the
     symbolic operator using the operator_table.
 
     """
@@ -197,13 +197,13 @@ def set_context(node, ctx, p):
     else:
         msg = 'unexpected expression in assignment %d (line %d)'
         raise SystemError(msg % (node_type.__name__, node.lineno))
-    
+
     if err_msg:
         m = 'assign to' if ctx == Store else 'delete'
         msg = "can't %s %s" % (m, err_msg)
         tok = FakeToken(p.lexer.lexer, p.lexer.lexer.lineno - 1)
         syntax_error(msg, tok)
-            
+
     if items is not None:
         for item in items:
             set_context(item, ctx, p)
@@ -244,24 +244,24 @@ def build_attr_declaration(kw, name, type_node, default, lineno, p):
     kw : string
         The keyword used in the declaration. A syntax error is raised if
         this is not 'attr' or 'event'.
-    
+
     name : string
         The name of the attribute or event being declared.
-    
+
     type_node : enaml_ast.Python node or None
-        The expression node for the type being declared, or None if not 
+        The expression node for the type being declared, or None if not
         using a type.
-    
+
     default : AttributeBinding or None
         The default attribute binding or None if not supply the default.
 
     lineno : int
         The line number of the declaration.
-    
+
     p : Yacc Production
-        The Ply object passed to the parser rule. This is used to 
+        The Ply object passed to the parser rule. This is used to
         extract the filename for syntax error reporting.
-    
+
     Returns
     -------
     result : AttributeDeclaration
@@ -334,7 +334,7 @@ def p_enaml2(p):
 
 def p_enaml_module(p):
     ''' enaml_module : enaml_module_body '''
-    # Separate the Python statements from the declarations and 
+    # Separate the Python statements from the declarations and
     # collect them into their node
     python_nodes = []
     body_nodes = []
@@ -376,16 +376,49 @@ def p_enaml_module_item1(p):
 #------------------------------------------------------------------------------
 # Declaration
 #------------------------------------------------------------------------------
-def p_declaration(p):
+def p_declaration1(p):
     ''' declaration : ENAMLDEF NAME LPAR NAME RPAR COLON declaration_body '''
     lineno = p.lineno(1)
-    name = p[2]
     doc, idn, items = p[7]
     base = ast.Expression(body=ast.Name(id=p[4], ctx=Load))
     base.lineno = lineno
     ast.fix_missing_locations(base)
     base_node = enaml_ast.Python(base, lineno)
-    p[0] = enaml_ast.Declaration(name, base_node, idn, doc, items, lineno)
+    p[0] = enaml_ast.Declaration(p[2], base_node, idn, doc, items, lineno)
+
+
+def p_declaration2(p):
+    ''' declaration : ENAMLDEF NAME LPAR NAME RPAR COLON PASS NEWLINE '''
+    lineno = p.lineno(1)
+    base = ast.Expression(body=ast.Name(id=p[4], ctx=Load))
+    base.lineno = lineno
+    ast.fix_missing_locations(base)
+    base_node = enaml_ast.Python(base, lineno)
+    p[0] = enaml_ast.Declaration(p[2], base_node, None, '', [], lineno)
+
+
+def p_declaration3(p):
+    ''' declaration : ENAMLDEF NAME LPAR NAME RPAR COLON NAME COLON declaration_body '''
+    lineno = p.lineno(1)
+    doc, idn, items = p[9]
+    if idn is not None:
+        msg = 'multiple identifiers declared'
+        syntax_error(msg, FakeToken(p.lexer.lexer, lineno))
+    base = ast.Expression(body=ast.Name(id=p[4], ctx=Load))
+    base.lineno = lineno
+    ast.fix_missing_locations(base)
+    base_node = enaml_ast.Python(base, lineno)
+    p[0] = enaml_ast.Declaration(p[2], base_node, p[7], doc, items, lineno)
+
+
+def p_declaration4(p):
+    ''' declaration : ENAMLDEF NAME LPAR NAME RPAR COLON NAME COLON PASS NEWLINE '''
+    lineno = p.lineno(1)
+    base = ast.Expression(body=ast.Name(id=p[4], ctx=Load))
+    base.lineno = lineno
+    ast.fix_missing_locations(base)
+    base_node = enaml_ast.Python(base, lineno)
+    p[0] = enaml_ast.Declaration(p[2], base_node, p[7], '', [], lineno)
 
 
 def p_declaration_body1(p):
@@ -466,7 +499,7 @@ def p_attribute_declaration1(p):
 
 def p_attribute_declaration2(p):
     ''' attribute_declaration : NAME NAME COLON NAME NEWLINE '''
-    lineno = p.lineno(1) 
+    lineno = p.lineno(1)
     expr = ast.Expression(body=ast.Name(id=p[4], ctx=Load))
     expr.lineno = lineno
     ast.fix_missing_locations(expr)
@@ -509,10 +542,39 @@ def p_identifier(p):
 #------------------------------------------------------------------------------
 # Instantiation
 #------------------------------------------------------------------------------
-def p_instantiation(p):
+def p_instantiation1(p):
     ''' instantiation : NAME COLON instantiation_body '''
     identifier, items = p[3]
     p[0] = enaml_ast.Instantiation(p[1], identifier, items, p.lineno(1))
+
+
+def p_instantiation2(p):
+    ''' instantiation : NAME COLON attribute_binding '''
+    p[0] = enaml_ast.Instantiation(p[1], None, [p[3]], p.lineno(1))
+
+
+def p_instantiation3(p):
+    ''' instantiation : NAME COLON PASS NEWLINE '''
+    p[0] = enaml_ast.Instantiation(p[1], None, [], p.lineno(1))
+
+
+def p_instantiation4(p):
+    ''' instantiation : NAME COLON NAME COLON instantiation_body '''
+    identifier, items = p[5]
+    if identifier is not None:
+        msg = 'multiple identifiers declared'
+        syntax_error(msg, FakeToken(p.lexer.lexer, p.lineno(1)))
+    p[0] = enaml_ast.Instantiation(p[1], p[3], items, p.lineno(1))
+
+
+def p_instantiation5(p):
+    ''' instantiation : NAME COLON NAME COLON attribute_binding '''
+    p[0] = enaml_ast.Instantiation(p[1], p[3], [p[5]], p.lineno(1))
+
+
+def p_instantiation6(p):
+    ''' instantiation : NAME COLON NAME COLON PASS NEWLINE '''
+    p[0] = enaml_ast.Instantiation(p[1], p[3], [], p.lineno(1))
 
 
 def p_instantiation_body1(p):
@@ -572,7 +634,7 @@ def p_binding1(p):
                 | COLONEQUAL test NEWLINE
                 | LEFTSHIFT test NEWLINE
                 | RIGHTSHIFT test NEWLINE '''
-    lineno = p.lineno(1) 
+    lineno = p.lineno(1)
     operator = translate_operator(p[1])
     expr = ast.Expression(body=p[2])
     expr.lineno = lineno
@@ -695,7 +757,7 @@ def p_small_stmt1(p):
                    | del_stmt
                    | pass_stmt
                    | flow_stmt
-                   | import_stmt 
+                   | import_stmt
                    | global_stmt
                    | exec_stmt
                    | assert_stmt '''
@@ -811,7 +873,7 @@ def p_pass_stmt(p):
 
 def p_flow_stmt(p):
     ''' flow_stmt : break_stmt
-                  | continue_stmt 
+                  | continue_stmt
                   | return_stmt
                   | raise_stmt
                   | yield_stmt '''
@@ -995,7 +1057,7 @@ def p_expr_stmt2(p):
 def p_expr_stmt3(p):
     ''' expr_stmt : testlist equal_list '''
     all_items = [p[1]] + p[2]
-    targets = map(ast_for_testlist, all_items) 
+    targets = map(ast_for_testlist, all_items)
     value = targets.pop()
     for item in targets:
         if type(item) == ast.Yield:
@@ -1004,7 +1066,7 @@ def p_expr_stmt3(p):
         set_context(item, Store, p)
     assg = ast.Assign()
     assg.targets = targets
-    assg.value = value   
+    assg.value = value
     p[0] = assg
 
 
@@ -1069,12 +1131,12 @@ def p_testlist_list2(p):
 
 
 def p_compound_stmt(p):
-    ''' compound_stmt : if_stmt 
+    ''' compound_stmt : if_stmt
                       | while_stmt
                       | for_stmt
                       | try_stmt
                       | with_stmt
-                      | funcdef 
+                      | funcdef
                       | classdef
                       | decorated '''
     p[0] = p[1]
@@ -1151,7 +1213,7 @@ def p_elif_stmt(p):
     ast.fix_missing_locations(if_stmt)
     p[0] = if_stmt
 
- 
+
 def p_else_stmt(p):
     ''' else_stmt : ELSE COLON suite '''
     p[0] = p[3]
@@ -1306,7 +1368,7 @@ def p_except_clause2(p):
 
 
 def p_except_clause3(p):
-    ''' except_clause : EXCEPT test AS test COLON suite 
+    ''' except_clause : EXCEPT test AS test COLON suite
                       | EXCEPT test COMMA test COLON suite '''
     excpt = ast.ExceptHandler()
     excpt.type = p[2]
@@ -1492,7 +1554,7 @@ def p_import_stmt1(p):
     ''' import_stmt : import_name '''
     p[0] = p[1]
 
-    
+
 def p_import_stmt2(p):
     ''' import_stmt : import_from '''
     p[0] = p[1]
@@ -1767,52 +1829,52 @@ def p_comparison_list2(p):
 
 
 def p_comp_op1(p):
-    ''' comp_op : LESS ''' 
+    ''' comp_op : LESS '''
     p[0] = ast.Lt()
 
 
 def p_comp_op2(p):
-    ''' comp_op : GREATER ''' 
+    ''' comp_op : GREATER '''
     p[0] = ast.Gt()
 
 
 def p_comp_op3(p):
-    ''' comp_op : EQEQUAL ''' 
+    ''' comp_op : EQEQUAL '''
     p[0] = ast.Eq()
 
 
 def p_comp_op4(p):
-    ''' comp_op : GREATEREQUAL ''' 
+    ''' comp_op : GREATEREQUAL '''
     p[0] = ast.GtE()
 
 
 def p_comp_op5(p):
-    ''' comp_op : LESSEQUAL ''' 
+    ''' comp_op : LESSEQUAL '''
     p[0] = ast.LtE()
 
 
 def p_comp_op6(p):
-    ''' comp_op : NOTEQUAL ''' 
+    ''' comp_op : NOTEQUAL '''
     p[0] = ast.NotEq()
 
 
 def p_comp_op7(p):
-    ''' comp_op : IN ''' 
+    ''' comp_op : IN '''
     p[0] = ast.In()
 
 
 def p_comp_op8(p):
-    ''' comp_op : NOT IN ''' 
+    ''' comp_op : NOT IN '''
     p[0] = ast.NotIn()
 
 
 def p_comp_op9(p):
-    ''' comp_op : IS ''' 
+    ''' comp_op : IS '''
     p[0] = ast.Is()
 
 
 def p_comp_op10(p):
-    ''' comp_op : IS NOT ''' 
+    ''' comp_op : IS NOT '''
     p[0] = ast.IsNot()
 
 
@@ -1850,7 +1912,7 @@ def p_xor_expr2(p):
     for op, right in p[2]:
         node = ast.BinOp(left=node, op=op, right=right)
     p[0] = node
-    
+
 
 def p_xor_expr_list1(p):
     ''' xor_expr_list : CIRCUMFLEX and_expr '''
@@ -2096,7 +2158,7 @@ def p_atom3(p):
     elif isinstance(info, GeneratorInfo):
         node = ast.GeneratorExp(elt=info.elt, generators=info.generators)
     else:
-        # We have a test node by itself in parenthesis controlling 
+        # We have a test node by itself in parenthesis controlling
         # order of operations, so just return the node.
         node = info
     p[0] = node
@@ -2117,7 +2179,7 @@ def p_atom5(p):
     else:
         raise TypeError('Unexpected node for listmaker: %s' % info)
     p[0] = node
-    
+
 
 def p_atom6(p):
     ''' atom : LBRACE RBRACE '''
@@ -2173,7 +2235,7 @@ def p_atom_string_list2(p):
 
 
 # We dont' allow the backqoute atom from standard Python. Just
-# use repr(...). This simplifies the grammar since we don't have 
+# use repr(...). This simplifies the grammar since we don't have
 # to define a testlist1.
 
 
@@ -2259,8 +2321,8 @@ def p_trailer1(p):
 def p_trailer2(p):
     ''' trailer : LPAR arglist RPAR '''
     args = p[2]
-    p[0] = ast.Call(args=args.args, keywords=args.keywords, 
-                    starargs=args.starargs, kwargs=args.kwargs) 
+    p[0] = ast.Call(args=args.args, keywords=args.keywords,
+                    starargs=args.starargs, kwargs=args.kwargs)
 
 
 def p_trailer3(p):
@@ -2271,7 +2333,7 @@ def p_trailer3(p):
 def p_trailer4(p):
     ''' trailer : DOT NAME '''
     p[0] = ast.Attribute(attr=p[2], ctx=Load)
-    
+
 
 def p_subscriptlist1(p):
     ''' subscriptlist : subscript '''
@@ -2610,7 +2672,7 @@ def p_arglist13(p):
             tok = FakeToken(p.lexer.lexer, p.lineno(1))
             syntax_error(msg, tok)
     p[0] = Arguments(keywords=keywords, starargs=p[2])
-        
+
 
 def p_arglist14(p):
     ''' arglist : STAR test COMMA arglist_list argument COMMA DOUBLESTAR test '''
@@ -2640,7 +2702,7 @@ def p_argument1(p):
 
 def p_argument2(p):
     ''' argument : test comp_for '''
-    p[0] = ast.GeneratorExp(elt=p[1], generators=p[2]) 
+    p[0] = ast.GeneratorExp(elt=p[1], generators=p[2])
 
 
 # This keyword argument needs to be asserted as a NAME, but using NAME
@@ -3074,17 +3136,17 @@ def p_fplist4(p):
 def p_fplist_list1(p):
     ''' fplist_list : COMMA fpdef '''
     p[0] = [p[2]]
-  
+
 
 def p_fplist_list2(p):
     ''' fplist_list : fplist_list COMMA fpdef '''
     p[0] = p[1] + [p[3]]
 
- 
+
 def p_error(t):
     msg = 'invalid syntax'
     lexer = t.lexer
-    # Ply has a weird thing where sometimes we get the EnamlLexer and 
+    # Ply has a weird thing where sometimes we get the EnamlLexer and
     # other times we get the Ply lexer
     if isinstance(lexer, EnamlLexer):
         lexer = lexer.lexer
@@ -3106,7 +3168,7 @@ _parser = yacc.yacc(
 def parse(enaml_source, filename='Enaml'):
     # All errors in the parsing and lexing rules are raised as a custom
     # ParsingError. This exception object can be called to return the
-    # actual exception instance that should be raised. This is done 
+    # actual exception instance that should be raised. This is done
     # because Ply enters an error recovery mode whenever a SyntaxError
     # is raised from within a rule. We don't want error recovery, we'd
     # rather just fail immediately. So this mechanism allows us to
