@@ -9,7 +9,7 @@ import re
 from weakref import WeakValueDictionary
 
 from traits.api import (
-    HasStrictTraits, ReadOnly, Str, Property, Tuple, Instance, Bool, Disallow, 
+    HasStrictTraits, ReadOnly, Str, Property, Tuple, Instance, Bool, Disallow,
     cached_property
 )
 
@@ -60,7 +60,7 @@ class ChildEventContext(object):
     """ A context manager which will emit a child event on an Object.
 
     This context manager will automatically emit the child event on an
-    Object when the context is exited. This context manager can also be 
+    Object when the context is exited. This context manager can also be
     safetly nested; only the top-level context for a given object will
     emit the child event, effectively collapsing all transient state.
 
@@ -123,12 +123,12 @@ class Object(HasStrictTraits):
     tree walking and searching support.
 
     """
-    #: The class level object id generator. This can be overridden 
+    #: The class level object id generator. This can be overridden
     #: in a subclass to provide custom unique messenger identifiers.
     object_id_generator = id_generator('o_')
 
     #: A read-only attribute which holds the object id. By default, the
-    #: id is *not* a uuid. This choice was made to reduce the size of 
+    #: id is *not* a uuid. This choice was made to reduce the size of
     #: messages sent across the wire. For most messages, using a uuid
     #: would significantly increase their size. If true uniqueness is
     #: required, then the object id generator can be overridden.
@@ -139,8 +139,8 @@ class Object(HasStrictTraits):
     widget_id = Property(fget=lambda self: self.object_id)
 
     #: An optional name to give to this object to assist in finding it
-    #: in the tree. See e.g. the 'find' method. Note that there is no 
-    #: uniqueness guarantee associated with the object `name`. It is 
+    #: in the tree. See e.g. the 'find' method. Note that there is no
+    #: uniqueness guarantee associated with the object `name`. It is
     #: left up to the developer to choose an appropriate name.
     name = Str
 
@@ -158,7 +158,7 @@ class Object(HasStrictTraits):
     _parent = Instance('Object')
 
     #: A read-only property which returns the tuple of children for
-    #: this object.The list of children for this object. 
+    #: this object.The list of children for this object.
     children = Property(depends_on='_children')
 
     #: The internal storage for the tuple of children for this object.
@@ -175,7 +175,7 @@ class Object(HasStrictTraits):
     #: their parent's snapshot. Objects are snappable by default.
     snappable = Bool(True)
 
-    #: An event fired during the initialization pass. This allows any 
+    #: An event fired during the initialization pass. This allows any
     #: listeners to perform work which depends on the object tree being
     #: in a complete and stable state.
     init = EnamlEvent
@@ -191,7 +191,7 @@ class Object(HasStrictTraits):
     #: attribute to a null pipe interface.
     action_pipe = Instance(ActionPipeInterface)
 
-    #: A loopback guard which can be used to prevent a signal loopback 
+    #: A loopback guard which can be used to prevent a signal loopback
     #: cycle when setting attributes from within an action handler.
     loopback_guard = Instance(LoopbackGuard, ())
 
@@ -242,13 +242,13 @@ class Object(HasStrictTraits):
         Parameters
         ----------
         parent : Object or None, optional
-            The Object instance which is the parent of this object, or 
+            The Object instance which is the parent of this object, or
             None if the object has no parent. Defaults to None.
 
         """
         super(Object, self).__init__()
         self.set_parent(parent)
-    
+
     #--------------------------------------------------------------------------
     # Property Methods
     #--------------------------------------------------------------------------
@@ -306,29 +306,31 @@ class Object(HasStrictTraits):
         only be called once. Multiple calls to this method are ignored.
 
         """
-        # Note: The order of operations here is highly important. Be
-        # sure the side effects are understood before changing it.
+        # Note: the body of this method is highly sensitive to order.
+        # be sure all side effects are understood before modifying.
         if self.initialized:
             return
-        # Refresh the pipe before initializing the children, so they 
+
+        # Refresh the pipe before initializing the children, so that
         # when they do the same, the only have to hop 1 time at max.
         self.inherit_pipe()
         for child in self._children:
             child.initialize()
+
         # This event may cause arbitrary side effects. A good example is
         # the Include type, which will possibly add a bunch of children
         # to its parent as a result. This means a bunch of trait change
-        # notification may be run. Only set the initialized flag to True
-        # and bind the change handlers after the even has quieted down.
+        # notification may be run. Only bind the change handlers after
+        # the event has quieted down.
         self.init()
-        self.initialized = True
         self.bind()
+        self.initialized = True
 
     def bind(self):
         """ A method called at the end of initialization.
 
         The intent of this method is to allow a widget to hook up its
-        trait change notification handlers which will be responsible 
+        trait change notification handlers which will be responsible
         for sending actions. The default implementation is a no-op.
 
         """
@@ -337,9 +339,9 @@ class Object(HasStrictTraits):
     def destroy(self):
         """ Explicity destroy this object and all of its children.
 
-        This method sends the 'destroy' action to the client, sets the 
+        This method sends the 'destroy' action to the client, sets the
         `intialized` flag to False, sets the parent reference to None,
-        sets the children to an empty tuple, then destroys the children. 
+        sets the children to an empty tuple, then destroys the children.
 
         """
         self.send_action('destroy', {})
@@ -354,7 +356,7 @@ class Object(HasStrictTraits):
         self._children = ()
         for child in children:
             child.destroy()
-    
+
     #--------------------------------------------------------------------------
     # Parenting Methods
     #--------------------------------------------------------------------------
@@ -395,14 +397,14 @@ class Object(HasStrictTraits):
         if parent is not None:
             with ChildEventContext(parent):
                 parent._children += (self,)
-                # Initialize the child from within the child event 
-                # context since it may have arbitrary side effects, 
+                # Initialize the child from within the child event
+                # context since it may have arbitrary side effects,
                 # including adding more children to its parent.
                 if parent.initialized:
                     self.initialize()
 
     def insert_children(self, before, insert):
-        """ Insert children into this object at the given location. 
+        """ Insert children into this object at the given location.
 
         The children will be automatically parented and inserted into
         the object's children. If any children are already children of
@@ -431,7 +433,7 @@ class Object(HasStrictTraits):
             raise ValueError('Cannot use `self` as Object child')
         if len(insert_list) != len(insert_set):
             raise ValueError('Cannot have duplicate children')
-        
+
         new = []
         added = False
         for child in self._children:
@@ -459,8 +461,8 @@ class Object(HasStrictTraits):
         with ChildEventContext(self):
             self._children = tuple(new)
             if self.initialized:
-                # Initialize the children from within the child event 
-                # context since they may have arbitrary side effects, 
+                # Initialize the children from within the child event
+                # context since they may have arbitrary side effects,
                 # including adding more children to their parent.
                 for child in insert_list:
                     child.initialize()
@@ -468,7 +470,7 @@ class Object(HasStrictTraits):
     def remove_children(self, remove, destroy=True):
         """ Remove the given children from this object.
 
-        The given children will be removed from the children of this 
+        The given children will be removed from the children of this
         object and their parent will be set to None. Any given child
         which is not a child of this object will be ignored.
 
@@ -587,8 +589,8 @@ class Object(HasStrictTraits):
         with ChildEventContext(self):
             self._children = tuple(new)
             if self.initialized:
-                # Initialize the children from within the child event 
-                # context since they may have arbitrary side effects, 
+                # Initialize the children from within the child event
+                # context since they may have arbitrary side effects,
                 # including adding more children to their parent.
                 for child in insert_list:
                     child.initialize()
@@ -599,8 +601,8 @@ class Object(HasStrictTraits):
     def handle_action(self, action, content):
         """ Handle the specified action with the given content.
 
-        This method tells the object to handle a specific action. The 
-        default behavior of the method is to dispatch the action to a 
+        This method tells the object to handle a specific action. The
+        default behavior of the method is to dispatch the action to a
         handler method named `on_action_<action>` where <action> is
         substituted with the provided action.
 
@@ -625,7 +627,7 @@ class Object(HasStrictTraits):
         """ Inherit the action pipe from the ancestors of this object.
 
         If the `action_pipe` for this instance is None, then this method
-        will walk the tree of ancestors until it finds an object with a 
+        will walk the tree of ancestors until it finds an object with a
         non null `action_pipe`. That pipe will then be used as the pipe
         for this object.
 
@@ -704,7 +706,7 @@ class Object(HasStrictTraits):
         return [child for child in self._children if child.snappable]
 
     def publish_attributes(self, *attrs):
-        """ A convenience method provided for subclasses to use to 
+        """ A convenience method provided for subclasses to use to
         publish changes to attributes as actions performed.
 
         The action name is created by prefixing 'set_' to the name of
@@ -718,7 +720,7 @@ class Object(HasStrictTraits):
         ----------
         *attrs
             The string names of the attributes to publish to the client.
-            The values of these attributes should be JSON serializable. 
+            The values of these attributes should be JSON serializable.
             More complex values should use their own dispatch handlers.
 
         """
@@ -748,7 +750,7 @@ class Object(HasStrictTraits):
         This event handler is called by a `ChildEventContext` when the
         children have changed for this object. It is called *after* the
         trait change notifications for `children` have fired and *after*
-        all child initialization is complete. It is only called if the 
+        all child initialization is complete. It is only called if the
         object is fully initialized. The default implementation of this
         method sends a `children_changed` action to the client. If a
         subclass requires more control, it may reimplement this method.
@@ -775,10 +777,10 @@ class Object(HasStrictTraits):
 
         The action will be created by prefixing the attribute name with
         'set_'. The value of the attribute should be JSON serializable.
-        The content of the message will have the name of the attribute 
-        as a key, and the value as its value. If the loopback guard is 
+        The content of the message will have the name of the attribute
+        as a key, and the value as its value. If the loopback guard is
         held for the given name, then the signal will not be emitted,
-        helping to avoid potential loopbacks. 
+        helping to avoid potential loopbacks.
 
         """
         if name not in self.loopback_guard:
@@ -811,9 +813,9 @@ class Object(HasStrictTraits):
             item = stack_pop()
             yield item
             stack_extend(item._children)
-    
+
     def traverse_ancestors(self, root=None):
-        """ Yields all of the objects in the tree, from the parent of 
+        """ Yields all of the objects in the tree, from the parent of
         this object up, stopping at the given root.
 
         Parameters
@@ -839,7 +841,7 @@ class Object(HasStrictTraits):
         ----------
         name : string
             The name of the object for which to search.
-        
+
         regex : bool, optional
             Whether the given name is a regex string which should be
             matched against the names of children instead of tested
@@ -848,9 +850,9 @@ class Object(HasStrictTraits):
         Returns
         -------
         result : Object or None
-            The first object found with the given name, or None if 
+            The first object found with the given name, or None if
             no object is found.
-        
+
         """
         if regex:
             rgx = re.compile(name)
@@ -873,7 +875,7 @@ class Object(HasStrictTraits):
         ----------
         name : string
             The name of the objects for which to search.
-        
+
         regex : bool, optional
             Whether the given name is a regex string which should be
             matched against the names of objects instead of testing
@@ -884,7 +886,7 @@ class Object(HasStrictTraits):
         result : list of Object
             The list of objects found with the given name, or an empty
             list if no objects are found.
-        
+
         """
         if regex:
             rgx = re.compile(name)
@@ -901,9 +903,9 @@ class Object(HasStrictTraits):
     #--------------------------------------------------------------------------
     # Overrides
     #--------------------------------------------------------------------------
-    #: The HasTraits class defines a class attribute 'set' which is a 
+    #: The HasTraits class defines a class attribute 'set' which is a
     #: deprecated alias for the 'trait_set' method. The problem is that
-    #: having that as an attribute interferes with the ability of Enaml 
+    #: having that as an attribute interferes with the ability of Enaml
     #: expressions to resolve the builtin 'set', since dynamic scoping
     #: takes precedence over builtins. This resets those ill-effects.
     set = Disallow
@@ -919,11 +921,11 @@ class Object(HasStrictTraits):
 
         This reimplemented method will make sure that context is reset
         appropriately for each call. This is required for Enaml since
-        bound attributes are lazily computed and set quitely on the fly. 
+        bound attributes are lazily computed and set quitely on the fly.
 
         A ticket has been filed against traits trunk:
             https://github.com/enthought/traits/issues/26
-            
+
         """
         last = self._trait_change_notify_flag
         self._trait_change_notify_flag = trait_change_notify
