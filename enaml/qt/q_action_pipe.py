@@ -35,6 +35,42 @@ class QActionPipe(QObject):
 
         """
         self.actionPosted.emit(object_id, action, content)
+    
+    def encode_binary(self, bytes):
+        """ Encode arbitrary binary data appropriately for this pipe.
+
+        This is an in-process pipe, so this is a no-op.
+
+        Parameters
+        ----------
+        bytes : bytes
+            The raw bytes to encode.
+
+        Returns
+        -------
+        encoded_bytes : bytes
+            The encoded bytes, suitable for transmission over the pipe.
+            
+        """
+        return bytes
+
+    def decode_binary(self, encoded_bytes):
+        """ Decode arbitrary binary data appropriately for this pipe.
+
+        This is an in-process pipe, so this is a no-op.
+
+        Parameters
+        ----------
+        encoded_bytes : str
+            The raw bytes to decode.
+
+        Returns
+        -------
+        bytes : bytes
+            The decoded bytes, suitable for use.
+            
+        """
+        return encoded_bytes
 
 
 ActionPipeInterface.register(QActionPipe)
