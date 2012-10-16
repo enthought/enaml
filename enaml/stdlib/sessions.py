@@ -17,34 +17,34 @@ from enaml.session_factory import SessionFactory
 class SimpleSession(Session):
     """ A concrete Session class that receives a callable, positional,
     and keyword arguments and creates the associated view(s).
-    
+
     """
     def init(self, sess_callable, *args, **kwargs):
         """ Initialize the session with the callable and arguments.
-        
+
         """
         self.sess_callable = sess_callable
         self.args = args
         self.kwargs = kwargs
-    
+
     def on_open(self):
         """ Create the view from the callable
-        
+
         """
         return self.sess_callable(*self.args, **self.kwargs)
 
 
 def simple_session(sess_name, sess_descr, sess_callable, *args, **kwargs):
     """ Creates a SessionFactory instance for a callable.
-    
+
     This creates a SessionFactory instance which will create instances
     of SimpleSession when prompted by the application.
-    
+
     Parameters
     ----------
     sess_name : str
         A unique, human-friendly name for the session.
-    
+
     sess_descr : str
         A brief description of the session.
 
@@ -64,21 +64,21 @@ def simple_session(sess_name, sess_descr, sess_callable, *args, **kwargs):
 
 def view_factory(sess_name=None, sess_descr=None):
     """ A decorator that creates a session factory from a callable.
-     
+
     This can be used in the following ways:
-        
+
         @view_factory
         def view(...):
             ...
             return View(...)
-        
+
         @view_factory('my-views', 'This is several views')
         def views(...):
             ...
             return [View1(...), View2(...)]
-    
+
         simple = view_factory(Main)
-    
+
     """
     def wrapper(func, _name, _descr):
         if _name is None:
@@ -118,9 +118,9 @@ def show_simple_view(view, toolkit='qt', description=''):
         from enaml.qt.qt_application import QtApplication
         app = QtApplication([simple_session('main', description, f)])
     # the wx refactor is not yet complete
-    #elif toolkit == 'wx':
-    #    from enaml.wx.wx_application import WxApplication
-    #    app = WxApplication([simple_session('main', description, f)])
+    elif toolkit == 'wx':
+        from enaml.wx.wx_application import WxApplication
+        app = WxApplication([simple_session('main', description, f)])
     else:
         raise ValueError('Unknown toolkit `%s`' % toolkit)
     app.start_session('main')
