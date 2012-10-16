@@ -4,7 +4,9 @@
 #------------------------------------------------------------------------------
 from traits.api import Property, cached_property
 
+from .container import Container
 from .dock_pane import DockPane
+from .include import Include
 from .menu_bar import MenuBar
 from .tool_bar import ToolBar
 from .window import Window
@@ -17,7 +19,7 @@ class MainWindow(Window):
     functionality beyond frame decoration. A MainWindow may optionally
     contain a MenuBar, any number of ToolBars, a StatusBar, and any
     number of DockPanes. Like Window, a MainWindow can have at most one
-    central Container widget, which will be expanded to fit into the 
+    central Container widget, which will be expanded to fit into the
     available space.
 
     """
@@ -34,6 +36,40 @@ class MainWindow(Window):
     # status_bar = Property(depends_on='children')
 
     #--------------------------------------------------------------------------
+    # Overrides
+    #--------------------------------------------------------------------------
+    def validate_children(self, children):
+        """ A child validator for a MainWindow.
+
+        This validator ensures that the type and number of children for
+        the MainWindow is appropriate.
+
+        """
+        types = (DockPane, ToolBar, Container, MenuBar, Include)
+        got_menu = False
+        got_widget = False
+        isinst = isinstance
+        for child in children:
+            if not isinst(child, types):
+                name = type(self).__name__
+                msg = ('The children of a component of type `%s` must be '
+                       'instances of `MenuBar`, `ToolBar`, `DockPane`, '
+                       '`Container` or `Include`. Got object of type `%s` '
+                       'instead.')
+                raise ValueError(msg % (name, type(child).__name__))
+            if isinst(child, Container):
+                if got_widget:
+                    msg = '`%s` got multiple values for the central widget'
+                    raise ValueError(msg % type(self).__name__)
+                got_widget = True
+            elif isinst(child, MenuBar):
+                if got_menu:
+                    msg = '`%s` got multiple values for the menu bar'
+                    raise ValueError(msg % type(self).__name__)
+                got_menu = True
+        return children
+
+    #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
     @cached_property
@@ -43,7 +79,7 @@ class MainWindow(Window):
         Returns
         -------
         result : MenuBar or None
-            The menu bar for this main window, or None if one is not 
+            The menu bar for this main window, or None if one is not
             defined.
 
         """
