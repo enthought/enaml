@@ -12,8 +12,8 @@ class Include(Declarative):
     """ An object which dynamically inserts children into its parent.
 
     The Include object can be used to cleanly and easily insert objects
-    into the children of its parent. Object assigned to the `objects` 
-    list of the Include will be parented by the parent of the Include. 
+    into the children of its parent. Object assigned to the `objects`
+    list of the Include will be parented by the parent of the Include.
     By default, an Include is not snappable and therefore acts like a
     shadow object with no client widget representation.
 
@@ -25,9 +25,6 @@ class Include(Declarative):
     #: A boolean flag indicating whether to destroy the old objects that
     #: are removed from the parent. The default is True.
     destroy_old = Bool(True)
-
-    #: By default, an Include does not support children.
-    allow_children = False
 
     #: By default, an Include is not snappable. Since an Include simply
     #: manages the parenting of objects, there is no need for the client
@@ -91,4 +88,15 @@ class Include(Declarative):
         if parent is not None:
             old = event.removed
             parent.replace_children(old, self, self.objects, self.destroy_old)
+
+    #--------------------------------------------------------------------------
+    # Overrides
+    #--------------------------------------------------------------------------
+    def validate_children(self, children):
+        """ A children validator which rejects all children.
+
+        """
+        if children:
+            raise ValueError('Cannot add children to an Include')
+        return children
 
