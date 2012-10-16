@@ -170,6 +170,10 @@ class QtMainWindow(QtWindow):
             main_window.removeDockWidget(child.widget())
         elif isinstance(child, QtToolBar):
             main_window.removeToolBar(child.widget())
+        elif isinstance(child, QtContainer):
+            main_window.setCentralWidget(None)
+        elif isinstance(child, QtMenuBar):
+            main_window.setMenuBar(None)
 
     def child_added(self, child):
         """ Handle the child added event for a QtMainWindow.
