@@ -61,6 +61,23 @@ class wxToolBarContainer(wx.Panel):
             tool_bar.Reparent(self)
             self.GetSizer().Add(tool_bar, 0, wx.EXPAND)
 
+    def RemoveToolBar(self, tool_bar):
+        """ Remove a tool bar from the container.
+
+        If the tool bar already exists in this container, this will be
+        a no-op.
+
+        Parameters
+        ----------
+        tool_bar : wxToolBar
+            The wxToolBar instance to remove from the container.
+
+        """
+        tool_bars = self._tool_bars
+        if tool_bar in tool_bars:
+            tool_bars.remove(tool_bar)
+            self.GetSizer().Detach(tool_bar)
+
 
 class wxMainWindow(wx.Frame):
     """ A wx.Frame subclass which adds MainWindow functionality.
@@ -179,6 +196,7 @@ class wxMainWindow(wx.Frame):
         manager = self._manager
         old_widget = self._central_widget
         if old_widget:
+            old_widget.Hide()
             pane = manager.GetPane(old_widget)
             if pane.IsOk():
                 pane.Show(False)
@@ -225,9 +243,32 @@ class wxMainWindow(wx.Frame):
             manager.AddPane(bars, pane)
         pane = manager.GetPane(bars)
         bars.AddToolBar(tool_bar)
-        pane.MinSize(bars.GetEffectiveMinSize())
+        pane.MinSize(bars.GetBestSize())
         if not self._batch:
             manager.Update()
+
+    def RemoveToolBar(self, tool_bar):
+        """ Remove a tool bar from the main window.
+
+        If the tool bar already exists in the main window, calling this
+        method is effectively a no-op.
+
+        Parameters
+        ----------
+        tool_bar : wxToolBar
+            The wxToolBar instance to remove from the main window.
+
+        """
+        bars = self._tool_bars
+        if bars is not None:
+            bars.RemoveToolBar(tool_bar)
+            tool_bar.Hide()
+            manager = self._manager
+            pane = manager.GetPane(bars)
+            pane.MinSize(bars.GetBestSize())
+            if not self._batch:
+                manager.Update()
+                manager.Update() # 2 calls required, because Wx...
 
     def AddDockPane(self, dock_pane):
         """ Add a dock pane to the main window.
@@ -329,4 +370,66 @@ class WxMainWindow(WxWindow):
         #main_window.SetStatusBar(status)
 
         main_window.EndBatch()
+
+    #--------------------------------------------------------------------------
+    # Child Events
+    #--------------------------------------------------------------------------
+    def child_removed(self, child):
+        """ Handle the child removed event for a WxMainWindow.
+
+        """
+        main_window = self.widget()
+        if isinstance(child, WxDockPane):
+            main_window.RemoveDockPane(child.widget())
+        elif isinstance(child, WxToolBar):
+            main_window.RemoveToolBar(child.widget())
+        elif isinstance(child, WxContainer):
+            main_window.SetCentralWidget(None)
+        elif isinstance(child, WxMenuBar):
+            main_window.SetMenuBar(None)
+
+    def child_added(self, child):
+        """ Handle the child added event for a WxMainWindow.
+
+        """
+        # XXX there is quite a bit of duplicated code here. It would
+        # be nice to clean this up at some point.
+        main_window = self.widget()
+
+        # Add a child QtMenuBar. It's not known if the given child is
+        # the first QtMenuBar child in the list of children. So, the
+        # list is scanned and the first one found is set as the menu
+        # bar for the window.
+        if isinstance(child, WxMenuBar):
+            for child in self.children():
+                if isinstance(child, WxMenuBar):
+                    main_window.SetMenuBar(child.widget())
+                    break
+
+        # Add a child QtContainer. It's not known if the given child is
+        # the first QtContainer child in the list of children. So, the
+        # list is scanned and the first one found is set as the central
+        # widget for the window.
+        elif isinstance(child, WxContainer):
+            for child in self.children():
+                if isinstance(child, WxContainer):
+                    main_window.SetCentralWidget(child.widget())
+                    break
+
+        # Add a child QtToolBar. There are two hacks involved in adding
+        # a tool bar. The first is the same hack that is perfomed in the
+        # `init_layout` method for a floating tool bar. The second is
+        # specific to OSX. On the platform, adding a tool bar to main
+        # window which is already visible but does not have any current
+        # tool bars will cause the main window to be hidden. This will
+        # only occur the *first* time a tool bar is added to the window.
+        # The hack below is workaround which should be sufficient for
+        # most use cases. A bug should really be filed against Qt for
+        # this one, as it's reproducible outside of Enaml.
+        elif isinstance(child, WxToolBar):
+            main_window.AddToolBar(child.widget())
+
+        # Add a child QtDockPane.
+        elif isinstance(child, WxDockPane):
+            main_window.AddDockPane(child.widget())
 
