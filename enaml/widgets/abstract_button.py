@@ -8,12 +8,12 @@ from traits.api import Bool, Unicode, Tuple#, Instance
 
 from enaml.core.trait_types import EnamlEvent
 
-from .constraints_widget import ConstraintsWidget
+from .control import Control
 #from ..noncomponents.image.abstract_image import AbstractImage
 #from ..noncomponents.image import ImageFromFile
 
 
-class AbstractButton(ConstraintsWidget):
+class AbstractButton(Control):
     """ A base class which provides functionality common for several
     button-like widgets.
 
@@ -72,7 +72,7 @@ class AbstractButton(ConstraintsWidget):
     # Message Handling
     #--------------------------------------------------------------------------
     def on_action_clicked(self, content):
-        """ Handle the 'clicked' action from the UI widget. 
+        """ Handle the 'clicked' action from the UI widget.
 
         The content will contain the current checked state.
 
@@ -82,7 +82,7 @@ class AbstractButton(ConstraintsWidget):
         self.clicked(checked)
 
     def on_action_toggled(self, content):
-        """ Handle the 'toggled' action from the UI widget. 
+        """ Handle the 'toggled' action from the UI widget.
 
         The payload will contain the current checked state.
 

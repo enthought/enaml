@@ -9,7 +9,8 @@ from traits.api import (
 
 from enaml.core.trait_types import Bounded
 
-from .constraints_widget import ConstraintsWidget, PolicyEnum
+from .constraints_widget import PolicyEnum
+from .control import Control
 
 
 #: The slider attributes to proxy to clients
@@ -23,8 +24,8 @@ _SLIDER_ATTRS = [
 MAX_SLIDER_VALUE = (1 << 16) - 1
 
 
-class Slider(ConstraintsWidget):
-    """ A simple slider widget that can be used to select from a range 
+class Slider(Control):
+    """ A simple slider widget that can be used to select from a range
     of integral values.
 
     """
@@ -53,7 +54,7 @@ class Slider(ConstraintsWidget):
     value = Bounded(low='minimum', high='maximum')
 
     #: Defines the number of steps that the slider will move when the
-    #: user presses the arrow keys. The default is 1. An upper limit 
+    #: user presses the arrow keys. The default is 1. An upper limit
     #: may be imposed according the limits of the client widget.
     single_step = Range(low=1)
 
@@ -64,11 +65,11 @@ class Slider(ConstraintsWidget):
     page_step = Range(low=1, value=10)
 
     #: A TickPosition enum value indicating how to display the tick
-    #: marks. Note that the orientation takes precedence over the tick 
-    #: mark position and an incompatible tick position will be adapted 
+    #: marks. Note that the orientation takes precedence over the tick
+    #: mark position and an incompatible tick position will be adapted
     #: according to the current orientation. The default tick position
     #: is 'bottom'.
-    tick_position = Enum( 
+    tick_position = Enum(
         'bottom', ('no_ticks', 'left', 'right', 'top', 'bottom', 'both'),
     )
 
@@ -86,12 +87,12 @@ class Slider(ConstraintsWidget):
     #: If True, the value is updated while sliding. Otherwise, it is
     #: only updated when the slider is released. Defaults to True.
     tracking = Bool(True)
-    
-    #: Hug width is redefined as a property to be computed based on the 
+
+    #: Hug width is redefined as a property to be computed based on the
     #: orientation of the slider unless overridden by the user.
     hug_width = Property(PolicyEnum, depends_on=['_hug_width', 'orientation'])
 
-    #: Hug height is redefined as a property to be computed based on the 
+    #: Hug height is redefined as a property to be computed based on the
     #: orientation of the slider unless overridden by the user.
     hug_height = Property(PolicyEnum, depends_on=['_hug_height', 'orientation'])
 
@@ -127,7 +128,7 @@ class Slider(ConstraintsWidget):
     #--------------------------------------------------------------------------
     def on_action_value_changed(self, content):
         """ Handle the 'value_changed' action from the client widget.
-        
+
         The content will contain the 'value' of the slider.
 
         """
@@ -137,7 +138,7 @@ class Slider(ConstraintsWidget):
     # Property Methods
     #--------------------------------------------------------------------------
     def _get_hug_width(self):
-        """ The property getter for 'hug_width'. 
+        """ The property getter for 'hug_width'.
 
         Returns a computed hug value unless overridden by the user.
 
@@ -151,7 +152,7 @@ class Slider(ConstraintsWidget):
         return res
 
     def _get_hug_height(self):
-        """ The proper getter for 'hug_height'. 
+        """ The proper getter for 'hug_height'.
 
         Returns a computed hug value unless overridden by the user.
 
@@ -165,7 +166,7 @@ class Slider(ConstraintsWidget):
         return res
 
     def _set_hug_width(self, value):
-        """ The property setter for 'hug_width'. 
+        """ The property setter for 'hug_width'.
 
         Overrides the computed value.
 
@@ -173,7 +174,7 @@ class Slider(ConstraintsWidget):
         self._hug_width = value
 
     def _set_hug_height(self, value):
-        """ The property setter for 'hug_height'. 
+        """ The property setter for 'hug_height'.
 
         Overrides the computed value.
 
@@ -187,9 +188,9 @@ class Slider(ConstraintsWidget):
         return self._minimum
 
     def _set_minimum(self, value):
-        """ The property setter for the 'minimum' attribute. 
+        """ The property setter for the 'minimum' attribute.
 
-        This validates that the value is always smaller than 
+        This validates that the value is always smaller than
         :attr:`maximum`.
 
         """
@@ -209,7 +210,7 @@ class Slider(ConstraintsWidget):
         return self._maximum
 
     def _set_maximum(self, value):
-        """ The property setter for the 'maximum' attribute. 
+        """ The property setter for the 'maximum' attribute.
 
         This validates that the value is always larger than
         :attr:`minimum`.

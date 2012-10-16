@@ -4,10 +4,10 @@
 #------------------------------------------------------------------------------
 from traits.api import Unicode, Bool, Int
 
-from .constraints_widget import ConstraintsWidget
+from .control import Control
 
 
-class TextEditor(ConstraintsWidget):
+class TextEditor(Control):
     """ A simple control for displaying read-only text.
 
     """

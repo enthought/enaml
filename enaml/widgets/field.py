@@ -6,17 +6,17 @@ from traits.api import Bool, Int, Unicode, Enum, List, Instance
 
 from enaml.validation.validator import Validator
 
-from .constraints_widget import ConstraintsWidget
+from .control import Control
 
 
-class Field(ConstraintsWidget):
+class Field(Control):
     """ A single line editable text widget.
 
     """
     #: The unicode text to display in the field.
     text = Unicode
 
-    #: The mask to use for text input. 
+    #: The mask to use for text input.
     #: TODO - describe and implement this mask
     mask = Unicode
 
@@ -26,7 +26,7 @@ class Field(ConstraintsWidget):
     validator = Instance(Validator)
 
     #: The list of actions which should cause the client to submit its
-    #: text to the server for validation and update. The currently 
+    #: text to the server for validation and update. The currently
     #: supported values are 'lost_focus' and 'return_pressed'.
     submit_triggers = List(
         Enum('lost_focus', 'return_pressed'), ['lost_focus', 'return_pressed']
@@ -36,7 +36,7 @@ class Field(ConstraintsWidget):
     #: widget doesn't have focus. Defaults to the empty string.
     placeholder = Unicode
 
-    #: How to display the text in the field. Valid values are 'normal' 
+    #: How to display the text in the field. Valid values are 'normal'
     #: which displays the text as normal, 'password' which displays the
     #: text with an obscured character, and 'silent' which displays no
     #: text at all but still allows input.
@@ -49,7 +49,7 @@ class Field(ConstraintsWidget):
     #: Whether or not the field is read only. Defaults to False.
     read_only = Bool(False)
 
-    #: How strongly a component hugs it's contents' width. Fields ignore 
+    #: How strongly a component hugs it's contents' width. Fields ignore
     #: the width hug by default, so they expand freely in width.
     hug_width = 'ignore'
 

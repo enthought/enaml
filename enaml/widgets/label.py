@@ -4,10 +4,10 @@
 #------------------------------------------------------------------------------
 from traits.api import Unicode
 
-from .constraints_widget import ConstraintsWidget
+from .control import Control
 
 
-class Label(ConstraintsWidget):
+class Label(Control):
     """ A simple control for displaying read-only text.
 
     """

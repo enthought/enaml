@@ -4,20 +4,20 @@
 #------------------------------------------------------------------------------
 from traits.api import Str
 
-from .constraints_widget import ConstraintsWidget
+from .control import Control
 
 
-class Html(ConstraintsWidget):
+class Html(Control):
     """ An extremely simple widget for displaying HTML.
-    
+
     """
     #: The Html source code to be rendered.
     source = Str
-    
-    #: How strongly a component hugs it's contents' width. Html widgets 
+
+    #: How strongly a component hugs it's contents' width. Html widgets
     #: ignore the width hug by default, so they expand freely in width.
     hug_width = 'ignore'
-    
+
     #: How strongly a component hugs it's contents' height. Html widgets
     #: ignore the height hug by default, so they expand freely in height.
     hug_height = 'ignore'

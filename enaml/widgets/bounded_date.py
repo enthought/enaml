@@ -9,12 +9,12 @@ from traits.api import Date, Property, TraitError, on_trait_change
 
 from enaml.core.trait_types import Bounded
 
-from .constraints_widget import ConstraintsWidget
+from .control import Control
 
 
-class BoundedDate(ConstraintsWidget):
-    """ A base class for components which edit a Python datetime.date 
-    object bounded between minimum and maximum values. 
+class BoundedDate(Control):
+    """ A base class for components which edit a Python datetime.date
+    object bounded between minimum and maximum values.
 
     This class is not meant to be used directly.
 
@@ -34,7 +34,7 @@ class BoundedDate(ConstraintsWidget):
     _maximum = Date(py_date(7999, 12, 31))
 
     #: The currently selected date. Default is the current date. The
-    #: value is bounded between :attr:`minimum` and :attr:`maximum`. 
+    #: value is bounded between :attr:`minimum` and :attr:`maximum`.
     date = Bounded(Date(py_date.today()), low='minimum', high='maximum')
 
     #--------------------------------------------------------------------------
@@ -104,7 +104,7 @@ class BoundedDate(ConstraintsWidget):
         return self._minimum
 
     def _set_minimum(self, date):
-        """ Set the minimum date. Addtional checks are applied to make 
+        """ Set the minimum date. Addtional checks are applied to make
         sure that :attr:`minimum` < :attr:`maximum`
 
         """
@@ -122,7 +122,7 @@ class BoundedDate(ConstraintsWidget):
         return self._maximum
 
     def _set_maximum(self, date):
-        """ Set the maximum date. Addtional checks are applied to make 
+        """ Set the maximum date. Addtional checks are applied to make
         sure that :attr:`minimum` < :attr:`maximum`
 
         """
@@ -132,7 +132,7 @@ class BoundedDate(ConstraintsWidget):
             msg = msg.format(self.minimum, date)
             raise TraitError(msg)
         self._maximum = date
-    
+
     #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
