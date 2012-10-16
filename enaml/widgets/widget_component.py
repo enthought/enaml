@@ -14,7 +14,7 @@ SizeTuple = Tuple(Range(low=-1, value=-1), Range(low=-1, value=-1))
 
 #: The standard attributes to proxy for a widget component.
 _WIDGET_ATTRS = [
-    'enabled', 'visible', 'bgcolor', 'fgcolor', 'font', 'minimum_size', 
+    'enabled', 'visible', 'bgcolor', 'fgcolor', 'font', 'minimum_size',
     'maximum_size', 'show_focus_rect'
 ]
 
@@ -30,8 +30,8 @@ class WidgetComponent(Declarative):
     #: Whether or not the widget is visible.
     visible = Bool(True)
 
-    #: A flag indicating whether or not to show the focus rectangle for 
-    #: the given widget. This is not necessarily support by all widgets 
+    #: A flag indicating whether or not to show the focus rectangle for
+    #: the given widget. This is not necessarily support by all widgets
     #: on all clients. A value of None indicates to use the default as
     #: supplied by the client.
     show_focus_rect = Enum(None, True, False)
