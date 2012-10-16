@@ -88,7 +88,7 @@ class Action(Declarative):
     # Overrides
     #--------------------------------------------------------------------------
     def validate_children(self, children):
-        """ A children validator which rejects all children.
+        """ A child validator which rejects all children.
 
         """
         if children:
