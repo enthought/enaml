@@ -85,6 +85,17 @@ class Action(Declarative):
         self.publish_attributes(*attrs)
 
     #--------------------------------------------------------------------------
+    # Overrides
+    #--------------------------------------------------------------------------
+    def validate_children(self, children):
+        """ A children validator which rejects all children.
+
+        """
+        if children:
+            raise ValueError('Cannot add children to an `Action`')
+        return children
+
+    #--------------------------------------------------------------------------
     # Message Handling
     #--------------------------------------------------------------------------
     def on_action_triggered(self, content):
