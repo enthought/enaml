@@ -92,7 +92,9 @@ class Action(Declarative):
 
         """
         if children:
-            raise ValueError('Cannot add children to an `Action`')
+            name = type(self).__name__
+            msg = 'Cannot add children to component of type `%s`'
+            raise ValueError(msg % name)
         return children
 
     #--------------------------------------------------------------------------
