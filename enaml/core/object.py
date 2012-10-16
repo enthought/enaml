@@ -145,30 +145,24 @@ class Object(HasStrictTraits):
     name = Str
 
     #: A read-only property which returns the instance's class name.
-    class_name = Property
+    class_name = Property(fget=lambda self: type(self).__name__)
 
     #: A read-only property which returns the names of the instances
     #: base classes, stopping at Declarative.
     base_names = Property
 
     #: A read-only property which returns the parent of this object.
-    parent = Property(depends_on='_parent')
+    parent = Property(fget=lambda self: self._parent, depends_on='_parent')
 
     #: The internal storage for the parent of this object.
     _parent = Instance('Object')
 
     #: A read-only property which returns the tuple of children for
-    #: this object.The list of children for this object.
+    #: this object.
     children = Property(depends_on='_children')
 
     #: The internal storage for the tuple of children for this object.
     _children = Tuple
-
-    #: A boolean flag indicating whether this object allows children.
-    #: If the flag is False, then attempting to use this object as the
-    #: parent of another object will raise an exception. The default
-    #: behavior is to allow children.
-    allow_children = Bool(True)
 
     #: A boolean flag indicating whether this object is snappable. Only
     #: snappable objects are included in the `children` field of their
@@ -252,15 +246,6 @@ class Object(HasStrictTraits):
     #--------------------------------------------------------------------------
     # Property Methods
     #--------------------------------------------------------------------------
-    def _get_class_name(self):
-        """ The getter for the 'class_name' property.
-
-        This property getter returns the string name of the class for
-        this instance.
-
-        """
-        return type(self).__name__
-
     def _get_base_names(self):
         """ The property getter for the 'base_names' attribute.
 
@@ -275,14 +260,6 @@ class Object(HasStrictTraits):
             if base is Object:
                 break
         return base_names
-
-    def _get_parent(self):
-        """ The property getter for the 'parent' attribute.
-
-        This property getter returns the parent of this object.
-
-        """
-        return self._parent
 
     @cached_property
     def _get_children(self):
@@ -379,24 +356,32 @@ class Object(HasStrictTraits):
         if parent is old_parent:
             return
 
-        if parent is not None and not parent.allow_children:
-            msg = 'Parent Object `%s` does not allow children'
-            raise ValueError(msg % parent)
         if parent is self:
             raise ValueError('Cannot use `self` as Object parent')
 
-        self._parent = parent
+        old_kids = None
         if old_parent is not None:
             old_kids = old_parent._children
-            if self in old_kids:
-                idx = old_kids.index(self)
-                new_kids = old_kids[:idx] + old_kids[idx + 1:]
-                with ChildEventContext(old_parent):
-                    old_parent._children = new_kids
+            idx = old_kids.index(self)
+            old_kids = old_kids[:idx] + old_kids[idx + 1:]
+            old_kids = tuple(old_parent.validate_children(old_kids))
 
+        new_kids = None
         if parent is not None:
+            new_kids = parent._children + (self,)
+            new_kids = tuple(parent.validate_children(new_kids))
+
+        # If this code path is reached, it means that child validation
+        # succeeded for the parents and it's safe to commit the change.
+        self._parent = parent
+
+        if old_kids is not None:
+            with ChildEventContext(old_parent):
+                old_parent._children = old_kids
+
+        if new_kids is not None:
             with ChildEventContext(parent):
-                parent._children += (self,)
+                parent._children = new_kids
                 # Initialize the child from within the child event
                 # context since it may have arbitrary side effects,
                 # including adding more children to its parent.
@@ -422,16 +407,11 @@ class Object(HasStrictTraits):
             An iterable of Object children to insert into this object.
 
         """
-        if not self.allow_children:
-            msg = 'Parent Object `%s` does not allow children'
-            raise ValueError(msg % self)
-
-        insert_list = list(insert)
-        insert_set = set(insert_list)
-
+        insert_tup = tuple(insert)
+        insert_set = set(insert_tup)
         if self in insert_set:
             raise ValueError('Cannot use `self` as Object child')
-        if len(insert_list) != len(insert_set):
+        if len(insert_tup) != len(insert_set):
             raise ValueError('Cannot have duplicate children')
 
         new = []
@@ -440,31 +420,42 @@ class Object(HasStrictTraits):
             if child in insert_set:
                 continue
             if child is before:
-                new.extend(insert_list)
+                new.extend(insert_tup)
                 added = True
             new.append(child)
         if not added:
-            new.extend(insert_list)
+            new.extend(insert_tup)
 
-        for child in insert_list:
+        old_updates = []
+        for child in insert_tup:
             old_parent = child._parent
-            if old_parent is not self:
+            if old_parent is not None and old_parent is not self:
+                old_kids = old_parent._children
+                idx = old_kids.index(child)
+                old_kids = old_kids[:idx] + old_kids[idx + 1:]
+                old_kids = old_parent.validate_children(old_kids)
+                old_updates.append((old_parent, old_kids))
+
+        new_kids = tuple(new)
+        new_kids = self.validate_children(new_kids)
+
+        # If this code path is reached, it means that child validation
+        # succeeded for the parents and it's safe to commit the change.
+        for child in insert_tup:
+            if child._parent is not self:
                 child._parent = self
-                if old_parent is not None:
-                    old_kids = old_parent._children
-                    if child in old_kids:
-                        idx = old_kids.index(child)
-                        new_kids = old_kids[:idx] + old_kids[idx + 1:]
-                        with ChildEventContext(old_parent):
-                            old_parent._children = new_kids
+
+        for old_parent, old_kids in old_updates:
+            with ChildEventContext(old_parent):
+                old_parent._children = old_kids
 
         with ChildEventContext(self):
-            self._children = tuple(new)
+            self._children = new_kids
             if self.initialized:
                 # Initialize the children from within the child event
                 # context since they may have arbitrary side effects,
                 # including adding more children to their parent.
-                for child in insert_list:
+                for child in insert_tup:
                     child.initialize()
 
     def remove_children(self, remove, destroy=True):
@@ -493,6 +484,9 @@ class Object(HasStrictTraits):
             else:
                 new.append(child)
 
+        new_kids = tuple(new)
+        new_kids = self.validate_children(new_kids)
+
         if destroy:
             for child in old:
                 # Set the child's parent to None so that destroy does
@@ -504,7 +498,7 @@ class Object(HasStrictTraits):
                 child._parent = None
 
         with ChildEventContext(self):
-            self._children = tuple(new)
+            self._children = new_kids
 
     def replace_children(self, remove, before, insert, destroy=True):
         """ Perform an 'atomic' remove and insert children operation.
@@ -533,18 +527,13 @@ class Object(HasStrictTraits):
             is True.
 
         """
-        if not self.allow_children:
-            msg = 'Parent Object `%s` does not allow children'
-            raise ValueError(msg % self)
-
-        remove_list = list(remove)
-        insert_list = list(insert)
-        remove_set = set(remove_list)
-        insert_set = set(insert_list)
-
+        remove_tup = tuple(remove)
+        insert_tup = tuple(insert)
+        remove_set = set(remove_tup)
+        insert_set = set(insert_tup)
         if self in insert_set:
             raise ValueError('Cannot use `self` as Object child')
-        if len(insert_list) != len(insert_set):
+        if len(insert_tup) != len(insert_set):
             raise ValueError('Cannot have duplicate children')
 
         old = []
@@ -558,12 +547,27 @@ class Object(HasStrictTraits):
             if child in insert_set:
                 continue
             if child is before:
-                new.extend(insert_list)
+                new.extend(insert_tup)
                 added = True
             new.append(child)
         if not added:
-            new.extend(insert_list)
+            new.extend(insert_tup)
 
+        old_updates = []
+        for child in insert_tup:
+            old_parent = child._parent
+            if old_parent is not None and old_parent is not self:
+                old_kids = old_parent._children
+                idx = old_kids.index(child)
+                old_kids = old_kids[:idx] + old_kids[idx + 1:]
+                old_kids = old_parent.validate_children(old_kids)
+                old_updates.append((old_parent, old_kids))
+
+        new_kids = tuple(new)
+        new_kids = self.validate_children(new_kids)
+
+        # If this code path is reached, it means that child validation
+        # succeeded for the parents and it's safe to commit the change.
         if destroy:
             for child in old:
                 # Set the child's parent to None so that destroy does
@@ -574,26 +578,56 @@ class Object(HasStrictTraits):
             for child in old:
                 child._parent = None
 
-        for child in insert_list:
-            old_parent = child._parent
-            if old_parent is not self:
+        for child in insert_tup:
+            if child._parent is not self:
                 child._parent = self
-                if old_parent is not None:
-                    old_kids = old_parent._children
-                    if child in old_kids:
-                        idx = old_kids.index(child)
-                        new_kids = old_kids[:idx] + old_kids[idx + 1:]
-                        with ChildEventContext(old_parent):
-                            old_parent._children = new_kids
+
+        for old_parent, old_kids in old_updates:
+            with ChildEventContext(old_parent):
+                old_parent._children = old_kids
 
         with ChildEventContext(self):
-            self._children = tuple(new)
+            self._children = new_kids
             if self.initialized:
                 # Initialize the children from within the child event
                 # context since they may have arbitrary side effects,
                 # including adding more children to their parent.
-                for child in insert_list:
+                for child in insert_tup:
                     child.initialize()
+
+    def validate_children(self, children):
+        """ Validate the given list of children.
+
+        This method is called when the children of the Object are being
+        changed but *before* the change is commited. This provides the
+        developer an opportunity to reject and/or modify the allowable
+        child of the object.
+
+        If the children are not valid, a ValueError should be raised with
+        an appropriate error message. If the children are valid, or can
+        be made valid, then the valid iterable of children should be
+        returned.
+
+        The default implementation of this method allows all children.
+
+        Parameters
+        ----------
+        children : tuple
+            The tuple of children to be committed to the object.
+
+        Returns
+        -------
+        result : iterable
+            The iterable of valid children for the object.
+
+        Raises
+        ------
+        ValueError
+            This exception will be raised if the children are not valid
+            of cannot be made valid.
+
+        """
+        return children
 
     #--------------------------------------------------------------------------
     # Messaging Methods
