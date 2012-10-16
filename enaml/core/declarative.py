@@ -29,7 +29,7 @@ class Declarative(Object):
     #: 'self' according to Enaml's dynamic scoping rules.
     self = Property(fget=lambda self: self)
 
-    #: The private dictionary of expression objects that are bound to 
+    #: The private dictionary of expression objects that are bound to
     #: attributes on this component. It should not be manipulated by
     #: user code. Rather, expressions should be bound by the operators
     #: by calling the '_bind_expression' method.
@@ -48,7 +48,7 @@ class Declarative(Object):
         Parameters
         ----------
         parent : Object or None, optional
-            The Object instance which is the parent of this object, or 
+            The Object instance which is the parent of this object, or
             None if the object has no parent. Defaults to None.
 
         **kwargs
@@ -60,7 +60,7 @@ class Declarative(Object):
         # applying any other keyword arguments so that bound expressions
         # do not override the keywords. The builders appear and are run
         # in the reverse order of a typical mro. The most base builder
-        # gets to add its children and bind its expressions first. 
+        # gets to add its children and bind its expressions first.
         # Builders that come later can then override these bindings.
         # Each component gets it's own identifier namespace and current
         # operator context.
@@ -83,9 +83,9 @@ class Declarative(Object):
         """ A private classmethod used by the Enaml compiler machinery.
 
         This method is used to add user attributes and events to custom
-        derived enamldef components. If the attribute already exists on 
+        derived enamldef components. If the attribute already exists on
         the class and is not a user defined attribute, then an exception
-        will be raised. The only method of overriding standard trait 
+        will be raised. The only method of overriding standard trait
         attributes is through traditional subclassing.
 
         Parameters
@@ -121,9 +121,9 @@ class Declarative(Object):
 
         # XXX HasTraits.add_class_trait will raise an exception if the
         # the trait is already defined. There does not appear to be a
-        # way to turn this off, nor does there appear to be a way to 
+        # way to turn this off, nor does there appear to be a way to
         # formally remove a class trait. So, we just do what the traits
-        # metaclass does when adding traits and directly add the ctrait 
+        # metaclass does when adding traits and directly add the ctrait
         # to the appropriate class dictionaries. The add_class_trait
         # classmethod does some extra work to make sure that the trait
         # is added to all subclasses, but that does not appear to be
@@ -138,17 +138,17 @@ class Declarative(Object):
 
         This method is called by the Enaml operators to bind the given
         expression object to the given attribute name. If the attribute
-        does not exist, an exception is raised. A strong reference to 
+        does not exist, an exception is raised. A strong reference to
         the expression object is kept internally.
 
         Parameters
         ----------
         name : string
             The name of the attribute on which to bind the expression.
-        
+
         expression : AbstractExpression
             A concrete implementation of AbstractExpression.
-        
+
         notify_only : bool, optional
             If True, the expression is only a notifier, in which case
             multiple binding is allowed, otherwise the new expression
@@ -163,7 +163,7 @@ class Declarative(Object):
         # If this is the first time an expression is being bound to the
         # given attribute, then we hook up a change handler. This ensures
         # that we only get one notification event per bound attribute.
-        # We also create the notification entry in the dict, which is 
+        # We also create the notification entry in the dict, which is
         # a list with at least one item. The first item will always be
         # the left associative expression (or None) and all following
         # items will be the notify_only expressions.
@@ -172,7 +172,7 @@ class Declarative(Object):
             self.on_trait_change(self._on_bound_attr_changed, name)
             expressions[name] = [None]
 
-        # There can be multiple notify_only expressions bound to a 
+        # There can be multiple notify_only expressions bound to a
         # single attribute, so they just get appended to the end of
         # the list. Otherwise, the left associative expression gets
         # placed at the zero position of the list, overriding any
@@ -186,23 +186,22 @@ class Declarative(Object):
                 old.expression_changed.disconnect(handler)
             expression.expression_changed.connect(handler)
             expressions[name][0] = expression
-            
+
             # Hookup support for default value computation. We only need
-            # to add an ExpressionTrait once, since it will reach back 
+            # to add an ExpressionTrait once, since it will reach back
             # into the _expressions dict as needed and retrieve the most
             # current bound expression.
             if not isinstance(curr.trait_type, ExpressionTrait):
                 self.add_trait(name, ExpressionTrait(curr))
-        
+
     def _on_expression_changed(self, expression, name, value):
         """ A private signal callback for the expression_changed signal
         of the bound expressions. It updates the value of the attribute
         with the new value from the expression.
 
         """
-        if self.initialized:
-            setattr(self, name, value)
-    
+        setattr(self, name, value)
+
     def _on_bound_attr_changed(self, obj, name, old, new):
         """ A private handler which is called when any attribute which
         has a bound signal changes. It calls the notify method on each
@@ -210,13 +209,12 @@ class Declarative(Object):
         is marked as live.
 
         """
-        # The check for None is for the case where there are no left 
+        # The check for None is for the case where there are no left
         # associative expressions bound to the attribute, so the first
         # entry in the list is still None.
-        if self.initialized:
-            for expr in self._expressions[name]:
-                if expr is not None:
-                    expr.notify(old, new)
+        for expr in self._expressions[name]:
+            if expr is not None:
+                expr.notify(old, new)
 
     #--------------------------------------------------------------------------
     # Public API
@@ -241,9 +239,9 @@ class Declarative(Object):
         Parameters
         ----------
         switch : bool
-            A boolean which indicates whether this instance or None 
+            A boolean which indicates whether this instance or None
             should be returned.
-        
+
         Returns
         -------
         result : self or None
