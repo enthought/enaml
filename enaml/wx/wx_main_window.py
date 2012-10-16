@@ -396,8 +396,8 @@ class WxMainWindow(WxWindow):
         # be nice to clean this up at some point.
         main_window = self.widget()
 
-        # Add a child QtMenuBar. It's not known if the given child is
-        # the first QtMenuBar child in the list of children. So, the
+        # Add a child WxMenuBar. It's not known if the given child is
+        # the first WxMenuBar child in the list of children. So, the
         # list is scanned and the first one found is set as the menu
         # bar for the window.
         if isinstance(child, WxMenuBar):
@@ -406,8 +406,8 @@ class WxMainWindow(WxWindow):
                     main_window.SetMenuBar(child.widget())
                     break
 
-        # Add a child QtContainer. It's not known if the given child is
-        # the first QtContainer child in the list of children. So, the
+        # Add a child WxContainer. It's not known if the given child is
+        # the first WxContainer child in the list of children. So, the
         # list is scanned and the first one found is set as the central
         # widget for the window.
         elif isinstance(child, WxContainer):
@@ -416,7 +416,7 @@ class WxMainWindow(WxWindow):
                     main_window.SetCentralWidget(child.widget())
                     break
 
-        # Add a child QtToolBar. There are two hacks involved in adding
+        # Add a child WxToolBar. There are two hacks involved in adding
         # a tool bar. The first is the same hack that is perfomed in the
         # `init_layout` method for a floating tool bar. The second is
         # specific to OSX. On the platform, adding a tool bar to main
@@ -424,12 +424,12 @@ class WxMainWindow(WxWindow):
         # tool bars will cause the main window to be hidden. This will
         # only occur the *first* time a tool bar is added to the window.
         # The hack below is workaround which should be sufficient for
-        # most use cases. A bug should really be filed against Qt for
+        # most use cases. A bug should really be filed against Wx for
         # this one, as it's reproducible outside of Enaml.
         elif isinstance(child, WxToolBar):
             main_window.AddToolBar(child.widget())
 
-        # Add a child QtDockPane.
+        # Add a child WxDockPane.
         elif isinstance(child, WxDockPane):
             main_window.AddDockPane(child.widget())
 
