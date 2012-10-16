@@ -97,6 +97,6 @@ class Include(Declarative):
 
         """
         if children:
-            raise ValueError('Cannot add children to an Include')
+            raise ValueError('Cannot add children to an `Include`')
         return children
 
