@@ -86,7 +86,7 @@ class QCustomMainWindow(QMainWindow):
 
 class QtMainWindow(QtWindow):
     """ A Qt implementation of an Enaml MainWindow.
-    
+
     """
     #: A private flag used to track the visible state changes sent from
     #: the Enaml widget. This is needed on OSX when dynamically adding
@@ -110,7 +110,7 @@ class QtMainWindow(QtWindow):
 
         """
         # The superclass' init_layout() method is explicitly not called
-        # since the layout initialization for Window is not appropriate 
+        # since the layout initialization for Window is not appropriate
         # for MainWindow.
         main_window = self.widget()
 
@@ -141,8 +141,8 @@ class QtMainWindow(QtWindow):
         # Setup the tool bars.
         for child in tool_bars:
             bar_widget = child.widget()
-            # XXX slight hack. When adding the toolbar to the main 
-            # window, it is forcibly unfloated. In order for the 
+            # XXX slight hack. When adding the toolbar to the main
+            # window, it is forcibly unfloated. In order for the
             # initial floating state to be maintained, it must be
             # re-floating after being added. We do the refloating
             # in the future, so that the main window shows up first.
@@ -161,6 +161,16 @@ class QtMainWindow(QtWindow):
     #--------------------------------------------------------------------------
     # Child Events
     #--------------------------------------------------------------------------
+    def child_removed(self, child):
+        """ Handle the child removed event for a QtMainWindow.
+
+        """
+        main_window = self.widget()
+        if isinstance(child, QtDockPane):
+            main_window.removeDockWidget(child.widget())
+        elif isinstance(child, QtToolBar):
+            main_window.removeToolBar(child.widget())
+
     def child_added(self, child):
         """ Handle the child added event for a QtMainWindow.
 
@@ -169,7 +179,7 @@ class QtMainWindow(QtWindow):
         # be nice to clean this up at some point.
         main_window = self.widget()
 
-        # Add a child QtMenuBar. It's not known if the given child is 
+        # Add a child QtMenuBar. It's not known if the given child is
         # the first QtMenuBar child in the list of children. So, the
         # list is scanned and the first one found is set as the menu
         # bar for the window.
@@ -179,7 +189,7 @@ class QtMainWindow(QtWindow):
                     main_window.setMenuBar(child.widget())
                     break
 
-        # Add a child QtContainer. It's not known if the given child is 
+        # Add a child QtContainer. It's not known if the given child is
         # the first QtContainer child in the list of children. So, the
         # list is scanned and the first one found is set as the central
         # widget for the window.
