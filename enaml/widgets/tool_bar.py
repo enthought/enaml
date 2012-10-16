@@ -7,6 +7,7 @@ from traits.api import Bool, Enum, List, Property, Either, cached_property
 from .action import Action
 from .action_group import ActionGroup
 from .constraints_widget import ConstraintsWidget, PolicyEnum
+from .include import Include
 
 
 class ToolBar(ConstraintsWidget):
@@ -24,21 +25,21 @@ class ToolBar(ConstraintsWidget):
     movable = Bool(True)
 
     #: Whether or not the tool bar can be floated as a separate window.
-    #: This value only has meaning if the tool bar is the child of a 
+    #: This value only has meaning if the tool bar is the child of a
     #: MainWindow.
     floatable = Bool(True)
-    
+
     #: A boolean indicating whether or not the tool bar is floating.
-    #: This value only has meaning if the tool bar is the child of a 
+    #: This value only has meaning if the tool bar is the child of a
     #: MainWindow.
     floating = Bool(False)
 
     #: The dock area in the MainWindow where the tool bar is docked.
-    #: This value only has meaning if the tool bar is the child of a 
+    #: This value only has meaning if the tool bar is the child of a
     #: MainWindow.
     dock_area = Enum('top', ('left', 'right', 'top', 'bottom'))
 
-    #: The areas in the MainWindow where the tool bar can be docked 
+    #: The areas in the MainWindow where the tool bar can be docked
     #: by the user. This value only has meaning if the tool bar is the
     #: child of a MainWindow.
     allowed_dock_areas = List(
@@ -54,11 +55,11 @@ class ToolBar(ConstraintsWidget):
     #: ActionGroup | Action
     items = Property(depends_on='children')
 
-    #: Hug width is redefined as a property to be computed based on the 
+    #: Hug width is redefined as a property to be computed based on the
     #: orientation of the tool bar unless overridden by the user.
     hug_width = Property(PolicyEnum, depends_on=['_hug_width', 'orientation'])
 
-    #: Hug height is redefined as a property to be computed based on the 
+    #: Hug height is redefined as a property to be computed based on the
     #: orientation of the slider unless overridden by the user.
     hug_height = Property(PolicyEnum, depends_on=['_hug_height', 'orientation'])
 
@@ -90,10 +91,31 @@ class ToolBar(ConstraintsWidget):
         """
         super(ToolBar, self).bind()
         attrs = (
-            'movable', 'floatable', 'floating', 'dock_area', 
+            'movable', 'floatable', 'floating', 'dock_area',
             'allowed_dock_areas', 'orientation',
         )
         self.publish_attributes(*attrs)
+
+    #--------------------------------------------------------------------------
+    # Overrides
+    #--------------------------------------------------------------------------
+    def validate_children(self, children):
+        """ A child validator for a ToolBar.
+
+        The allowable child types are `Action`, `ActionGroup`, and
+        `Include`.
+
+        """
+        types = (Action, ActionGroup, Include)
+        isinst = isinstance
+        for child in children:
+            if not isinst(child, types):
+                name = type(self).__name__
+                msg = ('The children of a component of type `%s` must be '
+                       'instances of `Action`, `ActionGroup`, or `Include`. '
+                       'Got object of type `%s` instead.')
+                raise ValueError(msg % (name, type(child).__name__))
+        return children
 
     #--------------------------------------------------------------------------
     # Private API
@@ -109,15 +131,15 @@ class ToolBar(ConstraintsWidget):
 
         """
         isinst = isinstance
-        allowed = (Action, ActionGroup)
-        items = (child for child in self.children if isinst(child, allowed))
+        types = (Action, ActionGroup)
+        items = (child for child in self.children if isinst(child, types))
         return tuple(items)
 
     #--------------------------------------------------------------------------
     # Property Methods
     #--------------------------------------------------------------------------
     def _get_hug_width(self):
-        """ The property getter for 'hug_width'. 
+        """ The property getter for 'hug_width'.
 
         Returns a computed hug value unless overridden by the user.
 
@@ -131,7 +153,7 @@ class ToolBar(ConstraintsWidget):
         return res
 
     def _get_hug_height(self):
-        """ The proper getter for 'hug_height'. 
+        """ The proper getter for 'hug_height'.
 
         Returns a computed hug value unless overridden by the user.
 
@@ -145,7 +167,7 @@ class ToolBar(ConstraintsWidget):
         return res
 
     def _set_hug_width(self, value):
-        """ The property setter for 'hug_width'. 
+        """ The property setter for 'hug_width'.
 
         Overrides the computed value.
 
@@ -153,7 +175,7 @@ class ToolBar(ConstraintsWidget):
         self._hug_width = value
 
     def _set_hug_height(self, value):
-        """ The property setter for 'hug_height'. 
+        """ The property setter for 'hug_height'.
 
         Overrides the computed value.
 
