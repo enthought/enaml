@@ -3,6 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from collections import defaultdict
+import logging
 
 import wx
 
@@ -14,8 +15,11 @@ from .wx_builder import WxBuilder
 from .wx_object import WxObject
 
 
+logger = logging.getLogger(__name__)
+
+
 class WxApplication(Application):
-    """ A concrete implementation of an Enaml application. 
+    """ A concrete implementation of an Enaml application.
 
     A WxApplication uses the Wx toolkit to implement an Enaml UI that
     runs in the local process.
@@ -88,14 +92,14 @@ class WxApplication(Application):
             The callable object to execute at some point in the future.
 
         *args, **kwargs
-            Any additional positional and keyword arguments to pass to 
+            Any additional positional and keyword arguments to pass to
             the callback.
 
         """
         self._wxcaller.DeferredCall(callback, *args, **kwargs)
 
     def timed_call(self, ms, callback, *args, **kwargs):
-        """ Invoke a callable on the main event loop thread at a 
+        """ Invoke a callable on the main event loop thread at a
         specified time in the future.
 
         Parameters
@@ -103,12 +107,12 @@ class WxApplication(Application):
         ms : int
             The time to delay, in milliseconds, before executing the
             callable.
-            
+
         callback : callable
             The callable object to execute at some point in the future.
 
         *args, **kwargs
-            Any additional positional and keyword arguments to pass to 
+            Any additional positional and keyword arguments to pass to
             the callback.
 
         """
@@ -152,7 +156,7 @@ class WxApplication(Application):
     def dispatch_wx_action(self, object_id, action, content):
         """ Dispatch an action to a wx object with the given id.
 
-        This method can be called when a message from an Enaml widget 
+        This method can be called when a message from an Enaml widget
         is received and needs to be delivered to the Wx client widget.
 
         Parameters
@@ -169,6 +173,8 @@ class WxApplication(Application):
         """
         obj = WxObject.lookup_object(object_id)
         if obj is None:
+            msg = "Invalid object id sent to WxApplication: %s:%s"
+            logger.warn(msg % (object_id, action))
             return
         obj.handle_action(action, content)
 

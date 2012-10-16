@@ -3,6 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from collections import defaultdict
+import logging
 
 from enaml.application import Application
 
@@ -12,6 +13,9 @@ from .q_action_pipe import QActionPipe
 from .q_deferred_caller import QDeferredCaller
 from .qt_builder import QtBuilder
 from .qt_object import QtObject
+
+
+logger = logging.getLogger(__name__)
 
 
 class QtApplication(Application):
@@ -171,10 +175,8 @@ class QtApplication(Application):
         """
         obj = QtObject.lookup_object(object_id)
         if obj is None:
-            # XXX disable for now to avoid annoying lifetime error
-            # messages
-            #print action, content
-            #raise ValueError('Invalid object id')
+            msg = "Invalid object id sent to QtApplication: %s:%s"
+            logger.warn(msg % (object_id, action))
             return
         obj.handle_action(action, content)
 
