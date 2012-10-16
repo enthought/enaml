@@ -20,7 +20,7 @@ Implementation notes:
 
 """
 from enaml.widgets.api import (
-    Splitter, Form, Container, Window, Label, Field, Html,
+    Splitter, SplitItem, Form, Container, Window, Label, Field, Html,
 )
 
 
@@ -63,14 +63,16 @@ enamldef MyHtmlWidgets(Container):
     padding = 0
     Splitter:
         orientation = 'vertical'
-        Container:
-            Html:
-                resist_height = 'weak'
-                source = '<center><h1>Hello World!</h1></center>'
-        Container:
-            Html:
-                resist_height = 'weak'
-                source = '<center><h1>Hello Enaml!</h1></center>'
+        SplitItem:
+            Container:
+                Html:
+                    resist_height = 'weak'
+                    source = '<center><h1>Hello World!</h1></center>'
+        SplitItem:
+            Container:
+                Html:
+                    resist_height = 'weak'
+                    source = '<center><h1>Hello Enaml!</h1></center>'
 
 
 enamldef Main(Window):
@@ -78,12 +80,16 @@ enamldef Main(Window):
         padding = 0
         Splitter:
             hug_height = 'strong'
-            MyForm:
-                pass
-            MyForm:
-                pass
-            MyHtmlWidgets:
-                pass
-            MyForm:
-                pass
-            
+            SplitItem:
+                MyForm:
+                    pass
+            SplitItem:
+                MyForm:
+                    pass
+            SplitItem:
+                MyHtmlWidgets:
+                    pass
+            SplitItem:
+                MyForm:
+                    pass
+
