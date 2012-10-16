@@ -55,7 +55,7 @@ class ActionGroup(Declarative):
     # Overrides
     #--------------------------------------------------------------------------
     def validate_children(self, children):
-        """ A child validator for an Action Group.
+        """ A child validator for an ActionGroup.
 
         The allowable child types are `Action` and `Include`.
 
@@ -64,10 +64,11 @@ class ActionGroup(Declarative):
         isinst = isinstance
         for child in children:
             if not isinst(child, types):
-                msg = ('The children of an `ActionGroup` must be instances '
-                       'of `Action` or `Include`. Got object of type `%s` '
-                       'instead.')
-                raise ValueError(msg % type(child).__name__)
+                name = type(self).__name__
+                msg = ('The children of a component of type `%s` must be '
+                       'instances of `Action` or `Include`. Got object of '
+                       'type `%s` instead.')
+                raise ValueError(msg % (name, type(child).__name__))
         return children
 
     #--------------------------------------------------------------------------
