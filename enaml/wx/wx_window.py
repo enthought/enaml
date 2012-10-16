@@ -10,6 +10,71 @@ from .wx_single_widget_sizer import wxSingleWidgetSizer
 from .wx_widget_component import WxWidgetComponent
 
 
+class wxCustomWindow(wx.Frame):
+    """ A custom wxFrame which manages a central widget.
+
+    The window layout computes the min/max size of the window based
+    on its central widget, unless the user explicitly changes them.
+
+    """
+    def __init__(self, *args, **kwargs):
+        """ Initialize a wxCustomWindow.
+
+        Parameters
+        ----------
+        *args, **kwargs
+            The positional and keyword arguments needed to initialize
+            a wxFrame.
+
+        """
+        super(wxCustomWindow, self).__init__(*args, **kwargs)
+        self._central_widget = None
+        self.SetSizer(wxSingleWidgetSizer())
+
+    def UpdateClientSizeHints(self):
+        """ Update the client size hints for the window.
+
+        This will update the min and max sizes for the window according
+        to the current window state. This method is called automatically
+        when the central widget is changed.
+
+        """
+        sizer = self.GetSizer()
+        min_w, min_h = self.ClientToWindowSize(sizer.CalcMin())
+        max_w, max_h= self.ClientToWindowSize(sizer.CalcMax())
+        self.SetSizeHints(min_w, min_h, max_w, max_h)
+        cur_w, cur_h = self.GetSize()
+        new_w = min(max_w, max(min_w, cur_w))
+        new_h = min(max_h, max(min_h, cur_h))
+        if cur_w != new_w or cur_h != new_h:
+            self.SetSize(wx.Size(new_w, new_h))
+
+    def GetCentralWidget(self):
+        """ Returns the central widget for the window.
+
+        Returns
+        -------
+        result : wxWindow or None
+            The central widget of the window, or None if no widget
+            was provided.
+
+        """
+        return self._central_widget
+
+    def SetCentralWidget(self, widget):
+        """ Set the central widget for this window.
+
+        Parameters
+        ----------
+        widget : wxWindow
+            The widget to use as the content of the window.
+
+        """
+        self._central_widget = widget
+        self.GetSizer().Add(widget)
+        self.UpdateClientSizeHints()
+
+
 class WxWindow(WxWidgetComponent):
     """ A Wx implementation of an Enaml Window.
 
@@ -21,9 +86,7 @@ class WxWindow(WxWidgetComponent):
         """ Create the underlying wx.Frame widget.
 
         """
-        widget = wx.Frame(parent)
-        widget.SetSizer(wxSingleWidgetSizer())
-        return widget
+        return wxCustomWindow(parent)
 
     def create(self, tree):
         """ Create and initialize the window control.
@@ -43,34 +106,9 @@ class WxWindow(WxWidgetComponent):
         widget = self.widget()
         for child in self.children():
             if isinstance(child, WxContainer):
-                widget.GetSizer().Add(child.widget())
-                self._update_client_size_hints()
+                widget.SetCentralWidget(child.widget())
                 break
         widget.Bind(EVT_COMMAND_LAYOUT_REQUESTED, self.on_layout_requested)
-
-    #--------------------------------------------------------------------------
-    # Private API
-    #--------------------------------------------------------------------------
-    def _update_client_size_hints(self):
-        """ A private method for updating the client size hints.
-
-        This method will pull the current min and max client sizes from
-        the window sizer, translate them to window sizes, and update the
-        size hints on the window. If the current window size violates
-        the new size hints, it will be resized (since Wx is too brain
-        dead to handle that itself).
-
-        """
-        widget = self.widget()
-        sizer = widget.GetSizer()
-        min_w, min_h = widget.ClientToWindowSize(sizer.CalcMin())
-        max_w, max_h= widget.ClientToWindowSize(sizer.CalcMax())
-        widget.SetSizeHints(min_w, min_h, max_w, max_h)
-        cur_w, cur_h = widget.GetSize()
-        new_w = min(max_w, max(min_w, cur_w))
-        new_h = min(max_h, max(min_h, cur_h))
-        if cur_w != new_w or cur_h != new_h:
-            widget.SetSize(wx.Size(new_w, new_h))
 
     #--------------------------------------------------------------------------
     # Child Events
@@ -81,8 +119,7 @@ class WxWindow(WxWidgetComponent):
         """
         for child in self.children():
             if isinstance(child, WxContainer):
-                self.widget().GetSizer().Add(child.widget())
-                self._update_client_size_hints()
+                self.widget().SetCentralWidget(child.widget())
                 break
 
     #--------------------------------------------------------------------------
@@ -102,7 +139,7 @@ class WxWindow(WxWidgetComponent):
         """ Handle the layout request event from the central widget.
 
         """
-        self._update_client_size_hints()
+        self.widget().UpdateClientSizeHints()
 
     #--------------------------------------------------------------------------
     # Message Handlers
