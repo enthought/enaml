@@ -116,8 +116,8 @@ class QtMainWindow(QtWindow):
         components = self.components()
         main_window.setMenuBar(components['menu_bar'])
         main_window.setCentralWidget(components['central_widget'])
-        for dwidget in components['dock_panes']:
-            main_window.addDockWidget(dwidget.dockArea(), dwidget)
+        for dpane in components['dock_panes']:
+            main_window.addDockWidget(dpane.dockArea(), dpane)
         for tbar in components['tool_bars']:
             # XXX slight hack. When adding the toolbar to the main
             # window, it is forcibly unfloated. In order for the
