@@ -301,9 +301,7 @@ class QtPage(QtWidgetComponent):
 
         """
         if isinstance(child, QtContainer):
-            widget = self.widget()
-            if child.widget() is widget.pageWidget():
-                widget.setPageWidget(None)
+            self.widget().setPageWidget(self.page_widget())
 
     def child_added(self, child):
         """ Handle the child added event for a QtPage.

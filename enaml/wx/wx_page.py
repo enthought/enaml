@@ -273,9 +273,7 @@ class WxPage(WxWidgetComponent):
 
         """
         if isinstance(child, WxContainer):
-            widget = self.widget()
-            if child.widget() is widget.GetPageWidget():
-                widget.SetPageWidget(None)
+            self.widget().SetPageWidget(self.page_widget())
 
     def child_added(self, child):
         """ Handle the child added event for a WxPage.
