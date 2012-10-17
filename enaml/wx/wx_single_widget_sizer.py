@@ -40,6 +40,7 @@ class wxSingleWidgetSizer(wx.PySizer):
             old.Hide()
         self._widget = widget
         if widget:
+            widget.Show()
             res = super(wxSingleWidgetSizer, self).Add(widget)
             self.Layout()
             return res

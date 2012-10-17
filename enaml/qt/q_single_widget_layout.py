@@ -37,6 +37,7 @@ class QSingleWidgetLayout(QLayout):
         """
         self.takeAt(0)
         if widget is not None:
+            widget.show()
             super(QSingleWidgetLayout, self).addWidget(widget)
 
     def count(self):
