@@ -216,8 +216,20 @@ class wxDockPane(wx.Panel):
             The wx widget to use as the dock widget for this pane.
 
         """
+        old_widget = self._dock_widget
+        if old_widget:
+            old_widget.Hide()
         self._dock_widget = widget
         self.GetSizer().Add(widget)
+        self.UpdateSizing()
+
+    def UpdateSizing(self):
+        """ Trigger a sizing update of the pane manager.
+
+        """
+        def closure(pane):
+            pane.MinSize(self.GetBestSize())
+        self._PaneInfoOperation(closure)
 
     def IsOpen(self):
         """ Get whether or not the dock pane is open.
@@ -541,22 +553,45 @@ class WxDockPane(WxWidgetComponent):
 
         """
         super(WxDockPane, self).init_layout()
+        self.widget().SetDockWidget(self.dock_widget())
+
+    #--------------------------------------------------------------------------
+    # Utility Methods
+    #--------------------------------------------------------------------------
+    def dock_widget(self):
+        """ Find and return the dock widget child for this widget.
+
+        Returns
+        -------
+        result : wxWindow or None
+            The dock widget defined for this widget, or None if one is
+            not defined.
+
+        """
+        widget = None
         for child in self.children():
             if isinstance(child, WxContainer):
-                self.widget().SetDockWidget(child.widget())
-                break
+                widget = child.widget()
+        return widget
 
     #--------------------------------------------------------------------------
     # Child Events
     #--------------------------------------------------------------------------
+    def child_removed(self, child):
+        """ Handle the child removed event for a WxDockPane.
+
+        """
+        if isinstance(child, WxContainer):
+            widget = self.widget()
+            if widget.GetDockWidget() is child.widget():
+                widget.SetDockWidget(None)
+
     def child_added(self, child):
         """ Handle the child added event for a WxDockPane.
 
         """
-        for child in self.children():
-            if isinstance(child, WxContainer):
-                self.widget().SetDockWidget(child.widget())
-                break
+        if isinstance(child, WxContainer):
+            self.widget().SetDockWidget(self.dock_widget())
 
     #--------------------------------------------------------------------------
     # Event Handlers
