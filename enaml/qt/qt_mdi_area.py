@@ -33,6 +33,13 @@ class QtMdiArea(QtConstraintsWidget):
     #--------------------------------------------------------------------------
     # Child Events
     #--------------------------------------------------------------------------
+    def child_removed(self, child):
+        """ Handle the child removed event for a QtMdiArea.
+
+        """
+        if isinstance(child, QtMdiWindow):
+            self.widget().removeSubWindow(child.widget())
+
     def child_added(self, child):
         """ Handle the child added event for a QtMdiArea.
 
