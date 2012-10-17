@@ -4,9 +4,7 @@
 #------------------------------------------------------------------------------
 from traits.api import Property, cached_property
 
-from .container import Container
 from .dock_pane import DockPane
-from .include import Include
 from .menu_bar import MenuBar
 from .tool_bar import ToolBar
 from .window import Window
@@ -49,9 +47,11 @@ class MainWindow(Window):
             defined.
 
         """
+        menu = None
         for child in self.children:
             if isinstance(child, MenuBar):
-                return child
+                menu = child
+        return menu
 
     @cached_property
     def _get_tool_bars(self):

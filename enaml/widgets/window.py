@@ -18,7 +18,7 @@ class Window(WidgetComponent):
     is dubbed the 'central widget'. The central widget is an instance
     of Container and is expanded to fit the size of the window.
 
-    A Window does not support features like MenuBars or DockPanes, for 
+    A Window does not support features like MenuBars or DockPanes, for
     such functionality, use a MainWindow widget.
 
     """
@@ -77,9 +77,11 @@ class Window(WidgetComponent):
             The central widget for the Window, or None if not provieded.
 
         """
+        widget = None
         for child in self.children:
             if isinstance(child, Container):
-                return child
+                widget = child
+        return widget
 
     #--------------------------------------------------------------------------
     # Message Handling

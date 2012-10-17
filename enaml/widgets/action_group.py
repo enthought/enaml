@@ -7,7 +7,6 @@ from traits.api import Bool, Property, cached_property
 from enaml.core.declarative import Declarative
 
 from .action import Action
-from .include import Include
 
 
 class ActionGroup(Declarative):

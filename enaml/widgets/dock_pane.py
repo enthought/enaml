@@ -7,7 +7,6 @@ from traits.api import List, Enum, Unicode, Bool,  Property, cached_property
 from enaml.core.trait_types import EnamlEvent
 
 from .container import Container
-from .include import Include
 from .widget_component import WidgetComponent
 
 
@@ -98,9 +97,11 @@ class DockPane(WidgetComponent):
             The dock widget for the DockPane, or None if not provided.
 
         """
+        widget = None
         for child in self.children:
             if isinstance(child, Container):
-                return child
+                widget = child
+        return widget
 
     #--------------------------------------------------------------------------
     # Message Handling

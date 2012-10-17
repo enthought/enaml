@@ -32,7 +32,9 @@ class StackItem(WidgetComponent):
             The stack widget for the StackItem, or None if not provided.
 
         """
+        widget = None
         for child in self.children:
             if isinstance(child, Container):
-                return child
+                widget = child
+        return widget
 

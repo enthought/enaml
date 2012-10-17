@@ -10,7 +10,6 @@ from enaml.layout.geometry import Box
 from enaml.layout.layout_helpers import vbox
 
 from .constraints_widget import ConstraintsWidget, BoxModel, get_from_box_model
-from .include import Include
 
 
 class ContainerBoxModel(BoxModel):

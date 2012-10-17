@@ -12,7 +12,7 @@ class SplitItem(WidgetComponent):
     """ A widget which can be used as an item in a Splitter.
 
     A SplitItem is a widget which can be used as a child of a Splitter
-    widget. It can have at most a single child widget which is an 
+    widget. It can have at most a single child widget which is an
     instance of Container.
 
     """
@@ -40,7 +40,7 @@ class SplitItem(WidgetComponent):
         """
         super(SplitItem, self).bind()
         self.publish_attributes('preferred_size')
-    
+
     #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
@@ -54,7 +54,9 @@ class SplitItem(WidgetComponent):
             The split widget for the SplitItem, or None if not provided.
 
         """
+        widget = None
         for child in self.children:
             if isinstance(child, Container):
-                return child
+                widget = child
+        return widget
 

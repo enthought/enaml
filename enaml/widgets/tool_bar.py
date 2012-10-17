@@ -7,7 +7,6 @@ from traits.api import Bool, Enum, List, Property, Either, cached_property
 from .action import Action
 from .action_group import ActionGroup
 from .constraints_widget import ConstraintsWidget, PolicyEnum
-from .include import Include
 
 
 class ToolBar(ConstraintsWidget):

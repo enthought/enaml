@@ -8,7 +8,7 @@ from .constraints_widget import ConstraintsWidget
 from .container import Container
 
 
-#: Enum trait describing the scrollbar policies that can be assigned to 
+#: Enum trait describing the scrollbar policies that can be assigned to
 #: the horizontal and vertical scrollbars.
 ScrollbarPolicy = Enum('as_needed', 'always_on', 'always_off')
 
@@ -25,7 +25,7 @@ class ScrollArea(ConstraintsWidget):
     #: The vertical scrollbar policy.
     vertical_policy = ScrollbarPolicy
 
-    #: Whether to resize the scroll widget when possible to avoid the 
+    #: Whether to resize the scroll widget when possible to avoid the
     #: need for scrollbars or to make use of extra space.
     widget_resizable = Bool(True)
 
@@ -72,11 +72,13 @@ class ScrollArea(ConstraintsWidget):
         Returns
         -------
         result : Container or None
-            The scroll widget for the ScrollArea, or None if not 
+            The scroll widget for the ScrollArea, or None if not
             provided.
 
         """
+        widget = None
         for child in self.children:
             if isinstance(child, Container):
-                return child
+                widget = child
+        return widget
 

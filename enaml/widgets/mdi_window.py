@@ -11,7 +11,7 @@ class MdiWindow(WidgetComponent):
     """ A widget which can be used as a window in an MdiArea.
 
     An MdiWindow is a widget which can be used as an independent window
-    in an MdiArea. It can have at most a single child widget which is 
+    in an MdiArea. It can have at most a single child widget which is
     an instance of WidgetComponent.
 
     """
@@ -31,7 +31,9 @@ class MdiWindow(WidgetComponent):
             The mdi widget for the MdiWindow, or None if not provided.
 
         """
+        widget = None
         for child in self.children:
             if isinstance(child, WidgetComponent):
-                return child
+                widget = child
+        return widget
 
