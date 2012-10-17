@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Unicode
+from traits.api import Unicode, Enum
 
 from .control import Control
 
@@ -13,6 +13,12 @@ class Label(Control):
     """
     #: The text for the label.
     text = Unicode
+
+    #: The horizontal alignment of the text in the widget area.
+    align = Enum('left', 'right', 'center', 'justify')
+
+    #: The vertical alignment of the text in the widget area.
+    vertical_align = Enum('center', 'top', 'bottom')
 
     #: How strongly a component hugs it's content. Labels hug their
     #: contents' width weakly by default.
@@ -27,6 +33,8 @@ class Label(Control):
         """
         snap = super(Label, self).snapshot()
         snap['text'] = self.text
+        snap['align'] = self.align
+        snap['vertical_align'] = self.vertical_align
         return snap
 
     def bind(self):
@@ -35,5 +43,5 @@ class Label(Control):
 
         """
         super(Label, self).bind()
-        self.publish_attributes('text')
+        self.publish_attributes('text', 'align', 'vertical_align')
 
