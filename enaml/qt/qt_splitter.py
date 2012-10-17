@@ -150,12 +150,19 @@ class QtSplitter(QtConstraintsWidget):
     #--------------------------------------------------------------------------
     # Child Events
     #--------------------------------------------------------------------------
+
+    # QSplitter automatically removes a widget when it's reparented. The
+    # base child_removed event will set the parent to None, and that is
+    # all that is needed.
+
     def child_added(self, child):
         """ Handle the child added event for a QtSplitter.
 
         """
         if isinstance(child, QtSplitItem):
-            self.widget().addWidget(child.widget())
+            index = self.index_of(child)
+            if index != -1:
+                self.widget().insertWidget(index, child.widget())
 
     #--------------------------------------------------------------------------
     # Signal Handlers

@@ -94,8 +94,10 @@ class WxSplitter(WxConstraintsWidget):
 
         """
         if isinstance(child, WxSplitItem):
-            self.widget().AppendWindow(child.widget())
-            self.size_hint_updated()
+            index = self.index_of(child)
+            if index != -1:
+                self.widget().InsertWindow(index, child.widget())
+                self.size_hint_updated()
 
     #--------------------------------------------------------------------------
     # Message Handler Methods
