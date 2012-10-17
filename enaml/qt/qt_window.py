@@ -27,7 +27,7 @@ class QWindowLayout(QSingleWidgetLayout):
             if size.isValid():
                 return size
         return super(QWindowLayout, self).minimumSize()
-            
+
     def maximumSize(self):
         """ The maximum size for the layout area.
 
@@ -71,7 +71,7 @@ class QWindow(QFrame):
         layout = QWindowLayout()
         layout.setSizeConstraint(QLayout.SetMinAndMaxSize)
         self.setLayout(layout)
-    
+
     def closeEvent(self, event):
         """ Handle the QCloseEvent from the window system.
 
@@ -112,8 +112,8 @@ class QWindow(QFrame):
         Returns
         -------
         result : QSize
-            If the user has explitly set the minimum size of the 
-            widget, that size will be returned. Otherwise, an 
+            If the user has explitly set the minimum size of the
+            widget, that size will be returned. Otherwise, an
             invalid QSize will be returned.
 
         """
@@ -125,8 +125,8 @@ class QWindow(QFrame):
         Returns
         -------
         result : QSize
-            If the user has explitly set the maximum size of the 
-            widget, that size will be returned. Otherwise, an 
+            If the user has explitly set the maximum size of the
+            widget, that size will be returned. Otherwise, an
             invalid QSize will be returned.
 
         """
@@ -136,7 +136,7 @@ class QWindow(QFrame):
         """ Set the minimum size for the QWindow.
 
         This is an overridden parent class method which stores the
-        provided size as the explictly set QSize. The explicit 
+        provided size as the explictly set QSize. The explicit
         size can be reset by passing a QSize of (0, 0).
 
         Parameters
@@ -149,14 +149,14 @@ class QWindow(QFrame):
         if size == QSize(0, 0):
             self._expl_min_size = QSize()
         else:
-            self._expl_min_size = size 
+            self._expl_min_size = size
         self.layout().update()
 
     def setMaximumSize(self, size):
         """ Set the maximum size for the QWindow.
 
         This is an overridden parent class method which stores the
-        provided size as the explictly set QSize. The explicit 
+        provided size as the explictly set QSize. The explicit
         size can be reset by passing a QSize equal to the maximum
         widget size of QSize(16777215, 16777215).
 
@@ -201,22 +201,43 @@ class QtWindow(QtWidgetComponent):
 
         """
         super(QtWindow, self).init_layout()
+        self.widget().setCentralWidget(self.central_widget())
+
+    #--------------------------------------------------------------------------
+    # Utility Methods
+    #--------------------------------------------------------------------------
+    def central_widget(self):
+        """ Find and return the central widget child for this widget.
+
+        Returns
+        -------
+        result : QWidget or None
+            The central widget defined for this widget, or None if one
+            is not defined.
+
+        """
+        widget = None
         for child in self.children():
             if isinstance(child, QtContainer):
-                self.widget().setCentralWidget(child.widget())
-                break
-    
+                widget = child.widget()
+        return widget
+
     #--------------------------------------------------------------------------
     # Child Events
     #--------------------------------------------------------------------------
+    def child_removed(self, child):
+        """ Handle the child removed event for a QtWindow.
+
+        """
+        if isinstance(child, QtContainer):
+            self.widget().setCentralWidget(self.central_widget())
+
     def child_added(self, child):
         """ Handle the child added event for a QtWindow.
 
         """
-        for child in self.children():
-            if isinstance(child, QtContainer):
-                self.widget().setCentralWidget(child.widget())
-                break
+        if isinstance(child, QtContainer):
+            self.widget().setCentralWidget(self.central_widget())
 
     #--------------------------------------------------------------------------
     # Signal Handlers
@@ -231,41 +252,41 @@ class QtWindow(QtWidgetComponent):
     # Message Handlers
     #--------------------------------------------------------------------------
     def on_action_close(self, content):
-        """ Handle the 'close' action from the Enaml widget. 
+        """ Handle the 'close' action from the Enaml widget.
 
         """
         self.close()
 
     def on_action_maximize(self, content):
-        """ Handle the 'maximize' action from the Enaml widget. 
+        """ Handle the 'maximize' action from the Enaml widget.
 
         """
         self.maximize()
 
     def on_action_minimize(self, content):
-        """ Handle the 'minimize' action from the Enaml widget. 
+        """ Handle the 'minimize' action from the Enaml widget.
 
         """
         self.minimize()
 
     def on_action_restore(self, content):
-        """ Handle the 'restore' action from the Enaml widget. 
+        """ Handle the 'restore' action from the Enaml widget.
 
         """
         self.restore()
 
     def on_action_set_icon(self, content):
-        """ Handle the 'set-icon' action from the Enaml widget. 
+        """ Handle the 'set-icon' action from the Enaml widget.
 
         """
         pass
 
     def on_action_set_title(self, content):
-        """ Handle the 'set-title' action from the Enaml widget. 
+        """ Handle the 'set-title' action from the Enaml widget.
 
         """
         self.set_title(content['title'])
-    
+
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
@@ -297,7 +318,7 @@ class QtWindow(QtWidgetComponent):
         """ Set the window icon.
 
         """
-        pass 
+        pass
 
     def set_title(self, title):
         """ Set the title of the window.

@@ -99,28 +99,47 @@ class WxWindow(WxWidgetComponent):
         self.widget().Bind(wx.EVT_CLOSE, self.on_close)
 
     def init_layout(self):
-        """ Perform the layout initialization for the window control.
+        """ Perform layout initialization for the control.
 
         """
         super(WxWindow, self).init_layout()
-        widget = self.widget()
+        self.widget().SetCentralWidget(self.central_widget())
+
+    #--------------------------------------------------------------------------
+    # Utility Methods
+    #--------------------------------------------------------------------------
+    def central_widget(self):
+        """ Find and return the central widget child for this widget.
+
+        Returns
+        -------
+        result : wxWindos or None
+            The central widget defined for this widget, or None if one
+            is not defined.
+
+        """
+        widget = None
         for child in self.children():
             if isinstance(child, WxContainer):
-                widget.SetCentralWidget(child.widget())
-                break
-        widget.Bind(EVT_COMMAND_LAYOUT_REQUESTED, self.on_layout_requested)
+                widget = child.widget()
+        return widget
 
     #--------------------------------------------------------------------------
     # Child Events
     #--------------------------------------------------------------------------
-    def child_added(self, child):
-        """ Handle the child added event for a WxWindow.
+    def child_removed(self, child):
+        """ Handle the child removed event for a QtWindow.
 
         """
-        for child in self.children():
-            if isinstance(child, WxContainer):
-                self.widget().SetCentralWidget(child.widget())
-                break
+        if isinstance(child, WxContainer):
+            self.widget().SetCentralWidget(self.central_widget())
+
+    def child_added(self, child):
+        """ Handle the child added event for a QtWindow.
+
+        """
+        if isinstance(child, WxContainer):
+            self.widget().SetCentralWidget(self.central_widget())
 
     #--------------------------------------------------------------------------
     # Event Handlers
