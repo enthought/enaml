@@ -51,6 +51,7 @@ class QCustomScrollArea(QScrollArea):
 
         """
         self._sizeHint = QSize()
+        self.takeWidget() # Let Python keep ownership of the old widget
         super(QCustomScrollArea, self).setWidget(widget)
 
     def sizeHint(self):
@@ -122,23 +123,44 @@ class QtScrollArea(QtConstraintsWidget):
         """
         super(QtScrollArea, self).init_layout()
         widget = self.widget()
+        widget.setWidget(self.scroll_widget())
+        widget.layoutRequested.connect(self.on_layout_requested)
+
+    #--------------------------------------------------------------------------
+    # Utility Methods
+    #--------------------------------------------------------------------------
+    def scroll_widget(self):
+        """ Find and return the scroll widget child for this widget.
+
+        Returns
+        -------
+        result : QWidget or None
+            The scroll widget defined for this widget, or None if one is
+            not defined.
+
+        """
+        widget = None
         for child in self.children():
             if isinstance(child, QtContainer):
-                widget.setWidget(child.widget())
-                break
-        widget.layoutRequested.connect(self.on_layout_requested)
+                widget = child.widget()
+        return widget
 
     #--------------------------------------------------------------------------
     # Child Events
     #--------------------------------------------------------------------------
+    def child_removed(self, child):
+        """ Handle the child removed event for a QtScrollArea.
+
+        """
+        if isinstance(child, QtContainer):
+            self.widget().setWidget(self.scroll_widget())
+
     def child_added(self, child):
         """ Handle the child added event for a QtScrollArea.
 
         """
-        for child in self.children():
-            if isinstance(child, QtContainer):
-                self.widget().setWidget(child.widget())
-                break
+        if isinstance(child, QtContainer):
+            self.widget().setWidget(self.scroll_widget())
 
     #--------------------------------------------------------------------------
     # Signal Handlers

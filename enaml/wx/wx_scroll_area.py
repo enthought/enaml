@@ -144,23 +144,43 @@ class WxScrollArea(WxConstraintsWidget):
 
         """
         super(WxScrollArea, self).init_layout()
-        widget = self.widget()
+        self.widget().SetScrollWidget(self.scroll_widget())
+
+    #--------------------------------------------------------------------------
+    # Utility Methods
+    #--------------------------------------------------------------------------
+    def scroll_widget(self):
+        """ Find and return the scroll widget child for this widget.
+
+        Returns
+        -------
+        result : wxWindow or None
+            The scroll widget defined for this widget, or None if one is
+            not defined.
+
+        """
+        widget = None
         for child in self.children():
             if isinstance(child, WxContainer):
-                widget.SetScrollWidget(child.widget())
-                break
+                widget = child.widget()
+        return widget
 
     #--------------------------------------------------------------------------
     # Child Events
     #--------------------------------------------------------------------------
+    def child_removed(self, child):
+        """ Handle the child removed event for a WxScrollArea.
+
+        """
+        if isinstance(child, WxContainer):
+            self.widget().SetScrollWidget(self.scroll_widget())
+
     def child_added(self, child):
         """ Handle the child added event for a WxScrollArea.
 
         """
-        for child in self.children():
-            if isinstance(child, WxContainer):
-                self.widget().SetScrollWidget(child.widget())
-                break
+        if isinstance(child, WxContainer):
+            self.widget().SetScrollWidget(self.scroll_widget())
 
     #--------------------------------------------------------------------------
     # Overrides
