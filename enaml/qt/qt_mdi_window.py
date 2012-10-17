@@ -62,9 +62,7 @@ class QtMdiWindow(QtWidgetComponent):
 
         """
         if isinstance(child, QtWidgetComponent):
-            widget = self.widget()
-            if child.widget() is widget.widget():
-                widget.setWidget(None)
+            self._set_window_widget(self.mdi_widget())
 
     def child_added(self, child):
         """ Handle the child added event for a QtMdiWindow.
