@@ -103,7 +103,9 @@ class WxWindow(WxWidgetComponent):
 
         """
         super(WxWindow, self).init_layout()
-        self.widget().SetCentralWidget(self.central_widget())
+        widget = self.widget()
+        widget.SetCentralWidget(self.central_widget())
+        widget.Bind(EVT_COMMAND_LAYOUT_REQUESTED, self.on_layout_requested)
 
     #--------------------------------------------------------------------------
     # Utility Methods
