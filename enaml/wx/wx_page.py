@@ -244,23 +244,45 @@ class WxPage(WxWidgetComponent):
 
         """
         super(WxPage, self).init_layout()
+        self.widget().SetPageWidget(self.page_widget())
+
+    #--------------------------------------------------------------------------
+    # Utility Methods
+    #--------------------------------------------------------------------------
+    def page_widget(self):
+        """ Find and return the page widget child for this widget.
+
+        Returns
+        -------
+        result : wxWindow or None
+            The page widget defined for this widget, or None if one is
+            not defined.
+
+        """
+        widget = None
         for child in self.children():
             if isinstance(child, WxContainer):
-                self.widget().SetPageWidget(child.widget())
-                break
+                widget = child.widget()
+        return widget
 
     #--------------------------------------------------------------------------
     # Child Events
     #--------------------------------------------------------------------------
+    def child_removed(self, child):
+        """ Handle the child removed event for a WxPage.
+
+        """
+        if isinstance(child, WxContainer):
+            widget = self.widget()
+            if child.widget() is widget.GetPageWidget():
+                widget.SetPageWidget(None)
+
     def child_added(self, child):
         """ Handle the child added event for a WxPage.
 
         """
-        for child in self.children():
-            if isinstance(child, WxContainer):
-                self.widget().SetPageWidget(child.widget())
-                self.update_geometry()
-                break
+        if isinstance(child, WxContainer):
+            self.widget().SetPageWidget(self.page_widget())
 
     #--------------------------------------------------------------------------
     # Event Handlers

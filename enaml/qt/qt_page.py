@@ -135,7 +135,7 @@ class QPage(QWidget):
 
         """
         self._is_open = False
-        notebook = self._findNotebook() 
+        notebook = self._findNotebook()
         if notebook is not None:
             notebook.hidePage(self)
 
@@ -272,22 +272,45 @@ class QtPage(QtWidgetComponent):
 
         """
         super(QtPage, self).init_layout()
+        self.widget().setPageWidget(self.page_widget())
+
+    #--------------------------------------------------------------------------
+    # Utility Methods
+    #--------------------------------------------------------------------------
+    def page_widget(self):
+        """ Find and return the page widget child for this widget.
+
+        Returns
+        -------
+        result : QWidget or None
+            The page widget defined for this widget, or None if one is
+            not defined.
+
+        """
+        widget = None
         for child in self.children():
             if isinstance(child, QtContainer):
-                self.widget().setPageWidget(child.widget())
-                break
-    
+                widget = child.widget()
+        return widget
+
     #--------------------------------------------------------------------------
     # Child Events
     #--------------------------------------------------------------------------
+    def child_removed(self, child):
+        """ Handle the child removed event for a QtPage.
+
+        """
+        if isinstance(child, QtContainer):
+            widget = self.widget()
+            if child.widget() is widget.pageWidget():
+                widget.setPageWidget(None)
+
     def child_added(self, child):
         """ Handle the child added event for a QtPage.
 
         """
-        for child in self.children():
-            if isinstance(child, QtContainer):
-                self.widget().setPageWidget(child.widget())
-                break
+        if isinstance(child, QtContainer):
+            self.widget().setPageWidget(self.page_widget())
 
     #--------------------------------------------------------------------------
     # Signal Handlers
