@@ -257,7 +257,8 @@ class WxActionGroup(WxObject):
         super(WxActionGroup, self).init_layout()
         widget = self.widget()
         for child in self.children():
-            widget.AddAction(child.widget())
+            if isinstance(child, WxAction):
+                widget.AddAction(child.widget())
 
     #--------------------------------------------------------------------------
     # Child Events
@@ -266,11 +267,12 @@ class WxActionGroup(WxObject):
         """ Handle the child removed event for a WxActionGroup.
 
         """
-        action = child.widget()
-        self.widget().RemoveAction(action)
-        parent = self.parent()
-        if parent is not None:
-            parent.widget().RemoveAction(action)
+        if isinstance(child, WxAction):
+            action = child.widget()
+            self.widget().RemoveAction(action)
+            parent = self.parent()
+            if parent is not None:
+                parent.widget().RemoveAction(action)
 
     def child_added(self, child):
         """ Handle the child added event for a WxActionGroup.
@@ -279,10 +281,12 @@ class WxActionGroup(WxObject):
         # The easiest way to handle the insert is to tell the parent to
         # insert all the current actions. It will work out the proper
         # ordering automatically.
-        parent = self.parent()
-        if parent is not None:
-            before = parent.find_next_action(self)
-            parent.widget().InsertActions(before, self.actions())
+        if isinstance(child, WxAction):
+            self.widget().AddAction(child.widget())
+            parent = self.parent()
+            if parent is not None:
+                before = parent.find_next_action(self)
+                parent.widget().InsertActions(before, self.actions())
 
     #--------------------------------------------------------------------------
     # Utility Methods
@@ -299,7 +303,8 @@ class WxActionGroup(WxObject):
             have the correct order.
 
         """
-        return [child.widget() for child in self.children()]
+        isinst = isinstance
+        return [c.widget() for c in self.children() if isinst(c, WxAction)]
 
     #--------------------------------------------------------------------------
     # Message Handling

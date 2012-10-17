@@ -89,7 +89,8 @@ class QtActionGroup(QtObject):
         super(QtActionGroup, self).init_layout()
         widget = self.widget()
         for child in self.children():
-            widget.addAction(child.widget())
+            if isinstance(child, QtAction):
+                widget.addAction(child.widget())
 
     #--------------------------------------------------------------------------
     # Child Events
@@ -98,11 +99,12 @@ class QtActionGroup(QtObject):
         """ Handle the child removed event for a QtActionGroup.
 
         """
-        action = child.widget()
-        self.widget().removeAction(action)
-        parent = self.parent()
-        if parent is not None:
-            parent.widget().removeAction(action)
+        if isinstance(child, QtAction):
+            action = child.widget()
+            self.widget().removeAction(action)
+            parent = self.parent()
+            if parent is not None:
+                parent.widget().removeAction(action)
 
     def child_added(self, child):
         """ Handle the child added event for a QtActionGroup.
@@ -111,11 +113,12 @@ class QtActionGroup(QtObject):
         # The easiest way to handle the insert is to tell the parent to
         # insert all the current actions. It will work out the proper
         # ordering automatically.
-        self.widget().addAction(child.widget())
-        parent = self.parent()
-        if parent is not None:
-            before = parent.find_next_action(self)
-            parent.widget().insertActions(before, self.actions())
+        if isinstance(child, QtAction):
+            self.widget().addAction(child.widget())
+            parent = self.parent()
+            if parent is not None:
+                before = parent.find_next_action(self)
+                parent.widget().insertActions(before, self.actions())
 
     #--------------------------------------------------------------------------
     # Utility Methods
@@ -132,7 +135,8 @@ class QtActionGroup(QtObject):
             have the correct order.
 
         """
-        return [child.widget() for child in self.children()]
+        isinst = isinstance
+        return [c.widget() for c in self.children() if isinst(c, QtAction)]
 
     #--------------------------------------------------------------------------
     # Message Handling
