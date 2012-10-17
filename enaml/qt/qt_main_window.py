@@ -113,50 +113,49 @@ class QtMainWindow(QtWindow):
         # since the layout initialization for Window is not appropriate
         # for MainWindow.
         main_window = self.widget()
-
-        menu_bars = []
-        tool_bars = []
-        dock_panes = []
-        containers = []
-        for child in self.children():
-            if isinstance(child, QtMenuBar):
-                menu_bars.append(child)
-            elif isinstance(child, QtToolBar):
-                tool_bars.append(child)
-            elif isinstance(child, QtDockPane):
-                dock_panes.append(child)
-            elif isinstance(child, QtContainer):
-                containers.append(child)
-
-        # Setup the menu bar. All but the first are ignored.
-        for child in menu_bars:
-            main_window.setMenuBar(child.widget())
-            break
-
-        # Setup the central widget. All but the first are ignored.
-        for child in containers:
-            main_window.setCentralWidget(child.widget())
-            break
-
-        # Setup the tool bars.
-        for child in tool_bars:
-            bar_widget = child.widget()
+        components = self.components()
+        main_window.setMenuBar(components['menu_bar'])
+        main_window.setCentralWidget(components['central_widget'])
+        for dwidget in components['dock_panes']:
+            main_window.addDockWidget(dwidget.dockArea(), dwidget)
+        for tbar in components['tool_bars']:
             # XXX slight hack. When adding the toolbar to the main
             # window, it is forcibly unfloated. In order for the
             # initial floating state to be maintained, it must be
             # re-floating after being added. We do the refloating
             # in the future, so that the main window shows up first.
-            floating = bar_widget.isFloating()
-            main_window.addToolBar(bar_widget.toolBarArea(), bar_widget)
+            floating = tbar.isFloating()
+            main_window.addToolBar(tbar.toolBarArea(), tbar)
             if floating:
-                QtMainWindow.deferred_call(bar_widget.setFloating, True)
+                QtMainWindow.deferred_call(tbar.setFloating, True)
 
-        # Setup the dock panes.
-        for child in dock_panes:
-            dock_widget = child.widget()
-            main_window.addDockWidget(dock_widget.dockArea(), dock_widget)
+    #--------------------------------------------------------------------------
+    # Utility Methods
+    #--------------------------------------------------------------------------
+    def components(self):
+        """ Get a dictionary of the main window components.
 
-        # Setup the status bar
+        Returns
+        -------
+        result : dict
+            A dicionary of main window components categorized by their
+            function.
+
+        """
+        d = {
+            'central_widget': None, 'menu_bar': None,
+            'tool_bars': [], 'dock_panes': [],
+        }
+        for child in self.children():
+            if isinstance(child, QtDockPane):
+                d['dock_panes'].append(child.widget())
+            elif isinstance(child, QtToolBar):
+                d['tool_bars'].append(child.widget())
+            elif isinstance(child, QtMenuBar):
+                d['menu_bar'] = child.widget()
+            elif isinstance(child, QtContainer):
+                d['central_widget'] = child.widget()
+        return d
 
     #--------------------------------------------------------------------------
     # Child Events
@@ -171,49 +170,38 @@ class QtMainWindow(QtWindow):
         elif isinstance(child, QtToolBar):
             main_window.removeToolBar(child.widget())
         elif isinstance(child, QtContainer):
-            main_window.setCentralWidget(None)
+            if child.widget() is main_window.centralWidget():
+                main_window.setCentralWidget(None)
         elif isinstance(child, QtMenuBar):
-            main_window.setMenuBar(None)
+            if child.widget() is main_window.menuBar():
+                main_window.setMenuBar(None)
 
     def child_added(self, child):
         """ Handle the child added event for a QtMainWindow.
 
         """
-        # XXX there is quite a bit of duplicated code here. It would
-        # be nice to clean this up at some point.
         main_window = self.widget()
-
-        # Add a child QtMenuBar. It's not known if the given child is
-        # the first QtMenuBar child in the list of children. So, the
-        # list is scanned and the first one found is set as the menu
-        # bar for the window.
         if isinstance(child, QtMenuBar):
-            for child in self.children():
-                if isinstance(child, QtMenuBar):
-                    main_window.setMenuBar(child.widget())
-                    break
-
-        # Add a child QtContainer. It's not known if the given child is
-        # the first QtContainer child in the list of children. So, the
-        # list is scanned and the first one found is set as the central
-        # widget for the window.
+            components = self.components()
+            main_window.setMenuBar(components['menu_bar'])
         elif isinstance(child, QtContainer):
-            for child in self.children():
-                if isinstance(child, QtContainer):
-                    main_window.setCentralWidget(child.widget())
-                    break
-
-        # Add a child QtToolBar. There are two hacks involved in adding
-        # a tool bar. The first is the same hack that is perfomed in the
-        # `init_layout` method for a floating tool bar. The second is
-        # specific to OSX. On the platform, adding a tool bar to main
-        # window which is already visible but does not have any current
-        # tool bars will cause the main window to be hidden. This will
-        # only occur the *first* time a tool bar is added to the window.
-        # The hack below is workaround which should be sufficient for
-        # most use cases. A bug should really be filed against Qt for
-        # this one, as it's reproducible outside of Enaml.
+            components = self.components()
+            main_window.setCentralWidget(components['central_widget'])
+        elif isinstance(child, QtDockPane):
+            dock_widget = child.widget()
+            main_window.addDockWidget(dock_widget.dockArea(), dock_widget)
         elif isinstance(child, QtToolBar):
+            # There are two hacks involved in adding a tool bar. The
+            # first is the same hack that is perfomed in the layout
+            # method for a floating tool bar. The second is specific
+            # to OSX. On that platform, adding a tool bar to main
+            # window which is already visible but does not have any
+            # current tool bars will cause the main window to be hidden.
+            # This will only occur the *first* time a tool bar is added
+            # to the window. The hack below is workaround which should
+            # be sufficient for most use cases. A bug should really be
+            # filed against Qt for this one, since it's reproducible
+            # outside of Enaml.
             bar_widget = child.widget()
             reshow = False
             if sys.platform == 'darwin':
@@ -224,11 +212,6 @@ class QtMainWindow(QtWindow):
                 QtMainWindow.deferred_call(bar_widget.setFloating, True)
             if reshow:
                 main_window.setVisible(True)
-
-        # Add a child QtDockPane.
-        elif isinstance(child, QtDockPane):
-            dock_widget = child.widget()
-            main_window.addDockWidget(dock_widget.dockArea(), dock_widget)
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
