@@ -394,11 +394,11 @@ class WxMainWindow(WxWindow):
         elif isinstance(child, WxToolBar):
             main_window.RemoveToolBar(child.widget())
         elif isinstance(child, WxContainer):
-            if child.widget() is main_window.GetCentralWidget():
-                main_window.SetCentralWidget(None)
+            components = self.components()
+            main_window.SetCentralWidget(components['central_widget'])
         elif isinstance(child, WxMenuBar):
-            if child.widget() is main_window.GetMenuBar():
-                main_window.SetMenuBar(None)
+            components = self.components()
+            main_window.SetMenuBar(components['menu_bar'])
 
     def child_added(self, child):
         """ Handle the child added event for a WxMainWindow.
