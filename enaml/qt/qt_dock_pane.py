@@ -221,9 +221,7 @@ class QtDockPane(QtWidgetComponent):
 
         """
         if isinstance(child, QtContainer):
-            widget = self.widget()
-            if widget.widget() is child.widget():
-                widget.setWidget(None)
+            self.widget().setWidget(self.dock_widget())
 
     def child_added(self, child):
         """ Handle the child added event for a QtDockPane.

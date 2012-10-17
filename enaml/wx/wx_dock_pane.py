@@ -582,9 +582,7 @@ class WxDockPane(WxWidgetComponent):
 
         """
         if isinstance(child, WxContainer):
-            widget = self.widget()
-            if widget.GetDockWidget() is child.widget():
-                widget.SetDockWidget(None)
+            self.widget().SetDockWidget(self.dock_widget())
 
     def child_added(self, child):
         """ Handle the child added event for a WxDockPane.
