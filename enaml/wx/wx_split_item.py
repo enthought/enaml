@@ -76,22 +76,43 @@ class WxSplitItem(WxWidgetComponent):
 
         """
         super(WxSplitItem, self).init_layout()
+        self.widget().SetSplitWidget(self.split_widget())
+
+    #--------------------------------------------------------------------------
+    # Utility Methods
+    #--------------------------------------------------------------------------
+    def split_widget(self):
+        """ Find and return the split widget child for this widget.
+
+        Returns
+        -------
+        result : wxWindow or None
+            The split widget defined for this widget, or None if one is
+            not defined.
+
+        """
+        widget = None
         for child in self.children():
             if isinstance(child, WxContainer):
-                self.widget().SetSplitWidget(child.widget())
-                break
+                widget = child.widget()
+        return widget
 
     #--------------------------------------------------------------------------
     # Child Events
     #--------------------------------------------------------------------------
-    def child_added(self, child):
-        """ Handle the child added event for a WxSplitItem.
+    def child_removed(self, child):
+        """ Handle the child removed event for a WxSplitItem.
 
         """
-        for child in self.children():
-            if isinstance(child, WxContainer):
-                self.widget().SetSplitWidget(child.widget())
-                break
+        if isinstance(child, WxContainer):
+            self.widget().SetSplitWidget(self.split_widget())
+
+    def child_added(self, child):
+        """ Handle the child added event for a QtSplitItem.
+
+        """
+        if isinstance(child, WxContainer):
+            self.widget().SetSplitWidget(self.split_widget())
 
     #--------------------------------------------------------------------------
     # Message Handlers

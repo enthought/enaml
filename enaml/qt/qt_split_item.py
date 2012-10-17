@@ -75,22 +75,43 @@ class QtSplitItem(QtWidgetComponent):
 
         """
         super(QtSplitItem, self).init_layout()
+        self.widget().setSplitWidget(self.split_widget())
+
+    #--------------------------------------------------------------------------
+    # Utility Methods
+    #--------------------------------------------------------------------------
+    def split_widget(self):
+        """ Find and return the split widget child for this widget.
+
+        Returns
+        -------
+        result : QWidget or None
+            The split widget defined for this widget, or None if one is
+            not defined.
+
+        """
+        widget = None
         for child in self.children():
             if isinstance(child, QtContainer):
-                self.widget().setSplitWidget(child.widget())
-                break
+                widget = child.widget()
+        return widget
 
     #--------------------------------------------------------------------------
     # Child Events
     #--------------------------------------------------------------------------
+    def child_removed(self, child):
+        """ Handle the child removed event for a QtSplitItem.
+
+        """
+        if isinstance(child, QtContainer):
+            self.widget().setSplitWidget(self.split_widget())
+
     def child_added(self, child):
         """ Handle the child added event for a QtSplitItem.
 
         """
-        for child in self.children():
-            if isinstance(child, QtContainer):
-                self.widget().setSplitWidget(child.widget())
-                break
+        if isinstance(child, QtContainer):
+            self.widget().setSplitWidget(self.split_widget())
 
     #--------------------------------------------------------------------------
     # Message Handlers
