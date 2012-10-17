@@ -68,23 +68,44 @@ class QtStackItem(QtWidgetComponent):
 
         """
         super(QtStackItem, self).init_layout()
+        self.widget().setStackWidget(self.stack_widget())
+
+    #--------------------------------------------------------------------------
+    # Utility Methods
+    #--------------------------------------------------------------------------
+    def stack_widget(self):
+        """ Find and return the stack widget child for this widget.
+
+        Returns
+        -------
+        result : QWidget or None
+            The stack widget defined for this widget, or None if one is
+            not defined.
+
+        """
+        widget = None
         for child in self.children():
             if isinstance(child, QtContainer):
-                self.widget().setStackWidget(child.widget())
-                break
+                widget = child.widget()
+        return widget
 
     #--------------------------------------------------------------------------
     # Child Events
     #--------------------------------------------------------------------------
+    def child_removed(self, child):
+        """ Handle the child added event for a QtStackItem.
+
+        """
+        if isinstance(child, QtContainer):
+            self.widget().setStackWidget(self.stack_widget())
+
     def child_added(self, child):
         """ Handle the child added event for a QtStackItem.
 
         """
-        for child in self.children():
-            if isinstance(child, QtContainer):
-                self.widget().setStackWidget(child.widget())
-                break
-    
+        if isinstance(child, QtContainer):
+            self.widget().setStackWidget(self.stack_widget())
+
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
