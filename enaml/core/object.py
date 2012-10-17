@@ -359,29 +359,17 @@ class Object(HasStrictTraits):
         if parent is self:
             raise ValueError('Cannot use `self` as Object parent')
 
-        old_kids = None
+        self._parent = parent
         if old_parent is not None:
             old_kids = old_parent._children
             idx = old_kids.index(self)
             old_kids = old_kids[:idx] + old_kids[idx + 1:]
-            old_kids = tuple(old_parent.validate_children(old_kids))
-
-        new_kids = None
-        if parent is not None:
-            new_kids = parent._children + (self,)
-            new_kids = tuple(parent.validate_children(new_kids))
-
-        # If this code path is reached, it means that child validation
-        # succeeded for the parents and it's safe to commit the change.
-        self._parent = parent
-
-        if old_kids is not None:
             with ChildEventContext(old_parent):
                 old_parent._children = old_kids
 
-        if new_kids is not None:
+        if parent is not None:
             with ChildEventContext(parent):
-                parent._children = new_kids
+                parent._children = parent._children + (self,)
                 # Initialize the child from within the child event
                 # context since it may have arbitrary side effects,
                 # including adding more children to its parent.
@@ -426,31 +414,19 @@ class Object(HasStrictTraits):
         if not added:
             new.extend(insert_tup)
 
-        old_updates = []
         for child in insert_tup:
             old_parent = child._parent
-            if old_parent is not None and old_parent is not self:
-                old_kids = old_parent._children
-                idx = old_kids.index(child)
-                old_kids = old_kids[:idx] + old_kids[idx + 1:]
-                old_kids = old_parent.validate_children(old_kids)
-                old_updates.append((old_parent, old_kids))
-
-        new_kids = tuple(new)
-        new_kids = self.validate_children(new_kids)
-
-        # If this code path is reached, it means that child validation
-        # succeeded for the parents and it's safe to commit the change.
-        for child in insert_tup:
-            if child._parent is not self:
+            if old_parent is not self:
                 child._parent = self
-
-        for old_parent, old_kids in old_updates:
-            with ChildEventContext(old_parent):
-                old_parent._children = old_kids
+                if old_parent is not None:
+                    old_kids = old_parent._children
+                    idx = old_kids.index(child)
+                    old_kids = old_kids[:idx] + old_kids[idx + 1:]
+                    with ChildEventContext(old_parent):
+                        old_parent._children = old_kids
 
         with ChildEventContext(self):
-            self._children = new_kids
+            self._children = tuple(new)
             if self.initialized:
                 # Initialize the children from within the child event
                 # context since they may have arbitrary side effects,
@@ -484,9 +460,6 @@ class Object(HasStrictTraits):
             else:
                 new.append(child)
 
-        new_kids = tuple(new)
-        new_kids = self.validate_children(new_kids)
-
         if destroy:
             for child in old:
                 # Set the child's parent to None so that destroy does
@@ -498,7 +471,7 @@ class Object(HasStrictTraits):
                 child._parent = None
 
         with ChildEventContext(self):
-            self._children = new_kids
+            self._children = tuple(new)
 
     def replace_children(self, remove, before, insert, destroy=True):
         """ Perform an 'atomic' remove and insert children operation.
@@ -553,21 +526,17 @@ class Object(HasStrictTraits):
         if not added:
             new.extend(insert_tup)
 
-        old_updates = []
         for child in insert_tup:
             old_parent = child._parent
-            if old_parent is not None and old_parent is not self:
-                old_kids = old_parent._children
-                idx = old_kids.index(child)
-                old_kids = old_kids[:idx] + old_kids[idx + 1:]
-                old_kids = old_parent.validate_children(old_kids)
-                old_updates.append((old_parent, old_kids))
+            if old_parent is not self:
+                child._parent = self
+                if old_parent is not None:
+                    old_kids = old_parent._children
+                    idx = old_kids.index(child)
+                    old_kids = old_kids[:idx] + old_kids[idx + 1:]
+                    with ChildEventContext(old_parent):
+                        old_parent._children = old_kids
 
-        new_kids = tuple(new)
-        new_kids = self.validate_children(new_kids)
-
-        # If this code path is reached, it means that child validation
-        # succeeded for the parents and it's safe to commit the change.
         if destroy:
             for child in old:
                 # Set the child's parent to None so that destroy does
@@ -578,56 +547,14 @@ class Object(HasStrictTraits):
             for child in old:
                 child._parent = None
 
-        for child in insert_tup:
-            if child._parent is not self:
-                child._parent = self
-
-        for old_parent, old_kids in old_updates:
-            with ChildEventContext(old_parent):
-                old_parent._children = old_kids
-
         with ChildEventContext(self):
-            self._children = new_kids
+            self._children = tuple(new)
             if self.initialized:
                 # Initialize the children from within the child event
                 # context since they may have arbitrary side effects,
                 # including adding more children to their parent.
                 for child in insert_tup:
                     child.initialize()
-
-    def validate_children(self, children):
-        """ Validate the given list of children.
-
-        This method is called when the children of the Object are being
-        changed but *before* the change is commited. This provides the
-        developer an opportunity to reject and/or modify the allowable
-        child of the object.
-
-        If the children are not valid, a ValueError should be raised with
-        an appropriate error message. If the children are valid, or can
-        be made valid, then the valid iterable of children should be
-        returned.
-
-        The default implementation of this method allows all children.
-
-        Parameters
-        ----------
-        children : tuple
-            The tuple of children to be committed to the object.
-
-        Returns
-        -------
-        result : iterable
-            The iterable of valid children for the object.
-
-        Raises
-        ------
-        ValueError
-            This exception will be raised if the children are not valid
-            of cannot be made valid.
-
-        """
-        return children
 
     #--------------------------------------------------------------------------
     # Messaging Methods

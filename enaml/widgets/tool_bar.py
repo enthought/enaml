@@ -97,27 +97,6 @@ class ToolBar(ConstraintsWidget):
         self.publish_attributes(*attrs)
 
     #--------------------------------------------------------------------------
-    # Overrides
-    #--------------------------------------------------------------------------
-    def validate_children(self, children):
-        """ A child validator for a ToolBar.
-
-        The allowable child types are `Action`, `ActionGroup`, and
-        `Include`.
-
-        """
-        types = (Action, ActionGroup, Include)
-        isinst = isinstance
-        for child in children:
-            if not isinst(child, types):
-                name = type(self).__name__
-                msg = ('The children of a component of type `%s` must be '
-                       'instances of `Action`, `ActionGroup`, or `Include`. '
-                       'Got object of type `%s` instead.')
-                raise ValueError(msg % (name, type(child).__name__))
-        return children
-
-    #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
     @cached_property

@@ -136,26 +136,6 @@ class Container(ConstraintsWidget):
         self.on_trait_change(self._send_relayout, 'share_layout, padding')
 
     #--------------------------------------------------------------------------
-    # Overrides
-    #--------------------------------------------------------------------------
-    def validate_children(self, children):
-        """ A child validator for a Container.
-
-        The allowable child types are `ConstraintsWidget` and `Include`.
-
-        """
-        types = (ConstraintsWidget, Include)
-        isinst = isinstance
-        for child in children:
-            if not isinst(child, types):
-                name = type(self).__name__
-                msg = ('The children of a component of type `%s` must be '
-                       'instances of `ConstraintsWidget` or `Include`. Got '
-                       'object of type `%s` instead.')
-                raise ValueError(msg % (name, type(child).__name__))
-        return children
-
-    #--------------------------------------------------------------------------
     # Constraints Generation
     #--------------------------------------------------------------------------
     def _layout_info(self):

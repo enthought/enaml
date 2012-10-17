@@ -7,6 +7,7 @@ from traits.api import List, Enum, Unicode, Bool,  Property, cached_property
 from enaml.core.trait_types import EnamlEvent
 
 from .container import Container
+from .include import Include
 from .widget_component import WidgetComponent
 
 
@@ -14,7 +15,7 @@ class DockPane(WidgetComponent):
     """ A widget which can be docked in a MainWindow.
 
     A DockPane is a widget which can be docked in designated dock areas
-    in a MainWindow. It can have at most a single child widget which is 
+    in a MainWindow. It can have at most a single child widget which is
     an instance of Container.
 
     """
@@ -35,15 +36,15 @@ class DockPane(WidgetComponent):
 
     #: Whether or not the dock can be floated as a separate window.
     floatable = Bool(True)
-    
+
     #: A boolean indicating whether or not the dock pane is floating.
     floating = Bool(False)
 
     #: The dock area in the MainWindow where the pane is docked.
     dock_area = Enum('left', 'right', 'top', 'bottom')
 
-    #: The dock areas in the MainWindow where the pane can be docked 
-    #: by the user. Note that this does not preclude the pane from 
+    #: The dock areas in the MainWindow where the pane can be docked
+    #: by the user. Note that this does not preclude the pane from
     #: being docked programmatically via the 'dock_area' attribute.
     allowed_dock_areas = List(
         Enum('left', 'right', 'top', 'bottom', 'all'), value=['all'],
@@ -52,7 +53,7 @@ class DockPane(WidgetComponent):
     #: A read only property which returns the pane's dock widget.
     dock_widget = Property(depends_on='children')
 
-    #: An event fired when the user closes the pane by clicking on the 
+    #: An event fired when the user closes the pane by clicking on the
     #: dock pane's close button.
     closed = EnamlEvent
 
@@ -78,8 +79,8 @@ class DockPane(WidgetComponent):
     def bind(self):
         super(DockPane, self).bind()
         attrs = (
-            'title', 'title_bar_visible', 'title_bar_orientation', 'closable', 
-            'movable', 'floatable', 'floating', 'dock_area', 
+            'title', 'title_bar_visible', 'title_bar_orientation', 'closable',
+            'movable', 'floatable', 'floating', 'dock_area',
             'allowed_dock_areas'
         )
         self.publish_attributes(*attrs)
@@ -128,7 +129,7 @@ class DockPane(WidgetComponent):
     # Public API
     #--------------------------------------------------------------------------
     def open(self):
-        """ Open the dock pane in the MainWindow. 
+        """ Open the dock pane in the MainWindow.
 
         Calling this method will also set the pane visibility to True.
 
@@ -141,7 +142,7 @@ class DockPane(WidgetComponent):
 
         Calling this method will set the pane visibility to False.
 
-        """ 
+        """
         self.set_guarded(visible=False)
         self.send_action('close', {})
 

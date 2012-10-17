@@ -89,16 +89,3 @@ class Include(Declarative):
             old = event.removed
             parent.replace_children(old, self, self.objects, self.destroy_old)
 
-    #--------------------------------------------------------------------------
-    # Overrides
-    #--------------------------------------------------------------------------
-    def validate_children(self, children):
-        """ A child validator which rejects all children.
-
-        """
-        if children:
-            name = type(self).__name__
-            msg = 'Cannot add children to component of type `%s`'
-            raise ValueError(msg % name)
-        return children
-

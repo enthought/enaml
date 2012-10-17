@@ -36,40 +36,6 @@ class MainWindow(Window):
     # status_bar = Property(depends_on='children')
 
     #--------------------------------------------------------------------------
-    # Overrides
-    #--------------------------------------------------------------------------
-    def validate_children(self, children):
-        """ A child validator for a MainWindow.
-
-        This validator ensures that the type and number of children for
-        the MainWindow is appropriate.
-
-        """
-        types = (DockPane, ToolBar, Container, MenuBar, Include)
-        got_menu = False
-        got_widget = False
-        isinst = isinstance
-        for child in children:
-            if not isinst(child, types):
-                name = type(self).__name__
-                msg = ('The children of a component of type `%s` must be '
-                       'instances of `MenuBar`, `ToolBar`, `DockPane`, '
-                       '`Container` or `Include`. Got object of type `%s` '
-                       'instead.')
-                raise ValueError(msg % (name, type(child).__name__))
-            if isinst(child, Container):
-                if got_widget:
-                    msg = '`%s` got multiple values for the central widget'
-                    raise ValueError(msg % type(self).__name__)
-                got_widget = True
-            elif isinst(child, MenuBar):
-                if got_menu:
-                    msg = '`%s` got multiple values for the menu bar'
-                    raise ValueError(msg % type(self).__name__)
-                got_menu = True
-        return children
-
-    #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
     @cached_property

@@ -52,26 +52,6 @@ class ActionGroup(Declarative):
         self.publish_attributes('exclusive', 'enabled', 'visible')
 
     #--------------------------------------------------------------------------
-    # Overrides
-    #--------------------------------------------------------------------------
-    def validate_children(self, children):
-        """ A child validator for an ActionGroup.
-
-        The allowable child types are `Action` and `Include`.
-
-        """
-        types = (Action, Include)
-        isinst = isinstance
-        for child in children:
-            if not isinst(child, types):
-                name = type(self).__name__
-                msg = ('The children of a component of type `%s` must be '
-                       'instances of `Action` or `Include`. Got object of '
-                       'type `%s` instead.')
-                raise ValueError(msg % (name, type(child).__name__))
-        return children
-
-    #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
     @cached_property
