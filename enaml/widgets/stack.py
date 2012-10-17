@@ -46,6 +46,16 @@ class Stack(ConstraintsWidget):
         self.publish_attributes('index', 'transition')
 
     #--------------------------------------------------------------------------
+    # Message Handling
+    #--------------------------------------------------------------------------
+    def on_action_index_changed(self, content):
+        """ Handle the `index_changed` action from the client widget.
+
+        """
+        with self.loopback_guard('index'):
+            self.index = content['index']
+
+    #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
     @cached_property
@@ -55,7 +65,7 @@ class Stack(ConstraintsWidget):
         Returns
         -------
         result : tuple
-            The tuple of StackItem instances defined as children of 
+            The tuple of StackItem instances defined as children of
             this Stack.
 
         """

@@ -8,7 +8,7 @@ from .qt_constraints_widget import QtConstraintsWidget
 from .qt_stack_item import QtStackItem
 from .q_pixmap_painter import QPixmapPainter
 from .q_pixmap_transition import (
-    QDirectedTransition, QSlideTransition, QWipeTransition, QIrisTransition, 
+    QDirectedTransition, QSlideTransition, QWipeTransition, QIrisTransition,
     QFadeTransition, QCrossFadeTransition
 )
 
@@ -36,7 +36,7 @@ def make_transition(info):
     Parameters
     ----------
     info : dict
-        A dictionary sent by an Enaml widget which represents a 
+        A dictionary sent by an Enaml widget which represents a
         transition.
 
     Returns
@@ -99,8 +99,8 @@ class QStack(QStackedWidget):
         self._painter = None
         self.setCurrentIndex(self._transition_index)
         # This final show() makes sure the underlyling widget is visible.
-        # If transitions are being fired rapidly, it's possible that the 
-        # current index and the transition index will be the same when 
+        # If transitions are being fired rapidly, it's possible that the
+        # current index and the transition index will be the same when
         # the call above is invoked. In such cases, Qt short circuits the
         # evaluation and the current widget is not shown.
         self.currentWidget().show()
@@ -145,9 +145,9 @@ class QStack(QStackedWidget):
         # a clean widget on which to draw.
         src_widget.setVisible(False)
         dst_widget.setVisible(False)
-        
+
         # Hookup the pixmap painter and start the transition.
-        painter = self._painter = QPixmapPainter() 
+        painter = self._painter = QPixmapPainter()
         painter.setTargetWidget(self)
         transition.pixmapUpdated.connect(painter.drawPixmap)
         transition.start()
@@ -201,7 +201,7 @@ class QStack(QStackedWidget):
         """ Transition the stack widget to the given index.
 
         If there is no transition object is installed on the widget
-        this is equivalent to calling `setCurrentIndex`. Otherwise, 
+        this is equivalent to calling `setCurrentIndex`. Otherwise,
         the change will be animated using the installed transition.
 
         Parameters
@@ -250,17 +250,27 @@ class QtStack(QtConstraintsWidget):
         # Bypass the transition effect during initialization.
         widget.setCurrentIndex(self._initial_index)
         widget.layoutRequested.connect(self.on_layout_requested)
+        widget.currentChanged.connect(self.on_current_changed)
 
     #--------------------------------------------------------------------------
     # Child Events
     #--------------------------------------------------------------------------
+    def child_removed(self, child):
+        """ Handle the child removed event for a QtStack.
+
+        """
+        if isinstance(child, QtStackItem):
+            self.widget().removeWidget(child.widget())
+
     def child_added(self, child):
         """ Handle the child added event for a QtStack.
 
         """
         if isinstance(child, QtStackItem):
-            self.widget().addWidget(child.widget())
-    
+            index = self.index_of(child)
+            if index != -1:
+                self.widget().insertWidget(index, child.widget())
+
     #--------------------------------------------------------------------------
     # Signal Handlers
     #--------------------------------------------------------------------------
@@ -270,6 +280,14 @@ class QtStack(QtConstraintsWidget):
         """
         self.size_hint_updated()
 
+    def on_current_changed(self):
+        """ Handle the `currentChanged` signal from the QStack.
+
+        """
+        if 'index' not in self.loopback_guard:
+            index = self.widget().currentIndex()
+            self.send_action('index_changed', {'index': index})
+
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
@@ -277,7 +295,8 @@ class QtStack(QtConstraintsWidget):
         """ Handle the 'set_index' action from the Enaml widget.
 
         """
-        self.set_index(content['index'])
+        with self.loopback_guard('index'):
+            self.set_index(content['index'])
 
     def on_action_set_transition(self, content):
         """ Handle the 'set_transition' action from the Enaml widget.
