@@ -7,16 +7,16 @@
 """
 from collections import namedtuple
 
-# The major release number. Differences in the major number indicate 
+# The major release number. Differences in the major number indicate
 # possibly large differences in API.
 MAJOR = 0
 
 # The minor release number. Differences in the minor number indicate
 # possibly small differences in the API, but these changes will come
-# backwards compatibility support. Minor releases are typically used 
-MINOR = 3
+# backwards compatibility support. Minor releases are typically used
+MINOR = 4
 
-# The micro release number. The micro release number is incremented 
+# The micro release number. The micro release number is incremented
 # for bug fix releases.
 MICRO = 0
 
