@@ -3,7 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt.QtCore import Qt, QDate
-from .qt_constraints_widget import QtConstraintsWidget
+from .qt_control import QtControl
 
 
 def as_qdate(iso_date):
@@ -20,7 +20,7 @@ def as_iso_date(qdate):
     return qdate.toString(Qt.ISODate)
 
 
-class QtBoundedDate(QtConstraintsWidget):
+class QtBoundedDate(QtControl):
     """ A base class for implementing Qt-Enaml date widgets.
 
     """
@@ -41,7 +41,7 @@ class QtBoundedDate(QtConstraintsWidget):
     #--------------------------------------------------------------------------
     def on_action_set_date(self, content):
         """ Handle the 'set_date' action from the Enaml widget.
-    
+
         """
         self.set_date(as_qdate(content['date']))
 
@@ -61,7 +61,7 @@ class QtBoundedDate(QtConstraintsWidget):
     # Signal Handlers
     #--------------------------------------------------------------------------
     def on_date_changed(self):
-        """ A signal handler to connect to the date changed signal of 
+        """ A signal handler to connect to the date changed signal of
         the underlying widget.
 
         This will convert the QDate to iso format and send the Enaml

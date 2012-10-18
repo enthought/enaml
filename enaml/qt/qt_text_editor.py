@@ -3,10 +3,10 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .editor.qt_ace_editor_view import QtAceEditorView
-from .qt_constraints_widget import QtConstraintsWidget
+from .qt_control import QtControl
 
 
-class QtTextEditor(QtConstraintsWidget):
+class QtTextEditor(QtControl):
     """ A Qt4 implementation of an Enaml TextEditor.
 
     """

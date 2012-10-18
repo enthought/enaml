@@ -5,7 +5,7 @@
 import wx
 import wx.lib.newevent
 
-from .wx_constraints_widget import WxConstraintsWidget
+from .wx_control import WxControl
 
 
 #: Horizontal tick mapping
@@ -135,7 +135,7 @@ class wxProperSlider(wx.Slider):
         self._tracking = tracking
 
 
-class WxSlider(WxConstraintsWidget):
+class WxSlider(WxControl):
     """ A Wx implementation of an Enaml Slider.
 
     """

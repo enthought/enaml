@@ -4,10 +4,10 @@
 #------------------------------------------------------------------------------
 import wx
 
-from .wx_constraints_widget import WxConstraintsWidget
+from .wx_control import WxControl
 
 
-class WxProgressBar(WxConstraintsWidget):
+class WxProgressBar(WxControl):
     """ A Wx implementation of an Enaml ProgressBar.
 
     """
@@ -28,7 +28,7 @@ class WxProgressBar(WxConstraintsWidget):
 
     def create(self, tree):
         """ Create and initialize the progress bar control.
-        
+
         """
         super(WxProgressBar, self).create(tree)
         self.set_minimum(tree['minimum'])

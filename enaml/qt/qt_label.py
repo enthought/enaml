@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from .qt.QtCore import Qt
 from .qt.QtGui import QLabel
-from .qt_constraints_widget import QtConstraintsWidget
+from .qt_control import QtControl
 
 
 ALIGN_MAP = {
@@ -22,7 +22,7 @@ VERTICAL_ALIGN_MAP = {
 }
 
 
-class QtLabel(QtConstraintsWidget):
+class QtLabel(QtControl):
     """ A Qt implementation of an Enaml Label.
 
     """

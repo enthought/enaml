@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 import wx
 
-from .wx_constraints_widget import WxConstraintsWidget
+from .wx_control import WxControl
 
 
 ALIGN_MAP = {
@@ -18,7 +18,7 @@ ALIGN_MAP = {
 ALIGN_MASK = wx.ALIGN_LEFT | wx.ALIGN_RIGHT | wx.ALIGN_CENTER
 
 
-class WxLabel(WxConstraintsWidget):
+class WxLabel(WxControl):
     """ A Wx implementation of an Enaml Label.
 
     """

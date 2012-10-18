@@ -7,7 +7,7 @@ import datetime
 from dateutil import parser as isoparser
 import wx
 
-from .wx_constraints_widget import WxConstraintsWidget
+from .wx_control import WxControl
 
 
 def as_wx_date(iso_date):
@@ -32,7 +32,7 @@ def as_iso_date(wx_date):
     return datetime.date(year, month, day).isoformat()
 
 
-class WxBoundedDate(WxConstraintsWidget):
+class WxBoundedDate(WxControl):
     """ A base class for use with Wx widgets implementing behavior
     for subclasses of BoundedDate.
 
@@ -54,7 +54,7 @@ class WxBoundedDate(WxConstraintsWidget):
     #--------------------------------------------------------------------------
     def on_action_set_date(self, content):
         """ Handle the 'set_date' action from the Enaml widget.
-    
+
         """
         self.set_date(as_wx_date(content['date']))
 
@@ -74,7 +74,7 @@ class WxBoundedDate(WxConstraintsWidget):
     # Event Handlers
     #--------------------------------------------------------------------------
     def on_date_changed(self, event):
-        """ An event handler to connect to the date changed signal of 
+        """ An event handler to connect to the date changed signal of
         the underlying widget.
 
         This will convert the wxDateTime to iso format and send the Enaml

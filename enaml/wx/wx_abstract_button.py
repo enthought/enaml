@@ -2,14 +2,14 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .wx_constraints_widget import WxConstraintsWidget
+from .wx_control import WxControl
 
 
-class WxAbstractButton(WxConstraintsWidget):
+class WxAbstractButton(WxControl):
     """ A Wx implementation of the Enaml AbstractButton class.
 
-    This class can serve as a base class for widgets that implement 
-    button behavior such as CheckBox, RadioButton and PushButtons. 
+    This class can serve as a base class for widgets that implement
+    button behavior such as CheckBox, RadioButton and PushButtons.
     It is not meant to be used directly.
 
     """
@@ -17,7 +17,7 @@ class WxAbstractButton(WxConstraintsWidget):
     # Setup Methods
     #--------------------------------------------------------------------------
     def create_widget(self, parent, tree):
-        """ This method must be implemented by subclasses to create 
+        """ This method must be implemented by subclasses to create
         the proper button widget.
 
         """
@@ -27,7 +27,7 @@ class WxAbstractButton(WxConstraintsWidget):
         """ Create and initialize the abstract button widget.
 
         Subclasses should reimplement this method and bind appropriate
-        event handlers to the 'on_clicked' and 'on_toggled' event 
+        event handlers to the 'on_clicked' and 'on_toggled' event
         handlers.
 
         """
@@ -111,7 +111,7 @@ class WxAbstractButton(WxConstraintsWidget):
 
         """
         self.widget().SetLabel(text)
-        
+
     def set_icon(self, icon):
         """ Sets the widget's icon to the provided image
 

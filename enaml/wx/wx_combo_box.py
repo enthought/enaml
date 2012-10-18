@@ -4,10 +4,10 @@
 #------------------------------------------------------------------------------
 import wx
 
-from .wx_constraints_widget import WxConstraintsWidget
+from .wx_control import WxControl
 
 
-class WxComboBox(WxConstraintsWidget):
+class WxComboBox(WxControl):
     """ A Wx implementation of an Enaml ComboBox.
 
     """

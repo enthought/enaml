@@ -3,7 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt.QtGui import QWidget, QPainter
-from .qt_constraints_widget import QtConstraintsWidget
+from .qt_control import QtControl
 
 
 class QImageView(QWidget):
@@ -43,7 +43,7 @@ class QImageView(QWidget):
         pm_width = pm_size.width()
         pm_height = pm_size.height()
         if pm_width == 0 or pm_height == 0:
-            return 
+            return
 
         evt_rect = event.rect()
         evt_x = evt_rect.x()
@@ -59,7 +59,7 @@ class QImageView(QWidget):
             paint_width = pm_width
             paint_height = pm_height
         else:
-            # If the image *is* scaled, it's scaled size depends on the 
+            # If the image *is* scaled, it's scaled size depends on the
             # size of the paint area as well as the other scaling flags.
             if self._preserve_aspect_ratio:
                 pm_ratio = float(pm_width) / pm_height
@@ -87,7 +87,7 @@ class QImageView(QWidget):
             # no larger than the paint area, and can thus be centered.
             paint_x = int((evt_width / 2. - paint_width / 2.) + evt_x)
             paint_y = int((evt_height / 2. - paint_height / 2.) + evt_y)
-        
+
         # Finally, draw the pixmap into the calculated rect.
         painter = QPainter(self)
         painter.setRenderHint(QPainter.SmoothPixmapTransform)
@@ -125,7 +125,7 @@ class QImageView(QWidget):
         self.update()
 
     def scaledContents(self):
-        """ Returns whether or not the contents scale with the widget 
+        """ Returns whether or not the contents scale with the widget
         size.
 
         """
@@ -137,7 +137,7 @@ class QImageView(QWidget):
         Parameters
         ----------
         scaled : bool
-            If True, the image will be scaled to fit the widget size, 
+            If True, the image will be scaled to fit the widget size,
             subject to the other sizing constraints in place. If False,
             the image will not scale and will be clipped as required.
 
@@ -146,7 +146,7 @@ class QImageView(QWidget):
         self.update()
 
     def preserveAspectRatio(self):
-        """ Returns whether or not the aspect ratio of the image is 
+        """ Returns whether or not the aspect ratio of the image is
         maintained during a resize.
 
         """
@@ -180,7 +180,7 @@ class QImageView(QWidget):
         Parameters
         ----------
         allow : bool
-            If True, then the image may be scaled larger than its 
+            If True, then the image may be scaled larger than its
             natural if it is scaled to fit. If False, the image will
             never be scaled larger than its natural size. In either
             case, the image may be scaled smaller.
@@ -190,7 +190,7 @@ class QImageView(QWidget):
         self.update()
 
 
-class QtImageView(QtConstraintsWidget):
+class QtImageView(QtControl):
     """ A Qt4 implementation of an Enaml ImageView widget.
 
     """
@@ -240,7 +240,7 @@ class QtImageView(QtConstraintsWidget):
 
         """
         self.set_allow_upscaling(content['allow_upscaling'])
-    
+
     def on_action_set_image(self, content):
         """ Handle the 'set_image' action from the Enaml widget.
 
@@ -250,15 +250,15 @@ class QtImageView(QtConstraintsWidget):
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
-    def set_scale_to_fit(self, scale_to_fit):        
-        """ Sets whether or not the image scales with the underlying 
+    def set_scale_to_fit(self, scale_to_fit):
+        """ Sets whether or not the image scales with the underlying
         control.
 
         """
         self.widget.setScaledContents(scale_to_fit)
 
     def set_preserve_aspect_ratio(self, preserve):
-        """ Sets whether or not to preserve the aspect ratio of the 
+        """ Sets whether or not to preserve the aspect ratio of the
         image when scaling.
 
         """

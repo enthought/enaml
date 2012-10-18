@@ -3,10 +3,10 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt.QtGui import QSpinBox
-from .qt_constraints_widget import QtConstraintsWidget
+from .qt_control import QtControl
 
-    
-class QtSpinBox(QtConstraintsWidget):
+
+class QtSpinBox(QtControl):
     """ A Qt implementation of an Enaml SpinBox.
 
     """
@@ -44,12 +44,12 @@ class QtSpinBox(QtConstraintsWidget):
         """ The signal handler for the 'valueChanged' signal.
 
         """
-        # Guard against loopback recursion since Qt will emit the 
+        # Guard against loopback recursion since Qt will emit the
         # valueChanged signal when programatically setting the value.
         if 'value' not in self.loopback_guard:
             content = {'value': self.widget().value()}
             self.send_action('value_changed', content)
-        
+
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
@@ -105,7 +105,7 @@ class QtSpinBox(QtConstraintsWidget):
         self.set_read_only(content['read_only'])
 
     def on_action_set_wrapping(self, content):
-        """ Handler for the 'set_wrapping' action from the Enaml 
+        """ Handler for the 'set_wrapping' action from the Enaml
         widget.
 
         """
@@ -131,7 +131,7 @@ class QtSpinBox(QtConstraintsWidget):
 
         """
         # The setValue will emit a changed signal. Since this will only
-        # be called as a result of an Enaml action, we guard against 
+        # be called as a result of an Enaml action, we guard against
         # the loopback
         with self.loopback_guard('value'):
             self.widget().setValue(value)

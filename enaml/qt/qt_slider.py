@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from .qt.QtCore import Qt
 from .qt.QtGui import QSlider
-from .qt_constraints_widget import QtConstraintsWidget
+from .qt_control import QtControl
 
 
 #: A map from Enaml constants to QSlider TickPosition values.
@@ -18,7 +18,7 @@ _TICK_POSITION_MAP = {
 }
 
 
-#: A map from Enaml enums to Qt constants for horizontal or vertical 
+#: A map from Enaml enums to Qt constants for horizontal or vertical
 #: orientation.
 _ORIENTATION_MAP = {
     'horizontal': Qt.Horizontal,
@@ -26,7 +26,7 @@ _ORIENTATION_MAP = {
 }
 
 
-class QtSlider(QtConstraintsWidget):
+class QtSlider(QtControl):
     """ A Qt implementation of an Enaml Slider.
 
     """
@@ -111,12 +111,12 @@ class QtSlider(QtConstraintsWidget):
 
         """
         self.set_tracking(content['tracking'])
-    
+
     #--------------------------------------------------------------------------
     # Signal Handlers
     #--------------------------------------------------------------------------
     def on_value_changed(self):
-        """ Send the 'value_changed' action to the Enaml widget when the 
+        """ Send the 'value_changed' action to the Enaml widget when the
         slider value has changed.
 
         """
