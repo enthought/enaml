@@ -85,8 +85,8 @@ CallableRef_richcompare( CallableRef* self, PyObject* other, int opid )
         PyObjectPtr sref( self->objref, true );
         if( CallableRef_Check( other ) )
         {
-            CallableRef* other = reinterpret_cast<CallableRef*>( other );
-            PyObjectPtr oref( other->objref, true );
+            CallableRef* cref_other = reinterpret_cast<CallableRef*>( other );
+            PyObjectPtr oref( cref_other->objref, true );
             if( sref.richcompare( oref, Py_EQ ) )
                 Py_RETURN_TRUE;
             Py_RETURN_FALSE;
