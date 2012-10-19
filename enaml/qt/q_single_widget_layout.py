@@ -100,8 +100,8 @@ class QSingleWidgetLayout(QLayout):
         return super(QSingleWidgetLayout, self).minimumSize()
 
     def maximumSize(self):
-        """ A reimplemented method which returns the minimum size hint
-        of the layout item widget as the minimum size of the window.
+        """ A reimplemented method which returns the maximum size hint
+        of the layout item widget as the maximum size of the window.
 
         """
         item = self._layout_item
