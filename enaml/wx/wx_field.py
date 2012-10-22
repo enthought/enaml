@@ -244,7 +244,8 @@ class WxField(WxControl):
         """ The event handler for EVT_TEXT_ENTER event.
 
         """
-        event.Skip()
+        # don't skip or Wx triggers the system beep, grrrrrrr.....
+        #event.Skip()
         if 'return_pressed' in self._submit_triggers:
             self._validate_and_submit()
 
@@ -311,7 +312,7 @@ class WxField(WxControl):
         """ Handle the 'invalid_text' action from the Enaml widget.
 
         """
-        if self.widget.GetValue() == content['text']:
+        if self.widget().GetValue() == content['text']:
             self._set_error_style()
 
     #--------------------------------------------------------------------------
