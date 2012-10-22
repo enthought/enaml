@@ -12,7 +12,7 @@ class TestPushButton(EnamlTestCase):
 
     def setUp(self):
         enaml_source = """
-from enaml.widgets import PushButton, Window
+from enaml.widgets.api import PushButton, Window
 
 enamldef MainView(Window):
     PushButton:

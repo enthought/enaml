@@ -5,25 +5,25 @@
 from .enaml_test_case import EnamlTestCase
 
 
-class TestDateEdit(EnamlTestCase):
-    """ Unit tests for the DateEdit widget.
+class TestDateSelector(EnamlTestCase):
+    """ Unit tests for the DateSelector widget.
 
     """
 
     def setUp(self):
         enaml_source = """
-from enaml.widgets import DateEdit, Window
+from enaml.widgets.api import DateSelector, Window
 
 enamldef MainView(Window):
-    DateEdit:
+    DateSelector:
         pass
 """
         self.parse_and_create(enaml_source)
-        self.server_widget = self.find_server_widget(self.view, "DateEdit")
-        self.client_widget = self.find_client_widget(self.client_view, "DateEdit")
+        self.server_widget = self.find_server_widget(self.view, "DateSelector")
+        self.client_widget = self.find_client_widget(self.client_view, "DateSelector")
 
     def test_set_date_format(self):
-        """ Test the setting of a DateEdit's date_format attribute.
+        """ Test the setting of a DateSelector's date_format attribute.
         """
         self.server_widget.date_format = "%m/%d/%Y"
         assert self.client_widget.date_format == self.server_widget.date_format

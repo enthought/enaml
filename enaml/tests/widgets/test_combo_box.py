@@ -12,7 +12,7 @@ class TestComboBox(EnamlTestCase):
 
     def setUp(self):
         enaml_source = """
-from enaml.widgets import ComboBox, Window
+from enaml.widgets.api import ComboBox, Window
 
 enamldef MainView(Window):
     ComboBox:
@@ -32,8 +32,8 @@ enamldef MainView(Window):
         """ Test the setting of a ComboBox's value attribute
         """
         self.server_widget.items = ["foo", "bar", "baz"]
-        self.server_widget.value = "bar"
+        self.server_widget.index = 1
         assert self.client_widget.index == self.server_widget.index
-        self.server_widget.value = "baz"
+        self.server_widget.index = 2
         assert self.client_widget.index == self.server_widget.index
 

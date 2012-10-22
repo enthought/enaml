@@ -36,17 +36,17 @@ enamldef MainView(Window):
         """ Test the setting of a BoundedDate's date attribute.
         """
         self.server_label.date = date(1976, 7, 4)
-        assert self.client_label.date == self.server_label.date
+        self.assertEquals(self.client_label.date, str(self.server_label.date))
 
     def test_set_max_date(self):
         """ Test the setting of a BoundedDate's max_date attribute.
         """
-        self.server_label.max_date = date(2525, 1, 1)
-        assert self.client_label.max_date == self.server_label.max_date
+        self.server_label.maximum = date(2525, 1, 1)
+        self.assertEquals(self.client_label.maximum, str(self.server_label.maximum))
 
     def test_set_min_date(self):
         """ Test the setting of a BoundedDate's min_date attribute.
         """
-        self.server_label.min_date = date(1900, 1, 1)
-        assert self.client_label.min_date == self.server_label.min_date
+        self.server_label.minimum = date(1900, 1, 1)
+        self.assertEquals(self.client_label.minimum, str(self.server_label.minimum))
 

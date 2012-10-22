@@ -12,15 +12,15 @@ class TestDatetimeEdit(EnamlTestCase):
 
     def setUp(self):
         enaml_source = """
-from enaml.widgets import DatetimeEdit, Window
+from enaml.widgets.api import DatetimeSelector, Window
 
 enamldef MainView(Window):
-    DatetimeEdit:
+    DatetimeSelector:
         pass
 """
         self.parse_and_create(enaml_source)
-        self.server_widget = self.find_server_widget(self.view, "DatetimeEdit")
-        self.client_widget = self.find_client_widget(self.client_view, "DatetimeEdit")
+        self.server_widget = self.find_server_widget(self.view, "DatetimeSelector")
+        self.client_widget = self.find_client_widget(self.client_view, "DatetimeSelector")
 
     def test_set_date_format(self):
         """ Test the setting of a DatetimeEdit's datetime_format attribute.

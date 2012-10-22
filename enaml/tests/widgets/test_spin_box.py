@@ -14,7 +14,7 @@ class TestSpinBox(EnamlTestCase):
 
     def setUp(self):
         enaml_source = """
-from enaml.widgets import SpinBox, Window
+from enaml.widgets.api import SpinBox, Window
 
 enamldef MainView(Window):
     SpinBox:
@@ -42,12 +42,6 @@ enamldef MainView(Window):
         self.server_widget.single_step = 25
         assert self.client_widget.single_step == self.server_widget.single_step
 
-    def test_set_tracking(self):
-        """ Test the setting of a SpinBox's tracking attribute
-        """
-        self.server_widget.tracking = True
-        assert self.client_widget.tracking == self.server_widget.tracking
-
     def test_set_validator(self):
         """ Test the setting of a SpinBox's validator attribute
         """
@@ -60,9 +54,9 @@ enamldef MainView(Window):
         self.server_widget.value = 50
         assert self.client_widget.value == self.server_widget.value
 
-    def test_set_wrap(self):
-        """ Test the setting of a SpinBox's wrap attribute
+    def test_set_wrapping(self):
+        """ Test the setting of a SpinBox's wrapping attribute
         """
-        self.server_widget.wrap = True
-        assert self.client_widget.wrap == self.server_widget.wrap
+        self.server_widget.wrapping = True
+        assert self.client_widget.wrapping == self.server_widget.wrapping
 

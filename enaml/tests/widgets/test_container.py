@@ -12,7 +12,7 @@ class TestContainer(EnamlTestCase):
 
     def setUp(self):
         enaml_source = """
-from enaml.widgets import Container, Window
+from enaml.widgets.api import Container, Window
 
 enamldef MainView(Window):
     Container:

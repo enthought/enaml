@@ -12,7 +12,7 @@ class TestConstraintsWidget(EnamlTestCase):
 
     def setUp(self):
         enaml_source = """
-from enaml.widgets import Window
+from enaml.widgets.api import Window
 from enaml.widgets.constraints_widget import ConstraintsWidget
 
 enamldef MainView(Window):
@@ -27,14 +27,16 @@ enamldef MainView(Window):
         """ Test the setting of a ConstraintsWidget's hug attribute
         """
         assert not hasattr(self.client_widget, 'relayout')
-        self.server_widget.hug = ('ignore', 'weak')
+        self.server_widget.hug_width = 'ignore'
+        self.server.widget.hug_height = 'weak'
         assert hasattr(self.client_widget, 'relayout')
 
     def test_set_resist_clip(self):
         """ Test the setting of a ConstraintsWidget's resist_clip attribute
         """
         assert not hasattr(self.client_widget, 'relayout')
-        self.server_widget.resist_clip = ('required', 'medium')
+        self.server_widget.resist_width = 'required'
+        self.server_widget.resist_height = 'medium'
         assert hasattr(self.client_widget, 'relayout')
 
     # XXX Add more tests

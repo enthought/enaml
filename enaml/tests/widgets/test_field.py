@@ -14,7 +14,7 @@ class TestField(EnamlTestCase):
 
     def setUp(self):
         enaml_source = """
-from enaml.widgets import Field, Window
+from enaml.widgets.api import Field, Window
 
 enamldef MainView(Window):
     Field:
@@ -33,14 +33,14 @@ enamldef MainView(Window):
     def test_set_password_mode(self):
         """ Test the setting of a Field's password_mode attribute
         """
-        self.server_widget.password_mode = 'silent'
-        assert self.client_widget.password_mode == self.server_widget.password_mode
+        self.server_widget.echo_mode = 'silent'
+        assert self.client_widget.echo_mode == self.server_widget.echo_mode
 
     def test_set_placeholder_text(self):
         """ Test the setting of a Field's placeholder_text attribute
         """
-        self.server_widget.placeholder_text = "Placeholder"
-        assert self.client_widget.placeholder_text == self.server_widget.placeholder_text
+        self.server_widget.placeholder = "Placeholder"
+        assert self.client_widget.placeholder == self.server_widget.placeholder
 
     def test_set_read_only(self):
         """ Test the setting of a Field's read_only attribute
@@ -51,19 +51,19 @@ enamldef MainView(Window):
     def test_set_submit_mode(self):
         """ Test the setting of a Field's submit_mode attribute
         """
-        self.server_widget.submit_mode = ['always',]
-        assert self.client_widget.submit_mode == self.server_widget.submit_mode
+        self.server_widget.submit_triggers = ['return_pressed',]
+        assert self.client_widget.submit_triggers == self.server_widget.submit_triggers
 
     def test_set_validator(self):
         """ Test the setting of a Field's validator attribute
         """
-        self.server_widget.value = 1
+        self.server_widget.text = '1'
         self.server_widget.validator = IntValidator()
         assert self.client_widget.validator == self.server_widget.validator
 
     def test_set_value(self):
         """ Test the setting of a Field's value attribute
         """
-        self.server_widget.value = "Whatever"
-        assert self.client_widget.value == self.server_widget.value
+        self.server_widget.text = "Whatever"
+        assert self.client_widget.text == self.server_widget.text
 
