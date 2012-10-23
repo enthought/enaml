@@ -6,7 +6,7 @@ import wx
 
 from enaml.validation.client_validators import null_validator, make_validator
 
-from .wx_constraints_widget import WxConstraintsWidget
+from .wx_control import WxControl
 
 
 class wxLineEdit(wx.TextCtrl):
@@ -37,8 +37,8 @@ class wxLineEdit(wx.TextCtrl):
     def _UpdatePlaceholderDisplay(self):
         """ Updates the display with the placeholder text if no text
         is currently set for the control.
-        
-        """ 
+
+        """
         if not self.GetValue() and self._placeholder_text:
             self.ChangeValue(self._placeholder_text)
             color = wx.Color(95, 95, 95)
@@ -73,7 +73,7 @@ class wxLineEdit(wx.TextCtrl):
         """
         self._RemovePlaceholderDisplay()
         event.Skip()
-    
+
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
@@ -129,7 +129,7 @@ class wxLineEdit(wx.TextCtrl):
         super(wxLineEdit, self).SetForegroundColour(wxColor)
 
 
-class WxField(WxConstraintsWidget):
+class WxField(WxControl):
     """ A Wx implementation of an Enaml Field.
 
     """
@@ -244,12 +244,13 @@ class WxField(WxConstraintsWidget):
         """ The event handler for EVT_TEXT_ENTER event.
 
         """
-        event.Skip()
+        # don't skip or Wx triggers the system beep, grrrrrrr.....
+        #event.Skip()
         if 'return_pressed' in self._submit_triggers:
             self._validate_and_submit()
 
     def on_text_edited(self, event):
-        # Temporary kludge until styles are fully implemented 
+        # Temporary kludge until styles are fully implemented
         event.Skip()
         widget = self.widget()
         if self._validator(widget.GetValue()):
@@ -277,7 +278,7 @@ class WxField(WxConstraintsWidget):
         self.set_validator(content['validator'])
 
     def on_action_set_submit_triggers(self, content):
-        """ Handle the 'set_submit_triggers' action from the Enaml 
+        """ Handle the 'set_submit_triggers' action from the Enaml
         widget.
 
         """
@@ -309,9 +310,9 @@ class WxField(WxConstraintsWidget):
 
     def on_action_invalid_text(self, content):
         """ Handle the 'invalid_text' action from the Enaml widget.
-        
+
         """
-        if self.widget.GetValue() == content['text']:
+        if self.widget().GetValue() == content['text']:
             self._set_error_style()
 
     #--------------------------------------------------------------------------
@@ -335,7 +336,7 @@ class WxField(WxConstraintsWidget):
         else:
             self._validator = make_validator(validator)
             self._validator_message = validator.get('message', '')
-    
+
     def set_submit_triggers(self, triggers):
         """ Set the submit triggers for the underlying widget.
 
@@ -356,8 +357,8 @@ class WxField(WxConstraintsWidget):
         pass
 
     def set_max_length(self, max_length):
-        """ Set the max length of the control to max_length. If the max 
-        length is <= 0 or > 32767 then the control will be set to hold 
+        """ Set the max length of the control to max_length. If the max
+        length is <= 0 or > 32767 then the control will be set to hold
         32kb of text.
 
         """
@@ -366,7 +367,7 @@ class WxField(WxConstraintsWidget):
         self.widget().SetMaxLength(max_length)
 
     def set_read_only(self, read_only):
-        """ Sets the read only state of the widget. 
+        """ Sets the read only state of the widget.
 
         """
         # Wx cannot change the read only state dynamically. It requires

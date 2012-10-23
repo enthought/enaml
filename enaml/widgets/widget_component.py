@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from traits.api import Bool, Str, Tuple, Range, Enum
 
-from .messenger_widget import MessengerWidget
+from enaml.core.declarative import Declarative
 
 
 #: A predefined trait which defines a size tuple. A size value of
@@ -14,14 +14,14 @@ SizeTuple = Tuple(Range(low=-1, value=-1), Range(low=-1, value=-1))
 
 #: The standard attributes to proxy for a widget component.
 _WIDGET_ATTRS = [
-    'enabled', 'visible', 'bgcolor', 'fgcolor', 'font', 'minimum_size', 
+    'enabled', 'visible', 'bgcolor', 'fgcolor', 'font', 'minimum_size',
     'maximum_size', 'show_focus_rect'
 ]
 
 
-class WidgetComponent(MessengerWidget):
-    """ A MessengerWidget subclass which represents the base of all
-    widgets in Enaml.
+class WidgetComponent(Declarative):
+    """ A Declarative subclass which represents the base of all widgets
+    in Enaml.
 
     """
     #: Whether or not the widget is enabled.
@@ -30,8 +30,8 @@ class WidgetComponent(MessengerWidget):
     #: Whether or not the widget is visible.
     visible = Bool(True)
 
-    #: A flag indicating whether or not to show the focus rectangle for 
-    #: the given widget. This is not necessarily support by all widgets 
+    #: A flag indicating whether or not to show the focus rectangle for
+    #: the given widget. This is not necessarily support by all widgets
     #: on all clients. A value of None indicates to use the default as
     #: supplied by the client.
     show_focus_rect = Enum(None, True, False)

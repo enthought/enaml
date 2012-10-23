@@ -8,7 +8,7 @@ from enaml.colors import parse_color
 
 from .qt.QtGui import QWidget, QWidgetItem, QColor, QApplication
 from .qt.QtCore import Qt, QSize
-from .qt_messenger_widget import QtMessengerWidget
+from .qt_object import QtObject
 
 
 def q_parse_color(color):
@@ -34,7 +34,7 @@ def q_parse_color(color):
     return qcolor
 
 
-class QtWidgetComponent(QtMessengerWidget):
+class QtWidgetComponent(QtObject):
     """ A Qt4 implementation of an Enaml WidgetComponent.
 
     """
@@ -213,6 +213,9 @@ class QtWidgetComponent(QtMessengerWidget):
             if not qcolor.isValid():
                 app_palette = QApplication.instance().palette(widget)
                 qcolor = app_palette.color(role)
+                widget.setAutoFillBackground(False)
+            else:
+                widget.setAutoFillBackground(True)
             palette = widget.palette()
             palette.setColor(role, qcolor)
             widget.setPalette(palette)

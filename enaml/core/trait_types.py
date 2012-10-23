@@ -5,7 +5,7 @@
 from weakref import WeakKeyDictionary, ref
 
 from traits.api import TraitType, TraitError, BaseInstance
-from traits.traits import CTrait
+from traits.traits import CTrait, trait_from
 
 
 #------------------------------------------------------------------------------

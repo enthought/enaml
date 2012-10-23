@@ -4,14 +4,15 @@
 #------------------------------------------------------------------------------
 from traits.api import Bool, Property, cached_property
 
+from enaml.core.declarative import Declarative
+
 from .action import Action
-from .messenger_widget import MessengerWidget
 
 
-class ActionGroup(MessengerWidget):
+class ActionGroup(Declarative):
     """ A non visible widget used to group actions.
 
-    An action group can be used in a MenuBar or a ToolBar to group a 
+    An action group can be used in a MenuBar or a ToolBar to group a
     related set of Actions and apply common operations to the set. The
     primary use of an action group is to make any checkable actions in
     the group mutually exclusive.
@@ -27,7 +28,7 @@ class ActionGroup(MessengerWidget):
     visible = Bool(True)
 
     #: A read only property which returns the actions for this group.
-    actions = Property(depends_on='children[]')
+    actions = Property(depends_on='children')
 
     #--------------------------------------------------------------------------
     # Initialization
@@ -37,7 +38,6 @@ class ActionGroup(MessengerWidget):
 
         """
         snap = super(ActionGroup, self).snapshot()
-        snap['action_ids'] = self._snap_action_ids()
         snap['exclusive'] = self.exclusive
         snap['enabled'] = self.enabled
         snap['visible'] = self.visible
@@ -66,10 +66,4 @@ class ActionGroup(MessengerWidget):
         isinst = isinstance
         items = (child for child in self.children if isinst(child, Action))
         return tuple(items)
-
-    def _snap_action_ids(self):
-        """ Returns the list of widget ids for the group's actions.
-
-        """
-        return [action.widget_id for action in self.actions]
 

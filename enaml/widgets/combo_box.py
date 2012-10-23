@@ -4,10 +4,10 @@
 #------------------------------------------------------------------------------
 from traits.api import List, Int, Property, Unicode, cached_property
 
-from .constraints_widget import ConstraintsWidget
+from .control import Control
 
 
-class ComboBox(ConstraintsWidget):
+class ComboBox(Control):
     """ A drop-down list from which one item can be selected at a time.
 
     Use a combo box to select a single item from a collection of items.
@@ -16,17 +16,17 @@ class ComboBox(ConstraintsWidget):
     #: The unicode strings to display in the combo box.
     items = List(Unicode)
 
-    #: The integer index of the currently selected item. If the given 
+    #: The integer index of the currently selected item. If the given
     #: index falls outside of the range of items, the item will be
     #: deselected.
     index = Int(-1)
 
-    #: A readonly property that will return the currently selected 
+    #: A readonly property that will return the currently selected
     #: item. If the index falls out of range, the selected item will
     #: be the empty string.
     selected_item = Property(Unicode, depends_on=['index', 'items[]'])
-    
-    #: How strongly a component hugs it's contents' width. ComboBoxes 
+
+    #: How strongly a component hugs it's contents' width. ComboBoxes
     #: hug width weakly, by default.
     hug_width = 'weak'
 
@@ -54,7 +54,7 @@ class ComboBox(ConstraintsWidget):
     # Message Handling
     #--------------------------------------------------------------------------
     def on_action_index_changed(self, content):
-        """ The message handler for the 'index_changed' action from the 
+        """ The message handler for the 'index_changed' action from the
         client widget. The content will contain the selected 'index'.
 
         """

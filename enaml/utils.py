@@ -10,9 +10,6 @@ from functools import wraps
 import logging
 from random import shuffle
 from string import letters, digits
-import traceback
-from types import MethodType
-from weakref import ref
 
 
 def id_generator(stem):
@@ -21,7 +18,7 @@ def id_generator(stem):
     For a given stem, the returned generator is guaranteed to yield
     consecutively increasing identifiers using a randomly ordered
     base 62 charset. The identifiers are only guaranteed unique for a
-    given instance of the generator. The randomness is employed to 
+    given instance of the generator. The randomness is employed to
     improve the hashing characteristics of the returned identifiers.
 
     Parameters
@@ -41,12 +38,12 @@ def id_generator(stem):
     while True:
         yield stem + join(charset[digit] for digit in places)
         for idx, digit in enumerate_(places):
-            digit += 1 
+            digit += 1
             if digit == charsetlen:
                 places[idx] = 0
             else:
                 places[idx] = digit
-                break 
+                break
         if places[-1] == 0:
             push(1)
 
@@ -60,69 +57,6 @@ class abstractclassmethod(classmethod):
     def __init__(self, func):
         func.__isabstractmethod__ = True
         super(abstractclassmethod, self).__init__(func)
-
-
-class WeakMethod(object):
-    """ An object which weakly binds a method with a lifetime bound
-    to the lifetime of the underlying object. 
-
-    Instances of WeakMethod are also weakref-able with a lifetime which 
-    is also bound to lifetime of the method owner.
-
-    If multiple WeakMethods are requested for the same equivalent method
-    object, the same WeakMethod will be returned. This behavior is the
-    same as the standard weakref semantics.
-
-    """
-    __slots__ = ('_key', '__weakref__')
-
-    #: An internal dict which maintains a strong reference to the
-    #: the underlying weak method wrappers until the owner of the 
-    #: method is destroyed.
-    _instances = defaultdict(list)
-
-    def __new__(cls, method):
-        """ Create a new WeakMethod instance or return an equivalent 
-        which already exists.
-
-        Parameters
-        ----------
-        method : A bound method object
-            The bound method which should be wrapped weakly.
-
-        """
-        def remove(wr_item):
-            WeakMethod._instances.pop(wr_item, None)
-        sref = ref(method.im_self, remove)
-        key = (method.im_func, sref, method.im_class)
-        if sref in WeakMethod._instances:
-            for item in WeakMethod._instances[sref]:
-                if item._key == key:
-                    return item
-        self = super(WeakMethod, cls).__new__(cls)
-        self._key = key
-        WeakMethod._instances[sref].append(self)
-        return self
-
-    def __call__(self, *args, **kwargs):
-        """ Invoke the wrapped method by reconstructing the bound
-        method from its components.
-
-        If the underlying instance object has been destroyed, this
-        method will return the default value.
-
-        Parameters
-        ----------
-        *args, **kwargs
-            The positional and keyword arguments to pass to the method.
-
-        """
-        im_func, im_self_ref, im_class = self._key
-        im_self = im_self_ref()
-        if im_self is None:
-            return
-        method = MethodType(im_func, im_self, im_class)
-        return method(*args, **kwargs)
 
 
 class LoopbackContext(object):
@@ -161,10 +95,10 @@ class LoopbackContext(object):
 
 
 class LoopbackGuard(object):
-    """ A guard object used by the MessengerWidget to protect against
-    loopback conditions while updating attributes on the component.
+    """ A guard object used by objects to protect against loopback
+    conditions while updating attributes on the component.
 
-    Instances of this class are callable and return a guarding 
+    Instances of this class are callable and return a guarding
     context manager for the provided lock items.
 
     """
@@ -179,7 +113,7 @@ class LoopbackGuard(object):
 
         Parameters
         ----------
-        *items
+        items
             The items for which to acquire the guard from within the
             returned context manager. These items must be hashable.
 
@@ -216,8 +150,8 @@ class LoopbackGuard(object):
         this method directly.
 
         It is safe to call this method multiple times for the same
-        item, provided it is paired with an equivalent number of 
-        calls to release(...). The guard will be released when 
+        item, provided it is paired with an equivalent number of
+        calls to release(...). The guard will be released when
         the acquired count on the item reaches zeros.
 
         Parameters
@@ -238,8 +172,8 @@ class LoopbackGuard(object):
         this method directly.
 
         It is safe to call this method multiple times for the same
-        item, provided it is paired with an equivalent number of 
-        calls to acquire(...). The guard will be released when 
+        item, provided it is paired with an equivalent number of
+        calls to acquire(...). The guard will be released when
         the acquired count on the item reaches zeros.
 
         Parameters
@@ -282,10 +216,15 @@ def log_exceptions(func):
         try:
             res = func(*args, **kwargs)
         except Exception:
-            tb = traceback.format_exc()
-            message = 'Exception occured in `%s`:\n%s' % (func.__name__, tb)
-            logging.error(message)
+            # Get the logger for the wrapped function.
+            logger = logging.getLogger(func.__module__)
+            message = 'Exception occured in `%s`:' % func.__name__
+            logger.exception(message)
             res = None
         return res
     return closure
+
+
+# Backwards comatibility import. WeakMethod was moved to its own module.
+from .weakmethod import WeakMethod
 

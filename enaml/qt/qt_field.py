@@ -6,7 +6,7 @@ from enaml.validation.client_validators import null_validator, make_validator
 
 from .qt.QtGui import QLineEdit
 from .qt.QtCore import Signal
-from .qt_constraints_widget import QtConstraintsWidget
+from .qt_control import QtControl
 
 
 ECHO_MODES = {
@@ -17,7 +17,7 @@ ECHO_MODES = {
 
 
 class QtFocusLineEdit(QLineEdit):
-    """ A QLineEdit subclass which converts a lost focus event into 
+    """ A QLineEdit subclass which converts a lost focus event into
     a lost focus signal.
 
     """
@@ -28,7 +28,7 @@ class QtFocusLineEdit(QLineEdit):
         return super(QtFocusLineEdit, self).focusOutEvent(event)
 
 
-class QtField(QtConstraintsWidget):
+class QtField(QtControl):
     """ A Qt4 implementation of an Enaml Field.
 
     """
@@ -131,7 +131,7 @@ class QtField(QtConstraintsWidget):
             self._validate_and_submit()
 
     def on_text_edited(self):
-        # Temporary kludge until styles are fully implemented 
+        # Temporary kludge until styles are fully implemented
         widget = self.widget()
         if self._validator(widget.text()):
             if self._is_error_state:
@@ -158,7 +158,7 @@ class QtField(QtConstraintsWidget):
         self.set_validator(content['validator'])
 
     def on_action_set_submit_triggers(self, content):
-        """ Handle the 'set_submit_triggers' action from the Enaml 
+        """ Handle the 'set_submit_triggers' action from the Enaml
         widget.
 
         """
@@ -187,10 +187,10 @@ class QtField(QtConstraintsWidget):
 
         """
         self.set_read_only(content['read_only'])
-        
+
     def on_action_invalid_text(self, content):
         """ Handle the 'invalid_text' action from the Enaml widget.
-        
+
         """
         if self.widget().text() == content['text']:
             self._set_error_style()
@@ -228,7 +228,7 @@ class QtField(QtConstraintsWidget):
 
         """
         self.widget().setPlaceholderText(text)
-    
+
     def set_echo_mode(self, mode):
         """ Set the echo mode of the underlying widget.
 

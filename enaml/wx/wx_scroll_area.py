@@ -5,20 +5,21 @@
 import wx
 
 from .wx_constraints_widget import WxConstraintsWidget
+from .wx_container import WxContainer
 from .wx_single_widget_sizer import wxSingleWidgetSizer
 
 
 # The 'always_on' scroll policy is not supported on wx, because it
-# requires setting a window style flag which does not dynamically 
+# requires setting a window style flag which does not dynamically
 # toggle in a reliable fashion. Since we only support 'off' or 'auto'
-# it's easiest to use this mapping to convert straight from policy 
-# values into a respective scroll rate. A rate of Zero causes wx not 
+# it's easiest to use this mapping to convert straight from policy
+# values into a respective scroll rate. A rate of Zero causes wx not
 # to show the scroll bar. A positive rate indicates to scroll that many
-# pixels per event. We set the rate to 1 to have smooth scrolling. Wx 
-# doesn't make a distinction between scroll events caused by the mouse 
-# or scrollbar and those caused by clicking the scroll buttons (ala qt), 
-# and thus this rate applies the same to all of those events. Since we 
-# expect that clicking on a scroll button happens much more infrequently 
+# pixels per event. We set the rate to 1 to have smooth scrolling. Wx
+# doesn't make a distinction between scroll events caused by the mouse
+# or scrollbar and those caused by clicking the scroll buttons (ala qt),
+# and thus this rate applies the same to all of those events. Since we
+# expect that clicking on a scroll button happens much more infrequently
 # than scrolling by dragging the scroll bar, we opt for a lower rate
 # in order to get smooth drag scrolling and sacrifice some usability
 # on the scroll buttons.
@@ -116,9 +117,6 @@ class WxScrollArea(WxConstraintsWidget):
     """ A Wx implementation of an Enaml ScrollArea.
 
     """
-    #: Storage for the scroll widget id
-    _scroll_widget_id = None
-
     #: Storage for the horizontal scroll policy
     _h_scroll = 'as_needed'
 
@@ -129,7 +127,7 @@ class WxScrollArea(WxConstraintsWidget):
         """ Create the underlying wxScrolledWindow widget.
 
         """
-        style = wx.HSCROLL | wx.VSCROLL | wx.BORDER_SIMPLE 
+        style = wx.HSCROLL | wx.VSCROLL | wx.BORDER_SIMPLE
         return wxScrollArea(parent, style=style)
 
     def create(self, tree):
@@ -137,45 +135,93 @@ class WxScrollArea(WxConstraintsWidget):
 
         """
         super(WxScrollArea, self).create(tree)
-        self.set_scroll_widget_id(tree['scroll_widget_id'])
-        self.set_horizontal_scrollbar(tree['horizontal_scrollbar'])
-        self.set_vertical_scrollbar(tree['vertical_scrollbar'])
+        self.set_horizontal_policy(tree['horizontal_policy'])
+        self.set_vertical_policy(tree['vertical_policy'])
+        self.set_widget_resizable(tree['widget_resizable'])
 
     def init_layout(self):
         """ Handle the layout initialization for the scroll area.
 
         """
-        child = self.find_child(self._scroll_widget_id)
-        if child is not None:
-            self.widget().SetScrollWidget(child.widget())
+        super(WxScrollArea, self).init_layout()
+        self.widget().SetScrollWidget(self.scroll_widget())
+
+    #--------------------------------------------------------------------------
+    # Utility Methods
+    #--------------------------------------------------------------------------
+    def scroll_widget(self):
+        """ Find and return the scroll widget child for this widget.
+
+        Returns
+        -------
+        result : wxWindow or None
+            The scroll widget defined for this widget, or None if one is
+            not defined.
+
+        """
+        widget = None
+        for child in self.children():
+            if isinstance(child, WxContainer):
+                widget = child.widget()
+        return widget
+
+    #--------------------------------------------------------------------------
+    # Child Events
+    #--------------------------------------------------------------------------
+    def child_removed(self, child):
+        """ Handle the child removed event for a WxScrollArea.
+
+        """
+        if isinstance(child, WxContainer):
+            self.widget().SetScrollWidget(self.scroll_widget())
+
+    def child_added(self, child):
+        """ Handle the child added event for a WxScrollArea.
+
+        """
+        if isinstance(child, WxContainer):
+            self.widget().SetScrollWidget(self.scroll_widget())
+
+    #--------------------------------------------------------------------------
+    # Overrides
+    #--------------------------------------------------------------------------
+    def replace_constraints(self, old_cns, new_cns):
+        """ A reimplemented WxConstraintsWidget layout method.
+
+        Constraints layout may not cross the boundary of a ScrollArea,
+        so this method is no-op which stops the layout propagation.
+
+        """
+        pass
 
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
-    def on_action_set_horizontal_scrollbar(self, content):
-        """ Handle the 'set_horizontal_scrollbar' action from the Enaml
+    def on_action_set_horizontal_policy(self, content):
+        """ Handle the 'set_horizontal_policy' action from the Enaml
         widget.
 
         """
-        self.set_horizontal_scrollbar(content['horizontal_scrollbar'])
+        self.set_horizontal_policy(content['horizontal_policy'])
 
-    def on_action_set_vertical_scrollbar(self, content):
-        """ Handle the 'set_vertical_scrollbar' action from the Enaml
+    def on_action_set_vertical_policy(self, content):
+        """ Handle the 'set_vertical_policy' action from the Enaml
         widget.
 
         """
-        self.set_vertical_scrollbar(content['vertical_scrollbar'])
+        self.set_vertical_policy(content['vertical_policy'])
+
+    def on_action_set_widget_resizable(self, content):
+        """ Handle the 'set_widget_resizable' action from the Enaml
+        widget.
+
+        """
+        self.set_widget_resizable(content['widget_resizable'])
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
-    def set_scroll_widget_id(self, widget_id):
-        """ Set the scroll widget id for the underlying widget.
-
-        """
-        self._scroll_widget_id = widget_id
-
-    def set_horizontal_scrollbar(self, policy):
+    def set_horizontal_policy(self, policy):
         """ Set the horizontal scrollbar policy of the widget.
 
         """
@@ -183,8 +229,8 @@ class WxScrollArea(WxConstraintsWidget):
         horiz = SCROLLBAR_MAP[policy]
         vert = SCROLLBAR_MAP[self._v_scroll]
         self.widget().SetScrollRate(horiz, vert)
-        
-    def set_vertical_scrollbar(self, policy):
+
+    def set_vertical_policy(self, policy):
         """ Set the vertical scrollbar policy of the widget.
 
         """
@@ -192,4 +238,11 @@ class WxScrollArea(WxConstraintsWidget):
         horiz = SCROLLBAR_MAP[self._h_scroll]
         vert = SCROLLBAR_MAP[policy]
         self.widget().SetScrollRate(horiz, vert)
+
+    def set_widget_resizable(self, resizable):
+        """ Set whether or not the scroll widget is resizable.
+
+        """
+        # Not currently implemented on Wx
+        pass
 

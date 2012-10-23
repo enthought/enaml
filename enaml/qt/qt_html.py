@@ -3,10 +3,10 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt.QtGui import QTextEdit
-from .qt_constraints_widget import QtConstraintsWidget
+from .qt_control import QtControl
 
 
-class QtHtml(QtConstraintsWidget):
+class QtHtml(QtControl):
     """ A Qt implementation of an Enaml HTML widget.
 
     """

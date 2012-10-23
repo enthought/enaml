@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 import wx.html
 
-from .wx_constraints_widget import WxConstraintsWidget
+from .wx_control import WxControl
 
 
 class wxProperHtmlWindow(wx.html.HtmlWindow):
@@ -20,7 +20,7 @@ class wxProperHtmlWindow(wx.html.HtmlWindow):
         return self._best_size
 
 
-class WxHtml(WxConstraintsWidget):
+class WxHtml(WxControl):
     """ A Wx implementation of the Enaml Html widget.
 
     """

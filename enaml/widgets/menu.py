@@ -17,7 +17,7 @@ class Menu(WidgetComponent):
     title = Unicode
     
     #: The items in the menu: Menu | Action | ActionGroup
-    items = Property(depends_on='children[]')
+    items = Property(depends_on='children')
 
     #--------------------------------------------------------------------------
     # Initialization
@@ -27,7 +27,6 @@ class Menu(WidgetComponent):
 
         """
         snap = super(Menu, self).snapshot()
-        snap['item_ids'] = self._snap_item_ids()
         snap['title'] = self.title
         return snap
 
@@ -55,10 +54,4 @@ class Menu(WidgetComponent):
         allowed = (Action, ActionGroup, Menu)
         items = (child for child in self.children if isinst(child, allowed))
         return tuple(items)
-
-    def _snap_item_ids(self):
-        """ Returns the list of widget ids for the menu items.
-
-        """
-        return [item.widget_id for item in self.items]
 

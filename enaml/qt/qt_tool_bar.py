@@ -5,7 +5,9 @@
 import sys
 
 from .qt.QtCore import Qt, Signal
-from .qt.QtGui import QToolBar, QAction, QActionGroup, QMainWindow 
+from .qt.QtGui import QToolBar, QMainWindow
+from .qt_action import QtAction
+from .qt_action_group import QtActionGroup
 from .qt_constraints_widget import QtConstraintsWidget
 
 
@@ -18,6 +20,7 @@ _DOCK_AREA_MAP = {
     'all': Qt.AllToolBarAreas,
 }
 
+
 #: A mapping from Qt tool bar areas to Enaml dock areas
 _DOCK_AREA_INV_MAP = {
     Qt.TopToolBarArea: 'top',
@@ -26,6 +29,7 @@ _DOCK_AREA_INV_MAP = {
     Qt.LeftToolBarArea: 'left',
     Qt.AllToolBarAreas: 'all',
 }
+
 
 #: A mapping from Enaml orientation to Qt Orientation
 _ORIENTATION_MAP = {
@@ -41,7 +45,7 @@ class QCustomToolBar(QToolBar):
     #: A signal emitted when the dock widget is floated.
     floated = Signal()
 
-    #: A signal emitted when the dock widget is docked. The payload 
+    #: A signal emitted when the dock widget is docked. The payload
     #: will be the new dock area.
     docked = Signal(object)
 
@@ -77,6 +81,19 @@ class QCustomToolBar(QToolBar):
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
+    def removeActions(self, actions):
+        """ Remove the given actions from the tool bar.
+
+        Parameters
+        ----------
+        actions : iterable
+            An iterable of QActions to remove from the tool bar.
+
+        """
+        remove = self.removeAction
+        for action in actions:
+            remove(action)
+
     def toolBarArea(self):
         """ Get the current tool bar area for the tool bar.
 
@@ -130,9 +147,6 @@ class QtToolBar(QtConstraintsWidget):
     """ A Qt implementation of an Enaml ToolBar.
 
     """
-    #: Storage for the tool bar item ids. 
-    _item_ids = []
-
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
@@ -147,7 +161,6 @@ class QtToolBar(QtConstraintsWidget):
 
         """
         super(QtToolBar, self).create(tree)
-        self.set_item_ids(tree['item_ids'])
         self.set_movable(tree['movable'])
         self.set_floatable(tree['floatable'])
         self.set_floating(tree['floating'])
@@ -164,15 +177,69 @@ class QtToolBar(QtConstraintsWidget):
         """
         super(QtToolBar, self).init_layout()
         widget = self.widget()
-        find_child = self.find_child
-        for item_id in self._item_ids:
-            child = find_child(item_id)
-            if child is not None:
-                child_widget = child.widget()
-                if isinstance(child_widget, QAction):
-                    widget.addAction(child_widget)
-                elif isinstance(child_widget, QActionGroup):
-                    widget.addActions(child_widget.actions())
+        for child in self.children():
+            if isinstance(child, QtAction):
+                widget.addAction(child.widget())
+            elif isinstance(child, QtActionGroup):
+                widget.addActions(child.actions())
+
+    #--------------------------------------------------------------------------
+    # Child Events
+    #--------------------------------------------------------------------------
+    def child_removed(self, child):
+        """  Handle the child removed event for a QtToolBar.
+
+        """
+        if isinstance(child, QtAction):
+            self.widget().removeAction(child.widget())
+        elif isinstance(child, QtActionGroup):
+            self.widget().removeActions(child.actions())
+
+    def child_added(self, child):
+        """ Handle the child added event for a QtToolBar.
+
+        """
+        before = self.find_next_action(child)
+        if isinstance(child, QtAction):
+            self.widget().insertAction(before, child.widget())
+        elif isinstance(child, QtActionGroup):
+            self.widget().insertActions(before, child.actions())
+
+    #--------------------------------------------------------------------------
+    # Utility Methods
+    #--------------------------------------------------------------------------
+    def find_next_action(self, child):
+        """ Get the QAction instance which comes immediately after the
+        actions of the given child.
+
+        Parameters
+        ----------
+        child : QtActionGroup, or QtAction
+            The child of interest.
+
+        Returns
+        -------
+        result : QAction or None
+            The QAction which comes immediately after the actions of the
+            given child, or None if no actions follow the child.
+
+        """
+        # The target action must be tested for membership against the
+        # current actions on the tool bar itself, since this method may
+        # be called after a child is added, but before the actions for
+        # the child have actually been added to the tool bar.
+        index = self.index_of(child)
+        if index != -1:
+            actions = set(self.widget().actions())
+            for child in self.children()[index + 1:]:
+                target = None
+                if isinstance(child, QtAction):
+                    target = child.widget()
+                elif isinstance(child, QtActionGroup):
+                    acts = child.actions()
+                    target = acts[0] if acts else None
+                if target in actions:
+                    return target
 
     #--------------------------------------------------------------------------
     # Signal Handlers
@@ -235,12 +302,6 @@ class QtToolBar(QtConstraintsWidget):
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
-    def set_item_ids(self, item_ids):
-        """ Set the item ids for the underlying widget.
-
-        """
-        self._item_ids = item_ids
-
     def set_movable(self, movable):
         """ Set the movable state on the underlying widget.
 

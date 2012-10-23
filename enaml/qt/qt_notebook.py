@@ -5,9 +5,10 @@
 import sys
 from weakref import WeakKeyDictionary
 
-from .qt.QtCore import Qt
+from .qt.QtCore import Qt, QEvent, Signal
 from .qt.QtGui import QTabWidget, QTabBar, QResizeEvent, QApplication
 from .qt_constraints_widget import QtConstraintsWidget
+from .qt_page import QtPage
 
 
 TAB_POSITIONS = {
@@ -28,6 +29,11 @@ class QNotebook(QTabWidget):
     """ A custom QTabWidget which handles children of type QPage.
 
     """
+    #: A signal emitted when a LayoutRequest event is posted to the
+    #: notebook widget. This will typically occur when the size hint
+    #: of the notebook is no longer valid.
+    layoutRequested = Signal()
+
     def __init__(self, *args, **kwargs):
         """ Initialize a QNotebook.
 
@@ -77,6 +83,19 @@ class QNotebook(QTabWidget):
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
+    def event(self, event):
+        """ A custom event handler which handles LayoutRequest events.
+
+        When a LayoutRequest event is posted to this widget, it will
+        emit the `layoutRequested` signal. This allows an external
+        consumer of this widget to update their external layout.
+
+        """
+        res = super(QNotebook, self).event(event)
+        if event.type() == QEvent.LayoutRequest:
+            self.layoutRequested.emit()
+        return res
+
     def showPage(self, page):
         """ Show a hidden QPage instance in the notebook.
 
@@ -112,7 +131,7 @@ class QNotebook(QTabWidget):
             self._hidden_pages[page] = index
 
     def addPage(self, page):
-        """ Add a QPage instance to the notebook. 
+        """ Add a QPage instance to the notebook.
 
         This method should be used in favor of the 'addTab' method.
 
@@ -153,6 +172,22 @@ class QNotebook(QTabWidget):
         else:
             page.hide()
             self._hidden_pages[page] = index
+
+    def removePage(self, page):
+        """ Remove a QPage instance from the notebook.
+
+        If the page does not exist in the notebook, this is a no-op.
+
+        Parameters
+        ----------
+        page : QPage
+            The QPage instance to remove from the notebook.
+
+        """
+        index = self.indexOf(page)
+        if index != -1:
+            self.removeTab(index)
+            page.hide()
 
     def setTabCloseButtonVisible(self, index, visible, refresh=True):
         """ Set whether the close button for the given tab is visible.
@@ -227,9 +262,6 @@ class QtNotebook(QtConstraintsWidget):
     """ A Qt implementation of an Enaml Notebook.
 
     """
-    #: Storage for the widget ids of the notebook pages.
-    _page_ids = []
-
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
@@ -239,7 +271,7 @@ class QtNotebook(QtConstraintsWidget):
         """
         widget = QNotebook(parent)
         if sys.platform == 'darwin':
-            # On OSX, the widget item layout rect is too small. 
+            # On OSX, the widget item layout rect is too small.
             # Setting this attribute forces the widget item to
             # use the widget rect for layout.
             widget.setAttribute(Qt.WA_LayoutUsesWidgetRect, True)
@@ -250,7 +282,6 @@ class QtNotebook(QtConstraintsWidget):
 
         """
         super(QtNotebook, self).create(tree)
-        self.set_page_ids(tree['page_ids'])
         self.set_tab_style(tree['tab_style'])
         self.set_tab_position(tree['tab_position'])
         self.set_tabs_closable(tree['tabs_closable'])
@@ -262,11 +293,38 @@ class QtNotebook(QtConstraintsWidget):
         """
         super(QtNotebook, self).init_layout()
         widget = self.widget()
-        find_child = self.find_child
-        for page_id in self._page_ids:
-            child = find_child(page_id)
-            if child is not None:
+        for child in self.children():
+            if isinstance(child, QtPage):
                 widget.addPage(child.widget())
+        widget.layoutRequested.connect(self.on_layout_requested)
+
+    #--------------------------------------------------------------------------
+    # Child Events
+    #--------------------------------------------------------------------------
+    def child_removed(self, child):
+        """ Handle the child removed event for a QtNotebook.
+
+        """
+        if isinstance(child, QtPage):
+            self.widget().removePage(child.widget())
+
+    def child_added(self, child):
+        """ Handle the child added event for a QtNotebook.
+
+        """
+        if isinstance(child, QtPage):
+            index = self.index_of(child)
+            if index != -1:
+                self.widget().insertPage(index, child.widget())
+
+    #--------------------------------------------------------------------------
+    # Signal Handlers
+    #--------------------------------------------------------------------------
+    def on_layout_requested(self):
+        """ Handle the `layoutRequested` signal from the QNotebook.
+
+        """
+        self.size_hint_updated()
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -298,12 +356,6 @@ class QtNotebook(QtConstraintsWidget):
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
-    def set_page_ids(self, page_ids):
-        """ Set the page ids for the underlying widget.
-
-        """
-        self._page_ids = page_ids
-
     def set_tab_style(self, style):
         """ Set the tab style for the tab bar in the widget.
 

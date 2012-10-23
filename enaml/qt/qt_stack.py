@@ -2,12 +2,13 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt.QtCore import QTimer 
+from .qt.QtCore import QTimer, QEvent, Signal
 from .qt.QtGui import QStackedWidget, QPixmap
 from .qt_constraints_widget import QtConstraintsWidget
+from .qt_stack_item import QtStackItem
 from .q_pixmap_painter import QPixmapPainter
 from .q_pixmap_transition import (
-    QDirectedTransition, QSlideTransition, QWipeTransition, QIrisTransition, 
+    QDirectedTransition, QSlideTransition, QWipeTransition, QIrisTransition,
     QFadeTransition, QCrossFadeTransition
 )
 
@@ -35,7 +36,7 @@ def make_transition(info):
     Parameters
     ----------
     info : dict
-        A dictionary sent by an Enaml widget which represents a 
+        A dictionary sent by an Enaml widget which represents a
         transition.
 
     Returns
@@ -62,6 +63,11 @@ class QStack(QStackedWidget):
     """ A QStackedWidget subclass which adds support for transitions.
 
     """
+    #: A signal emitted when a LayoutRequest event is posted to the
+    #: stack widget. This will typically occur when the size hint of
+    #: the stack is no longer valid.
+    layoutRequested = Signal()
+
     def __init__(self, *args, **kwargs):
         """ Initialize a QStack.
 
@@ -93,8 +99,8 @@ class QStack(QStackedWidget):
         self._painter = None
         self.setCurrentIndex(self._transition_index)
         # This final show() makes sure the underlyling widget is visible.
-        # If transitions are being fired rapidly, it's possible that the 
-        # current index and the transition index will be the same when 
+        # If transitions are being fired rapidly, it's possible that the
+        # current index and the transition index will be the same when
         # the call above is invoked. In such cases, Qt short circuits the
         # evaluation and the current widget is not shown.
         self.currentWidget().show()
@@ -139,9 +145,9 @@ class QStack(QStackedWidget):
         # a clean widget on which to draw.
         src_widget.setVisible(False)
         dst_widget.setVisible(False)
-        
+
         # Hookup the pixmap painter and start the transition.
-        painter = self._painter = QPixmapPainter() 
+        painter = self._painter = QPixmapPainter()
         painter.setTargetWidget(self)
         transition.pixmapUpdated.connect(painter.drawPixmap)
         transition.start()
@@ -149,6 +155,19 @@ class QStack(QStackedWidget):
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
+    def event(self, event):
+        """ A custom event handler which handles LayoutRequest events.
+
+        When a LayoutRequest event is posted to this widget, it will
+        emit the `layoutRequested` signal. This allows an external
+        consumer of this widget to update their external layout.
+
+        """
+        res = super(QStack, self).event(event)
+        if event.type() == QEvent.LayoutRequest:
+            self.layoutRequested.emit()
+        return res
+
     def transition(self):
         """ Get the transition installed on this widget.
 
@@ -182,7 +201,7 @@ class QStack(QStackedWidget):
         """ Transition the stack widget to the given index.
 
         If there is no transition object is installed on the widget
-        this is equivalent to calling `setCurrentIndex`. Otherwise, 
+        this is equivalent to calling `setCurrentIndex`. Otherwise,
         the change will be animated using the installed transition.
 
         Parameters
@@ -202,9 +221,6 @@ class QtStack(QtConstraintsWidget):
     """ A Qt implementation of an Enaml Stack.
 
     """
-    #: Storage for the stack item ids
-    _stack_item_ids = []
-
     #: The initial selected index in the stack.
     _initial_index = 0
 
@@ -219,7 +235,6 @@ class QtStack(QtConstraintsWidget):
 
         """
         super(QtStack, self).create(tree)
-        self.set_stack_item_ids(tree['stack_item_ids'])
         self.set_transition(tree['transition'])
         self._initial_index = tree['index']
 
@@ -229,13 +244,49 @@ class QtStack(QtConstraintsWidget):
         """
         super(QtStack, self).init_layout()
         widget = self.widget()
-        find_child = self.find_child
-        for widget_id in self._stack_item_ids:
-            child = find_child(widget_id)
-            if child is not None:
+        for child in self.children():
+            if isinstance(child, QtStackItem):
                 widget.addWidget(child.widget())
         # Bypass the transition effect during initialization.
         widget.setCurrentIndex(self._initial_index)
+        widget.layoutRequested.connect(self.on_layout_requested)
+        widget.currentChanged.connect(self.on_current_changed)
+
+    #--------------------------------------------------------------------------
+    # Child Events
+    #--------------------------------------------------------------------------
+    def child_removed(self, child):
+        """ Handle the child removed event for a QtStack.
+
+        """
+        if isinstance(child, QtStackItem):
+            self.widget().removeWidget(child.widget())
+
+    def child_added(self, child):
+        """ Handle the child added event for a QtStack.
+
+        """
+        if isinstance(child, QtStackItem):
+            index = self.index_of(child)
+            if index != -1:
+                self.widget().insertWidget(index, child.widget())
+
+    #--------------------------------------------------------------------------
+    # Signal Handlers
+    #--------------------------------------------------------------------------
+    def on_layout_requested(self):
+        """ Handle the `layoutRequested` signal from the QStack.
+
+        """
+        self.size_hint_updated()
+
+    def on_current_changed(self):
+        """ Handle the `currentChanged` signal from the QStack.
+
+        """
+        if 'index' not in self.loopback_guard:
+            index = self.widget().currentIndex()
+            self.send_action('index_changed', {'index': index})
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -244,7 +295,8 @@ class QtStack(QtConstraintsWidget):
         """ Handle the 'set_index' action from the Enaml widget.
 
         """
-        self.set_index(content['index'])
+        with self.loopback_guard('index'):
+            self.set_index(content['index'])
 
     def on_action_set_transition(self, content):
         """ Handle the 'set_transition' action from the Enaml widget.
@@ -255,12 +307,6 @@ class QtStack(QtConstraintsWidget):
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
-    def set_stack_item_ids(self, item_ids):
-        """ Set the stack item ids for the underlying widget.
-
-        """
-        self._stack_item_ids = item_ids
-
     def set_index(self, index):
         """ Set the current index of the underlying widget.
 

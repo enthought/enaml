@@ -6,6 +6,8 @@ import weakref
 import wx
 
 from .wx_constraints_widget import WxConstraintsWidget
+from .wx_layout_request import EVT_COMMAND_LAYOUT_REQUESTED
+from .wx_page import WxPage
 from .wx_upstream import aui
 
 
@@ -60,14 +62,16 @@ class wxDocumentNotebook(aui.AuiNotebook):
     #--------------------------------------------------------------------------
     def GetBestSize(self):
         """ Overridden GetBestSize method which will return the best
-        size for the current tab.
+        size for the notebook.
 
         """
-        page = self.GetCurrentPage()
-        if page is None:
-            return wx.Size(256, 192)
+        size = wx.Size(256, 192)
+        for idx in xrange(self.GetPageCount()):
+            page = self.GetPage(idx)
+            psize = page.GetBestSize()
+            size.SetWidth(max(size.GetWidth(), psize.GetWidth()))
+            size.SetHeight(max(size.GetHeight(), psize.GetHeight()))
         # On windows, there's an off by 2 error in the width.
-        size = page.GetBestSize()
         height = self.GetHeightForPageHeight(size.GetHeight())
         return wx.Size(size.GetWidth() + 2, height)
 
@@ -156,6 +160,22 @@ class wxDocumentNotebook(aui.AuiNotebook):
             page.Show(False)
             self._hidden_pages[page] = index
 
+    def RemoveWxPage(self, page):
+        """ Remove a wxPage instance from the notebook.
+
+        If the page does not exist in the notebook, this is a no-op.
+
+        Parameters
+        ----------
+        page : wxPage
+            The wxPage instance to remove from the notebook.
+
+        """
+        index = self.GetPageIndex(page)
+        if index != -1:
+            self.RemovePage(index)
+            page.Show(False)
+
 
 class wxPreferencesNotebook(wx.Notebook):
     """ A custom wx.Notebook which handles children of type wxPage.
@@ -182,21 +202,23 @@ class wxPreferencesNotebook(wx.Notebook):
     #--------------------------------------------------------------------------
     def GetBestSize(self):
         """ Overridden GetBestSize method which will return the best
-        size for the current tab.
+        size for the notebook.
 
         """
-        page = self.GetCurrentPage()
-        if page is None:
-            return wx.Size(256, 192)
+        size = wx.Size(256, 192)
+        for idx in xrange(self.GetPageCount()):
+            page = self.GetPage(idx)
+            psize = page.GetBestSize()
+            size.SetWidth(max(size.GetWidth(), psize.GetWidth()))
+            size.SetHeight(max(size.GetHeight(), psize.GetHeight()))
         # On windows, the wx.Notebook renders each page with 2 pixels
         # of padding on the top, and bottom, and 4 pixels of padding
         # on the left and right (at least under the Windows 7 theme).
         # We need to compensate for this padding along with the space
-        # taken up by the tab bar. The tab bar height was manually 
+        # taken up by the tab bar. The tab bar height was manually
         # measured to be 21 pixels. I've found no way to have wx measure
-        # it for me (there's nothing in RendererNative for it), so its 
+        # it for me (there's nothing in RendererNative for it), so its
         # just hard-coded for now.
-        size = page.GetBestSize()
         return wx.Size(size.GetWidth() + 8, size.GetHeight() + 25)
 
     def ShowWxPage(self, page):
@@ -275,6 +297,22 @@ class wxPreferencesNotebook(wx.Notebook):
             page.Show(False)
             self._hidden_pages[page] = index
 
+    def RemoveWxPage(self, page):
+        """ Remove a wxPage instance from the notebook.
+
+        If the page does not exist in the notebook, this is a no-op.
+
+        Parameters
+        ----------
+        page : wxPage
+            The wxPage instance to remove from the notebook.
+
+        """
+        index = self.GetPageIndex(page)
+        if index != -1:
+            self.RemovePage(index)
+            page.Show(False)
+
     def GetPageIndex(self, page):
         """ Returns the index of the page in the control.
 
@@ -317,21 +355,18 @@ class wxPreferencesNotebook(wx.Notebook):
         """ A dummy method which makes the wxPreferencesNotebook api
         compatible with the wxDocumentNotebook.
 
-        Close buttons cannot be set on a preferences notebook. This 
-        method exists soley so that child wxPages do not need to 
+        Close buttons cannot be set on a preferences notebook. This
+        method exists soley so that child wxPages do not need to
         special case their implementation based on their parent.
 
         """
         pass
-        
+
 
 class WxNotebook(WxConstraintsWidget):
     """ A Wx implementation of an Enaml Notebook.
 
     """
-    #: Storage for the widget ids of the notebook pages.
-    _page_ids = []
-
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
@@ -341,7 +376,7 @@ class WxNotebook(WxConstraintsWidget):
         """
         if tree['tab_style'] == 'preferences':
             res = wxPreferencesNotebook(parent)
-        else: 
+        else:
             style = aui.AUI_NB_SCROLL_BUTTONS
             res =  wxDocumentNotebook(parent, agwStyle=style)
         return res
@@ -351,7 +386,6 @@ class WxNotebook(WxConstraintsWidget):
 
         """
         super(WxNotebook, self).create(tree)
-        self.set_page_ids(tree['page_ids'])
         self.set_tab_style(tree['tab_style'])
         self.set_tab_position(tree['tab_position'])
         self.set_tabs_closable(tree['tabs_closable'])
@@ -363,11 +397,40 @@ class WxNotebook(WxConstraintsWidget):
         """
         super(WxNotebook, self).init_layout()
         widget = self.widget()
-        find_child = self.find_child
-        for page_id in self._page_ids:
-            child = find_child(page_id)
-            if child is not None:
+        for child in self.children():
+            if isinstance(child, WxPage):
                 widget.AddWxPage(child.widget())
+        widget.Bind(EVT_COMMAND_LAYOUT_REQUESTED, self.on_layout_requested)
+
+    #--------------------------------------------------------------------------
+    # Child Events
+    #--------------------------------------------------------------------------
+    def child_removed(self, child):
+        """ Handle the child removed event for a WxNotebook.
+
+        """
+        if isinstance(child, WxPage):
+            self.widget().RemoveWxPage(child.widget())
+            self.size_hint_updated()
+
+    def child_added(self, child):
+        """ Handle the child added event for a WxNotebook.
+
+        """
+        if isinstance(child, WxPage):
+            index = self.index_of(child)
+            if index != -1:
+                self.widget().InsertWxPage(index, child.widget())
+                self.size_hint_updated()
+
+    #--------------------------------------------------------------------------
+    # Event Handlers
+    #--------------------------------------------------------------------------
+    def on_layout_requested(self, event):
+        """ Handle the layout request event from a child page.
+
+        """
+        self.size_hint_updated()
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -399,12 +462,6 @@ class WxNotebook(WxConstraintsWidget):
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
-    def set_page_ids(self, page_ids):
-        """ Set the page ids for the underlying widget.
-
-        """
-        self._page_ids = page_ids
-
     def set_tab_style(self, style):
         """ Set the tab style for the underlying widget.
 

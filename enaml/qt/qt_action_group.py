@@ -3,7 +3,8 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt.QtGui import QActionGroup
-from .qt_messenger_widget import QtMessengerWidget
+from .qt_action import QtAction
+from .qt_object import QtObject
 
 
 class QCustomActionGroup(QActionGroup):
@@ -59,13 +60,10 @@ class QCustomActionGroup(QActionGroup):
                         action.setChecked(False)
 
 
-class QtActionGroup(QtMessengerWidget):
+class QtActionGroup(QtObject):
     """ A Qt implementation of an Enaml ActionGroup.
 
     """
-    #: Store for the action ids
-    _action_ids = []
-
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
@@ -80,7 +78,6 @@ class QtActionGroup(QtMessengerWidget):
 
         """
         super(QtActionGroup, self).create(tree)
-        self.set_action_ids(tree['action_ids'])
         self.set_exclusive(tree['exclusive'])
         self.set_enabled(tree['enabled'])
         self.set_visible(tree['visible'])
@@ -91,11 +88,55 @@ class QtActionGroup(QtMessengerWidget):
         """
         super(QtActionGroup, self).init_layout()
         widget = self.widget()
-        find_child = self.find_child
-        for action_id in self._action_ids:
-            child = find_child(action_id)
-            if child is not None:
+        for child in self.children():
+            if isinstance(child, QtAction):
                 widget.addAction(child.widget())
+
+    #--------------------------------------------------------------------------
+    # Child Events
+    #--------------------------------------------------------------------------
+    def child_removed(self, child):
+        """ Handle the child removed event for a QtActionGroup.
+
+        """
+        if isinstance(child, QtAction):
+            action = child.widget()
+            self.widget().removeAction(action)
+            parent = self.parent()
+            if parent is not None:
+                parent.widget().removeAction(action)
+
+    def child_added(self, child):
+        """ Handle the child added event for a QtActionGroup.
+
+        """
+        # The easiest way to handle the insert is to tell the parent to
+        # insert all the current actions. It will work out the proper
+        # ordering automatically.
+        if isinstance(child, QtAction):
+            self.widget().addAction(child.widget())
+            parent = self.parent()
+            if parent is not None:
+                before = parent.find_next_action(self)
+                parent.widget().insertActions(before, self.actions())
+
+    #--------------------------------------------------------------------------
+    # Utility Methods
+    #--------------------------------------------------------------------------
+    def actions(self):
+        """ Get the QAction children for this action group.
+
+        Returns
+        -------
+        result : list
+            The list of QAction instances which are children of this
+            action group. Unlike the list returned by the `actions`
+            method of the QActionGroup, the children in this list will
+            have the correct order.
+
+        """
+        isinst = isinstance
+        return [c.widget() for c in self.children() if isinst(c, QtAction)]
 
     #--------------------------------------------------------------------------
     # Message Handling
@@ -117,16 +158,10 @@ class QtActionGroup(QtMessengerWidget):
 
         """
         self.set_visible(content['visible'])
-    
+
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
-    def set_action_ids(self, action_ids):
-        """ Set the action ids for the underlying control.
-
-        """
-        self._action_ids = action_ids
-
     def set_exclusive(self, exclusive):
         """ Set the exclusive state of the underlying control.
 

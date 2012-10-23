@@ -2,18 +2,18 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from casuarius import ConstraintVariable 
+from casuarius import ConstraintVariable
 
 from .wx_widget_component import WxWidgetComponent
 
 
 class LayoutBox(object):
-    """ A class which encapsulates a layout box using casuarius 
+    """ A class which encapsulates a layout box using casuarius
     constraint variables.
 
     The constraint variables are created on an as-needed basis, this
     allows Enaml widgets to define new constraints and build layouts
-    with them, without having to specifically update this client 
+    with them, without having to specifically update this client
     code.
 
     """
@@ -69,7 +69,13 @@ class WxConstraintsWidget(WxWidgetComponent):
     #: are assumed to never change.
     _hard_cns = []
 
-    #: The list of constraint dictionaries defined by the user on 
+    #: The list of size hint constraints to apply to the widget. These
+    #: constraints are computed once and then cached. If the size hint
+    #: of a widget changes at run time, then `size_hint_updated` should
+    #: be called to trigger an appropriate relayout of the widget.
+    _size_hint_cns = []
+
+    #: The list of constraint dictionaries defined by the user on
     #: the server side Enaml widget.
     _user_cns = []
 
@@ -86,7 +92,7 @@ class WxConstraintsWidget(WxWidgetComponent):
         self._hug = layout['hug']
         self._resist = layout['resist']
         self._user_cns = layout['constraints']
-        
+
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
@@ -94,7 +100,7 @@ class WxConstraintsWidget(WxWidgetComponent):
         """ Handle the 'relayout' action from the Enaml widget.
 
         """
-        # XXX The WxContainer needs to get in on the action to grab the 
+        # XXX The WxContainer needs to get in on the action to grab the
         # share_layout flag.
         self._hug = content['hug']
         self._resist_clip = content['resist']
@@ -134,7 +140,7 @@ class WxConstraintsWidget(WxWidgetComponent):
             current layout system.
 
         new_cns : list
-            The list of casuarius constraints to add to the 
+            The list of casuarius constraints to add to the
             current layout system.
 
         """
@@ -145,8 +151,8 @@ class WxConstraintsWidget(WxWidgetComponent):
     def size_hint_constraints(self):
         """ Creates the list of size hint constraints for this widget.
 
-        This method using the provided size hint of the widget and the
-        policies for 'hug' and 'resist_clip' to generate casuarius 
+        This method uses the provided size hint of the widget and the
+        policies for 'hug' and 'resist_clip' to generate casuarius
         LinearConstraint objects which respect the size hinting of the
         widget.
 
@@ -159,32 +165,50 @@ class WxConstraintsWidget(WxWidgetComponent):
             A list of casuarius LinearConstraint instances.
 
         """
-        cns = []
-        push = cns.append
-        hint = self.widget().GetBestSize()
-        if hint.IsFullySpecified():
-            width_hint = hint.width
-            height_hint = hint.height
-            primitive = self.layout_box.primitive
-            width = primitive('width')
-            height = primitive('height')
-            hug_width, hug_height = self._hug
-            resist_width, resist_height = self._resist
-            if width_hint >= 0:
-                if hug_width != 'ignore':
-                    cn = (width == width_hint) | hug_width
-                    push(cn)
-                if resist_width != 'ignore':
-                    cn = (width >= width_hint) | resist_width
-                    push(cn)
-            if height_hint >= 0:
-                if hug_height != 'ignore':
-                    cn = (height == height_hint) | hug_height
-                    push(cn)
-                if resist_height != 'ignore':
-                    cn = (height >= height_hint) | resist_height
-                    push(cn)
+        cns = self._size_hint_cns
+        if not cns:
+            cns = self._size_hint_cns = []
+            push = cns.append
+            hint = self.widget().GetBestSize()
+            if hint.IsFullySpecified():
+                width_hint = hint.width
+                height_hint = hint.height
+                primitive = self.layout_box.primitive
+                width = primitive('width')
+                height = primitive('height')
+                hug_width, hug_height = self._hug
+                resist_width, resist_height = self._resist
+                if width_hint >= 0:
+                    if hug_width != 'ignore':
+                        cn = (width == width_hint) | hug_width
+                        push(cn)
+                    if resist_width != 'ignore':
+                        cn = (width >= width_hint) | resist_width
+                        push(cn)
+                if height_hint >= 0:
+                    if hug_height != 'ignore':
+                        cn = (height == height_hint) | hug_height
+                        push(cn)
+                    if resist_height != 'ignore':
+                        cn = (height >= height_hint) | resist_height
+                        push(cn)
         return cns
+
+    def size_hint_updated(self):
+        """ Notify the layout system that the size hint of this widget
+        has been updated.
+
+        """
+        # Only the ancestors of a widget care about its size hint,
+        # so this method attempts to replace the size hint constraints
+        # for the widget starting with its parent.
+        parent = self.parent()
+        if isinstance(parent, WxConstraintsWidget):
+            old_cns = self._size_hint_cns
+            self._size_hint_cns = []
+            new_cns = self.size_hint_constraints()
+            parent.replace_constraints(old_cns, new_cns)
+        self.update_geometry()
 
     def hard_constraints(self):
         """ Generate the constraints which must always be applied.
@@ -200,7 +224,7 @@ class WxConstraintsWidget(WxWidgetComponent):
 
         """
         cns = self._hard_cns
-        if not cns: 
+        if not cns:
             primitive = self.layout_box.primitive
             left = primitive('left')
             top = primitive('top')
@@ -224,7 +248,7 @@ class WxConstraintsWidget(WxWidgetComponent):
 
         """
         return self._user_cns
-    
+
     def geometry_updater(self):
         """ A method which can be called to create a function which
         will update the layout geometry of the underlying widget.
@@ -236,13 +260,13 @@ class WxConstraintsWidget(WxWidgetComponent):
         ----------
         dx : float
             The offset of the parent widget from the computed origin
-            of the layout. This amount is subtracted from the computed 
+            of the layout. This amount is subtracted from the computed
             layout 'x' amount, which is expressed in the coordinates
             of the owner widget.
 
         dy : float
             The offset of the parent widget from the computed origin
-            of the layout. This amount is subtracted from the computed 
+            of the layout. This amount is subtracted from the computed
             layout 'y' amount, which is expressed in the coordinates
             of the layout owner widget.
 
@@ -255,8 +279,8 @@ class WxConstraintsWidget(WxWidgetComponent):
         """
         # The return function is a hyper optimized (for Python) closure
         # that will is called on every resize to update the geometry of
-        # the widget. This is explicitly not idiomatic Python code. It 
-        # exists purely for the sake of efficiency and was justified 
+        # the widget. This is explicitly not idiomatic Python code. It
+        # exists purely for the sake of efficiency and was justified
         # with profiling.
         primitive = self.layout_box.primitive
         x = primitive('left')

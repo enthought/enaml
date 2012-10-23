@@ -4,6 +4,7 @@
 #------------------------------------------------------------------------------
 from .qt.QtCore import Qt, Signal
 from .qt.QtGui import QDockWidget, QWidget
+from .qt_container import QtContainer
 from .qt_widget_component import QtWidgetComponent
 
 
@@ -15,6 +16,7 @@ _DOCK_AREA_MAP = {
     'left': Qt.LeftDockWidgetArea,
     'all': Qt.AllDockWidgetAreas,
 }
+
 
 #: A mapping from Qt dock areas to Enaml dock areas.
 _DOCK_AREA_INV_MAP = {
@@ -36,14 +38,14 @@ class QCustomDockWidget(QDockWidget):
     #: A signal emitted when the dock widget is floated.
     floated = Signal()
 
-    #: A signal emitted when the dock widget is docked. The payload 
+    #: A signal emitted when the dock widget is docked. The payload
     #: will be the new dock area.
     docked = Signal(object)
 
     def __init__(self, *args, **kwargs):
         """ Initialize a QCustomDockWidget.
 
-        Parameters 
+        Parameters
         ----------
         *args, **kwargs
             The positional and keyword arguments needed to initialize
@@ -63,7 +65,7 @@ class QCustomDockWidget(QDockWidget):
 
         """
         # Hiding the title bar on a floating dock widget causes the
-        # frame to be hidden. We need to make sure its shown when 
+        # frame to be hidden. We need to make sure its shown when
         # floating, and hidden again upon docking if needed.
         if top_level:
             self._showTitleBar()
@@ -157,9 +159,6 @@ class QtDockPane(QtWidgetComponent):
     """ A Qt implementation of an Enaml DockPane.
 
     """
-    #: Storage for the dock widget id
-    _dock_widget_id = None
-
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
@@ -174,7 +173,6 @@ class QtDockPane(QtWidgetComponent):
 
         """
         super(QtDockPane, self).create(tree)
-        self.set_dock_widget_id(tree['dock_widget_id'])
         self.set_title(tree['title'])
         self.set_title_bar_visible(tree['title_bar_visible'])
         self.set_title_bar_orientation(tree['title_bar_orientation'])
@@ -194,9 +192,43 @@ class QtDockPane(QtWidgetComponent):
 
         """
         super(QtDockPane, self).init_layout()
-        child = self.find_child(self._dock_widget_id)
-        if child is not None:
-            self.widget().setWidget(child.widget())
+        self.widget().setWidget(self.dock_widget())
+
+    #--------------------------------------------------------------------------
+    # Utility Methods
+    #--------------------------------------------------------------------------
+    def dock_widget(self):
+        """ Find and return the dock widget child for this widget.
+
+        Returns
+        -------
+        result : QWidget or None
+            The dock widget defined for this widget, or None if one is
+            not defined.
+
+        """
+        widget = None
+        for child in self.children():
+            if isinstance(child, QtContainer):
+                widget = child.widget()
+        return widget
+
+    #--------------------------------------------------------------------------
+    # Child Events
+    #--------------------------------------------------------------------------
+    def child_removed(self, child):
+        """ Handle the child removed event for a QtDockPane.
+
+        """
+        if isinstance(child, QtContainer):
+            self.widget().setWidget(self.dock_widget())
+
+    def child_added(self, child):
+        """ Handle the child added event for a QtDockPane.
+
+        """
+        if isinstance(child, QtContainer):
+            self.widget().setWidget(self.dock_widget())
 
     #--------------------------------------------------------------------------
     # Signal Handlers
@@ -226,7 +258,7 @@ class QtDockPane(QtWidgetComponent):
 
     #--------------------------------------------------------------------------
     # Message Handling
-    #-------------------------------------------------------------------------- 
+    #--------------------------------------------------------------------------
     def on_action_set_title(self, content):
         """ Handle the 'set_title' action from the Enaml widget.
 
@@ -300,12 +332,6 @@ class QtDockPane(QtWidgetComponent):
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
-    def set_dock_widget_id(self, dock_widget_id):
-        """ Set the dock widget id for the underlying widget.
-
-        """
-        self._dock_widget_id = dock_widget_id
-
     def set_title(self, title):
         """ Set the title on the underlying widget.
 

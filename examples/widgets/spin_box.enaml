@@ -1,0 +1,25 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2012, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+""" An example of the `SpinBox` widget.
+
+This example demonstrates the use of a simple `SpinBox` control which is
+used to select from a discrete range of integer values.
+
+"""
+from enaml.widgets.api import Window, Form, Label, Field, SpinBox
+
+
+enamldef Main(Window):
+    title = 'SpinBox Example'
+    Form:
+        Label:
+            text = 'Select Age'
+        SpinBox:
+            id: sbox 
+            maximum = 100
+            minimum = 0
+        Field:
+            text << u'Age: {}'.format(sbox.value)
+            read_only = True

@@ -16,13 +16,22 @@ enamldef RegexField(Field):
     validator << RegexValidator(regex=regex)
 
 
+_int_converters = {
+    2: bin,
+    8: oct,
+    10: unicode,
+    16: hex
+}
+
+
 enamldef IntField(Field):
     attr minimum = None
     attr maximum = None
     attr base = 10
     attr value : int = 0
-    text << unicode(value)
-    text :: self.value = int(text)
+    attr converter << _int_converters.get(base, unicode)
+    text << converter(value)
+    text :: self.value = int(text, base)
     validator << IntValidator(base=base, minimum=minimum, maximum=maximum)
 
 
@@ -31,8 +40,9 @@ enamldef FloatField(Field):
     attr maximum = None
     attr allow_exponent : bool = True
     attr value : float = 0.0
-    text << unicode(value)
-    text :: self.value = int(text)
+    attr converter = unicode
+    text << converter(value)
+    text :: self.value = float(text)
     validator << FloatValidator(
         minimum=minimum, maximum=maximum, allow_exponent=allow_exponent
     )

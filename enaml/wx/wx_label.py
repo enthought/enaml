@@ -4,10 +4,21 @@
 #------------------------------------------------------------------------------
 import wx
 
-from .wx_constraints_widget import WxConstraintsWidget
+from .wx_control import WxControl
 
 
-class WxLabel(WxConstraintsWidget):
+ALIGN_MAP = {
+    'left': wx.ALIGN_LEFT,
+    'right': wx.ALIGN_RIGHT,
+    'center': wx.ALIGN_CENTER,
+    'justify': wx.ALIGN_LEFT, # wx doesn't support justification
+}
+
+
+ALIGN_MASK = wx.ALIGN_LEFT | wx.ALIGN_RIGHT | wx.ALIGN_CENTER
+
+
+class WxLabel(WxControl):
     """ A Wx implementation of an Enaml Label.
 
     """
@@ -26,6 +37,8 @@ class WxLabel(WxConstraintsWidget):
         """
         super(WxLabel, self).create(tree)
         self.set_text(tree['text'])
+        self.set_align(tree['align'])
+        self.set_vertical_align(tree['vertical_align'])
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -34,8 +47,25 @@ class WxLabel(WxConstraintsWidget):
         """ Handle the 'set_text' action from the Enaml widget.
 
         """
-        # XXX trigger a relayout if the size hint has changed.
+        widget = self.widget()
+        old_hint = widget.GetBestSize()
         self.set_text(content['text'])
+        new_hint = widget.GetBestSize()
+        if old_hint != new_hint:
+            self.size_hint_updated()
+
+    def on_action_set_align(self, content):
+        """ Handle the 'set_align' action from the Enaml widget.
+
+        """
+        self.set_align(content['align'])
+        self.widget().Refresh()
+
+    def on_action_set_vertical_align(self, content):
+        """ Handle the 'set_vertical_align' action from the Enaml widget.
+
+        """
+        self.set_vertical_align(content['vertical_align'])
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -45,4 +75,22 @@ class WxLabel(WxConstraintsWidget):
 
         """
         self.widget().SetLabel(text)
+
+    def set_align(self, align):
+        """ Set the alignment of the text in the underlying widget.
+
+        """
+        widget = self.widget()
+        style = widget.GetWindowStyle()
+        style &= ~ALIGN_MASK
+        style |= ALIGN_MAP[align]
+        widget.SetWindowStyle(style)
+
+    def set_vertical_align(self, align):
+        """ Set the vertical alignment of the text in the underlying
+        widget.
+
+        """
+        # Wx does not support vertical alignment.
+        pass
 

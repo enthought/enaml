@@ -16,17 +16,6 @@ class MenuBar(WidgetComponent):
     menus = Property(depends_on='children')
 
     #--------------------------------------------------------------------------
-    # Initialization
-    #--------------------------------------------------------------------------
-    def snapshot(self):
-        """ Returns the snapshot dict for the DockPane.
-
-        """
-        snap = super(MenuBar, self).snapshot()
-        snap['menu_ids'] = self._snap_menu_ids()
-        return snap
-
-    #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
     @cached_property
@@ -42,10 +31,4 @@ class MenuBar(WidgetComponent):
         isinst = isinstance
         menus = (child for child in self.children if isinst(child, Menu))
         return tuple(menus)
-
-    def _snap_menu_ids(self):
-        """ Returns the list of widget ids for the menus.
-
-        """
-        return [menu.widget_id for menu in self.menus]
 

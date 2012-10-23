@@ -6,7 +6,8 @@ import wx
 
 from enaml.colors import parse_color
 
-from .wx_messenger_widget import WxMessengerWidget
+from .wx_layout_request import wxEvtLayoutRequested
+from .wx_object import WxObject
 
 
 def wx_parse_color(color):
@@ -33,7 +34,7 @@ def wx_parse_color(color):
     return wx_color
 
 
-class WxWidgetComponent(WxMessengerWidget):
+class WxWidgetComponent(WxObject):
     """ A Wx implementation of an Enaml WidgetComponent.
 
     """
@@ -69,6 +70,24 @@ class WxWidgetComponent(WxMessengerWidget):
         self.set_show_focus_rect(tree['show_focus_rect'])
 
     #--------------------------------------------------------------------------
+    # Public API
+    #--------------------------------------------------------------------------
+    def update_geometry(self):
+        """ Notify the layout system that this widget has changed.
+
+        This method should be called when the geometry of the widget has
+        changed and the layout system should update the layout. This will
+        post a wxEvtLayoutRequested event to the parent of this widget.
+
+        """
+        widget = self.widget()
+        if widget:
+            parent = widget.GetParent()
+            if parent:
+                event = wxEvtLayoutRequested(widget.GetId())
+                wx.PostEvent(parent, event)
+
+    #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
     def on_action_set_enabled(self, content):
@@ -79,7 +98,7 @@ class WxWidgetComponent(WxMessengerWidget):
 
     def on_action_set_visible(self, content):
         """ Handle the 'set_visible' action from the Enaml widget.
-        
+
         """
         self.set_visible(content['visible'])
 
@@ -114,7 +133,7 @@ class WxWidgetComponent(WxMessengerWidget):
         self.set_maximum_size(content['maximum_size'])
 
     def on_action_set_show_focus_rect(self, content):
-        """ Handle the 'set_show_focus_rect' action from the Enaml 
+        """ Handle the 'set_show_focus_rect' action from the Enaml
         widget.
 
         """
@@ -211,13 +230,13 @@ class WxWidgetComponent(WxMessengerWidget):
 
         """
         pass
-        
+
     def set_show_focus_rect(self, show):
         """ Sets whether or not to show the focus rectangle around
-        the widget. 
+        the widget.
 
         This is currently not supported on Wx.
-        
+
         """
         pass
 

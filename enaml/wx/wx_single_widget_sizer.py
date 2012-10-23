@@ -9,7 +9,7 @@ class wxSingleWidgetSizer(wx.PySizer):
     """ A custom wx Sizer for sizing a single child widget.
 
     There can only be one widget in this sizer at a time and it should
-    be added via the .Add(...) method. Old items will be removed 
+    be added via the .Add(...) method. Old items will be removed
     automatically (but not destroyed).
 
     """
@@ -20,7 +20,7 @@ class wxSingleWidgetSizer(wx.PySizer):
     def CalcMax(self):
         """ A method to compute the maximum size allowed by the sizer.
 
-        This is not a native wx sizer method, but is included for 
+        This is not a native wx sizer method, but is included for
         convenience.
 
         """
@@ -35,14 +35,18 @@ class wxSingleWidgetSizer(wx.PySizer):
 
         """
         self.Clear(deleteWindows=False)
+        old = self._widget
+        if old:
+            old.Hide()
         self._widget = widget
         if widget:
+            widget.Show()
             res = super(wxSingleWidgetSizer, self).Add(widget)
             self.Layout()
             return res
 
     def CalcMin(self):
-        """ Returns the minimum size for the children this sizer is 
+        """ Returns the minimum size for the children this sizer is
         managing.
 
         """

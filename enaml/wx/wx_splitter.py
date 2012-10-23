@@ -6,6 +6,7 @@ import wx
 from wx.lib.splitter import MultiSplitterWindow
 
 from .wx_constraints_widget import WxConstraintsWidget
+from .wx_split_item import WxSplitItem
 
 
 _ORIENTATION_MAP = {
@@ -30,15 +31,16 @@ class wxSplitter(MultiSplitterWindow):
 
         """
         # We modify the mouse event to "fake" like the shift key is
-        # always down. This causes the splitter to not adjust its 
+        # always down. This causes the splitter to not adjust its
         # neighbor when dragging the sash. This behavior is consistent
         # with Qt's behavior. This is not *the best* way to handle this,
-        # but it's the easiest and quickest at the moment. The proper 
+        # but it's the easiest and quickest at the moment. The proper
         # way would be to reimplement this method in its entirety and
         # allow the adjustNeighbor computation to be based on keyboard
-        # state as well as attribute flags. 
+        # state as well as attribute flags.
         #
-        # TODO implement this properly
+        # TODO implement this properly (or just rewrite this entire
+        # control, because like everything else in Wx, it's crap).
         event.m_shiftDown = True
         return super(wxSplitter, self)._OnMouse(event)
 
@@ -47,9 +49,6 @@ class WxSplitter(WxConstraintsWidget):
     """ A Wx implementation of an Enaml Splitter.
 
     """
-    #: Storage for the splitter widget ids
-    _splitter_widget_ids = []
-
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
@@ -63,32 +62,52 @@ class WxSplitter(WxConstraintsWidget):
         """ Create and initialize the splitter control.
         """
         super(WxSplitter, self).create(tree)
-        self.set_splitter_widget_ids(tree['splitter_widget_ids'])
         self.set_orientation(tree['orientation'])
         self.set_live_drag(tree['live_drag'])
-        self.set_preferred_sizes(tree['preferred_sizes'])
-    
+
     def init_layout(self):
         """ Handle the layout initialization for the splitter.
 
         """
         super(WxSplitter, self).init_layout()
         widget = self.widget()
-        find_child = self.find_child
-        for widget_id in self._splitter_widget_ids:
-            child = find_child(widget_id)
-            if child is not None:
+        for child in self.children():
+            if isinstance(child, WxSplitItem):
                 widget.AppendWindow(child.widget())
         widget.SizeWindows()
 
     #--------------------------------------------------------------------------
-    # Message Handler Methods 
+    # Child Events
+    #--------------------------------------------------------------------------
+    def child_removed(self, child):
+        """ Handle the child removed event for a WxSplitter.
+
+        """
+        if isinstance(child, WxSplitItem):
+            widget = child.widget()
+            self.widget().DetachWindow(widget)
+            widget.Hide()
+            self.size_hint_updated()
+
+    def child_added(self, child):
+        """ Handle the child added event for a WxSplitter.
+
+        """
+        if isinstance(child, WxSplitItem):
+            index = self.index_of(child)
+            if index != -1:
+                self.widget().InsertWindow(index, child.widget())
+                self.size_hint_updated()
+
+    #--------------------------------------------------------------------------
+    # Message Handler Methods
     #--------------------------------------------------------------------------
     def on_action_set_orientation(self, content):
         """ Handle the 'set_orientation' action from the Enaml widget.
 
         """
         self.set_orientation(content['orientation'])
+        self.size_hint_updated()
 
     def on_action_set_live_drag(self, content):
         """ Handle the 'set_live_drag' action from the Enaml widget.
@@ -96,22 +115,9 @@ class WxSplitter(WxConstraintsWidget):
         """
         self.set_live_drag(content['live_drag'])
 
-    def on_action_set_preferred_sizes(self, content):
-        """ Handle the 'set_preferred_sizes' action from the Enaml 
-        widget.
-
-        """
-        self.set_preferred_sizes(content['preferred_sizes'])
-    
     #--------------------------------------------------------------------------
-    # Widget Update Methods 
+    # Widget Update Methods
     #--------------------------------------------------------------------------
-    def set_splitter_widget_ids(self, widget_ids):
-        """ Set the splitter widget ids for the underlying widget.
-
-        """
-        self._splitter_widget_ids = widget_ids
-
     def set_orientation(self, orientation):
         """ Update the orientation of the splitter.
 
@@ -120,7 +126,7 @@ class WxSplitter(WxConstraintsWidget):
         widget = self.widget()
         widget.SetOrientation(wx_orientation)
         widget.SizeWindows()
-    
+
     def set_live_drag(self, live_drag):
         """ Updates the drag state of the splitter.
 
@@ -130,12 +136,4 @@ class WxSplitter(WxConstraintsWidget):
             widget.WindowStyle |= wx.SP_LIVE_UPDATE
         else:
             widget.WindowStyle &= ~wx.SP_LIVE_UPDATE
-
-    def set_preferred_sizes(self, sizes):
-        """ Set the initial sizes for the children.
-
-        """
-        # XXX We're punting here for now. What we need to do is implement
-        # QSplitter::setSizes
-        return
 

@@ -3,10 +3,10 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt.QtGui import QProgressBar
-from .qt_constraints_widget import QtConstraintsWidget
+from .qt_control import QtControl
 
 
-class QtProgressBar(QtConstraintsWidget):
+class QtProgressBar(QtControl):
     """ A Qt implementation of an Enaml ProgressBar.
 
     """

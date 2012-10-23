@@ -142,6 +142,11 @@ def spin_box_factory():
     return QtSpinBox
 
 
+def split_item_factory():
+    from .qt_split_item import QtSplitItem
+    return QtSplitItem
+
+
 def splitter_factory():
     from .qt_splitter import QtSplitter
     return QtSplitter
@@ -201,6 +206,7 @@ QT_FACTORIES = {
     'ScrollArea': scroll_area_factory,
     'Slider': slider_factory,
     'SpinBox': spin_box_factory,
+    'SplitItem': split_item_factory,
     'Splitter': splitter_factory,
     'Stack': stack_factory,
     'StackItem': stack_item_factory,

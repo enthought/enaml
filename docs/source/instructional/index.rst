@@ -7,6 +7,6 @@
     :maxdepth: 2
 
     overview
-    Tutorials <tutorials_home>
+    tutorials_home
     Examples <example>
     faq

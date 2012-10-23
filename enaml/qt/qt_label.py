@@ -2,11 +2,27 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from .qt.QtCore import Qt
 from .qt.QtGui import QLabel
-from .qt_constraints_widget import QtConstraintsWidget
+from .qt_control import QtControl
 
 
-class QtLabel(QtConstraintsWidget):
+ALIGN_MAP = {
+    'left': Qt.AlignLeft,
+    'right': Qt.AlignRight,
+    'center': Qt.AlignHCenter,
+    'justify': Qt.AlignJustify,
+}
+
+
+VERTICAL_ALIGN_MAP = {
+    'top': Qt.AlignTop,
+    'bottom': Qt.AlignBottom,
+    'center': Qt.AlignVCenter,
+}
+
+
+class QtLabel(QtControl):
     """ A Qt implementation of an Enaml Label.
 
     """
@@ -25,6 +41,8 @@ class QtLabel(QtConstraintsWidget):
         """
         super(QtLabel, self).create(tree)
         self.set_text(tree['text'])
+        self.set_align(tree['align'])
+        self.set_vertical_align(tree['vertical_align'])
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -33,8 +51,24 @@ class QtLabel(QtConstraintsWidget):
         """ Handle the 'set_text' action from the Enaml widget.
 
         """
-        # XXX trigger a relayout if the size hint has changed.
+        item = self.widget_item()
+        old_hint = item.sizeHint()
         self.set_text(content['text'])
+        new_hint = item.sizeHint()
+        if old_hint != new_hint:
+            self.size_hint_updated()
+
+    def on_action_set_align(self, content):
+        """ Handle the 'set_align' action from the Enaml widget.
+
+        """
+        self.set_align(content['align'])
+
+    def on_action_set_vertical_align(self, content):
+        """ Handle the 'set_vertical_align' action from the Enaml widget.
+
+        """
+        self.set_vertical_align(content['vertical_align'])
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -44,4 +78,25 @@ class QtLabel(QtConstraintsWidget):
 
         """
         self.widget().setText(text)
+
+    def set_align(self, align):
+        """ Set the alignment of the text in the underlying widget.
+
+        """
+        widget = self.widget()
+        alignment = widget.alignment()
+        alignment &= ~Qt.AlignHorizontal_Mask
+        alignment |= ALIGN_MAP[align]
+        widget.setAlignment(alignment)
+
+    def set_vertical_align(self, align):
+        """ Set the vertical alignment of the text in the underlying
+        widget.
+
+        """
+        widget = self.widget()
+        alignment = widget.alignment()
+        alignment &= ~Qt.AlignVertical_Mask
+        alignment |= VERTICAL_ALIGN_MAP[align]
+        widget.setAlignment(alignment)
 

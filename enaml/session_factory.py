@@ -15,18 +15,18 @@ class SessionFactory(object):
         name : str
             A unique, human-friendly name for the Session that will be
             created.
-        
+
         description : str
             A brief description of the Session that will be created.
-        
+
         session_class : Session subclass
             A concrete subclass of Session that will be created by this
             factory.
-        
+
         *args, **kwargs
-            Optional positional and keyword arguments to pass to the
-            initialize() method of the Session that gets created.
-        
+            Optional positional and keyword arguments to pass to the 
+            init() method of the Session that gets created.
+
         """
         self.name = name
         self.description = description
@@ -34,15 +34,14 @@ class SessionFactory(object):
         self.args = args
         self.kwargs = kwargs
     
-    def __call__(self, request):
+    def __call__(self, session_id):
         """ Called by the Enaml Application to create an instance of 
         the Session.
 
         Parameters
         ----------
-        request : BaseRequest
-            The request with message type 'start_session' sent by 
-            client to start a new session.
+        session_id : str
+            The unique session identifier to pass to the Session.
 
         Returns
         -------
@@ -50,10 +49,5 @@ class SessionFactory(object):
             A new instance of the Session type provided to the factory.
         
         """
-        push_handler = request.push_handler()
-        username = request.message.header.username
-        session = self.session_class(
-            push_handler, username, self.args, self.kwargs
-        )
-        return session
+        return self.session_class(session_id, self.args, self.kwargs)
 

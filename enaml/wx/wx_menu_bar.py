@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 import wx
 
-from .wx_menu import EVT_MENU_CHANGED
+from .wx_menu import WxMenu, EVT_MENU_CHANGED
 from .wx_widget_component import WxWidgetComponent
 
 
@@ -109,20 +109,63 @@ class wxMenuBar(wx.MenuBar):
             The wxMenu instance to add to the menu bar.
 
         """
+        self.InsertMenu(None, menu)
+
+    def InsertMenu(self, before, menu):
+        """ Insert a wxMenu into the menu bar.
+
+        If the menu already exists in the menu bar, this is a no-op.
+
+        Parameters
+        ----------
+        before : wxMenu
+            The menu before which to insert the given menu.
+
+        menu : wxMenu
+            The menu to insert into the menu bar.
+
+        """
         menus = self._menus
         if menu not in menus:
-            menus.append(menu)
+            if before in menus:
+                index = menus.index(before)
+            else:
+                index = len(menus)
+            menus.insert(index, menu)
             if menu.IsVisible():
-                self._visible_menus.append(menu)
-                self.Append(menu, menu.GetTitle())
+                max_index = len(self._visible_menus)
+                index = min(index, max_index)
+                self._visible_menus.insert(index, menu)
+                self.Insert(index, menu, menu.GetTitle())
             menu.Bind(EVT_MENU_CHANGED, self.OnMenuChanged)
             menu._SetBarEnabled(self._enabled)
+
+    def RemoveMenu(self, menu):
+        """ Remove a wxMenu from the menu bar.
+
+        If the menu does not exist in the menu bar, this is a no-op.
+
+        Parameters
+        ----------
+        menu : wxMenu
+            The menu to remove from the menu bar.
+
+        """
+        menus = self._menus
+        if menu in menus:
+            menus.remove(menu)
+            menu.Unbind(EVT_MENU_CHANGED, handler=self.OnMenuChanged)
+            visible_menus = self._visible_menus
+            if menu in visible_menus:
+                index = visible_menus.index(menu)
+                visible_menus.remove(menu)
+                self.Remove(index)
 
     def Update(self):
         """ A method which can be called to update the menu bar.
 
         Calling this method will manually refresh the state of the
-        items in the menu bar. This is useful to call just after 
+        items in the menu bar. This is useful to call just after
         attaching the menu bar to a frame, since the menu bar state
         cannot be updated prior to being attached.
 
@@ -138,9 +181,6 @@ class WxMenuBar(WxWidgetComponent):
     """ A Wx implementation of an Enaml MenuBar.
 
     """
-    #: Storage for the menu ids.
-    _menu_ids = []
-
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
@@ -150,34 +190,62 @@ class WxMenuBar(WxWidgetComponent):
         """
         return wxMenuBar()
 
-    def create(self, tree):
-        """ Create and initialize the underlying control.
-
-        """
-        super(WxMenuBar, self).create(tree)
-        self.set_menu_ids(tree['menu_ids'])
-
     def init_layout(self):
         """ Initialize the layout for the underlying control.
 
         """
         super(WxMenuBar, self).init_layout()
         widget = self.widget()
-        find_child = self.find_child
-        for menu_id in self._menu_ids:
-            child = find_child(menu_id)
-            if child is not None:
+        for child in self.children():
+            if isinstance(child, WxMenu):
                 widget.AddMenu(child.widget())
-    
+
+    #--------------------------------------------------------------------------
+    # Child Events
+    #--------------------------------------------------------------------------
+    def child_removed(self, child):
+        """ Handle the child removed event for a WxMenuBar.
+
+        """
+        if isinstance(child, WxMenu):
+            self.widget().RemoveMenu(child.widget())
+
+    def child_added(self, child):
+        """ Handle the child added event for a WxMenuBar.
+
+        """
+        if isinstance(child, WxMenu):
+            before = self.find_next_menu(child)
+            self.widget().InsertMenu(before, child.widget())
+
+    #--------------------------------------------------------------------------
+    # Utility Methods
+    #--------------------------------------------------------------------------
+    def find_next_menu(self, child):
+        """ Get the wxMenu instance which comes immediately after the
+        menu of the given child.
+
+        Parameters
+        ----------
+        child : WxMenu
+            The child menu of interest.
+
+        Returns
+        -------
+        result : wxMenu or None
+            The wxMenu which comes immediately after the menu of the
+            given child, or None if no menu follows the child.
+
+        """
+        index = self.index_of(child)
+        if index != -1:
+            for child in self.children()[index + 1:]:
+                if isinstance(child, WxMenu):
+                    return child.widget()
+
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
-    def set_menu_ids(self, menu_ids):
-        """ Set the menu ids for the underlying control.
-
-        """
-        self._menu_ids = menu_ids
-
     def set_enabled(self, enabled):
         """ Overridden parent class method.
 

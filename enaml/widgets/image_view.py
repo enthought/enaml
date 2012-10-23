@@ -6,19 +6,19 @@ from traits.api import Bool, Instance
 
 from enaml.noncomponents.image.abstract_image import AbstractImage
 
-from .constraints_widget import ConstraintsWidget
+from .control import Control
 
 
-class ImageView(ConstraintsWidget):
+class ImageView(Control):
     """ A widget which can display an Image with optional scaling.
 
     """
     #: The image to display in the control
     image = Instance(AbstractImage)
-    
+
     #: Whether or not to scale the image with the size of the component.
     scale_to_fit = Bool(False)
-    
+
     #: Whether or not to preserve the aspect ratio if scaling the image.
     preserve_aspect_ratio = Bool(True)
 

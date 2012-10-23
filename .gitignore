@@ -10,7 +10,7 @@
 /build
 /dist
 /docs/build
-/docs/source/api-ref/widgets/*.rst
+/docs/source/api_ref/widgets/*.rst
 
 .gitignore~
 *.orig

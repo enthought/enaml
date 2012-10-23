@@ -3,12 +3,12 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt.QtGui import QComboBox
-from .qt_constraints_widget import QtConstraintsWidget
+from .qt_control import QtControl
 
 
-class QtComboBox(QtConstraintsWidget):
+class QtComboBox(QtControl):
     """ A Qt implementation of an Enaml ComboBox.
-    
+
     """
     #--------------------------------------------------------------------------
     # Setup Methods

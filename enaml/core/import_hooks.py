@@ -185,7 +185,7 @@ class EnamlImporter(AbstractEnamlImporter):
     This importer adopts the Python 3 conventions and scheme for creating
     the cached files and setting the __file__ attribute on the module.
     See this discussion thread for more info:
-        http://www.mail-archive.com/python-dev@python.org/msg45203.html
+    http://www.mail-archive.com/python-dev@python.org/msg45203.html
 
     """
     @classmethod

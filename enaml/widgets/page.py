@@ -22,7 +22,7 @@ class Page(WidgetComponent):
     title = Unicode
 
     #: The icon to user for the page in the notebook.
-    # icon = 
+    # icon =
 
     #: The tool tip to use for a page when the user hovers a tab.
     tool_tip = Unicode
@@ -33,10 +33,10 @@ class Page(WidgetComponent):
     closable = Bool(True)
 
     #: A read only property which returns the page's page widget.
-    page_widget = Property(depends_on='children[]')
+    page_widget = Property(depends_on='children')
 
-    #: An event fired when the user closes the page by clicking on 
-    #: the tab's close button. This event is fired by the parent 
+    #: An event fired when the user closes the page by clicking on
+    #: the tab's close button. This event is fired by the parent
     #: Notebook when the tab is closed. This event has no payload.
     closed = EnamlEvent
 
@@ -48,7 +48,6 @@ class Page(WidgetComponent):
 
         """
         snap = super(Page, self).snapshot()
-        snap['page_widget_id'] = self._snap_page_widget_id()
         snap['title'] = self.title
         snap['tool_tip'] = self.tool_tip
         snap['closable'] = self.closable
@@ -74,17 +73,11 @@ class Page(WidgetComponent):
             The page widget for the Page, or None if not provided.
 
         """
+        widget = None
         for child in self.children:
             if isinstance(child, Container):
-                return child
-
-    def _snap_page_widget_id(self):
-        """ Returns the widget id for the page widget or None.
-
-        """
-        page_widget = self.page_widget
-        if page_widget is not None:
-            return page_widget.widget_id
+                widget = child
+        return widget
 
     #--------------------------------------------------------------------------
     # Message Handling
@@ -113,7 +106,7 @@ class Page(WidgetComponent):
 
         Calling this method will set the page visibility to False.
 
-        """ 
+        """
         self.set_guarded(visible=False)
         self.send_action('close', {})
 

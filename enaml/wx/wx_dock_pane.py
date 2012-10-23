@@ -5,6 +5,7 @@
 import wx
 import wx.lib.newevent
 
+from .wx_container import WxContainer
 from .wx_single_widget_sizer import wxSingleWidgetSizer
 from .wx_upstream import aui
 from .wx_widget_component import WxWidgetComponent
@@ -97,7 +98,7 @@ class wxDockPane(wx.Panel):
         return event.GetManager()
 
     def _PaneInfoOperation(self, closure):
-        """ A private method which will run the given closure if there 
+        """ A private method which will run the given closure if there
         is a valid pane info object for this dock pane.
 
         """
@@ -126,7 +127,7 @@ class wxDockPane(wx.Panel):
         """ Handles the parent EVT_AUI_PANE_FLOATED event.
 
         This event handler is called directly by the parent wxMainWindow
-        from its pane floated event handler. This handler simply emits 
+        from its pane floated event handler. This handler simply emits
         the EVT_DOCK_PANE_FLOATED event.
 
         """
@@ -153,7 +154,7 @@ class wxDockPane(wx.Panel):
 
         This is called by the wxMainWindow when it adds this dock pane
         to its internal layout for the first time.
-        
+
         Returns
         -------
         result : AuiPaneInfo
@@ -215,8 +216,20 @@ class wxDockPane(wx.Panel):
             The wx widget to use as the dock widget for this pane.
 
         """
+        old_widget = self._dock_widget
+        if old_widget:
+            old_widget.Hide()
         self._dock_widget = widget
         self.GetSizer().Add(widget)
+        self.UpdateSizing()
+
+    def UpdateSizing(self):
+        """ Trigger a sizing update of the pane manager.
+
+        """
+        def closure(pane):
+            pane.MinSize(self.GetBestSize())
+        self._PaneInfoOperation(closure)
 
     def IsOpen(self):
         """ Get whether or not the dock pane is open.
@@ -449,7 +462,7 @@ class wxDockPane(wx.Panel):
         Returns
         -------
         result : int
-            The current dock area of the pane. One of the wx enums 
+            The current dock area of the pane. One of the wx enums
             LEFT, RIGHT, TOP, or BOTTOM.
 
         """
@@ -461,7 +474,7 @@ class wxDockPane(wx.Panel):
         Parameters
         ----------
         dock_area : int
-            The dock area for the pane. One of the wx enums LEFT, 
+            The dock area for the pane. One of the wx enums LEFT,
             RIGHT, TOP, or BOTTOM.
 
         """
@@ -507,9 +520,6 @@ class WxDockPane(WxWidgetComponent):
     """ A Wx implementation of an Enaml DockPane.
 
     """
-    #: Storage for the dock widget id
-    _dock_widget_id = None
-
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
@@ -524,7 +534,6 @@ class WxDockPane(WxWidgetComponent):
 
         """
         super(WxDockPane, self).create(tree)
-        self.set_dock_widget_id(tree['dock_widget_id'])
         self.set_title(tree['title'])
         self.set_title_bar_visible(tree['title_bar_visible'])
         self.set_title_bar_orientation(tree['title_bar_orientation'])
@@ -544,9 +553,43 @@ class WxDockPane(WxWidgetComponent):
 
         """
         super(WxDockPane, self).init_layout()
-        child = self.find_child(self._dock_widget_id)
-        if child is not None:
-            self.widget().SetDockWidget(child.widget())
+        self.widget().SetDockWidget(self.dock_widget())
+
+    #--------------------------------------------------------------------------
+    # Utility Methods
+    #--------------------------------------------------------------------------
+    def dock_widget(self):
+        """ Find and return the dock widget child for this widget.
+
+        Returns
+        -------
+        result : wxWindow or None
+            The dock widget defined for this widget, or None if one is
+            not defined.
+
+        """
+        widget = None
+        for child in self.children():
+            if isinstance(child, WxContainer):
+                widget = child.widget()
+        return widget
+
+    #--------------------------------------------------------------------------
+    # Child Events
+    #--------------------------------------------------------------------------
+    def child_removed(self, child):
+        """ Handle the child removed event for a WxDockPane.
+
+        """
+        if isinstance(child, WxContainer):
+            self.widget().SetDockWidget(self.dock_widget())
+
+    def child_added(self, child):
+        """ Handle the child added event for a WxDockPane.
+
+        """
+        if isinstance(child, WxContainer):
+            self.widget().SetDockWidget(self.dock_widget())
 
     #--------------------------------------------------------------------------
     # Event Handlers
@@ -573,7 +616,7 @@ class WxDockPane(WxWidgetComponent):
 
     #--------------------------------------------------------------------------
     # Message Handling
-    #-------------------------------------------------------------------------- 
+    #--------------------------------------------------------------------------
     def on_action_set_title(self, content):
         """ Handle the 'set_title' action from the Enaml widget.
 
@@ -656,12 +699,6 @@ class WxDockPane(WxWidgetComponent):
             widget.Open()
         else:
             widget.Close()
-
-    def set_dock_widget_id(self, dock_widget_id):
-        """ Set the dock widget id for the underlying widget.
-
-        """
-        self._dock_widget_id = dock_widget_id
 
     def set_title(self, title):
         """ Set the title on the underlying widget.

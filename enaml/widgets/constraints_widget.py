@@ -4,10 +4,11 @@
 #------------------------------------------------------------------------------
 from traits.api import Property, Enum, Instance, List
 
+from enaml.application import Application, ScheduledTask
 from enaml.layout.constraint_variable import ConstraintVariable
 from enaml.layout.layout_helpers import expand_constraints, ABConstrainable
 
-from .widget_component import WidgetComponent   
+from .widget_component import WidgetComponent
 
 
 class BoxModel(object):
@@ -130,6 +131,9 @@ class ConstraintsWidget(WidgetComponent):
     #: The default is 'strong' for height.
     resist_height = PolicyEnum('strong')
 
+    #: The private application task used to collapse layout messages.
+    _layout_task = Instance(ScheduledTask)
+
     #: The private storage the box model instance for this component.
     _box_model = Instance(BoxModel)
     def __box_model_default(self):
@@ -172,8 +176,31 @@ class ConstraintsWidget(WidgetComponent):
     def _send_relayout(self):
         """ Send the 'relayout' action to the client widget.
 
+        If an Enaml Application instance exists, then multiple `relayout`
+        actions will be collapsed into a single action that will be sent
+        on the next cycle of the event loop. If no application exists, 
+        then the action is sent immediately.
+
         """
-        self.send_action('relayout', self._layout_info())
+        # The relayout action is deferred until the next cycle of the
+        # event loop for two reasons: 1) So that multiple relayout 
+        # requests can be collapsed into a single action. 2) So that
+        # all child events (which are fired synchronously) can finish
+        # processing and send their actions to the client before the
+        # relayout request is sent. 
+        app = Application.instance()
+        if app is None:
+            self.send_action('relayout', self._layout_info())
+        else:
+            task = self._layout_task
+            if task is None:
+                def notifier(ignored):
+                    self._layout_task = None
+                def layout_task():
+                    self.send_action('relayout', self._layout_info())
+                task = app.schedule(layout_task)
+                task.notify(notifier)
+                self._layout_task = task
 
     #--------------------------------------------------------------------------
     # Constraints Generation

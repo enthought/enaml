@@ -18,6 +18,7 @@ from .form import Form
 from .group_box import GroupBox
 from .html import Html
 from .image_view import ImageView
+from .include import Include
 from .label import Label
 from .main_window import MainWindow
 from .mdi_area import MdiArea
@@ -32,6 +33,7 @@ from .radio_button import RadioButton
 from .scroll_area import ScrollArea
 from .slider import Slider
 from .spin_box import SpinBox
+from .split_item import SplitItem
 from .splitter import Splitter
 from .stack import Stack
 from .stack_item import StackItem

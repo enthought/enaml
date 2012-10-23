@@ -4,10 +4,10 @@
 #------------------------------------------------------------------------------
 from traits.api import Int, Bool, Range, Unicode
 
-from .constraints_widget import ConstraintsWidget
+from .control import Control
 
 
-class SpinBox(ConstraintsWidget):
+class SpinBox(Control):
     """ A spin box widget which manipulates integer values.
 
     """
@@ -40,11 +40,11 @@ class SpinBox(ConstraintsWidget):
     #: will still be able to copy the text to the clipboard.
     read_only = Bool(False)
 
-    #: Whether or not the spin box will wrap around at its extremes. 
+    #: Whether or not the spin box will wrap around at its extremes.
     #: Defaults to False.
     wrapping = Bool(False)
 
-    #: How strongly a component hugs it's contents' width. SpinBoxes 
+    #: How strongly a component hugs it's contents' width. SpinBoxes
     #: ignore the width hug by default, so they expand freely in width.
     hug_width = 'ignore'
 
@@ -77,7 +77,7 @@ class SpinBox(ConstraintsWidget):
         """
         super(SpinBox, self).bind()
         attrs = (
-            'maximum', 'minimum', 'value', 'prefix', 'suffix', 
+            'maximum', 'minimum', 'value', 'prefix', 'suffix',
             'special_value_text', 'single_step', 'read_only', 'wrapping',
         )
         self.publish_attributes(*attrs)

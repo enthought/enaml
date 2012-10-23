@@ -5,6 +5,7 @@
 import wx
 import wx.lib.newevent
 
+from .wx_container import WxContainer
 from .wx_widget_component import WxWidgetComponent
 from .wx_single_widget_sizer import wxSingleWidgetSizer
 
@@ -15,7 +16,7 @@ wxPageClosedEvent, EVT_PAGE_CLOSED = wx.lib.newevent.NewEvent()
 
 class wxPage(wx.Panel):
     """ A wxPanel subclass which acts as a page in a wx notebook.
-    
+
     """
     def __init__(self, *args, **kwargs):
         """ Initialize a wxPage.
@@ -43,7 +44,7 @@ class wxPage(wx.Panel):
         """ Handle the page close event.
 
         This event handler is called by the parent notebook. The parent
-        event is always be vetoed or else Wx will destroy the page. If 
+        event is always be vetoed or else Wx will destroy the page. If
         the page is closable, we close the page and emit the custom
         close event.
 
@@ -70,7 +71,7 @@ class wxPage(wx.Panel):
     # Private API
     #--------------------------------------------------------------------------
     def _PageIndexOperation(self, closure):
-        """ A private method which will run the given closure if there 
+        """ A private method which will run the given closure if there
         is a valid index for this page.
 
         """
@@ -133,7 +134,7 @@ class wxPage(wx.Panel):
         self._is_open = False
         parent = self.GetParent()
         if parent:
-            parent.HideWxPage(self) 
+            parent.HideWxPage(self)
 
     def GetEnabled(self):
         """ Get the enabled state of the page.
@@ -219,9 +220,6 @@ class WxPage(WxWidgetComponent):
     """ A Wx implementation of an Enaml notebook Page.
 
     """
-    #: The storage for the page widget id
-    _page_widget_id = None
-
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
@@ -236,7 +234,6 @@ class WxPage(WxWidgetComponent):
 
         """
         super(WxPage, self).create(tree)
-        self.set_page_widget_id(tree['page_widget_id'])
         self.set_title(tree['title'])
         self.set_tool_tip(tree['tool_tip'])
         self.set_closable(tree['closable'])
@@ -247,9 +244,43 @@ class WxPage(WxWidgetComponent):
 
         """
         super(WxPage, self).init_layout()
-        child = self.find_child(self._page_widget_id)
-        if child is not None:
-            self.widget().SetPageWidget(child.widget())
+        self.widget().SetPageWidget(self.page_widget())
+
+    #--------------------------------------------------------------------------
+    # Utility Methods
+    #--------------------------------------------------------------------------
+    def page_widget(self):
+        """ Find and return the page widget child for this widget.
+
+        Returns
+        -------
+        result : wxWindow or None
+            The page widget defined for this widget, or None if one is
+            not defined.
+
+        """
+        widget = None
+        for child in self.children():
+            if isinstance(child, WxContainer):
+                widget = child.widget()
+        return widget
+
+    #--------------------------------------------------------------------------
+    # Child Events
+    #--------------------------------------------------------------------------
+    def child_removed(self, child):
+        """ Handle the child removed event for a WxPage.
+
+        """
+        if isinstance(child, WxContainer):
+            self.widget().SetPageWidget(self.page_widget())
+
+    def child_added(self, child):
+        """ Handle the child added event for a WxPage.
+
+        """
+        if isinstance(child, WxContainer):
+            self.widget().SetPageWidget(self.page_widget())
 
     #--------------------------------------------------------------------------
     # Event Handlers
@@ -292,7 +323,7 @@ class WxPage(WxWidgetComponent):
 
         """
         self.widget().Close()
-    
+
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
@@ -314,12 +345,6 @@ class WxPage(WxWidgetComponent):
         """
         self.widget().SetEnabled(enabled)
 
-    def set_page_widget_id(self, widget_id):
-        """ Set the page widget id for the underlying control.
-
-        """
-        self._page_widget_id = widget_id
-
     def set_title(self, title):
         """ Set the title of the tab for this page.
 
@@ -336,7 +361,7 @@ class WxPage(WxWidgetComponent):
         """ Set the tooltip of the tab for this page.
 
         """
-        # XXX Wx notebooks do not support a tab tooltip, so this 
+        # XXX Wx notebooks do not support a tab tooltip, so this
         # setting is simply ignored. (wx trunk now supports this)
         pass
 

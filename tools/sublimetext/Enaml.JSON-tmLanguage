@@ -1,7 +1,15 @@
 { "name": "Enaml",
-  "scopeName": "source.enaml", 
-  "fileTypes": ["enaml"], 
+  "scopeName": "source.enaml",
+  "fileTypes": ["enaml"],
   "patterns": [
+    {
+      "comment": "Enaml Identifier",
+      "match": "^\\s*(id):\\s*([A-Za-z_][A-Za-z0-9_]*)\\s*$",
+      "captures": {
+        "1": { "name": "keyword.other" },
+        "2": { "name": "variable.other" }
+      }
+    },
     {
       "comment": "Enaml Declaration",
       "match": "^(enamldef)\\s*([A-Za-z_][A-Za-z0-9_]*)\\((.*?)\\):\\s*$",
@@ -12,6 +20,43 @@
       }
     },
     {
+      "comment": "Enaml Declaration with id",
+      "match": "^(enamldef)\\s*([A-Za-z_][A-Za-z0-9_]*)\\((.*?)\\):\\s*([A-Za-z_][A-Za-z0-9_]*):\\s*$",
+      "captures": {
+        "1": { "name": "storage.type"},
+        "2": { "name": "entity.name.type" },
+        "3": { "name": "entity.other.inherited-class" },
+        "4": { "name": "variable.other" }
+      }
+    },
+    {
+      "comment": "Enaml Declaration one liner with id",
+      "begin": "^(enamldef)\\s*([A-Za-z_][A-Za-z0-9_]*)\\((.*?)\\):\\s*([A-Za-z_][A-Za-z0-9_]*):",
+      "beginCaptures": {
+        "1": { "name": "storage.type"},
+        "2": { "name": "entity.name.type" },
+        "3": { "name": "entity.other.inherited-class" },
+        "4": { "name": "variable.other" }
+      },
+      "patterns": [
+        { "include": "source.python" }
+      ],
+      "end": "$"
+    },
+    {
+      "comment": "Enaml Declaration one liner",
+      "begin": "^(enamldef)\\s*([A-Za-z_][A-Za-z0-9_]*)\\((.*?)\\):",
+      "beginCaptures": {
+        "1": { "name": "storage.type"},
+        "2": { "name": "entity.name.type" },
+        "3": { "name": "entity.other.inherited-class" }
+      },
+      "patterns": [
+        { "include": "source.python" }
+      ],
+      "end": "$"
+    },
+    {
       "comment": "Enaml Instantiation",
       "match": "^\\s*([A-Za-z_][A-Za-z0-9_]*):\\s*$",
       "captures": {
@@ -19,12 +64,35 @@
       }
     },
     {
-      "comment": "Enaml Identifier",
-      "match": "^\\s*(id):\\s*([A-Za-z_][A-Za-z0-9_]*)\\s*$",
+      "comment": "Enaml Instantiation with id",
+      "match": "^\\s*([A-Za-z_][A-Za-z0-9_]*):\\s*([A-Za-z_][A-Za-z0-9_]*):\\s*$",
       "captures": {
-        "1": { "name": "keyword.other" },
-        "2": { "name": "variable.parameter" }
+        "1": { "name": "support.class" },
+        "2": { "name": "variable.other" }
       }
+    },
+    {
+      "comment": "Enaml Instantiation one liner with id",
+      "begin": "^\\s*([A-Za-z_][A-Za-z0-9_]*):\\s*([A-Za-z_][A-Za-z0-9_]*):",
+      "beginCaptures": {
+        "1": { "name": "support.class" },
+        "2": { "name": "variable.other" }
+      },
+      "patterns": [
+        { "include": "source.python" }
+      ],
+      "end": "$"
+    },
+    {
+      "comment": "Enaml Instantiation one liner",
+      "begin": "^\\s*([A-Za-z_][A-Za-z0-9_]*):",
+      "beginCaptures": {
+        "1": { "name": "support.class" }
+      },
+      "patterns": [
+        { "include": "source.python" }
+      ],
+      "end": "$"
     },
     {
       "comment": "Enaml Attribute Declaration",

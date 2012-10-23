@@ -1,3 +1,7 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2012, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
 """ An example which demonstrates the use of the `hbox` layout helper
 along with some auxiliary constraints.
 

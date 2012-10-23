@@ -2,11 +2,13 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .wx_action import EVT_ACTION_CHANGED
-from .wx_messenger_widget import WxMessengerWidget
+import wx
+
+from .wx_action import WxAction, EVT_ACTION_CHANGED
+from .wx_object import WxObject
 
 
-class wxActionGroup(object):
+class wxActionGroup(wx.EvtHandler):
     """ A simple object which keeps track of a group of actions.
 
     """
@@ -17,10 +19,11 @@ class wxActionGroup(object):
         ----------
         parent : object or None
             The parent for this wxActionGroup. The parent is not used
-            directly by the action, but is provided as a convenience 
+            directly by the action, but is provided as a convenience
             for other parts of the framework.
 
         """
+        super(wxActionGroup, self).__init__()
         self._parent = parent
         self._exclusive = True
         self._enabled = True
@@ -56,7 +59,7 @@ class wxActionGroup(object):
 
         Returns
         -------
-        result : object or None 
+        result : object or None
             The parent of this action group or None.
 
         """
@@ -140,7 +143,7 @@ class wxActionGroup(object):
         Returns
         -------
         result : wxAction or None
-            The currently checked action in the group, or None if 
+            The currently checked action in the group, or None if
             no action is checked.
 
         """
@@ -156,7 +159,7 @@ class wxActionGroup(object):
 
         """
         return self._exclusive
-    
+
     def SetExclusive(self, exclusive):
         """ Set whether or not the action group is exclusive.
 
@@ -225,13 +228,10 @@ class wxActionGroup(object):
                 action._SetGroupVisible(visible)
 
 
-class WxActionGroup(WxMessengerWidget):
+class WxActionGroup(WxObject):
     """ A Wx implementation of an Enaml ActionGroup.
 
     """
-    #: Store for the action ids
-    _action_ids = []
-
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
@@ -246,7 +246,6 @@ class WxActionGroup(WxMessengerWidget):
 
         """
         super(WxActionGroup, self).create(tree)
-        self.set_action_ids(tree['action_ids'])
         self.set_exclusive(tree['exclusive'])
         self.set_enabled(tree['enabled'])
         self.set_visible(tree['visible'])
@@ -257,11 +256,55 @@ class WxActionGroup(WxMessengerWidget):
         """
         super(WxActionGroup, self).init_layout()
         widget = self.widget()
-        find_child = self.find_child
-        for action_id in self._action_ids:
-            child = find_child(action_id)
-            if child is not None:
+        for child in self.children():
+            if isinstance(child, WxAction):
                 widget.AddAction(child.widget())
+
+    #--------------------------------------------------------------------------
+    # Child Events
+    #--------------------------------------------------------------------------
+    def child_removed(self, child):
+        """ Handle the child removed event for a WxActionGroup.
+
+        """
+        if isinstance(child, WxAction):
+            action = child.widget()
+            self.widget().RemoveAction(action)
+            parent = self.parent()
+            if parent is not None:
+                parent.widget().RemoveAction(action)
+
+    def child_added(self, child):
+        """ Handle the child added event for a WxActionGroup.
+
+        """
+        # The easiest way to handle the insert is to tell the parent to
+        # insert all the current actions. It will work out the proper
+        # ordering automatically.
+        if isinstance(child, WxAction):
+            self.widget().AddAction(child.widget())
+            parent = self.parent()
+            if parent is not None:
+                before = parent.find_next_action(self)
+                parent.widget().InsertActions(before, self.actions())
+
+    #--------------------------------------------------------------------------
+    # Utility Methods
+    #--------------------------------------------------------------------------
+    def actions(self):
+        """ Get the WxAction children for this action group.
+
+        Returns
+        -------
+        result : list
+            The list of wxAction instances which are children of this
+            action group. Unlike the list returned by the `GetActions`
+            method of the wxActionGroup, the children in this list will
+            have the correct order.
+
+        """
+        isinst = isinstance
+        return [c.widget() for c in self.children() if isinst(c, WxAction)]
 
     #--------------------------------------------------------------------------
     # Message Handling
@@ -283,16 +326,10 @@ class WxActionGroup(WxMessengerWidget):
 
         """
         self.set_visible(content['visible'])
-    
+
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
-    def set_action_ids(self, action_ids):
-        """ Set the action ids for the underlying control.
-
-        """
-        self._action_ids = action_ids
-
     def set_exclusive(self, exclusive):
         """ Set the exclusive state of the underlying control.
 

@@ -1,0 +1,86 @@
+from enaml.application import Application
+from enaml.session import Session
+from enaml.session_factory import SessionFactory
+from enaml.qt.qt_application import QtApplication
+from enaml.widgets.api import Field, Window, PushButton, Container, Slider, ProgressBar, Include
+from enaml.core.declarative import Declarative
+
+
+enamldef TimedProgress(ProgressBar):
+    event run
+    event _timeout
+    attr _running: bool = False
+    run ::
+        if not _running:
+            _timeout()
+    _timeout ::
+        if value < 100:
+            self._running = True
+            self.value += 1
+            Application.instance().timed_call(100, _timeout)
+        else:
+            self.value = 0
+            self._running = False
+
+
+def printer():
+    print 'printer'
+
+from enaml.layout.api import vbox
+
+enamldef View(Window):
+    Container:
+        hug_height = 'ignore'
+        constraints << [vbox(*widgets)]
+        PushButton:
+            text << str(sldr.value)
+            clicked :: Application.instance().end_session(sid)
+        PushButton:
+            text = 'Bar'
+            clicked :: prog.run()
+        PushButton:
+            text = 'Baz'
+            clicked :: 
+                print 'before'
+                Application.instance().timed_call(1000, printer)
+                print 'after'
+        PushButton:
+            id: add
+            text = 'Add'
+            clicked :: inc.objects.extend([Field() for _ in range(10)])
+            #clicked :: Field(parent)
+        PushButton:
+            text = 'Remove'
+            clicked :: del inc.objects[len(inc.objects)/2:]
+            #clicked :: add.set_parent(inc2.parent)
+        Slider:
+            id: sldr
+        Include:
+            id: inc
+            objects = [Field(), Field(), Field()]
+        TimedProgress:
+            id: prog
+        Container:
+            hug_height = 'strong'
+            constraints << [vbox(*widgets)]
+            PushButton:
+                text = 'foo'
+
+
+
+sid = None
+
+class FooSession(Session):
+
+    def on_open(self):
+        global sid
+        sid = self.session_id
+        return View()
+
+
+def main():
+    fact = SessionFactory('main', '', FooSession)
+    app = QtApplication([fact])
+    app.start_session('main')
+    app.start()
+

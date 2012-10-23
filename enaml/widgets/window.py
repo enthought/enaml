@@ -18,7 +18,7 @@ class Window(WidgetComponent):
     is dubbed the 'central widget'. The central widget is an instance
     of Container and is expanded to fit the size of the window.
 
-    A Window does not support features like MenuBars or DockPanes, for 
+    A Window does not support features like MenuBars or DockPanes, for
     such functionality, use a MainWindow widget.
 
     """
@@ -37,7 +37,7 @@ class Window(WidgetComponent):
     closed = EnamlEvent
 
     #: Returns the central widget in use for the Window
-    central_widget = Property(depends_on='children[]')
+    central_widget = Property(depends_on='children')
 
     #: The titlebar icon.
     # XXX needs to be implemented
@@ -51,7 +51,6 @@ class Window(WidgetComponent):
 
         """
         snap = super(Window, self).snapshot()
-        snap['central_widget_id'] = self._snap_central_widget_id()
         snap['title'] = self.title
         snap['initial_size'] = self.initial_size
         snap['modality'] = self.modality
@@ -78,17 +77,11 @@ class Window(WidgetComponent):
             The central widget for the Window, or None if not provieded.
 
         """
+        widget = None
         for child in self.children:
             if isinstance(child, Container):
-                return child
-
-    def _snap_central_widget_id(self):
-        """ Returns the widget id of the central widget or None.
-
-        """
-        widget = self.central_widget
-        if widget is not None:
-            return widget.widget_id
+                widget = child
+        return widget
 
     #--------------------------------------------------------------------------
     # Message Handling

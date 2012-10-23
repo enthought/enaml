@@ -17,34 +17,21 @@ class MainWindow(Window):
     functionality beyond frame decoration. A MainWindow may optionally
     contain a MenuBar, any number of ToolBars, a StatusBar, and any
     number of DockPanes. Like Window, a MainWindow can have at most one
-    central Container widget, which will be expanded to fit into the 
+    central Container widget, which will be expanded to fit into the
     available space.
 
     """
     #: A read only property which returns the window's MenuBar.
-    menu_bar = Property(depends_on='children[]')
+    menu_bar = Property(depends_on='children')
 
     #: A read only property which returns the window's ToolBars.
-    tool_bars = Property(depends_on='children[]')
+    tool_bars = Property(depends_on='children')
 
     #: A read only property which returns the window's DockPanes.
-    dock_panes = Property(depends_on='children[]')
+    dock_panes = Property(depends_on='children')
 
     #: A read only property which returns the window's StatusBar.
-    # status_bar = Property(depends_on='children[]')
-
-    #--------------------------------------------------------------------------
-    # Initialization 
-    #--------------------------------------------------------------------------
-    def snapshot(self):
-        """ Returns the snapshot for the MainWindow.
-
-        """
-        snap = super(MainWindow, self).snapshot()
-        snap['menu_bar_id'] = self._snap_menu_bar_id()
-        snap['tool_bar_ids'] = self._snap_tool_bar_ids()
-        snap['dock_pane_ids'] = self._snap_dock_pane_ids()
-        return snap
+    # status_bar = Property(depends_on='children')
 
     #--------------------------------------------------------------------------
     # Private API
@@ -56,13 +43,15 @@ class MainWindow(Window):
         Returns
         -------
         result : MenuBar or None
-            The menu bar for this main window, or None if one is not 
+            The menu bar for this main window, or None if one is not
             defined.
 
         """
+        menu = None
         for child in self.children:
             if isinstance(child, MenuBar):
-                return child
+                menu = child
+        return menu
 
     @cached_property
     def _get_tool_bars(self):
@@ -93,24 +82,4 @@ class MainWindow(Window):
         isinst = isinstance
         panes = (child for child in self.children if isinst(child, DockPane))
         return tuple(panes)
-
-    def _snap_menu_bar_id(self):
-        """ Returns the widget id for the menu bar or None.
-
-        """
-        menu_bar = self.menu_bar
-        if menu_bar is not None:
-            return menu_bar.widget_id
-
-    def _snap_tool_bar_ids(self):
-        """ Returns the widget ids of the main window's tool bars.
-
-        """
-        return [bar.widget_id for bar in self.tool_bars]
-
-    def _snap_dock_pane_ids(self):
-        """ Returns the widget ids of the main window's dock panes.
-
-        """
-        return [pane.widget_id for pane in self.dock_panes]
 
