@@ -62,11 +62,10 @@ class MockRouter(object):
     callbackPosted = Signal()
 
     def __init__(self):
-        """ Initialize a QRouter.
+        """ Initialize a MockRouter.
 
         """
         self.callbackPosted.connect(self._onCallbackPosted)
-
         self.callbackPosted.connect(self.debug_message)
         self.clientMessagePosted.connect(self.debug_message)
         self.appMessagePosted.connect(self.debug_message)
@@ -107,7 +106,7 @@ class MockRouter(object):
             The callable to be run at some point in the future.
 
         *args, **kwargs
-            The positional and keyword arguments to pass to the 
+            The positional and keyword arguments to pass to the
             callable when it is invoked.
 
         """
@@ -125,8 +124,8 @@ class MockPushHandler(BasePushHandler):
 
         Parameters
         ----------
-        router : QRouter
-            The QRouter instance with which to issue requests and 
+        router : MockRouter
+            The MockRouter instance with which to issue requests and
             callbacks.
 
         """
@@ -146,21 +145,14 @@ class MockPushHandler(BasePushHandler):
     def add_callback(self, callback, *args, **kwargs):
         """ Add a callback to the event queue to be called later.
 
-        This is used as a convenience for Session objects to provide
-        a way to run callables in a deferred fashion. It does not 
-        imply any communication with the client. It is merely an
-        abstract entry point into the zmq event loop. 
-
-        Call it a concession to practicality over purity - SCC
-
         Parameters
         ----------
         callback : callable
-            A callable which should be invoked by the event loop at 
+            A callable which should be invoked by the event loop at
             some future time. This method returns immediately.
 
         *args, **kwargs
-            The positional and keyword arguments to pass to the 
+            The positional and keyword arguments to pass to the
             callable when it is invoked.
 
         """
@@ -199,18 +191,18 @@ class MockRequest(BaseRequest):
     def add_callback(self, callback, *args, **kwargs):
         """ Add a callback to the event queue to be called later.
 
-        This is can be used by the request handlers to defer long 
+        This is can be used by the request handlers to defer long
         running work until a future time, at which point the results
         can be pushed to the client with the 'push_handler()'.
 
         Parameters
         ----------
         callback : callable
-            A callable which should be invoked by the event loop at 
+            A callable which should be invoked by the event loop at
             some future time. This method will return immediately.
 
         *args, **kwargs
-            The positional and keyword arguments to pass to the 
+            The positional and keyword arguments to pass to the
             callable when it is invoked.
 
         """
@@ -232,14 +224,14 @@ class MockRequest(BaseRequest):
         self._finished = True
 
     def push_handler(self):
-        """ Returns an object that can be used to push unsolicited 
+        """ Returns an object that can be used to push unsolicited
         messages to this client.
 
         Returns
         -------
         result : QtLocalPushHandler
-            A QtLocalPushHandler instance which can be used to push 
-            messages to this client, without the client initiating a 
+            A QtLocalPushHandler instance which can be used to push
+            messages to this client, without the client initiating a
             request.
 
         """
@@ -261,23 +253,23 @@ class MockClientSession(object):
     }
 
     def __init__(self, session_id, username, router, factories):
-        """ Initialize a QtClientSession.
+        """ Initialize a MockClientSession.
 
         Parameters
         ----------
         session_id : str
-            The session identifier to use for communicating with the 
+            The session identifier to use for communicating with the
             Enaml session object.
 
         username : str
             The username to associate with the session.
 
-        router : QRouter
-            The QRouter instance to use for sending messages back to 
+        router : MockRouter
+            The MockRouter instance to use for sending messages back to
             the client.
 
         factories : dict
-            The Qt factory functions to use when building the view.
+            The factory functions to use when building the view.
 
         """
         self._session_id = session_id
@@ -292,7 +284,7 @@ class MockClientSession(object):
     def _on_message_snapshot_response(self, message):
         """ Handle the 'snapshot_response' message type.
 
-        This method will clear all of the existing widgets for the 
+        This method will clear all of the existing widgets for the
         session, and rebuild the UI tree(s) to match the state on the
         server. If the status of the response is not "ok", then an
         error will be logged.
@@ -379,7 +371,7 @@ class MockClientSession(object):
 
         Returns
         -------
-        result : QtMessengerWidget or None
+        result : MockWidget or None
             The built widget, or None if the widget could not be built.
             A failed build will be logged as an error. The returned
             widget is *not* added to the parent. That responsibility
@@ -406,16 +398,16 @@ class MockClientSession(object):
 
         Parameters
         ----------
-        parent : QtMessengerWidget or None
+        parent : MockWidget or None
             The messenger widget to use as the parent of the widgets
             being created, or None if they have no parent.
 
         child_defs : list of tuples
             A list of the form (index, snapshot) where index is the
             integer index to use when inserting the newly built child
-            into the parent. If the index is -1, the child will be 
+            into the parent. If the index is -1, the child will be
             simply added to the parent. The 'snapshot' is the dict
-            representing the ui tree to build for the child. 
+            representing the ui tree to build for the child.
 
         """
         # The dict of widget_id -> widget used for message dispatching
@@ -450,7 +442,7 @@ class MockClientSession(object):
             tree_push((index, tree))
             parent_push(parent)
             while tree_stack:
-                tree_index, tree_item = tree_pop() 
+                tree_index, tree_item = tree_pop()
                 parent = parent_pop()
                 widget = build(parent, tree_item, factories)
                 if widget is None:
@@ -500,7 +492,7 @@ class MockClientSession(object):
         """ Send an unsolicited message of type 'widget_action' to a
         server widget for this session.
 
-        This method is normally only called by the QtMessengerWidget's
+        This method is normally only called by the MockWidget's
         which are owned by this QtClientSession object. This should not 
         be called directly by user code.
         
@@ -565,7 +557,7 @@ class MockClientSession(object):
 ID_GEN = id_generator('__mockmsg')
 
 class MockLocalClient(object):
-    """ A client for managing server sessions in an in-process 
+    """ A client for managing server sessions in an in-process
     environment.
 
     """
@@ -580,7 +572,7 @@ class MockLocalClient(object):
     }
 
     def __init__(self, router, factories, username='mock_local_client'):
-        """ Initialize a QtLocalClient.
+        """ Initialize a MockLocalClient.
 
         Parameters
         ----------
@@ -593,7 +585,7 @@ class MockLocalClient(object):
             client widgets for a view.
 
         username : str, optional
-            The username to use for this client. The default username 
+            The username to use for this client. The default username
             is 'local_qt_client'
 
         """

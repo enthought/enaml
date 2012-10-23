@@ -10,7 +10,7 @@ from enaml.core.enaml_compiler import EnamlCompiler
 from enaml.application import Application
 from enaml.stdlib.sessions import simple_session
 
-from .mock_request import MockLocalServer
+from .mock_server import MockLocalServer
 
 
 class EnamlTestCase(unittest.TestCase):
@@ -28,7 +28,6 @@ class EnamlTestCase(unittest.TestCase):
         """
 
         print root.widget()
-        #if widget is None, it means nobody has called create on them
         if type_name == root.widget()['class']:
             return root
 
@@ -80,11 +79,10 @@ class EnamlTestCase(unittest.TestCase):
         View = ns['MainView']
 
         # Start the app instance first.
-        v = simple_session('main', 'test', View)
+        view_factory = simple_session('main', 'test', View)
 
-        self.app = Application([v])
+        self.app = Application([view_factory])
 
-        # uses QT for now
         server = MockLocalServer(self.app)
         client = server.local_client()
 
@@ -97,9 +95,10 @@ class EnamlTestCase(unittest.TestCase):
         session_id = client._client_sessions.keys()[0]
 
         server_view_id = self.app._sessions[session_id]._widgets.keys()[0]
+        # retrieve the enaml server side root widget
         self.view = self.app._sessions[session_id]._widgets[server_view_id]
 
         session = client._client_sessions[session_id]
-
+        # retrieve the enaml client side root widget
         self.client_view = session._widgets[session._widgets.keys()[0]]
 
