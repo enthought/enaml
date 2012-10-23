@@ -4,14 +4,13 @@
 #------------------------------------------------------------------------------
 from itertools import izip_longest
 
-from enaml.async.async_application import AbstractBuilder, AsyncApplication, \
-    AsyncApplicationError
+from enaml.application import Application
 
 from .mock_pipe import MockPipe
 from .mock_widget import MockWidget
 
 
-class MockBuilder(AbstractBuilder):
+class MockBuilder(object):
     """ A builder that generates a client-side UI tree.
 
     """
@@ -41,7 +40,7 @@ class MockBuilder(AbstractBuilder):
                 self._root = widget
 
 
-class MockApplication(AsyncApplication):
+class MockApplication(Application):
     """ A mock application for testing server widget components.
 
     """
