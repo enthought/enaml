@@ -26,7 +26,7 @@ enamldef MainView(Window):
         """
         assert self.client_window.title == ""
         self.server_window.title = "something else"
-        assert self.client_window.title == self.server_window.title
+        self.assertEquals(self.client_window.title, self.server_window.title)
 
     def test_set_maximize(self):
         """ Test the Window's maximize() method.

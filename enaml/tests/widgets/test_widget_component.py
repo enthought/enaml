@@ -73,3 +73,8 @@ enamldef MainView(Window):
         self.server_widget.show_focus_rect = True
         assert self.client_widget.show_focus_rect == self.server_widget.show_focus_rect
 
+if __name__ == '__main__':
+    import unittest
+    import logging
+    logging.basicConfig(level=logging.DEBUG)
+    unittest.main()

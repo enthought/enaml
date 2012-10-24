@@ -24,6 +24,7 @@ current_date = date(1980,4,11)
 
 enamldef MainView(Window):
     BoundedDate:
+        id: abcd
         minimum = minimum_date
         maximum = maximum_date
         date = current_date
@@ -39,7 +40,7 @@ enamldef MainView(Window):
         self.assertEquals(self.client_label.date, str(self.server_label.date))
 
     def test_set_max_date(self):
-        """ Test the setting of a BoundedDate's max_date attribute.
+        """ Test the setting of a BoundedDate's maximum date attribute.
         """
         self.server_label.maximum = date(2525, 1, 1)
         self.assertEquals(self.client_label.maximum, str(self.server_label.maximum))
@@ -50,3 +51,7 @@ enamldef MainView(Window):
         self.server_label.minimum = date(1900, 1, 1)
         self.assertEquals(self.client_label.minimum, str(self.server_label.minimum))
 
+
+if __name__ == '__main__':
+    import unittest
+    unittest.main()
