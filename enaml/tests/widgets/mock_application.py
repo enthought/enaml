@@ -11,6 +11,7 @@ from enaml.core.object import ActionPipeInterface
 from enaml.signaling import Signal
 from .mock_widget import MockWidget
 
+logger = logging.getLogger(__name__)
 
 def mock_factory():
     return MockWidget
@@ -82,13 +83,13 @@ class MockActionPipe(object):
             The content dictionary for the action.
 
         """
+        print object_id, action, content
         self.actionPosted.emit(object_id, action, content)
 
 
 ActionPipeInterface.register(MockActionPipe)
 
 
-logger = logging.getLogger(__name__)
 
 
 class MockBuilder(object):
@@ -168,9 +169,10 @@ class MockApplication(Application):
         pass
 
     def stop(self):
-        pass
+        self._objects.clear()
 
     def deferred_call(self, callback, *args, **kwargs):
+        time.sleep(1/1000.)
         callback(*args, **kwargs)
 
     def timed_call(self, ms, callback, *args, **kwargs):
@@ -219,4 +221,7 @@ class MockApplication(Application):
             raise ValueError('Invalid object id')
         obj.handle_action(action, content)
 
+    def schedule(self, callback, args=None, kwargs=None, priority=0):
+        # FIXME: there is a deadlock when relaying on the ScheduledTask
+        callback(*args, **kwargs)
 
