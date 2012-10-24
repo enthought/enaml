@@ -83,7 +83,6 @@ class MockActionPipe(object):
             The content dictionary for the action.
 
         """
-        print object_id, action, content
         self.actionPosted.emit(object_id, action, content)
 
 
