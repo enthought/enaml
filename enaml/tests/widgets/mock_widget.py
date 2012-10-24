@@ -17,7 +17,86 @@ class MockWidget(object):
     """ A mock client UI widget
 
     """
-    def __init__(self, parent, widget_id, session):
+
+    _objects = {}
+
+    @classmethod
+    def lookup_object(cls, object_id):
+        """ A classmethod which finds the object with the given id.
+
+        Parameters
+        ----------
+        object_id : str
+            The identifier for the object to lookup.
+
+        Returns
+        -------
+        result : QtObject or None
+            The QtObject for the given identifier, or None if no object
+            is found.
+
+        """
+        return cls._objects.get(object_id)
+
+    @classmethod
+    def construct(cls, tree, parent, pipe, builder):
+        """ Construct the QtObject instance for the given parameters.
+
+        This classmethod is called by the QtBuilder object used by the
+        application. When called, it will create a new instance of the
+        class by extracting the object id from the snapshot and calling
+        the class constructor. It then invokes the `create` method on
+        the new instance. This classmethod exists for cases where it is
+        necessary to define custom construction behavior. A subclass
+        may reimplement this method as required.
+
+        Parameters
+        ----------
+        tree : dict
+            An Enaml snapshot dict representing an object tree from this
+            object downward.
+
+        parent : QtObject or None
+            The parent QtObject to use for this object, or None if this
+            object is top-level.
+
+        pipe : QActionPipe or None
+            The QActionPipe to use for sending messages to the Enaml
+            object, or None if messaging is not desired.
+
+        builder : QtBuilder
+            The QtBuilder instance that is building this object.
+
+        Returns
+        -------
+        result : QtObject
+            The QtObject instance for these parameters.
+
+        Notes
+        -----
+        This method does *not* construct the children for this object.
+        That responsibility lies with the QtBuilder object which calls
+        this constructor.
+
+        """
+        object_id = tree['object_id']
+        self = cls.lookup_object(object_id)
+        if self is None:
+            self = cls(object_id, parent, pipe, builder)
+        self.create(tree)
+        return self
+
+    def __new__(cls, object_id, *args, **kwargs):
+        """ Create a new QtObject.
+
+        """
+        if object_id in cls._objects:
+            raise ValueError('Duplicate object id')
+        self = super(MockWidget, cls).__new__(cls)
+        cls._objects[object_id] = self
+        return self
+
+    def __init__(self, object_id, parent, pipe, builder):
         """ Initialize a MockWidget
 
         Parameters
@@ -34,12 +113,14 @@ class MockWidget(object):
             server widget.
 
         """
-        self._widget_id = widget_id
-        self._session = session
+        self._object_id = object_id
+        self._pipe = pipe
+        self._builder = builder
         self._parent = parent
         self._children = []
         self._children_map = {}
         self._widget = None
+        self._initialized = False
 
     #--------------------------------------------------------------------------
     # Public API (stolen from the QtMessengerWidget)
@@ -149,7 +230,7 @@ class MockWidget(object):
             The widget identifier for this messenger widget.
 
         """
-        return self._widget_id
+        return self._object_id
 
     def create_widget(self, parent, tree):
         """ A method which must be implemented by subclasses.
@@ -193,12 +274,12 @@ class MockWidget(object):
         parent_widget = parent.widget() if parent else None
         self._widget = self.create_widget(parent_widget, tree)
 
-        children = tree['children']
-
-        for child in children:
-            widget = MockWidget(self._parent, child['widget_id'], self._session)
-            widget.create(child)
-            self._children.append(widget)
+        for child in tree['children']:
+            oid  = child['object_id']
+            c = MockWidget.lookup_object(oid)
+            if c is None:
+                c = MockWidget(oid, self._parent, self._pipe, self._builder)
+            self.add_child(c)
 
     def init_layout(self):
         """ A method that allows widgets to do layout initialization.
@@ -238,6 +319,14 @@ class MockWidget(object):
                 def set_attribute(value):
                     self._widget[attribute] = value[attribute]
                 return set_attribute
+
+        res = re.match('on_action_(.*?)', name)
+        if res is not None:
+            action = res.groups()
+            def fun(self):
+                return True
+            self._widget[action] = fun
+            return self._widget[action]
 
 
     #--------------------------------------------------------------------------

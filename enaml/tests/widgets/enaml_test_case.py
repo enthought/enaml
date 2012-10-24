@@ -7,10 +7,9 @@ import unittest
 
 from enaml.core.parser import parse
 from enaml.core.enaml_compiler import EnamlCompiler
-from enaml.application import Application
 from enaml.stdlib.sessions import simple_session
 
-from .mock_server import MockLocalServer
+from .mock_application import MockApplication
 
 
 class EnamlTestCase(unittest.TestCase):
@@ -27,7 +26,6 @@ class EnamlTestCase(unittest.TestCase):
 
         """
 
-        print root.widget()
         if type_name == root.widget()['class']:
             return root
 
@@ -81,24 +79,23 @@ class EnamlTestCase(unittest.TestCase):
         # Start the app instance first.
         view_factory = simple_session('main', 'test', View)
 
-        self.app = Application([view_factory])
+        self.app = MockApplication.instance()
 
-        server = MockLocalServer(self.app)
-        client = server.local_client()
+        if self.app is None:
+            self.app = MockApplication([])
 
-        client.start_session('main')
+        self.app.add_factories([view_factory])
 
-        self.server = server
+        session_id = self.app.start_session('main')
 
-        server.start()
+        self.app.start()
 
-        session_id = client._client_sessions.keys()[0]
+        session = self.app._sessions[session_id]
 
-        server_view_id = self.app._sessions[session_id]._widgets.keys()[0]
         # retrieve the enaml server side root widget
-        self.view = self.app._sessions[session_id]._widgets[server_view_id]
+        self.view = session.session_objects[0]
 
-        session = client._client_sessions[session_id]
-        # retrieve the enaml client side root widget
-        self.client_view = session._widgets[session._widgets.keys()[0]]
+        #import IPython
+        #IPython.embed()
+        self.client_view = self.app._objects[session_id][0]
 
