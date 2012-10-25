@@ -2,6 +2,7 @@
 #  Copyright (c) 2011-2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+import itertools
 import types
 import unittest
 
@@ -12,6 +13,11 @@ from enaml.stdlib.sessions import simple_session
 from .mock_application import MockApplication
 
 
+_session_counter = itertools.count()
+def get_unique_session_identifier():
+    """ Returns a 'unique' name for a session. """
+    return 'session_{}'.format(_session_counter.next())
+
 class EnamlTestCase(unittest.TestCase):
     """ Base class for testing Enaml object widgets.
 
@@ -20,13 +26,14 @@ class EnamlTestCase(unittest.TestCase):
 
     """
 
+
     def find_client_widget(self, root, type_name):
         """ A simple function that recursively walks a widget tree until it
         finds a widget of a particular type.
 
         """
 
-        if type_name == root.widget()['class']:
+        if type_name == root.widget_type():
             return root
 
         for child in root.children():
@@ -77,7 +84,8 @@ class EnamlTestCase(unittest.TestCase):
         View = ns['MainView']
 
         # Start the app instance first.
-        view_factory = simple_session('main', 'test', View)
+        session_name =  get_unique_session_identifier()
+        view_factory = simple_session(session_name, 'test', View)
 
         self.app = MockApplication.instance()
 
@@ -86,7 +94,7 @@ class EnamlTestCase(unittest.TestCase):
 
         self.app.add_factories([view_factory])
 
-        session_id = self.app.start_session('main')
+        session_id = self.app.start_session(session_name)
 
         self.app.start()
 
@@ -95,7 +103,11 @@ class EnamlTestCase(unittest.TestCase):
         # retrieve the enaml server side root widget
         self.view = session.session_objects[0]
 
-        #import IPython
-        #IPython.embed()
+        # retrieve the enaml client side root widget
         self.client_view = self.app._objects[session_id][0]
+
+
+    def tearDown(self):
+
+        self.app.stop()
 

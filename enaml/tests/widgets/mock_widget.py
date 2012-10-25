@@ -210,7 +210,7 @@ class MockWidget(object):
         return self._children_map.get(widget_id)
 
     def widget(self):
-        """ Get the toolkit widget for this messenger widget.
+        """ Get the toolkit widget for this widget.
 
         Returns
         -------
@@ -220,6 +220,20 @@ class MockWidget(object):
 
         """
         return self._widget
+
+
+    def widget_type(self):
+        """ Returns the widget type for this widget.
+
+        Returns
+        -------
+        result: str
+            The widget type (meaning the class name of the server side widget)
+
+        """
+
+        return self._widget['class']
+
 
     def widget_id(self):
         """ Get the widget id for the messenger widget.
