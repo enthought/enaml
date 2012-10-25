@@ -5,8 +5,7 @@
 from traits.api import HasTraits, Str, Range, Bool, on_trait_change
 
 import enaml
-from enaml.stdlib.sessions import simple_app
-from enaml.qt.qt_local_server import QtLocalServer
+from enaml.stdlib.sessions import show_simple_view
 
 
 class Person(HasTraits):
@@ -37,15 +36,11 @@ class Person(HasTraits):
 if __name__ == '__main__':
     with enaml.imports():
         from person_view import PersonView
-    
+
     john = Person(first_name='John', last_name='Doe', age=42)
     john.debug = True
-    app = simple_app(
-        'john', 'A view of the Person john', PersonView, person=john
-    ) 
 
-    server = QtLocalServer(app)
-    client = server.local_client()
-    client.start_session('john')
-    server.start()
+    view = PersonView(person=john)
+    show_simple_view(view)
+
 
