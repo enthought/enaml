@@ -32,8 +32,6 @@ enamldef MainView(Window):
     def test_set_visible(self):
         """ Test the setting of a WidgetComponent's visible attribute
         """
-        #import IPython
-        #IPython.embed()
         self.server_widget.visible = False
         assert self.client_widget.visible == self.server_widget.visible
 
