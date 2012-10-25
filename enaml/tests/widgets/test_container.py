@@ -25,14 +25,12 @@ enamldef MainView(Window):
     def test_set_padding(self):
         """ Test the setting of a Container's padding attribute
         """
-        assert not hasattr(self.client_widget, 'relayout')
         self.server_widget.padding = (0,0,0,0)
         assert hasattr(self.client_widget, 'relayout')
 
     def test_set_padding_strength(self):
         """ Test the setting of a Container's padding_strength attribute
         """
-        assert not hasattr(self.client_widget, 'relayout')
         self.server_widget.padding_strength = 'ignore'
         assert not hasattr(self.client_widget, 'relayout')
 

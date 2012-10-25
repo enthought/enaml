@@ -34,7 +34,7 @@ enamldef MainView(Window):
         self.server_widget.minimum = 10
         assert self.client_widget.minimum == self.server_widget.minimum
 
-    def xxx_test_set_orientation(self):
+    def test_set_orientation(self):
         """ Test the setting of a Slider's orientation attribute
         """
         self.server_widget.orientation = 'vertical'
