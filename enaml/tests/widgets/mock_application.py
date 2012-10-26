@@ -4,11 +4,13 @@
 #------------------------------------------------------------------------------
 
 from collections import defaultdict
+from concurrent import futures
 import logging
-import time
+
 from enaml.application import Application
 from enaml.core.object import ActionPipeInterface
 from enaml.signaling import Signal
+
 from .mock_widget import MockWidget
 
 logger = logging.getLogger(__name__)
@@ -59,8 +61,8 @@ MOCK_FACTORIES = {
 class MockActionPipe(object):
     """ A messaging pipe implementation.
 
-    This is a small QObject subclass which converts a `send` on the pipe
-    into a signal which is connected to by the QtApplication.
+    This is a mock pipe class which converts a `send` on the pipe
+    into a signal which is connected to by the MockApplication.
 
     This object also satisfies the Enaml ActionPipeInterface.
 
@@ -83,11 +85,11 @@ class MockActionPipe(object):
             The content dictionary for the action.
 
         """
+        logger.debug('Sending %s %s %s', object_id, action, content)
         self.actionPosted.emit(object_id, action, content)
 
 
 ActionPipeInterface.register(MockActionPipe)
-
 
 
 
@@ -165,18 +167,20 @@ class MockApplication(Application):
         return self._enaml_pipe
 
     def start(self):
-        pass
+        self._executor = futures.ThreadPoolExecutor(max_workers=1)
 
     def stop(self):
         self._objects.clear()
+        self._executor.shutdown()
 
     def deferred_call(self, callback, *args, **kwargs):
-        time.sleep(1/1000.)
-        callback(*args, **kwargs)
+        # Execute this asynchronously
+        logger.debug('Deferred call to %s', callback)
+        self._executor.submit(callback, *args, **kwargs)
 
     def timed_call(self, ms, callback, *args, **kwargs):
-        time.sleep(ms/1000.)
-        callback(*args, **kwargs)
+        # This function is currently unused in the code base. 
+        raise NotImplementedError
 
     def start_session(self, name):
         """ Start a new session of the given name.
@@ -215,12 +219,9 @@ class MockApplication(Application):
             The dictionary of content needed to perform the action.
 
         """
+        logger.debug('Dispatching action %s %s %s', object_id, action, content)
         obj = MockWidget.lookup_object(object_id)
         if obj is None:
             raise ValueError('Invalid object id')
         obj.handle_action(action, content)
-
-    def schedule(self, callback, args=None, kwargs=None, priority=0):
-        # FIXME: there is a deadlock when relaying on the ScheduledTask
-        callback(*args, **kwargs)
 
