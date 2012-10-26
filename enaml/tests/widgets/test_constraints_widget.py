@@ -29,6 +29,7 @@ enamldef MainView(Window):
         self.server_widget.hug_width = 'ignore'
         self.server_widget.hug_height = 'weak'
         assert hasattr(self.client_widget, 'relayout')
+        print self.client_widget.widget()
 
     def test_set_resist_clip(self):
         """ Test the setting of a ConstraintsWidget's resist_clip attribute
@@ -38,3 +39,9 @@ enamldef MainView(Window):
         assert hasattr(self.client_widget, 'relayout')
 
     # XXX Add more tests
+
+if __name__ == '__main__':
+    import logging
+    import unittest
+    logging.basicConfig(level=logging.DEBUG)
+    unittest.main()

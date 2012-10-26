@@ -53,5 +53,7 @@ enamldef MainView(Window):
 
 
 if __name__ == '__main__':
+    import logging
     import unittest
+    logging.basicConfig(level=logging.DEBUG)
     unittest.main()
