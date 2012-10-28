@@ -333,7 +333,7 @@ _Disconnector_call( _Disconnector* self, PyObject* args, PyObject* kwargs )
 
     PyWeakrefPtr objref( self->objref, true );
     PyObjectPtr obj( objref.get_object() );
-    if( !obj )
+    if( obj.is_None() )
         Py_RETURN_NONE;
 
     PyDictPtr dict;
@@ -533,7 +533,7 @@ BoundSignal_emit( BoundSignal* self, PyObject* args, PyObject* kwargs )
 {
     PyWeakrefPtr objref( self->objref, true );
     PyObjectPtr obj( objref.get_object() );
-    if( !obj )
+    if( obj.is_None() )
         Py_RETURN_NONE;
 
     PyDictPtr dict;
@@ -601,7 +601,7 @@ BoundSignal_connect( BoundSignal* self, PyObject* slot )
 {
     PyWeakrefPtr objref( self->objref, true );
     PyObjectPtr obj( objref.get_object() );
-    if( !obj )
+    if( obj.is_None() )
         Py_RETURN_NONE;
 
     PyDictPtr dict;
