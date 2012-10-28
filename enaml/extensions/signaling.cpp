@@ -30,6 +30,11 @@ typedef struct {
 } BoundSignal;
 
 
+#define FREELIST_MAX 128
+static int numfree = 0;
+static BoundSignal* freelist[ FREELIST_MAX ];
+
+
 static PyObject* SignalsKey;
 static PyObject* WeakMethod;
 static PyObject* CallableRef;
@@ -494,7 +499,10 @@ BoundSignal_dealloc( BoundSignal* self )
 {
     PyObject_GC_UnTrack( self );
     BoundSignal_clear( self );
-    self->ob_type->tp_free( reinterpret_cast<PyObject*>( self ) );
+    if( numfree < FREELIST_MAX )
+        freelist[ numfree++ ] = self;
+    else
+        self->ob_type->tp_free( reinterpret_cast<PyObject*>( self ) );
 }
 
 
@@ -784,9 +792,19 @@ _BoundSignal_New( PyObject* owner, PyObject* objref )
 {
     PyObjectPtr ownerptr( owner, true );
     PyObjectPtr objrefptr( objref, true );
-    PyObjectPtr bsigptr( PyType_GenericAlloc( &BoundSignal_Type, 0 ) );
-    if( !bsigptr )
-        return 0;
+    PyObjectPtr bsigptr;
+    if( numfree > 0 )
+    {
+        PyObject* o = reinterpret_cast<PyObject*>( freelist[ --numfree ] );
+        _Py_NewReference( o );
+        bsigptr = o;
+    }
+    else
+    {
+        bsigptr = PyType_GenericAlloc( &BoundSignal_Type, 0 );
+        if( !bsigptr )
+            return 0;
+    }
     BoundSignal* bsig = reinterpret_cast<BoundSignal*>( bsigptr.get() );
     bsig->owner = ownerptr.release();
     bsig->objref = objrefptr.release();
