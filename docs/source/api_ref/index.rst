@@ -8,4 +8,5 @@ Enaml API Reference
 
     Base <enaml>
     Core <enaml.core>
+    Stdlib <enaml.stdlib>
     Widgets <enaml.widgets>

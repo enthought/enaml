@@ -182,7 +182,7 @@ Hooking up an |Enaml| View to a Traits Object
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 In the code block for launching the script from the command line, we create a
-``Person`` object and create an applicatation which serves it using the
+``Person`` object and create an application which serves it using the
 ``PersonView`` for the GUI::
 
     if __name__ == '__main__':
@@ -192,14 +192,34 @@ In the code block for launching the script from the command line, we create a
         
         john = Person(first_name='John', last_name='Doe', age=42)
         john.debug = True
-        app = simple_app(
+
+In the previous example, we have seen the simplest way of creating and
+rendering a view by using the ``show_simple_view`` function. In this example,
+we will get to the heart of Enaml by creating a session factory object and the
+Enaml application::
+
+        from enaml.stdlib.sessions import simple_session
+
+        session = simple_session(
             'john', 'A view of the Person john', PersonView, person=john
         ) 
     
-        server = QtLocalServer(app)
-        client = server.local_client()
-        client.start_session('john')
-        server.start()
+The first two arguments are a name and brief description of the session. The 
+third is the view that we want to use to create this session, in this case
+``PersonView``.  Everything beyond this is optional, but we want
+to hook john as the Person instance used by the PersonView. 
+
+For writing traditional single-process GUI applications, this pattern will
+satisfy the majority of use-cases.
+
+
+Finally, we need to start the application and pass it a list of session
+factories, start the session named john and run the application.::
+
+
+        app = QtApplication([session])
+        app.start_session('john')
+        app.start()
 
 
 Running it from the command line, we see::

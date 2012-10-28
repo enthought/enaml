@@ -5,7 +5,8 @@
 from traits.api import HasTraits, Str, Range, Bool, on_trait_change
 
 import enaml
-from enaml.stdlib.sessions import show_simple_view
+from enaml.stdlib.sessions import simple_session
+from enaml.qt.qt_application import QtApplication
 
 
 class Person(HasTraits):
@@ -40,7 +41,9 @@ if __name__ == '__main__':
     john = Person(first_name='John', last_name='Doe', age=42)
     john.debug = True
 
-    view = PersonView(person=john)
-    show_simple_view(view)
+    session = simple_session('john', 'A view of the Person john', PersonView, person=john)
 
+    app = QtApplication([session])
+    app.start_session('john')
+    app.start()
 
