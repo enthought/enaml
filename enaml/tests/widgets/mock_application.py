@@ -10,52 +10,19 @@ import logging
 from enaml.application import Application
 from enaml.core.object import ActionPipeInterface
 from enaml.signaling import Signal
+from enaml.qt.qt_factories import QT_FACTORIES
 
 from .mock_widget import MockWidget
 
 logger = logging.getLogger(__name__)
 
+
 def mock_factory():
     return MockWidget
 
-
-MOCK_FACTORIES = {
-    'Action': mock_factory,
-    'ActionGroup': mock_factory,
-    'Calendar': mock_factory,
-    'CheckBox': mock_factory,
-    'ComboBox': mock_factory,
-    'Container': mock_factory,
-    'DateSelector': mock_factory,
-    'DatetimeSelector': mock_factory,
-    'DockPane': mock_factory,
-    'Field': mock_factory,
-    'Form': mock_factory,
-    'GroupBox': mock_factory,
-    'Html': mock_factory,
-    'ImageView': mock_factory,
-    'Label': mock_factory,
-    'MainWindow': mock_factory,
-    'MdiArea': mock_factory,
-    'MdiWindow': mock_factory,
-    'Menu': mock_factory,
-    'MenuBar': mock_factory,
-    'Notebook': mock_factory,
-    'Page': mock_factory,
-    'PushButton': mock_factory,
-    'ProgressBar': mock_factory,
-    'RadioButton': mock_factory,
-    'ScrollArea': mock_factory,
-    'Slider': mock_factory,
-    'SpinBox': mock_factory,
-    'Splitter': mock_factory,
-    'Stack': mock_factory,
-    'StackItem': mock_factory,
-    'TextEditor': mock_factory,
-    'ToolBar': mock_factory,
-    'Window': mock_factory,
-    'WidgetComponent': mock_factory,
-}
+# Generate the MOCK_FACTORIES dictionnary based on the QT_FACTORIES
+MOCK_FACTORIES = {key: mock_factory for key in QT_FACTORIES}
+MOCK_FACTORIES['WidgetComponent'] = mock_factory
 
 
 class MockActionPipe(object):
@@ -90,7 +57,6 @@ class MockActionPipe(object):
 
 
 ActionPipeInterface.register(MockActionPipe)
-
 
 
 class MockBuilder(object):
@@ -130,6 +96,7 @@ class MockBuilder(object):
 
         factories = self._factories
         class_name = tree['class']
+        obj_cls = mock_factory()
         if class_name in factories:
             obj_cls = factories[class_name]()
         else:
@@ -139,7 +106,7 @@ class MockBuilder(object):
                     obj_cls = factories[base]()
                     break
         if obj_cls is None:
-            msg =  'Unhandled object type: %s:%s'
+            msg = 'Unhandled object type: %s:%s'
             item_class = tree['class']
             item_bases = tree['bases']
             logger.error(msg % (item_class, item_bases))
@@ -179,7 +146,7 @@ class MockApplication(Application):
         self._executor.submit(callback, *args, **kwargs)
 
     def timed_call(self, ms, callback, *args, **kwargs):
-        # This function is currently unused in the code base. 
+        # This function is currently unused in the code base.
         raise NotImplementedError
 
     def start_session(self, name):
@@ -204,7 +171,7 @@ class MockApplication(Application):
         """ Dispatch an action to an object with the given id.
 
         This method can be called by subclasses when they receive an
-        action message from a client object. If the object does not 
+        action message from a client object. If the object does not
         exist, an exception will be raised.
 
         Parameters
@@ -225,3 +192,4 @@ class MockApplication(Application):
             raise ValueError('Invalid object id')
         obj.handle_action(action, content)
 
+### EOF
