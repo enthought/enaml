@@ -24,7 +24,8 @@ enamldef MainView(Window):
     def test_set_title(self):
         """ Test the setting of a Window's title attribute.
         """
-        assert self.client_window.title == ""
+        self.assertEquals(self.client_window.title, '')
+
         self.server_window.title = "something else"
         self.assertEquals(self.client_window.title, self.server_window.title)
 

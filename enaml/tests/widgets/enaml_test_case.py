@@ -104,8 +104,7 @@ class EnamlTestCase(unittest.TestCase):
         self.view = session.session_objects[0]
 
         # retrieve the enaml client side root widget
-        self.client_view = self.app._objects[session_id][0]
-
+        self.client_view = self.app._toolkit_objects[session_id][0]
 
     def tearDown(self):
 

@@ -4,12 +4,11 @@
 #------------------------------------------------------------------------------
 
 from collections import defaultdict
-from concurrent import futures
 import logging
 
 from enaml.application import Application
-from enaml.core.object import ActionPipeInterface
-from enaml.signaling import Signal
+from enaml.qt.q_action_pipe import QActionPipe
+from enaml.qt.q_deferred_caller import QDeferredCaller
 from enaml.qt.qt_factories import QT_FACTORIES
 
 from .mock_widget import MockWidget
@@ -24,39 +23,6 @@ def mock_factory():
 MOCK_FACTORIES = {key: mock_factory for key in QT_FACTORIES}
 MOCK_FACTORIES['WidgetComponent'] = mock_factory
 
-
-class MockActionPipe(object):
-    """ A messaging pipe implementation.
-
-    This is a mock pipe class which converts a `send` on the pipe
-    into a signal which is connected to by the MockApplication.
-
-    This object also satisfies the Enaml ActionPipeInterface.
-
-    """
-    #: A signal emitted when an item has been sent down the pipe.
-    actionPosted = Signal()
-
-    def send(self, object_id, action, content):
-        """ Send the action to any attached listeners.
-
-        Parameters
-        ----------
-        object_id : str
-            The object id of the target object.
-
-        action : str
-            The action that should be performed by the object.
-
-        content : dict
-            The content dictionary for the action.
-
-        """
-        logger.debug('Sending %s %s %s', object_id, action, content)
-        self.actionPosted.emit(object_id, action, content)
-
-
-ActionPipeInterface.register(MockActionPipe)
 
 
 class MockBuilder(object):
@@ -116,34 +82,36 @@ class MockBuilder(object):
             self.build(child, obj, pipe)
         return obj
 
-
 class MockApplication(Application):
 
     def __init__(self, factories):
 
         super(MockApplication, self).__init__(factories)
 
-        self._enaml_pipe = epipe = MockActionPipe()
-        self._builder = MockBuilder()
-        self._objects = defaultdict(list)
+        self._enaml_pipe = epipe = QActionPipe()
+        self._toolkit_pipe = tpipe = QActionPipe()
+        self._qcaller = QDeferredCaller()
 
-        epipe.actionPosted.connect(self.dispatch_action)
+        self._builder = MockBuilder()
+        self._toolkit_objects = defaultdict(list)
+
+        epipe.actionPosted.connect(self._on_enaml_action)
+        tpipe.actionPosted.connect(self._on_toolkit_action)
 
     @property
     def pipe_interface(self):
         return self._enaml_pipe
 
     def start(self):
-        self._executor = futures.ThreadPoolExecutor(max_workers=1)
+        pass
 
     def stop(self):
-        self._objects.clear()
-        self._executor.shutdown()
+        self._toolkit_objects.clear()
 
     def deferred_call(self, callback, *args, **kwargs):
         # Execute this asynchronously
         logger.debug('Deferred call to %s', callback)
-        self._executor.submit(callback, *args, **kwargs)
+        self._qcaller.deferredCall(callback, *args, **kwargs)
 
     def timed_call(self, ms, callback, *args, **kwargs):
         # This function is currently unused in the code base.
@@ -153,21 +121,21 @@ class MockApplication(Application):
         """ Start a new session of the given name.
 
         This is an overridden parent class method which will build out
-        the Qt client object tree for the session. It will be displayed
+        the mock client object tree for the session. It will be displayed
         when the application is started.
 
         """
         sid = super(MockApplication, self).start_session(name)
-        pipe = self._enaml_pipe
+        pipe = self._toolkit_pipe
         builder = self._builder
-        objects = self._objects[sid]
+        objects = self._toolkit_objects[sid]
         for item in self.snapshot(sid):
             obj = builder.build(item, None, pipe)
             if obj is not None:
                 objects.append(obj)
         return sid
 
-    def dispatch_action(self, object_id, action, content):
+    def dispatch_toolkit_action(self, object_id, action, content):
         """ Dispatch an action to an object with the given id.
 
         This method can be called by subclasses when they receive an
@@ -191,5 +159,21 @@ class MockApplication(Application):
         if obj is None:
             raise ValueError('Invalid object id')
         obj.handle_action(action, content)
+
+
+    #--------------------------------------------------------------------------
+    # Private API
+    #--------------------------------------------------------------------------
+    def _on_enaml_action(self, object_id, action, content):
+        """ Handle an action being posted by an Enaml object.
+
+        """
+        self.dispatch_toolkit_action(object_id, action, content)
+
+    def _on_toolkit_action(self, object_id, action, content):
+        """ Handle an action being posted by a Mock object.
+
+        """
+        self.dispatch_action(object_id, action, content)
 
 ### EOF
