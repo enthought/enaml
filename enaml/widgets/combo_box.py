@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import List, Int, Property, Unicode, cached_property
+from traits.api import Bool, List, Int, Property, Unicode, cached_property
 
 from .control import Control
 
@@ -20,6 +20,9 @@ class ComboBox(Control):
     #: index falls outside of the range of items, the item will be
     #: deselected.
     index = Int(-1)
+
+    #: Whether the text in the combo box can be edited by the user.
+    editable = Bool(False)
 
     #: A readonly property that will return the currently selected
     #: item. If the index falls out of range, the selected item will
@@ -40,6 +43,7 @@ class ComboBox(Control):
         snap = super(ComboBox, self).snapshot()
         snap['items'] = self.items
         snap['index'] = self.index
+        snap['editable'] = self.editable
         return snap
 
     def bind(self):
@@ -48,7 +52,15 @@ class ComboBox(Control):
 
         """
         super(ComboBox, self).bind()
-        self.publish_attributes('items', 'index')
+        self.publish_attributes('index', 'editable')
+        self.on_trait_change(self._send_items, 'items, items_items')
+
+    def _send_items(self):
+        """ Send the 'set_items' action to the client widget.
+
+        """
+        content = {'items': self.items}
+        self.send_action('set_items', content)
 
     #--------------------------------------------------------------------------
     # Message Handling
@@ -66,7 +78,7 @@ class ComboBox(Control):
     #--------------------------------------------------------------------------
     @cached_property
     def _get_selected_item(self):
-        """ The default value handler for :attr:`selected_item`.
+        """ The getter for the `selected_item` property.
 
         """
         items = self.items
