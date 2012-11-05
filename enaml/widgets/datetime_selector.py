@@ -2,13 +2,13 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Str
+from traits.api import Bool, Str
 
 from .bounded_datetime import BoundedDatetime
 
 
 class DatetimeSelector(BoundedDatetime):
-    """ A datetime widget that displays a Python datetime.datetime 
+    """ A datetime widget that displays a Python datetime.datetime
     object using an appropriate toolkit specific control.
 
     """
@@ -17,7 +17,10 @@ class DatetimeSelector(BoundedDatetime):
     #: This may not be supported by all backends.
     datetime_format = Str
 
-    #: How strongly a component hugs its contents' width. DatetimeEdits 
+    #: Whether to use a calendar popup for selecting the date.
+    calendar_popup = Bool(False)
+
+    #: How strongly a component hugs its contents' width. DatetimeEdits
     #: ignore the width hug by default, so they expand freely in width.
     hug_width = 'ignore'
 
@@ -31,6 +34,7 @@ class DatetimeSelector(BoundedDatetime):
         """
         snap = super(DatetimeSelector, self).snapshot()
         snap['datetime_format'] = self.datetime_format
+        snap['calendar_popup'] = self.calendar_popup
         return snap
 
     def bind(self):
@@ -39,5 +43,5 @@ class DatetimeSelector(BoundedDatetime):
 
         """
         super(DatetimeSelector, self).bind()
-        self.publish_attributes('datetime_format')
+        self.publish_attributes('datetime_format', 'calendar_popup')
 

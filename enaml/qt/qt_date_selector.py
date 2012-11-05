@@ -25,6 +25,7 @@ class QtDateSelector(QtBoundedDate):
         """
         super(QtDateSelector, self).create(tree)
         self.set_date_format(tree['date_format'])
+        self.set_calendar_popup(tree['calendar_popup'])
         self.widget().dateChanged.connect(self.on_date_changed)
 
     #--------------------------------------------------------------------------
@@ -35,6 +36,12 @@ class QtDateSelector(QtBoundedDate):
 
         """
         self.set_date_format(content['date_format'])
+
+    def on_action_set_calendar_popup(self, content):
+        """ Handle the 'set_calendar_popup' action from the Enaml widget.
+
+        """
+        self.set_calendar_popup(content['calendar_popup'])
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -90,9 +97,20 @@ class QtDateSelector(QtBoundedDate):
         ----------
         date_format : str
             A Python time formatting string.
-            
+
         """
-        # XXX make sure Python's and Qt's format strings are the 
+        # XXX make sure Python's and Qt's format strings are the
         # same, or convert between the two.
         self.widget().setDisplayFormat(date_format)
+
+    def set_calendar_popup(self, popup):
+        """ Set whether a calendar popup is available on the widget.
+
+        Parameters
+        ----------
+        popup : bool
+            Whether the calendar popup is enabled.
+
+        """
+        self.widget().setCalendarPopup(popup)
 
