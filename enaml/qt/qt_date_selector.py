@@ -66,7 +66,8 @@ class QtDateSelector(QtBoundedDate):
             The QDate object to use for setting the date.
 
         """
-        self.widget().setDate(date)
+        with self.loopback_guard('date'):
+            self.widget().setDate(date)
 
     def set_max_date(self, date):
         """ Set the widget's maximum date.

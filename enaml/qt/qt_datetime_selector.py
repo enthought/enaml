@@ -67,7 +67,8 @@ class QtDatetimeSelector(QtBoundedDatetime):
             The QDateTime object to use for setting the datetime.
 
         """
-        self.widget().setDateTime(datetime)
+        with self.loopback_guard('datetime'):
+            self.widget().setDateTime(datetime)
 
     def set_max_datetime(self, datetime):
         """ Set the widget's maximum datetime.
