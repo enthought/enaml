@@ -167,6 +167,11 @@ def text_editor_factory():
     return QtTextEditor
 
 
+def time_selector_factory():
+    from .qt_time_selector import QtTimeSelector
+    return QtTimeSelector
+
+
 def tool_bar_factory():
     from .qt_tool_bar import QtToolBar
     return QtToolBar
@@ -211,6 +216,7 @@ QT_FACTORIES = {
     'Stack': stack_factory,
     'StackItem': stack_item_factory,
     'TextEditor': text_editor_factory,
+    'TimeSelector': time_selector_factory,
     'ToolBar': tool_bar_factory,
     'Window': window_factory,
 }
