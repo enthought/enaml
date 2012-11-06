@@ -88,7 +88,7 @@ class QtComboBox(QtControl):
         """ Set the current index of the ComboBox.
 
         """
-        with self.loopback_guard():
+        with self.loopback_guard('index'):
             self.widget().setCurrentIndex(index)
 
     def set_editable(self, editable):
