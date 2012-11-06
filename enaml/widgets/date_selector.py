@@ -23,8 +23,8 @@ class DateSelector(BoundedDate):
     #: Whether to use a calendar popup for selecting the date.
     calendar_popup = Bool(False)
 
-    #: How strongly a component hugs it's contents' width. DateEdits
-    #: ignore the width hug by default, so they expand freely in width.
+    #: How strongly to hugs the content width. A DateSelector ignores
+    #: the width hug by default, so it expands freely in width.
     hug_width = 'ignore'
 
     #--------------------------------------------------------------------------

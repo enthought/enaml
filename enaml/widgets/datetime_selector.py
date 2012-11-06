@@ -20,8 +20,8 @@ class DatetimeSelector(BoundedDatetime):
     #: Whether to use a calendar popup for selecting the date.
     calendar_popup = Bool(False)
 
-    #: How strongly a component hugs its contents' width. DatetimeEdits
-    #: ignore the width hug by default, so they expand freely in width.
+    #: How strongly to hugs the content width. A DatetimeSelector ignores
+    #: the width hug by default, so it expands freely in width.
     hug_width = 'ignore'
 
     #--------------------------------------------------------------------------
