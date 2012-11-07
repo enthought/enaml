@@ -52,6 +52,11 @@ def field_factory():
     return QtField
 
 
+def file_dialog_factory():
+    from .qt_file_dialog import QtFileDialog
+    return QtFileDialog
+
+
 def form_factory():
     from .qt_form import QtForm
     return QtForm
@@ -193,6 +198,7 @@ QT_FACTORIES = {
     'DatetimeSelector': datetime_selector_factory,
     'DockPane': dock_pane_factory,
     'Field': field_factory,
+    'FileDialog': file_dialog_factory,
     'Form': form_factory,
     'GroupBox': group_box_factory,
     'Html': html_factory,

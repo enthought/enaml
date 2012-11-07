@@ -14,6 +14,7 @@ from .date_selector import DateSelector
 from .datetime_selector import DatetimeSelector
 from .dock_pane import DockPane
 from .field import Field
+from .file_dialog import FileDialog
 from .form import Form
 from .group_box import GroupBox
 from .html import Html
