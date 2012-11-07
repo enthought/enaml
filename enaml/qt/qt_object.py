@@ -258,12 +258,27 @@ class QtObject(object):
 
         Returns
         -------
-        result : QObject
+        result : QObject or None
             The toolkit object for this object, or None if it does not
             have a toolkit object.
 
         """
         return self._widget
+
+    def parent_widget(self):
+        """ Get the toolkit-specific parent widget for this object.
+
+        Returns
+        -------
+        result : QObject or None
+            The toolkit object for this object, or None if it does
+            not exist.
+
+        """
+        parent = self._parent
+        if parent is not None:
+            parent = parent.widget()
+        return parent
 
     def create_widget(self, parent, tree):
         """ A method which should be reimplemented by subclasses.
