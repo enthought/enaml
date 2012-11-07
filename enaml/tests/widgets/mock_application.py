@@ -62,7 +62,6 @@ class MockBuilder(object):
 
         factories = self._factories
         class_name = tree['class']
-        obj_cls = mock_factory()
         if class_name in factories:
             obj_cls = factories[class_name]()
         else:

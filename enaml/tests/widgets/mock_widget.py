@@ -6,6 +6,7 @@ import logging
 import re
 from types import MethodType
 
+logger = logging.getLogger(__name__)
 
 def make_handler_func(func_name, name, obj):
     func = lambda slf, ctxt: setattr(slf, name, ctxt['value'])
@@ -147,67 +148,7 @@ class MockWidget(object):
             be modified in place by user code.
 
         """
-        return self._children
-
-    def add_child(self, child):
-        """ Add a child widget to this widget.
-
-        Parameters
-        ----------
-        child : QtMessengerWidget
-            The child widget to add to this widget.
-
-        """
-        # XXX handle reparenting and duplicate adding
-        self._children.append(child)
-        self._children_map[child.widget_id()] = child
-
-    def insert_child(self, index, child):
-        """ Insert a child widget into this widget.
-
-        Parameters
-        ----------
-        index : int
-            The target index for the child widget.
-
-        child : QtMessengerWidget
-            The child widget to insert into this widget.
-
-        """
-        # XXX handle reparenting and duplicates
-        self._children.insert(index, child)
-        self._children_map[child.widget_id()] = child
-
-    def remove_child(self, child):
-        """ Remove the child widget from this widget.
-
-        Parameters
-        ----------
-        child : QtMessengerWidget
-            The child widget to remove from this widget.
-
-        """
-        # XXX handle unparenting
-        children = self._children
-        if child in children:
-            children.remove(child)
-            self._children_map.pop(child.widget_id(), None)
-
-    def find_child(self, widget_id):
-        """ Find the child with the given widget id.
-
-        Parameters
-        ----------
-        widget_id : str
-            The widget identifier for the target widget.
-
-        Returns
-        -------
-        result : QtMessengerWidget or None
-            The child widget or None if its not found.
-
-        """
-        return self._children_map.get(widget_id)
+        return [MockWidget.lookup_object(child['object_id']) for child in self._children]
 
     def widget(self):
         """ Get the toolkit widget for this widget.
@@ -288,12 +229,9 @@ class MockWidget(object):
         parent_widget = parent.widget() if parent else None
         self._widget = self.create_widget(parent_widget, tree)
 
-        for child in tree['children']:
-            oid  = child['object_id']
-            c = MockWidget.lookup_object(oid)
-            if c is None:
-                c = MockWidget(oid, self._parent, self._pipe, self._builder)
-            self.add_child(c)
+        # The builder takes care of creating the object. Just keep a reference
+        # to tree['children'] 
+        self._children = tree['children']
 
     def init_layout(self):
         """ A method that allows widgets to do layout initialization.
@@ -368,6 +306,6 @@ class MockWidget(object):
         else:
             # XXX show a dialog here?
             msg = "Unhandled action sent to `%s` from server: %s"
-            logging.error(msg % (self.widget_id(), action))
+            logger.error(msg % (self.widget_id(), action))
 
 
