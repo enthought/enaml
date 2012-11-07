@@ -2,14 +2,14 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from casuarius import ConstraintVariable 
+from casuarius import ConstraintVariable
 
 from .qt.QtCore import QRect
 from .qt_widget_component import QtWidgetComponent
 
 
 class LayoutBox(object):
-    """ A class which encapsulates a layout box using casuarius 
+    """ A class which encapsulates a layout box using casuarius
     constraint variables.
 
     The constraint variables are created on an as-needed basis, this
@@ -75,7 +75,7 @@ class QtConstraintsWidget(QtWidgetComponent):
     #: be called to trigger an appropriate relayout of the widget.
     _size_hint_cns = []
 
-    #: The list of constraint dictionaries defined by the user on 
+    #: The list of constraint dictionaries defined by the user on
     #: the server side Enaml widget.
     _user_cns = []
 
@@ -100,7 +100,7 @@ class QtConstraintsWidget(QtWidgetComponent):
         """ Handle the 'relayout' action from the Enaml widget.
 
         """
-        # XXX The QtContainer needs to get in on the action to grab the 
+        # XXX The QtContainer needs to get in on the action to grab the
         # share_layout flag.
         self._hug = content['hug']
         self._resist = content['resist']
@@ -140,14 +140,14 @@ class QtConstraintsWidget(QtWidgetComponent):
             current layout system.
 
         new_cns : list
-            The list of casuarius constraints to add to the 
+            The list of casuarius constraints to add to the
             current layout system.
 
         """
         parent = self.parent()
         if isinstance(parent, QtConstraintsWidget):
             parent.replace_constraints(old_cns, new_cns)
-    
+
     def size_hint_constraints(self):
         """ Creates the list of size hint constraints for this widget.
 
@@ -222,7 +222,7 @@ class QtConstraintsWidget(QtWidgetComponent):
 
         """
         cns = self._hard_cns
-        if not cns: 
+        if not cns:
             primitive = self.layout_box.primitive
             left = primitive('left')
             top = primitive('top')
@@ -258,13 +258,13 @@ class QtConstraintsWidget(QtWidgetComponent):
         ----------
         dx : float
             The offset of the parent widget from the computed origin
-            of the layout. This amount is subtracted from the computed 
+            of the layout. This amount is subtracted from the computed
             layout 'x' amount, which is expressed in the coordinates
             of the owner widget.
 
         dy : float
             The offset of the parent widget from the computed origin
-            of the layout. This amount is subtracted from the computed 
+            of the layout. This amount is subtracted from the computed
             layout 'y' amount, which is expressed in the coordinates
             of the layout owner widget.
 
@@ -277,9 +277,9 @@ class QtConstraintsWidget(QtWidgetComponent):
         """
         # The return function is a hyper optimized (for Python) closure
         # that will be called on every resize to update the geometry of
-        # the widget. According to cProfile, executing the body of this 
-        # closure is 2x faster than the call to QWidgetItem.setGeometry. 
-        # The previous version of this method, `update_layout_geometry`, 
+        # the widget. According to cProfile, executing the body of this
+        # closure is 2x faster than the call to QWidgetItem.setGeometry.
+        # The previous version of this method, `update_layout_geometry`,
         # was 5x slower. This is explicitly not idiomatic Python code.
         # It exists purely for the sake of efficiency, justified with
         # profiling.
