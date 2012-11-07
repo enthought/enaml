@@ -105,6 +105,7 @@ class QtConstraintsWidget(QtWidgetComponent):
         self._hug = content['hug']
         self._resist = content['resist']
         self._user_cns = content['constraints']
+        self._size_hint_cns = []
         self.relayout()
 
     #--------------------------------------------------------------------------
