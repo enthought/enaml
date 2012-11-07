@@ -137,6 +137,11 @@ def scroll_area_factory():
     return QtScrollArea
 
 
+def separator_factory():
+    from .qt_separator import QtSeparator
+    return QtSeparator
+
+
 def slider_factory():
     from .qt_slider import QtSlider
     return QtSlider
@@ -215,6 +220,7 @@ QT_FACTORIES = {
     'ProgressBar': progress_bar_factory,
     'RadioButton': radio_button_factory,
     'ScrollArea': scroll_area_factory,
+    'Separator': separator_factory,
     'Slider': slider_factory,
     'SpinBox': spin_box_factory,
     'SplitItem': split_item_factory,

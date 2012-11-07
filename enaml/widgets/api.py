@@ -33,6 +33,7 @@ from .push_button import PushButton
 from .radio_button import RadioButton
 from .scroll_area import ScrollArea
 from .slider import Slider
+from .separator import Separator
 from .spin_box import SpinBox
 from .split_item import SplitItem
 from .splitter import Splitter
