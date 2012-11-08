@@ -18,6 +18,24 @@ from .wx_object import WxObject
 logger = logging.getLogger(__name__)
 
 
+class WxRootHandler(WxObject):
+    """ An object handler for managing root level application messages.
+
+    """
+    def on_action_message_batch(self, content):
+        """ Handle the 'message_batch' action sent by the Enaml
+        application.
+
+        """
+        for object_id, action, msg_content in content['batch']:
+            obj = WxObject.lookup_object(object_id)
+            if obj is None:
+                msg = "Invalid object id sent to QtApplication: %s:%s"
+                logger.warn(msg % (object_id, action))
+            else:
+                obj.handle_action(action, msg_content)
+
+
 class WxApplication(Application):
     """ A concrete implementation of an Enaml application.
 
@@ -49,6 +67,10 @@ class WxApplication(Application):
         self._wx_objects = defaultdict(list)
         epipe.Bind(EVT_ACTION_PIPE, self._on_enaml_action)
         wxpipe.Bind(EVT_ACTION_PIPE, self._on_wx_action)
+        # Create the root handler object for handling batched actions. A
+        # strong reference is kept by the WxObject class, so there is no
+        # need to store a reference to it on the application.
+        WxRootHandler(u'', None, None, None)
 
     #--------------------------------------------------------------------------
     # Abstract API Implementation
@@ -117,6 +139,17 @@ class WxApplication(Application):
 
         """
         self._wxcaller.TimedCall(ms, callback, *args, **kwargs)
+
+    def is_main_thread(self):
+        """ Indicates whether the caller is on the main gui thread.
+
+        Returns
+        -------
+        result : bool
+            True if called from the main gui thread. False otherwise.
+
+        """
+        return wx.Thread_IsMain()
 
     #--------------------------------------------------------------------------
     # Public API
