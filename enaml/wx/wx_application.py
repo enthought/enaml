@@ -182,9 +182,6 @@ class WxApplication(Application):
         """
         super(WxApplication, self).end_session(session_id)
         self._wx_objects.pop(session_id, None)
-        # XXX decide lifetime issues!
-        # XXX this is the most reliable way to cleanup.
-        import gc; gc.collect()
 
     def dispatch_wx_action(self, object_id, action, content):
         """ Dispatch an action to a wx object with the given id.
