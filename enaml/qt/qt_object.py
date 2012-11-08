@@ -398,7 +398,7 @@ class QtObject(object):
             self._parent = None
 
         # Finally, unparent the underlying toolkit widget. Since there
-        # should not longer be any public references to it, it will be
+        # should no longer be any public references to it, it will be
         # garbage collected and destroyed. This appears to be a safer
         # approach than calling widget.deleteLater().
         widget = self._widget
