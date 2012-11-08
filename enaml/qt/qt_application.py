@@ -18,7 +18,7 @@ from .qt_object import QtObject
 logger = logging.getLogger(__name__)
 
 
-class RootHandler(QtObject):
+class QtRootHandler(QtObject):
     """ An object handler for managing root level application messages.
 
     """
@@ -70,7 +70,7 @@ class QtApplication(Application):
         # Create the root handler object for handling batched actions. A
         # strong reference is kept by the QtObject class, so there is no
         # need to store a reference to it on the application.
-        RootHandler(u'', None, None, None)
+        QtRootHandler(u'', None, None, None)
 
     #--------------------------------------------------------------------------
     # Abstract API Implementation
