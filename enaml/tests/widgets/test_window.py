@@ -27,6 +27,8 @@ enamldef MainView(Window):
         self.assertEquals(self.client_window.title, '')
 
         self.server_window.title = "something else"
+
+        self.app.processEvents()
         self.assertEquals(self.client_window.title, self.server_window.title)
 
     def test_set_maximize(self):
@@ -44,6 +46,7 @@ enamldef MainView(Window):
     def test_set_restore(self):
         """ Test the Window's restore() method.
         """
+        assert hasattr(self.client_window, 'restore')
         self.server_window.restore()
         assert hasattr(self.client_window, 'restore')
 

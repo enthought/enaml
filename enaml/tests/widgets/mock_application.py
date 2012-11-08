@@ -7,6 +7,8 @@ from collections import defaultdict
 import logging
 
 from enaml.application import Application
+from enaml.qt.qt.QtCore import Qt
+from enaml.qt.qt.QtGui import QApplication
 from enaml.qt.q_action_pipe import QActionPipe
 from enaml.qt.q_deferred_caller import QDeferredCaller
 from enaml.qt.qt_factories import QT_FACTORIES
@@ -87,6 +89,8 @@ class MockApplication(Application):
 
         super(MockApplication, self).__init__(factories)
 
+        self._qapp = QApplication.instance() or QApplication([])
+
         self._enaml_pipe = epipe = QActionPipe()
         self._toolkit_pipe = tpipe = QActionPipe()
         self._qcaller = QDeferredCaller()
@@ -94,8 +98,8 @@ class MockApplication(Application):
         self._builder = MockBuilder()
         self._toolkit_objects = defaultdict(list)
 
-        epipe.actionPosted.connect(self._on_enaml_action)
-        tpipe.actionPosted.connect(self._on_toolkit_action)
+        epipe.actionPosted.connect(self._on_enaml_action, Qt.QueuedConnection)
+        tpipe.actionPosted.connect(self._on_toolkit_action, Qt.QueuedConnection)
 
     @property
     def pipe_interface(self):
@@ -159,6 +163,11 @@ class MockApplication(Application):
             raise ValueError('Invalid object id')
         obj.handle_action(action, content)
 
+
+    def processEvents(self):
+        """ This method is for testing only. It runs the event loop and process all the events."""
+        self._qapp.processEvents()
+        self._qapp.processEvents()
 
     #--------------------------------------------------------------------------
     # Private API
