@@ -105,7 +105,7 @@ class QtConstraintsWidget(QtWidgetComponent):
         self._hug = content['hug']
         self._resist = content['resist']
         self._user_cns = content['constraints']
-        self._size_hint_cns = []
+        self.clear_size_hint_constraints()
         self.relayout()
 
     #--------------------------------------------------------------------------
@@ -148,6 +148,26 @@ class QtConstraintsWidget(QtWidgetComponent):
         parent = self.parent()
         if isinstance(parent, QtConstraintsWidget):
             parent.replace_constraints(old_cns, new_cns)
+
+    def clear_constraints(self, cns):
+        """ Clear the given constraints from the current layout system.
+
+        The default behavior of this method is to proxy the call up the
+        tree of ancestors until it is either handled by a subclass which
+        has reimplemented this method (see QtContainer), or the ancestor
+        is not an instance of QtConstraintsWidget, at which point the
+        request is dropped. This method will *not* trigger a relayout.
+
+        Parameters
+        ----------
+        cns : list
+            The list of casuarius constraints to remove from the
+            current layout system.
+
+        """
+        parent = self.parent()
+        if isinstance(parent, QtConstraintsWidget):
+            parent.clear_constraints(cns)
 
     def size_hint_constraints(self):
         """ Creates the list of size hint constraints for this widget.
@@ -208,6 +228,19 @@ class QtConstraintsWidget(QtWidgetComponent):
             self._size_hint_cns = []
             new_cns = self.size_hint_constraints()
             parent.replace_constraints(old_cns, new_cns)
+
+    def clear_size_hint_constraints(self):
+        """ Clear the size hint constraints from the layout system.
+
+        """
+        # Only the ancestors of a widget care about its size hint,
+        # so this method attempts to replace the size hint constraints
+        # for the widget starting with its parent.
+        parent = self.parent()
+        if isinstance(parent, QtConstraintsWidget):
+            cns = self._size_hint_cns
+            self._size_hint_cns = []
+            parent.clear_constraints(cns)
 
     def hard_constraints(self):
         """ Generate the constraints which must always be applied.

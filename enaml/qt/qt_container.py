@@ -285,6 +285,23 @@ class QtContainer(QtConstraintsWidget):
         else:
             self._layout_owner.replace_constraints(old_cns, new_cns)
 
+    def clear_constraints(self, cns):
+        """ Clear the given constraints from the current layout.
+
+        Parameters
+        ----------
+        cns : list
+            The list of casuarius constraints to remove from the
+            current layout system.
+
+        """
+        if self._owns_layout:
+            manager = self._layout_manager
+            if manager is not None:
+                manager.replace_constraints(cns, [])
+        else:
+            self._layout_owner.clear_constraints(cns)
+
     def layout(self):
         """ The callback invoked by the layout manager when there are
         new layout values available.
