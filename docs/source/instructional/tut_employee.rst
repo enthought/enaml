@@ -104,7 +104,25 @@ using the differeent containers:
 
  * :py:class:`~enaml.widgets.container.Container`,
  * :py:class:`~enaml.widgets.form.Form`,
- * :py:class:`~enaml.widgets.group_box.GroupdBox`
+ * :py:class:`~enaml.widgets.group_box.GroupBox`
 
-The containers holds a set of widgets and apply a default set of layout rules
-on top of them. 
+Those widgets take care of aranging the layout of the child widgets using a set
+of constraints. In this tutorial, the only one that defines constraints is the
+outer container::
+
+    Container:
+        constraints << [
+            vertical(
+                top, top_box, btm_box.when(btm_box.visible), spacer, bottom
+            ),
+            horizontal(left, spacer.flex(), top_box, spacer.flex(), right),
+            horizontal(left, spacer.flex(), btm_box, spacer.flex(), right),
+            align('midline', top_form, btm_form, clear_invisible=False)
+        ]
+
+The constraints attribute of the :py:class:`~enaml.widgets.container.Container`
+is populated with a list of constraints. The user expresses how he wants the
+layout to be aranged:
+
+ * A vertical list of widgets with the top_box on top of the btm_box
+ * ...
