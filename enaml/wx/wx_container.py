@@ -28,11 +28,11 @@ def _convert_cn_info(info, owners):
         var = info['var']
         res = coeff * _convert_cn_info(var, owners)
     elif cn_type == 'linear_symbolic':
-        sym_name = info['name'].split('-')[-1]
+        sym_name = info['name']
         owner_id = info['owner']
         owner = owners.get(owner_id, None)
         if owner is None:
-            owner = owners[owner_id] = LayoutBox(info['name'], owner_id)
+            owner = owners[owner_id] = LayoutBox('_virtual', owner_id)
         res = owner.primitive(sym_name)
     else:
         msg = 'Unhandled constraint info type `%s`' % cn_type
