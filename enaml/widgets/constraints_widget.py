@@ -5,40 +5,11 @@
 from traits.api import Property, Enum, Instance, List
 
 from enaml.application import Application, ScheduledTask
-from enaml.layout.constraint_variable import ConstraintVariable
-from enaml.layout.layout_helpers import expand_constraints, ABConstrainable
+from enaml.layout.ab_constrainable import ABConstrainable
+from enaml.layout.box_model import BoxModel
+from enaml.layout.layout_helpers import expand_constraints
 
 from .widget_component import WidgetComponent
-
-
-class BoxModel(object):
-    """ A class which provides a simple constraints box model.
-
-    Primitive Variables:
-        left, top, width, height
-
-    Derived Variables:
-        right, bottom, v_center, h_center
-
-    """
-    def __init__(self, owner):
-        """ Initialize a BoxModel.
-
-        Parameters
-        ----------
-        owner : string
-            A string which uniquely identifies the owner of this box
-            model.
-
-        """
-        owner = str(owner)
-        for primitive in ('left', 'top', 'width', 'height'):
-            var = ConstraintVariable(primitive, owner)
-            setattr(self, primitive, var)
-        self.right = self.left + self.width
-        self.bottom = self.top + self.height
-        self.v_center = self.top + self.height / 2.0
-        self.h_center = self.left + self.width / 2.0
 
 
 #: A traits enum which defines the allowable constraints strengths.
