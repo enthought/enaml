@@ -244,7 +244,11 @@ class WxContainer(WxConstraintsWidget):
             self.init_layout()
             self.refresh()
             new_hint = widget.GetBestSize()
-            if old_hint != new_hint:
+            # If the size hint constraints are empty, it indicates that
+            # they were previously cleared. In this case, the layout
+            # system must be notified to rebuild its constraints, even
+            # if the numeric size hint hasn't changed.
+            if old_hint != new_hint or not self._size_hint_cns:
                 self.size_hint_updated()
         else:
             self._layout_owner.relayout()
