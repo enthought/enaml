@@ -90,7 +90,7 @@ class QContainer(QFrame):
     #: A signal which is emitted on a resize event.
     resized = Signal()
 
-    #: An invalid QSize used as the default value for class instances.
+    #: The internally cached size hint.
     _size_hint = QSize()
 
     def resizeEvent(self, event):
@@ -108,13 +108,13 @@ class QContainer(QFrame):
         hint = self._size_hint
         if not hint.isValid():
             hint = super(QContainer, self).sizeHint()
-        return hint
+        return QSize(hint)
 
     def setSizeHint(self, hint):
         """ Sets the size hint to use for this widget.
 
         """
-        self._size_hint = hint
+        self._size_hint = QSize(hint)
 
     def minimumSizeHint(self):
         """ Returns the minimum size hint for the widget.
@@ -604,25 +604,32 @@ class QtContainer(QtConstraintsWidget):
         """ Calculates the minimum size of the container which would
         allow all constraints to be satisfied.
 
-        If this container does not own its layout then it will return
-        an invalid QSize.
+        If the container's resist properties have a strength less than
+        'medium', the returned size will be zero. If the container does
+        not own its layout, the returned size will be invalid.
 
         Returns
         -------
         result : QSize
-            A (potentially) invalid QSize which is the minimum size
+            A (potentially invalid) QSize which is the minimum size
             required to satisfy all constraints.
 
         """
+        resist_width, resist_height = self._resist
+        shrink = ('ignore', 'weak')
+        if resist_width in shrink and resist_height in shrink:
+            return QSize(0, 0)
         if self._owns_layout and self._layout_manager is not None:
             primitive = self.layout_box.primitive
             width = primitive('width')
             height = primitive('height')
             w, h = self._layout_manager.get_min_size(width, height)
-            res = QSize(w, h)
-        else:
-            res = QSize()
-        return res
+            if resist_width in shrink:
+                w = 0
+            if resist_height in shrink:
+                h = 0
+            return QSize(w, h)
+        return QSize()
 
     def compute_best_size(self):
         """ Calculates the best size of the container.
@@ -631,15 +638,15 @@ class QtContainer(QtConstraintsWidget):
         size of the layout using a strength which is much weaker than a
         normal resize. This takes into account the size of any widgets
         which have their resist clip property set to 'weak' while still
-        allowing the window to be resized smaller by the user. If this
-        container does not own its layout then it will return an
-        invalid QSize.
+        allowing the window to be resized smaller by the user. If the
+        container does not own its layout, the returned size will be
+        invalid.
 
         Returns
         -------
         result : QSize
-            A (potentially) invalid QSize which is the minimum size
-            required to satisfy all constraints.
+            A (potentially invalid) QSize which is the best size that
+            will satisfy all constraints.
 
         """
         if self._owns_layout and self._layout_manager is not None:
@@ -647,36 +654,37 @@ class QtContainer(QtConstraintsWidget):
             width = primitive('width')
             height = primitive('height')
             w, h = self._layout_manager.get_min_size(width, height, weak)
-            res = QSize(w, h)
-        else:
-            res = QSize()
-        return res
+            return QSize(w, h)
+        return QSize()
 
     def compute_max_size(self):
         """ Calculates the maximum size of the container which would
         allow all constraints to be satisfied.
 
-        If this container does not own its layout then it will return
-        an invalid QSize.
+        If the container's hug properties have a strength less than
+        'medium', or if the container does not own its layout, the
+        returned size will be the Qt maximum.
 
         Returns
         -------
         result : QSize
-            A (potentially) invalid QSize which is the maximum size
+            A (potentially invalid) QSize which is the maximum size
             allowable while still satisfying all constraints.
 
         """
+        hug_width, hug_height = self._hug
+        expanding = ('ignore', 'weak')
+        if hug_width in expanding and hug_height in expanding:
+            return QSize(16777215, 16777215)
         if self._owns_layout and self._layout_manager is not None:
             primitive = self.layout_box.primitive
             width = primitive('width')
             height = primitive('height')
             w, h = self._layout_manager.get_max_size(width, height)
-            res = QSize(w, h)
-        else:
-            res = QSize()
-        if res.width() == -1:
-            res.setWidth(16777215)
-        if res.height() == -1:
-            res.setHeight(16777215)
-        return res
+            if w < 0 or hug_width in expanding:
+                w = 16777215
+            if h < 0 or hug_height in expanding:
+                h = 16777215
+            return QSize(w, h)
+        return QSize(16777215, 16777215)
 
