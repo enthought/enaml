@@ -1,26 +1,23 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2011, Enthought, Inc.
+#  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Bool, Str
+from traits.api import Str
 
-from .bounded_datetime import BoundedDatetime
+from .bounded_time import BoundedTime
 
 
-class DatetimeSelector(BoundedDatetime):
-    """ A datetime widget that displays a Python datetime.datetime
-    object using an appropriate toolkit specific control.
+class TimeSelector(BoundedTime):
+    """ A time widget that displays a Python datetime.time object using
+    an appropriate toolkit specific control.
 
     """
-    #: A python date format string to format the datetime. If None is
+    #: A python time format string to format the time. If None is
     #: supplied (or is invalid) the system locale setting is used.
     #: This may not be supported by all backends.
-    datetime_format = Str
+    time_format = Str
 
-    #: Whether to use a calendar popup for selecting the date.
-    calendar_popup = Bool(False)
-
-    #: How strongly to hugs the content width. A DatetimeSelector ignores
+    #: How strongly to hugs the content width. A TimeSelector ignores
     #: the width hug by default, so it expands freely in width.
     hug_width = 'ignore'
 
@@ -32,9 +29,8 @@ class DatetimeSelector(BoundedDatetime):
         initialize a client widget.
 
         """
-        snap = super(DatetimeSelector, self).snapshot()
-        snap['datetime_format'] = self.datetime_format
-        snap['calendar_popup'] = self.calendar_popup
+        snap = super(TimeSelector, self).snapshot()
+        snap['time_format'] = self.time_format
         return snap
 
     def bind(self):
@@ -42,6 +38,6 @@ class DatetimeSelector(BoundedDatetime):
         to bind any event handlers necessary.
 
         """
-        super(DatetimeSelector, self).bind()
-        self.publish_attributes('datetime_format', 'calendar_popup')
+        super(TimeSelector, self).bind()
+        self.publish_attributes('time_format')
 

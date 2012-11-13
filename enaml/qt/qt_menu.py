@@ -2,6 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from .qt.QtCore import Qt
 from .qt.QtGui import QMenu
 from .qt_action import QtAction
 from .qt_action_group import QtActionGroup
@@ -12,6 +13,72 @@ class QCustomMenu(QMenu):
     """ A custom subclass of QMenu which adds some convenience apis.
 
     """
+    def __init__(self, *args, **kwargs):
+        """ Initialize a QCustomMenu.
+
+        Parameters
+        ----------
+        *args, **kwargs
+            The positional and keyword arguments needed to initialize
+            a QMenu.
+
+        """
+        super(QCustomMenu, self).__init__(*args, **kwargs)
+        self._is_context_menu = False
+
+    #--------------------------------------------------------------------------
+    # Private API
+    #--------------------------------------------------------------------------
+    def _onShowContextMenu(self, pos):
+        """ A private signal handler for displaying the context menu.
+
+        This handler is connected to the context menu requested signal
+        on the parent widget when this menu is marked as a context
+        menu.
+
+        """
+        parent = self.parentWidget()
+        if parent is not None:
+            global_pos = parent.mapToGlobal(pos)
+            self.exec_(global_pos)
+
+    #--------------------------------------------------------------------------
+    # Public API
+    #--------------------------------------------------------------------------
+    def isContextMenu(self):
+        """ Whether this menu acts as a context menu for its parent.
+
+        Returns
+        -------
+        result : bool
+            True if this menu acts as a context menu, False otherwise.
+
+        """
+        return self._is_context_menu
+
+    def setContextMenu(self, context):
+        """ Set whether this menu acts as a context menu for its parent.
+
+        Parameters
+        ----------
+        context : bool
+            True if this menu should act as a context menu, False
+            otherwise.
+
+        """
+        old_context = self._is_context_menu
+        self._is_context_menu = context
+        if old_context != context:
+            parent = self.parentWidget()
+            if parent is not None:
+                handler = self._onShowContextMenu
+                if context:
+                    parent.setContextMenuPolicy(Qt.CustomContextMenu)
+                    parent.customContextMenuRequested.connect(handler)
+                else:
+                    parent.setContextMenuPolicy(Qt.DefaultContextMenu)
+                    parent.customContextMenuRequested.disconnect(handler)
+
     def removeActions(self, actions):
         """ Remove the given actions from the menu.
 
@@ -45,6 +112,7 @@ class QtMenu(QtWidgetComponent):
         """
         super(QtMenu, self).create(tree)
         self.set_title(tree['title'])
+        self.set_context_menu(tree['context_menu'])
 
     def init_layout(self):
         """ Initialize the layout for the underlying widget.
@@ -133,6 +201,12 @@ class QtMenu(QtWidgetComponent):
         """
         self.set_title(content['title'])
 
+    def on_action_set_context_menu(self, content):
+        """ Handle the 'set_context_menu' action from the Enaml widget.
+
+        """
+        self.set_context_menu(content['context_menu'])
+
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
@@ -150,4 +224,10 @@ class QtMenu(QtWidgetComponent):
 
         """
         self.widget().setTitle(title)
+
+    def set_context_menu(self, context):
+        """ Set whether or not the menu is a context menu.
+
+        """
+        self.widget().setContextMenu(context)
 

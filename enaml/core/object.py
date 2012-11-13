@@ -244,6 +244,37 @@ class Object(HasStrictTraits):
         self.set_parent(parent)
 
     #--------------------------------------------------------------------------
+    # Private API
+    #--------------------------------------------------------------------------
+    def _destroy(self, notify):
+        """ The private destructor implementation.
+
+        This method ensures that only the top-level object notifies the
+        client of the destruction. The destruction of all children of
+        an object is implicit and reduces the number of messages which
+        must be sent to the client.
+
+        Parameters
+        ----------
+        notify : bool
+            Whether to send the 'destroy' action to the client.
+
+        """
+        if notify:
+            self.send_action('destroy', {})
+        self.initialized = False
+        parent = self._parent
+        if parent is not None:
+            if parent.initialized:
+                self.set_parent(None)
+            else:
+                self._parent = None
+        children = self._children
+        self._children = ()
+        for child in children:
+            child._destroy(False)
+
+    #--------------------------------------------------------------------------
     # Property Methods
     #--------------------------------------------------------------------------
     def _get_base_names(self):
@@ -321,18 +352,7 @@ class Object(HasStrictTraits):
         sets the children to an empty tuple, then destroys the children.
 
         """
-        self.send_action('destroy', {})
-        self.initialized = False
-        parent = self._parent
-        if parent is not None:
-            if parent.initialized:
-                self.set_parent(None)
-            else:
-                self._parent = None
-        children = self._children
-        self._children = ()
-        for child in children:
-            child.destroy()
+        self._destroy(True)
 
     #--------------------------------------------------------------------------
     # Parenting Methods

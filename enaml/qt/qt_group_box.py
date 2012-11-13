@@ -9,7 +9,7 @@ from .qt.QtGui import QGroupBox
 from .qt_container import QtContainer
 
 
-QT_ALIGNMENTS = { 
+QT_ALIGNMENTS = {
     'left': Qt.AlignLeft,
     'right': Qt.AlignRight,
     'center': Qt.AlignHCenter,
@@ -23,7 +23,7 @@ class QResizingGroupBox(QGroupBox):
     #: A signal which is emitted on a resize event.
     resized = Signal()
 
-    #: An invalid QSize used as the default value for class instances.
+    #: The internally cached size hint.
     _size_hint = QSize()
 
     def resizeEvent(self, event):
@@ -40,19 +40,19 @@ class QResizingGroupBox(QGroupBox):
         """
         hint = self._size_hint
         if not hint.isValid():
-            hint = super(QResizingGroupBox, self).sizeHint()
-        return hint
+            return super(QResizingGroupBox, self).sizeHint()
+        return QSize(hint)
 
     def setSizeHint(self, hint):
         """ Sets the size hint to use for this widget.
 
         """
-        self._size_hint = hint
+        self._size_hint = QSize(hint)
 
     def minimumSizeHint(self):
         """ Returns the minimum size hint of the widget.
 
-        The minimum size hint for a QResizingGroupBox is conceptually 
+        The minimum size hint for a QResizingGroupBox is conceptually
         the same as its size hint, so we just return that value.
 
         """
@@ -72,12 +72,12 @@ class QtGroupBox(QtContainer):
         """
         widget = QResizingGroupBox(parent)
         if sys.platform == 'darwin':
-            # On OSX, the widget item layout rect is too small. 
+            # On OSX, the widget item layout rect is too small.
             # Setting this attribute forces the widget item to
             # use the widget rect for layout.
             widget.setAttribute(Qt.WA_LayoutUsesWidgetRect, True)
         return widget
-        
+
     def create(self, tree):
         """ Create and initialize the underlying widget.
 
@@ -124,20 +124,20 @@ class QtGroupBox(QtContainer):
         self.set_flat(content['flat'])
 
     #--------------------------------------------------------------------------
-    # Widget Update methods 
+    # Widget Update methods
     #--------------------------------------------------------------------------
     def set_title(self, title):
         """ Updates the title of group box.
 
         """
         self.widget().setTitle(title)
-    
+
     def set_flat(self, flat):
         """ Updates the flattened appearance of the group box.
 
         """
         self.widget().setFlat(flat)
-    
+
     def set_title_align(self, align):
         """ Updates the alignment of the title of the group box.
 

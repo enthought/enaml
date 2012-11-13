@@ -120,8 +120,9 @@ class QtSlider(QtControl):
         slider value has changed.
 
         """
-        content = {'value': self.widget().value()}
-        self.send_action('value_changed', content)
+        if 'value' not in self.loopback_guard:
+            content = {'value': self.widget().value()}
+            self.send_action('value_changed', content)
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -130,7 +131,8 @@ class QtSlider(QtControl):
         """ Set the value of the underlying widget.
 
         """
-        self.widget().setValue(value)
+        with self.loopback_guard('value'):
+            self.widget().setValue(value)
 
     def set_maximum(self, maximum):
         """ Set the maximum value of the underlying widget.

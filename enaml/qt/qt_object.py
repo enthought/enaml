@@ -2,7 +2,6 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import functools
 import logging
 
 from enaml.utils import LoopbackGuard
@@ -12,34 +11,6 @@ from .q_deferred_caller import QDeferredCaller
 
 
 logger = logging.getLogger(__name__)
-
-
-def deferred_updates(func):
-    """ A method decorator which will defer widget updates.
-
-    When used as a decorator for a QtObject, this will disable updates
-    on the underlying widget, and re-enable them on the next cycle of
-    the event loop after the method returns.
-
-    Parameters
-    ----------
-    func : function
-        A function object defined as a method on a QtObject.
-
-    """
-    @functools.wraps(func)
-    def closure(self, *args, **kwargs):
-        widget = self.widget()
-        if widget is not None and widget.isWidgetType():
-            widget.setUpdatesEnabled(False)
-            try:
-                res = func(self, *args, **kwargs)
-            finally:
-                QtObject.deferred_call(widget.setUpdatesEnabled, True)
-        else:
-            res = func(self, *args, **kwargs)
-        return res
-    return closure
 
 
 class QtObject(object):
@@ -258,12 +229,27 @@ class QtObject(object):
 
         Returns
         -------
-        result : QObject
+        result : QObject or None
             The toolkit object for this object, or None if it does not
             have a toolkit object.
 
         """
         return self._widget
+
+    def parent_widget(self):
+        """ Get the toolkit-specific parent widget for this object.
+
+        Returns
+        -------
+        result : QObject or None
+            The toolkit object for this object, or None if it does
+            not exist.
+
+        """
+        parent = self._parent
+        if parent is not None:
+            parent = parent.widget()
+        return parent
 
     def create_widget(self, parent, tree):
         """ A method which should be reimplemented by subclasses.
@@ -383,7 +369,7 @@ class QtObject(object):
             self._parent = None
 
         # Finally, unparent the underlying toolkit widget. Since there
-        # should not longer be any public references to it, it will be
+        # should no longer be any public references to it, it will be
         # garbage collected and destroyed. This appears to be a safer
         # approach than calling widget.deleteLater().
         widget = self._widget
@@ -422,7 +408,6 @@ class QtObject(object):
         """
         return self._children
 
-    @deferred_updates
     def set_parent(self, parent):
         """ Set the parent for this object.
 
@@ -562,7 +547,6 @@ class QtObject(object):
     #--------------------------------------------------------------------------
     # Action Handlers
     #--------------------------------------------------------------------------
-    @deferred_updates
     def on_action_children_changed(self, content):
         """ Handle the 'children_changed' action from the Enaml object.
 

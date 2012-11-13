@@ -52,6 +52,11 @@ def field_factory():
     return QtField
 
 
+def file_dialog_factory():
+    from .qt_file_dialog import QtFileDialog
+    return QtFileDialog
+
+
 def form_factory():
     from .qt_form import QtForm
     return QtForm
@@ -132,6 +137,11 @@ def scroll_area_factory():
     return QtScrollArea
 
 
+def separator_factory():
+    from .qt_separator import QtSeparator
+    return QtSeparator
+
+
 def slider_factory():
     from .qt_slider import QtSlider
     return QtSlider
@@ -167,6 +177,11 @@ def text_editor_factory():
     return QtTextEditor
 
 
+def time_selector_factory():
+    from .qt_time_selector import QtTimeSelector
+    return QtTimeSelector
+
+
 def tool_bar_factory():
     from .qt_tool_bar import QtToolBar
     return QtToolBar
@@ -188,6 +203,7 @@ QT_FACTORIES = {
     'DatetimeSelector': datetime_selector_factory,
     'DockPane': dock_pane_factory,
     'Field': field_factory,
+    'FileDialog': file_dialog_factory,
     'Form': form_factory,
     'GroupBox': group_box_factory,
     'Html': html_factory,
@@ -204,6 +220,7 @@ QT_FACTORIES = {
     'ProgressBar': progress_bar_factory,
     'RadioButton': radio_button_factory,
     'ScrollArea': scroll_area_factory,
+    'Separator': separator_factory,
     'Slider': slider_factory,
     'SpinBox': spin_box_factory,
     'SplitItem': split_item_factory,
@@ -211,6 +228,7 @@ QT_FACTORIES = {
     'Stack': stack_factory,
     'StackItem': stack_item_factory,
     'TextEditor': text_editor_factory,
+    'TimeSelector': time_selector_factory,
     'ToolBar': tool_bar_factory,
     'Window': window_factory,
 }

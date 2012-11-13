@@ -380,7 +380,13 @@ class WxObject(object):
             if self in parent._children:
                 parent._children.remove(self)
                 if parent._initialized:
-                    parent.child_removed(self)
+                    # Wx has a tendency to destroy the world out from
+                    # under the developer, particularly when a wxFrame
+                    # is closed. This guards against bad shutdowns by
+                    # not sending the child event to the parent if the
+                    # widget is already destroyed.
+                    if self._widget:
+                        parent.child_removed(self)
             self._parent = None
 
         # Finally, destroy the underlying toolkit widget, since there

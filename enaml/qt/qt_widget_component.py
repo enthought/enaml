@@ -77,13 +77,13 @@ class QtWidgetComponent(QtObject):
     # Public Api
     #--------------------------------------------------------------------------
     def widget_item(self):
-        """ Get the QWidgetItem for the underlying widget. 
+        """ Get the QWidgetItem for the underlying widget.
 
         Returns
         -------
         result : QWidgetItem
             The QWidgetItem to use for the underlying widget.
-            
+
         """
         res = self._widget_item
         if res is None:
@@ -101,7 +101,7 @@ class QtWidgetComponent(QtObject):
 
     def on_action_set_visible(self, content):
         """ Handle the 'set_visible' action from the Enaml widget.
-        
+
         """
         self.set_visible(content['visible'])
 
@@ -136,7 +136,7 @@ class QtWidgetComponent(QtObject):
         self.set_maximum_size(content['maximum_size'])
 
     def on_action_set_show_focus_rect(self, content):
-        """ Handle the 'set_show_focus_rect' action from the Enaml 
+        """ Handle the 'set_show_focus_rect' action from the Enaml
         widget.
 
         """
@@ -252,7 +252,7 @@ class QtWidgetComponent(QtObject):
 
         """
         pass
-        
+
     def set_show_focus_rect(self, show):
         """ Sets whether or not to show the focus rectangle around
         the widget. This is currently only supported on OSX.

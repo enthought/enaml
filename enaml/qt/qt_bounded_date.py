@@ -46,7 +46,7 @@ class QtBoundedDate(QtControl):
         self.set_date(as_qdate(content['date']))
 
     def on_action_set_minimum(self, content):
-        """ Hanlde the 'set_minimum' action from the Enaml widget.
+        """ Handle the 'set_minimum' action from the Enaml widget.
 
         """
         self.set_min_date(as_qdate(content['minimum']))
@@ -68,9 +68,10 @@ class QtBoundedDate(QtControl):
         widget the 'date_changed' action.
 
         """
-        qdate = self.get_date()
-        content = {'date': as_iso_date(qdate)}
-        self.send_action('date_changed', content)
+        if 'date' not in self.loopback_guard:
+            qdate = self.get_date()
+            content = {'date': as_iso_date(qdate)}
+            self.send_action('date_changed', content)
 
     #--------------------------------------------------------------------------
     # Abstract Methods
@@ -88,6 +89,9 @@ class QtBoundedDate(QtControl):
 
     def set_date(self, date):
         """ Set the widget's current date.
+
+        Implementations should enter the loopback guard using the key
+        'date' before setting the date.
 
         Parameters
         ----------

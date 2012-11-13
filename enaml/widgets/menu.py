@@ -2,7 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Unicode, Property, cached_property
+from traits.api import Bool, Unicode, Property, cached_property
 
 from .action import Action
 from .action_group import ActionGroup
@@ -15,7 +15,10 @@ class Menu(WidgetComponent):
     """
     #: The title to use for the menu.
     title = Unicode
-    
+
+    #: Whether this menu should behave as a context menu for its parent.
+    context_menu = Bool(False)
+
     #: The items in the menu: Menu | Action | ActionGroup
     items = Property(depends_on='children')
 
@@ -28,6 +31,7 @@ class Menu(WidgetComponent):
         """
         snap = super(Menu, self).snapshot()
         snap['title'] = self.title
+        snap['context_menu'] = self.context_menu
         return snap
 
     def bind(self):
@@ -35,7 +39,7 @@ class Menu(WidgetComponent):
 
         """
         super(Menu, self).bind()
-        self.publish_attributes('title')
+        self.publish_attributes('title', 'context_menu')
 
     #--------------------------------------------------------------------------
     # Private API

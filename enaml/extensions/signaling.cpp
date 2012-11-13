@@ -30,6 +30,11 @@ typedef struct {
 } BoundSignal;
 
 
+#define FREELIST_MAX 128
+static int numfree = 0;
+static BoundSignal* freelist[ FREELIST_MAX ];
+
+
 static PyObject* SignalsKey;
 static PyObject* WeakMethod;
 static PyObject* CallableRef;
@@ -328,7 +333,7 @@ _Disconnector_call( _Disconnector* self, PyObject* args, PyObject* kwargs )
 
     PyWeakrefPtr objref( self->objref, true );
     PyObjectPtr obj( objref.get_object() );
-    if( !obj )
+    if( obj.is_None() )
         Py_RETURN_NONE;
 
     PyDictPtr dict;
@@ -404,7 +409,7 @@ PyTypeObject _Disconnector_Type = {
     (getattrofunc)0,                        /* tp_getattro */
     (setattrofunc)0,                        /* tp_setattro */
     (PyBufferProcs*)0,                      /* tp_as_buffer */
-    Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_HAVE_GC, /* tp_flags */
+    Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_GC, /* tp_flags */
     _Disconnector__doc__,                   /* Documentation string */
     (traverseproc)_Disconnector_traverse,   /* tp_traverse */
     (inquiry)_Disconnector_clear,           /* tp_clear */
@@ -494,7 +499,10 @@ BoundSignal_dealloc( BoundSignal* self )
 {
     PyObject_GC_UnTrack( self );
     BoundSignal_clear( self );
-    self->ob_type->tp_free( reinterpret_cast<PyObject*>( self ) );
+    if( numfree < FREELIST_MAX )
+        freelist[ numfree++ ] = self;
+    else
+        self->ob_type->tp_free( reinterpret_cast<PyObject*>( self ) );
 }
 
 
@@ -525,7 +533,7 @@ BoundSignal_emit( BoundSignal* self, PyObject* args, PyObject* kwargs )
 {
     PyWeakrefPtr objref( self->objref, true );
     PyObjectPtr obj( objref.get_object() );
-    if( !obj )
+    if( obj.is_None() )
         Py_RETURN_NONE;
 
     PyDictPtr dict;
@@ -593,7 +601,7 @@ BoundSignal_connect( BoundSignal* self, PyObject* slot )
 {
     PyWeakrefPtr objref( self->objref, true );
     PyObjectPtr obj( objref.get_object() );
-    if( !obj )
+    if( obj.is_None() )
         Py_RETURN_NONE;
 
     PyDictPtr dict;
@@ -742,7 +750,7 @@ PyTypeObject BoundSignal_Type = {
     (getattrofunc)0,                        /* tp_getattro */
     (setattrofunc)0,                        /* tp_setattro */
     (PyBufferProcs*)0,                      /* tp_as_buffer */
-    Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_HAVE_GC, /* tp_flags */
+    Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_GC,  /* tp_flags */
     BoundSignal__doc__,                     /* Documentation string */
     (traverseproc)BoundSignal_traverse,     /* tp_traverse */
     (inquiry)BoundSignal_clear,             /* tp_clear */
@@ -784,9 +792,19 @@ _BoundSignal_New( PyObject* owner, PyObject* objref )
 {
     PyObjectPtr ownerptr( owner, true );
     PyObjectPtr objrefptr( objref, true );
-    PyObjectPtr bsigptr( PyType_GenericAlloc( &BoundSignal_Type, 0 ) );
-    if( !bsigptr )
-        return 0;
+    PyObjectPtr bsigptr;
+    if( numfree > 0 )
+    {
+        PyObject* o = reinterpret_cast<PyObject*>( freelist[ --numfree ] );
+        _Py_NewReference( o );
+        bsigptr = o;
+    }
+    else
+    {
+        bsigptr = PyType_GenericAlloc( &BoundSignal_Type, 0 );
+        if( !bsigptr )
+            return 0;
+    }
     BoundSignal* bsig = reinterpret_cast<BoundSignal*>( bsigptr.get() );
     bsig->owner = ownerptr.release();
     bsig->objref = objrefptr.release();

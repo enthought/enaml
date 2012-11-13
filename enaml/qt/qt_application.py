@@ -7,7 +7,7 @@ import logging
 
 from enaml.application import Application
 
-from .qt.QtCore import Qt
+from .qt.QtCore import Qt, QThread
 from .qt.QtGui import QApplication
 from .q_action_pipe import QActionPipe
 from .q_deferred_caller import QDeferredCaller
@@ -16,6 +16,24 @@ from .qt_object import QtObject
 
 
 logger = logging.getLogger(__name__)
+
+
+class QtRootHandler(QtObject):
+    """ An object handler for managing root level application messages.
+
+    """
+    def on_action_message_batch(self, content):
+        """ Handle the 'message_batch' action sent by the Enaml
+        application.
+
+        """
+        for object_id, action, msg_content in content['batch']:
+            obj = QtObject.lookup_object(object_id)
+            if obj is None:
+                msg = "Invalid object id sent to QtApplication: %s:%s"
+                logger.warn(msg % (object_id, action))
+            else:
+                obj.handle_action(action, msg_content)
 
 
 class QtApplication(Application):
@@ -49,6 +67,10 @@ class QtApplication(Application):
         self._qt_objects = defaultdict(list)
         epipe.actionPosted.connect(self._on_enaml_action, Qt.QueuedConnection)
         qpipe.actionPosted.connect(self._on_qt_action, Qt.QueuedConnection)
+        # Create the root handler object for handling batched actions. A
+        # strong reference is kept by the QtObject class, so there is no
+        # need to store a reference to it on the application.
+        QtRootHandler(u'', None, None, None)
 
     #--------------------------------------------------------------------------
     # Abstract API Implementation
@@ -120,6 +142,17 @@ class QtApplication(Application):
         """
         self._qcaller.timedCall(ms, callback, *args, **kwargs)
 
+    def is_main_thread(self):
+        """ Indicates whether the caller is on the main gui thread.
+
+        Returns
+        -------
+        result : bool
+            True if called from the main gui thread. False otherwise.
+
+        """
+        return QThread.currentThread() == self._qapp.thread()
+
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
@@ -151,9 +184,6 @@ class QtApplication(Application):
         """
         super(QtApplication, self).end_session(session_id)
         self._qt_objects.pop(session_id, None)
-        # XXX decide lifetime issues!
-        # XXX this is the most reliable way to cleanup.
-        import gc; gc.collect()
 
     def dispatch_qt_action(self, object_id, action, content):
         """ Dispatch an action to a qt object with the given id.
