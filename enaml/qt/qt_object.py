@@ -4,7 +4,6 @@
 #------------------------------------------------------------------------------
 import functools
 import logging
-import sys
 
 from enaml.utils import LoopbackGuard
 
@@ -13,39 +12,6 @@ from .q_deferred_caller import QDeferredCaller
 
 
 logger = logging.getLogger(__name__)
-
-
-def deferred_updates(func):
-    """ A method decorator which will defer widget updates.
-
-    When used as a decorator for a QtObject, this will disable updates
-    on the underlying widget, and re-enable them on the next cycle of
-    the event loop after the method returns.
-
-    Parameters
-    ----------
-    func : function
-        A function object defined as a method on a QtObject.
-
-    """
-    # This just causes flicker on OSX, and so can be turned off.
-    # XXX check if this is still needed on Windows. The collapsed
-    # layout events may have taken care of the need for it.
-    if sys.platform == 'darwin':
-        return func
-    @functools.wraps(func)
-    def closure(self, *args, **kwargs):
-        widget = self.widget()
-        if widget is not None and widget.isWidgetType():
-            widget.setUpdatesEnabled(False)
-            try:
-                res = func(self, *args, **kwargs)
-            finally:
-                QtObject.deferred_call(widget.setUpdatesEnabled, True)
-        else:
-            res = func(self, *args, **kwargs)
-        return res
-    return closure
 
 
 class QtObject(object):
@@ -443,7 +409,6 @@ class QtObject(object):
         """
         return self._children
 
-    @deferred_updates
     def set_parent(self, parent):
         """ Set the parent for this object.
 
@@ -583,7 +548,6 @@ class QtObject(object):
     #--------------------------------------------------------------------------
     # Action Handlers
     #--------------------------------------------------------------------------
-    @deferred_updates
     def on_action_children_changed(self, content):
         """ Handle the 'children_changed' action from the Enaml object.
 
