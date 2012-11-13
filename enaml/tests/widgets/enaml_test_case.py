@@ -2,6 +2,7 @@
 #  Copyright (c) 2011-2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from contextlib import contextmanager
 import itertools
 import types
 import unittest
@@ -10,7 +11,47 @@ from enaml.core.parser import parse
 from enaml.core.enaml_compiler import EnamlCompiler
 from enaml.stdlib.sessions import simple_session
 
-from .mock_application import MockApplication
+from enaml.qt.qt_application import QtApplication
+
+class TestingQtApplication(QtApplication):
+    """ Custom application used only by the testing framework for QT.
+
+    It prevent the application from starting the event loop and exposes a
+    function as a context manager to execute a set of actions before forcing the
+    events to be processed.
+
+    """
+
+    def start(self):
+        """ Start the application's main event loop.
+
+        """
+        pass
+
+    @contextmanager
+    def process_events(self):
+        """ Process all the pending events on the QT event loop.
+
+        This method is for testing only. It runs the event loop and process all
+        the events.
+
+        """
+
+        yield
+
+        # From QT Documentation
+        # Immediately dispatches all events which have been previously queued 
+        # with QCoreApplication::postEvent().
+        # Events from the window system are not dispatched by this function, 
+        # but by processEvents().
+        self._qapp.sendPostedEvents()
+
+        # Processes all pending events for the calling thread
+        self._qapp.processEvents()
+        self._qapp.sendPostedEvents()
+        self._qapp.processEvents()
+
+
 
 
 _session_counter = itertools.count()
@@ -33,8 +74,8 @@ class EnamlTestCase(unittest.TestCase):
 
         """
 
-        if type_name == root.widget_type():
-            return root
+        if type_name in [ cls.__name__ for cls in type(root).__mro__]:
+            return root.widget()
 
         for child in root.children():
             found = self.find_client_widget(child, type_name)
@@ -48,7 +89,7 @@ class EnamlTestCase(unittest.TestCase):
         finds a widget of a particular type.
 
         """
-        if root.__class__.__name__ == type_name:
+        if type_name in [cls.__name__ for cls in type(root).__mro__]:
             return root
 
         for child in root.children:
@@ -87,10 +128,10 @@ class EnamlTestCase(unittest.TestCase):
         session_name =  get_unique_session_identifier()
         view_factory = simple_session(session_name, 'test', View)
 
-        self.app = MockApplication.instance()
+        self.app = TestingQtApplication.instance()
 
         if self.app is None:
-            self.app = MockApplication([])
+            self.app = TestingQtApplication([])
 
         self.app.add_factories([view_factory])
 
@@ -104,7 +145,7 @@ class EnamlTestCase(unittest.TestCase):
         self.view = session.session_objects[0]
 
         # retrieve the enaml client side root widget
-        self.client_view = self.app._toolkit_objects[session_id][0]
+        self.client_view = self.app._qt_objects[session_id][0]
 
     def tearDown(self):
 

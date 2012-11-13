@@ -19,36 +19,46 @@ enamldef MainView(Window):
 """
         self.parse_and_create(enaml_source)
         self.server_window = self.find_server_widget(self.view, "MainView")
-        self.client_window = self.find_client_widget(self.client_view, "MainView")
+        self.client_window = self.find_client_widget(self.client_view, "QtWindow")
 
     def test_set_title(self):
         """ Test the setting of a Window's title attribute.
         """
-        self.assertEquals(self.client_window.title, '')
+        self.assertEquals(self.client_window.windowTitle(), '')
 
-        self.server_window.title = "something else"
+        with self.app.process_events():
+            self.server_window.title = "something else"
 
-        self.app.processEvents()
-        self.assertEquals(self.client_window.title, self.server_window.title)
+        self.assertEquals(self.client_window.windowTitle(), self.server_window.title)
 
     def test_set_maximize(self):
         """ Test the Window's maximize() method.
         """
-        self.server_window.maximize()
-        assert hasattr(self.client_window, 'maximize')
+        self.assertFalse(self.client_window.isMaximized())
+
+        with self.app.process_events():
+            self.server_window.maximize()
+
+        self.assertTrue(self.client_window.isMaximized())
 
     def test_set_minimize(self):
         """ Test the Window's minimize() method.
         """
-        self.server_window.minimize()
-        assert hasattr(self.client_window, 'minimize')
+        self.assertFalse(self.client_window.isMinimized())
+
+        with self.app.process_events():
+            self.server_window.minimize()
+
+        self.assertTrue(self.client_window.isMinimized())
 
     def test_set_restore(self):
         """ Test the Window's restore() method.
         """
-        assert hasattr(self.client_window, 'restore')
-        self.server_window.restore()
-        assert hasattr(self.client_window, 'restore')
+        self.assertFalse(self.client_window.isMinimized())
+        with self.app.process_events():
+            self.server_window.minimize()
+            self.server_window.restore()
+        self.assertFalse(self.client_window.isMinimized())
 
 
 if __name__ == '__main__':
