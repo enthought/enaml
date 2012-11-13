@@ -2,7 +2,6 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import functools
 import logging
 
 from enaml.utils import LoopbackGuard
