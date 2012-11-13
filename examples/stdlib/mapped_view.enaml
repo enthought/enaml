@@ -103,6 +103,7 @@ enamldef Main(Window):
     attr main_model = Model()
     Container:
         constraints << [vbox(*widgets)]
+        hug_height = 'strong'
         ComboBox:
             items << [obj.name for obj in main_model.objects]
             index := main_model.index
