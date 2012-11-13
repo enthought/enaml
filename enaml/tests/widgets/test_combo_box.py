@@ -20,20 +20,39 @@ enamldef MainView(Window):
 """
         self.parse_and_create(enaml_source)
         self.server_widget = self.find_server_widget(self.view, "ComboBox")
-        self.client_widget = self.find_client_widget(self.client_view, "ComboBox")
+        self.client_widget = self.find_client_widget(
+            self.client_view, "QtComboBox"
+        )
 
     def test_set_items(self):
-        """ Test the setting of a ComboBox's items attribute
-        """
-        self.server_widget.items = ["foo", "bar", "baz", "qux"]
-        assert self.client_widget.items == self.server_widget.items
+        """ Test the setting of a ComboBox's items attribute. """
+
+        expected_result =  ["foo", "bar", "baz", "qux"]
+
+        with self.app.process_events():
+            self.server_widget.items = expected_result
+
+        result = [
+            self.client_widget.itemText(i) for i in xrange(self.client_widget.count())
+        ]
+
+        self.assertEquals(expected_result, result)
 
     def test_set_value(self):
-        """ Test the setting of a ComboBox's value attribute
-        """
-        self.server_widget.items = ["foo", "bar", "baz"]
-        self.server_widget.index = 1
-        assert self.client_widget.index == self.server_widget.index
-        self.server_widget.index = 2
-        assert self.client_widget.index == self.server_widget.index
+        """ Test the setting of a ComboBox's value attribute. """
+
+        with self.app.process_events():
+            self.server_widget.items = ["foo", "bar", "baz"]
+            self.server_widget.index = 1
+
+        self.assertEquals(self.server_widget.index, self.client_widget.currentIndex())
+
+        with self.app.process_events():
+            self.server_widget.index = 2
+
+        self.assertEquals(self.server_widget.index, self.client_widget.currentIndex())
+
+if __name__ == '__main__':
+    import unittest
+    unittest.main()
 
