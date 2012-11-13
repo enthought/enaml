@@ -4,6 +4,7 @@
 #------------------------------------------------------------------------------
 import functools
 import logging
+import sys
 
 from enaml.utils import LoopbackGuard
 
@@ -27,6 +28,11 @@ def deferred_updates(func):
         A function object defined as a method on a QtObject.
 
     """
+    # This just causes flicker on OSX, and so can be turned off.
+    # XXX check if this is still needed on Windows. The collapsed
+    # layout events may have taken care of the need for it.
+    if sys.platform == 'darwin':
+        return func
     @functools.wraps(func)
     def closure(self, *args, **kwargs):
         widget = self.widget()
