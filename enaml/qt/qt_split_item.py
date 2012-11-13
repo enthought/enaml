@@ -47,7 +47,7 @@ class QSplitItem(QWidget):
 
         """
         self._split_widget = widget
-        self.layout().addWidget(widget)
+        self.layout().setWidget(widget)
 
 
 class QtSplitItem(QtWidgetComponent):

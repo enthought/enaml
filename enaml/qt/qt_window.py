@@ -104,7 +104,7 @@ class QWindow(QFrame):
 
         """
         self._central_widget = widget
-        self.layout().addWidget(widget)
+        self.layout().setWidget(widget)
 
     def explicitMinimumSize(self):
         """ Return the explicit minimum size for this widget.

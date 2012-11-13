@@ -108,7 +108,7 @@ class QPage(QWidget):
 
         """
         self._page_widget = widget
-        self.layout().addWidget(widget)
+        self.layout().setWidget(widget)
 
     def isOpen(self):
         """ Get whether or not the page is open.
