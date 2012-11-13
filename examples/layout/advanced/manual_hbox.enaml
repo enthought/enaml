@@ -8,7 +8,7 @@ This example demonstrates how one would manually define the constraints
 for an `hbox` style layout. In fact, the `hbox` layout helper generates
 the primitive constraints in a fashion very similar to this example.
 The intent of this example is to demonstrate that all of the layout
-helper functions can be distilled down to a list of primitive 
+helper functions can be distilled down to a list of primitive
 constraints.
 
 """
@@ -17,6 +17,7 @@ from enaml.widgets.api import Window, Container, PushButton
 
 enamldef Main(Window):
     Container:
+        hug_height = 'strong'
         constraints = [
             # Horizontal Constraints
             contents_left == pb1.left,

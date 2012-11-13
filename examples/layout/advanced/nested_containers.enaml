@@ -4,9 +4,9 @@
 #------------------------------------------------------------------------------
 """ An example showing the unified layout across nested Containers.
 
-There are three Containers under the window, two sharing space on top and 
-one taking up the entire horizontal space on the bottom. The two on top 
-simply consist of a Label and a Field. The Container on the left is 
+There are three Containers under the window, two sharing space on top and
+one taking up the entire horizontal space on the bottom. The two on top
+simply consist of a Label and a Field. The Container on the left is
 constrained to be slightly larger than the other by a constant multiplier.
 
 The Container on the bottom contains the more complicated example from
@@ -48,16 +48,16 @@ enamldef Main(Window):
             label_text = "Left:"
             hug_height = 'strong'
         LabeledField:
-            id: top_right_cntr 
+            id: top_right_cntr
             label_text = "Right:"
             hug_height = 'strong'
         Container:
             id: bottom_cntr
             constraints = [
                 vbox(
-                    html_frame, 
+                    html_frame,
                     hbox(
-                        add_button, remove_button, spacer, 
+                        add_button, remove_button, spacer,
                         change_mode_button, spacer, share_button,
                     ),
                 ),
