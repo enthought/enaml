@@ -15,6 +15,8 @@ from .datetime_selector import DatetimeSelector
 from .dock_pane import DockPane
 from .field import Field
 from .file_dialog import FileDialog
+from .flow_area import FlowArea
+from .flow_item import FlowItem
 from .form import Form
 from .group_box import GroupBox
 from .html import Html

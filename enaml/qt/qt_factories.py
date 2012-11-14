@@ -57,6 +57,16 @@ def file_dialog_factory():
     return QtFileDialog
 
 
+def flow_area_factory():
+    from .qt_flow_area import QtFlowArea
+    return QtFlowArea
+
+
+def flow_item_factory():
+    from .qt_flow_item import QtFlowItem
+    return QtFlowItem
+
+
 def form_factory():
     from .qt_form import QtForm
     return QtForm
@@ -204,6 +214,8 @@ QT_FACTORIES = {
     'DockPane': dock_pane_factory,
     'Field': field_factory,
     'FileDialog': file_dialog_factory,
+    'FlowArea': flow_area_factory,
+    'FlowItem': flow_item_factory,
     'Form': form_factory,
     'GroupBox': group_box_factory,
     'Html': html_factory,
