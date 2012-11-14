@@ -3,6 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt.QtGui import QFrame
+from .q_flow_layout import AbstractFlowWidget, FlowLayoutData
 from .q_single_widget_layout import QSingleWidgetLayout
 from .qt_container import QtContainer
 from .qt_widget_component import QtWidgetComponent
@@ -24,7 +25,11 @@ class QFlowItem(QFrame):
         """
         super(QFlowItem, self).__init__(*args, **kwargs)
         self._flow_widget = None
+        self._layout_data = FlowLayoutData()
         self.setLayout(QSingleWidgetLayout())
+
+    def layoutData(self):
+        return self._layout_data
 
     def flowWidget(self):
         """ Get the flow widget for this flow item.
@@ -48,6 +53,9 @@ class QFlowItem(QFrame):
         """
         self._flow_widget = widget
         self.layout().setWidget(widget)
+
+
+AbstractFlowWidget.register(QFlowItem)
 
 
 class QtFlowItem(QtWidgetComponent):
