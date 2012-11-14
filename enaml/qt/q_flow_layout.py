@@ -304,7 +304,7 @@ class _HLayoutContainer(object):
         """
         height = 0
         space = max(0, space)
-        total = self._total_diff
+        total = max(self._total_diff, 1) # Guard against divide by zero
         for row in self._rows:
             d = space * row.diff / total
             row.height = min(row.min_height + d, row.des_height)
@@ -691,6 +691,8 @@ class QFlowLayout(QLayout):
             layout flow.
 
         """
+        #import time
+        #t1 = time.clock()
         if self._orientation == Qt.Vertical:
             res = self._doVerticalLayout(rect, test)
             # s = rect.size()
@@ -698,6 +700,8 @@ class QFlowLayout(QLayout):
             # self._wfh_size = s
         else:
             res = self._doHorizontalLayout(rect, test)
+        #t2 = time.clock()
+        #print t2 - t1
         return res
 
     def _doHorizontalLayout(self, rect, test):
