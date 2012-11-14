@@ -53,9 +53,6 @@ class QSingleWidgetLayout(QLayout):
         self.setContentsMargins(0, 0, 0, 0)
         self._item = None
 
-    #--------------------------------------------------------------------------
-    # Public API
-    #--------------------------------------------------------------------------
     def widget(self):
         """ Get the widget being managed by this layout.
 
@@ -82,13 +79,10 @@ class QSingleWidgetLayout(QLayout):
         self.takeAt(0)
         if widget is not None:
             self.addChildWidget(widget)
-            self.addItem(QSingleWidgetItem(widget))
-            widget.setVisible(True)
-            self.update()
+            self._item = QSingleWidgetItem(widget)
+            widget.show()
+            self.invalidate()
 
-    #--------------------------------------------------------------------------
-    # Private API
-    #--------------------------------------------------------------------------
     def addWidget(self, widget):
         """ Overridden parent class method. This method redirects to the
         `setWidget` method. User code should call `setWidget` instead.
@@ -104,8 +98,12 @@ class QSingleWidgetLayout(QLayout):
         """ A virtual method implementation which sets the layout item
         in the layout. The old item will be overridden.
 
+        This method should not be used. The method `setWidget` should be
+        used instead.
+
         """
-        self._item = item
+        msg = 'Use `setWidget` instead.'
+        raise NotImplementedError(msg)
 
     def count(self):
         """ A virtual method implementation which returns 0 if no layout
@@ -128,13 +126,11 @@ class QSingleWidgetLayout(QLayout):
 
         """
         if idx == 0:
-            res = self._item
+            item = self._item
             self._item = None
-            if res is not None:
-                old = res.widget()
-                if old is not None:
-                    old.hide()
-            return res
+            if item is not None:
+                item.widget().hide()
+            return item
 
     def sizeHint(self):
         """ A virtual method implementation which returns the size hint
