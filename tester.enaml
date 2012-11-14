@@ -2,79 +2,63 @@ from enaml.application import Application
 from enaml.session import Session
 from enaml.session_factory import SessionFactory
 from enaml.qt.qt_application import QtApplication
-from enaml.widgets.api import Field, Window, PushButton, Container, Slider, ProgressBar, Include
-from enaml.core.declarative import Declarative
+from enaml.widgets.api import *
+from enaml.layout.api import *
 
 
-enamldef TimedProgress(ProgressBar):
-    event run
-    event _timeout
-    attr _running: bool = False
-    run ::
-        if not _running:
-            _timeout()
-    _timeout ::
-        if value < 100:
-            self._running = True
-            self.value += 1
-            Application.instance().timed_call(100, _timeout)
-        else:
-            self.value = 0
-            self._running = False
+enamldef Item(FlowItem):
+    attr n
+    Container:
+        padding = 0
+        PushButton: pass
+        Field: text = str(n)
+        Field: text = str(n)
+        Slider: pass
+        #Html:
+        #    resist_height = 'weak'
+        #    constraints = [height >= (15 if n >= 3 else 60)]
 
-
-def printer():
-    print 'printer'
-
-from enaml.layout.api import vbox
 
 enamldef View(Window):
     Container:
-        hug_height = 'ignore'
-        constraints << [vbox(*widgets)]
-        PushButton:
-            text << str(sldr.value)
-            clicked :: Application.instance().end_session(sid)
-        PushButton:
-            text = 'Bar'
-            clicked :: prog.run()
-        PushButton:
-            text = 'Baz'
-            clicked :: 
-                print 'before'
-                Application.instance().timed_call(1000, printer)
-                print 'after'
-        PushButton:
-            id: add
-            text = 'Add'
-            clicked :: inc.objects.extend([Field() for _ in range(10)])
-            #clicked :: Field(parent)
-        PushButton:
-            text = 'Remove'
-            clicked :: del inc.objects[len(inc.objects)/2:]
-            #clicked :: add.set_parent(inc2.parent)
-        Slider:
-            id: sldr
-        Include:
-            id: inc
-            objects = [Field(), Field(), Field()]
-        TimedProgress:
-            id: prog
-        Container:
-            hug_height = 'strong'
-            constraints << [vbox(*widgets)]
-            PushButton:
-                text = 'foo'
+        FlowArea: area:
+            align << cbox.items[cbox.index]
+            orientation << cbox2.items[cbox2.index]
+            FlowItem:
+                Form:
+                    padding = 0
+                    Label:
+                        text = 'Horizontal Spacing'
+                    Slider:
+                        minimum = 0
+                        maximum = 50
+                        value := area.horizontal_spacing
+                    Label:
+                        text = 'Vertical Spacing'
+                    Slider:
+                        minimum = 0
+                        maximum = 50
+                        value := area.vertical_spacing
+                    Label:
+                        text = 'Orientation'
+                    ComboBox: cbox2:
+                        items = ['horizontal', 'vertical']
+                        index = 0
+                    Label:
+                        text = 'Align'
+                    ComboBox: cbox:
+                        items = ['leading', 'center', 'trailing']
+                        index = 0
+                    CheckBox:
+                        text = 'Reverse Fill'
+                        checked := area.reverse_fill
+            Include:
+                objects = [Item(n=i) for i in range(25)]
 
-
-
-sid = None
 
 class FooSession(Session):
 
     def on_open(self):
-        global sid
-        sid = self.session_id
         return View()
 
 
