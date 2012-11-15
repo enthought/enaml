@@ -2,7 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Bool, Enum, Range, Property, cached_property
+from traits.api import Enum, Range, Property, cached_property
 
 from enaml.core.trait_types import CoercingInstance
 from enaml.layout.geometry import Box
@@ -16,14 +16,13 @@ class FlowArea(ConstraintsWidget):
     the end of the available space.
 
     """
+    #: The flow direction of the layout.
+    direction = Enum(
+        'left_to_right', 'right_to_left', 'top_to_bottom', 'bottom_to_top'
+    )
+
     #: The alignment of a line of items within the layout.
-    align = Enum('leading', 'center', 'trailing')
-
-    #: The orientation of a line of items in the layout.
-    orientation = Enum('horizontal', 'vertical')
-
-    #: Whether items fill a line in the layout in reverse.
-    reverse_fill = Bool(False)
+    align = Enum('leading', 'trailing', 'center', 'justify')
 
     #: The amount of horizontal space to place between items.
     horizontal_spacing = Range(low=0, value=10)
@@ -49,9 +48,8 @@ class FlowArea(ConstraintsWidget):
 
         """
         snap = super(FlowArea, self).snapshot()
+        snap['direction'] = self.direction
         snap['align'] = self.align
-        snap['orientation'] = self.orientation
-        snap['reverse_fill'] = self.reverse_fill
         snap['horizontal_spacing'] = self.horizontal_spacing
         snap['vertical_spacing'] = self.vertical_spacing
         snap['margins'] = self.margins
@@ -63,8 +61,8 @@ class FlowArea(ConstraintsWidget):
         """
         super(FlowArea, self).bind()
         attrs = (
-            'align', 'orientation', 'reverse_fill', 'horizontal_spacing',
-            'vertical_spacing', 'margins',
+            'direction', 'align', 'horizontal_spacing','vertical_spacing',
+            'margins',
         )
         self.publish_attributes(*attrs)
 

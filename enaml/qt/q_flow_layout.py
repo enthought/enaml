@@ -3,7 +3,6 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from abc import ABCMeta, abstractmethod
-import time
 
 from .qt.QtCore import Qt, QSize, QRect
 from .qt.QtGui import QLayout, QWidgetItem
@@ -53,20 +52,20 @@ class FlowLayoutData(object):
     #: the amount of space that is taken up by an expandable item in the
     #: direction of the layout flow, relative to the other items in the
     #: line. The minimum is 0 which means the item should not expand.
-    #: There is no maximum.
+    #: There is no maximum. The default is 0.
     stretch = 0
 
     #: The ortho stretch factor of the layout item. This value controls
     #: the amount of space that is taken up by an expandable item in the
     #: direction orthogonal to the layout flow, relative to other items
     #: in the line. The minimum is 0 which means the item should not
-    #: expand. There is no maximum.
+    #: expand. There is no maximum. The default is 0.
     ortho_stretch = 0
 
     #: The alignment of the layout item in the direction orthogonal to
     #: the layout flow. This must be one of the enums Qt.AlignLeading,
     #: Qt.AlignTrailing, or Qt.AlignCenter.
-    align = Qt.AlignLeading
+    alignment = Qt.AlignLeading
 
     #: The preferred size for the layout item. This size will be used
     #: as the size of the layout item to the extent possible. If the
@@ -126,14 +125,36 @@ class QFlowWidgetItem(QWidgetItem):
 
         """
         if not self._cached_hint.isValid():
-            hint = self.data.preferred_size
-            if hint.isValid():
-                hint = hint.expandedTo(self.minimumSize())
-                hint = hint.boundedTo(self.maximumSize())
-            else:
-                hint = super(QFlowWidgetItem, self).sizeHint()
+            hint = super(QFlowWidgetItem, self).sizeHint()
+            pref = self.data.preferred_size
+            mins = self.minimumSize()
+            maxs = self.maximumSize()
+            if pref.width() != -1:
+                pw = max(mins.width(), min(pref.width(), maxs.width()))
+                hint.setWidth(pw)
+            if pref.height() != -1:
+                ph = max(mins.height(), min(pref.height(), maxs.height()))
+                hint.setHeight(ph)
             self._cached_hint = hint
         return self._cached_hint
+
+    def setGeometry(self, rect):
+        """ Set the rectangle covered by this layout item.
+
+        This reimplemented method ensures that layout always occurs at
+        the origin of the given rect. The default QWidgetItem behavior
+        is to center the item in the given space.
+
+        Parameters
+        ----------
+        rect : QRect
+            The rectangle that this layout item should cover.
+
+        """
+        if self.isEmpty():
+            return
+        s = rect.size().boundedTo(self.maximumSize())
+        self.widget().setGeometry(rect.x(), rect.y(), s.width(), s.height())
 
     def invalidate(self):
         """ Invalidate the internal cached data for this widget item.
@@ -151,28 +172,78 @@ class _LayoutRow(object):
     """ A private class used by QFlowLayout.
 
     This class accumulates information about a row of items as the items
-    are added to the row. Instances of the this class are created by a
-    _LayoutContainer on an as-needed basis.
+    are added to the row. Instances of the this class are created by the
+    QFlowLayout during a layout pass.
 
     """
-    def __init__(self, spacing):
+    #: The height to use for laying out the row. This attribute is
+    #: modified directly by the layout as it distributes the vertical
+    #: space amongst the rows.
+    layout_height = 0
+
+    def __init__(self, width, options):
         """ Initialize a layout row.
 
         Parameters
         ----------
-        spacing : int
-            The horizontal spacing to place between each item in the
-            row.
+        width : int
+            The width of the layout area.
+
+        options : _LayoutOptions
+            The options in effect for the layout.
 
         """
-        self.spacing = spacing
-        self.min_height = 0
-        self.des_height = 0
-        self.diff = 0
-        self.stretch = 0
-        self.width = 0
-        self.height = 0
-        self.items = []
+        self._width = width
+        self._options = options
+        self._min_height = 0
+        self._hint_height = 0
+        self._min_width = 0
+        self._hint_width = 0
+        self._stretch = 0
+        self._flow_stretch = 0
+        self._items = []
+
+    @property
+    def min_height(self):
+        """ A read-only property which returns the mininmum row height.
+
+        """
+        return self._min_height
+
+    @property
+    def hint_height(self):
+        """ A read-only property which returns the desired row height.
+
+        """
+        return self._hint_height
+
+    @property
+    def min_width(self):
+        """ A read-only property which returns the minimum row width.
+
+        """
+        return self._min_width
+
+    @property
+    def hint_width(self):
+        """ A read-only property which returns the desired row width.
+
+        """
+        return self._hint_width
+
+    @property
+    def diff_height(self):
+        """ A read-only property which returns the height diff.
+
+        """
+        return self._hint_height - self._min_height
+
+    @property
+    def stretch(self):
+        """ A read-only property which returns the row's stretch factor.
+
+        """
+        return self._stretch
 
     def add_item(self, item):
         """ Add an item to the layout row.
@@ -182,214 +253,432 @@ class _LayoutRow(object):
         item : QFlowWidgetItem
             The flow widget item to add to the layout row.
 
+        Returns
+        -------
+        result : bool
+            True if the items was added. False if the item was not
+            added. An item will not be added if the row already
+            contains an item and adding another item would cause
+            it to overflow.
+
         """
         min_size = item.minimumSize()
         hint_size = item.sizeHint()
-        self.min_height = max(self.min_height, min_size.height())
-        self.des_height = max(self.des_height, hint_size.height())
-        self.diff = self.des_height - self.min_height
-        self.stretch += item.data.stretch
-        self.width += hint_size.width()
-        if len(self.items) > 0:
-            self.width += self.spacing
-        self.items.append(item)
+        n = len(self._items)
+        s = self._options.h_spacing
+        if n > 0 and (self._hint_width + s + hint_size.width()) > self._width:
+            return False
+        self._min_height = max(self._min_height, min_size.height())
+        self._hint_height = max(self._hint_height, hint_size.height())
+        self._stretch = max(self._stretch, item.data.ortho_stretch)
+        self._min_width += min_size.width()
+        self._hint_width += hint_size.width()
+        self._flow_stretch += item.data.stretch
+        if n > 0:
+            self._min_width += s
+            self._hint_width += s
+        self._items.append(item)
+        return True
 
-    def layout(self, rect_x, rect_y):
-        curr_x = rect_x
-        space = self.spacing
-        for item in self.items:
-            s = item.sizeHint()
-            w = s.width()
-            if item.data.stretch > 0:
-                h = self.height
+    def layout(self, x, y):
+        """ Layout the row using the given starting coordinates.
+
+        Parameters
+        ----------
+        x : int
+            The x coordinate of the row origin.
+
+        y : int
+            The y coordinate of the row origin.
+
+        """
+        opts = self._options
+        layout_width = self._width
+        layout_height = self.layout_height
+        delta = self._width - self._hint_width
+        items = self._items
+
+        # Short circuit the case where there is negative extra space.
+        # This means that there must be only a single item in the row,
+        # in which case the width may shrink to the minimum if needed.
+        if delta < 0:
+            assert len(items) == 1
+            item = items[0]
+            w = max(layout_width, item.minimumSize().width())
+            if item.data.ortho_stretch > 0:
+                h = min(layout_height, item.maximumSize().height())
             else:
-                h= min(s.height(), self.height)
-            r = QRect(curr_x, rect_y, w, h)
-            item.setGeometry(r)
+                h = min(layout_height, item.sizeHint().height())
+            delta_h = layout_height - h
+            if delta_h > 0:
+                align = item.data.alignment
+                if align == QFlowLayout.AlignTrailing:
+                    y += delta_h
+                elif align == QFlowLayout.AlignCenter:
+                    y += delta_h / 2
+            item.setGeometry(QRect(x, y, w, h))
+            return
+
+        # Reversing the items reverses the layout direction. All of the
+        # computation up to this point has be independent of direction.
+        if opts.direction == QFlowLayout.RightToLeft:
+            items.reverse()
+
+        # Precompute a map of starting widths for the items. These will
+        # be progressively modified as the delta space is distributed.
+        widths = {}
+        for item in items:
+            widths[item] = item.sizeHint().width()
+
+        # If the flow stretch for the row is greater than zero. Then
+        # there exists an item or items which have flow stretch. It's
+        # not sufficient to simply distribute the delta space according
+        # to relative stretch factors, because an item may have a max
+        # width which is less than the adjusted width. This causes the
+        # rest of the adjustments to be invalid, yielding a potential
+        # O(n^2) solution. Instead, the items which can stretch are
+        # sorted according to the differences between their desired
+        # width and max width. When distributing the delta space in this
+        # order, any unused space from an item is added back to the pool
+        # and its stretch factor removed from further computation. This
+        # gives an O(n log n) solution to the problem. This algorithm
+        # iteratively removes space from the delta, so that the alignment
+        # pass below operates on the adjusted free space amount.
+        flow_stretch = self._flow_stretch
+        if flow_stretch > 0:
+            diffs = []
+            for item in items:
+                if item.data.stretch > 0:
+                    h = item.sizeHint().width()
+                    m = item.maximumSize().width()
+                    diffs.append((m - h, item))
+            diffs.sort()
+            for ignored, item in diffs:
+                item_stretch = item.data.stretch
+                max_width = item.maximumSize().width()
+                d = item_stretch * delta / flow_stretch
+                flow_stretch -= item_stretch
+                item_width = widths[item]
+                if item_width + d > max_width:
+                    widths[item] = max_width
+                    delta -= max_width - item_width
+                else:
+                    widths[item] = item_width + d
+                    delta -= d
+
+        # The widths of all items are now computed. Any leftover delta
+        # space is used for alignment purposes. This is accomplished by
+        # shifting the starting location and, in the case of justify,
+        # adding to the horizontal space value.
+        start_x = x
+        space = opts.h_spacing
+        if opts.alignment == QFlowLayout.AlignLeading:
+            if opts.direction == QFlowLayout.RightToLeft:
+                start_x += delta
+        elif opts.alignment == QFlowLayout.AlignTrailing:
+            if opts.direction == QFlowLayout.LeftToRight:
+                start_x += delta
+        elif opts.alignment == QFlowLayout.AlignCenter:
+            start_x += delta / 2
+        else:
+            d = delta / (len(items) + 1)
+            space += d
+            start_x += d
+
+        # Make a final pass over the items and perform the layout. This
+        # pass handles the orthogonal alignment of the item if there is
+        # any leftover vertical space for the item.
+        curr_x = start_x
+        for item in items:
+            w = widths[item]
+            if item.data.ortho_stretch > 0:
+                h = min(layout_height, item.maximumSize().height())
+            else:
+                h = min(layout_height, item.sizeHint().height())
+            delta = layout_height - h
+            this_y = y
+            if delta > 0:
+                align = item.data.alignment
+                if align == QFlowLayout.AlignTrailing:
+                    this_y = y + delta
+                elif align == QFlowLayout.AlignCenter:
+                    this_y = y + delta / 2
+            item.setGeometry(QRect(curr_x, this_y, w, h))
             curr_x += (w + space)
 
 
-class _HLayoutContainer(object):
+class _LayoutColumn(object):
     """ A private class used by QFlowLayout.
 
-    This class accumulates information about a horizontal flow layout.
-    Items can be added to an instance of this class and they will be
-    automatically classified into rows. Unlike the _LayoutRow class,
-    this class does not keep a running total of its data. The `update`
-    method should be explicitly called to update the layout metrics.
+    This class accumulates information about a column of items as the
+    items are added to the column. Instances of the this class are
+    created by the QFlowLayout during a layout pass.
 
     """
-    def __init__(self, h_spacing, v_spacing, width):
-        """ Initialize an _HLayoutContainer.
+    #: The width to use for laying out the column. This attribute is
+    #: modified directly by the layout as it distributes the horizontal
+    #: space amongst the columns
+    layout_width = 0
+
+    def __init__(self, height, options):
+        """ Initialize a layout row.
 
         Parameters
         ----------
-        h_spacing : int
-            The horizontal spacing to place between items.
+        height : int
+            The height of the layout area.
 
-        v_spacing : int
-            The vertical spacing to place between rows.
-
-        width : int
-            The width of the layout area.
+        options : _LayoutOptions
+            The options in effect for the layout.
 
         """
-        self._h_spacing = h_spacing
-        self._v_spacing = v_spacing
-        self._width = width
-        self._rows = []
+        self._height = height
+        self._options = options
         self._min_height = 0
-        self._des_height = 0
-        self._total_diff = 0
-        self._total_stretch = 0
+        self._hint_height = 0
+        self._min_width = 0
+        self._hint_width = 0
+        self._stretch = 0
+        self._flow_stretch = 0
+        self._items = []
 
-    def add_item(self, item):
-        """ Add an item to the layout container.
-
-        The item will be automatically added to the proper row.
-
-        """
-        rows = self._rows
-        h_space = self._h_spacing
-        if len(rows) == 0:
-            row = _LayoutRow(h_space)
-            row.add_item(item)
-            rows.append(row)
-        else:
-            row = rows[-1]
-            hint = item.sizeHint()
-            if (row.width + h_space + hint.width()) > self._width:
-                row = _LayoutRow(h_space)
-                row.add_item(item)
-                rows.append(row)
-            else:
-                row.add_item(item)
-
-    def update(self):
-        """ Update the layout metrics for the current set of rows.
-
-        """
-        space = self._v_spacing * (len(self._rows) - 1)
-        min_height = space
-        des_height = space
-        total_diff = 0
-        total_stretch = 0
-        for row in self._rows:
-            min_height += row.min_height
-            des_height += row.des_height
-            total_diff += row.diff
-            total_stretch += row.stretch
-        self._min_height = min_height
-        self._des_height = des_height
-        self._total_diff = total_diff
-        self._total_stretch = total_stretch
-
-    def size_rows(self, space):
-        """ Size the row for the given amount of free space.
-
-        This will distribute the space fairly according to the relative
-        difference of rows desired height versus min height. A given row
-        will not being sized larger than its desired size.
-
-        Parameters
-        ----------
-        space : int
-            The amount of free vertical space to distribute to rows.
-
-        Returns
-        -------
-        result : int
-            The sized height of the container.
-
-        """
-        height = 0
-        space = max(0, space)
-        total = max(self._total_diff, 1) # Guard against divide by zero
-        for row in self._rows:
-            d = space * row.diff / total
-            row.height = min(row.min_height + d, row.des_height)
-            height += row.height
-        height += self._v_spacing * (len(self._rows) - 1)
-        return height
-
-    def distribute(self, space):
-        """ Distribute extra space amongst the rows according to their
-        stretch factors.
-
-        Parameters
-        ----------
-        space : int
-            The amount of free vertical space to distribute to rows.
-
-        """
-        space = max(0, space)
-        total = self._total_stretch
-        if space > 0 and total > 0:
-            for row in self._rows:
-                if row.stretch > 0:
-                    d = space * row.stretch / total
-                    row.height += d
-
+    @property
     def min_height(self):
-        """ Get the minimum required height for the container.
-
-        Returns
-        -------
-        result : int
-            The minimum height required by the container.
+        """ A read-only property which returns the mininmum column
+        height.
 
         """
         return self._min_height
 
-    def height(self):
-        """ Compute and return the height of the container.
+    @property
+    def hint_height(self):
+        """ A read-only property which returns the desired column
+        height.
+
+        """
+        return self._hint_height
+
+    @property
+    def min_width(self):
+        """ A read-only property which returns the minimum column
+        width.
+
+        """
+        return self._min_width
+
+    @property
+    def hint_width(self):
+        """ A read-only property which returns the desired column
+        width.
+
+        """
+        return self._hint_width
+
+    @property
+    def diff_width(self):
+        """ A read-only property which returns the width diff.
+
+        """
+        return self._hint_width - self._min_width
+
+    @property
+    def stretch(self):
+        """ A read-only property which returns the column's stretch
+        factor.
+
+        """
+        return self._stretch
+
+    def add_item(self, item):
+        """ Add an item to the layout column.
+
+        Parameters
+        ----------
+        item : QFlowWidgetItem
+            The flow widget item to add to the layout column.
 
         Returns
         -------
-        result : int
-            The total height occupied by the container.
+        result : bool
+            True if the items was added. False if the item was not
+            added. An item will not be added if the column already
+            contains an item and adding another item would cause
+            it to overflow.
 
         """
-        height = 0
-        for row in self._rows:
-            height += row.height
-        height += self._v_spacing * (len(self._rows) - 1)
-        return height
+        min_size = item.minimumSize()
+        hint_size = item.sizeHint()
+        n = len(self._items)
+        s = self._options.v_spacing
+        new = self._hint_height + s + hint_size.height()
+        if n > 0 and new > self._height:
+            return False
+        self._min_width = max(self._min_width, min_size.width())
+        self._hint_width = max(self._hint_width, hint_size.width())
+        self._stretch = max(self._stretch, item.data.ortho_stretch)
+        self._min_height += min_size.height()
+        self._hint_height += hint_size.height()
+        self._flow_stretch += item.data.stretch
+        if n > 0:
+            self._min_height += s
+            self._hint_height += s
+        self._items.append(item)
+        return True
 
-    def layout(self, rect_x, rect_y):
-        """ Layout the items according to the current state.
+    def layout(self, x, y):
+        """ Layout the row using the given starting coordinates.
+
+        Parameters
+        ----------
+        x : int
+            The x coordinate of the column origin.
+
+        y : int
+            The y coordinate of the column origin.
 
         """
-        height = 0
-        curr_y = rect_y
-        space = self._v_spacing
-        for row in self._rows:
-            row.layout(rect_x, curr_y)
-            d = row.height + space
-            height += d
-            curr_y += d
-        return height
+        opts = self._options
+        layout_height = self._height
+        layout_width = self.layout_width
+        delta = self._height - self._hint_height
+        items = self._items
+
+        # Short circuit the case where there is negative extra space.
+        # This means that there must be only a single item in the column,
+        # in which case the height may shrink to the minimum if needed.
+        if delta < 0:
+            assert len(items) == 1
+            item = items[0]
+            h = max(layout_height, item.minimumSize().height())
+            if item.data.ortho_stretch > 0:
+                w = min(layout_width, item.maximumSize().width())
+            else:
+                w = min(layout_width, item.sizeHint().width())
+            delta_w = layout_width - w
+            if delta_w > 0:
+                align = item.data.alignment
+                if align == QFlowLayout.AlignTrailing:
+                    x += delta_w
+                elif align == QFlowLayout.AlignCenter:
+                    x += delta_w / 2
+            item.setGeometry(QRect(x, y, w, h))
+            return
+
+        # Reversing the items reverses the layout direction. All of the
+        # computation up to this point has be independent of direction.
+        if opts.direction == QFlowLayout.BottomToTop:
+            items.reverse()
+
+        # Precompute a map of starting heights for the items. These will
+        # be progressively modified as the delta space is distributed.
+        heights = {}
+        for item in items:
+            heights[item] = item.sizeHint().height()
+
+        # See the long comment in _LayoutRow for the explanation about
+        # this section of code. This section is simply the transpose.
+        flow_stretch = self._flow_stretch
+        if flow_stretch > 0:
+            diffs = []
+            for item in items:
+                if item.data.stretch > 0:
+                    h = item.sizeHint().height()
+                    m = item.maximumSize().height()
+                    diffs.append((m - h, item))
+            diffs.sort()
+            for ignored, item in diffs:
+                item_stretch = item.data.stretch
+                max_height = item.maximumSize().height()
+                d = item_stretch * delta / flow_stretch
+                flow_stretch -= item_stretch
+                item_height = heights[item]
+                if item_height + d > max_height:
+                    heights[item] = max_height
+                    delta -= max_height - item_height
+                else:
+                    heights[item] = item_height + d
+                    delta -= d
+
+        # The heights of all items are now computed. Any leftover delta
+        # space is used for alignment purposes. This is accomplished by
+        # shifting the starting location and, in the case of justify,
+        # adding to the vertical space value.
+        start_y = y
+        space = opts.v_spacing
+        if opts.alignment == QFlowLayout.AlignLeading:
+            if opts.direction == QFlowLayout.BottomToTop:
+                start_y += delta
+        elif opts.alignment == QFlowLayout.AlignTrailing:
+            if opts.direction == QFlowLayout.TopToBottom:
+                start_y += delta
+        elif opts.alignment == QFlowLayout.AlignCenter:
+            start_y += delta / 2
+        else:
+            d = delta / (len(items) + 1)
+            space += d
+            start_y += d
+
+        # Make a final pass over the items and perform the layout. This
+        # pass handles the orthogonal alignment of the item if there is
+        # any leftover horizontal space for the item.
+        curr_y = start_y
+        for item in items:
+            h = heights[item]
+            if item.data.ortho_stretch > 0:
+                w = min(layout_width, item.maximumSize().width())
+            else:
+                w = min(layout_width, item.sizeHint().width())
+            delta = layout_width - w
+            this_x = x
+            if delta > 0:
+                align = item.data.alignment
+                if align == QFlowLayout.AlignTrailing:
+                    this_x = x + delta
+                elif align == QFlowLayout.AlignCenter:
+                    this_x = x + delta / 2
+            item.setGeometry(QRect(this_x, curr_y, w, h))
+            curr_y += (h + space)
 
 
 class QFlowLayout(QLayout):
-    """ A custom QLayout which implements a flowing warparound layout.
+    """ A custom QLayout which implements a flowing wraparound layout.
 
     """
+    #: Lines are filled from left to right and stacked top to bottom.
+    LeftToRight = 0
+
+    #: Lines are filled from right to left and stacked top to bottom.
+    RightToLeft = 1
+
+    #: Lines are filled from top to bottom and stacked left to right.
+    TopToBottom = 2
+
+    #: Lines are filled from bottom to top and stacked left to right.
+    BottomToTop = 3
+
+    #: Lines are aligned to their leading edge.
+    AlignLeading = 4
+
+    #: Lines are aligned to their trailing edge.
+    AlignTrailing = 5
+
+    #: Lines are aligned centered within any extra space.
+    AlignCenter = 6
+
+    #: Lines are aligned justified within any extra space.
+    AlignJustify = 7
+
     def __init__(self):
         """ Initialize a QFlowLayout.
 
         """
         super(QFlowLayout, self).__init__()
         self._items = []
-        self._alignment = Qt.AlignLeading
-        self._orientation = Qt.Horizontal
-        self._reverse_fill = False
+        self._options = _LayoutOptions()
         self._cached_w = -1
         self._cached_hfw = -1
         self._cached_min = None
         self._cached_hint = None
-        self._v_spacing = 10
-        self._h_spacing = 10
         self._wfh_size = None
 
     def addWidget(self, widget):
@@ -415,90 +704,57 @@ class QFlowLayout(QLayout):
             The flow widget to insert into the layout.
 
         """
-        assert isinstance(widget, AbstractFlowWidget), 'invalid widget type'
         self.addChildWidget(widget)
         item = QFlowWidgetItem(widget, widget.layoutData())
         self._items.insert(index, item)
         widget.show()
         self.invalidate()
 
-    def alignment(self):
-        """ Get the edge alignment for the lines in the layout.
+    def direction(self):
+        """ Get the direction of the flow layout.
 
         Returns
         -------
-        result : enum
-            The edge alignment of the lines in the layout. This will be
-            one of Qt.AlignLeading, Qt.AlignTrailing, or Qt.AlignCenter.
-            The default is Qt.AlignLeading.
+        result : QFlowLayout direction enum
+            The direction of the layout. The default is LeftToRight.
 
         """
-        return self._alignment
+        return self._options.direction
+
+    def setDirection(self, direction):
+        """ Set the direction of the flow layout.
+
+        Parameters
+        ----------
+        direction : QFlowLayout direction enum
+            The desired flow direction of the layout.
+
+        """
+        self._options.direction = direction
+        self.invalidate()
+
+    def alignment(self):
+        """ Get the alignment for the lines in the layout.
+
+        Returns
+        -------
+        result : QFlowLayout alignment enum
+            The alignment of the lines in the layout. The default is
+            AlignLeading.
+
+        """
+        return self._options.alignment
 
     def setAlignment(self, alignment):
-        """ Set the alignment for a line in the layout.
+        """ Set the alignment for the lines in the layout.
 
         Parameters
         ----------
-        alignment : enum
-            The edge alignment of the lines in the layout. This must be
-            one of Qt.AlignLeading, Qt.AlignTrailing, or Qt.AlignCenter.
+        alignment : QFlowLayout alignment enum
+            The desired alignment of the lines in the layout.
 
         """
-        allowed = (Qt.AlignLeading, Qt.AlignTrailing, Qt.AlignCenter)
-        assert alignment in allowed, 'invalid alignment'
-        self._alignment = alignment
-        self.invalidate()
-
-    def orientation(self):
-        """ Get the orientation of the flow layout.
-
-        Returns
-        -------
-        result : enum
-            The orientation of the layout. This will be Qt.Horizontal
-            or Qt.Vertical. The default is Qt.Horizontal.
-
-        """
-        return self._orientation
-
-    def setOrientation(self, orientation):
-        """ Set the orientation of the flow layout.
-
-        Parameters
-        ----------
-        orientation : enum
-            The orientation of the layout. This must be Qt.Horizontal
-            or Qt.Vertical.
-
-        """
-        allowed = (Qt.Horizontal, Qt.Vertical)
-        assert orientation in allowed, 'invalid orientation'
-        self._orientation = orientation
-        self.invalidate()
-
-    def reverseFill(self):
-        """ Whether reverse fill is enabled for this layout.
-
-        Returns
-        -------
-        result : bool
-            True if reverse fill is enabled, False otherwise. The
-            default is False.
-
-        """
-        return self._reverse_fill
-
-    def setReverseFill(self, enable):
-        """ Set whether reverse fill is enabled for this layout.
-
-        Parameters
-        ----------
-        enable : bool
-            Whether or not to enable reverse fill.
-
-        """
-        self._reverse_fill = enable
+        self._options.alignment = alignment
         self.invalidate()
 
     def horizontalSpacing(self):
@@ -511,7 +767,7 @@ class QFlowLayout(QLayout):
             the layout. The default is 10px.
 
         """
-        return self._h_spacing
+        return self._options.h_spacing
 
     def setHorizontalSpacing(self, spacing):
         """ Set the horizontal spacing for the layout.
@@ -523,7 +779,7 @@ class QFlowLayout(QLayout):
             items in the layout.
 
         """
-        self._h_spacing = spacing
+        self._options.h_spacing = spacing
         self.invalidate()
 
     def verticalSpacing(self):
@@ -536,7 +792,7 @@ class QFlowLayout(QLayout):
             layout. The default is 10px.
 
         """
-        return self._v_spacing
+        return self._options.v_spacing
 
     def setVerticalSpacing(self, spacing):
         """ Set the vertical spacing for the layout.
@@ -548,7 +804,7 @@ class QFlowLayout(QLayout):
             items in the layout.
 
         """
-        self._v_spacing = spacing
+        self._options.v_spacing = spacing
         self.invalidate()
 
     def hasHeightForWidth(self):
@@ -557,10 +813,10 @@ class QFlowLayout(QLayout):
         Returns
         -------
         result : bool
-            True if the orientation is horizontal, False otherwise.
+            True if the flow direction is horizontal, False otherwise.
 
         """
-        return self._orientation == Qt.Horizontal
+        return self._options.direction in (self.LeftToRight, self.RightToLeft)
 
     def heightForWidth(self, width):
         """ Get the height of the layout for the given width.
@@ -597,9 +853,9 @@ class QFlowLayout(QLayout):
         """
         self._cached_w = -1
         self._cached_hfw = -1
+        self._cached_wfh = -1
         self._cached_min = None
         self._cached_hint = None
-        self._wfh_size = None
         for item in self._items:
             item.invalidate()
         super(QFlowLayout, self).invalidate()
@@ -667,6 +923,14 @@ class QFlowLayout(QLayout):
             size.setWidth(size.width() + left + right)
             size.setHeight(size.height() + top + bottom)
             self._cached_min = size
+        # XXX hack! We really need hasWidthForHeight! This doesn't quite
+        # work because a QScrollArea internally caches the min size.
+        d = self._options.direction
+        if d == self.TopToBottom or d == self.BottomToTop:
+            m = QSize(self._cached_min)
+            if m.width() < self._cached_wfh:
+                m.setWidth(self._cached_wfh)
+            return m
         return self._cached_min
 
     #--------------------------------------------------------------------------
@@ -687,148 +951,175 @@ class QFlowLayout(QLayout):
         Returns
         -------
         result : int
-            The layout space required in the direction opposite of the
-            layout flow.
+            The layout space (width or height) required in the direction
+            orthogonal to the layout flow.
 
         """
-        #import time
-        #t1 = time.clock()
-        if self._orientation == Qt.Vertical:
-            res = self._doVerticalLayout(rect, test)
-            # s = rect.size()
-            # s.setWidth(res)
-            # self._wfh_size = s
-        else:
+        d = self._options.direction
+        if d == self.LeftToRight or d == self.RightToLeft:
             res = self._doHorizontalLayout(rect, test)
-        #t2 = time.clock()
-        #print t2 - t1
+        else:
+            res = self._doVerticalLayout(rect, test)
+            # XXX hack! we need hasWidthForHeight
+            self._cached_wfh = res + rect.x()
         return res
 
     def _doHorizontalLayout(self, rect, test):
-        """ Perform the layout for a horizontal orientation.
+        """ Perform the layout for a horizontal flow direction.
 
         The method signature is identical to the `_doLayout` method.
 
         """
-        # Add the items to a layout container. The container implements
-        # the majority of the distribution and layout logic.
-        h_space = self._h_spacing
-        v_space = self._v_spacing
-        container = _HLayoutContainer(h_space, v_space, rect.width())
+        # Walk over the items and create the layout rows.
+        rows = []
+        width = rect.width()
+        opts = self._options
         for item in self._items:
-            container.add_item(item)
+            if len(rows) == 0:
+                row = _LayoutRow(width, opts)
+                row.add_item(item)
+                rows.append(row)
+            else:
+                row = rows[-1]
+                if not row.add_item(item):
+                    row = _LayoutRow(width, opts)
+                    row.add_item(item)
+                    rows.append(row)
 
-        # Once all items added to the container and classified, the
-        # container can update its internal layout metrics.
-        container.update()
-
-        # If this is a test run, the minimum layout height is all that
-        # is required. No other work needs to be performed.
+        # After collecting rows all of the rows, compute the metrics. If
+        # this is a test run, only the minimum height is required.
         if test:
-            return container.min_height()
+            return sum(row.min_height for row in rows)
+        space = opts.v_spacing * (len(rows) - 1)
+        min_height = space
+        hint_height = space
+        total_diff = 0
+        stretch = 0
+        for row in rows:
+            min_height += row.min_height
+            hint_height += row.hint_height
+            total_diff += row.diff_height
+            stretch += row.stretch
 
-        # Distribute the extra available space. If the rect is smaller
-        # than the required min, then each row gets its minimum height.
-        # Otherwise, the space is distributed to the rows based on the
-        # relative magnitude of their height differences.
-        rect_height = rect.height()
-        delta = rect_height - container.min_height()
-        height = container.size_rows(delta)
+        # Make an initial pass to distribute extra space to rows which
+        # lie between their minimum height and desired height.
+        height = rect.height()
+        play_space = max(0, height - min_height)
+        diff_space = max(total_diff, 1) # Guard against divide by zero
+        layout_height = 0
+        for row in rows:
+            d = play_space * row.diff_height / diff_space
+            row.layout_height = min(row.min_height + d, row.hint_height)
+            layout_height += row.layout_height
+        layout_height += space
 
-        # Redistribute any remaining space to rows which can stretch.
-        remaining = rect_height - height
-        container.distribute(remaining)
+        # Make a second pass to distribute remaining space to rows
+        # which with a stretch factor greater than zero.
+        remaining = height - layout_height
+        if remaining > 0 and stretch > 0:
+            for row in rows:
+                if row.stretch > 0:
+                    row.layout_height += remaining * row.stretch / stretch
 
-        # XXX add layout options
+        # Make a final pass to layout the rows, computing the overall
+        # final layout height along the way.
+        final_height = 0
+        x = rect.x()
+        curr_y = rect.y()
+        v_space = opts.v_spacing
+        for row in rows:
+            row.layout(x, curr_y)
+            d = row.layout_height + v_space
+            final_height += d
+            curr_y += d
 
-        # Finally, walk the structure and layout the items.
-        return container.layout(rect.x(), rect.y())
+        return final_height
 
     def _doVerticalLayout(self, rect, test):
-        """ Perform the layout for a vertical orientation.
+        """ Perform the layout for a vertical flow direction.
 
         The method signature is identical to the `_doLayout` method.
 
         """
-        rect_top = rect.y()
-        rect_bottom = rect_top + rect.height()
-
-        # This loop passes over the list of items and separates them
-        # into individual rows. A given item is allowed to overflow a
-        # row if it is the only member of the row. An item at the end
-        # of  a populated row which overflows is moved to the next line.
-        # The total width and height of a row is kept as a running total
-        # so that alignment offsets may be easily computed.
-        columns = []
-        curr_col = []
-        col_width = 0
-        col_height = 0
-        curr_y = rect_top
-        v_space = self._v_spacing
+        # Walk over the items and create the layout columns.
+        cols = []
+        height = rect.height()
+        opts = self._options
         for item in self._items:
-            hint = item.sizeHint()
-            hint_width = hint.width()
-            hint_height = hint.height()
-            col_item = (item, hint_width, hint_height)
-            if (curr_y + hint_height) > rect_bottom:
-                if len(curr_col) == 0:
-                    columns.append((hint_width, hint_height, [col_item]))
-                    col_width = 0
-                    col_height = 0
-                    curr_y = rect_top
-                else:
-                    col_height += v_space * (len(curr_col) - 1)
-                    columns.append((col_width, col_height, curr_col))
-                    curr_col = [col_item]
-                    col_width = hint_width
-                    col_height = hint_height
-                    curr_y = rect_top + hint_height + v_space
+            if len(cols) == 0:
+                col = _LayoutColumn(height, opts)
+                col.add_item(item)
+                cols.append(col)
             else:
-                curr_col.append(col_item)
-                col_height += hint_height
-                col_width = max(col_width, hint_width)
-                curr_y += hint_height + v_space
+                col = cols[-1]
+                if not col.add_item(item):
+                    col = _LayoutColumn(height, opts)
+                    col.add_item(item)
+                    cols.append(col)
 
-        # Add the final trailing row (if populated) to the list of rows.
-        if len(curr_col) > 0:
-            col_height += v_space * (len(curr_col) - 1)
-            columns.append((col_width, col_height, curr_col))
-
-        # If this is a test run, enough information is now available to
-        # compute the layout height, and extra work can be skipped.
+        # After collecting rows all of the columns, compute the metrics.
+        # If this is a test run, only the minimum width is required.
         if test:
-            x = rect.x()
-            for col_width, ignored1, ignored2 in columns:
-                x += col_width
-            x += self._h_spacing * (len(columns) - 1)
-            return x
+            return sum(col.min_width for col in cols)
+        space = opts.h_spacing * (len(cols) - 1)
+        min_width = space
+        hint_width = space
+        total_diff = 0
+        stretch = 0
+        for col in cols:
+            min_width += col.min_width
+            hint_width += col.hint_width
+            total_diff += col.diff_width
+            stretch += col.stretch
 
-        # A function to compute the alignment offset given a row width.
-        align = self._alignment
-        if align == Qt.AlignLeading:
-            align_offset = lambda h: rect_top
-        elif align == Qt.AlignTrailing:
-            align_offset = lambda h: max(rect_bottom - h, rect_top)
-        else:
-            align_offset = lambda h: max((rect_bottom - h) / 2, rect_top)
+        # Make an initial pass to distribute extra space to columns
+        # which lie between their minimum width and desired width.
+        width = rect.width()
+        play_space = max(0, width - min_width)
+        diff_space = max(total_diff, 1) # Guard against divide by zero
+        layout_width = 0
+        for col in cols:
+            d = play_space * col.diff_width / diff_space
+            col.layout_width = min(col.min_width + d, col.hint_width)
+            layout_width += col.layout_width
+        layout_width += space
 
-        # A function to order the row items for the layout fill.
-        if self._reverse_fill:
-            fill_order = lambda items: reversed(items)
-        else:
-            fill_order = lambda items: items
+        # Make a second pass to distribute remaining space to columns
+        # which with a stretch factor greater than zero.
+        remaining = width - layout_width
+        if remaining > 0 and stretch > 0:
+            for col in cols:
+                if col.stretch > 0:
+                    col.layout_width += remaining * col.stretch / stretch
 
-        # Loop over the rows and apply the item layout geometries.
-        next_x = 0
+        # Make a final pass to layout the columns, computing the overall
+        # final layout width along the way.
+        final_width = 0
+        y = rect.y()
         curr_x = rect.x()
-        h_space = self._h_spacing
-        for col_width, col_height, col_items in columns:
-            curr_y = align_offset(col_height)
-            for item, width, height in fill_order(col_items):
-                r = QRect(curr_x, curr_y, width, height)
-                item.setGeometry(r)
-                next_x = max(next_x, curr_x + width + h_space)
-                curr_y += height + v_space
-            curr_x = next_x
+        h_space = opts.h_spacing
+        for col in cols:
+            col.layout(curr_x, y)
+            d = col.layout_width + h_space
+            final_width += d
+            curr_x += d
 
-        return curr_x
+        return final_width
+
+
+class _LayoutOptions(object):
+    """ A class used by QFlowLayoutData to store it's layout options.
+
+    """
+    #: The flow direction of the layout.
+    direction = QFlowLayout.LeftToRight
+
+    #: The alignment of a line in the layout.
+    alignment = QFlowLayout.AlignLeading
+
+    #: The horizontal spacing between items or lines in the layout.
+    h_spacing = 10
+
+    #: The vertical spacing between items or lines in the layout.
+    v_spacing = 10
+

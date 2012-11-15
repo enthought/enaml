@@ -8,52 +8,89 @@ from enaml.layout.api import *
 
 enamldef Item(FlowItem):
     attr n
-    Container:
+    attr max_w = 200
+    align << abox.items[abox.index]
+    stretch << fs.value
+    ortho_stretch << os.value
+    preferred_size << (pw.value, ph.value)
+    Form:
         padding = 0
-        PushButton: pass
-        Field: text = str(n)
-        Field: text = str(n)
-        Slider: pass
-        #Html:
-        #    resist_height = 'weak'
-        #    constraints = [height >= (15 if n >= 3 else 60)]
+        hug_height = 'strong'
+        #hug_width = 'strong'
+        Label:
+            text = 'Widget'
+        Field:
+            text = str(n)
+            read_only = True
+        Label:
+            text << 'Preferred Width %d' % pw.value
+        SpinBox: pw:
+            minimum = -1
+            maximum = 800
+            value = -1
+        Label:
+            text << 'Preferred Height %d' % ph.value
+        SpinBox: ph:
+            minimum = -1
+            maximum = 800
+            value = -1
+        Label:
+            text = 'Ortho Align'
+        ComboBox: abox:
+            items = ['leading', 'trailing', 'center']
+            index = 0
+        Label:
+            text << 'Flow Stretch %d' % fs.value
+        SpinBox: fs:
+            minimum = 0
+            maximum = 100
+            value = 0
+        Label:
+            text << 'Ortho Stretch %d' % os.value
+        SpinBox: os:
+            minimum = 0
+            maximum = 100
+            value = 0
+        Html:
+            resist_height = 'weak'
+            constraints = [height >= 50]
+            source = '<center>Min Height == 50</center>'
 
 
 enamldef View(Window):
     Container:
         FlowArea: area:
             align << cbox.items[cbox.index]
-            orientation << cbox2.items[cbox2.index]
+            direction << cbox2.items[cbox2.index]
             FlowItem:
-                Form:
-                    padding = 0
-                    Label:
-                        text = 'Horizontal Spacing'
-                    Slider:
-                        minimum = 0
-                        maximum = 50
-                        value := area.horizontal_spacing
-                    Label:
-                        text = 'Vertical Spacing'
-                    Slider:
-                        minimum = 0
-                        maximum = 50
-                        value := area.vertical_spacing
-                    Label:
-                        text = 'Orientation'
-                    ComboBox: cbox2:
-                        items = ['horizontal', 'vertical']
-                        index = 0
-                    Label:
-                        text = 'Align'
-                    ComboBox: cbox:
-                        items = ['leading', 'center', 'trailing']
-                        index = 0
-                    CheckBox:
-                        text = 'Reverse Fill'
-                        checked := area.reverse_fill
+                GroupBox:
+                    title = 'Area Controls'
+                    Form:
+                        padding = 0
+                        Label:
+                            text = 'Horizontal Spacing'
+                        Slider:
+                            minimum = 0
+                            maximum = 50
+                            value := area.horizontal_spacing
+                        Label:
+                            text = 'Vertical Spacing'
+                        Slider:
+                            minimum = 0
+                            maximum = 50
+                            value := area.vertical_spacing
+                        Label:
+                            text = 'Direction'
+                        ComboBox: cbox2:
+                            items = ['left_to_right', 'right_to_left', 'top_to_bottom', 'bottom_to_top']
+                            index = 0
+                        Label:
+                            text = 'Align'
+                        ComboBox: cbox:
+                            items = ['leading', 'trailing', 'center', 'justify']
+                            index = 0
             Include:
-                objects = [Item(n=i) for i in range(25)]
+                objects = [Item(n=i) for i in range(7)]
 
 
 class FooSession(Session):

@@ -2,23 +2,25 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt.QtCore import Qt
 from .qt.QtGui import QScrollArea, QFrame
 from .qt_constraints_widget import QtConstraintsWidget
 from .qt_flow_item import QtFlowItem
 from .q_flow_layout import QFlowLayout
 
 
-_ALIGN_MAP = {
-    'leading': Qt.AlignLeading,
-    'trailing': Qt.AlignTrailing,
-    'center': Qt.AlignCenter,
+_DIRECTION_MAP = {
+    'left_to_right': QFlowLayout.LeftToRight,
+    'right_to_left': QFlowLayout.RightToLeft,
+    'top_to_bottom': QFlowLayout.TopToBottom,
+    'bottom_to_top': QFlowLayout.BottomToTop,
 }
 
 
-_ORIENTATION_MAP = {
-    'horizontal': Qt.Horizontal,
-    'vertical': Qt.Vertical,
+_ALIGN_MAP = {
+    'leading': QFlowLayout.AlignLeading,
+    'trailing': QFlowLayout.AlignTrailing,
+    'center': QFlowLayout.AlignCenter,
+    'justify': QFlowLayout.AlignJustify,
 }
 
 
@@ -50,17 +52,11 @@ class QFlowArea(QScrollArea):
     def setAlignment(self, alignment):
         self._area_layout.setAlignment(alignment)
 
-    def orientation(self):
-        return self._area_layout.orientation()
+    def direction(self):
+        return self._area_layout.direction()
 
-    def setOrientation(self, orientation):
-        self._area_layout.setOrientation(orientation)
-
-    def reverseFill(self):
-        return self._area_layout.reverseFill()
-
-    def setReverseFill(self, enable):
-        self._area_layout.setReverseFill(enable)
+    def setDirection(self, direction):
+        self._area_layout.setDirection(direction)
 
     def verticalSpacing(self):
         return self._area_layout.verticalSpacing()
@@ -93,9 +89,8 @@ class QtFlowArea(QtConstraintsWidget):
 
         """
         super(QtFlowArea, self).create(tree)
+        self.set_direction(tree['direction'])
         self.set_align(tree['align'])
-        self.set_orientation(tree['orientation'])
-        self.set_reverse_fill(tree['reverse_fill'])
         self.set_horizontal_spacing(tree['horizontal_spacing'])
         self.set_vertical_spacing(tree['vertical_spacing'])
         self.set_margins(tree['margins'])
@@ -133,23 +128,17 @@ class QtFlowArea(QtConstraintsWidget):
     #--------------------------------------------------------------------------
     # Message Handling
     #--------------------------------------------------------------------------
+    def on_action_set_direction(self, content):
+        """ Handle the 'set_direction' action from the Enaml widget.
+
+        """
+        self.set_direction(content['direction'])
+
     def on_action_set_align(self, content):
         """ Handle the 'set_align' action from the Enaml widget.
 
         """
         self.set_align(content['align'])
-
-    def on_action_set_orientation(self, content):
-        """ Handle the 'set_orientation' action from the Enaml widget.
-
-        """
-        self.set_orientation(content['orientation'])
-
-    def on_action_set_reverse_fill(self, content):
-        """ Handle the 'set_reverse_fill' action from the Enaml widget.
-
-        """
-        self.set_reverse_fill(content['reverse_fill'])
 
     def on_action_set_horizontal_spacing(self, content):
         """ Handle the 'set_horizontal_spacing' action from the Enaml
@@ -174,23 +163,17 @@ class QtFlowArea(QtConstraintsWidget):
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
+    def set_direction(self, direction):
+        """ Set the direction for the underlying control.
+
+        """
+        self.widget().setDirection(_DIRECTION_MAP[direction])
+
     def set_align(self, align):
         """ Set the alignment for the underlying control.
 
         """
         self.widget().setAlignment(_ALIGN_MAP[align])
-
-    def set_orientation(self, orientation):
-        """ Set the orientation for the underlying control.
-
-        """
-        self.widget().setOrientation(_ORIENTATION_MAP[orientation])
-
-    def set_reverse_fill(self, enable):
-        """ Set the reverse fill property for the underlying control.
-
-        """
-        self.widget().setReverseFill(enable)
 
     def set_horizontal_spacing(self, spacing):
         """ Set the horizontal spacing of the underyling control.
