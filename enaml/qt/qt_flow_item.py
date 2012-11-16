@@ -21,7 +21,7 @@ class QFlowItem(QFrame):
     """ A QFrame subclass which acts as an item in a QFlowArea.
 
     """
-    def __init__(self, parent=None, flags=0):
+    def __init__(self, parent=None):
         """ Initialize a QFlowItem.
 
         Parameters
@@ -29,11 +29,8 @@ class QFlowItem(QFrame):
         parent : QWidget, optional
             The parent of the flow item.
 
-        flags : int, optional
-            The window flags to pass to the frame.
-
         """
-        super(QFlowItem, self).__init__(parent, flags)
+        super(QFlowItem, self).__init__(parent)
         self._flow_widget = None
         self._layout_data = FlowLayoutData()
         self.setLayout(QSingleWidgetLayout())
