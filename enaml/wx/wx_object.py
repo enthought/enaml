@@ -36,7 +36,7 @@ def deferred_updates(func):
             try:
                 res = func(self, *args, **kwargs)
             finally:
-                widget.Thaw()
+                self.deferred_call(widget.Thaw)
         else:
             res = func(self, *args, **kwargs)
         return res
