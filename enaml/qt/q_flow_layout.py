@@ -979,9 +979,10 @@ class QFlowLayout(QLayout):
 
         # After collecting rows all of the rows, compute the metrics. If
         # this is a test run, only the minimum height is required.
-        if test:
-            return sum(row.min_height for row in rows)
         space = opts.v_spacing * (len(rows) - 1)
+        if test:
+            return sum(row.min_height for row in rows) + space
+
         min_height = space
         hint_height = space
         total_diff = 0
@@ -1050,9 +1051,10 @@ class QFlowLayout(QLayout):
 
         # After collecting rows all of the columns, compute the metrics.
         # If this is a test run, only the minimum width is required.
-        if test:
-            return sum(col.min_width for col in cols)
         space = opts.h_spacing * (len(cols) - 1)
+        if test:
+            return sum(col.min_width for col in cols) + space
+
         min_width = space
         hint_width = space
         total_diff = 0
