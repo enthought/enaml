@@ -2,7 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt.QtCore import QSize
+from .qt.QtCore import QSize, QEvent
 from .qt.QtGui import QFrame, QLayout
 from .q_flow_layout import QFlowLayout, AbstractFlowWidget, FlowLayoutData
 from .q_single_widget_layout import QSingleWidgetLayout
@@ -182,16 +182,19 @@ class QFlowItem(QFrame):
 
         """
         self._flow_widget = widget
-        try:
-            self.layout().setWidget(widget)
-        except AttributeError:
-            # XXX Hack! The layout type gets swapped out from under us
-            # during the destruction process when running on PyQt. It
-            # comes out as an instance of QWidgetItem. Need look into
-            # exactly what is causing this.
-            l = self.layout()
-            if widget is not None or isinstance(l, QSingleWidgetLayout):
-                raise
+        self.layout().setWidget(widget)
+
+    def event(self, event):
+        """ A custom event handler which handles LayoutRequest events.
+
+        When a LayoutRequest event is posted to this widget, it will
+        emit the `layoutRequested` signal. This allows an external
+        consumer of this widget to update their external layout.
+
+        """
+        if event.type() == QEvent.LayoutRequest:
+            self._layout_data.dirty = True
+        return super(QFlowItem, self).event(event)
 
 
 AbstractFlowWidget.register(QFlowItem)
