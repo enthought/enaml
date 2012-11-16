@@ -2,7 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt.QtCore import Qt, QSize
+from .qt.QtCore import QSize
 from .qt.QtGui import QFrame, QLayout
 from .q_flow_layout import QFlowLayout, AbstractFlowWidget, FlowLayoutData
 from .q_single_widget_layout import QSingleWidgetLayout
@@ -21,56 +21,144 @@ class QFlowItem(QFrame):
     """ A QFrame subclass which acts as an item in a QFlowArea.
 
     """
-    def __init__(self, *args, **kwargs):
+    def __init__(self, parent=None, flags=0):
         """ Initialize a QFlowItem.
 
         Parameters
         ----------
-        *args, **kwargs
-            The position and keyword arguments required to initialize
-            a QFrame.
+        parent : QWidget, optional
+            The parent of the flow item.
+
+        flags : int, optional
+            The window flags to pass to the frame.
 
         """
-        super(QFlowItem, self).__init__(*args, **kwargs)
+        super(QFlowItem, self).__init__(parent, flags)
         self._flow_widget = None
         self._layout_data = FlowLayoutData()
         self.setLayout(QSingleWidgetLayout())
         self.layout().setSizeConstraint(QLayout.SetMinAndMaxSize)
 
     def layoutData(self):
+        """ Get the layout data associate with this flow item.
+
+        This method implements the AbstractFlowWidget interface.
+
+        Returns
+        -------
+        result : FlowLayoutData
+            The layout data for this flow item.
+
+        """
         return self._layout_data
 
     def preferredSize(self):
+        """ Get the preferred size for this widget.
+
+        Returns
+        -------
+        result : QSize
+            The preferred size of this flow item.
+
+        """
         return self._layout_data.preferred_size
 
     def setPreferredSize(self, size):
+        """ Set the preferred size for this flow item.
+
+        This will trigger an invalidation of the layout data.
+
+        Parameters
+        ----------
+        size : QSize
+            The preferred size for the flow item.
+
+        """
         d = self._layout_data
         d.preferred_size = size
         d.dirty = True
         self.updateGeometry()
 
     def alignment(self):
+        """ Get the alignment for the flow item.
+
+        Returns
+        -------
+        result : QFlowLayout alignment
+            The alignment for the flow item in the layout.
+
+        """
         return self._layout_data.alignment
 
     def setAlignment(self, alignment):
+        """ Set the alignment for the flot item.
+
+        This will trigger an invalidation of the layout data.
+
+        Parameters
+        ----------
+        alignment : QFlowLayout alignment
+            The alignment for the flow item in the layout.
+
+        """
         d = self._layout_data
         d.alignment = alignment
         d.dirty = True
         self.updateGeometry()
 
     def stretch(self):
+        """ Get the stretch factor for the flow item.
+
+        Returns
+        -------
+        result : int
+            The stretch factor for the flow item in the direction of
+            the layout flow.
+
+        """
         return self._layout_data.stretch
 
     def setStretch(self, stretch):
+        """ Set the stretch factor for the flow item.
+
+        This will trigger an invalidation of the layout data.
+
+        Parameters
+        ----------
+        stretch : int
+            The stretch factor for the flow item in the direction of
+            the layout flow.
+
+        """
         d = self._layout_data
         d.stretch = stretch
         d.dirty = True
         self.updateGeometry()
 
     def orthoStretch(self):
+        """ Get the ortho stretch factor for the flow item.
+
+        Returns
+        -------
+        result : int
+            The stretch factor for the flow item in the direction
+            orthogonal to the layout flow.
+
+        """
         return self._layout_data.stretch
 
     def setOrthoStretch(self, stretch):
+        """ Set the ortho stretch factor for the flow item.
+
+        This will trigger an invalidation of the layout data.
+
+        Parameters
+        ----------
+        stretch : int
+            The stretch factor for the flow item in the direction
+            orthogonal to the layout flow.
+
+        """
         d = self._layout_data
         d.ortho_stretch = stretch
         d.dirty = True
@@ -97,7 +185,16 @@ class QFlowItem(QFrame):
 
         """
         self._flow_widget = widget
-        self.layout().setWidget(widget)
+        try:
+            self.layout().setWidget(widget)
+        except AttributeError:
+            # XXX Hack! The layout type gets swapped out from under us
+            # during the destruction process when running on PyQt. It
+            # comes out as an instance of QWidgetItem. Need look into
+            # exactly what is causing this.
+            l = self.layout()
+            if widget is not None or isinstance(l, QSingleWidgetLayout):
+                raise
 
 
 AbstractFlowWidget.register(QFlowItem)
@@ -117,6 +214,9 @@ class QtFlowItem(QtWidgetComponent):
         return QFlowItem(parent)
 
     def create(self, tree):
+        """ Create and initialize the underlying control.
+
+        """
         super(QtFlowItem, self).create(tree)
         self.set_preferred_size(tree['preferred_size'])
         self.set_align(tree['align'])
@@ -170,29 +270,54 @@ class QtFlowItem(QtWidgetComponent):
     # Message Handling
     #--------------------------------------------------------------------------
     def on_action_set_preferred_size(self, content):
+        """ Handle the 'set_preferred_size' action from the Enaml
+        widget.
+
+        """
         self.set_preferred_size(content['preferred_size'])
 
     def on_action_set_align(self, content):
+        """ Handle the 'set_align' action from the Enaml widget.
+
+        """
         self.set_align(content['align'])
 
     def on_action_set_stretch(self, content):
+        """ Handle the 'set_stretch' action from the Enaml widget.
+
+        """
         self.set_stretch(content['stretch'])
 
     def on_action_set_ortho_stretch(self, content):
+        """ Handle the 'set_ortho_stretch' action from the Enaml widget.
+
+        """
         self.set_ortho_stretch(content['ortho_stretch'])
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
     def set_preferred_size(self, size):
+        """ Set the preferred size of the underlying widget.
+
+        """
         self.widget().setPreferredSize(QSize(*size))
 
     def set_align(self, align):
+        """ Set the alignment of the underlying widget.
+
+        """
         self.widget().setAlignment(_ALIGN_MAP[align])
 
     def set_stretch(self, stretch):
+        """ Set the stretch factor of the underlying widget.
+
+        """
         self.widget().setStretch(stretch)
 
     def set_ortho_stretch(self, stretch):
+        """ Set the ortho stretch factor of the underling widget.
+
+        """
         self.widget().setOrthoStretch(stretch)
 

@@ -25,50 +25,45 @@ _ALIGN_MAP = {
 
 
 class QFlowArea(QScrollArea):
+    """ A custom QScrollArea which implements a flowing layout.
 
-    def __init__(self, *args, **kwargs):
-        super(QFlowArea, self).__init__(*args, **kwargs)
+    """
+    def __init__(self, parent=None):
+        """ Initialize a QFlowArea.
+
+        Parameters
+        ----------
+        parent : QWidget, optional
+            The parent widget of this widget.
+
+        """
+        super(QFlowArea, self).__init__(parent)
+        self._widget = QFrame(self)
+        self._layout = QFlowLayout()
+        self._widget.setLayout(self._layout)
         self.setWidgetResizable(True)
-        self._area_widget = QFrame(self)
-        self._area_layout = QFlowLayout()
-        self._area_widget.setLayout(self._area_layout)
-        self.setWidget(self._area_widget)
+        self.setWidget(self._widget)
 
-    def addWidget(self, widget):
-        self._area_layout.addWidget(widget)
+    def layout(self):
+        """ Get the layout for this flow area.
 
-    def insertWidget(self, index, widget):
-        self._area_layout.insertWidget(index, widget)
+        The majority of interaction for a QFlowArea takes place through
+        its layout, rather than through the widget itself.
 
-    def margins(self):
-        return self._area_layout.getContentsMargins()
+        Returns
+        -------
+        result : QFlowLayout
+            The flow layout for this flow area.
 
-    def setMargins(self, left, top, right, bottom):
-        self._area_layout.setContentsMargins(left, top, right, bottom)
+        """
+        return self._layout
 
-    def aligment(self):
-        return self._area_layout.alignment()
+    def setLayout(self, layout):
+        """ A reimplemented method. Setting the layout on a QFlowArea
+        is not supported.
 
-    def setAlignment(self, alignment):
-        self._area_layout.setAlignment(alignment)
-
-    def direction(self):
-        return self._area_layout.direction()
-
-    def setDirection(self, direction):
-        self._area_layout.setDirection(direction)
-
-    def verticalSpacing(self):
-        return self._area_layout.verticalSpacing()
-
-    def setVerticalSpacing(self, spacing):
-        self._area_layout.setVerticalSpacing(spacing)
-
-    def horizontalSpacing(self):
-        return self._area_layout.horizontalSpacing()
-
-    def setHorizontalSpacing(self, spacing):
-        self._area_layout.setHorizontalSpacing(spacing)
+        """
+        raise TypeError("Cannot set layout on a QFlowArea.")
 
 
 class QtFlowArea(QtConstraintsWidget):
@@ -100,10 +95,10 @@ class QtFlowArea(QtConstraintsWidget):
 
         """
         super(QtFlowArea, self).init_layout()
-        widget = self.widget()
+        layout = self.widget().layout()
         for child in self.children():
             if isinstance(child, QtFlowItem):
-                widget.addWidget(child.widget())
+                layout.addWidget(child.widget())
 
     #--------------------------------------------------------------------------
     # Child Events
@@ -112,18 +107,16 @@ class QtFlowArea(QtConstraintsWidget):
         """ Handle the child removed event for a QtMdiArea.
 
         """
-        # if isinstance(child, QtMdiWindow):
-        #     self.widget().removeSubWindow(child.widget())
+        if isinstance(child, QtFlowItem):
+            self.widget().layout().removeWidget(child.widget())
 
     def child_added(self, child):
         """ Handle the child added event for a QtMdiArea.
 
         """
-        # The size hint of a QMdiArea is typically quite large and the
-        # size hint constraints are usually ignored. There is no need
-        # to notify of a change in size hint here.
-        # if isinstance(child, QtMdiWindow):
-        #     self.widget().addSubWindow(child.widget())
+        if isinstance(child, QtFlowItem):
+            index = self.index_of(child)
+            self.widget().layout().insertWidget(index, child.widget())
 
     #--------------------------------------------------------------------------
     # Message Handling
@@ -167,32 +160,32 @@ class QtFlowArea(QtConstraintsWidget):
         """ Set the direction for the underlying control.
 
         """
-        self.widget().setDirection(_DIRECTION_MAP[direction])
+        self.widget().layout().setDirection(_DIRECTION_MAP[direction])
 
     def set_align(self, align):
         """ Set the alignment for the underlying control.
 
         """
-        self.widget().setAlignment(_ALIGN_MAP[align])
+        self.widget().layout().setAlignment(_ALIGN_MAP[align])
 
     def set_horizontal_spacing(self, spacing):
         """ Set the horizontal spacing of the underyling control.
 
         """
-        self.widget().setHorizontalSpacing(spacing)
+        self.widget().layout().setHorizontalSpacing(spacing)
 
     def set_vertical_spacing(self, spacing):
         """ Set the vertical spacing of the underlying control.
 
         """
-        self.widget().setVerticalSpacing(spacing)
+        self.widget().layout().setVerticalSpacing(spacing)
 
     def set_margins(self, margins):
         """ Set the margins of the underlying control.
 
         """
         top, right, bottom, left = margins
-        self.widget().setMargins(left, top, right, bottom)
+        self.widget().layout().setContentsMargins(left, top, right, bottom)
 
     #--------------------------------------------------------------------------
     # Overrides
