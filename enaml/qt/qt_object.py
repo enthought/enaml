@@ -451,11 +451,12 @@ class QtObject(object):
             The parent of this object, or None if it has no parent.
 
         """
-        # Note: The added/removed events must be executed on the next
-        # cycle of the event loop. It's possible that this method is
-        # being called from the `construct` class method and the child
-        # of the widget will not yet exist. This means that child event
-        # handlers that rely on the child widget existing will fail.
+        # Note: If this object is not yet fully intialized, then the
+        # added/removed events must be executed on the next cycle of
+        # the event loop. It's possible that this method is being called
+        # from the `construct` class method and the toolkit widget will
+        # not yet exist. This means that child event handlers that rely
+        # on the child toolkit widget existing will fail.
         curr = self._parent
         if curr is parent or parent is self:
             return
@@ -465,12 +466,18 @@ class QtObject(object):
             if self in curr._children:
                 curr._children.remove(self)
                 if curr._initialized:
-                    QtObject.deferred_call(curr.child_removed, self)
+                    if self._initialized:
+                        curr.child_removed(self)
+                    else:
+                        QtObject.deferred_call(curr.child_removed, self)
 
         if parent is not None:
             parent._children.append(self)
             if parent._initialized:
-                QtObject.deferred_call(parent.child_added, self)
+                if self._initialized:
+                    parent.child_added(self)
+                else:
+                    QtObject.deferred_call(parent.child_added, self)
 
     def child_removed(self, child):
         """ Called when a child is removed from this object.
@@ -628,5 +635,8 @@ class QtObject(object):
         This method will call the `destroy` method on the object.
 
         """
-        self.destroy()
+        if self._initialized:
+            self.destroy()
+        else:
+            QtObject.deferred_call(self.destroy)
 

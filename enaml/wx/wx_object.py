@@ -427,7 +427,6 @@ class WxObject(object):
         """
         return self._children
 
-    @deferred_updates
     def set_parent(self, parent):
         """ Set the parent for this object.
 
@@ -456,12 +455,18 @@ class WxObject(object):
             if self in curr._children:
                 curr._children.remove(self)
                 if curr._initialized:
-                    WxObject.deferred_call(curr.child_removed, self)
+                    if self._initialized:
+                        curr.child_removed(self)
+                    else:
+                        WxObject.deferred_call(curr.child_removed, self)
 
         if parent is not None:
             parent._children.append(self)
             if parent._initialized:
-                WxObject.deferred_call(parent.child_added, self)
+                if self._initialized:
+                    curr.child_added(self)
+                else:
+                    WxObject.deferred_call(parent.child_added, self)
 
     def child_removed(self, child):
         """ Called when a child is removed from this object.
@@ -622,5 +627,8 @@ class WxObject(object):
         This method will call the `destroy` method on the object.
 
         """
-        self.destroy()
+        if self._initialized:
+            self.destroy()
+        else:
+            WxObject.deferred_call(self.destroy)
 

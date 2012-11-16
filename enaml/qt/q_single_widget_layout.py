@@ -53,7 +53,9 @@ class QSingleWidgetLayout(QLayout):
         self.setContentsMargins(0, 0, 0, 0)
         self._item = None
 
-    def widget(self):
+    # Note: do not name this method `widget` since that is a virtual
+    # method on QLayoutItem which is a parent class of QLayout.
+    def getWidget(self):
         """ Get the widget being managed by this layout.
 
         Returns
