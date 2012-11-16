@@ -30,7 +30,7 @@ class FlowArea(ConstraintsWidget):
     #: The amount of vertical space to place between items.
     vertical_spacing = Range(low=0, value=10)
 
-    #: The margins to use around the exterior of the area.
+    #: The margins to use around the outside of the flow area.
     margins = CoercingInstance(Box, (10, 10, 10, 10))
 
     #: A read only property which returns the area's flow items.
