@@ -480,18 +480,15 @@ class Object(HasStrictTraits):
             else:
                 new.append(child)
 
-        if destroy:
-            for child in old:
-                # Set the child's parent to None so that destroy does
-                # not recurse back into a child manipulation method.
-                child._parent = None
-                child.destroy()
-        else:
-            for child in old:
-                child._parent = None
+        for child in old:
+            child._parent = None
 
         with ChildEventContext(self):
             self._children = tuple(new)
+
+        if destroy:
+            for child in old:
+                child.destroy()
 
     def replace_children(self, remove, before, insert, destroy=True):
         """ Perform an 'atomic' remove and insert children operation.
@@ -557,15 +554,8 @@ class Object(HasStrictTraits):
                     with ChildEventContext(old_parent):
                         old_parent._children = old_kids
 
-        if destroy:
-            for child in old:
-                # Set the child's parent to None so that destroy does
-                # not recurse back into a child manipulation method.
-                child._parent = None
-                child.destroy()
-        else:
-            for child in old:
-                child._parent = None
+        for child in old:
+            child._parent = None
 
         with ChildEventContext(self):
             self._children = tuple(new)
@@ -575,6 +565,10 @@ class Object(HasStrictTraits):
                 # including adding more children to their parent.
                 for child in insert_tup:
                     child.initialize()
+
+        if destroy:
+            for child in old:
+                child.destroy()
 
     #--------------------------------------------------------------------------
     # Messaging Methods
