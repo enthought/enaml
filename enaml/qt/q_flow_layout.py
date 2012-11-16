@@ -68,8 +68,9 @@ class FlowLayoutData(object):
     alignment = Qt.AlignLeading
 
     #: The preferred size for the layout item. This size will be used
-    #: as the size of the layout item to the extent possible. If the
-    #: given size is invalid, the sizeHint of the item will be used.
+    #: as the size of the layout item to the extent possible. If this
+    #: size is invalid in a particular dimension, the sizeHint of the
+    #: item in that direction will be used.
     preferred_size = QSize()
 
     def __init__(self):
@@ -83,6 +84,10 @@ class QFlowWidgetItem(QWidgetItem):
     """ A custom QWidgetItem for use with the QFlowLayout.
 
     """
+    #: The FlowLayoutData associated with this widget item. It is a
+    #: publically accesible attribute for performance reasons.
+    data = None
+
     def __init__(self, widget, data):
         """ Initialize a QFlowWidgetItem.
 
@@ -102,8 +107,10 @@ class QFlowWidgetItem(QWidgetItem):
         self._cached_min = QSize()
 
     def maximumSize(self):
-        """ Overridden maximum size computation. The max size for a flow
-        widget item is cached.
+        """ Reimplemented maximum size computation.
+
+        The max size for a flow widget item is cached and recomputed
+        only when the widget item is invalidated.
 
         """
         if not self._cached_max.isValid():
@@ -111,8 +118,10 @@ class QFlowWidgetItem(QWidgetItem):
         return self._cached_max
 
     def minimumSize(self):
-        """ Overridden minimum size computation. The min size for a flow
-        widget item is cached.
+        """ Reimplemented minimum size computation.
+
+        The min size for a flow widget item is cached and recomputed
+        only when the widget item is invalidated.
 
         """
         if not self._cached_min.isValid():
@@ -120,20 +129,24 @@ class QFlowWidgetItem(QWidgetItem):
         return self._cached_min
 
     def sizeHint(self):
-        """ Overridden size hint computation. The size hint for a flow
-        widget item is cached.
+        """ Reimplemented size hint computation.
+
+        The size hint for a flow widget item is cached and recomputed
+        only when the widget item is invalidated. The size hint is the
+        valid union of the preferred size, as indicated by the layout
+        data, and the size hint of the widget.
 
         """
         if not self._cached_hint.isValid():
             hint = super(QFlowWidgetItem, self).sizeHint()
             pref = self.data.preferred_size
-            mins = self.minimumSize()
-            maxs = self.maximumSize()
+            smin = self.minimumSize()
+            smax = self.maximumSize()
             if pref.width() != -1:
-                pw = max(mins.width(), min(pref.width(), maxs.width()))
+                pw = max(smin.width(), min(pref.width(), smax.width()))
                 hint.setWidth(pw)
             if pref.height() != -1:
-                ph = max(mins.height(), min(pref.height(), maxs.height()))
+                ph = max(smin.height(), min(pref.height(), smax.height()))
                 hint.setHeight(ph)
             self._cached_hint = hint
         return self._cached_hint
@@ -159,7 +172,8 @@ class QFlowWidgetItem(QWidgetItem):
     def invalidate(self):
         """ Invalidate the internal cached data for this widget item.
 
-        Invalidation will only occur if the layout data is dirty.
+        The invalidation will only have an effect if the layout data
+        associate with this item is marked as dirty.
 
         """
         if self.data.dirty:
@@ -173,13 +187,40 @@ class _LayoutRow(object):
 
     This class accumulates information about a row of items as the items
     are added to the row. Instances of the this class are created by the
-    QFlowLayout during a layout pass.
+    QFlowLayout during a layout pass. For performance reasons, there are
+    several publically accesible attributes. See their documentation for
+    restrictions on their use.
 
     """
     #: The height to use for laying out the row. This attribute is
     #: modified directly by the layout as it distributes the vertical
     #: space amongst the rows.
     layout_height = 0
+
+    #: The minimum height required for the row. This is automatically
+    #: updated as items are added to the row. It should be considered
+    #: read-only to external users.
+    min_height = 0
+
+    #: The minimum width required for the row. This is automatically
+    #: updated as items are added to the row. It should be considered
+    #: read-only to external users.
+    min_width = 0
+
+    #: The desired height for the row. This is automatically updated as
+    #: items are added to the row. It should be considered read-only to
+    #: external users.
+    hint_height = 0
+
+    #: The desired width for the row. This is automatically updated as
+    #: items are added to the row. It should be considered read-only to
+    #: external users.
+    hint_width = 0
+
+    #: The vertical stretch factor for the row. This is automatically
+    #: updated as items are added to the row. It should be considered
+    #: read-only by external users.
+    stretch = 0
 
     def __init__(self, width, options):
         """ Initialize a layout row.
@@ -195,55 +236,16 @@ class _LayoutRow(object):
         """
         self._width = width
         self._options = options
-        self._min_height = 0
-        self._hint_height = 0
-        self._min_width = 0
-        self._hint_width = 0
-        self._stretch = 0
-        self._flow_stretch = 0
+        self._items_stretch = 0
         self._items = []
 
     @property
-    def min_height(self):
-        """ A read-only property which returns the mininmum row height.
-
-        """
-        return self._min_height
-
-    @property
-    def hint_height(self):
-        """ A read-only property which returns the desired row height.
-
-        """
-        return self._hint_height
-
-    @property
-    def min_width(self):
-        """ A read-only property which returns the minimum row width.
-
-        """
-        return self._min_width
-
-    @property
-    def hint_width(self):
-        """ A read-only property which returns the desired row width.
-
-        """
-        return self._hint_width
-
-    @property
     def diff_height(self):
-        """ A read-only property which returns the height diff.
+        """ A read-only property which computes the difference between
+        the desired height and the minimum height.
 
         """
-        return self._hint_height - self._min_height
-
-    @property
-    def stretch(self):
-        """ A read-only property which returns the row's stretch factor.
-
-        """
-        return self._stretch
+        return self.hint_height - self.min_height
 
     def add_item(self, item):
         """ Add an item to the layout row.
@@ -266,17 +268,17 @@ class _LayoutRow(object):
         hint_size = item.sizeHint()
         n = len(self._items)
         s = self._options.h_spacing
-        if n > 0 and (self._hint_width + s + hint_size.width()) > self._width:
+        if n > 0 and (self.hint_width + s + hint_size.width()) > self._width:
             return False
-        self._min_height = max(self._min_height, min_size.height())
-        self._hint_height = max(self._hint_height, hint_size.height())
-        self._stretch = max(self._stretch, item.data.ortho_stretch)
-        self._min_width += min_size.width()
-        self._hint_width += hint_size.width()
-        self._flow_stretch += item.data.stretch
+        self.min_height = max(self.min_height, min_size.height())
+        self.hint_height = max(self.hint_height, hint_size.height())
+        self.stretch = max(self.stretch, item.data.ortho_stretch)
+        self.min_width += min_size.width()
+        self.hint_width += hint_size.width()
+        self._items_stretch += item.data.stretch
         if n > 0:
-            self._min_width += s
-            self._hint_width += s
+            self.min_width += s
+            self.hint_width += s
         self._items.append(item)
         return True
 
@@ -295,7 +297,7 @@ class _LayoutRow(object):
         opts = self._options
         layout_width = self._width
         layout_height = self.layout_height
-        delta = self._width - self._hint_width
+        delta = self._width - self.hint_width
         items = self._items
 
         # Short circuit the case where there is negative extra space.
@@ -344,8 +346,8 @@ class _LayoutRow(object):
         # gives an O(n log n) solution to the problem. This algorithm
         # iteratively removes space from the delta, so that the alignment
         # pass below operates on the adjusted free space amount.
-        flow_stretch = self._flow_stretch
-        if flow_stretch > 0:
+        items_stretch = self._items_stretch
+        if items_stretch > 0:
             diffs = []
             for item in items:
                 if item.data.stretch > 0:
@@ -356,8 +358,8 @@ class _LayoutRow(object):
             for ignored, item in diffs:
                 item_stretch = item.data.stretch
                 max_width = item.maximumSize().width()
-                d = item_stretch * delta / flow_stretch
-                flow_stretch -= item_stretch
+                d = item_stretch * delta / items_stretch
+                items_stretch -= item_stretch
                 item_width = widths[item]
                 if item_width + d > max_width:
                     widths[item] = max_width
@@ -412,16 +414,43 @@ class _LayoutColumn(object):
 
     This class accumulates information about a column of items as the
     items are added to the column. Instances of the this class are
-    created by the QFlowLayout during a layout pass.
+    created by the QFlowLayout during a layout pass. For performance
+    reasons, there are several publically accesible attributes. See
+    their documentation for restrictions on their use.
 
     """
     #: The width to use for laying out the column. This attribute is
     #: modified directly by the layout as it distributes the horizontal
-    #: space amongst the columns
+    #: space amongst the columns.
     layout_width = 0
 
+    #: The minimum height required for the column. This is automatically
+    #: updated as items are added to the column. It should be considered
+    #: read-only to external users.
+    min_height = 0
+
+    #: The minimum width required for the column. This is automatically
+    #: updated as items are added to the column. It should be considered
+    #: read-only to external users.
+    min_width = 0
+
+    #: The desired height for the column. This is automatically updated
+    #: as items are added to the column. It should be considered
+    #: read-only to external users.
+    hint_height = 0
+
+    #: The desired width for the column. This is automatically updated
+    #: as items are added to the column. It should be considered
+    #: read-only to external users.
+    hint_width = 0
+
+    #: The vertical stretch factor for the column. This is automatically
+    #: updated as items are added to the column. It should be considered
+    #: read-only by external users.
+    stretch = 0
+
     def __init__(self, height, options):
-        """ Initialize a layout row.
+        """ Initialize a layout column.
 
         Parameters
         ----------
@@ -434,60 +463,16 @@ class _LayoutColumn(object):
         """
         self._height = height
         self._options = options
-        self._min_height = 0
-        self._hint_height = 0
-        self._min_width = 0
-        self._hint_width = 0
-        self._stretch = 0
-        self._flow_stretch = 0
+        self._items_stretch = 0
         self._items = []
 
     @property
-    def min_height(self):
-        """ A read-only property which returns the mininmum column
-        height.
-
-        """
-        return self._min_height
-
-    @property
-    def hint_height(self):
-        """ A read-only property which returns the desired column
-        height.
-
-        """
-        return self._hint_height
-
-    @property
-    def min_width(self):
-        """ A read-only property which returns the minimum column
-        width.
-
-        """
-        return self._min_width
-
-    @property
-    def hint_width(self):
-        """ A read-only property which returns the desired column
-        width.
-
-        """
-        return self._hint_width
-
-    @property
     def diff_width(self):
-        """ A read-only property which returns the width diff.
+        """ A read-only property which computes the difference between
+        the desired width and the minimum width.
 
         """
-        return self._hint_width - self._min_width
-
-    @property
-    def stretch(self):
-        """ A read-only property which returns the column's stretch
-        factor.
-
-        """
-        return self._stretch
+        return self.hint_width - self.min_width
 
     def add_item(self, item):
         """ Add an item to the layout column.
@@ -510,18 +495,17 @@ class _LayoutColumn(object):
         hint_size = item.sizeHint()
         n = len(self._items)
         s = self._options.v_spacing
-        new = self._hint_height + s + hint_size.height()
-        if n > 0 and new > self._height:
+        if n > 0 and self.hint_height + s + hint_size.height() > self._height:
             return False
-        self._min_width = max(self._min_width, min_size.width())
-        self._hint_width = max(self._hint_width, hint_size.width())
-        self._stretch = max(self._stretch, item.data.ortho_stretch)
-        self._min_height += min_size.height()
-        self._hint_height += hint_size.height()
-        self._flow_stretch += item.data.stretch
+        self.min_width = max(self.min_width, min_size.width())
+        self.hint_width = max(self.hint_width, hint_size.width())
+        self.stretch = max(self.stretch, item.data.ortho_stretch)
+        self.min_height += min_size.height()
+        self.hint_height += hint_size.height()
+        self._items_stretch += item.data.stretch
         if n > 0:
-            self._min_height += s
-            self._hint_height += s
+            self.min_height += s
+            self.hint_height += s
         self._items.append(item)
         return True
 
@@ -540,7 +524,7 @@ class _LayoutColumn(object):
         opts = self._options
         layout_height = self._height
         layout_width = self.layout_width
-        delta = self._height - self._hint_height
+        delta = self._height - self.hint_height
         items = self._items
 
         # Short circuit the case where there is negative extra space.
@@ -577,8 +561,8 @@ class _LayoutColumn(object):
 
         # See the long comment in _LayoutRow for the explanation about
         # this section of code. This section is simply the transpose.
-        flow_stretch = self._flow_stretch
-        if flow_stretch > 0:
+        items_stretch = self._items_stretch
+        if items_stretch > 0:
             diffs = []
             for item in items:
                 if item.data.stretch > 0:
@@ -589,8 +573,8 @@ class _LayoutColumn(object):
             for ignored, item in diffs:
                 item_stretch = item.data.stretch
                 max_height = item.maximumSize().height()
-                d = item_stretch * delta / flow_stretch
-                flow_stretch -= item_stretch
+                d = item_stretch * delta / items_stretch
+                items_stretch -= item_stretch
                 item_height = heights[item]
                 if item_height + d > max_height:
                     heights[item] = max_height
@@ -704,6 +688,7 @@ class QFlowLayout(QLayout):
             The flow widget to insert into the layout.
 
         """
+        assert isinstance(widget, AbstractFlowWidget), 'invalid widget type'
         self.addChildWidget(widget)
         item = QFlowWidgetItem(widget, widget.layoutData())
         self._items.insert(index, item)
@@ -886,7 +871,13 @@ class QFlowLayout(QLayout):
             item = items[idx]
             del items[idx]
             item.widget().hide()
-            return item
+            # The creation path of the layout items bypasses the virtual
+            # wrapper methods, this means that the ownership of the cpp
+            # pointer is never transfered to Qt. If the item is returned
+            # here it will be delete by Qt, which doesn't own the pointer.
+            # A double free occurs once the Python item falls out of scope.
+            # To avoid this, this method always returns None and the item
+            # cleanup is performed by Python, which owns the cpp pointer.
 
     def setGeometry(self, rect):
         """ Sets the geometry of all the items in the layout.
@@ -1108,7 +1099,7 @@ class QFlowLayout(QLayout):
 
 
 class _LayoutOptions(object):
-    """ A class used by QFlowLayoutData to store it's layout options.
+    """ A private class used by QFlowLayout to store layout options.
 
     """
     #: The flow direction of the layout.
