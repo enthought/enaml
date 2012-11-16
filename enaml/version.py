@@ -15,7 +15,7 @@ MAJOR = 0
 # possibly small differences in the API, but these changes will come
 # backwards compatibility support. Minor releases are typically used
 # for feature additions.
-MINOR = 4
+MINOR = 5
 
 # The micro release number. The micro release number is incremented
 # for bug fix releases.

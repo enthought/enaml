@@ -9,13 +9,13 @@ from setuptools import setup, find_packages, Extension
 if os.environ.get('BUILD_ENAML_EXTENSIONS'):
     ext_modules = [
         Extension(
-            'enaml.extensions.weakmethod', 
-            ['enaml/extensions/weakmethod.cpp'], 
+            'enaml.extensions.weakmethod',
+            ['enaml/extensions/weakmethod.cpp'],
             language='c++',
         ),
         Extension(
-            'enaml.extensions.callableref', 
-            ['enaml/extensions/callableref.cpp'], 
+            'enaml.extensions.callableref',
+            ['enaml/extensions/callableref.cpp'],
             language='c++',
         ),
         Extension(
@@ -30,7 +30,7 @@ else:
 
 setup(
     name='enaml',
-    version='0.3.0alpha',
+    version='0.5.0',
     author='Enthought, Inc',
     author_email='info@enthought.com',
     url='https://github.com/enthought/enaml',
