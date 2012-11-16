@@ -1,0 +1,53 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2012, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+class SessionFactory(object):
+    """ A class whose instances are used by an Enaml Application to 
+    create Session instances.
+    
+    """
+    def __init__(self, name, description, session_class, *args, **kwargs):
+        """ Initialize a SessionFactory.
+        
+        Parameters
+        ----------
+        name : str
+            A unique, human-friendly name for the Session that will be
+            created.
+
+        description : str
+            A brief description of the Session that will be created.
+
+        session_class : Session subclass
+            A concrete subclass of Session that will be created by this
+            factory.
+
+        *args, **kwargs
+            Optional positional and keyword arguments to pass to the 
+            init() method of the Session that gets created.
+
+        """
+        self.name = name
+        self.description = description
+        self.session_class = session_class
+        self.args = args
+        self.kwargs = kwargs
+    
+    def __call__(self, session_id):
+        """ Called by the Enaml Application to create an instance of 
+        the Session.
+
+        Parameters
+        ----------
+        session_id : str
+            The unique session identifier to pass to the Session.
+
+        Returns
+        -------
+        result : Session
+            A new instance of the Session type provided to the factory.
+        
+        """
+        return self.session_class(session_id, self.args, self.kwargs)
+

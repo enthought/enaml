@@ -1,9 +1,9 @@
 Slider Example
 ===============================================================================
 
-:download:`slider.enaml <../../../examples/components/slider.enaml>`
+:download:`slider.enaml <../../../examples/widgets/slider.enaml>`
 
-.. literalinclude:: ../../../examples/components/slider.enaml
+.. literalinclude:: ../../../examples/widgets/slider.enaml
     :language: python
 
 ::

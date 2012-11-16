@@ -1,0 +1,58 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+""" ImageView example.
+
+An demonstration of how to use an ImageView component to display 
+an image.
+
+"""
+import os
+
+from enaml.widgets import Window, Container, ImageView, CheckBox
+from enaml.noncomponents.image import ImageFromFile, ImageFromArray
+
+WIDTH = 128
+HEIGHT = 128
+
+def get_data():
+    buf = bytearray(WIDTH * HEIGHT * 4)
+    buf[0::4] = '\xff' * (WIDTH * HEIGHT)
+    buf[3::4] = '\xff' * (WIDTH * HEIGHT)
+    return buf
+
+def get_path():
+    return os.path.join(os.path.dirname(__file__), 'question.png')
+
+
+enamldef Main(Window):
+    title = 'Image View'
+    Container:
+        ImageView:
+            id: image0
+            image = ImageFromFile(get_path())
+            bgcolor = 'gray'
+            scale_to_fit = False
+            constraints = [
+                height == image1.height, 
+                height == image2.height,
+            ]
+        ImageView:
+            id: image1
+            image = ImageFromFile(get_path())
+            bgcolor = 'gray'
+            scale_to_fit = False
+            preserve_aspect_ratio = False
+        ImageView:
+            id: image2
+            image = ImageFromArray(get_data(), (WIDTH, HEIGHT), "rgba32")
+            bgcolor = 'gray'
+            scale_to_fit = False
+        CheckBox:
+            text = "Scale Images"
+            checked ::
+                image0.scale_to_fit = not image0.scale_to_fit
+                image1.scale_to_fit = not image1.scale_to_fit
+                image2.scale_to_fit = not image2.scale_to_fit
+

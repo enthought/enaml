@@ -18,8 +18,8 @@ from .monitors import TraitAttributeMonitor, TraitGetattrMonitor
 #: Operators are passed a number of arguments from the Enaml runtime 
 #: engine in order to perform their work. The arguments are, in order:
 #:
-#:      cmpnt : BaseComponent
-#:          The BaseComponent instance which owns the expression which
+#:      cmpnt : Declarative
+#:          The Declarative instance which owns the expression which
 #:          is being bound.
 #:
 #:      attr : string
@@ -32,57 +32,57 @@ from .monitors import TraitAttributeMonitor, TraitGetattrMonitor
 #:
 #:      identifiers : dict
 #:          The dictionary of identifiers available to the expression.
-#:          This dictionary is shared amongs all expressions within
+#:          This dictionary is shared amongst all expressions within
 #:          a given lexical scope. It should therefore not be modified
 #:          or copied since identifiers may continue to be added to 
 #:          this dict as runtime execution continues.
 #:
 #:      f_globals : dict
-#:          The dictionary of globals available to the  expression. 
+#:          The dictionary of globals available to the expression. 
 #:          The same rules about sharing and copying that apply to
 #:          the identifiers dict, apply here as well.
 #:
-#:      toolkit : Toolkit
-#:          The toolkit instance that is in scope for the expression.
-#:          The same rules about sharing and copying that apply to
-#:          the identifiers dict, apply here as well.
+#:      operators : OperatorContext
+#:          The operator context used when looking up the operator.
+#:          For the standard operators, this context is passed along
+#:          to the generated expressions.
 #:
 #: Operators may do whatever they please with the information provided
 #: to them. The default operators in Enaml use this information to 
 #: create and bind Enaml expression objects to the component. However,
-#: this is not a requirement and developers who are extending enaml
+#: this is not a requirement and developers who are extending Enaml
 #: are free to get creative with the operators.
 
 
-def op_simple(cmpnt, attr, code, identifiers, f_globals, toolkit):
+def op_simple(cmpnt, attr, code, identifiers, f_globals, operators):
     """ The default Enaml operator for '=' expressions. It binds an
     instance of SimpleExpression to the component.
 
     """
-    expr = SimpleExpression(cmpnt, attr, code, identifiers, f_globals, toolkit)
-    cmpnt.bind_expression(attr, expr)
+    expr = SimpleExpression(cmpnt, attr, code, identifiers, f_globals, operators)
+    cmpnt._bind_expression(attr, expr)
 
 
-def op_notify(cmpnt, attr, code, identifiers, f_globals, toolkit):
+def op_notify(cmpnt, attr, code, identifiers, f_globals, operators):
     """ The default Enaml operator for '::' expressions. It binds an
     instance of NotificationExpression to the component.
 
     """
-    expr = NotificationExpression(cmpnt, attr, code, identifiers, f_globals, toolkit)
-    cmpnt.bind_expression(attr, expr, notify_only=True)
+    expr = NotificationExpression(cmpnt, attr, code, identifiers, f_globals, operators)
+    cmpnt._bind_expression(attr, expr, notify_only=True)
 
 
-def op_update(cmpnt, attr, code, identifiers, f_globals, toolkit):
+def op_update(cmpnt, attr, code, identifiers, f_globals, operators):
     """ The default Enaml operator for '>>' expressions. It binds an
     instance of UpdateExpression to the component.
 
     """
     inverters = [GenericAttributeInverter, GetattrInverter, ImplicitAttrInverter]
-    expr = UpdateExpression(inverters, cmpnt, attr, code, identifiers, f_globals, toolkit)
-    cmpnt.bind_expression(attr, expr, notify_only=True)
+    expr = UpdateExpression(inverters, cmpnt, attr, code, identifiers, f_globals, operators)
+    cmpnt._bind_expression(attr, expr, notify_only=True)
 
 
-def op_subscribe(cmpnt, attr, code, identifiers, f_globals, toolkit):
+def op_subscribe(cmpnt, attr, code, identifiers, f_globals, operators):
     """ The default Enaml operator for '<<' expressions. It binds an
     instance of SubscriptionExpression to the component using monitors
     which understand traits attribute access via dotted notation and
@@ -90,11 +90,11 @@ def op_subscribe(cmpnt, attr, code, identifiers, f_globals, toolkit):
 
     """
     monitors = [TraitAttributeMonitor, TraitGetattrMonitor]
-    expr = SubscriptionExpression(monitors, cmpnt, attr, code, identifiers, f_globals, toolkit)
-    cmpnt.bind_expression(attr, expr)
+    expr = SubscriptionExpression(monitors, cmpnt, attr, code, identifiers, f_globals, operators)
+    cmpnt._bind_expression(attr, expr)
 
 
-def op_delegate(cmpnt, attr, code, identifiers, f_globals, toolkit):
+def op_delegate(cmpnt, attr, code, identifiers, f_globals, operators):
     """ The default Enaml operator for ':=' expressions. It binds an
     instance of DelegationExpression to the component using monitors
     which understand traits attribute access via dotted notation and
@@ -105,8 +105,8 @@ def op_delegate(cmpnt, attr, code, identifiers, f_globals, toolkit):
     """
     inverters = [GenericAttributeInverter, GetattrInverter, ImplicitAttrInverter]
     monitors = [TraitAttributeMonitor, TraitGetattrMonitor]
-    expr = DelegationExpression(inverters, monitors, cmpnt, attr, code, identifiers, f_globals, toolkit)
-    cmpnt.bind_expression(attr, expr)
+    expr = DelegationExpression(inverters, monitors, cmpnt, attr, code, identifiers, f_globals, operators)
+    cmpnt._bind_expression(attr, expr)
 
 
 OPERATORS = {

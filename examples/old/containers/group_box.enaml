@@ -1,0 +1,86 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+""" Group boxes.
+
+We create two GroupBoxes containing Form layouts. The GroupBoxes have
+informative titles. CheckBoxes on the bottom of the window allow you to 
+toggle the presence of the titles and whether they should be shown in a 
+"flat" style or the default style.
+
+"""
+from enaml.layout.api import vbox, hbox, align, spacer
+from enaml.widgets.api import (
+    Window, Container, GroupBox, Form, Label, Field, CheckBox,
+)
+
+
+enamldef Main(Window):
+    title = "Group Boxes"
+    Container:
+        constraints = [
+            vbox(
+                top_box,
+                bottom_box,
+                hbox(spacer, title_check, flat_check),
+            ),
+            align('midline', top_form, bottom_form),
+        ]
+        GroupBox:
+            id: top_box
+            share_layout = True
+            title = "Personal Details"
+            share_layout = True
+            Form:
+                id: top_form
+                share_layout = True
+                Label:
+                    text = "First name:"
+                Field:
+                    pass
+                Label:
+                    text = "Last name:"
+                Field:
+                    pass
+                Label:
+                    text = "Home phone:"
+                Field:
+                    pass
+        GroupBox:
+            id: bottom_box
+            share_layout = True
+            title = "Employment Details"
+            share_layout = True
+            Form:
+                id: bottom_form
+                share_layout = True
+                Label:
+                    text = "Employer:"
+                Field:
+                    pass
+                Label:
+                    text = "Office or Desk phone:"
+                Field:
+                    pass
+        CheckBox:
+            id: title_check
+            text = "Show titles"
+            checked = True
+            toggled ::
+                if top_box.title:
+                    top_box.title = ""
+                else:
+                    top_box.title = "Personal Details"
+                if bottom_box.title:
+                    bottom_box.title = ""
+                else:
+                    bottom_box.title = "Employment Details"
+        CheckBox:
+            id: flat_check
+            text = "Flat"
+            checked = False
+            toggled ::
+                for box in (top_box, bottom_box):
+                    box.flat = not box.flat
+

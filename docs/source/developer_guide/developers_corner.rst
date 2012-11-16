@@ -45,7 +45,7 @@ Sphinx Directives and Roles
     Automatically generate the object description from an |Enaml| file. Specify
     the object to document as though you were importing it.
 
-..  autoenaml_decl:: enaml.stdlib.fields.ErrorField
+..  autoenaml_decl:: enaml.stdlib.fields.IntField
 
 .. rst:directive:: enaml:enaml_defn
 
@@ -83,8 +83,9 @@ objects.
 
 .. inheritance-diagram::
     enamldoc.sphinx_ext.EnamlComponentDocumenter
-    enamldoc.sphinx_ext.EnamlDeclarationDocumenter
-    enamldoc.sphinx_ext.EnamlDomain
+    enamldoc.sphinx_ext.EnamlDocstringSignatureMixin
+    enamldoc.sphinx_ext.DeclarativeDocumenter
+    enamldoc.sphinx_ext.EnamlModuleDocumenter
 
 
 Including the Sphinx extension ``refactordoc`` allows use of formatted
@@ -270,6 +271,6 @@ Example
 
         """
 
-.. currentmodule:: refactor_doc
+.. currentmodule:: refactordoc
 
-.. automethod:: FunctionDocstring.extract_fields
+.. automethod:: FunctionDoc.extract_fields

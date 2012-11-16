@@ -1,0 +1,56 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+""" Nested hbox()/vbox()
+
+FIXME: this is a dumb example.
+
+"""
+from enaml.layout.api import vbox, hbox, align, spacer
+from enaml.widgets.api import Window, Container, Label, PushButton
+
+
+enamldef Main(Window):
+    Container:
+        id: main_window
+        constraints = [
+            vbox(
+                ALabel,
+                BLabel,
+                hbox(CLabel, spacer, DLabel, spacer, ELabel),
+                hbox(spacer, FLabel, GLabel),
+                hbox(button1, spacer, button2, spacer, button3)),
+            align('h_center', main_window, DLabel, button2),
+        ]
+        Label:
+            id: ALabel
+            text = "Label A"
+        Label:
+            id: BLabel
+            text = "Label B"
+        Label:
+            id: CLabel
+            text = "Label C"
+        Label:
+            id: DLabel
+            text = "Label D"
+        Label:
+            id: ELabel
+            text = "Label E"
+        Label:
+            id: FLabel
+            text = "Label F"
+        Label:
+            id: GLabel
+            text = "Label G"
+        PushButton:
+            id: button1
+            text = "Button 1"
+        PushButton:
+            id: button2
+            text = "Button 2"
+        PushButton:
+            id: button3
+            text = "Button 3"
+

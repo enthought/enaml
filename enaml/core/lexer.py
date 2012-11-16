@@ -3,9 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import os
-import re
 import tokenize
-import warnings
 
 import ply.lex as lex
 
@@ -13,27 +11,6 @@ import ply.lex as lex
 # Get a save directory for the lex and parse tables
 _lex_dir = os.path.join(os.path.dirname(__file__), 'parse_tab')
 _lex_module = 'enaml.core.parse_tab.lextab'
-
-
-#------------------------------------------------------------------------------
-# Deprecation Handling
-#------------------------------------------------------------------------------
-# old decl header
-DECL = re.compile('^[a-zA-Z_][a-zA-Z0-9_]*\s*\(\s*[a-zA-Z_][a-zA-Z0-9_]*\s*\)\s*:\s*$')
-
-
-def warn_old_decl_syntax(lineno):
-    msg = ("Declaring a component without the keyword 'enamldef' is "
-           "deprecated and will be removed in futures versions. The keyword "
-           "has been automatically added on line number %s")
-    warnings.warn(msg % lineno, DeprecationWarning)
-
-
-def warn_old_tag_syntax(lineno):
-    msg = ("The ::python:: and ::end:: tags are deprecated and will be "
-           "removed in future versions. The tags are no longer required "
-           "and can simply be ommitted. Ignoring tag on line number %s")
-    warnings.warn(msg % lineno, DeprecationWarning)
 
 
 #------------------------------------------------------------------------------
@@ -463,19 +440,6 @@ class EnamlLexer(object):
         syntax_error('EOL while scanning single quoted string.', t)
     
     #--------------------------------------------------------------------------
-    # Raw Python
-    #--------------------------------------------------------------------------   
-    # Deprecated Backwards Compatibility for :: python :: tags
-    def t_start_raw_python(self, t):
-        r'::[\t\ ]*python[\t\ ]*::[\t\ ]*'
-        warn_old_tag_syntax(t.lineno)
-
-
-    def t_end_raw_python(self, t):
-        r'::[\t\ ]*end[\t\ ]*::[\t\ ]*'
-        warn_old_tag_syntax(t.lineno)
-
-    #--------------------------------------------------------------------------
     # Miscellaneous Token Rules
     #--------------------------------------------------------------------------
     # This is placed after the string rules so r"" is not matched as a name.
@@ -508,16 +472,6 @@ class EnamlLexer(object):
         self.lexer.filename = filename
 
     def input(self, txt):
-        # Support for deprecated component declaration without
-        # keyword. This automatically inserts the keyword before
-        # anything makes it to the parser.
-        new = []
-        for lineno, line in enumerate(txt.splitlines()):
-            if DECL.match(line):
-                warn_old_decl_syntax(lineno)
-                line = 'enamldef ' + line
-            new.append(line)
-        txt = '\n'.join(new)
         self.lexer.input(txt)
         self.next_token = self.make_token_stream().next
 

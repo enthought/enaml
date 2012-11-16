@@ -5,7 +5,7 @@
 from weakref import WeakKeyDictionary, ref
 
 from traits.api import TraitType, TraitError, BaseInstance
-from traits.traits import CTrait
+from traits.traits import CTrait, trait_from
 
 
 #------------------------------------------------------------------------------
@@ -239,33 +239,25 @@ class ExpressionTrait(TraitType):
     def get(self, obj, name):
         """ Handle computing the initial value for the expression trait. 
         This method first restores the old trait, then evaluates the 
-        expression and sets the value on the trait. It then performs
-        a getattr to return the new value of the trait. If the object
-        is not yet fully initialized, the value is set quietly.
+        expression and sets the value on the trait quietly. It then 
+        performs a getattr to return the new value of the trait.
 
         """
         self.swapout(obj, name)
         val = self.compute_default(obj, name)
         if val is not NotImplemented:
-            if not obj.initialized:
-                obj.trait_setq(**{name: val})
-            else:    
-                setattr(obj, name, val)
+            obj.trait_setq(**{name: val})
         return getattr(obj, name, val)
 
     def set(self, obj, name, val):
         """ Handle the setting of an initial value for the expression
         trait. This method first restores the old trait, then sets
         the value on that trait. In this case, the expression object
-        is not needed. If the object is not yet fully initialized, the 
-        value is set quietly.
+        is not needed.
 
         """
         self.swapout(obj, name)
-        if not obj.initialized:
-            obj.trait_setq(**{name: val})
-        else:
-            setattr(obj, name, val)
+        setattr(obj, name, val)
 
 
 #------------------------------------------------------------------------------
@@ -426,7 +418,7 @@ class Bounded(TraitType):
                 raise TraitError(msg)
         
         if not is_inside_bounds:
-            msg = ('The assigned date value must be bounded between {0} '
+            msg = ('The assigned value must be bounded between {0} '
                    ' and {1}. Got {2} instead.'.format(low, high, value))
             raise TraitError(msg)
 
@@ -454,7 +446,7 @@ class LazyProperty(TraitType):
     """ A trait which behaves like a read-only cached property, but
     which lazily defers binding the dependency notifiers until the
     first time the value is retrieved. It is used to avoid situations
-    where a property dependency in prematurely evaluated during
+    where a property dependency is prematurely evaluated during
     component instantiation.
 
     """
@@ -538,35 +530,4 @@ class CoercingInstance(BaseInstance):
         except:
             pass
         return super(CoercingInstance, self).validate(obj, name, value)
-
-
-#------------------------------------------------------------------------------
-# Enaml Widget Instance
-#------------------------------------------------------------------------------
-class EnamlWidgetInstance(BaseInstance):
-    """ A BaseInstance subclass which will call the 'setup' method on
-    the value being assigned, passing in the appropriate toolkit widget
-    object. The 'destroy' method on the old instance will be called 
-    unless the 'destroy_old' flag is set to False. These operations are
-    done *before* the value is actually set and therefore before any 
-    change notifications are fired.
-
-    """
-    def __init__(self, *args, **kwargs):
-        self.destroy_old = kwargs.pop('destroy_old', True)
-        super(EnamlWidgetInstance, self).__init__(*args, **kwargs)
-
-    def validate(self, obj, name, value):
-        """ Validates the value using the superclass method. Upon
-        success, it then destroys the old value (if requested) and 
-        sets up the new value. The value is expected to be at least
-        an instance WidgetComponent.
-
-        """
-        value = super(EnamlWidgetInstance, self).validate(obj, name, value)
-        old = getattr(obj, name, None)
-        if old is not None and self.destroy_old:
-            old.destroy()
-        value.setup(obj.toolkit_widget)
-        return value
 

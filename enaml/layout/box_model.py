@@ -2,57 +2,75 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from casuarius import ConstraintVariable
+from .constraint_variable import ConstraintVariable
 
 
 class BoxModel(object):
-    """ Provides ConstraintVariables describing a box.
+    """ A class which provides a simple constraints box model.
 
     Primitive Variables:
-        - left
-        - top
-        - width
-        - height
-    
+        left, top, width, height
+
     Derived Variables:
-        - right
-        - bottom
-        - v_center
-        - h_center
+        right, bottom, v_center, h_center
 
     """
-    def __init__(self, component):
-        label = '{0}_{1:x}'.format(type(component).__name__, id(component))
-        for primitive in ('left', 'top', 'width', 'height'):
-            var = ConstraintVariable('{0}_{1}'.format(primitive, label))
-            setattr(self, primitive, var) 
+    __slots__ = (
+        'left', 'top', 'width', 'height', 'right', 'bottom', 'v_center',
+        'h_center'
+    )
+
+    def __init__(self, owner):
+        """ Initialize a BoxModel.
+
+        Parameters
+        ----------
+        owner : str
+            A string which uniquely identifies the owner of this box
+            model.
+
+        """
+        self.left = ConstraintVariable('left', owner)
+        self.top = ConstraintVariable('top', owner)
+        self.width = ConstraintVariable('width', owner)
+        self.height = ConstraintVariable('height', owner)
         self.right = self.left + self.width
         self.bottom = self.top + self.height
         self.v_center = self.top + self.height / 2.0
-        self.h_center = self.left + self.width / 2.0        
+        self.h_center = self.left + self.width / 2.0
 
 
-class PaddingBoxModel(BoxModel):
-    """ Provides ConstraintVariables describing a box with padding.
+class ContentsBoxModel(BoxModel):
+    """ A BoxModel subclass which adds an inner contents box.
 
     Primitive Variables:
-        - padding_[left|right|top|bottom]
-    
+        contents_[left|right|top|bottom]
+
     Derived Variables:
-        - contents_[left|top|right|bottom|width|height|v_center|h_center]
-    
+        contents_[width|height|v_center|h_center]
+
     """
-    def __init__(self, component):
-        super(PaddingBoxModel, self).__init__(component)
-        label = '{0}_{1:x}'.format(type(component).__name__, id(component))
-        for primitive in ('left', 'right', 'top', 'bottom'):
-           attr = 'padding_{0}'.format(primitive)
-           var = ConstraintVariable('{0}_{1}'.format(attr, label))
-           setattr(self, attr, var)
-        self.contents_left = self.left + self.padding_left
-        self.contents_top = self.top + self.padding_top
-        self.contents_right = self.right - self.padding_right
-        self.contents_bottom = self.bottom - self.padding_bottom
+    __slots__ = (
+        'contents_left', 'contents_right', 'contents_top', 'contents_bottom',
+        'contents_width', 'contents_height', 'contents_v_center',
+        'contents_h_center'
+    )
+
+    def __init__(self, owner):
+        """ Initialize a ContainerBoxModel.
+
+        Parameters
+        ----------
+        owner : string
+            A string which uniquely identifies the owner of this box
+            model.
+
+        """
+        super(ContentsBoxModel, self).__init__(owner)
+        self.contents_left = ConstraintVariable('contents_left', owner)
+        self.contents_right = ConstraintVariable('contents_right', owner)
+        self.contents_top = ConstraintVariable('contents_top', owner)
+        self.contents_bottom = ConstraintVariable('contents_bottom', owner)
         self.contents_width = self.contents_right - self.contents_left
         self.contents_height = self.contents_bottom - self.contents_top
         self.contents_v_center = self.contents_top + self.contents_height / 2.0

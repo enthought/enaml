@@ -1,0 +1,74 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+""" Notebook Example
+
+This example shows how to use the notebook container to arrange constituent pages
+
+"""
+import itertools
+
+from enaml.layout.api import hbox, vbox, spacer, align
+from enaml.widgets.api import (
+    Window, Html, Container, PushButton, Notebook, Form, Label, Field, Page
+)
+
+
+tab_pos = itertools.cycle(['top', 'bottom', 'left', 'right'])
+tab_pos.next()
+
+
+enamldef TabForm(Form):
+    attr button_text: str = 'Click Me!'
+    event button_clicked
+    Label:
+        id: first_label
+        text = 'First'
+    Field:
+        id: first_field
+        pass
+    Label:
+        id: last_label
+        text = 'Last'
+    Field:
+        id: last_field
+        pass
+    Label:
+        id: phone_label
+        text = 'Phone'
+    Field:
+        id: phone_field
+        pass
+    PushButton:
+        id: button
+        text = button_text
+        clicked :: button_clicked()
+
+
+enamldef Main(Window):
+    title = 'TabGroup'
+    Container:
+        Notebook:
+            id: nb
+            constraints = [height >= 200, width >= 500]
+            tab_style = 'preferences'
+            tabs_closable = False
+            Page:
+                id: spam_tab
+                title = 'Spam'
+                TabForm:
+                    button_text = 'Close tab'
+                    button_clicked :: nb.close_tab(spam_tab)
+            Page:
+                id: ham_tab
+                title = 'Ham'
+                TabForm:
+                    button_text = 'Close tab'
+                    button_clicked :: nb.close_tab(ham_tab)
+            Page:
+                title = 'Toggle'
+                TabForm:
+                    button_text = 'Cycle Tab Position'
+                    button_clicked :: nb.tab_position = tab_pos.next()
+

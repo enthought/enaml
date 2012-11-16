@@ -9,9 +9,10 @@ from weakref import ref
 
 from traits.api import Disallow
 
+from enaml.signaling import Signal
+
 from .byteplay import Code
 from .monitors import AbstractMonitor
-from .signaling import Signal
 from .trait_types import UninitializedAttributeError
 
 
@@ -20,7 +21,7 @@ from .trait_types import UninitializedAttributeError
 #------------------------------------------------------------------------------
 @contextmanager
 def swap_attribute(obj, attr, value):
-    """ Swap an attribute of an object with the given value for the 
+    """ Swap an attribute of an object with the given value for the
     duration of the context, restoring it on exit. The attribute must
     already exist on the object prior to entering the context.
 
@@ -28,14 +29,14 @@ def swap_attribute(obj, attr, value):
     ----------
     obj : object
         The object which owns the attribute.
-    
+
     attr : string
         The name of the attribute on the object.
 
     value : object
         The value to apply to the attribute for the duration of the
         context.
-    
+
     """
     old = getattr(obj, attr)
     setattr(obj, attr, value)
@@ -47,7 +48,7 @@ def swap_attribute(obj, attr, value):
 # Execution Scope
 #------------------------------------------------------------------------------
 class ExecutionScope(object):
-    """ A custom mapping object that implements the scope resolution 
+    """ A custom mapping object that implements the scope resolution
     order for the evaluation of code objects in Enaml expressions.
 
     Notes
@@ -57,41 +58,32 @@ class ExecutionScope(object):
     order to avoid issues with reference cycles.
 
     """
-    def __init__(self, obj, identifiers, f_globals, toolkit, overrides, cb):
+    def __init__(self, obj, identifiers, overrides, attr_cb):
         """ Initialize an execution scope.
 
         Parameters
         ----------
-        obj : BaseComponent
-            The BaseComponent instance on which the expression is bound.
+        obj : Declarative
+            The Declarative instance on which the expression is bound.
 
         identifiers : dict
             The dictionary of identifiers that are available to the
             expression. These are checked before the attribute space
             of the component.
 
-        f_globals : dict
-            The globals dict to check after checking the attribute space
-            of the given component, but before checking the toolkit.
-
-        toolkit : Toolkit
-            The toolkit to check after checking the globals.
-
         overrides : dict
             An dictionary of override values to check before identifiers.
 
-        cb : callable or None
-            A callable which is called when an implicit attribute is 
-            found and accessed on the object. The arguments passed are 
+        attr_cb : callable or None
+            A callable which is called when an implicit attribute is
+            found and accessed on the object. The arguments passed are
             the object and the attribute name.
 
         """
         self._obj = obj
         self._identifiers = identifiers
-        self._f_globals = f_globals
-        self._toolkit = toolkit
         self._overrides = overrides
-        self._attr_cb = cb
+        self._attr_cb = attr_cb
         self._assignments = {}
 
     def __getitem__(self, name):
@@ -107,7 +99,7 @@ class ExecutionScope(object):
             5) f_globals
             6) toolkit
             7) builtins
-        
+
         Parameters
         ----------
         name : string
@@ -120,8 +112,8 @@ class ExecutionScope(object):
 
         Raises
         ------
-        KeyError
-            If the name is not found, a KeyError is raise.
+        KeyError : Exception
+            If the name is not found, a KeyError is raised.
 
         """
         # Check the assignments dict first since this is where all
@@ -135,7 +127,7 @@ class ExecutionScope(object):
         dct = self._overrides
         if name in dct:
             return dct[name]
-        
+
         # Identifiers have the highest precedence of value able to
         # be supplied by a user of the framework.
         dct = self._identifiers
@@ -157,17 +149,10 @@ class ExecutionScope(object):
                     cb(parent, name)
                 return res
 
-        # Global variables come after implicit attributes
-        dct = self._f_globals
-        if name in dct:
-            return dct[name]
-        
-        # End with the toolkit which will raise KeyError on failure.
-        # Builtins will be checked by Python using the global dict.
-        return self._toolkit[name]
+        raise KeyError(name)
 
     def __setitem__(self, name, val):
-        """ Stores the value into the internal assignments dict. This 
+        """ Stores the value into the internal assignments dict. This
 
         """
         self._assignments[name] = val
@@ -179,7 +164,7 @@ class ExecutionScope(object):
         del self._assignments[name]
 
     def __contains__(self, name):
-        """ Return True if the name is found in the scope, False 
+        """ Return True if the name is found in the scope, False
         otherwise.
 
         """
@@ -205,28 +190,28 @@ class ExecutionScope(object):
 #------------------------------------------------------------------------------
 class NonlocalScope(object):
     """ An object which implements implicit attribute scoping starting
-    at a given object in the tree. It is used in conjuction with a 
+    at a given object in the tree. It is used in conjuction with a
     nonlocals() instance to allow for explicit referencing of values
     which would otherwise be implicitly scoped.
 
     """
-    def __init__(self, obj, cb):
+    def __init__(self, obj, attr_cb):
         """ Initialize a nonlocal scope.
 
         Parameters
         ----------
-        obj : BaseComponent
-            The BaseComponent instance which forms the first level of
+        obj : Declarative
+            The Declarative instance which forms the first level of
             the scope.
-        
-        cb : callable or None
-            A callable which is called when an implicit attribute is 
-            found and accessed on the object. The arguments passed are 
+
+        attr_cb : callable or None
+            A callable which is called when an implicit attribute is
+            found and accessed on the object. The arguments passed are
             the object and the attribute name.
-        
+
         """
         self._nls_obj = obj
-        self._nls_attr_cb = cb
+        self._nls_attr_cb = attr_cb
 
     def __repr__(self):
         """ A pretty representation of the NonlocalScope.
@@ -275,7 +260,7 @@ class NonlocalScope(object):
             raise AttributeError(msg)
 
     def __setattr__(self, name, value):
-        """ A convenience method which allows setting items in the 
+        """ A convenience method which allows setting items in the
         scope via setattr instead of setitem.
 
         """
@@ -306,19 +291,19 @@ class NonlocalScope(object):
                     cb(parent, name)
                 return res
         raise KeyError(name)
-    
+
     def __setitem__(self, name, value):
         """ Sets the value of the scope by beginning at the current scope
-        object and progressing up the tree until the named attribute is 
+        object and progressing up the tree until the named attribute is
         found. A KeyError is raise in the attribute is not found.
 
         """
         parent = self._nls_obj
         while parent is not None:
-            # It's not sufficient to try to do setattr(...) here and 
+            # It's not sufficient to try to do setattr(...) here and
             # catch the AttributeError, because HasStrictTraits raises
             # a TraitError in these cases and it becomes impossible
-            # to distinguish that error from a trait typing error 
+            # to distinguish that error from a trait typing error
             # without checking the message of the exception.
             try:
                 getattr(parent, name)
@@ -332,7 +317,7 @@ class NonlocalScope(object):
         raise KeyError(name)
 
     def __contains__(self, name):
-        """ Return True if the name is found in the scope, False 
+        """ Return True if the name is found in the scope, False
         otherwise.
 
         """
@@ -361,22 +346,22 @@ class AbstractExpression(object):
     __metaclass__ = ABCMeta
 
     #: A signal which is emitted when the expression has changed. It is
-    #: emmitted with three arguments: expression, name, and value; where 
-    #: expression is the instance which emitted the signal, name is the 
+    #: emmitted with three arguments: expression, name, and value; where
+    #: expression is the instance which emitted the signal, name is the
     #: attribute name to which the expression is bound, and value is the
     #: computed value of the expression.
     expression_changed = Signal()
 
-    def __init__(self, obj, name, code, identifiers, f_globals, toolkit):
+    def __init__(self, obj, name, code, identifiers, f_globals, operators):
         """ Initializes and expression object.
 
         Parameters
         ----------
-        obj : BaseComponent
+        obj : Declarative
             The base component to which this expression is being bound.
 
         name : string
-            The name of the attribute on the owner to which this 
+            The name of the attribute on the owner to which this
             expression is bound.
 
         code : types.CodeType object
@@ -387,11 +372,15 @@ class AbstractExpression(object):
             expression.
 
         f_globals : dict
-            The globals dictionary in which the expression should execute.
+            The globals dictionary in which the expression should
+            execute.
 
-        toolkit : Toolkit
-            The toolkit that was used to create the object and in which
-            the expression should execute.
+        operators : OperatorContext
+            The operator context used when creating this expression.
+            This context is entered before evaluating any code objects.
+            This ensures that any components created by the expression
+            share the same operator context as this expression, unless
+            explicitly overridden.
 
         """
         self.obj_ref = ref(obj)
@@ -399,36 +388,36 @@ class AbstractExpression(object):
         self.code = code
         self.identifiers = identifiers
         self.f_globals = f_globals
-        self.toolkit = toolkit
+        self.operators = operators
 
     @abstractmethod
     def eval(self):
-        """ Evaluates the expression and returns the result. If an 
-        expression does not provide (or cannot provide) a value, it 
+        """ Evaluates the expression and returns the result. If an
+        expression does not provide (or cannot provide) a value, it
         should return NotImplemented.
-        
+
         Returns
         -------
         result : object or NotImplemented
             The result of evaluating the expression or NotImplemented
             if the expression is unable to provide a value.
-        
+
         """
         raise NotImplementedError
 
     @abstractmethod
     def notify(self, old, new):
-        """ A method called by the owner component when the trait on 
+        """ A method called by the owner component when the trait on
         which it is bound has changed.
 
         Parameters
         ----------
         old : object
             The old value of the attribute.
-        
+
         new : object
             The new value of the attribute.
-    
+
         """
         raise NotImplementedError
 
@@ -449,18 +438,13 @@ class SimpleExpression(AbstractExpression):
         obj = self.obj_ref()
         if obj is None:
             return NotImplemented
-        
-        overrides = {'nonlocals': NonlocalScope(obj, None)}
-        identifiers = self.identifiers
-        f_globals = self.f_globals
-        toolkit = self.toolkit
-        scope = ExecutionScope(
-            obj, identifiers, f_globals, toolkit, overrides, None,
-        )
 
-        with toolkit:
-            res =  eval(self.code, f_globals, scope)
-        
+        overrides = {'nonlocals': NonlocalScope(obj, None)}
+        scope = ExecutionScope(obj, self.identifiers, overrides, None)
+
+        with self.operators:
+            res =  eval(self.code, self.f_globals, scope)
+
         return res
 
     def notify(self, old, new):
@@ -475,9 +459,9 @@ class SimpleExpression(AbstractExpression):
 # Notifification Expression
 #------------------------------------------------------------------------------
 class NotificationExpression(AbstractExpression):
-    """ A concrete implementation of AbstractExpression. An instance 
+    """ A concrete implementation of AbstractExpression. An instance
     of NotificationExpression does not support evaluation and does not
-    emit the expression_changed signal, but it does support notification. 
+    emit the expression_changed signal, but it does support notification.
     An 'event' object will be added to the scope of the expression which
     will contain information about the trait change.
 
@@ -494,7 +478,7 @@ class NotificationExpression(AbstractExpression):
 
     def notify(self, old, new):
         """ Evaluates the underlying expression, and provides an 'event'
-        object in the evaluation scope which contains information about 
+        object in the evaluation scope which contains information about
         the trait change.
 
         """
@@ -502,26 +486,21 @@ class NotificationExpression(AbstractExpression):
         if obj is None:
             return
 
-        identifiers = self.identifiers
-        f_globals = self.f_globals
-        toolkit = self.toolkit
-        override = {
+        overrides = {
             'event': self.event(obj, self.name, old, new),
             'nonlocals': NonlocalScope(obj, None),
         }
-        scope = ExecutionScope(
-            obj, identifiers, f_globals, toolkit, override, None,
-        )
+        scope = ExecutionScope(obj, self.identifiers, overrides, None)
 
-        with toolkit:
-            eval(self.code, f_globals, scope)
+        with self.operators:
+            eval(self.code, self.f_globals, scope)
 
 
 #------------------------------------------------------------------------------
 # Update Expression
 #------------------------------------------------------------------------------
 class UpdateExpression(AbstractExpression):
-    """ A concrete implementation of AbstractExpression which sets the 
+    """ A concrete implementation of AbstractExpression which sets the
     value on the contituents of the expression according to any provided
     inverters.
 
@@ -533,15 +512,15 @@ class UpdateExpression(AbstractExpression):
         ----------
         inverter_classes : iterable of AbstractInverter subclasses
             An iterable of concrete AbstractInverter subclasses which
-            will invert the given expression code into a mirrored 
+            will invert the given expression code into a mirrored
             operation which sets the value on the appropriate object.
-        
-        *args
+
+        args
             The arguments required to initialize an AbstractExpression
-        
+
         """
         super(UpdateExpression, self).__init__(*args)
-        
+
         inverters = []
         bp_code = Code.from_code(self.code)
         code_list = bp_code.code
@@ -552,7 +531,7 @@ class UpdateExpression(AbstractExpression):
             if new_code is not None:
                 bp_code.code = new_code
                 inverters.append(bp_code.to_code())
-        
+
         if not inverters:
             msg = ("Unable to delegate expression to the '%s' attribute of "
                    "the %s object. The provided expression is not structured "
@@ -561,9 +540,9 @@ class UpdateExpression(AbstractExpression):
             raise ValueError(msg % (self.name, self.obj_ref()))
 
         self.inverters = tuple(inverters)
-    
+
     def eval(self):
-        """ A no-op eval method since UpdateExpression does not support 
+        """ A no-op eval method since UpdateExpression does not support
         evaluation.
 
         """
@@ -572,7 +551,7 @@ class UpdateExpression(AbstractExpression):
     def notify(self, old, new):
         """ A notification method which runs through the list of inverted
         code objects which attempt to set the value. The process stops on
-        the first successful inversion. If none of the invertors are 
+        the first successful inversion. If none of the invertors are
         successful, a RuntimeError is raised.
 
         """
@@ -580,28 +559,24 @@ class UpdateExpression(AbstractExpression):
         if obj is None:
             return
 
-        # The override dict is populated with information about the
+        # The overrides dict is populated with information about the
         # expression and the change. The values allow the generated
         # inverter codes to access the information which is required
         # to perform the operation. The items are added using names
         # which are not valid Python identifiers and therefore do
         # not risk clashing with names in the expression. This is
         # the same technique used by the Python interpreter itself.
-        identifiers = self.identifiers
-        f_globals = self.f_globals
-        toolkit = self.toolkit
         overrides = {
-            '_[expr]': self, '_[obj]': obj, '_[old]': old, '_[new]': new, 
+            '_[expr]': self, '_[obj]': obj, '_[old]': old, '_[new]': new,
             '_[name]': self.name, 'nonlocals': NonlocalScope(obj, None),
         }
-        scope = ExecutionScope(
-            obj, identifiers, f_globals, toolkit, overrides, None,
-        )
+        scope = ExecutionScope(obj, self.identifiers, overrides, None)
 
         # Run through the inverters, giving each a chance to do the
-        # inversion. The process ends with the first success. If 
+        # inversion. The process ends with the first success. If
         # none of the invertors are successful an error is raised.
-        with toolkit:
+        f_globals = self.f_globals
+        with self.operators:
             for inverter in self.inverters:
                 if eval(inverter, f_globals, scope):
                     break
@@ -620,9 +595,9 @@ class _ImplicitAttributeBinder(object):
     attribute lookup.
 
     """
-    # This doesn't need to be provided as a monitor because implicit 
+    # This doesn't need to be provided as a monitor because implicit
     # attribute lookups, when successful, will always be on an instance
-    # of BaseComponent and should never need to be hooked by an Enaml 
+    # of Declarative and should never need to be hooked by an Enaml
     # extension.
     def __init__(self, parent):
         """ Initialize an _ImplicitAttributeBinder
@@ -635,29 +610,29 @@ class _ImplicitAttributeBinder(object):
 
         """
         self.parent_ref = ref(parent)
-    
+
     def __call__(self, obj, name):
         """ Binds the change handler to the given object/attribute
         pair, provided the attribute points to a valid trait.
 
         Parameters
         ----------
-        obj : BaseComponent
-            The BaseComponent instance that owns the attribute.
-        
+        obj : Declarative
+            The Declarative instance that owns the attribute.
+
         name : string
             The attribute name of interest
-             
+
         """
         trait = obj.trait(name)
         if trait is not None and trait is not Disallow:
             obj.on_trait_change(self.notify, name)
-    
+
     def notify(self):
         """ The trait change handler callback. It calls the monitor
-        changed method on the parent when the trait changes, provided 
+        changed method on the parent when the trait changes, provided
         the parent has not already been garbage collected.
-        
+
         """
         parent = self.parent_ref()
         if parent is not None:
@@ -665,9 +640,9 @@ class _ImplicitAttributeBinder(object):
 
 
 class SubscriptionExpression(AbstractExpression):
-    """ A concrete implementation of AbstractExpression. An instance 
+    """ A concrete implementation of AbstractExpression. An instance
     of SubcriptionExpression emits the expression_changed signal when
-    the value of the underlying expression changes. It does not 
+    the value of the underlying expression changes. It does not
     support notification.
 
     """
@@ -680,13 +655,13 @@ class SubscriptionExpression(AbstractExpression):
             An iterable of AbstractMonitor subclasses which will
             be used to generating the monitoring code for the
             expression.
-        
-        *args
+
+        args
             The arguments required to initialize an AbstractExpression
-        
+
         """
         super(SubscriptionExpression, self).__init__(*args)
-        
+
         # Create the monitor instances and connect their signals
         monitors = []
         handler = self._on_monitor_changed
@@ -707,7 +682,7 @@ class SubscriptionExpression(AbstractExpression):
         for monitor in monitors:
             for idx, code in monitor.get_insertion_code(code_list):
                 insertions[idx].extend(code)
-        
+
         # Create a new code list which interleaves the code generated
         # by the monitors at the appropriate location in the expression.
         new_code = []
@@ -715,7 +690,7 @@ class SubscriptionExpression(AbstractExpression):
             if idx in insertions:
                 new_code.extend(insertions[idx])
             new_code.append(code_op)
-        
+
         bp_code.code = new_code
         self.eval_code = bp_code.to_code()
         self.monitors = tuple(monitors)
@@ -729,8 +704,8 @@ class SubscriptionExpression(AbstractExpression):
 
         """
         new_value = self.eval()
-        
-        # Guard against exceptions being raise during comparison, such 
+
+        # Guard against exceptions being raise during comparison, such
         # as when comparing two numpy arrays.
         try:
             different = new_value != self.old_value
@@ -739,7 +714,7 @@ class SubscriptionExpression(AbstractExpression):
 
         if different:
             self.old_value = new_value
-            self.expression_changed(self, self.name, new_value)
+            self.expression_changed.emit(self, self.name, new_value)
 
     def eval(self):
         """ Evaluates the expression and returns the result. It also
@@ -747,7 +722,7 @@ class SubscriptionExpression(AbstractExpression):
         ensures that duplicate notifications are avoided.
 
         """
-        # Reset the monitors before every evaluation so that any old 
+        # Reset the monitors before every evaluation so that any old
         # notifiers are disconnected. This avoids muti-notifications.
         self.implicit_binder = binder = _ImplicitAttributeBinder(self)
         for monitor in self.monitors:
@@ -756,17 +731,12 @@ class SubscriptionExpression(AbstractExpression):
         obj = self.obj_ref()
         if obj is None:
             return NotImplemented
-        
-        identifiers = self.identifiers
-        f_globals = self.f_globals
-        toolkit = self.toolkit
-        overrides = {'nonlocals': NonlocalScope(obj, binder)}
-        scope = ExecutionScope(
-            obj, identifiers, f_globals, toolkit, overrides, binder,
-        )
 
-        with toolkit:
-            res = eval(self.eval_code, f_globals, scope)
+        overrides = {'nonlocals': NonlocalScope(obj, binder)}
+        scope = ExecutionScope(obj, self.identifiers, overrides, binder)
+
+        with self.operators:
+            res = eval(self.eval_code, self.f_globals, scope)
 
         return res
 
@@ -794,15 +764,15 @@ class DelegationExpression(SubscriptionExpression):
         ----------
         inverter_classes : iterable of AbstractInverter subclasses
             An iterable of concrete AbstractInverter subclasses which
-            will invert the given expression code into a mirrored 
+            will invert the given expression code into a mirrored
             operation which sets the value on the appropriate object.
-        
-        *args
+
+        args
             The arguments required to initialize a SubscriptionExpression
-        
+
         """
         super(DelegationExpression, self).__init__(*args)
-        
+
         inverters = []
         bp_code = Code.from_code(self.code)
         code_list = bp_code.code
@@ -813,7 +783,7 @@ class DelegationExpression(SubscriptionExpression):
             if new_code is not None:
                 bp_code.code = new_code
                 inverters.append(bp_code.to_code())
-        
+
         if not inverters:
             msg = ("Unable to delegate expression to the '%s' attribute of "
                    "the %s object. The provided expression is not structured "
@@ -822,18 +792,18 @@ class DelegationExpression(SubscriptionExpression):
             raise ValueError(msg % (self.name, self.obj_ref()))
 
         self.inverters = inverters
-    
+
     def notify(self, old, new):
         """ A notification method which runs through the list of inverted
         code objects which attempt to set the value. The process stops on
-        the first successful inversion. If none of the invertors are 
+        the first successful inversion. If none of the invertors are
         successful, a RuntimeError is raised.
 
         """
         obj = self.obj_ref()
         if obj is None:
             return
-        
+
         # We don't need to attempt the inversion if the new value
         # is the same as the last value generated by the expression.
         # This helps prevent bouncing back and forth which can be
@@ -855,21 +825,17 @@ class DelegationExpression(SubscriptionExpression):
         # which are not valid Python identifiers and therefore do
         # not risk clashing with names in the expression. This is
         # the same technique used by the Python interpreter itself.
-        identifiers = self.identifiers
-        f_globals = self.f_globals
-        toolkit = self.toolkit
         overrides = {
-            '_[expr]': self, '_[obj]': obj, '_[old]': old, '_[new]': new, 
+            '_[expr]': self, '_[obj]': obj, '_[old]': old, '_[new]': new,
             '_[name]': self.name, 'nonlocals': NonlocalScope(obj, None),
         }
-        scope = ExecutionScope(
-            obj, identifiers, f_globals, toolkit, overrides, None,
-        )
+        scope = ExecutionScope(obj, self.identifiers, overrides, None)
 
         # Run through the inverters, giving each a chance to do the
-        # inversion. The process ends with the first success. If 
+        # inversion. The process ends with the first success. If
         # none of the invertors are successful an error is raised.
-        with toolkit:
+        f_globals = self.f_globals
+        with self.operators:
             for inverter in self.inverters:
                 if eval(inverter, f_globals, scope):
                     break

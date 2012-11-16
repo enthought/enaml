@@ -13,17 +13,18 @@ Qt
 ^^
 
 .. inheritance-diagram::
-    {{ module|replace('components.', 'backends.qt.qt_') }}.Qt{{ objname }}
+    {{ module|replace('widgets.', 'qt.qt_') }}.Qt{{ objname }}
     :parts: 1
 
-.. autoclass:: {{ module|replace('components.', 'backends.qt.qt_') }}.Qt{{ objname }}
+.. autoclass:: {{ module|replace('widgets.', 'qt.qt_') }}.Qt{{ objname }}
+
 
 Wx
 ^^
 
 .. inheritance-diagram::
-    {{ module|replace('components.', 'backends.wx.wx_') }}.WX{{ objname }}
+    {{ module|replace('widgets.', 'wx.wx_') }}.Wx{{ objname }}
     :parts: 1
 
-.. autoclass:: {{ module|replace('components.', 'backends.wx.wx_') }}.WX{{ objname }}
+.. autoclass:: {{ module|replace('widgets.', 'wx.wx_') }}.Wx{{ objname }}
 

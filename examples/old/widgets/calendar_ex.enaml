@@ -1,0 +1,19 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2012, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+""" Calendar Example
+
+Demonstrates a simple calendar widget.
+
+"""
+from enaml.widgets import Window, Form, Label, Field, Calendar
+
+enamldef Main(Window):
+    title = 'Calendar Example'
+    Form:
+        Label:
+            text = 'Calendar'
+        Calendar:
+            id: cal
+

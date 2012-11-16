@@ -1,38 +1,50 @@
 enaml
 =====
 
-The top-level enaml package contains some utility modules used throughout the
-Enaml library.
+The top-level enaml package contains modules used throughout the Enaml library.
 
-:mod:`enums` Module
--------------------
 
-.. automodule:: enaml.enums
-
-:mod:`exceptions` Module
+:mod:`application` Module
 -------------------------
 
-.. inheritance-diagram:: enaml.exceptions
-    :parts: 1
+.. automodule:: enaml.application
 
-.. automodule:: enaml.exceptions
 
-:mod:`guard` Module
--------------------------
+:mod:`colors` Module
+---------------------
+.. automodule:: enaml.colors
 
-.. inheritance-diagram:: enaml.guard
-    :parts: 1
 
-.. automodule:: enaml.guard
+:mod:`message` Module
+---------------------
+.. automodule:: enaml.message
+
+
+:mod:`request` Module
+---------------------
+.. automodule:: enaml.request
+
 
 :mod:`runner` Module
--------------------------
+--------------------
 
 .. automodule:: enaml.runner
 
+
+:mod:`session` Module
+---------------------
+
+.. automodule:: enaml.session
+
+
+:mod:`session_factory` Module
+-----------------------------
+
+.. automodule:: enaml.session_factory
+
+
 :mod:`utils` Module
--------------------------
+-------------------
 
 .. automodule:: enaml.utils
-
 

@@ -1,25 +1,36 @@
-# Copyright (c) 2012 by Enthought, Inc.
-# All rights reserved.
+#------------------------------------------------------------------------------
+#  Copyright (c) 2012, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+import os
+from setuptools import setup, find_packages, Extension
 
-from setuptools import setup, find_packages
 
-kwds = {}
-
-try:
-    from distutils.core import Extension
-    from Cython.Distutils import build_ext
-
-    # only build the speedups Cython C extension when Cython is installed
-    kwds['cmdclass'] = {'build_ext': build_ext}
-    kwds['ext_modules'] = [Extension('enaml.speedups.model_index',
-                                     ['enaml/speedups/model_index.pyx'])]
-except ImportError:
-    pass
+if os.environ.get('BUILD_ENAML_EXTENSIONS'):
+    ext_modules = [
+        Extension(
+            'enaml.extensions.weakmethod',
+            ['enaml/extensions/weakmethod.cpp'],
+            language='c++',
+        ),
+        Extension(
+            'enaml.extensions.callableref',
+            ['enaml/extensions/callableref.cpp'],
+            language='c++',
+        ),
+        Extension(
+           'enaml.extensions.signaling',
+           ['enaml/extensions/signaling.cpp'],
+           language='c++',
+        ),
+    ]
+else:
+    ext_modules = []
 
 
 setup(
     name='enaml',
-    version='0.2.1',
+    version='0.5.0',
     author='Enthought, Inc',
     author_email='info@enthought.com',
     url='https://github.com/enthought/enaml',
@@ -31,10 +42,11 @@ setup(
     packages=find_packages(),
     package_data={'enaml.stdlib': ['*.enaml']},
     entry_points = dict(
-        console_scripts = [
-            "enaml-run = enaml.runner:main",
+        console_scripts=[
+            'enaml-run = enaml.runner:main',
         ],
     ),
-    test_suite = "enaml.test_collector",
-    **kwds
+    ext_modules=ext_modules,
+    test_suite='enaml.test_collector',
 )
+
