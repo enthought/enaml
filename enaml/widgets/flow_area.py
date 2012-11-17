@@ -12,8 +12,8 @@ from .flow_item import FlowItem
 
 
 class FlowArea(ConstraintsWidget):
-    """ A lays out its children in flowing manner, wrapping around at
-    the end of the available space.
+    """ A widget which lays out its children in flowing manner, wrapping
+    around at the end of the available space.
 
     """
     #: The flow direction of the layout.
