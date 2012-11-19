@@ -16,7 +16,7 @@
     "data": "<string>",
 
     // The format of the image data. Required
-    "format": "<'raw_file' | 'rgb32' | 'rgba32' | 'indexed8'>",
+    "format": "<'raw_file' | 'rgb32' | 'rgba32' | 'abgr32' | 'indexed8'>",
 
     // A tuple with the width and height of the image. Required
     "size": "<tuple>",
