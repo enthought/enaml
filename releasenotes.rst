@@ -13,7 +13,7 @@ Enaml Release Notes
 - Invalidate the QFlowLayout on layout request. 1e91a54245_
 - Dispatch child events immediately when possible. e869f7124f_
 - Destroy child widgets after the children change event is emitted. c695ae35ee_
-- Add a preliminary WebView widget. 27faa381d_
+- Add a preliminary WebView widget. 27faa381dc_
 
 
 .. _f86dad8f6e: https://github.com/enthought/enaml/tree/f86dad8f6e3fe0bf07a2cf59765aaa3b934fa233
