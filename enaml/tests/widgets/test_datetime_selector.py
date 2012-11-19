@@ -6,6 +6,7 @@ import datetime
 
 from .enaml_test_case import EnamlTestCase
 
+ONE_SECOND_DELTA = datetime.timedelta(seconds=1)
 
 class TestDatetimeEdit(EnamlTestCase):
     """ Unit tests for the DatetimeEdit widget.
@@ -46,14 +47,15 @@ enamldef MainView(Window):
             self.server_widget.minimum = now
             self.server_widget.maximum = now + datetime.timedelta(days=7)
 
-        self.assertEquals(
-            self.client_widget.minimumDateTime().toPython().date(), now
+
+
+        self.assertTrue(
+            self.client_widget.minimumDateTime().toPython() -  now < ONE_SECOND_DELTA)
+        self.assertTrue(
+            self.client_widget.minimumDateTime().toPython() - self.server_widget.minimum <  ONE_SECOND_DELTA
         )
-        self.assertEquals(
-            self.client_widget.minimumDateTime().toPython(), self.server_widget.minimum
-        )
-        self.assertEquals(
-            self.client_widget.maximumDateTime().toPython(), self.server_widget.maximum
+        self.assertTrue(
+            self.client_widget.maximumDateTime().toPython() - self.server_widget.maximum < ONE_SECOND_DELTA
         )
 
     def test_set_maximum_with_date_update(self):
@@ -66,7 +68,9 @@ enamldef MainView(Window):
         with self.app.process_events():
             self.server_widget.maximum = maximum_date
 
-        self.assertEquals(self.client_widget.dateTime().toPython().isoformat(), maximum_date.isoformat())
+        self.assertTrue(
+            self.client_widget.dateTime().toPython() - maximum_date < ONE_SECOND_DELTA
+        )
 
     # XXX: Need to test the receive_date_changed() method
 
