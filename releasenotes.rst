@@ -16,11 +16,11 @@ Enaml Release Notes
 - Add a preliminary WebView widget. 27faa381dc_
 
 
-.. _f86dad8f6e: https://github.com/enthought/enaml/tree/f86dad8f6e3fe0bf07a2cf59765aaa3b934fa233
-.. _8dbed4b9cd: https://github.com/enthought/enaml/tree/8dbed4b9cd16d8c9f71ea63dfd92494176fdf753
+.. _f86dad8f6e: https://github.com/enthought/enaml/commit/f86dad8f6e3fe0bf07a2cf59765aaa3b934fa233
+.. _8dbed4b9cd: https://github.com/enthought/enaml/commit/8dbed4b9cd16d8c9f71ea63dfd92494176fdf753
 .. _7a4c9de7e6: https://github.com/enthought/enaml/commit/7a4c9de7e6342b65efd6e3e841be0adfad286d99
-.. _a962d2ae78: https://github.com/enthought/enaml/tree/a962d2ae78488398cbe50d4ad16bd1cd90a1060b
-.. _1e91a54245: https://github.com/enthought/enaml/tree/1e91a542452662ebd3dfe9d5a854ec2277f4415d
-.. _e869f7124f: https://github.com/enthought/enaml/tree/e869f7124f0e13bea7f35d5f5a91bc89dc1dcd4e
-.. _c695ae35ee: https://github.com/enthought/enaml/tree/c695ae35ee9fcf35964df88831de0d3b30883f78
+.. _a962d2ae78: https://github.com/enthought/enaml/commit/a962d2ae78488398cbe50d4ad16bd1cd90a1060b
+.. _1e91a54245: https://github.com/enthought/enaml/commit/1e91a542452662ebd3dfe9d5a854ec2277f4415d
+.. _e869f7124f: https://github.com/enthought/enaml/commit/e869f7124f0e13bea7f35d5f5a91bc89dc1dcd4e
+.. _c695ae35ee: https://github.com/enthought/enaml/commit/c695ae35ee9fcf35964df88831de0d3b30883f78
 .. _27faa381dc: https://github.com/enthought/enaml/commit/27faa381dc5dd6c5cc41a0826df35b71339d3e7e
