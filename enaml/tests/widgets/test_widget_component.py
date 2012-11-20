@@ -13,6 +13,9 @@ from .enaml_test_case import EnamlTestCase
 class Test(EnamlTestCase):
     """ Unit tests for the WidgetComponent widget.
 
+    There is not factory for the WidgetComponent in enaml.qt.qt_factories.
+    The test is done on a PushButton (that inherits from the WidgetComponent).
+
     """
 
     def setUp(self):
@@ -25,7 +28,9 @@ enamldef MainView(Window):
 """
         self.parse_and_create(enaml_source)
         self.server_widget = self.find_server_widget(self.view, "PushButton")
-        self.client_widget = self.find_client_widget(self.client_view, "QtPushButton")
+        self.client_widget = self.find_client_widget(
+            self.client_view, "QtPushButton"
+        )
 
     def test_set_enabled(self):
         """ Test the setting of a WidgetComponent's enabled attribute
