@@ -2,9 +2,9 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Instance, List, Property, Str, Dict, Disallow
+from traits.api import Instance, List, Property, Str, Dict, Disallow, ReadOnly
 
-from .expressions import AbstractExpression
+from .abstract_expressions import AbstractExpression, AbstractListener
 from .object import Object
 from .operator_context import OperatorContext
 from .trait_types import ExpressionTrait, UserAttribute, UserEvent
@@ -29,11 +29,16 @@ class Declarative(Object):
     #: 'self' according to Enaml's dynamic scoping rules.
     self = Property(fget=lambda self: self)
 
+    #: The operator context used to build out this instance.
+    operators = ReadOnly
+
     #: The private dictionary of expression objects that are bound to
     #: attributes on this component. It should not be manipulated by
     #: user code. Rather, expressions should be bound by the operators
     #: by calling the '_bind_expression' method.
     _expressions = Dict(Str, List(Instance(AbstractExpression)))
+
+    _listeners = Dict(Str, List(Instance(AbstractListener)))
 
     #: A class attribute used by the Enaml compiler machinery to store
     #: the builder functions on the class. The functions are called
@@ -64,9 +69,9 @@ class Declarative(Object):
         # Builders that come later can then override these bindings.
         # Each component gets it's own identifier namespace and current
         # operator context.
+        operators = self.operators = OperatorContext.active_context()
         if self._builders:
             identifiers = {}
-            operators = OperatorContext.active_context()
             for builder in self._builders:
                 builder(self, identifiers, operators)
 
@@ -133,7 +138,7 @@ class Declarative(Object):
         cls.__base_traits__[name] = ctrait
         cls.__class_traits__[name] = ctrait
 
-    def _bind_expression(self, name, expression, notify_only=False):
+    def _bind_expression(self, name, expression):
         """ A private method used by the Enaml execution engine.
 
         This method is called by the Enaml operators to bind the given
@@ -160,33 +165,13 @@ class Declarative(Object):
             msg = "Cannot bind expression. %s object has no attribute '%s'"
             raise AttributeError(msg % (self, name))
 
-        # If this is the first time an expression is being bound to the
-        # given attribute, then we hook up a change handler. This ensures
-        # that we only get one notification event per bound attribute.
-        # We also create the notification entry in the dict, which is
-        # a list with at least one item. The first item will always be
-        # the left associative expression (or None) and all following
-        # items will be the notify_only expressions.
         expressions = self._expressions
-        if name not in expressions:
-            self.on_trait_change(self._on_bound_attr_changed, name)
-            expressions[name] = [None]
-
-        # There can be multiple notify_only expressions bound to a
-        # single attribute, so they just get appended to the end of
-        # the list. Otherwise, the left associative expression gets
-        # placed at the zero position of the list, overriding any
-        # existing expression.
-        if notify_only:
-            expressions[name].append(expression)
-        else:
-            handler = self._on_expression_changed
+        handler = self._on_expression_changed
+        if name in expressions:
             old = expressions[name][0]
-            if old is not None:
-                old.expression_changed.disconnect(handler)
-            expression.expression_changed.connect(handler)
-            expressions[name][0] = expression
-
+            if old.invalidated is not None:
+                old.invalidated.disconnect(handler)
+        else:
             # Hookup support for default value computation. We only need
             # to add an ExpressionTrait once, since it will reach back
             # into the _expressions dict as needed and retrieve the most
@@ -194,13 +179,26 @@ class Declarative(Object):
             if not isinstance(curr.trait_type, ExpressionTrait):
                 self.add_trait(name, ExpressionTrait(curr))
 
-    def _on_expression_changed(self, expression, name, value):
-        """ A private signal callback for the expression_changed signal
-        of the bound expressions. It updates the value of the attribute
-        with the new value from the expression.
+        if expression.invalidated is not None:
+            expression.invalidated.connect(handler)
+        expressions[name] = [expression]
 
-        """
-        setattr(self, name, value)
+    def _bind_listener(self, name, listener):
+        curr = self.trait(name)
+        if curr is None or curr.trait_type is Disallow:
+            msg = "Cannot bind expression. %s object has no attribute '%s'"
+            raise AttributeError(msg % (self, name))
+        listeners = self._listeners
+        if name not in listeners:
+            self.on_trait_change(self._on_bound_attr_changed, name)
+            listeners[name] = []
+        listeners[name].append(listener)
+
+    def _on_expression_changed(self, name):
+        expressions = self._expressions
+        if name in expressions:
+            expr = expressions[name][0]
+            setattr(self, name, expr.eval(self, name))
 
     def _on_bound_attr_changed(self, obj, name, old, new):
         """ A private handler which is called when any attribute which
@@ -212,9 +210,9 @@ class Declarative(Object):
         # The check for None is for the case where there are no left
         # associative expressions bound to the attribute, so the first
         # entry in the list is still None.
-        for expr in self._expressions[name]:
-            if expr is not None:
-                expr.notify(old, new)
+        for expr in self._listeners[name]:
+            #expr.notify(old, new)
+            expr.value_changed(self, name, old, new)
 
     #--------------------------------------------------------------------------
     # Public API

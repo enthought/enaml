@@ -5,6 +5,8 @@ from enaml.core.byteplay import (
     BINARY_SUBSCR, GET_ITER, LOAD_NAME, LOAD_GLOBAL, DELETE_NAME, DELETE_GLOBAL
 )
 
+from enaml.core._funchelper import call_func
+
 
 class Watcher(object):
 
@@ -30,8 +32,6 @@ def translate_code(code, f_globals):
     for idx, (op, op_arg) in enumerate(code_list):
         if op == LOAD_GLOBAL:
             code_list[idx] = (LOAD_NAME, op_arg)
-        if op == DELETE_GLOBAL:
-            code_list[idx] = (DELETE_NAME, op_arg)
 
     # The list of code segments that will be inserted into the
     # new bytecode for the expression.
@@ -130,43 +130,37 @@ def translate_code(code, f_globals):
 
 class CustomScope(dict):
 
-    def __init__(self, f_globals):
-        self._f_globals = f_globals
-
     def __getitem__(self, name):
         print
         print '############# getitem', name
         print
-        try:
-            r = self._f_globals[name]
-        except KeyError:
-            r = getattr(__builtins__, name)
-        return r
+        raise KeyError
 
     def __setitem__(self, name, value):
         print
         print '############ setitem', name, value
         print
-        self._f_globals[name] = value
+        raise KeyError
 
     def __delitem__(self, name):
         print
         print '############ delitem', name
         print
-        del self._f_globals[name]
+        raise KeyError
 
 
 class CodeTracer(object):
 
     def __init__(self, code, f_globals):
-        self._s = CustomScope(f_globals)
+        self._s = CustomScope()
         self._watchers = []
-        self._func = translate_code(code, self._s)
+        self._func = translate_code(code, f_globals)
 
     def __call__(self, watcher, *args, **kwargs):
         self._watchers.append(watcher)
         try:
-            self._func(self, *args, **kwargs)
+            a = (self,) + args
+            call_func(self._func, a, kwargs, self._s)
         finally:
             self._watchers.pop()
 
@@ -202,16 +196,9 @@ def tester():
     c[-1].a
     fs = [Bar(1, 2, w=12) for i in range(10)]
     d = [f.b for f in fs]
-    del f
-    del c
-    #global foobar
-    del foobar
-
 
 
 if __name__ == '__main__':
     t = CodeTracer(tester.func_code, tester.func_globals)
-    import dis
-    print dis.dis(t._func)
     t(None)
-    print foobar
+

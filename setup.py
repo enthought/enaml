@@ -28,6 +28,15 @@ else:
     ext_modules = []
 
 
+ext_modules.append(
+    Extension(
+        'enaml.core.funchelper',
+        ['enaml/core/funchelper.cpp'],
+        language='c++',
+    )
+)
+
+
 setup(
     name='enaml',
     version='0.5.0',

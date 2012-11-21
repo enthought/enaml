@@ -40,7 +40,7 @@ def imports():
 #------------------------------------------------------------------------------
 # Operator Context Functions
 #------------------------------------------------------------------------------
-#: The private storage for the optional default operator context function 
+#: The private storage for the optional default operator context function
 #: which overrides that which is provided by default.
 _default_operator_context_func = None
 
@@ -53,7 +53,7 @@ def set_default_operator_context_func(func):
     func : callable
         A callable object which takes no arguments and returns an
         instance of OperatorContext.
-    
+
     """
     global _default_operator_context_func
     _default_operator_context_func = func
@@ -79,7 +79,7 @@ def default_operator_context():
     if ctxt_func is not None:
         return ctxt_func()
     from enaml.core.operator_context import OperatorContext
-    from enaml.core.operators import OPERATORS
+    from enaml.core.new_operators import OPERATORS
     return OperatorContext(OPERATORS)
 
 
