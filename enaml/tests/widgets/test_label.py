@@ -12,7 +12,7 @@ class TestLabel(EnamlTestCase):
 
     def setUp(self):
         enaml_source = """
-from enaml.widgets import Label, Window
+from enaml.widgets.api import Label, Window
 
 enamldef MainView(Window):
     Label:

@@ -12,7 +12,7 @@ class TestProgressBar(EnamlTestCase):
 
     def setUp(self):
         enaml_source = """
-from enaml.widgets import ProgressBar, Window
+from enaml.widgets.api import ProgressBar, Window
 
 enamldef MainView(Window):
     ProgressBar:

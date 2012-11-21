@@ -3,7 +3,6 @@ enaml
 
 The top-level enaml package contains modules used throughout the Enaml library.
 
-
 :mod:`application` Module
 -------------------------
 

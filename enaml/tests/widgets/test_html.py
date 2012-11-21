@@ -12,7 +12,7 @@ class TestHtml(EnamlTestCase):
 
     def setUp(self):
         enaml_source = """
-from enaml.widgets import Html, Window
+from enaml.widgets.api import Html, Window
 
 enamldef MainView(Window):
     Html:

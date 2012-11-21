@@ -12,7 +12,7 @@ class Test(EnamlTestCase):
 
     def setUp(self):
         enaml_source = """
-from enaml.widgets import Window
+from enaml.widgets.api import Window
 from enaml.widgets.widget_component import WidgetComponent
 
 enamldef MainView(Window):
@@ -53,23 +53,17 @@ enamldef MainView(Window):
         self.server_widget.font = "Helvetica-Regular"
         assert self.client_widget.font == self.server_widget.font
 
-    def test_set_size_hint(self):
-        """ Test the setting of a WidgetComponent's size_hint attribute
-        """
-        self.server_widget.size_hint = (200, 200)
-        assert self.client_widget.size_hint == self.server_widget.size_hint
-
-    def test_set_min_size(self):
+    def test_set_minimum_size(self):
         """ Test the setting of a WidgetComponent's min_size attribute
         """
-        self.server_widget.min_size = (100, 100)
-        assert self.client_widget.min_size == self.server_widget.min_size
+        self.server_widget.minimum_size = (100, 100)
+        assert self.client_widget.minimum_size == self.server_widget.minimum_size
 
-    def test_set_max_size(self):
+    def test_set_maximum_size(self):
         """ Test the setting of a WidgetComponent's max_size attribute
         """
-        self.server_widget.max_size = (250, 250)
-        assert self.client_widget.max_size == self.server_widget.max_size
+        self.server_widget.maximum_size = (250, 250)
+        assert self.client_widget.maximum_size == self.server_widget.maximum_size
 
     def test_set_show_focus_rect(self):
         """ Test the setting of a WidgetComponent's show_focus_rect attribute
@@ -77,3 +71,8 @@ enamldef MainView(Window):
         self.server_widget.show_focus_rect = True
         assert self.client_widget.show_focus_rect == self.server_widget.show_focus_rect
 
+if __name__ == '__main__':
+    import unittest
+    import logging
+    logging.basicConfig(level=logging.DEBUG)
+    unittest.main()

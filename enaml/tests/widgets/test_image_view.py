@@ -5,6 +5,7 @@
 from .enaml_test_case import EnamlTestCase
 
 
+
 class TestImageView(EnamlTestCase):
     """ Unit tests for the ImageView widget.
 
@@ -12,7 +13,7 @@ class TestImageView(EnamlTestCase):
 
     def setUp(self):
         enaml_source = """
-from enaml.widgets import ImageView, Window
+from enaml.widgets.api import ImageView, Window
 
 enamldef MainView(Window):
     ImageView:

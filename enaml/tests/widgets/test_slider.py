@@ -12,7 +12,7 @@ class TestSlider(EnamlTestCase):
 
     def setUp(self):
         enaml_source = """
-from enaml.widgets import Slider, Window
+from enaml.widgets.api import Slider, Window
 
 enamldef MainView(Window):
     Slider:
