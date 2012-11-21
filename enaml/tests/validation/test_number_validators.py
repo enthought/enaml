@@ -4,31 +4,57 @@
 #------------------------------------------------------------------------------
 import unittest
 
-from enaml.validation import (
-    NumberValidator, IntegralNumberValidator, RealNumberValidator,
-    ComplexNumberValidator, IntValidator, LongValidator, FloatValidator,
-    ComplexValidator, BinValidator, OctValidator, HexValidator,
-    LongBinValidator, LongOctValidator, LongHexValidator,
+from enaml.validation.api import (
+    IntValidator, FloatValidator, RegexValidator
 )
 
 
-@unittest.skip('Skipping Validation Tests')
-class TestNumberValidators(unittest.TestCase):
+class ValidatorTestCase(unittest.TestCase):
+    """ Simple class exposing assertValid and asertInvalid methods to test
+    validators. """
 
-    def test_number_validator(self):
-        v = NumberValidator()
-        self.assertEqual(v.validate(u'k'), v.INVALID)
-        self.assertEqual(v.validate(u'12'), v.ACCEPTABLE)
-        self.assertEqual(v.validate(u'-12'), v.ACCEPTABLE)
-        self.assertEqual(v.validate(u'1e7'), v.ACCEPTABLE)
+    def assertValid(self, validator, value):
+        self.assertTrue(validator.validate(value, None)[1])
+
+    def assertInvalid(self, validator, value):
+        self.assertFalse(validator.validate(value, None)[1])
+
+
+class TestIntValidator(ValidatorTestCase):
+
+    def test_int_validator(self):
+        v = IntValidator()
+        self.assertInvalid(v, u'k')
+        self.assertValid(v, u'12')
+        self.assertValid(v, u'-12')
+        self.assertInvalid(v, u'1e7')
 
     def test_number_out_of_range(self):
-        v = NumberValidator(low=10, high=89)
-        self.assertEqual(v.validate(u'12'), v.ACCEPTABLE)
-        self.assertEqual(v.validate(u'-12'), v.INVALID)
-        self.assertEqual(v.validate(u'9'), v.INTERMEDIATE)
-        self.assertEqual(v.validate(u'60k'), v.INVALID)
-    
-    def test_integral_number_validator(self):
-        v = IntegralNumberValidator()
+        v = IntValidator(minimum=10, maximum=89)
+        self.assertValid(v, u'12')
+        self.assertInvalid(v, u'-12')
+        self.assertInvalid(v, u'9')
+        self.assertInvalid(v, u'60k')
 
+
+class TestFloatValidator(ValidatorTestCase):
+
+    def test_int_validator(self):
+        v = FloatValidator()
+        self.assertInvalid(v, u'k')
+        self.assertValid(v, u'12')
+        self.assertValid(v, u'-12')
+        self.assertValid(v, u'1e7')
+
+    def test_number_out_of_range(self):
+        v = FloatValidator(minimum=10, maximum=89)
+        self.assertValid(v, u'12')
+        self.assertInvalid(v, u'-12')
+        self.assertInvalid(v, u'9')
+        self.assertInvalid(v, u'60k')
+
+    def test_validator_no_exponent(self):
+        v = FloatValidator(allow_exponent=False, minimum=10)
+        self.assertValid(v, u'12')
+        self.assertInvalid(v, u'9')
+        self.assertInvalid(v, u'60k')
