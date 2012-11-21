@@ -2,10 +2,8 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from weakref import WeakKeyDictionary, ref
-
 from traits.api import TraitType, TraitError, BaseInstance
-from traits.traits import CTrait, trait_from
+from traits.traits import CTrait
 
 
 #------------------------------------------------------------------------------
@@ -14,7 +12,7 @@ from traits.traits import CTrait, trait_from
 class EnamlInstance(TraitType):
     """ A custom TraitType which serves as a simple isinstance(...)
     validator. This class serves as the base class for other custom
-    trait types such as EnamlEvent and UserAttribute.
+    trait types such as EnamlEvent.
 
     """
     @staticmethod
@@ -39,7 +37,7 @@ class EnamlInstance(TraitType):
         return isinstance(obj, type) or hasattr(obj, '__instancecheck__')
 
     def __init__(self, base_type=object):
-        """ Initialize a UserAttribute instance.
+        """ Initialize an EnamlInstance.
 
         Parameters
         ----------
@@ -149,181 +147,6 @@ class EnamlEvent(EnamlInstance):
 
         """
         return 'emitted with an object of %s' % self.base_type
-
-
-#------------------------------------------------------------------------------
-# Expression Trait
-#------------------------------------------------------------------------------
-class ExpressionInitializationError(Exception):
-    """ An exception used to indicate an error during initialization
-    of an expression.
-
-    """
-    # XXX - We can't inherit from AttributeError because the local
-    # scope object used by expressions captures an AttributeError
-    # and converts it into in a KeyError in order to implement
-    # dynamic attribute scoping. We actually want this exception
-    # to propagate.
-    pass
-
-
-class ExpressionTrait(TraitType):
-    """ A custom trait type which is used to help implement expression
-    binding. Instances of this trait are added to an object, but swap
-    themselves out and replace the old trait the first time they are
-    accessed. This allows bound expressions to be initialized in the
-    proper order without requiring an explicit initialization graph.
-
-    """
-    def __init__(self, old_trait):
-        """ Initialize an expression trait.
-
-        Parameters
-        ----------
-        old_trait : ctrait
-            The trait object that the expression trait is temporarily
-            replacing. When a 'get' or 'set' is triggered on this
-            trait, the old trait will be restored and then the default
-            value of the expression will be applied.
-
-        """
-        super(ExpressionTrait, self).__init__()
-        self.old_trait = old_trait
-
-    def swapout(self, obj, name):
-        """ Restore the old trait onto the object. This method takes
-        care to make sure that listeners are copied over properly.
-
-        """
-        # The default behavior of add_trait does *almost* the right
-        # thing when it copies over notifiers when replacing the
-        # existing trait. What it fails to do is update the owner
-        # attribute of TraitChangeNotifyWrappers which are managing
-        # a bound method notifier. This means that if said notifier
-        # ever dies, it removes itself from the incorrect owner list
-        # and it will be (erroneously) called on the next dispatch
-        # cycle. The logic here makes sure that the owner attribute
-        # of such a notifier is properly updated with its new owner.
-        obj.add_trait(name, self.old_trait)
-        notifiers = obj.trait(name)._notifiers(0)
-        if notifiers is not None:
-            for notifier in notifiers:
-                if hasattr(notifier, 'owner'):
-                    notifier.owner = notifiers
-
-    def compute_default(self, obj, name):
-        """ Returns the default value as computed by the most recently
-        bound expression. If a value cannot be provided, NotImplemented
-        is returned.
-
-        """
-        res = NotImplemented
-        expr = obj._expressions[name][0]
-        if expr is not None:
-            try:
-                res = expr.eval(obj, name)
-            except Exception as e:
-                # Reraise a propagating initialization error.
-                if isinstance(e, ExpressionInitializationError):
-                    raise
-                msg = ('Error initializing expression (%r line %s). '
-                       'Orignal exception was:\n%s')
-                import traceback
-                tb = traceback.format_exc()
-                filename = expr._func.func_code.co_filename
-                lineno = expr._func.func_code.co_firstlineno
-                args = (filename, lineno, tb)
-                raise ExpressionInitializationError(msg % args)
-        return res
-
-    def get(self, obj, name):
-        """ Handle computing the initial value for the expression trait.
-        This method first restores the old trait, then evaluates the
-        expression and sets the value on the trait quietly. It then
-        performs a getattr to return the new value of the trait.
-
-        """
-        self.swapout(obj, name)
-        val = self.compute_default(obj, name)
-        if val is not NotImplemented:
-            obj.trait_setq(**{name: val})
-        return getattr(obj, name, val)
-
-    def set(self, obj, name, val):
-        """ Handle the setting of an initial value for the expression
-        trait. This method first restores the old trait, then sets
-        the value on that trait. In this case, the expression object
-        is not needed.
-
-        """
-        self.swapout(obj, name)
-        setattr(obj, name, val)
-
-
-#------------------------------------------------------------------------------
-# User Attribute and Event
-#------------------------------------------------------------------------------
-class UninitializedAttributeError(Exception):
-    """ A custom Exception used by UserAttribute to signal the access
-    of an uninitialized attribute.
-
-    """
-    # XXX - We can't inherit from AttributeError because the local
-    # scope object used by expressions captures an AttributeError
-    # and converts it into in a KeyError in order to implement
-    # dynamic attribute scoping. We actually want this exception
-    # to propagate.
-    pass
-
-
-class UserAttribute(EnamlInstance):
-    """ An EnamlInstance subclass that is used to implement optional
-    attribute typing when adding a new user attribute to an Enaml
-    component.
-
-    """
-    def get(self, obj, name):
-        """ The trait getter method. Returns the value from the object's
-        dict, or raises an uninitialized error if the value doesn't exist.
-
-        """
-        dct = obj.__dict__
-        if name not in dct:
-            self.uninitialized_error(obj, name)
-        return dct[name]
-
-    def set(self, obj, name, value):
-        """ The trait setter method. Sets the value in the object's
-        dict if it is valid, and emits a change notification if the
-        value has changed. The first time the value is set the change
-        notification will carry None as the old value.
-
-        """
-        value = self.validate(obj, name, value)
-        dct = obj.__dict__
-        if name not in dct:
-            old = None
-        else:
-            old = dct[name]
-        dct[name] = value
-        if old != value:
-            obj.trait_property_changed(name, old, value)
-
-    def uninitialized_error(self, obj, name):
-        """ A method which raises an UninitializedAttributeError for
-        the given object and attribute name
-
-        """
-        msg = "Cannot access the uninitialized '%s' attribute of the %s object"
-        raise UninitializedAttributeError(msg % (name, obj))
-
-
-class UserEvent(EnamlEvent):
-    """ A simple EnamlEvent subclass used to distinguish between events
-    declared by the framework, and events declared by the user.
-
-    """
-    pass
 
 
 #------------------------------------------------------------------------------
@@ -437,75 +260,6 @@ class Bounded(TraitType):
             high = reduce(getattr, high.split('.'), obj)
 
         return (low, high)
-
-
-#------------------------------------------------------------------------------
-# Lazy Property
-#------------------------------------------------------------------------------
-class LazyProperty(TraitType):
-    """ A trait which behaves like a read-only cached property, but
-    which lazily defers binding the dependency notifiers until the
-    first time the value is retrieved. It is used to avoid situations
-    where a property dependency is prematurely evaluated during
-    component instantiation.
-
-    """
-    def __init__(self, trait=None, depends_on=''):
-        """ Initialize a LazyProperty.
-
-        Parameters
-        ----------
-        trait : TraitType, optional
-            An optional trait type for the values returned by the
-            property. List is required if using extending trait
-            name syntax for e.g. list listeners.
-
-        depends_on : string, optional
-            The traits notification string for the dependencies of
-            the filter.
-
-        """
-        super(LazyProperty, self).__init__()
-        self.dependency = depends_on
-        self.handlers = WeakKeyDictionary()
-        if trait is not None:
-            self.default_value_type = trait.default_value_type
-
-    def get(self, obj, name):
-        """ Returns the (possibly cached) value of the filter. The
-        notification handlers will be attached the first time the
-        value is accessed.
-
-        """
-        cache_name = '_%s_lazy_property_cache' % name
-        dct = obj.__dict__
-        if cache_name not in dct:
-            method_name = '_get_%s' % name
-            val = getattr(obj, method_name)()
-            dct[cache_name] = val
-            self.bind(obj, name)
-        else:
-            val = dct[cache_name]
-        return val
-
-    def bind(self, obj, name):
-        """ Binds the dependency notification handlers for the object.
-
-        """
-        wr_obj = ref(obj)
-        def notify():
-            obj = wr_obj()
-            if obj is not None:
-                cache_name = '_%s_lazy_property_cache' % name
-                old = obj.__dict__.pop(cache_name, None)
-                obj.trait_property_changed(name, old)
-
-        handlers = self.handlers
-        dependency = self.dependency
-        if obj in handlers:
-            obj.on_trait_change(handlers[obj], dependency, remove=True)
-        handlers[obj] = notify
-        obj.on_trait_change(notify, dependency)
 
 
 #------------------------------------------------------------------------------

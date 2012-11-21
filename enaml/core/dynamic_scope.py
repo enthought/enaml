@@ -3,9 +3,11 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from abc import ABCMeta, abstractmethod
-from .trait_types import UninitializedAttributeError
 
 
+#------------------------------------------------------------------------------
+# Abstract Scope Listener
+#------------------------------------------------------------------------------
 class AbstractScopeListener(object):
     """ An abstract interface definition for scope listeners.
 
@@ -32,6 +34,20 @@ class AbstractScopeListener(object):
 
         """
         raise NotImplementedError
+
+
+#------------------------------------------------------------------------------
+# Dynamic Scope
+#------------------------------------------------------------------------------
+class DynamicAttributeError(AttributeError):
+    """ A custom Attribute error for use with dynamic scoping.
+
+    DynamicScope operates by catching AttributeError and converting it
+    into a key error. This DynamicAttributeError can be raised by user
+    code in order to escape the trapping and bubble up.
+
+    """
+    pass
 
 
 class DynamicScope(object):
@@ -97,6 +113,8 @@ class DynamicScope(object):
         while parent is not None:
             try:
                 value = getattr(parent, name)
+            except DynamicAttributeError:
+                raise
             except AttributeError:
                 parent = parent.parent
             else:
@@ -122,6 +140,9 @@ class DynamicScope(object):
         return res
 
 
+#------------------------------------------------------------------------------
+# Nonlocals
+#------------------------------------------------------------------------------
 class Nonlocals(object):
     """ An object which implements userland dynamic scoping.
 
@@ -218,6 +239,8 @@ class Nonlocals(object):
         while parent is not None:
             try:
                 value = getattr(parent, name)
+            except DynamicAttributeError:
+                raise
             except AttributeError:
                 parent = parent.parent
             else:
@@ -253,8 +276,8 @@ class Nonlocals(object):
             # without checking the message of the exception.
             try:
                 getattr(parent, name)
-            except UninitializedAttributeError:
-                pass
+            except DynamicAttributeError:
+                pass # ignore uninitialized attribute errors
             except AttributeError:
                 parent = parent.parent
                 continue
