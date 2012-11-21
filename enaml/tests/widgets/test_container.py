@@ -37,8 +37,6 @@ enamldef MainView(Window):
         self.assertTrue(initial_size.height < no_padding_size.height)
         self.assertTrue(initial_size.width < no_padding_size.width)
 
-        print initial_size, no_padding_size
-
 if __name__ == '__main__':
     import unittest
     unittest.main()
