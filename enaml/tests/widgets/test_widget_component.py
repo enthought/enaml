@@ -1,4 +1,3 @@
-#------------------------------------------------------------------------------
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
@@ -6,8 +5,15 @@ import sys
 import unittest
 
 
+from enaml.colors import parse_color
 from enaml.qt.qt.QtCore import Qt
 from .enaml_test_case import EnamlTestCase
+
+def get_rbga_from_qt_color(color):
+    """ Returns an RGBA tuple with color values between 0 and 1 from a QColor.
+    """
+    return (color.redF(), color.greenF(), color.blueF(), color.alphaF())
+
 
 
 class Test(EnamlTestCase):
@@ -88,26 +94,42 @@ enamldef MainView(Window):
     def test_set_bgcolor(self):
         """ Test the setting of a WidgetComponent's bgcolor attribute
         """
+        background_color = "#FFFFFF"
         with self.app.process_events():
-            self.server_widget.bgcolor = "#FFFFFF"
+            self.server_widget.bgcolor = background_color
+        rgba = parse_color(background_color)
 
-        assert self.client_widget.backgroundRole() == self.server_widget.bgcolor
+        role = self.client_widget.backgroundRole()
+        color = self.client_widget.palette().color(role)
+        client_color = get_rbga_from_qt_color(color)
+
+        self.assertEquals(rgba, client_color)
 
     def test_set_fgcolor(self):
         """ Test the setting of a WidgetComponent's fgcolor attribute
         """
+        foreground_color = "#000000"
+
         with self.app.process_events():
-            self.server_widget.fgcolor = "#000000"
+            self.server_widget.fgcolor = foreground_color
 
-        assert self.client_widget.foregroundRole() == self.server_widget.fgcolor
+        rgba = parse_color(foreground_color)
 
+
+        role = self.client_widget.foregroundRole()
+        color = self.client_widget.palette().color(role)
+        client_color = get_rbga_from_qt_color(color)
+
+        self.assertEquals(rgba, client_color)
+
+    @unittest.expectedFailure
     def test_set_font(self):
         """ Test the setting of a WidgetComponent's font attribute
         """
         with self.app.process_events():
             self.server_widget.font = "Helvetica-Regular"
 
-        assert self.client_widget.font == self.server_widget.font
+        self.assertEquals(self.client_widget.font(), self.server_widget.font)
 
 
 
