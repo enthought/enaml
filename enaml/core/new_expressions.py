@@ -170,17 +170,13 @@ class StandardInverter(CodeInverter):
         """ Called before the CALL_FUNCTION opcode is executed.
 
         This method inverts a call to the builtin `getattr` into a call
-        to the builtin `setattr`, and allows the builtin `setattr` to
-        execute unmodified. All other calls will raise.
+        to the builtin `setattr`. All other calls will raise.
         See also: `CodeInverter.call_function`.
 
         """
         nargs = argspec & 0xFF
         nkwargs = (argspec >> 8) & 0xFF
         if (func is getattr and (nargs == 2 or nargs == 3) and nkwargs == 0):
-            obj, attr = argtuple[0], argtuple[1]
-            setattr(obj, attr, value)
-        elif (func is setattr and nargs == 3 and nkwargs == 0):
             obj, attr = argtuple[0], argtuple[1]
             setattr(obj, attr, value)
         else:
