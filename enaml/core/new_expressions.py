@@ -376,3 +376,28 @@ class SubscriptionExpression(BaseExpression):
 
 AbstractExpression.register(SubscriptionExpression)
 
+
+#------------------------------------------------------------------------------
+# Delegation Expression
+#------------------------------------------------------------------------------
+class DelegationExpression(SubscriptionExpression):
+    """
+
+    """
+    #--------------------------------------------------------------------------
+    # AbstractListener Interface
+    #--------------------------------------------------------------------------
+    def value_changed(self, obj, name, old, new):
+        """ Called when the attribute on the object has changed.
+
+        """
+        nonlocals = Nonlocals(obj, None)
+        inverter = StandardInverter(nonlocals)
+        overrides = {'nonlocals': nonlocals}
+        scope = DynamicScope(obj, self._identifiers, overrides, None)
+        with obj.operators:
+            call_func(self._func._setter, (inverter, new), {}, scope)
+
+
+AbstractListener.register(DelegationExpression)
+
