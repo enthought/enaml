@@ -16,7 +16,8 @@ from enaml.widgets.api import Container, Window, Field
 
 enamldef MainView(Window):
     Container:
-        pass
+        hug_width = 'strong'
+        hug_height = 'strong'
 """
         self.parse_and_create(enaml_source)
         self.server_widget = self.find_server_widget(self.view, "Container")
@@ -26,16 +27,17 @@ enamldef MainView(Window):
         """ Test the setting of a Container's padding attribute
         """
 
-        initial_size = self.client_widget.size()
+        initial_size = self.client_widget.size().toTuple()
 
         with self.app.process_events():
             self.server_widget.padding = (0,0,0,0)
 
         # ensure changing the padding has an impact on the client size. 
         # Removing the padding should make the container larger
-        no_padding_size = self.client_widget.size()
-        self.assertTrue(initial_size.height < no_padding_size.height)
-        self.assertTrue(initial_size.width < no_padding_size.width)
+        no_padding_size = self.client_widget.size().toTuple()
+
+        self.assertTrue(initial_size[0] < no_padding_size[0])
+        self.assertTrue(initial_size[1] < no_padding_size[1])
 
 if __name__ == '__main__':
     import unittest
