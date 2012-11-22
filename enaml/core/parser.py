@@ -236,7 +236,35 @@ def ast_for_dotted_name(dotted_name):
     return res
 
 
-def build_attr_declaration(kw, name, type_node, default, lineno, p):
+# The nodes which can be inverted to form an assignable expression.
+_INVERTABLE = (ast.Name, ast.Attribute, ast.Call, ast.Subscript)
+
+def validate_invertable(node, lineno, p):
+    """ Validates that its possible for the compiler to generated
+    inversion code for the given ast node.
+
+    Currently, code is invertable if the expression terminates with
+    a node of the following types: Name, Attribute, Call, Subscript.
+
+    Parameters
+    ----------
+    node : ast.AST
+        The ast expression node to validate.
+
+    lineno : int
+        The line number of the declaration.
+
+    p : Yacc Production
+        The Ply object passed to the parser rule. This is used to
+        extract the filename for syntax error reporting.
+
+    """
+    if not isinstance(node, _INVERTABLE):
+        msg = "can't assign to expression of this form"
+        syntax_error(msg, FakeToken(p.lexer.lexer, lineno))
+
+
+def build_attr_declaration(kw, name, attr_type, default, lineno, p):
     """ Builds an ast node for an attr or event declaration.
 
     Parameters
@@ -248,9 +276,8 @@ def build_attr_declaration(kw, name, type_node, default, lineno, p):
     name : string
         The name of the attribute or event being declared.
 
-    type_node : enaml_ast.Python node or None
-        The expression node for the type being declared, or None if not
-        using a type.
+    attr_type : str or None
+        The type being declared, or None if not using a type.
 
     default : AttributeBinding or None
         The default attribute binding or None if not supply the default.
@@ -273,11 +300,11 @@ def build_attr_declaration(kw, name, type_node, default, lineno, p):
         syntax_error(msg, FakeToken(p.lexer.lexer, lineno))
     if kw == 'attr':
         res = enaml_ast.AttributeDeclaration(
-            name, type_node, default, False, lineno,
+            name, attr_type, default, False, lineno,
         )
     else:
         res = enaml_ast.AttributeDeclaration(
-            name, type_node, default, True, lineno,
+            name, attr_type, default, True, lineno,
         )
     return res
 
@@ -380,11 +407,7 @@ def p_declaration1(p):
     ''' declaration : ENAMLDEF NAME LPAR NAME RPAR COLON declaration_body '''
     lineno = p.lineno(1)
     doc, idn, items = p[7]
-    base = ast.Expression(body=ast.Name(id=p[4], ctx=Load))
-    base.lineno = lineno
-    ast.fix_missing_locations(base)
-    base_node = enaml_ast.Python(base, lineno)
-    p[0] = enaml_ast.Declaration(p[2], base_node, idn, doc, items, lineno)
+    p[0] = enaml_ast.Declaration(p[2], p[4], idn, doc, items, lineno)
 
 
 def p_declaration2(p):
@@ -499,12 +522,7 @@ def p_attribute_declaration1(p):
 
 def p_attribute_declaration2(p):
     ''' attribute_declaration : NAME NAME COLON NAME NEWLINE '''
-    lineno = p.lineno(1)
-    expr = ast.Expression(body=ast.Name(id=p[4], ctx=Load))
-    expr.lineno = lineno
-    ast.fix_missing_locations(expr)
-    expr_node = enaml_ast.Python(expr, lineno)
-    p[0] = build_attr_declaration(p[1], p[2], expr_node, None, p.lineno(1), p)
+    p[0] = build_attr_declaration(p[1], p[2], p[4], None, p.lineno(1), p)
 
 
 def p_attribute_declaration3(p):
@@ -518,13 +536,9 @@ def p_attribute_declaration3(p):
 def p_attribute_declaration4(p):
     ''' attribute_declaration : NAME NAME COLON NAME binding '''
     lineno = p.lineno(1)
-    expr = ast.Expression(body=ast.Name(id=p[4], ctx=Load))
-    expr.lineno = lineno
-    ast.fix_missing_locations(expr)
-    expr_node = enaml_ast.Python(expr, lineno)
     name = p[2]
     binding = enaml_ast.AttributeBinding(name, p[5], lineno)
-    p[0] = build_attr_declaration(p[1], name, expr_node, binding, lineno, p)
+    p[0] = build_attr_declaration(p[1], name, p[4], binding, lineno, p)
 
 
 #------------------------------------------------------------------------------
@@ -631,9 +645,7 @@ def p_attribute_binding(p):
 
 def p_binding1(p):
     ''' binding : EQUAL test NEWLINE
-                | COLONEQUAL test NEWLINE
-                | LEFTSHIFT test NEWLINE
-                | RIGHTSHIFT test NEWLINE '''
+                | LEFTSHIFT test NEWLINE '''
     lineno = p.lineno(1)
     operator = translate_operator(p[1])
     expr = ast.Expression(body=p[2])
@@ -644,6 +656,19 @@ def p_binding1(p):
 
 
 def p_binding2(p):
+    ''' binding : COLONEQUAL test NEWLINE
+                | RIGHTSHIFT test NEWLINE '''
+    lineno = p.lineno(1)
+    validate_invertable(p[2], lineno, p)
+    operator = translate_operator(p[1])
+    expr = ast.Expression(body=p[2])
+    expr.lineno = lineno
+    ast.fix_missing_locations(expr)
+    expr_node = enaml_ast.Python(expr, lineno)
+    p[0] = enaml_ast.BoundExpression(operator, expr_node, lineno)
+
+
+def p_binding3(p):
     ''' binding : DOUBLECOLON suite '''
     lineno = p.lineno(1)
     operator = translate_operator(p[1])
