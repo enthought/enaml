@@ -76,7 +76,21 @@ enamldef MainView(Window):
             self.server_widget.text = '1'
             self.server_widget.validator = IntValidator()
 
-        assert self.client_widget.validator == self.server_widget.validator
+
+        bad_text_input = 'hello world!'
+
+        # Try to set the text with a string from the client side
+        with self.app.process_events():
+            self.client_widget.setText(bad_text_input)
+            self.client_widget.returnPressed.emit()
+
+        expected_value = '1'
+
+        self.assertEquals(expected_value, self.server_widget.text)
+        # on the client side, the text is the wrong one BUT the stylsheet shows
+        # that the input is invalid
+        self.assertEquals(bad_text_input, self.client_widget.text())
+        self.assertNotEquals('', self.client_widget.styleSheet())
 
     def test_set_text(self):
         """ Test the setting of a Field's text attribute
@@ -86,3 +100,6 @@ enamldef MainView(Window):
 
         self.assertEquals(self.client_widget.text(), self.server_widget.text)
 
+if __name__ == '__main__':
+    import unittest
+    unittest.main()
