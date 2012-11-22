@@ -59,7 +59,7 @@ class TraitsTracer(CodeTracer):
     #--------------------------------------------------------------------------
     # AbstractScopeListener Interface
     #--------------------------------------------------------------------------
-    def dynamic_load(self, obj, attr):
+    def dynamic_load(self, obj, attr, value):
         """ Called when an object attribute is dynamically loaded.
 
         This will attach a listener to the object if it is a HasTraits
@@ -365,14 +365,11 @@ class SubscriptionExpression(BaseExpression):
             notifier._expr = None # break the ref cycle
         notifier = self._notifier = Notifier(self, name)
         tracer = TraitsTracer(notifier)
-        overrides = {'nonlocals': Nonlocals(obj, None)}
-        scope = DynamicScope(obj, self._identifiers, overrides, None)
+        overrides = {'nonlocals': Nonlocals(obj, tracer)}
+        scope = DynamicScope(obj, self._identifiers, overrides, tracer)
         with obj.operators:
-            try:
-                return call_func(self._func, (tracer,), {}, scope)
-            except Exception, e:
-                print e
-                return ''
+            return call_func(self._func, (tracer,), {}, scope)
+
 
 AbstractExpression.register(SubscriptionExpression)
 
