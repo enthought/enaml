@@ -288,6 +288,9 @@ class Declarative(Object):
         # needed in this case, since this method will only be called by
         # the compiler machinery for brand new subclasses.
         ctrait = user_trait.as_ctrait()
+        anytrait_handler = cls.__prefix_traits__.get('@')
+        if anytrait_handler is not None:
+            ctrait._notifiers(1).append(anytrait_handler)
         cls.__base_traits__[name] = ctrait
         cls.__class_traits__[name] = ctrait
 
@@ -382,6 +385,7 @@ class Declarative(Object):
         number of notifier objects which must be created.
 
         """
+        super(Declarative, self)._anytrait_changed(name, old, new)
         lsnrs = self._listeners
         if name in lsnrs:
             for listener in lsnrs[name]:
