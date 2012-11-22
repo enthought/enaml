@@ -3,9 +3,9 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .byteplay import (
-    Code, LOAD_ATTR, LOAD_CONST, ROT_TWO, DUP_TOP, CALL_FUNCTION, POP_TOP,
-    LOAD_FAST, BUILD_TUPLE, ROT_THREE, UNPACK_SEQUENCE, DUP_TOPX,
-    BINARY_SUBSCR, GET_ITER, LOAD_NAME, LOAD_GLOBAL
+    LOAD_ATTR, LOAD_CONST, ROT_TWO, DUP_TOP, CALL_FUNCTION, POP_TOP, LOAD_FAST,
+    BUILD_TUPLE, ROT_THREE, UNPACK_SEQUENCE, DUP_TOPX, BINARY_SUBSCR, GET_ITER,
+    LOAD_NAME, RETURN_VALUE
 )
 
 
@@ -110,7 +110,7 @@ class CodeInverter(object):
         """ Called by the modified code to raise an inversion exception.
 
         """
-        raise RuntimeError('Cannot assign to the given expression')
+        raise RuntimeError("can't assign to expression")
 
     def load_name(self, name, value):
         """ Called before the LOAD_NAME opcode is executed.
@@ -194,46 +194,25 @@ class CodeInverter(object):
         self.fail()
 
 
-def transform_code(code, trace):
-    """ Transform a code object into a Python function.
+def inject_tracing(codelist):
+    """ Inject tracing code into the given code list.
 
-    This will disassemble the given code object and rewrite it to enable
-    Enaml's dynamic scoping and tracing features.
+    This will inject the bytecode operations required to trace the
+    execution of the code using a `CodeTracer` object. The generated
+    opcodes expect a fast local '_[tracer]' to be available when the
+    code is executed.
 
     Parameters
     ----------
-    code : types.CodeType
-        The Python code object which should transformed.
-
-    trace : bool
-        Whether or not to add tracing code to the function. If this is
-        True, the arguments of the returned function are extended so
-        that the first argument to the function is a `CodeTracer`
-        instance.
+    codelist : list
+        The list of byteplay code ops to modify.
 
     Returns
     -------
-    result : types.CodeType
-        A Python code object which implements the desired functionality.
+    result : list
+        A *new* list of code ops which implement the desired behavior.
 
     """
-    bp_code = Code.from_code(code)
-    code_list = list(bp_code.code)
-
-    # Replacing LOAD_GLOBAL with LOAD_NAME enables dynamic scoping by
-    # way of a custom locals mapping. There is a C extension module
-    # with a function `call_func` which allows a Python function to
-    # be called with a locals mapping, which is normally not possible.
-    for idx, (op, op_arg) in enumerate(code_list):
-        if op == LOAD_GLOBAL:
-            code_list[idx] = (LOAD_NAME, op_arg)
-
-    # If tracing code is not required, the transformation is complete.
-    if not trace:
-        bp_code.code = code_list
-        bp_code.newlocals = False
-        return bp_code.to_code()
-
     # This builds a mapping of code idx to a list of ops, which are the
     # tracing bytecode instructions which will be inserted into the code
     # object being transformed. The ops assume that a tracer object is
@@ -242,7 +221,7 @@ def transform_code(code, trace):
     # that the tracer has no visible side effects, the tracing is
     # transparent.
     inserts = {}
-    for idx, (op, op_arg) in enumerate(code_list):
+    for idx, (op, op_arg) in enumerate(codelist):
         if op == LOAD_ATTR:
             code = [                        # obj
                 (DUP_TOP, None),            # obj -> obj
@@ -301,14 +280,83 @@ def transform_code(code, trace):
     # Create a new code list which interleaves the generated code with
     # the original code at the appropriate location.
     new_code = []
-    for idx, code_op in enumerate(code_list):
+    for idx, code_op in enumerate(codelist):
         if idx in inserts:
             new_code.extend(inserts[idx])
         new_code.append(code_op)
+    return new_code
 
-    # Create the new code object which takes a tracer as the first arg.
-    bp_code.code = new_code
-    bp_code.newlocals = False
-    bp_code.args = ('_[tracer]',) + bp_code.args
-    return bp_code.to_code()
+
+def inject_inversion(codelist):
+    """ Inject inversion code into the given code list.
+
+    This will inject the bytecode operations required to invert the
+    execution of the code using a `CodeInverter` object. The generated
+    opcodes expect the fast local '_[inverter]' and '_[value]' to be
+    available when the code is executed.
+
+    Parameters
+    ----------
+    codelist : list
+        The list of byteplay code ops to modify.
+
+    Returns
+    -------
+    result : list
+        A *new* list of code ops which implement the desired behavior.
+
+    Raises
+    ------
+    ValueError
+        The given code is not suitable for inversion.
+
+    """
+    opcode, oparg = codelist[-2]
+    if opcode == LOAD_NAME and len(codelist) == 3:
+        new_code = codelist[:-2]
+        new_code.extend([
+            (LOAD_FAST, '_[inverter]'),
+            (LOAD_ATTR, 'load_name'),
+            (LOAD_CONST, oparg),
+            (LOAD_FAST, '_[value]'),
+            (CALL_FUNCTION, 0x0002),
+            (RETURN_VALUE, None),
+        ])
+    elif opcode == LOAD_ATTR:
+        new_code = codelist[:-2]
+        new_code.extend([
+            (LOAD_FAST, '_[inverter]'),
+            (LOAD_ATTR, 'load_attr'),
+            (ROT_TWO, None),
+            (LOAD_CONST, oparg),
+            (LOAD_FAST, '_[value]'),
+            (CALL_FUNCTION, 0x0003),
+            (RETURN_VALUE, None),
+        ])
+    elif opcode == CALL_FUNCTION:
+        n_stack_args = (oparg & 0xFF) + 2 * ((oparg >> 8) & 0xFF)
+        new_code = codelist[:-2]
+        new_code.extend([
+            (BUILD_TUPLE, n_stack_args),
+            (LOAD_FAST, '_[inverter]'),
+            (LOAD_ATTR, 'call_function'),
+            (ROT_THREE, None),
+            (LOAD_CONST, oparg),
+            (LOAD_FAST, '_[value]'),
+            (CALL_FUNCTION, 0x0004),
+            (RETURN_VALUE, None),
+        ])
+    elif opcode == BINARY_SUBSCR:
+        new_code = codelist[:-2]
+        new_code.extend([
+            (LOAD_FAST, '_[inverter]'),
+            (LOAD_ATTR, 'binary_subscr'),
+            (ROT_THREE, None),
+            (LOAD_FAST, '_[value]'),
+            (CALL_FUNCTION, 0x0003),
+            (RETURN_VALUE, None),
+        ])
+    else:
+        raise ValueError("can't invert code")
+    return new_code
 
