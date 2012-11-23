@@ -2,24 +2,36 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from ctypes import pythonapi, py_object, POINTER, c_int, byref
 from types import FunctionType
+from ctypes import (
+    pythonapi, py_object, c_int, c_long, Structure, ARRAY, c_void_p
+)
 
 
 PyEval_EvalCodeEx = pythonapi.PyEval_EvalCodeEx
 PyEval_EvalCodeEx.restype = py_object
 PyEval_EvalCodeEx.argtypes = [
-    py_object,              # code object
-    py_object,              # globals dict
-    py_object,              # locals mapping
-    POINTER(py_object),     # args array
-    c_int,                  # num args
-    POINTER(py_object),     # keywords array
-    c_int,                  # num keywords
-    POINTER(py_object),     # defaults array
-    c_int,                  # num defaults
-    py_object,              # closure
+    py_object,      # code object
+    py_object,      # globals dict
+    py_object,      # locals mapping
+    c_void_p,       # args array (PyObject**)
+    c_int,          # num args
+    c_void_p,       # keywords array (PyObject**)
+    c_int,          # num keywords
+    c_void_p,       # defaults array (PyObject**)
+    c_int,          # num defaults
+    py_object,      # closure
 ]
+
+
+class PyTupleObject(Structure):
+    _fields_ = [
+        ('ob_refcnt', c_long),
+        ('ob_type', py_object),
+        ('ob_size', c_long),
+        ('ob_item', ARRAY(py_object, 1)),
+    ]
+OB_ITEM_OFFSET = PyTupleObject.ob_item.offset
 
 
 def call_func(func, args, kwargs, f_locals=None):
@@ -55,11 +67,13 @@ def call_func(func, args, kwargs, f_locals=None):
     if not isinstance(kwargs, dict):
         raise TypeError('keywords must be a dict')
 
-    if f_locals is not None and not hasattr(f_locals, '__getitem__'):
+    if f_locals is None:
+        f_locals = py_object()
+    elif not hasattr(f_locals, '__getitem__'):
         raise TypeError('locals must be a mapping')
 
-    defaults = func.func_defaults
-    num_defaults = len(defaults) if defaults else 0
+    num_args = len(args)
+    args_array = c_void_p(id(args) + OB_ITEM_OFFSET)
 
     if kwargs:
         keywords = []
@@ -69,22 +83,23 @@ def call_func(func, args, kwargs, f_locals=None):
         keywords = tuple(keywords)
         num_keywords = len(keywords) / 2
     else:
-        keywords = None
+        keywords = ()
         num_keywords = 0
+    keywords_array = c_void_p(id(keywords) + OB_ITEM_OFFSET)
 
-    args_ptr = byref(py_object(args[0])) if args else None
-    defaults_ptr = byref(py_object(defaults[0])) if defaults else None
-    keywords_ptr = byref(py_object(keywords[0])) if keywords else None
+    defaults = func.func_defaults or ()
+    num_defaults = len(defaults)
+    defaults_array = c_void_p(id(defaults) + OB_ITEM_OFFSET)
 
     result = PyEval_EvalCodeEx(
         func.func_code,
         func.func_globals,
         f_locals,
-        args_ptr,
-        len(args),
-        keywords_ptr,
+        args_array,
+        num_args,
+        keywords_array,
         num_keywords,
-        defaults_ptr,
+        defaults_array,
         num_defaults,
         func.func_closure
     )
