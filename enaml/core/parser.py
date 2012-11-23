@@ -1623,7 +1623,7 @@ def p_import_from4(p):
 
 def p_import_from5(p):
     ''' import_from : FROM import_from_dots dotted_name IMPORT import_as_name '''
-    imprt = ast.ImportFrom(module=p[3], names=p[5], level=len(p[2]))
+    imprt = ast.ImportFrom(module=p[3], names=[p[5]], level=len(p[2]))
     imprt.col_offset = 0
     p[0] = imprt
 

@@ -35,7 +35,7 @@ else:
 
 setup(
     name='enaml',
-    version='0.5.0',
+    version='0.5.1',
     author='Enthought, Inc',
     author_email='info@enthought.com',
     url='https://github.com/enthought/enaml',

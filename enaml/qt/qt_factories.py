@@ -197,6 +197,11 @@ def tool_bar_factory():
     return QtToolBar
 
 
+def web_view_factory():
+    from .qt_web_view import QtWebView
+    return QtWebView
+
+
 def window_factory():
     from .qt_window import QtWindow
     return QtWindow
@@ -242,6 +247,7 @@ QT_FACTORIES = {
     'TextEditor': text_editor_factory,
     'TimeSelector': time_selector_factory,
     'ToolBar': tool_bar_factory,
+    'WebView': web_view_factory,
     'Window': window_factory,
 }
 
