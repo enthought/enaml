@@ -10,6 +10,7 @@
 
 using namespace PythonHelpers;
 
+extern "C" {
 
 typedef struct {
     PyObject_HEAD
@@ -868,4 +869,6 @@ initsignaling( void )
     if( PyModule_AddObject( mod.get(), "BoundSignal", bsig_type.release() ) == -1 )
         return;
 }
+
+} // extern "C"
 

@@ -13,7 +13,8 @@ dynamic scoping. The code below is a slightly tweaked `function_call`
 from Python's funcobject.c
 
 */
-extern "C" { static PyObject* call_trace_func( PyObject*, PyObject* ); }
+extern "C" {
+
 static PyObject*
 call_func( PyObject* mod, PyObject* args )
 {
@@ -112,4 +113,6 @@ initfunchelper( void )
     if( !mod )
         return;
 }
+
+} // extern "C"
 
