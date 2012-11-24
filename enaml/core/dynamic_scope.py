@@ -125,16 +125,21 @@ class DynamicScope(object):
         raise KeyError(name)
 
     def __contains__(self, name):
-        """ Return True if the name is in scope, False otherwise.
+        """ Returns True if the name is in scope, False otherwise.
 
         """
         if isinstance(name, basestring):
+            # Temporarily disable the listener during scope testing.
+            listener = self._listener
+            self._listener = None
             try:
                 self.__getitem__(name)
             except KeyError:
                 res = False
             else:
                 res = True
+            finally:
+                self._listener = listener
         else:
             res = False
         return res
@@ -290,8 +295,7 @@ class Nonlocals(object):
 
         """
         if isinstance(name, basestring):
-            # Temporarily disable the listener to prevent property
-            # bindings due to scope testing.
+            # Temporarily disable the listener during scope testing.
             listener = self._nls_listener
             self._nls_listener = None
             try:
