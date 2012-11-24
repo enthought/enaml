@@ -15,8 +15,8 @@ class CodeTracer(object):
     This class defines the interface for a code tracer object, which is
     an object which can be passed as the first argument to a code object
     which has been transformed to enable tracing. Methods on the tracer
-    are called with relevant arguments from the Python stack, when that
-    particular code segment is executing. The return values of a tracer
+    are called with relevant arguments from the Python stack when that
+    particular code segment is executing. The return value of a tracer
     method is ignored; exceptions are propagated.
 
     """
@@ -98,16 +98,16 @@ class CodeInverter(object):
     This class defines the interface for a code inverter object, which is
     an object which can be passed as the first argument to a code object
     which has been transformed to enable inversion. The methods on the
-    inverter are called with relevant arguments from the Python stack,
+    inverter are called with relevant arguments from the Python stack
     when that particular code segment is executing. The return values of
     a tracer method is ignored; exceptions are propagated.
 
     The default behavior of an inverter is to raise. Implementations
-    must provide their own code.
+    must provide their own code in order to enable inversion.
 
     """
     def fail(self):
-        """ Called by the modified code to raise an inversion exception.
+        """ Called by handlers to raise an inversion exception.
 
         """
         raise RuntimeError("can't assign to expression")
@@ -284,6 +284,7 @@ def inject_tracing(codelist):
         if idx in inserts:
             new_code.extend(inserts[idx])
         new_code.append(code_op)
+
     return new_code
 
 
@@ -312,51 +313,49 @@ def inject_inversion(codelist):
 
     """
     opcode, oparg = codelist[-2]
+    new_code = codelist[:-2]
     if opcode == LOAD_NAME and len(codelist) == 3:
-        new_code = codelist[:-2]
-        new_code.extend([
-            (LOAD_FAST, '_[inverter]'),
-            (LOAD_ATTR, 'load_name'),
-            (LOAD_CONST, oparg),
-            (LOAD_FAST, '_[value]'),
-            (CALL_FUNCTION, 0x0002),
-            (RETURN_VALUE, None),
+        new_code.extend([                   #:
+            (LOAD_FAST, '_[inverter]'),     #: inverter
+            (LOAD_ATTR, 'load_name'),       #: invertfunc
+            (LOAD_CONST, oparg),            #: invertfunc -> name
+            (LOAD_FAST, '_[value]'),        #: invertfunc -> name - > value
+            (CALL_FUNCTION, 0x0002),        #: retval
+            (RETURN_VALUE, None),           #:
         ])
     elif opcode == LOAD_ATTR:
-        new_code = codelist[:-2]
-        new_code.extend([
-            (LOAD_FAST, '_[inverter]'),
-            (LOAD_ATTR, 'load_attr'),
-            (ROT_TWO, None),
-            (LOAD_CONST, oparg),
-            (LOAD_FAST, '_[value]'),
-            (CALL_FUNCTION, 0x0003),
-            (RETURN_VALUE, None),
+        new_code.extend([                   #: obj
+            (LOAD_FAST, '_[inverter]'),     #: obj -> inverter
+            (LOAD_ATTR, 'load_attr'),       #: obj -> invertfunc
+            (ROT_TWO, None),                #: invertfunc -> obj
+            (LOAD_CONST, oparg),            #: invertfunc -> obj -> attr
+            (LOAD_FAST, '_[value]'),        #: invertfunc -> obj -> attr -> value
+            (CALL_FUNCTION, 0x0003),        #: retval
+            (RETURN_VALUE, None),           #:
         ])
     elif opcode == CALL_FUNCTION:
         n_stack_args = (oparg & 0xFF) + 2 * ((oparg >> 8) & 0xFF)
-        new_code = codelist[:-2]
-        new_code.extend([
-            (BUILD_TUPLE, n_stack_args),
-            (LOAD_FAST, '_[inverter]'),
-            (LOAD_ATTR, 'call_function'),
-            (ROT_THREE, None),
-            (LOAD_CONST, oparg),
-            (LOAD_FAST, '_[value]'),
-            (CALL_FUNCTION, 0x0004),
-            (RETURN_VALUE, None),
+        new_code.extend([                   #: func -> arg(0) -> arg(1) -> ... -> arg(n-1)
+            (BUILD_TUPLE, n_stack_args),    #: func -> argtuple
+            (LOAD_FAST, '_[inverter]'),     #: func -> argtuple -> inverter
+            (LOAD_ATTR, 'call_function'),   #: func -> argtuple -> invertfunc
+            (ROT_THREE, None),              #: invertfunc -> func -> argtuple
+            (LOAD_CONST, oparg),            #: invertfunc -> func -> argtuple -> argspec
+            (LOAD_FAST, '_[value]'),        #: invertfunc -> func -> argtuple -> argspec -> value
+            (CALL_FUNCTION, 0x0004),        #: retval
+            (RETURN_VALUE, None),           #:
         ])
     elif opcode == BINARY_SUBSCR:
-        new_code = codelist[:-2]
-        new_code.extend([
-            (LOAD_FAST, '_[inverter]'),
-            (LOAD_ATTR, 'binary_subscr'),
-            (ROT_THREE, None),
-            (LOAD_FAST, '_[value]'),
-            (CALL_FUNCTION, 0x0003),
-            (RETURN_VALUE, None),
+        new_code.extend([                   #: obj -> index
+            (LOAD_FAST, '_[inverter]'),     #: obj -> index -> inverter
+            (LOAD_ATTR, 'binary_subscr'),   #: obj -> index -> invertfunc
+            (ROT_THREE, None),              #: invertfunc -> obj -> index
+            (LOAD_FAST, '_[value]'),        #: invertfunc -> obj -> index -> value
+            (CALL_FUNCTION, 0x0003),        #: retval
+            (RETURN_VALUE, None),           #:
         ])
     else:
         raise ValueError("can't invert code")
+
     return new_code
 
