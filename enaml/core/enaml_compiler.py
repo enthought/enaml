@@ -47,7 +47,19 @@ from .code_tracing import inject_tracing, inject_inversion
 #     descriptive _add_user_attribute. Finally, it adds the eval_compile
 #     function for compiling Python code in 'eval' mode with proper line
 #     number handling.
-COMPILER_VERSION = 5
+# 6 : Compile with code tracing - 24 November 2012
+#     This updates the compiler to generate code using the idea of code
+#     tracing instead of monitors and inverters. The compiler compiles
+#     the expressions into functions which are augmented to accept
+#     additional arguments. These arguments are tracer objects which will
+#     have methods called in response to bytecode ops executing. These
+#     methods can then attach listeners as necessary. This is an easier
+#     paradigm to develop with than the previous incarnation. This new
+#     way also allows the compiler to generate the final code objects
+#     upfront, instead of needed to specialize at runtime for a given
+#     operator context. This results in a much smaller footprint since
+#     then number of code objects created is n instead of n x m.
+COMPILER_VERSION = 6
 
 
 # The Enaml compiler translates an Enaml AST into Python bytecode.
@@ -144,7 +156,7 @@ def replace_global_loads(codelist, explicit=None):
 def optimize_locals(codelist):
     """ Optimize the given code object for fast locals access.
 
-    All STORE_NAME opcodes will be replace with STORE_FAST. Names which
+    All STORE_NAME opcodes will be replaced with STORE_FAST. Names which
     are stored and then loaded via LOAD_NAME are rewritten to LOAD_FAST.
     This transformation is applied in-place.
 
@@ -435,19 +447,16 @@ class DeclarationCompiler(_NodeVisitor):
         self.push_name(name)
 
         extend_ops([
-            # f_globals = globals()
-            (LOAD_NAME, 'globals'),
+            (LOAD_NAME, 'globals'),     # f_globals = globals()
             (CALL_FUNCTION, 0x0000),
             (STORE_FAST, 'f_globals'),
-            # _var_1 = instance
-            (LOAD_FAST, 'instance'),
+            (LOAD_FAST, 'instance'),    # _var_1 = instance
             (STORE_FAST, name),
         ])
 
         if node.identifier:
             extend_ops([
-                # identifiers['foo'] = _var_1
-                (LOAD_FAST, name),
+                (LOAD_FAST, name),              # identifiers['foo'] = _var_1
                 (LOAD_FAST, 'identifiers'),
                 (LOAD_CONST, node.identifier),
                 (STORE_SUBSCR, None),
@@ -458,8 +467,7 @@ class DeclarationCompiler(_NodeVisitor):
             visit(item)
 
         extend_ops([
-            # return _var_1
-            (LOAD_FAST, name),
+            (LOAD_FAST, name),      # return _var_1
             (RETURN_VALUE, None),
         ])
 
@@ -492,10 +500,8 @@ class DeclarationCompiler(_NodeVisitor):
         if isinstance(code, tuple): # operator `::`
             sub_code, upd_code = code
             self.extend_ops([
-                # sub_func.__setter__ = upd_func
-                # operators['__operator_ColonEqual__'](obj, attr, sub_func, identifiers)
                 (SetLineno, node.binding.lineno),
-                (LOAD_FAST, 'operators'),
+                (LOAD_FAST, 'operators'),           # operators[op](obj, attr, sub_func, identifiers)
                 (LOAD_CONST, op),
                 (BINARY_SUBSCR, None),
                 (LOAD_FAST, self.curr_name()),
@@ -506,16 +512,15 @@ class DeclarationCompiler(_NodeVisitor):
                 (LOAD_CONST, upd_code),
                 (MAKE_FUNCTION, 0),
                 (ROT_TWO, None),
-                (STORE_ATTR, '_setter'),
+                (STORE_ATTR, '_update'),            # sub_func._update = upd_func
                 (LOAD_FAST, 'identifiers'),
                 (CALL_FUNCTION, 0x0004),
                 (POP_TOP, None),
             ])
         else:
             self.extend_ops([
-                # operators['__operator_Equal__'](obj, attr, func, identifiers)
                 (SetLineno, node.binding.lineno),
-                (LOAD_FAST, 'operators'),
+                (LOAD_FAST, 'operators'),           # operators[op](obj, attr, func, identifiers)
                 (LOAD_CONST, op),
                 (BINARY_SUBSCR, None),
                 (LOAD_FAST, self.curr_name()),
@@ -539,9 +544,8 @@ class DeclarationCompiler(_NodeVisitor):
         name = self.name_gen.next()
         self.push_name(name)
         extend_ops([
-            # _var_2 = globals()['PushButton'](parent)
             (SetLineno, node.lineno),
-            (LOAD_NAME, node.name),
+            (LOAD_NAME, node.name),     # _var_2 = globals()['PushButton'](parent)
             (LOAD_FAST, parent_name),
             (CALL_FUNCTION, 0x0001),
             (STORE_FAST, name),
@@ -549,8 +553,7 @@ class DeclarationCompiler(_NodeVisitor):
 
         if node.identifier:
             extend_ops([
-                # identifiers['btn'] = _var_2
-                (LOAD_FAST, name),
+                (LOAD_FAST, name),              # identifiers['btn'] = _var_2
                 (LOAD_FAST, 'identifiers'),
                 (LOAD_CONST, node.identifier),
                 (STORE_SUBSCR, None),
@@ -649,9 +652,9 @@ class EnamlCompiler(_NodeVisitor):
 
         """
         py_code = compile(node.py_ast, self.filename, mode='exec')
-        bpc = Code.from_code(py_code)
+        bp_code = Code.from_code(py_code)
         # Skip the SetLineo and ReturnValue codes
-        self.extend_ops(bpc.code[1:-2])
+        self.extend_ops(bp_code.code[1:-2])
 
     def visit_Declaration(self, node):
         """ The Declaration node visitor.
@@ -668,7 +671,7 @@ class EnamlCompiler(_NodeVisitor):
         func_code = DeclarationCompiler.compile(node, filename)
         extend_ops([
             (SetLineno, node.lineno),
-            (LOAD_NAME, '_make_enamldef_helper_'),
+            (LOAD_NAME, '_make_enamldef_helper_'),  # Foo = _make_enamldef_helper_(name, base, buildfunc)
             (LOAD_CONST, name),
             (LOAD_NAME, node.base),
             (LOAD_CONST, func_code),
@@ -705,7 +708,7 @@ class EnamlCompiler(_NodeVisitor):
         attr_type = node.type or 'object'
         self.extend_ops([
             (SetLineno, node.lineno),
-            (DUP_TOP, None),
+            (DUP_TOP, None),                #cls._add_user_attribute(name, type, is_event)
             (LOAD_CONST, node.name),
             (LOAD_NAME, attr_type),
             (LOAD_CONST, node.is_event),
