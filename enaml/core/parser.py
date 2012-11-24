@@ -405,19 +405,13 @@ def p_enaml_module_item1(p):
 #------------------------------------------------------------------------------
 def p_declaration1(p):
     ''' declaration : ENAMLDEF NAME LPAR NAME RPAR COLON declaration_body '''
-    lineno = p.lineno(1)
     doc, idn, items = p[7]
-    p[0] = enaml_ast.Declaration(p[2], p[4], idn, doc, items, lineno)
+    p[0] = enaml_ast.Declaration(p[2], p[4], idn, doc, items, p.lineno(1))
 
 
 def p_declaration2(p):
     ''' declaration : ENAMLDEF NAME LPAR NAME RPAR COLON PASS NEWLINE '''
-    lineno = p.lineno(1)
-    base = ast.Expression(body=ast.Name(id=p[4], ctx=Load))
-    base.lineno = lineno
-    ast.fix_missing_locations(base)
-    base_node = enaml_ast.Python(base, lineno)
-    p[0] = enaml_ast.Declaration(p[2], base_node, None, '', [], lineno)
+    p[0] = enaml_ast.Declaration(p[2], p[4], None, '', [], p.lineno(1))
 
 
 def p_declaration3(p):
@@ -427,21 +421,12 @@ def p_declaration3(p):
     if idn is not None:
         msg = 'multiple identifiers declared'
         syntax_error(msg, FakeToken(p.lexer.lexer, lineno))
-    base = ast.Expression(body=ast.Name(id=p[4], ctx=Load))
-    base.lineno = lineno
-    ast.fix_missing_locations(base)
-    base_node = enaml_ast.Python(base, lineno)
-    p[0] = enaml_ast.Declaration(p[2], base_node, p[7], doc, items, lineno)
+    p[0] = enaml_ast.Declaration(p[2], p[4], p[7], doc, items, lineno)
 
 
 def p_declaration4(p):
     ''' declaration : ENAMLDEF NAME LPAR NAME RPAR COLON NAME COLON PASS NEWLINE '''
-    lineno = p.lineno(1)
-    base = ast.Expression(body=ast.Name(id=p[4], ctx=Load))
-    base.lineno = lineno
-    ast.fix_missing_locations(base)
-    base_node = enaml_ast.Python(base, lineno)
-    p[0] = enaml_ast.Declaration(p[2], base_node, p[7], '', [], lineno)
+    p[0] = enaml_ast.Declaration(p[2], p[4], p[7], '', [], p.lineno(1))
 
 
 def p_declaration_body1(p):
