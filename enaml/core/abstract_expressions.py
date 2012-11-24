@@ -3,13 +3,14 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from abc import ABCMeta, abstractmethod
+from enaml.signaling import Signal
 
 
 class AbstractListener(object):
     """ An interface definition for creating attribute listeners.
 
-    Listeners can be regisitered with `Declarative` instances in order
-    to track changes to their attributes.
+    Listeners are registered with `Declarative` instances using the
+    `bind_listener` method to track changes to their attributes.
 
     """
     __metaclass__ = ABCMeta
@@ -39,19 +40,14 @@ class AbstractListener(object):
 class AbstractExpression(object):
     """ An abstract interface definition for creating expressions.
 
-    Expressions can be registered with `Declarative` instances in order
-    to provide dynamically computed values at runtime.
+    Expressions are registered with `Declarative` instances using the
+    `bind_expression` method to provide computed attribute values.
 
     """
     __metaclass__ = ABCMeta
 
-    #: An Enaml Signal which should be emitted by the expression when
-    #: the the expression is invalidated. If an expression does not
-    #: support invalidation, this may be None.
-    invalidated = None
-
     @abstractmethod
-    def eval(self, obj):
+    def eval(self, obj, name):
         """ Evaluate and return the results of the expression.
 
         Parameters
@@ -59,8 +55,25 @@ class AbstractExpression(object):
         obj : Declarative
             The declarative object which owns the expression.
 
-
+        name : str
+            The attribute name on `obj` for which this expression is
+            providing the value.
 
         """
         raise NotImplementedError
+
+
+class AbstractListenableExpression(AbstractExpression):
+    """ An abstract interface definition for creating listenable
+    expressions.
+
+    Listenable expressions are registered with `Declarative` instances
+    using the `bind_expression` method to provide dynamically computed
+    attribute values at runtime.
+
+    """
+    #: An Enaml Signal emitted by the expression when it becomes invalid.
+    #: The payload of the signal will be the name that was passed to the
+    #: `eval` method during the last expression evaluation.
+    invalidated = Signal()
 
