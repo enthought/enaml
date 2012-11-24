@@ -6,11 +6,11 @@
 #------------------------------------------------------------------------------
 # Logging Setup
 #------------------------------------------------------------------------------
-# Add a NullHandler to make sure that all enaml loggers don't complain when they
-# get used.
+# Add a NullHandler so enaml loggers don't complain when they get used.
 import logging
 
 class NullHandler(logging.Handler):
+
     def handle(self, record):
         pass
 
@@ -33,7 +33,7 @@ def imports():
     """ Lazily imports and returns an enaml imports context.
 
     """
-    from .core.import_hooks import imports
+    from enaml.core.import_hooks import imports
     return imports()
 
 
@@ -79,7 +79,7 @@ def default_operator_context():
     if ctxt_func is not None:
         return ctxt_func()
     from enaml.core.operator_context import OperatorContext
-    from enaml.core.new_operators import OPERATORS
+    from enaml.core.operators import OPERATORS
     return OperatorContext(OPERATORS)
 
 
