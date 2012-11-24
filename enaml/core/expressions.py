@@ -60,8 +60,8 @@ class TraitsTracer(CodeTracer):
     def dynamic_load(self, obj, attr, value):
         """ Called when an object attribute is dynamically loaded.
 
-        This will attach a listener to the object if it is a HasTraits
-        instance. See also: `AbstractScopeListener.dynamic_load`.
+        This will trace the object if it is a HasTraits instance.
+        See also: `AbstractScopeListener.dynamic_load`.
 
         """
         if isinstance(obj, HasTraits):
@@ -73,8 +73,8 @@ class TraitsTracer(CodeTracer):
     def load_attr(self, obj, attr):
         """ Called before the LOAD_ATTR opcode is executed.
 
-        This will attach a listener to the object if it is a HasTraits
-        instance. See also: `CodeTracer.dynamic_load`.
+        This will trace the object if it is a HasTraits instance.
+        See also: `CodeTracer.dynamic_load`.
 
         """
         if isinstance(obj, HasTraits):
@@ -83,9 +83,8 @@ class TraitsTracer(CodeTracer):
     def call_function(self, func, argtuple, argspec):
         """ Called before the CALL_FUNCTION opcode is executed.
 
-        This will attach a listener if the func is the builtin `getattr`
-        and the object is a HasTraits instance.
-        See also: `CodeTracer.call_function`
+        This will trace the func is the builtin `getattr` and the object
+        is a HasTraits instance. See also: `CodeTracer.call_function`
 
         """
         nargs = argspec & 0xFF
@@ -98,9 +97,8 @@ class TraitsTracer(CodeTracer):
     def binary_subscr(self, obj, idx):
         """ Called before the BINARY_SUBSCR opcode is executed.
 
-        This will attach a traits items listener if the object is a
-        `TraitListObject` or a `TraitDictObject`.
-        See also: `CodeTracer.get_iter`.
+        This will trace the object if it is a `TraitListObject` or a
+        `TraitDictObject`. See also: `CodeTracer.get_iter`.
 
         """
         if isinstance(obj, (TraitListObject, TraitDictObject)):
@@ -112,8 +110,8 @@ class TraitsTracer(CodeTracer):
     def get_iter(self, obj):
         """ Called before the GET_ITER opcode is executed.
 
-        This will attach a traits items listener if the object is a
-        `TraitListObject`. See also: `CodeTracer.get_iter`.
+        This will trace the object if it is a `TraitListObject`
+        See also: `CodeTracer.get_iter`.
 
         """
         if isinstance(obj, TraitListObject):
@@ -291,8 +289,8 @@ class UpdateExpression(BaseExpression):
 
         """
         nonlocals = Nonlocals(obj, None)
-        inverter = StandardInverter(nonlocals)
         overrides = {'nonlocals': nonlocals}
+        inverter = StandardInverter(nonlocals)
         scope = DynamicScope(obj, self._identifiers, overrides, None)
         with obj.operators:
             call_func(self._func, (inverter, new), {}, scope)
@@ -365,7 +363,7 @@ class SubscriptionExpression(BaseExpression):
         with obj.operators:
             result = call_func(self._func, (tracer,), {}, scope)
 
-        # In most cases, the object comprising the dependencies of an
+        # In most cases, the objects comprising the dependencies of an
         # expression will not change during subsequent evaluations of
         # the expression. Rather than creating a new notifier on each
         # pass and repeating the work of creating the change handlers,
@@ -410,7 +408,7 @@ class DelegationExpression(SubscriptionExpression):
         overrides = {'nonlocals': nonlocals}
         scope = DynamicScope(obj, self._identifiers, overrides, None)
         with obj.operators:
-            call_func(self._func._setter, (inverter, new), {}, scope)
+            call_func(self._func._update, (inverter, new), {}, scope)
 
 
 AbstractListener.register(DelegationExpression)
