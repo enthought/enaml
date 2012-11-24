@@ -6,7 +6,9 @@ from traits.api import (
     Instance, List, Property, Str, Dict, Disallow, ReadOnly, TraitType,
 )
 
-from .abstract_expressions import AbstractExpression, AbstractListener
+from .abstract_expressions import (
+    AbstractExpression, AbstractListener, AbstractListenableExpression
+)
 from .dynamic_scope import DynamicAttributeError
 from .object import Object
 from .operator_context import OperatorContext
@@ -294,71 +296,6 @@ class Declarative(Object):
         cls.__base_traits__[name] = ctrait
         cls.__class_traits__[name] = ctrait
 
-    def _bind_expression(self, name, expression):
-        """ A private method used by the Enaml execution engine.
-
-        This method is called by the Enaml operators to bind the given
-        expression object to the given attribute name. If the attribute
-        does not exist, an exception is raised. A strong reference to
-        the expression object is kept internally.
-
-        Parameters
-        ----------
-        name : string
-            The name of the attribute on which to bind the expression.
-
-        expression : AbstractExpression
-            A concrete implementation of AbstractExpression.
-
-        """
-        curr = self.trait(name)
-        if curr is None or curr.trait_type is Disallow:
-            msg = "Cannot bind expression. %s object has no attribute '%s'"
-            raise AttributeError(msg % (self, name))
-
-        exprs = self._expressions
-        handler = self._on_expr_invalidated
-        if name in exprs:
-            old = exprs[name]
-            if old.invalidated is not None:
-                old.invalidated.disconnect(handler)
-        else:
-            # Add support for default value computation. ExpressionTrait
-            # must only be added once; it will call `eval_expression`
-            # as needed and retrieve the most current expression value.
-            if not isinstance(curr.trait_type, ExpressionTrait):
-                self.add_trait(name, ExpressionTrait(curr))
-
-        if expression.invalidated is not None:
-            expression.invalidated.connect(handler)
-        exprs[name] = expression
-
-    def _bind_listener(self, name, listener):
-        """ A private method used by the Enaml execution engine.
-
-        This method is called by the Enaml operators to bind the given
-        listener object to the given attribute name. If the attribute
-        does not exist, an exception is raised. A strong reference to
-        the listener object is kept internally.
-
-        Parameters
-        ----------
-        name : string
-            The name of the attribute on which to bind the listener.
-
-        listener : AbstractListener
-            A concrete implementation of AbstractListener.
-
-        """
-        curr = self.trait(name)
-        if curr is None or curr.trait_type is Disallow:
-            msg = "Cannot bind listener. %s object has no attribute '%s'"
-            raise AttributeError(msg % (self, name))
-        lsnrs = self._listeners
-        if name not in lsnrs:
-            lsnrs[name] = []
-        lsnrs[name].append(listener)
-
     def _on_expr_invalidated(self, name):
         """ A signal handler invoked when an expression is invalidated.
 
@@ -386,35 +323,112 @@ class Declarative(Object):
 
         """
         super(Declarative, self)._anytrait_changed(name, old, new)
-        lsnrs = self._listeners
-        if name in lsnrs:
-            for listener in lsnrs[name]:
-                listener.value_changed(self, name, old, new)
+        self.run_listeners(name, old, new)
 
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
+    def bind_expression(self, name, expression):
+        """ Bind an expression to the given attribute name.
+
+        This method can be called to bind a value-providing expression
+        to the given attribute name. If the named attribute does not
+        exist, an exception is raised. Listenable expressions are
+        supported.
+
+        Parameters
+        ----------
+        name : string
+            The name of the attribute on which to bind the expression.
+
+        expression : AbstractExpression
+            A concrete implementation of AbstractExpression.
+
+        """
+        curr = self.trait(name)
+        if curr is None or curr.trait_type is Disallow:
+            msg = "Cannot bind expression. %s object has no attribute '%s'"
+            raise AttributeError(msg % (self, name))
+
+        exprs = self._expressions
+        if name in exprs:
+            old = exprs[name]
+            if isinstance(old, AbstractListenableExpression):
+                old.invalidated.disconnect(self._on_expr_invalidated)
+        if isinstance(expression, AbstractListenableExpression):
+            expression.invalidated.connect(self._on_expr_invalidated)
+        exprs[name] = expression
+
+        # Hookup support for default value computation. ExpressionTrait
+        # will call `eval_expression` when its `get` method is called.
+        if not isinstance(curr.trait_type, ExpressionTrait):
+            self.add_trait(name, ExpressionTrait(curr))
+
+    def bind_listener(self, name, listener):
+        """ A private method used by the Enaml execution engine.
+
+        This method is called by the Enaml operators to bind the given
+        listener object to the given attribute name. If the attribute
+        does not exist, an exception is raised. A strong reference to
+        the listener object is kept internally.
+
+        Parameters
+        ----------
+        name : string
+            The name of the attribute on which to bind the listener.
+
+        listener : AbstractListener
+            A concrete implementation of AbstractListener.
+
+        """
+        curr = self.trait(name)
+        if curr is None or curr.trait_type is Disallow:
+            msg = "Cannot bind listener. %s object has no attribute '%s'"
+            raise AttributeError(msg % (self, name))
+        lsnrs = self._listeners
+        if name not in lsnrs:
+            lsnrs[name] = []
+        lsnrs[name].append(listener)
+
     def eval_expression(self, name):
         """ Evaluate a bound expression with the given name.
-
-        This will not update the value of the bound attribute.
 
         Parameters
         ----------
         name : str
-            The name of the attribute to which the expression is bound.
+            The name of the attribute with the bound expression.
 
         Returns
         -------
         result : object or NotImplemented
-            The results of the expression, or NotImplemented if there
-            is no expression bound to the given name.
+            The result of evaluating the expression, or NotImplemented
+            if there is no expression bound to the given name.
 
         """
         exprs = self._expressions
         if name in exprs:
             return exprs[name].eval(self, name)
         return NotImplemented
+
+    def run_listeners(self, name, old, new):
+        """ Run the listeners bound to the given attribute name.
+
+        Parameters
+        ----------
+        name : str
+            The name of the attribute with the bound listeners.
+
+        old : object
+            The old value to pass to the listeners.
+
+        new : object
+            The new value to pass to the listeners.
+
+        """
+        lsnrs = self._listeners
+        if name in lsnrs:
+            for listener in lsnrs[name]:
+                listener.value_changed(self, name, old, new)
 
     def destroy(self):
         """ A reimplemented parent class destructor method.

@@ -8,56 +8,55 @@ from .new_expressions import (
 )
 
 
-def op_simple(cmpnt, attr, func, identifiers):
-    """ The default Enaml operator for '=' expressions. It binds an
-    instance of SimpleExpression to the component.
+def op_simple(obj, name, func, identifiers):
+    """ The default Enaml operator for `=` expressions.
+
+    It binds an instance of SimpleExpression to the object.
 
     """
     expr = SimpleExpression(func, identifiers)
-    cmpnt._bind_expression(attr, expr)
+    obj.bind_expression(name, expr)
 
 
-def op_notify(cmpnt, attr, func, identifiers):
-    """ The default Enaml operator for '::' expressions. It binds an
-    instance of NotificationExpression to the component.
+def op_notify(obj, name, func, identifiers):
+    """ The default Enaml operator for `::` expressions.
+
+    It binds an instance of NotificationExpression to the object.
 
     """
     expr = NotificationExpression(func, identifiers)
-    cmpnt._bind_listener(attr, expr)
+    obj.bind_listener(name, expr)
 
 
-def op_update(cmpnt, attr, func, identifiers):
-    """ The default Enaml operator for '>>' expressions. It binds an
-    instance of UpdateExpression to the component.
+def op_update(obj, name, func, identifiers):
+    """ The default Enaml operator for `>>` expressions.
+
+    It binds an instance of UpdateExpression to the object.
 
     """
     expr = UpdateExpression(func, identifiers)
-    cmpnt._bind_listener(attr, expr)
+    obj.bind_listener(name, expr)
 
 
-def op_subscribe(cmpnt, attr, func, identifiers):
-    """ The default Enaml operator for '<<' expressions. It binds an
-    instance of SubscriptionExpression to the component using monitors
-    which understand traits attribute access via dotted notation and
-    the builtin getattr function.
+def op_subscribe(obj, name, func, identifiers):
+    """ The default Enaml operator for `<<` expressions.
+
+    It binds an instance of SubscriptionExpression to the object.
 
     """
     expr = SubscriptionExpression(func, identifiers)
-    cmpnt._bind_expression(attr, expr)
+    obj.bind_expression(name, expr)
 
 
-def op_delegate(cmpnt, attr, func, identifiers):
-    """ The default Enaml operator for ':=' expressions. It binds an
-    instance of DelegationExpression to the component using monitors
-    which understand traits attribute access via dotted notation and
-    the builtin getattr function, and inverters which understand the
-    dotted attribute access, implicit attribute access, and also the
-    builtin getattr function.
+def op_delegate(obj, name, func, identifiers):
+    """ The default Enaml operator for `:=` expressions.
+
+    It binds an instance of DelegationExpression to the object.
 
     """
     expr = DelegationExpression(func, identifiers)
-    cmpnt._bind_expression(attr, expr)
-    cmpnt._bind_listener(attr, expr)
+    obj.bind_expression(name, expr)
+    obj.bind_listener(name, expr)
 
 
 OPERATORS = {
