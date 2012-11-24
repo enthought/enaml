@@ -308,9 +308,9 @@ class SubscriptionNotifier(object):
     """ A simple object used for attaching notification handlers.
 
     """
-    __slots__ = ('expr', 'name', 'hashval', '__weakref__')
+    __slots__ = ('expr', 'name', 'keyval', '__weakref__')
 
-    def __init__(self, expr, name, hashval):
+    def __init__(self, expr, name, keyval):
         """ Initialize a Notifier.
 
         Parameters
@@ -322,13 +322,13 @@ class SubscriptionNotifier(object):
         name : str
             The name to which the expression is bound.
 
-        hashval : int
-            A hash value to use for testing equivalency of notifiers.
+        keyval : object
+            An object to use for testing equivalency of notifiers.
 
         """
         self.expr = ref(expr)
         self.name = name
-        self.hashval = hashval
+        self.keyval = keyval
 
     def notify(self):
         """ Notify that the expression is invalid.
@@ -369,15 +369,19 @@ class SubscriptionExpression(BaseExpression):
         # expression will not change during subsequent evaluations of
         # the expression. Rather than creating a new notifier on each
         # pass and repeating the work of creating the change handlers,
-        # a hash of the dependencies is computed and a new notifier is
-        # created only when the hash changes.
-        items = frozenset(tracer.traced_items)
+        # a key for the dependencies is computed and a new notifier is
+        # created only when the key changes. The key uses the id of an
+        # object instead of the object itself so strong references to
+        # the object are not maintained by the expression.
+        id_ = id
+        traced = tracer.traced_items
+        keyval = frozenset((id_(obj), attr) for obj, attr in traced)
         notifier = self._notifier
-        if notifier is None or hash(items) != notifier.hashval:
-            notifier = SubscriptionNotifier(self, name, hash(items))
+        if notifier is None or keyval != notifier.keyval:
+            notifier = SubscriptionNotifier(self, name, keyval)
             self._notifier = notifier
             handler = notifier.notify
-            for obj, attr in items:
+            for obj, attr in traced:
                 obj.on_trait_change(handler, attr)
 
         return result
