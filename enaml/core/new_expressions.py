@@ -3,12 +3,15 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from collections import namedtuple
+from weakref import ref
 
 from traits.api import HasTraits, Disallow, TraitListObject, TraitDictObject
 
 from enaml.signaling import Signal
 
-from .abstract_expressions import AbstractExpression, AbstractListener
+from .abstract_expressions import (
+    AbstractExpression, AbstractListener, AbstractListenableExpression
+)
 from .code_tracing import CodeTracer, CodeInverter
 from .dynamic_scope import DynamicScope, AbstractScopeListener, Nonlocals
 from .funchelper import call_func
@@ -18,26 +21,23 @@ from .funchelper import call_func
 # Traits Code Tracer
 #------------------------------------------------------------------------------
 class TraitsTracer(CodeTracer):
-    """ A CodeTracer for tracing expressions using Traits.
+    """ A CodeTracer for tracing expressions which use Traits.
+
+    This tracer maintains a running set of `traced_items` which are the
+    (obj, name) pairs of traits items discovered during tracing.
 
     """
-    def __init__(self, notifier):
+    def __init__(self):
         """ Initialize a TraitsTracer.
 
-        Parameters
-        ----------
-        notifier : AbstractNotifier
-            The notifier to use as a handler for traits dependencies.
-
         """
-        self._notifier = notifier
-        self._bound = set()
+        self.traced_items = set()
 
     #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
-    def _bind_trait(self, obj, name):
-        """ Bind the a handler for the named trait on the object.
+    def _trace_trait(self, obj, name):
+        """ Add the trait object and name pair to the traced items.
 
         Parameters
         ----------
@@ -48,13 +48,11 @@ class TraitsTracer(CodeTracer):
             The trait name to for which to bind a handler.
 
         """
+        # Traits will happily force create a trait for things which aren't
+        # actually traits. This tries to avoid most of that when possible.
         trait = obj.trait(name)
-        if trait is not None and trait is not Disallow:
-            key = (obj, name)
-            bound = self._bound
-            if key not in bound:
-                obj.on_trait_change(self._notifier.notify, name)
-                bound.add(key)
+        if trait is not None and trait.trait_type is not Disallow:
+            self.traced_items.add((obj, name))
 
     #--------------------------------------------------------------------------
     # AbstractScopeListener Interface
@@ -67,7 +65,7 @@ class TraitsTracer(CodeTracer):
 
         """
         if isinstance(obj, HasTraits):
-            self._bind_trait(obj, attr)
+            self._trace_trait(obj, attr)
 
     #--------------------------------------------------------------------------
     # CodeTracer Interface
@@ -80,7 +78,7 @@ class TraitsTracer(CodeTracer):
 
         """
         if isinstance(obj, HasTraits):
-            self._bind_trait(obj, attr)
+            self._trace_trait(obj, attr)
 
     def call_function(self, func, argtuple, argspec):
         """ Called before the CALL_FUNCTION opcode is executed.
@@ -95,33 +93,34 @@ class TraitsTracer(CodeTracer):
         if (func is getattr and (nargs == 2 or nargs == 3) and nkwargs == 0):
             obj, attr = argtuple[0], argtuple[1]
             if isinstance(obj, HasTraits) and isinstance(attr, basestring):
-                self._bind_trait(obj, attr)
+                self._trace_trait(obj, attr)
 
     def binary_subscr(self, obj, idx):
         """ Called before the BINARY_SUBSCR opcode is executed.
 
-        This will attach a trait if the object is a `TraitListObject`
-        or a `TraitDictObject`. See also: `CodeTracer.get_iter`.
+        This will attach a traits items listener if the object is a
+        `TraitListObject` or a `TraitDictObject`.
+        See also: `CodeTracer.get_iter`.
 
         """
         if isinstance(obj, (TraitListObject, TraitDictObject)):
-            o = obj.object()
-            if o is not None:
+            traits_obj = obj.object()
+            if traits_obj is not None:
                 if obj.name_items:
-                    self._bind_trait(o, obj.name_items)
+                    self._trace_trait(traits_obj, obj.name_items)
 
     def get_iter(self, obj):
         """ Called before the GET_ITER opcode is executed.
 
-        This will attach a trait if the object is a `TraitListObject`.
-        See also: `CodeTracer.get_iter`.
+        This will attach a traits items listener if the object is a
+        `TraitListObject`. See also: `CodeTracer.get_iter`.
 
         """
         if isinstance(obj, TraitListObject):
-            o = obj.object()
-            if o is not None:
+            traits_obj = obj.object()
+            if traits_obj is not None:
                 if obj.name_items:
-                    self._bind_trait(o, obj.name_items)
+                    self._trace_trait(traits_obj, obj.name_items)
 
 
 AbstractScopeListener.register(TraitsTracer)
@@ -160,7 +159,7 @@ class StandardInverter(CodeInverter):
     def load_attr(self, obj, attr, value):
         """ Called before the LOAD_ATTR opcode is executed.
 
-        This method performs STORE_ATTR via the builting `setattr`.
+        This method performs STORE_ATTR via the builtin `setattr`.
         See also: `CodeInverter.load_attr`.
 
         """
@@ -193,38 +192,6 @@ class StandardInverter(CodeInverter):
 
 
 #------------------------------------------------------------------------------
-# Notifier
-#------------------------------------------------------------------------------
-class Notifier(object):
-    """ A simple object used to attach notification handlers.
-
-    """
-    __slots__ = ('_expr', '_name', '__weakref__')
-
-    def __init__(self, expr, name):
-        """ Initialize a TraitNotifier.
-
-        Parameters
-        ----------
-        expr : AbstractExpression
-            The expression whose `invalidated` signal should be emitted
-            when the notifier is triggered.
-
-        name : str
-            The name to which the expression is bound.
-
-        """
-        self._expr = expr
-        self._name = name
-
-    def notify(self):
-        """ Notify that the expression is invalid.
-
-        """
-        self._expr.invalidated.emit(self._name)
-
-
-#------------------------------------------------------------------------------
 # Base Expression
 #------------------------------------------------------------------------------
 class BaseExpression(object):
@@ -239,8 +206,9 @@ class BaseExpression(object):
         Parameters
         ----------
         func : types.FunctionType
-            A function whose bytecode has been patch support dynamic
-            scoping but not tracing.
+            A function created by the Enaml compiler with bytecode that
+            has been patched to support the semantics required of the
+            expression.
 
         identifiers : dict
             The dictionary of identifiers available to the function.
@@ -258,9 +226,6 @@ class SimpleExpression(BaseExpression):
 
     """
     __slots__ = ()
-
-    # SimpleExpression does not support invalidation.
-    invalidated = None
 
     #--------------------------------------------------------------------------
     # AbstractExpression Interface
@@ -339,42 +304,94 @@ AbstractListener.register(UpdateExpression)
 #------------------------------------------------------------------------------
 # Subcsription Expression
 #------------------------------------------------------------------------------
-class SubscriptionExpression(BaseExpression):
-    """ An implementation of AbstractExpression for the `<<` operator.
+class SubscriptionNotifier(object):
+    """ A simple object used for attaching notification handlers.
 
     """
-    # Slots not declared because Signal requires a __dict__
-    invalidated = Signal()
+    __slots__ = ('expr', 'name', 'hashval', '__weakref__')
 
-    # Internal storage for the notifier
+    def __init__(self, expr, name, hashval):
+        """ Initialize a Notifier.
+
+        Parameters
+        ----------
+        expr : AbstractListenableExpression
+            The expression whose `invalidated` signal should be emitted
+            when the notifier is triggered. It must be weakref-able.
+
+        name : str
+            The name to which the expression is bound.
+
+        hashval : int
+            A hash value to use for testing equivalency of notifiers.
+
+        """
+        self.expr = ref(expr)
+        self.name = name
+        self.hashval = hashval
+
+    def notify(self):
+        """ Notify that the expression is invalid.
+
+        """
+        expr = self.expr()
+        if expr is not None:
+            expr.invalidated.emit(self.name)
+
+
+class SubscriptionExpression(BaseExpression):
+    """ An implementation of AbstractListenableExpression for the `<<`
+    operator.
+
+    """
+    # Note: __slots__ are not declared because Enaml Signals require a
+    # __dict__ to exist on the instance.
+
+    #: Private storage for the SubscriptionNotifier.
     _notifier = None
 
     #--------------------------------------------------------------------------
-    # AbstractExpression Interface
+    # AbstractListenableExpression Interface
     #--------------------------------------------------------------------------
+    invalidated = Signal()
+
     def eval(self, obj, name):
         """ Evaluate and return the expression value.
 
         """
-        notifier = self._notifier
-        if notifier is not None:
-            notifier._expr = None # break the ref cycle
-        notifier = self._notifier = Notifier(self, name)
-        tracer = TraitsTracer(notifier)
+        tracer = TraitsTracer()
         overrides = {'nonlocals': Nonlocals(obj, tracer)}
         scope = DynamicScope(obj, self._identifiers, overrides, tracer)
         with obj.operators:
-            return call_func(self._func, (tracer,), {}, scope)
+            result = call_func(self._func, (tracer,), {}, scope)
+
+        # In most cases, the object comprising the dependencies of an
+        # expression will not change during subsequent evaluations of
+        # the expression. Rather than creating a new notifier on each
+        # pass and repeating the work of creating the change handlers,
+        # a hash of the dependencies is computed and a new notifier is
+        # created only when the hash changes.
+        items = frozenset(tracer.traced_items)
+        notifier = self._notifier
+        if notifier is None or hash(items) != notifier.hashval:
+            notifier = SubscriptionNotifier(self, name, hash(items))
+            self._notifier = notifier
+            handler = notifier.notify
+            for obj, attr in items:
+                obj.on_trait_change(handler, attr)
+
+        return result
 
 
-AbstractExpression.register(SubscriptionExpression)
+AbstractListenableExpression.register(SubscriptionExpression)
 
 
 #------------------------------------------------------------------------------
 # Delegation Expression
 #------------------------------------------------------------------------------
 class DelegationExpression(SubscriptionExpression):
-    """
+    """ An object which implements the `:=` operator by implementing the
+    AbstractListenableExpression and AbstractListener interfaces.
 
     """
     #--------------------------------------------------------------------------
