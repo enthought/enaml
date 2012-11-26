@@ -1,112 +1,110 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2011, Enthought, Inc.
+#  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+""" The default Enaml operators.
+
+The operator functions are called by the Enaml runtime to implement the
+expression binding semantics of the Enaml operators. The functions are
+passed a number of arguments in order to perform their work:
+
+Parameters
+----------
+obj : Declarative
+    The Declarative object which owns the expression which is being
+    bound.
+
+name : string
+    The name of the attribute on the object which is being bound.
+
+func : types.FunctionType
+    A function with bytecode that has been patched by the Enaml compiler
+    for semantics specific to the operator. The docs for each operator
+    given a more complete description of this function, since it varies
+    for each operator.
+
+identifiers : dict
+    The dictionary of identifiers available to the expression. This dict
+    is shared amongst all expressions within a given lexical scope. It
+    should therefore not be modified or copied since identifiers may
+    continue to be added to this dict as runtime execution continues.
+
+"""
 from .expressions import (
-    SimpleExpression, NotificationExpression, SubscriptionExpression, 
-    DelegationExpression, UpdateExpression,
+    SimpleExpression, NotificationExpression, SubscriptionExpression,
+    UpdateExpression, DelegationExpression
 )
-from .inverters import (
-    GenericAttributeInverter, GetattrInverter, ImplicitAttrInverter,
-)
-from .monitors import TraitAttributeMonitor, TraitGetattrMonitor
 
 
-#------------------------------------------------------------------------------
-# Builtin Enaml Operators
-#------------------------------------------------------------------------------
-#: Operators are passed a number of arguments from the Enaml runtime 
-#: engine in order to perform their work. The arguments are, in order:
-#:
-#:      cmpnt : Declarative
-#:          The Declarative instance which owns the expression which
-#:          is being bound.
-#:
-#:      attr : string
-#:          The name of the attribute on the component which is being
-#:          bound.
-#:
-#:      code : types.CodeType
-#:          The compiled code object for the Python expression given
-#:          given by the user. It is compiled with mode='eval'.
-#:
-#:      identifiers : dict
-#:          The dictionary of identifiers available to the expression.
-#:          This dictionary is shared amongst all expressions within
-#:          a given lexical scope. It should therefore not be modified
-#:          or copied since identifiers may continue to be added to 
-#:          this dict as runtime execution continues.
-#:
-#:      f_globals : dict
-#:          The dictionary of globals available to the expression. 
-#:          The same rules about sharing and copying that apply to
-#:          the identifiers dict, apply here as well.
-#:
-#:      operators : OperatorContext
-#:          The operator context used when looking up the operator.
-#:          For the standard operators, this context is passed along
-#:          to the generated expressions.
-#:
-#: Operators may do whatever they please with the information provided
-#: to them. The default operators in Enaml use this information to 
-#: create and bind Enaml expression objects to the component. However,
-#: this is not a requirement and developers who are extending Enaml
-#: are free to get creative with the operators.
+def op_simple(obj, name, func, identifiers):
+    """ The default Enaml operator for `=` expressions.
 
-
-def op_simple(cmpnt, attr, code, identifiers, f_globals, operators):
-    """ The default Enaml operator for '=' expressions. It binds an
-    instance of SimpleExpression to the component.
+    This operator binds an instance of SimpleExpression to the attribute
+    on the object. The function takes no arguments and returns the value
+    of the expression. It is patched for dynamic scoping and it should be
+    invoked with `funchelper.call_func(...)`.
 
     """
-    expr = SimpleExpression(cmpnt, attr, code, identifiers, f_globals, operators)
-    cmpnt._bind_expression(attr, expr)
+    expr = SimpleExpression(func, identifiers)
+    obj.bind_expression(name, expr)
 
 
-def op_notify(cmpnt, attr, code, identifiers, f_globals, operators):
-    """ The default Enaml operator for '::' expressions. It binds an
-    instance of NotificationExpression to the component.
+def op_notify(obj, name, func, identifiers):
+    """ The default Enaml operator for `::` expressions.
 
-    """
-    expr = NotificationExpression(cmpnt, attr, code, identifiers, f_globals, operators)
-    cmpnt._bind_expression(attr, expr, notify_only=True)
-
-
-def op_update(cmpnt, attr, code, identifiers, f_globals, operators):
-    """ The default Enaml operator for '>>' expressions. It binds an
-    instance of UpdateExpression to the component.
+    This operator binds an instance of NotificationExpression to the
+    attribute on the object. The function takes no arguments and will
+    return None. It is patched for dynamic scoping and it should be
+    invoked with `funchelper.call_func(...)`.
 
     """
-    inverters = [GenericAttributeInverter, GetattrInverter, ImplicitAttrInverter]
-    expr = UpdateExpression(inverters, cmpnt, attr, code, identifiers, f_globals, operators)
-    cmpnt._bind_expression(attr, expr, notify_only=True)
+    expr = NotificationExpression(func, identifiers)
+    obj.bind_listener(name, expr)
 
 
-def op_subscribe(cmpnt, attr, code, identifiers, f_globals, operators):
-    """ The default Enaml operator for '<<' expressions. It binds an
-    instance of SubscriptionExpression to the component using monitors
-    which understand traits attribute access via dotted notation and
-    the builtin getattr function.
+def op_update(obj, name, func, identifiers):
+    """ The default Enaml operator for `>>` expressions.
 
-    """
-    monitors = [TraitAttributeMonitor, TraitGetattrMonitor]
-    expr = SubscriptionExpression(monitors, cmpnt, attr, code, identifiers, f_globals, operators)
-    cmpnt._bind_expression(attr, expr)
-
-
-def op_delegate(cmpnt, attr, code, identifiers, f_globals, operators):
-    """ The default Enaml operator for ':=' expressions. It binds an
-    instance of DelegationExpression to the component using monitors
-    which understand traits attribute access via dotted notation and
-    the builtin getattr function, and inverters which understand the
-    dotted attribute access, implicit attribute access, and also the
-    builtin getattr function.
+    This operator binds an instance of UpdateExpression to the attribute
+    on the object. The function takes two arguments: a code inverter and
+    the new value of the attribute, and returns None. It is patched for
+    dynamic scoping and code inversion and it should be invoked with
+    `funchelper.call_func(...)`.
 
     """
-    inverters = [GenericAttributeInverter, GetattrInverter, ImplicitAttrInverter]
-    monitors = [TraitAttributeMonitor, TraitGetattrMonitor]
-    expr = DelegationExpression(inverters, monitors, cmpnt, attr, code, identifiers, f_globals, operators)
-    cmpnt._bind_expression(attr, expr)
+    expr = UpdateExpression(func, identifiers)
+    obj.bind_listener(name, expr)
+
+
+def op_subscribe(obj, name, func, identifiers):
+    """ The default Enaml operator for `<<` expressions.
+
+    This operator binds an instance of SubscriptionExpression to the
+    attribute on the object. The function takes one argument: a code
+    tracer, and returns the value of the expression. It is patched for
+    dynamic scoping and code tracing and it should be invoked with
+    `funchelper.call_func(...)`.
+
+    """
+    expr = SubscriptionExpression(func, identifiers)
+    obj.bind_expression(name, expr)
+
+
+def op_delegate(obj, name, func, identifiers):
+    """ The default Enaml operator for `:=` expressions.
+
+    This operator binds an instance of DelegationExpression to the
+    attribute on the object. The semantics of the function are the same
+    as that of `op_subscribe`. The function also has an attribute named
+    `_update` which is a function implementing `op_update` semantics.
+    Both functions should be invoked with `funchelper.call_func(...)`.
+    In this fashion, `op_delegate` is the combination of `op_subscribe`
+    and `op_update`.
+
+    """
+    expr = DelegationExpression(func, identifiers)
+    obj.bind_expression(name, expr)
+    obj.bind_listener(name, expr)
 
 
 OPERATORS = {

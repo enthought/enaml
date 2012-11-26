@@ -6,11 +6,11 @@
 #------------------------------------------------------------------------------
 # Logging Setup
 #------------------------------------------------------------------------------
-# Add a NullHandler to make sure that all enaml loggers don't complain when they
-# get used.
+# Add a NullHandler so enaml loggers don't complain when they get used.
 import logging
 
 class NullHandler(logging.Handler):
+
     def handle(self, record):
         pass
 
@@ -33,14 +33,14 @@ def imports():
     """ Lazily imports and returns an enaml imports context.
 
     """
-    from .core.import_hooks import imports
+    from enaml.core.import_hooks import imports
     return imports()
 
 
 #------------------------------------------------------------------------------
 # Operator Context Functions
 #------------------------------------------------------------------------------
-#: The private storage for the optional default operator context function 
+#: The private storage for the optional default operator context function
 #: which overrides that which is provided by default.
 _default_operator_context_func = None
 
@@ -53,7 +53,7 @@ def set_default_operator_context_func(func):
     func : callable
         A callable object which takes no arguments and returns an
         instance of OperatorContext.
-    
+
     """
     global _default_operator_context_func
     _default_operator_context_func = func

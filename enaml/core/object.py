@@ -189,6 +189,11 @@ class Object(HasStrictTraits):
     #: cycle when setting attributes from within an action handler.
     loopback_guard = Instance(LoopbackGuard, ())
 
+    #: The internal set of published attributes. Publishing is performed
+    #: through an anytrait handler to reduce the number of notifier
+    #: objects which must be created.
+    _published_attrs = Instance(set, ())
+
     #: Class level storage for Object instances. Objects are added to
     #: this dict as they are created. The instances are stored weakly.
     _objects = WeakValueDictionary()
@@ -688,7 +693,7 @@ class Object(HasStrictTraits):
         the changed attribute. This method is suitable for most cases
         of simple attribute publishing. More complex cases will need
         to implement their own dispatching handlers. The handler for
-        the changes will only emit the `action` signal if the attribute
+        the changes will only send the action message if the attribute
         name is not held by the loopback guard.
 
         Parameters
@@ -699,10 +704,7 @@ class Object(HasStrictTraits):
             More complex values should use their own dispatch handlers.
 
         """
-        otc = self.on_trait_change
-        handler = self._publish_attr_handler
-        for attr in attrs:
-            otc(handler, attr)
+        self._published_attrs.update(attrs)
 
     def set_guarded(self, **attrs):
         """ A convenience method provided for subclasses to set a
@@ -746,9 +748,8 @@ class Object(HasStrictTraits):
         content['added'] = [c.snapshot() for c in added if c.snappable]
         self.send_action('children_changed', content)
 
-    def _publish_attr_handler(self, name, new):
-        """ A private handler which will emit the `action` signal in
-        response to a trait change event.
+    def _anytrait_changed(self, name, old, new):
+        """ An `anytrait` change handler which publishes action messages.
 
         The action will be created by prefixing the attribute name with
         'set_'. The value of the attribute should be JSON serializable.
@@ -758,7 +759,7 @@ class Object(HasStrictTraits):
         helping to avoid potential loopbacks.
 
         """
-        if name not in self.loopback_guard:
+        if name in self._published_attrs and name not in self.loopback_guard:
             action = 'set_' + name
             content = {name: new}
             self.send_action(action, content)

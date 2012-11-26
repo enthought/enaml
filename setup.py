@@ -23,6 +23,11 @@ if os.environ.get('BUILD_ENAML_EXTENSIONS'):
            ['enaml/extensions/signaling.cpp'],
            language='c++',
         ),
+        Extension(
+            'enaml.extensions.funchelper',
+            ['enaml/extensions/funchelper.cpp'],
+            language='c++',
+        ),
     ]
 else:
     ext_modules = []
