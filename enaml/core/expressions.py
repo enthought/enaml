@@ -1,847 +1,415 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2011, Enthought, Inc.
+#  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from abc import ABCMeta, abstractmethod
-from collections import namedtuple, defaultdict
-from contextlib import contextmanager
+from collections import namedtuple
 from weakref import ref
 
-from traits.api import Disallow
+from traits.api import HasTraits, Disallow, TraitListObject, TraitDictObject
 
 from enaml.signaling import Signal
 
-from .byteplay import Code
-from .monitors import AbstractMonitor
-from .trait_types import UninitializedAttributeError
+from .abstract_expressions import (
+    AbstractExpression, AbstractListener, AbstractListenableExpression
+)
+from .code_tracing import CodeTracer, CodeInverter
+from .dynamic_scope import DynamicScope, AbstractScopeListener, Nonlocals
+from .funchelper import call_func
 
 
 #------------------------------------------------------------------------------
-# Expression Helpers
+# Traits Code Tracer
 #------------------------------------------------------------------------------
-@contextmanager
-def swap_attribute(obj, attr, value):
-    """ Swap an attribute of an object with the given value for the
-    duration of the context, restoring it on exit. The attribute must
-    already exist on the object prior to entering the context.
+class TraitsTracer(CodeTracer):
+    """ A CodeTracer for tracing expressions which use Traits.
 
-    Parameters
-    ----------
-    obj : object
-        The object which owns the attribute.
-
-    attr : string
-        The name of the attribute on the object.
-
-    value : object
-        The value to apply to the attribute for the duration of the
-        context.
+    This tracer maintains a running set of `traced_items` which are the
+    (obj, name) pairs of traits items discovered during tracing.
 
     """
-    old = getattr(obj, attr)
-    setattr(obj, attr, value)
-    yield
-    setattr(obj, attr, old)
+    def __init__(self):
+        """ Initialize a TraitsTracer.
+
+        """
+        self.traced_items = set()
+
+    #--------------------------------------------------------------------------
+    # Private API
+    #--------------------------------------------------------------------------
+    def _trace_trait(self, obj, name):
+        """ Add the trait object and name pair to the traced items.
+
+        Parameters
+        ----------
+        obj : HasTraits
+            The traits object owning the attribute.
+
+        name : str
+            The trait name to for which to bind a handler.
+
+        """
+        # Traits will happily force create a trait for things which aren't
+        # actually traits. This tries to avoid most of that when possible.
+        trait = obj.trait(name)
+        if trait is not None and trait.trait_type is not Disallow:
+            self.traced_items.add((obj, name))
+
+    #--------------------------------------------------------------------------
+    # AbstractScopeListener Interface
+    #--------------------------------------------------------------------------
+    def dynamic_load(self, obj, attr, value):
+        """ Called when an object attribute is dynamically loaded.
+
+        This will trace the object if it is a HasTraits instance.
+        See also: `AbstractScopeListener.dynamic_load`.
+
+        """
+        if isinstance(obj, HasTraits):
+            self._trace_trait(obj, attr)
+
+    #--------------------------------------------------------------------------
+    # CodeTracer Interface
+    #--------------------------------------------------------------------------
+    def load_attr(self, obj, attr):
+        """ Called before the LOAD_ATTR opcode is executed.
+
+        This will trace the object if it is a HasTraits instance.
+        See also: `CodeTracer.dynamic_load`.
+
+        """
+        if isinstance(obj, HasTraits):
+            self._trace_trait(obj, attr)
+
+    def call_function(self, func, argtuple, argspec):
+        """ Called before the CALL_FUNCTION opcode is executed.
+
+        This will trace the func is the builtin `getattr` and the object
+        is a HasTraits instance. See also: `CodeTracer.call_function`
+
+        """
+        nargs = argspec & 0xFF
+        nkwargs = (argspec >> 8) & 0xFF
+        if (func is getattr and (nargs == 2 or nargs == 3) and nkwargs == 0):
+            obj, attr = argtuple[0], argtuple[1]
+            if isinstance(obj, HasTraits) and isinstance(attr, basestring):
+                self._trace_trait(obj, attr)
+
+    def binary_subscr(self, obj, idx):
+        """ Called before the BINARY_SUBSCR opcode is executed.
+
+        This will trace the object if it is a `TraitListObject` or a
+        `TraitDictObject`. See also: `CodeTracer.get_iter`.
+
+        """
+        if isinstance(obj, (TraitListObject, TraitDictObject)):
+            traits_obj = obj.object()
+            if traits_obj is not None:
+                if obj.name_items:
+                    self._trace_trait(traits_obj, obj.name_items)
+
+    def get_iter(self, obj):
+        """ Called before the GET_ITER opcode is executed.
+
+        This will trace the object if it is a `TraitListObject`
+        See also: `CodeTracer.get_iter`.
+
+        """
+        if isinstance(obj, TraitListObject):
+            traits_obj = obj.object()
+            if traits_obj is not None:
+                if obj.name_items:
+                    self._trace_trait(traits_obj, obj.name_items)
+
+
+AbstractScopeListener.register(TraitsTracer)
 
 
 #------------------------------------------------------------------------------
-# Execution Scope
+# Standard Code Inverter
 #------------------------------------------------------------------------------
-class ExecutionScope(object):
-    """ A custom mapping object that implements the scope resolution
-    order for the evaluation of code objects in Enaml expressions.
-
-    Notes
-    -----
-    Strong references are kept to all objects passed to the constructor,
-    so these scope objects should be created as needed and discarded in
-    order to avoid issues with reference cycles.
+class StandardInverter(CodeInverter):
+    """ The standard code inverter for Enaml expressions.
 
     """
-    def __init__(self, obj, identifiers, overrides, attr_cb):
-        """ Initialize an execution scope.
+    def __init__(self, nonlocals):
+        """ Initialize a StandardInverter.
 
         Parameters
         ----------
-        obj : Declarative
-            The Declarative instance on which the expression is bound.
-
-        identifiers : dict
-            The dictionary of identifiers that are available to the
-            expression. These are checked before the attribute space
-            of the component.
-
-        overrides : dict
-            An dictionary of override values to check before identifiers.
-
-        attr_cb : callable or None
-            A callable which is called when an implicit attribute is
-            found and accessed on the object. The arguments passed are
-            the object and the attribute name.
+        nonlocals : Nonlocals
+            The nonlocal scope for the executing expression.
 
         """
-        self._obj = obj
-        self._identifiers = identifiers
-        self._overrides = overrides
-        self._attr_cb = attr_cb
-        self._assignments = {}
+        self._nonlocals = nonlocals
 
-    def __getitem__(self, name):
-        """ Lookup an item from the namespace.
+    #--------------------------------------------------------------------------
+    # CodeInverter Interface
+    #--------------------------------------------------------------------------
+    def load_name(self, name, value):
+        """ Called before the LOAD_NAME opcode is executed.
 
-        Returns the named item from the namespace according to the
-        following precedence rules:
-
-            1) assignments
-            2) override
-            3) identifiers
-            4) implicit attrs
-            5) f_globals
-            6) toolkit
-            7) builtins
-
-        Parameters
-        ----------
-        name : string
-            The name that should be looked up in the namespace.
-
-        Returns
-        -------
-        result : object
-            The value associated with the name, if found.
-
-        Raises
-        ------
-        KeyError : Exception
-            If the name is not found, a KeyError is raised.
+        This method performs STORE_NAME by storing to the nonlocals.
+        See also: `CodeInverter.load_name`.
 
         """
-        # Check the assignments dict first since this is where all
-        # local variable assignments will be stored.
-        dct = self._assignments
-        if name in dct:
-            return dct[name]
+        self._nonlocals[name] = value
 
-        # The overrides have the highest precedence of all framework
-        # supplied values.
-        dct = self._overrides
-        if name in dct:
-            return dct[name]
+    def load_attr(self, obj, attr, value):
+        """ Called before the LOAD_ATTR opcode is executed.
 
-        # Identifiers have the highest precedence of value able to
-        # be supplied by a user of the framework.
-        dct = self._identifiers
-        if name in dct:
-            return dct[name]
-
-        # After identifiers, the implicit attributes of the component
-        # hierarchy have precedence.
-        parent = self._obj
-        while parent is not None:
-            try:
-                res = getattr(parent, name)
-            except AttributeError:
-                parent = parent.parent
-            else:
-                # Call the attribute callback if given.
-                cb = self._attr_cb
-                if cb is not None:
-                    cb(parent, name)
-                return res
-
-        raise KeyError(name)
-
-    def __setitem__(self, name, val):
-        """ Stores the value into the internal assignments dict. This
+        This method performs STORE_ATTR via the builtin `setattr`.
+        See also: `CodeInverter.load_attr`.
 
         """
-        self._assignments[name] = val
+        setattr(obj, attr, value)
 
-    def __delitem__(self, name):
-        """ Deletes the value from the internal assignments dict.
+    def call_function(self, func, argtuple, argspec, value):
+        """ Called before the CALL_FUNCTION opcode is executed.
 
-        """
-        del self._assignments[name]
-
-    def __contains__(self, name):
-        """ Return True if the name is found in the scope, False
-        otherwise.
+        This method inverts a call to the builtin `getattr` into a call
+        to the builtin `setattr`. All other calls will raise.
+        See also: `CodeInverter.call_function`.
 
         """
-        # This method must be supplied in order for pdb to work properly
-        # from within code blocks. Any attribute callback is temporarily
-        # uninstalled so that it is not executed when simply checking for
-        # the existance of the item in the scope.
-        with swap_attribute(self, '_attr_cb', None):
-            if isinstance(name, basestring):
-                try:
-                    self.__getitem__(name)
-                except KeyError:
-                    res = False
-                else:
-                    res = True
-            else:
-                res = False
-        return res
-
-
-#------------------------------------------------------------------------------
-# Nonlocal Scope
-#------------------------------------------------------------------------------
-class NonlocalScope(object):
-    """ An object which implements implicit attribute scoping starting
-    at a given object in the tree. It is used in conjuction with a
-    nonlocals() instance to allow for explicit referencing of values
-    which would otherwise be implicitly scoped.
-
-    """
-    def __init__(self, obj, attr_cb):
-        """ Initialize a nonlocal scope.
-
-        Parameters
-        ----------
-        obj : Declarative
-            The Declarative instance which forms the first level of
-            the scope.
-
-        attr_cb : callable or None
-            A callable which is called when an implicit attribute is
-            found and accessed on the object. The arguments passed are
-            the object and the attribute name.
-
-        """
-        self._nls_obj = obj
-        self._nls_attr_cb = attr_cb
-
-    def __repr__(self):
-        """ A pretty representation of the NonlocalScope.
-
-        """
-        templ = 'NonlocalScope[%s]'
-        return templ % self._nls_obj
-
-    def __call__(self, level=0):
-        """ Returns a new nonlocal scope object offset the given number
-        of levels in the hierarchy.
-
-        Parameters
-        ----------
-        level : int, optional
-            The number of levels up the tree to offset. The default is
-            zero and indicates no offset. The level must be >= 0.
-
-        """
-        if not isinstance(level, int) or level < 0:
-            msg = ('The nonlocal scope level must be an int >= 0. '
-                   'Got %r instead.')
-            raise ValueError(msg % level)
-
-        offset = 0
-        target = self._nls_obj
-        while target is not None and offset != level:
-            target = target.parent
-            offset += 1
-
-        if offset != level:
-            msg = 'Scope level %s is out of range'
-            raise ValueError(msg % level)
-
-        return NonlocalScope(target, self._nls_attr_cb)
-
-    def __getattr__(self, name):
-        """ A convenience method which allows accessing items in the
-        scope via getattr instead of getitem.
-
-        """
-        try:
-            return self.__getitem__(name)
-        except KeyError:
-            msg = "%s has no attribute '%s'" % (self, name)
-            raise AttributeError(msg)
-
-    def __setattr__(self, name, value):
-        """ A convenience method which allows setting items in the
-        scope via setattr instead of setitem.
-
-        """
-        if name in ('_nls_obj', '_nls_attr_cb'):
-            super(NonlocalScope, self).__setattr__(name, value)
+        nargs = argspec & 0xFF
+        nkwargs = (argspec >> 8) & 0xFF
+        if (func is getattr and (nargs == 2 or nargs == 3) and nkwargs == 0):
+            obj, attr = argtuple[0], argtuple[1]
+            setattr(obj, attr, value)
         else:
-            try:
-                self.__setitem__(name, value)
-            except KeyError:
-                msg = "%s has no attribute '%s'" % (self, name)
-                raise AttributeError(msg)
+            self.fail()
 
-    def __getitem__(self, name):
-        """ Returns the named item beginning at the current scope object
-        and progressing up the tree until the named attribute is found.
-        A KeyError is raised if the attribute is not found.
+    def binary_subscr(self, obj, idx, value):
+        """ Called before the BINARY_SUBSCR opcode is executed.
+
+        This method performs a STORE_SUBSCR operation through standard
+        setitem semantics. See also: `CodeInverter.binary_subscr`.
 
         """
-        parent = self._nls_obj
-        while parent is not None:
-            try:
-                res = getattr(parent, name)
-            except AttributeError:
-                parent = parent.parent
-            else:
-                cb = self._nls_attr_cb
-                if cb is not None:
-                    cb(parent, name)
-                return res
-        raise KeyError(name)
-
-    def __setitem__(self, name, value):
-        """ Sets the value of the scope by beginning at the current scope
-        object and progressing up the tree until the named attribute is
-        found. A KeyError is raise in the attribute is not found.
-
-        """
-        parent = self._nls_obj
-        while parent is not None:
-            # It's not sufficient to try to do setattr(...) here and
-            # catch the AttributeError, because HasStrictTraits raises
-            # a TraitError in these cases and it becomes impossible
-            # to distinguish that error from a trait typing error
-            # without checking the message of the exception.
-            try:
-                getattr(parent, name)
-            except UninitializedAttributeError:
-                pass
-            except AttributeError:
-                parent = parent.parent
-                continue
-            setattr(parent, name, value)
-            return
-        raise KeyError(name)
-
-    def __contains__(self, name):
-        """ Return True if the name is found in the scope, False
-        otherwise.
-
-        """
-        with swap_attribute(self, '_nls_attr_cb', None):
-            if isinstance(name, basestring):
-                try:
-                    self.__getitem__(name)
-                except KeyError:
-                    res = False
-                else:
-                    res = True
-            else:
-                res = False
-        return res
+        obj[idx] = value
 
 
 #------------------------------------------------------------------------------
-# Abstract Expression
+# Base Expression
 #------------------------------------------------------------------------------
-class AbstractExpression(object):
-    """ The base abstract expression class which defines the base api
-    for Expression handlers. These objects are typically created by
-    the Enaml operators.
+class BaseExpression(object):
+    """ The base class of the standard Enaml expression classes.
 
     """
-    __metaclass__ = ABCMeta
+    __slots__ = ('_func', '_identifiers')
 
-    #: A signal which is emitted when the expression has changed. It is
-    #: emmitted with three arguments: expression, name, and value; where
-    #: expression is the instance which emitted the signal, name is the
-    #: attribute name to which the expression is bound, and value is the
-    #: computed value of the expression.
-    expression_changed = Signal()
-
-    def __init__(self, obj, name, code, identifiers, f_globals, operators):
-        """ Initializes and expression object.
+    def __init__(self, func, identifiers):
+        """ Initialize a BaseExpression.
 
         Parameters
         ----------
-        obj : Declarative
-            The base component to which this expression is being bound.
-
-        name : string
-            The name of the attribute on the owner to which this
-            expression is bound.
-
-        code : types.CodeType object
-            The compiled code object for the Python expression.
-
-        identifiers : dict
-            The dictionary of identifiers that are available to the
+        func : types.FunctionType
+            A function created by the Enaml compiler with bytecode that
+            has been patched to support the semantics required of the
             expression.
 
-        f_globals : dict
-            The globals dictionary in which the expression should
-            execute.
-
-        operators : OperatorContext
-            The operator context used when creating this expression.
-            This context is entered before evaluating any code objects.
-            This ensures that any components created by the expression
-            share the same operator context as this expression, unless
-            explicitly overridden.
+        identifiers : dict
+            The dictionary of identifiers available to the function.
 
         """
-        self.obj_ref = ref(obj)
-        self.name = name
-        self.code = code
-        self.identifiers = identifiers
-        self.f_globals = f_globals
-        self.operators = operators
-
-    @abstractmethod
-    def eval(self):
-        """ Evaluates the expression and returns the result. If an
-        expression does not provide (or cannot provide) a value, it
-        should return NotImplemented.
-
-        Returns
-        -------
-        result : object or NotImplemented
-            The result of evaluating the expression or NotImplemented
-            if the expression is unable to provide a value.
-
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def notify(self, old, new):
-        """ A method called by the owner component when the trait on
-        which it is bound has changed.
-
-        Parameters
-        ----------
-        old : object
-            The old value of the attribute.
-
-        new : object
-            The new value of the attribute.
-
-        """
-        raise NotImplementedError
+        self._func = func
+        self._identifiers = identifiers
 
 
 #------------------------------------------------------------------------------
 # Simple Expression
 #------------------------------------------------------------------------------
-class SimpleExpression(AbstractExpression):
-    """ A concrete implementation of AbstractEvalExpression. An instance
-    of SimpleExpression does not track changes in the expression or emit
-    the expression_changed signal. Is also does not support notification.
+class SimpleExpression(BaseExpression):
+    """ An implementation of AbstractExpression for the `=` operator.
 
     """
-    def eval(self):
-        """ Evaluates and returns the results of the expression.
+    __slots__ = ()
+
+    #--------------------------------------------------------------------------
+    # AbstractExpression Interface
+    #--------------------------------------------------------------------------
+    def eval(self, obj, name):
+        """ Evaluate and return the expression value.
 
         """
-        obj = self.obj_ref()
-        if obj is None:
-            return NotImplemented
+        overrides = {'nonlocals': Nonlocals(obj, None)}
+        scope = DynamicScope(obj, self._identifiers, overrides, None)
+        with obj.operators:
+            return call_func(self._func, (), {}, scope)
 
-        overrides = {'nonlocals': NonlocalScope(obj, None)}
-        scope = ExecutionScope(obj, self.identifiers, overrides, None)
 
-        with self.operators:
-            res =  eval(self.code, self.f_globals, scope)
-
-        return res
-
-    def notify(self, old, new):
-        """ A no-op notification method since SimpleExpression does not
-        support notification.
-
-        """
-        pass
+AbstractExpression.register(SimpleExpression)
 
 
 #------------------------------------------------------------------------------
-# Notifification Expression
+# Notification Expression
 #------------------------------------------------------------------------------
-class NotificationExpression(AbstractExpression):
-    """ A concrete implementation of AbstractExpression. An instance
-    of NotificationExpression does not support evaluation and does not
-    emit the expression_changed signal, but it does support notification.
-    An 'event' object will be added to the scope of the expression which
-    will contain information about the trait change.
+class NotificationExpression(BaseExpression):
+    """ An implementation of AbstractListener for the `::` operator.
 
     """
+    __slots__ = ()
+
     #: A namedtuple which is used to pass arguments to the expression.
     event = namedtuple('event', 'obj name old new')
 
-    def eval(self):
-        """ A no-op eval method since NotificationExpression does not
-        support evaluation.
+    #--------------------------------------------------------------------------
+    # AbstractListener Interface
+    #--------------------------------------------------------------------------
+    def value_changed(self, obj, name, old, new):
+        """ Called when the attribute on the object has changed.
 
         """
-        return NotImplemented
-
-    def notify(self, old, new):
-        """ Evaluates the underlying expression, and provides an 'event'
-        object in the evaluation scope which contains information about
-        the trait change.
-
-        """
-        obj = self.obj_ref()
-        if obj is None:
-            return
-
         overrides = {
-            'event': self.event(obj, self.name, old, new),
-            'nonlocals': NonlocalScope(obj, None),
+            'event': self.event(obj, name, old, new),
+            'nonlocals': Nonlocals(obj, None),
         }
-        scope = ExecutionScope(obj, self.identifiers, overrides, None)
+        scope = DynamicScope(obj, self._identifiers, overrides, None)
+        with obj.operators:
+            call_func(self._func, (), {}, scope)
 
-        with self.operators:
-            eval(self.code, self.f_globals, scope)
+
+AbstractListener.register(NotificationExpression)
 
 
 #------------------------------------------------------------------------------
 # Update Expression
 #------------------------------------------------------------------------------
-class UpdateExpression(AbstractExpression):
-    """ A concrete implementation of AbstractExpression which sets the
-    value on the contituents of the expression according to any provided
-    inverters.
+class UpdateExpression(BaseExpression):
+    """ An implementation of AbstractListener for the `>>` operator.
 
     """
-    def __init__(self, inverter_classes, *args):
-        """ Initialize an UpdateExpression
+    __slots__ = ()
 
-        Parameters
-        ----------
-        inverter_classes : iterable of AbstractInverter subclasses
-            An iterable of concrete AbstractInverter subclasses which
-            will invert the given expression code into a mirrored
-            operation which sets the value on the appropriate object.
-
-        args
-            The arguments required to initialize an AbstractExpression
+    #--------------------------------------------------------------------------
+    # AbstractListener Interface
+    #--------------------------------------------------------------------------
+    def value_changed(self, obj, name, old, new):
+        """ Called when the attribute on the object has changed.
 
         """
-        super(UpdateExpression, self).__init__(*args)
+        nonlocals = Nonlocals(obj, None)
+        overrides = {'nonlocals': nonlocals}
+        inverter = StandardInverter(nonlocals)
+        scope = DynamicScope(obj, self._identifiers, overrides, None)
+        with obj.operators:
+            call_func(self._func, (inverter, new), {}, scope)
 
-        inverters = []
-        bp_code = Code.from_code(self.code)
-        code_list = bp_code.code
 
-        for inv_cls in inverter_classes:
-            inverter = inv_cls()
-            new_code = inverter.get_inverted_code(code_list)
-            if new_code is not None:
-                bp_code.code = new_code
-                inverters.append(bp_code.to_code())
-
-        if not inverters:
-            msg = ("Unable to delegate expression to the '%s' attribute of "
-                   "the %s object. The provided expression is not structured "
-                   "in a way which is suitable for delegation by any of "
-                   "the supplied code inverters.")
-            raise ValueError(msg % (self.name, self.obj_ref()))
-
-        self.inverters = tuple(inverters)
-
-    def eval(self):
-        """ A no-op eval method since UpdateExpression does not support
-        evaluation.
-
-        """
-        return NotImplemented
-
-    def notify(self, old, new):
-        """ A notification method which runs through the list of inverted
-        code objects which attempt to set the value. The process stops on
-        the first successful inversion. If none of the invertors are
-        successful, a RuntimeError is raised.
-
-        """
-        obj = self.obj_ref()
-        if obj is None:
-            return
-
-        # The overrides dict is populated with information about the
-        # expression and the change. The values allow the generated
-        # inverter codes to access the information which is required
-        # to perform the operation. The items are added using names
-        # which are not valid Python identifiers and therefore do
-        # not risk clashing with names in the expression. This is
-        # the same technique used by the Python interpreter itself.
-        overrides = {
-            '_[expr]': self, '_[obj]': obj, '_[old]': old, '_[new]': new,
-            '_[name]': self.name, 'nonlocals': NonlocalScope(obj, None),
-        }
-        scope = ExecutionScope(obj, self.identifiers, overrides, None)
-
-        # Run through the inverters, giving each a chance to do the
-        # inversion. The process ends with the first success. If
-        # none of the invertors are successful an error is raised.
-        f_globals = self.f_globals
-        with self.operators:
-            for inverter in self.inverters:
-                if eval(inverter, f_globals, scope):
-                    break
-            else:
-                msg = ("Unable to delegate expression to the %r attribute "
-                       "of the %s object. None of the provided inverters were "
-                       "successful in assigning the value.")
-                raise RuntimeError(msg % (self.name, obj))
+AbstractListener.register(UpdateExpression)
 
 
 #------------------------------------------------------------------------------
-# Subscription Expression
+# Subcsription Expression
 #------------------------------------------------------------------------------
-class _ImplicitAttributeBinder(object):
-    """ A thin class which supports attaching a notifier to an implicit
-    attribute lookup.
+class SubscriptionNotifier(object):
+    """ A simple object used for attaching notification handlers.
 
     """
-    # This doesn't need to be provided as a monitor because implicit
-    # attribute lookups, when successful, will always be on an instance
-    # of Declarative and should never need to be hooked by an Enaml
-    # extension.
-    def __init__(self, parent):
-        """ Initialize an _ImplicitAttributeBinder
+    __slots__ = ('expr', 'name', 'keyval', '__weakref__')
+
+    def __init__(self, expr, name, keyval):
+        """ Initialize a Notifier.
 
         Parameters
         ----------
-        parent : SubscriptionExpression
-            The parent SubscriptionExpression instance. Only a weak
-            reference to the parent is stored.
+        expr : AbstractListenableExpression
+            The expression whose `invalidated` signal should be emitted
+            when the notifier is triggered. It must be weakref-able.
+
+        name : str
+            The name to which the expression is bound.
+
+        keyval : object
+            An object to use for testing equivalency of notifiers.
 
         """
-        self.parent_ref = ref(parent)
-
-    def __call__(self, obj, name):
-        """ Binds the change handler to the given object/attribute
-        pair, provided the attribute points to a valid trait.
-
-        Parameters
-        ----------
-        obj : Declarative
-            The Declarative instance that owns the attribute.
-
-        name : string
-            The attribute name of interest
-
-        """
-        trait = obj.trait(name)
-        if trait is not None and trait is not Disallow:
-            obj.on_trait_change(self.notify, name)
+        self.expr = ref(expr)
+        self.name = name
+        self.keyval = keyval
 
     def notify(self):
-        """ The trait change handler callback. It calls the monitor
-        changed method on the parent when the trait changes, provided
-        the parent has not already been garbage collected.
+        """ Notify that the expression is invalid.
 
         """
-        parent = self.parent_ref()
-        if parent is not None:
-            parent._on_monitor_changed()
+        expr = self.expr()
+        if expr is not None:
+            expr.invalidated.emit(self.name)
 
 
-class SubscriptionExpression(AbstractExpression):
-    """ A concrete implementation of AbstractExpression. An instance
-    of SubcriptionExpression emits the expression_changed signal when
-    the value of the underlying expression changes. It does not
-    support notification.
+class SubscriptionExpression(BaseExpression):
+    """ An implementation of AbstractListenableExpression for the `<<`
+    operator.
 
     """
-    def __init__(self, monitor_classes, *args):
-        """ Initialize a SubscriptionExpression
+    # Note: __slots__ are not declared because Enaml Signals require a
+    # __dict__ to exist on the instance.
 
-        Parameters
-        ----------
-        monitor_classes : iterable of AbstractMonitor subclasses
-            An iterable of AbstractMonitor subclasses which will
-            be used to generating the monitoring code for the
-            expression.
+    #: Private storage for the SubscriptionNotifier.
+    _notifier = None
 
-        args
-            The arguments required to initialize an AbstractExpression
+    #--------------------------------------------------------------------------
+    # AbstractListenableExpression Interface
+    #--------------------------------------------------------------------------
+    invalidated = Signal()
 
-        """
-        super(SubscriptionExpression, self).__init__(*args)
-
-        # Create the monitor instances and connect their signals
-        monitors = []
-        handler = self._on_monitor_changed
-        for mcls in monitor_classes:
-            if not issubclass(mcls, AbstractMonitor):
-                msg = ('Monitors must be subclasses of AbstractMonitor. '
-                       'Got %s instead.')
-                raise TypeError(msg % mcls)
-            monitor = mcls()
-            monitor.expression_changed.connect(handler)
-            monitors.append(monitor)
-
-        # Collect the generated code from the monitors that will be
-        # inserted into the code for the expression.
-        bp_code = Code.from_code(self.code)
-        code_list = list(bp_code.code)
-        insertions = defaultdict(list)
-        for monitor in monitors:
-            for idx, code in monitor.get_insertion_code(code_list):
-                insertions[idx].extend(code)
-
-        # Create a new code list which interleaves the code generated
-        # by the monitors at the appropriate location in the expression.
-        new_code = []
-        for idx, code_op in enumerate(code_list):
-            if idx in insertions:
-                new_code.extend(insertions[idx])
-            new_code.append(code_op)
-
-        bp_code.code = new_code
-        self.eval_code = bp_code.to_code()
-        self.monitors = tuple(monitors)
-        self.implicit_binder = _ImplicitAttributeBinder(self)
-        self.old_value = NotImplemented
-
-    def _on_monitor_changed(self):
-        """ The signal callback which is fired from a monitor when the
-        expression changes. It will fire the expression_changed signal
-        provided that the value of the expression has actually changed.
+    def eval(self, obj, name):
+        """ Evaluate and return the expression value.
 
         """
-        new_value = self.eval()
+        tracer = TraitsTracer()
+        overrides = {'nonlocals': Nonlocals(obj, tracer)}
+        scope = DynamicScope(obj, self._identifiers, overrides, tracer)
+        with obj.operators:
+            result = call_func(self._func, (tracer,), {}, scope)
 
-        # Guard against exceptions being raise during comparison, such
-        # as when comparing two numpy arrays.
-        try:
-            different = new_value != self.old_value
-        except Exception:
-            different = True
+        # In most cases, the objects comprising the dependencies of an
+        # expression will not change during subsequent evaluations of
+        # the expression. Rather than creating a new notifier on each
+        # pass and repeating the work of creating the change handlers,
+        # a key for the dependencies is computed and a new notifier is
+        # created only when the key changes. The key uses the id of an
+        # object instead of the object itself so strong references to
+        # the object are not maintained by the expression.
+        id_ = id
+        traced = tracer.traced_items
+        keyval = frozenset((id_(obj), attr) for obj, attr in traced)
+        notifier = self._notifier
+        if notifier is None or keyval != notifier.keyval:
+            notifier = SubscriptionNotifier(self, name, keyval)
+            self._notifier = notifier
+            handler = notifier.notify
+            for obj, attr in traced:
+                obj.on_trait_change(handler, attr)
 
-        if different:
-            self.old_value = new_value
-            self.expression_changed.emit(self, self.name, new_value)
+        return result
 
-    def eval(self):
-        """ Evaluates the expression and returns the result. It also
-        resets the monitors before evaluating the expression to help
-        ensures that duplicate notifications are avoided.
 
-        """
-        # Reset the monitors before every evaluation so that any old
-        # notifiers are disconnected. This avoids muti-notifications.
-        self.implicit_binder = binder = _ImplicitAttributeBinder(self)
-        for monitor in self.monitors:
-            monitor.reset()
-
-        obj = self.obj_ref()
-        if obj is None:
-            return NotImplemented
-
-        overrides = {'nonlocals': NonlocalScope(obj, binder)}
-        scope = ExecutionScope(obj, self.identifiers, overrides, binder)
-
-        with self.operators:
-            res = eval(self.eval_code, self.f_globals, scope)
-
-        return res
-
-    def notify(self, old, new):
-        """ A no-op notification method since SubscriptionExpression does
-        not support notification.
-
-        """
-        pass
+AbstractListenableExpression.register(SubscriptionExpression)
 
 
 #------------------------------------------------------------------------------
 # Delegation Expression
 #------------------------------------------------------------------------------
 class DelegationExpression(SubscriptionExpression):
-    """ A SubscriptionExpression subclass that adds notification support
-    by setting the value on the contituents of the expression according
-    to any provide inverters.
+    """ An object which implements the `:=` operator by implementing the
+    AbstractListenableExpression and AbstractListener interfaces.
 
     """
-    def __init__(self, inverter_classes, *args):
-        """ Initialize a DelegationExpression
-
-        Parameters
-        ----------
-        inverter_classes : iterable of AbstractInverter subclasses
-            An iterable of concrete AbstractInverter subclasses which
-            will invert the given expression code into a mirrored
-            operation which sets the value on the appropriate object.
-
-        args
-            The arguments required to initialize a SubscriptionExpression
+    #--------------------------------------------------------------------------
+    # AbstractListener Interface
+    #--------------------------------------------------------------------------
+    def value_changed(self, obj, name, old, new):
+        """ Called when the attribute on the object has changed.
 
         """
-        super(DelegationExpression, self).__init__(*args)
+        nonlocals = Nonlocals(obj, None)
+        inverter = StandardInverter(nonlocals)
+        overrides = {'nonlocals': nonlocals}
+        scope = DynamicScope(obj, self._identifiers, overrides, None)
+        with obj.operators:
+            call_func(self._func._update, (inverter, new), {}, scope)
 
-        inverters = []
-        bp_code = Code.from_code(self.code)
-        code_list = bp_code.code
 
-        for inv_cls in inverter_classes:
-            inverter = inv_cls()
-            new_code = inverter.get_inverted_code(code_list)
-            if new_code is not None:
-                bp_code.code = new_code
-                inverters.append(bp_code.to_code())
-
-        if not inverters:
-            msg = ("Unable to delegate expression to the '%s' attribute of "
-                   "the %s object. The provided expression is not structured "
-                   "in a way which is suitable for delegation by any of "
-                   "the supplied code inverters.")
-            raise ValueError(msg % (self.name, self.obj_ref()))
-
-        self.inverters = inverters
-
-    def notify(self, old, new):
-        """ A notification method which runs through the list of inverted
-        code objects which attempt to set the value. The process stops on
-        the first successful inversion. If none of the invertors are
-        successful, a RuntimeError is raised.
-
-        """
-        obj = self.obj_ref()
-        if obj is None:
-            return
-
-        # We don't need to attempt the inversion if the new value
-        # is the same as the last value generated by the expression.
-        # This helps prevent bouncing back and forth which can be
-        # induced by excessive notification. Guard against exceptions
-        # being raise during comparison, such as when comparing two
-        # numpy arrays.
-        try:
-            different = new != self.old_value
-        except Exception:
-            different = True
-
-        if not different:
-            return
-
-        # The override dict is populated with information about the
-        # expression and the change. The values allow the generated
-        # inverter codes to access the information which is required
-        # to perform the operation. The items are added using names
-        # which are not valid Python identifiers and therefore do
-        # not risk clashing with names in the expression. This is
-        # the same technique used by the Python interpreter itself.
-        overrides = {
-            '_[expr]': self, '_[obj]': obj, '_[old]': old, '_[new]': new,
-            '_[name]': self.name, 'nonlocals': NonlocalScope(obj, None),
-        }
-        scope = ExecutionScope(obj, self.identifiers, overrides, None)
-
-        # Run through the inverters, giving each a chance to do the
-        # inversion. The process ends with the first success. If
-        # none of the invertors are successful an error is raised.
-        f_globals = self.f_globals
-        with self.operators:
-            for inverter in self.inverters:
-                if eval(inverter, f_globals, scope):
-                    break
-            else:
-                msg = ("Unable to delegate expression to the '%s' attribute "
-                       "of the %s object. None of the provided inverters were "
-                       "successful in assigning the value.")
-                raise RuntimeError(msg)
+AbstractListener.register(DelegationExpression)
 

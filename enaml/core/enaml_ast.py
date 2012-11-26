@@ -9,7 +9,7 @@ class ASTNode(object):
     ----------
     lineno : int
         The line number in the source code that created this node.
-    
+
     """
     def __init__(self, lineno):
         self.lineno = lineno
@@ -19,7 +19,7 @@ class ASTNode(object):
 
     def __str__(self):
         return repr(self)
-            
+
 
 class Module(ASTNode):
     """ An AST node representing an Enaml module.
@@ -28,10 +28,10 @@ class Module(ASTNode):
     ----------
     doc : str
         The module's documentation string.
-    
+
     body : list
         A list of ast nodes comprising the body of the module.
-    
+
     """
     def __init__(self, body, lineno):
         super(Module, self).__init__(lineno)
@@ -45,7 +45,7 @@ class Python(ASTNode):
     ----------
     py_ast : ast.AST
         A Python ast node.
-    
+
     """
     def __init__(self, py_ast, lineno):
         super(Python, self).__init__(lineno)
@@ -59,19 +59,19 @@ class Declaration(ASTNode):
     ----------
     name : str
         The name of the declaration.
-    
-    base : Python
-        A Python node which represents the base type of the declaration.
-    
+
+    base : str
+        The name of the base type.
+
     identifier : str
         The local identifier to use for instances of the declaration.
-    
+
     doc : str
         The documentation string for the declaration.
-    
+
     body : list
         A list of AST nodes that comprise the body of the declaration.
-    
+
     """
     def __init__(self, name, base, identifier, doc, body, lineno):
         super(Declaration, self).__init__(lineno)
@@ -89,13 +89,13 @@ class Instantiation(ASTNode):
     ----------
     name : str
         The name of declaration being instantiated.
-    
+
     identifier : str
         The local identifier to use for the new instance.
-    
+
     body : list
         A list of AST nodes which comprise the instantiation body.
-    
+
     """
     def __init__(self, name, identifier, body, lineno):
         super(Instantiation, self).__init__(lineno)
@@ -112,14 +112,14 @@ class AttributeDeclaration(ASTNode):
     name : str
         The name of the attribute being declared.
 
-    type : Python or None
-        A Python node representing the type of the attribute, or None
-        if no type was given. If None the attribute can be of any type.
+    type : str
+        A string representing the type of the attribute, or None if no
+        type was given. If None the attribute can be of any type.
 
     default : AttributeBinding or None
-        The default binding of the attribute, or None if no default 
+        The default binding of the attribute, or None if no default
         is provided.
-        
+
     is_event : boolean
         Whether or not this declaration represents an event.
         i.e. was declared with 'event' instead of 'attr'.
@@ -140,10 +140,10 @@ class AttributeBinding(ASTNode):
     ----------
     name : str
         The name of the attribute being bound.
-    
+
     binding : BoundExpression
         The BoundExpression ast node which represents the binding.
-    
+
     """
     def __init__(self, name, binding, lineno):
         super(AttributeBinding, self).__init__(lineno)
@@ -158,10 +158,10 @@ class BoundExpression(ASTNode):
     ----------
     op : str
         The name of the operator that will perform the binding.
-    
+
     expr : Python
         A Python ast node that reprents the bound expression.
-    
+
     """
     def __init__(self, op, expr, lineno):
         super(BoundExpression, self).__init__(lineno)

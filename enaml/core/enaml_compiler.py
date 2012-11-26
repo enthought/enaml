@@ -9,13 +9,14 @@ import types
 from .byteplay import (
     Code, LOAD_FAST, CALL_FUNCTION, LOAD_GLOBAL, STORE_FAST, LOAD_CONST,
     LOAD_ATTR, STORE_SUBSCR, RETURN_VALUE, POP_TOP, MAKE_FUNCTION, STORE_NAME,
-    LOAD_NAME, DUP_TOP, SetLineno,
+    LOAD_NAME, DUP_TOP, SetLineno, BINARY_SUBSCR, STORE_ATTR, ROT_TWO
 )
+from .code_tracing import inject_tracing, inject_inversion
 
 
 # Increment this number whenever the compiler changes the code which it
 # generates. This number is used by the import hooks to know which version
-# of a .enamlc file is valid for the Enaml compiler version in use. If 
+# of a .enamlc file is valid for the Enaml compiler version in use. If
 # this number is not incremented on change, it may result in .enamlc
 # files which fail on import.
 #
@@ -23,9 +24,9 @@ from .byteplay import (
 # ---------------
 # 1 : Initial compiler version - 2 February 2012
 # 2 : Update line number handling - 26 March 2012
-#     When compiling code objects with mode='eval', Python ignores the 
-#     line number specified by the ast. The workaround is to compile the 
-#     code object, then make a new copy of it with the proper firstlineno 
+#     When compiling code objects with mode='eval', Python ignores the
+#     line number specified by the ast. The workaround is to compile the
+#     code object, then make a new copy of it with the proper firstlineno
 #     set via the types.CodeType constructor.
 # 3 : Update the generated code to remove the toolkit - 21 June 2012
 #     This updates the compiler for the coming switch to async UI's
@@ -33,26 +34,38 @@ from .byteplay import (
 #     magic scope maintained is for that of operators.
 # 4 : Update component building - 27 July 2012
 #     This updates the compiler to handle the new Enaml creation semantics
-#     that don't rely on __enaml_call__. Instead the parent is passed 
+#     that don't rely on __enaml_call__. Instead the parent is passed
 #     directly to the component cls which is a subclass of Declarative.
 #     That class handles calling the builder functions upon instance
 #     creation. This allows us to get rid of the EnamlDef class and
 #     make enamldef constructs proper subclasses of Declarative.
 # 5 : Change the import names - 28 July 2012
-#     This changes the imported helper name from _make_decl_subclass_ 
-#     to _make_enamldef_helper_ which is more descriptive, but equally 
+#     This changes the imported helper name from _make_decl_subclass_
+#     to _make_enamldef_helper_ which is more descriptive, but equally
 #     mangled. It also updates the method name used on the Declarative
 #     component for adding attribute from _add_decl_attr to the more
-#     descriptive _add_user_attribute. Finally, it adds the eval_compile 
-#     function for compiling Python code in 'eval' mode with proper line 
+#     descriptive _add_user_attribute. Finally, it adds the eval_compile
+#     function for compiling Python code in 'eval' mode with proper line
 #     number handling.
-COMPILER_VERSION = 5
+# 6 : Compile with code tracing - 24 November 2012
+#     This updates the compiler to generate code using the idea of code
+#     tracing instead of monitors and inverters. The compiler compiles
+#     the expressions into functions which are augmented to accept
+#     additional arguments. These arguments are tracer objects which will
+#     have methods called in response to bytecode ops executing. These
+#     methods can then attach listeners as necessary. This is an easier
+#     paradigm to develop with than the previous incarnation. This new
+#     way also allows the compiler to generate the final code objects
+#     upfront, instead of needed to specialize at runtime for a given
+#     operator context. This results in a much smaller footprint since
+#     then number of code objects created is n instead of n x m.
+COMPILER_VERSION = 6
 
 
 # The Enaml compiler translates an Enaml AST into Python bytecode.
 #
 # Given this sample declaration in Enaml::
-#          
+#
 # FooWindow(Window):
 #     id: foo
 #     a = '12'
@@ -66,15 +79,14 @@ COMPILER_VERSION = 5
 #
 # def FooWindow(instance, identifiers, operators):
 #     f_globals = globals()
-#     eval_ = eval
 #     _var_1 = instance
 #     identifiers['foo'] = _var_1
-#     op = eval_('__operator_Equal__', operators)
-#     op(_var_1, 'a', <code for '12'>, identifiers, f_globals, operators)
-#     _var_2 = eval_('PushButton', f_globals)(_var_1)
+#     op = operators['__operator_Equal__']
+#     op(_var_1, 'a', <function>, identifiers)
+#     _var_2 = f_globals['PushButton'](_var_1)
 #     identifiers['btn'] = _var_2
-#     op = eval_('__operator_Equal__', operators)
-#     op(_var_2, 'text', <code for 'clickme'>, identifiers, f_globals, operators)
+#     op = operators['__operator_Equal__']
+#     op(_var_2, 'text', <function>, identifiers)
 #     return _var_1
 #
 # FooWindow = _make_enamldef_helper_('FooWindow', Window, FooWindow)
@@ -108,28 +120,220 @@ def update_firstlineno(code, firstlineno):
     return types.CodeType(
         code.co_argcount, code.co_nlocals, code.co_stacksize, code.co_flags,
         code.co_code, code.co_consts, code.co_names, code.co_varnames,
-        code.co_filename, code.co_name, firstlineno, code.co_lnotab, 
+        code.co_filename, code.co_name, firstlineno, code.co_lnotab,
         code.co_freevars, code.co_cellvars,
     )
 
 
-def eval_compile(item, filename, lineno):
-    """ Compile the item in eval mode, updating the lineno as necessary.
+#------------------------------------------------------------------------------
+# Expression Compilers
+#------------------------------------------------------------------------------
+def replace_global_loads(codelist, explicit=None):
+    """ A code transformer which rewrites LOAD_GLOBAL opcodes.
+
+    This transform will replace the LOAD_GLOBAL opcodes with LOAD_NAME
+    opcodes. The operation is performed in-place.
 
     Parameters
     ----------
-    item : string or ast
-        A string of Python code, or a Python AST object.
+    codelist : list
+        The list of byteplay code ops to modify.
 
-    filename : string
-        The string filename to use when compiling.
-
-    lineno : int
-        The line number to use for the returned code object.
+    explicit : set or None
+        The set of global names declared explicitly and which should
+        remain untransformed.
 
     """
-    code = compile(item, filename, mode='eval')
-    return update_firstlineno(code, lineno)
+    # Replacing LOAD_GLOBAL with LOAD_NAME enables dynamic scoping by
+    # way of a custom locals mapping. The `call_func` function in the
+    # `funchelper` module enables passing a locals map to a function.
+    explicit = explicit or set()
+    for idx, (op, op_arg) in enumerate(codelist):
+        if op == LOAD_GLOBAL and op_arg not in explicit:
+            codelist[idx] = (LOAD_NAME, op_arg)
+
+
+def optimize_locals(codelist):
+    """ Optimize the given code object for fast locals access.
+
+    All STORE_NAME opcodes will be replaced with STORE_FAST. Names which
+    are stored and then loaded via LOAD_NAME are rewritten to LOAD_FAST.
+    This transformation is applied in-place.
+
+    Parameters
+    ----------
+    codelist : list
+        The list of byteplay code ops to modify.
+
+    """
+    fast_locals = set()
+    for idx, (op, op_arg) in enumerate(codelist):
+        if op == STORE_NAME:
+            fast_locals.add(op_arg)
+            codelist[idx] = (STORE_FAST, op_arg)
+    for idx, (op, op_arg) in enumerate(codelist):
+        if op == LOAD_NAME and op_arg in fast_locals:
+            codelist[idx] = (LOAD_FAST, op_arg)
+
+
+def compile_simple(py_ast, filename):
+    """ Compile an ast into a code object implementing operator `=`.
+
+    Parameters
+    ----------
+    py_ast : ast.Expression
+        A Python ast Expression node.
+
+    filename : str
+        The filename which generated the expression.
+
+    Returns
+    -------
+    result : types.CodeType
+        A Python code object which implements the desired behavior.
+
+    """
+    code = compile(py_ast, filename, mode='eval')
+    code = update_firstlineno(code, py_ast.lineno)
+    bp_code = Code.from_code(code)
+    replace_global_loads(bp_code.code)
+    optimize_locals(bp_code.code)
+    bp_code.newlocals = False
+    return bp_code.to_code()
+
+
+def compile_notify(py_ast, filename):
+    """ Compile an ast into a code object implementing operator `::`.
+
+    Parameters
+    ----------
+    py_ast : ast.Module
+        A Python ast Module node.
+
+    filename : str
+        The filename which generated the expression.
+
+    Returns
+    -------
+    result : types.CodeType
+        A Python code object which implements the desired behavior.
+
+    """
+    explicit_globals = set()
+    for node in ast.walk(py_ast):
+        if isinstance(node, ast.Global):
+            explicit_globals.update(node.names)
+    code = compile(py_ast, filename, mode='exec')
+    bp_code = Code.from_code(code)
+    replace_global_loads(bp_code.code, explicit_globals)
+    optimize_locals(bp_code.code)
+    bp_code.newlocals = False
+    return bp_code.to_code()
+
+
+def compile_subscribe(py_ast, filename):
+    """ Compile an ast into a code object implementing operator `<<`.
+
+    Parameters
+    ----------
+    py_ast : ast.Expression
+        A Python ast Expression node.
+
+    filename : str
+        The filename which generated the expression.
+
+    Returns
+    -------
+    result : types.CodeType
+        A Python code object which implements the desired behavior.
+
+    """
+    code = compile(py_ast, filename, mode='eval')
+    code = update_firstlineno(code, py_ast.lineno)
+    bp_code = Code.from_code(code)
+    replace_global_loads(bp_code.code)
+    optimize_locals(bp_code.code)
+    bp_code.code = inject_tracing(bp_code.code)
+    bp_code.newlocals = False
+    bp_code.args = ('_[tracer]',) + bp_code.args
+    return bp_code.to_code()
+
+
+def compile_update(py_ast, filename):
+    """ Compile an ast into a code object implementing operator `>>`.
+
+    Parameters
+    ----------
+    py_ast : ast.Expression
+        A Python ast Expression node.
+
+    filename : str
+        The filename which generated the expression.
+
+    Returns
+    -------
+    result : types.CodeType
+        A Python code object which implements the desired behavior.
+
+    """
+    code = compile(py_ast, filename, mode='eval')
+    code = update_firstlineno(code, py_ast.lineno)
+    bp_code = Code.from_code(code)
+    replace_global_loads(bp_code.code)
+    optimize_locals(bp_code.code)
+    bp_code.code = inject_inversion(bp_code.code)
+    bp_code.newlocals = False
+    bp_code.args = ('_[inverter]', '_[value]') + bp_code.args
+    return bp_code.to_code()
+
+
+def compile_delegate(py_ast, filename):
+    """ Compile an ast into a code object implementing operator `:=`.
+
+    This will generate two code objects: one which is equivalent to
+    operator `<<` and another which is equivalent to `>>`.
+
+    Parameters
+    ----------
+    py_ast : ast.Expression
+        A Python ast Expression node.
+
+    filename : str
+        The filename which generated the expression.
+
+    Returns
+    -------
+    result : tuple
+        A 2-tuple of types.CodeType equivalent to operators `<<` and
+        `>>` respectively.
+
+    """
+    code = compile(py_ast, filename, mode='eval')
+    code = update_firstlineno(code, py_ast.lineno)
+    bp_code = Code.from_code(code)
+    bp_code.newlocals = False
+    codelist = bp_code.code[:]
+    bp_args = tuple(bp_code.args)
+    replace_global_loads(codelist)
+    optimize_locals(codelist)
+    sub_list = inject_tracing(codelist)
+    bp_code.code = sub_list
+    bp_code.args = ('_[tracer]',) + bp_args
+    sub_code = bp_code.to_code()
+    upd_list = inject_inversion(codelist)
+    bp_code.code = upd_list
+    bp_code.args = ('_[inverter]', '_[value]') + bp_args
+    upd_code = bp_code.to_code()
+    return (sub_code, upd_code)
+
+
+COMPILE_OP_MAP = {
+    '__operator_Equal__': compile_simple,
+    '__operator_ColonColon__': compile_notify,
+    '__operator_LessLess__': compile_subscribe,
+    '__operator_GreaterGreater__': compile_update,
+    '__operator_ColonEqual__': compile_delegate,
+}
 
 
 #------------------------------------------------------------------------------
@@ -141,7 +345,9 @@ class _NodeVisitor(object):
 
     """
     def visit(self, node):
-        """  The main visitor dispatch method.
+        """ The main visitor dispatch method.
+
+        Unhandled nodes will raise an error.
 
         """
         name = 'visit_%s' % node.__class__.__name__
@@ -151,8 +357,22 @@ class _NodeVisitor(object):
             method = self.default_visit
         method(node)
 
+    def visit_nonstrict(self, node):
+        """ A nonstrict visitor dispatch method.
+
+        Unhandled nodes will be ignored.
+
+        """
+        name = 'visit_%s' % node.__class__.__name__
+        try:
+            method = getattr(self, name)
+        except AttributeError:
+            pass
+        else:
+            method(node)
+
     def default_visit(self, node):
-        """ The default visitor method. Raises an error since there 
+        """ The default visitor method. Raises an error since there
         should not be any unhandled nodes.
 
         """
@@ -170,7 +390,7 @@ class DeclarationCompiler(_NodeVisitor):
     def compile(cls, node, filename):
         """ The main entry point of the DeclarationCompiler.
 
-        This compiler compiles the given Declaration node into a code 
+        This compiler compiles the given Declaration node into a code
         object for a builder function.
 
         Parameters
@@ -186,7 +406,7 @@ class DeclarationCompiler(_NodeVisitor):
         compiler.visit(node)
         code_ops = compiler.code_ops
         code = Code(
-            code_ops, [], ['instance', 'identifiers', 'operators'], False, 
+            code_ops, [], ['instance', 'identifiers', 'operators'], False,
             False, True, node.name, filename, node.lineno, node.doc,
         )
         return code
@@ -215,7 +435,7 @@ class DeclarationCompiler(_NodeVisitor):
         return self.name_stack[-1]
 
     def visit_Declaration(self, node):
-        """ Creates the bytecode ops for a declaration node. 
+        """ Creates the bytecode ops for a declaration node.
 
         This node visitor pulls the passed in root into a local var
         and stores it's identifier if one is given. It also loads
@@ -227,41 +447,34 @@ class DeclarationCompiler(_NodeVisitor):
         self.push_name(name)
 
         extend_ops([
-            # f_globals = globals()
-            (LOAD_GLOBAL, 'globals'),
+            (LOAD_NAME, 'globals'),     # f_globals = globals()
             (CALL_FUNCTION, 0x0000),
             (STORE_FAST, 'f_globals'),
-            # eval_ = eval
-            (LOAD_GLOBAL, 'eval'),
-            (STORE_FAST, 'eval_'),
-            # _var_1 = instance
-            (LOAD_FAST, 'instance'),
+            (LOAD_FAST, 'instance'),    # _var_1 = instance
             (STORE_FAST, name),
         ])
 
         if node.identifier:
             extend_ops([
-                # identifiers['foo'] = _var_1
-                (LOAD_FAST, name),
+                (LOAD_FAST, name),              # identifiers['foo'] = _var_1
                 (LOAD_FAST, 'identifiers'),
                 (LOAD_CONST, node.identifier),
                 (STORE_SUBSCR, None),
             ])
-        
+
         visit = self.visit
         for item in node.body:
             visit(item)
-        
+
         extend_ops([
-            # return _var_1
-            (LOAD_FAST, name),
+            (LOAD_FAST, name),      # return _var_1
             (RETURN_VALUE, None),
         ])
 
         self.pop_name()
 
     def visit_AttributeDeclaration(self, node):
-        """ Creates the bytecode ops for an attribute declaration. 
+        """ Creates the bytecode ops for an attribute declaration.
 
         The attributes will have already been added to the subclass, so
         this visitor just dispatches to any default bindings which may
@@ -274,63 +487,73 @@ class DeclarationCompiler(_NodeVisitor):
             self.visit(node.default)
 
     def visit_AttributeBinding(self, node):
-        """ Creates the bytecode ops for an attribute binding. 
+        """ Creates the bytecode ops for an attribute binding.
 
-        This visitor handles loading and calling the appropriate 
+        This visitor handles loading and calling the appropriate
         operator.
 
         """
-        fn = self.filename
-        op_code = eval_compile(node.binding.op, fn, node.binding.lineno)
         py_ast = node.binding.expr.py_ast
-        if isinstance(py_ast, ast.Module):
-            expr_code = compile(py_ast, fn, mode='exec')
+        op = node.binding.op
+        op_compiler = COMPILE_OP_MAP[op]
+        code = op_compiler(py_ast, self.filename)
+        if isinstance(code, tuple): # operator `::`
+            sub_code, upd_code = code
+            self.extend_ops([
+                (SetLineno, node.binding.lineno),
+                (LOAD_FAST, 'operators'),           # operators[op](obj, attr, sub_func, identifiers)
+                (LOAD_CONST, op),
+                (BINARY_SUBSCR, None),
+                (LOAD_FAST, self.curr_name()),
+                (LOAD_CONST, node.name),
+                (LOAD_CONST, sub_code),
+                (MAKE_FUNCTION, 0),
+                (DUP_TOP, None),
+                (LOAD_CONST, upd_code),
+                (MAKE_FUNCTION, 0),
+                (ROT_TWO, None),
+                (STORE_ATTR, '_update'),            # sub_func._update = upd_func
+                (LOAD_FAST, 'identifiers'),
+                (CALL_FUNCTION, 0x0004),
+                (POP_TOP, None),
+            ])
         else:
-            expr_code = eval_compile(py_ast, fn, py_ast.lineno)
-        self.extend_ops([
-            # op = eval('__operator_Equal__', operators)
-            # op(item, 'a', code, identifiers, f_globals, operators)
-            (LOAD_FAST, 'eval_'),
-            (LOAD_CONST, op_code),
-            (LOAD_FAST, 'operators'),
-            (CALL_FUNCTION, 0x0002),
-            (LOAD_FAST, self.curr_name()),
-            (LOAD_CONST, node.name),
-            (LOAD_CONST, expr_code),
-            (LOAD_FAST, 'identifiers'),
-            (LOAD_FAST, 'f_globals'),
-            (LOAD_FAST, 'operators'),
-            (CALL_FUNCTION, 0x0006),
-            (POP_TOP, None),
-        ])
+            self.extend_ops([
+                (SetLineno, node.binding.lineno),
+                (LOAD_FAST, 'operators'),           # operators[op](obj, attr, func, identifiers)
+                (LOAD_CONST, op),
+                (BINARY_SUBSCR, None),
+                (LOAD_FAST, self.curr_name()),
+                (LOAD_CONST, node.name),
+                (LOAD_CONST, code),
+                (MAKE_FUNCTION, 0),
+                (LOAD_FAST, 'identifiers'),
+                (CALL_FUNCTION, 0x0004),
+                (POP_TOP, None),
+            ])
 
     def visit_Instantiation(self, node):
-        """ Create the bytecode ops for a component instantiation. 
+        """ Create the bytecode ops for a component instantiation.
 
-        This visitor handles calling another derived component and 
+        This visitor handles calling another derived component and
         storing its identifier, if given.
-        
+
         """
         extend_ops = self.extend_ops
         parent_name = self.curr_name()
         name = self.name_gen.next()
         self.push_name(name)
-        op_code = eval_compile(node.name, self.filename, node.lineno)
         extend_ops([
-            # _var_2 = eval('PushButton', f_globals)(parent)
-            (LOAD_FAST, 'eval_'),
-            (LOAD_CONST, op_code),
-            (LOAD_FAST, 'f_globals'),
-            (CALL_FUNCTION, 0x0002),
+            (SetLineno, node.lineno),
+            (LOAD_NAME, node.name),     # _var_2 = globals()['PushButton'](parent)
             (LOAD_FAST, parent_name),
             (CALL_FUNCTION, 0x0001),
             (STORE_FAST, name),
         ])
-        
+
         if node.identifier:
             extend_ops([
-                # identifiers['btn'] = _var_2
-                (LOAD_FAST, name),
+                (LOAD_FAST, name),              # identifiers['btn'] = _var_2
                 (LOAD_FAST, 'identifiers'),
                 (LOAD_CONST, node.identifier),
                 (STORE_SUBSCR, None),
@@ -339,7 +562,7 @@ class DeclarationCompiler(_NodeVisitor):
         visit = self.visit
         for item in node.body:
             visit(item)
-        
+
         self.pop_name()
 
 
@@ -348,7 +571,7 @@ class DeclarationCompiler(_NodeVisitor):
 #------------------------------------------------------------------------------
 class EnamlCompiler(_NodeVisitor):
     """ A visitor that will compile an enaml module ast node.
-    
+
     The entry point is the `compile` classmethod which will compile
     the ast into an appropriate python code object for a module.
 
@@ -361,10 +584,10 @@ class EnamlCompiler(_NodeVisitor):
         ----------
         module_ast : Instance(enaml_ast.Module)
             The enaml module ast node that should be compiled.
-        
+
         filename : str
             The string filename of the module ast being compiled.
-        
+
         """
         compiler = cls(filename)
         compiler.visit(module_ast)
@@ -386,7 +609,7 @@ class EnamlCompiler(_NodeVisitor):
             end_code = compile(end, filename, mode='exec')
             # Skip the SetLineo and ReturnValue codes
             extend_ops(Code.from_code(end_code).code[1:-2])
-        
+
         # Add in the final return value ops
         extend_ops([
             (LOAD_CONST, None),
@@ -413,29 +636,30 @@ class EnamlCompiler(_NodeVisitor):
         self.extend_ops = self.code_ops.extend
 
     def visit_Module(self, node):
-        """ The Module node visitor method. 
+        """ The Module node visitor method.
 
         This visitor dispatches to all of the body nodes of the module.
 
         """
+        visit = self.visit
         for item in node.body:
-            self.visit(item)
-    
+            visit(item)
+
     def visit_Python(self, node):
         """ The Python node visitor method.
-        
+
         This visitor adds a chunk of raw Python into the module.
 
         """
         py_code = compile(node.py_ast, self.filename, mode='exec')
-        bpc = Code.from_code(py_code)
+        bp_code = Code.from_code(py_code)
         # Skip the SetLineo and ReturnValue codes
-        self.extend_ops(bpc.code[1:-2])
+        self.extend_ops(bp_code.code[1:-2])
 
     def visit_Declaration(self, node):
-        """ The Declaration node visitor. 
+        """ The Declaration node visitor.
 
-        This generates the bytecode ops whic create a new type for the 
+        This generates the bytecode ops whic create a new type for the
         enamldef and then adds the user defined attributes and events.
         It also dispatches to the DeclarationCompiler which will create
         the builder function for the new type.
@@ -444,19 +668,12 @@ class EnamlCompiler(_NodeVisitor):
         name = node.name
         extend_ops = self.extend_ops
         filename = self.filename
-
         func_code = DeclarationCompiler.compile(node, filename)
-        base_code = eval_compile(node.base.py_ast, filename, node.base.lineno)
-
         extend_ops([
             (SetLineno, node.lineno),
-            (LOAD_NAME, '_make_enamldef_helper_'),
+            (LOAD_NAME, '_make_enamldef_helper_'),  # Foo = _make_enamldef_helper_(name, base, buildfunc)
             (LOAD_CONST, name),
-            (LOAD_NAME, 'eval'),
-            (LOAD_CONST, base_code),
-            (LOAD_NAME, 'globals'),
-            (CALL_FUNCTION, 0x0000),
-            (CALL_FUNCTION, 0x0002),
+            (LOAD_NAME, node.base),
             (LOAD_CONST, func_code),
             (MAKE_FUNCTION, 0),
             (CALL_FUNCTION, 0x0003),
@@ -470,36 +687,32 @@ class EnamlCompiler(_NodeVisitor):
             (LOAD_ATTR, '_add_user_attribute'),
         ])
 
-        # This loop adds the ops to add the user attrs and events.
+        # Dispatch to add any class-level info contained within the
+        # declaration body. Visit nonstrict since not all child nodes
+        # are valid at the class-level. The '_add_user_attribute'
+        # class method is left on the top of the stack and popped
+        # at the end of the visitors.
+        visit = self.visit_nonstrict
         for child_node in node.body:
-            if type(child_node).__name__ == 'AttributeDeclaration':
-                extend_ops([
-                    (SetLineno, child_node.lineno),
-                    (DUP_TOP, None),
-                    (LOAD_CONST, child_node.name),
-                ])
-                attr_type = child_node.type
-                if attr_type is not None:
-                    attr_type_code = eval_compile(
-                        attr_type.py_ast, filename, attr_type.lineno
-                    )
-                    extend_ops([
-                        (LOAD_NAME, 'eval'),
-                        (LOAD_CONST, attr_type_code),
-                        (LOAD_NAME, 'globals'),
-                        (CALL_FUNCTION, 0x0000),
-                        (CALL_FUNCTION, 0x0002),
-                        (LOAD_CONST, child_node.is_event),
-                        (CALL_FUNCTION, 0x0003),
-                        (POP_TOP, None),
-                    ])
-                else:
-                    extend_ops([
-                        (LOAD_NAME, 'object'),
-                        (LOAD_CONST, child_node.is_event),
-                        (CALL_FUNCTION, 0x0003),
-                        (POP_TOP, None),
-                    ])
+            visit(child_node)
 
         extend_ops([(POP_TOP, None)])
+
+    def visit_AttributeDeclaration(self, node):
+        """ Creates the bytecode ops for an attribute declaration.
+
+        This will add the ops to add the user attrs and events to
+        the new type.
+
+        """
+        attr_type = node.type or 'object'
+        self.extend_ops([
+            (SetLineno, node.lineno),
+            (DUP_TOP, None),                #cls._add_user_attribute(name, type, is_event)
+            (LOAD_CONST, node.name),
+            (LOAD_NAME, attr_type),
+            (LOAD_CONST, node.is_event),
+            (CALL_FUNCTION, 0x0003),
+            (POP_TOP, None),
+        ])
 

@@ -9,6 +9,7 @@
 
 using namespace PythonHelpers;
 
+extern "C" {
 
 // Type structure for CallableRef instances
 typedef struct {
@@ -201,4 +202,6 @@ initcallableref( void )
     PyObjectPtr cr_type( reinterpret_cast<PyObject*>( &CallableRef_Type ), true );
     PyModule_AddObject( mod, "CallableRef", cr_type.release() );
 }
+
+} // extern "C"
 
