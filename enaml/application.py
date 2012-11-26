@@ -2,14 +2,12 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from abc import ABCMeta, abstractmethod, abstractproperty
+from abc import ABCMeta, abstractmethod
 from heapq import heappush, heappop
 from itertools import count
 import logging
 from threading import Lock
 import uuid
-
-from enaml.core.object import Object
 
 
 logger = logging.getLogger(__name__)
@@ -183,15 +181,21 @@ class Application(object):
     #--------------------------------------------------------------------------
     # Abstract API
     #--------------------------------------------------------------------------
-    @abstractproperty
-    def pipe_interface(self):
-        """ Get the ActionPipeInterface for this application.
+    @abstractmethod
+    def socket(self, session_id):
+        """ Get the ActionSocketInterface for a session.
+
+        Parameters
+        ----------
+        session_id : str
+            The string identifier for the session which will use the
+            created action socket.
 
         Returns
         -------
-        result : ActionPipeInterface
-            An implementor of ActionPipeInterface which can be used by
-            Enaml Object instances to send messages to their clients.
+        result : ActionSocketInterface
+            An implementor of ActionSocketInterface which can be used
+            by Enaml Sessione instances for messaging.
 
         """
         raise NotImplementedError
@@ -360,6 +364,23 @@ class Application(object):
         ]
         return info
 
+    def session(self, session_id):
+        """ Get the session for the given session id.
+
+        Parameters
+        ----------
+        session_id : str
+            The unique identifier for the session to retrieve.
+
+        Returns
+        -------
+        result : Session or None
+            The session object with the given id, or None if the id
+            does not correspond to an active session.
+
+        """
+        return self._sessions.get(session_id)
+
     def start_session(self, name):
         """ Start a new session of the given name.
 
@@ -381,10 +402,10 @@ class Application(object):
         if name not in self._named_factories:
             raise ValueError('Invalid session name')
         factory = self._named_factories[name]
+        session = factory()
         session_id = uuid.uuid4().hex
-        session = factory(session_id)
         self._sessions[session_id] = session
-        session.open(self.pipe_interface)
+        session.open(session_id, self.socket(session_id))
         return session_id
 
     def end_session(self, session_id):
@@ -422,30 +443,6 @@ class Application(object):
         if session is None:
             raise ValueError('Invalid session id')
         return session.snapshot()
-
-    def dispatch_action(self, object_id, action, content):
-        """ Dispatch an action to an object with the given id.
-
-        This method can be called by subclasses when they receive an
-        action message from a client object. If the object does not
-        exist, an exception will be raised.
-
-        Parameters
-        ----------
-        object_id : str
-            The unique identifier for the object.
-
-        action : str
-            The action to be performed by the object.
-
-        content : dict
-            The dictionary of content needed to perform the action.
-
-        """
-        obj = Object.lookup_object(object_id)
-        if obj is None:
-            raise ValueError('Invalid object id')
-        obj.handle_action(action, content)
 
     def destroy(self):
         """ Destroy this application instance.
