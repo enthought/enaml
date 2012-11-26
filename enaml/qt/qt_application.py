@@ -2,38 +2,24 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from collections import defaultdict
 import logging
 
 from enaml.application import Application
 
 from .qt.QtCore import Qt, QThread
 from .qt.QtGui import QApplication
-from .q_action_pipe import QActionPipe
+from .q_action_socket import QClientSocket, QServerSocket
 from .q_deferred_caller import QDeferredCaller
-from .qt_builder import QtBuilder
-from .qt_object import QtObject
+from .qt_session import QtSession, batch_handler_id
+from .qt_factories import register_default
 
 
 logger = logging.getLogger(__name__)
 
 
-class QtRootHandler(QtObject):
-    """ An object handler for managing root level application messages.
-
-    """
-    def on_action_message_batch(self, content):
-        """ Handle the 'message_batch' action sent by the Enaml
-        application.
-
-        """
-        for object_id, action, msg_content in content['batch']:
-            obj = QtObject.lookup_object(object_id)
-            if obj is None:
-                msg = "Invalid object id sent to QtApplication: %s:%s"
-                logger.warn(msg % (object_id, action))
-            else:
-                obj.handle_action(action, msg_content)
+# This registers the default Qt factories with the QtWidgetRegistry and
+# allows an application access to the default widget implementations.
+register_default()
 
 
 class QtApplication(Application):
@@ -43,7 +29,7 @@ class QtApplication(Application):
     runs in the local process.
 
     """
-    def __init__(self, factories, builder=None):
+    def __init__(self, factories):
         """ Initialize a QtApplication.
 
         Parameters
@@ -52,41 +38,33 @@ class QtApplication(Application):
             An iterable of SessionFactory instances to pass to the
             superclass constructor.
 
-        builder : QtBuilder or None
-            An optional QtBuilder instance to manage the building of
-            QtObject instances for this application. If not provided,
-            a default builder will be used.
-
         """
         super(QtApplication, self).__init__(factories)
         self._qapp = QApplication.instance() or QApplication([])
         self._qcaller = QDeferredCaller()
-        self._enaml_pipe = epipe = QActionPipe()
-        self._qt_pipe = qpipe = QActionPipe()
-        self._qt_builder = builder or QtBuilder()
-        self._qt_objects = defaultdict(list)
-        epipe.actionPosted.connect(self._on_enaml_action, Qt.QueuedConnection)
-        qpipe.actionPosted.connect(self._on_qt_action, Qt.QueuedConnection)
-        # Create the root handler object for handling batched actions. A
-        # strong reference is kept by the QtObject class, so there is no
-        # need to store a reference to it on the application.
-        QtRootHandler(u'', None, None, None)
+        self._qt_sessions = {}
+        self._sockets = {}
 
     #--------------------------------------------------------------------------
     # Abstract API Implementation
     #--------------------------------------------------------------------------
-    @property
-    def pipe_interface(self):
-        """ Get the ActionPipeInterface for this application.
+    def socket(self, session_id):
+        """ Get the ActionSocketInterface for a session.
+
+        Parameters
+        ----------
+        session_id : str
+            The string identifier for the session which will use the
+            created action socket.
 
         Returns
         -------
-        result : ActionPipeInterface
-            An implementor of ActionPipeInterface which can be used by
-            Enaml Object instances to send messages to their clients.
+        result : ActionSocketInterface
+            An implementor of ActionSocketInterface which can be used
+            by Enaml Sessione instances for messaging.
 
         """
-        return self._enaml_pipe
+        return self._socket_pair(session_id)[0]
 
     def start(self):
         """ Start the application's main event loop.
@@ -165,14 +143,10 @@ class QtApplication(Application):
 
         """
         sid = super(QtApplication, self).start_session(name)
-        pipe = self._qt_pipe
-        builder = self._qt_builder
-        objects = self._qt_objects[sid]
-        for item in self.snapshot(sid):
-            obj = builder.build(item, None, pipe)
-            if obj is not None:
-                obj.initialize()
-                objects.append(obj)
+        socket = self._socket_pair(sid)[1]
+        qt_session = QtSession(sid)
+        self._qt_sessions[sid] = qt_session
+        qt_session.open(self.snapshot(sid), socket)
         return sid
 
     def end_session(self, session_id):
@@ -183,45 +157,42 @@ class QtApplication(Application):
 
         """
         super(QtApplication, self).end_session(session_id)
-        self._qt_objects.pop(session_id, None)
-
-    def dispatch_qt_action(self, object_id, action, content):
-        """ Dispatch an action to a qt object with the given id.
-
-        This method can be called when a message from an Enaml widget
-        is received and needs to be delivered to the Qt client widget.
-
-        Parameters
-        ----------
-        object_id : str
-            The unique identifier for the object.
-
-        action : str
-            The action to be performed by the object.
-
-        content : dict
-            The dictionary of content needed to perform the action.
-
-        """
-        obj = QtObject.lookup_object(object_id)
-        if obj is None:
-            msg = "Invalid object id sent to QtApplication: %s:%s"
-            logger.warn(msg % (object_id, action))
-            return
-        obj.handle_action(action, content)
+        qt_session = self._qt_sessions.pop(session_id, None)
+        if qt_session is not None:
+            qt_session.close()
+        self._sockets.pop(session_id, None)
 
     #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
-    def _on_enaml_action(self, object_id, action, content):
-        """ Handle an action being posted by an Enaml object.
+    def _socket_pair(self, session_id):
+        """ Get the socket pair for the given session id.
+
+        If the socket pair does not yet exist, it will be created.
+
+        Parameters
+        ----------
+        session_id : str
+            The identifier of the session that will use the sockets.
+
+        Returns
+        -------
+        result : tuple
+            A 2-tuple of action sockets for the server and client sides,
+            respectively.
 
         """
-        self.dispatch_qt_action(object_id, action, content)
-
-    def _on_qt_action(self, object_id, action, content):
-        """ Handle an action being posted by a Qt object.
-
-        """
-        self.dispatch_action(object_id, action, content)
+        sockets = self._sockets
+        if session_id not in sockets:
+            batch_id = batch_handler_id(session_id)
+            server_socket = QServerSocket(batch_id)
+            client_socket = QClientSocket()
+            conn = Qt.QueuedConnection
+            server_socket.messagePosted.connect(client_socket.receive, conn)
+            client_socket.messagePosted.connect(server_socket.receive, conn)
+            pair = (server_socket, client_socket)
+            sockets[session_id] = pair
+        else:
+            pair = sockets[session_id]
+        return pair
 
