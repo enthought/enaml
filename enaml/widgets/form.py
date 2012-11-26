@@ -26,7 +26,7 @@ class Form(Container):
     #: and widgets are aligned.
     midline = Instance(ConstraintVariable)
     def _midline_default(self):
-        return ConstraintVariable('midline', self.widget_id)
+        return ConstraintVariable('midline', self.object_id)
 
     #: The strength for the form layout constraints.
     # FIXME: Use an Enum.

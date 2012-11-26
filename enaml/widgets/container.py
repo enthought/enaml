@@ -91,7 +91,7 @@ class Container(ConstraintsWidget):
     #: The private storage the box model instance for this component.
     _box_model = Instance(ContentsBoxModel)
     def __box_model_default(self):
-        return ContentsBoxModel(self.widget_id)
+        return ContentsBoxModel(self.object_id)
 
     #--------------------------------------------------------------------------
     # Initialization

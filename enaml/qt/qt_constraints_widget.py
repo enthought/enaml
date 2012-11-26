@@ -88,7 +88,7 @@ class QtConstraintsWidget(QtWidgetComponent):
         """
         super(QtConstraintsWidget, self).create(tree)
         layout = tree['layout']
-        self.layout_box = LayoutBox(type(self).__name__, self.widget_id())
+        self.layout_box = LayoutBox(type(self).__name__, self.object_id())
         self._hug = layout['hug']
         self._resist = layout['resist']
         self._user_cns = layout['constraints']

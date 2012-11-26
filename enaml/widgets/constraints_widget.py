@@ -108,7 +108,7 @@ class ConstraintsWidget(WidgetComponent):
     #: The private storage the box model instance for this component.
     _box_model = Instance(BoxModel)
     def __box_model_default(self):
-        return BoxModel(self.widget_id)
+        return BoxModel(self.object_id)
 
     #--------------------------------------------------------------------------
     # Initialization

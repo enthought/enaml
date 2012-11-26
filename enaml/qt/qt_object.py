@@ -246,13 +246,6 @@ class QtObject(object):
         """
         return self._object_id
 
-    def widget_id(self):
-        """ A backwards compatibility method. New code should call the
-        `object_id` method.
-
-        """
-        return self._object_id
-
     def widget(self):
         """ Get the toolkit-specific object for this object.
 

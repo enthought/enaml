@@ -531,7 +531,7 @@ class WxContainer(WxConstraintsWidget):
         # The mapping of constraint owners and the list of constraint
         # info dictionaries provided by the Enaml widgets.
         box = self.layout_box
-        cn_owners = {self.widget_id(): box}
+        cn_owners = {self.object_id(): box}
         cn_dicts = list(self.user_constraints())
         cn_dicts_extend = cn_dicts.extend
 
@@ -546,7 +546,7 @@ class WxContainer(WxConstraintsWidget):
         WxContainer_ = WxContainer
         for _, updater in layout_table:
             child = updater.item
-            cn_owners[child.widget_id()] = child.layout_box
+            cn_owners[child.object_id()] = child.layout_box
             raw_cns_extend(child.hard_constraints())
             if isinst(child, WxContainer_):
                 if child.transfer_layout_ownership(self):

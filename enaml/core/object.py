@@ -134,10 +134,6 @@ class Object(HasStrictTraits):
     #: required, then the object id generator can be overridden.
     object_id = ReadOnly
 
-    #: A backwards compatibility alias for `object_id`. New code should
-    #: access `object_id` directly.
-    widget_id = Property(fget=lambda self: self.object_id)
-
     #: An optional name to give to this object to assist in finding it
     #: in the tree. See e.g. the 'find' method. Note that there is no
     #: uniqueness guarantee associated with the object `name`. It is
@@ -661,7 +657,6 @@ class Object(HasStrictTraits):
         """
         snap = {}
         snap['object_id'] = self.object_id
-        snap['widget_id'] = self.widget_id # backwards compatibility
         snap['class'] = self.class_name
         snap['bases'] = self.base_names
         snap['name'] = self.name
