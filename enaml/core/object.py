@@ -2,11 +2,9 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from abc import ABCMeta, abstractmethod
 from collections import defaultdict, deque, namedtuple
 import logging
 import re
-from weakref import WeakValueDictionary
 
 from traits.api import (
     HasStrictTraits, ReadOnly, Str, Property, Tuple, Instance, Bool, Disallow,
@@ -19,34 +17,6 @@ from .trait_types import EnamlEvent
 
 
 logger = logging.getLogger(__name__)
-
-
-class ActionPipeInterface(object):
-    """ An abstract base class defining an action pipe interface.
-
-    Concrete implementations of this interface can be used by Object
-    instances to sent messages to their client objects.
-
-    """
-    __metaclass__ = ABCMeta
-
-    @abstractmethod
-    def send(self, object_id, action, content):
-        """ Send an action to the client of an object.
-
-        Parameters
-        ----------
-        object_id : str
-            The object id for the Object sending the message.
-
-        action : str
-            The action that should be take by the client object.
-
-        content : dict
-            The dictionary of content needed to perform the action.
-
-        """
-        raise NotImplementedError
 
 
 #: A namedtuple which contains information about a child change event.
@@ -143,8 +113,8 @@ class Object(HasStrictTraits):
     #: A read-only property which returns the instance's class name.
     class_name = Property(fget=lambda self: type(self).__name__)
 
-    #: A read-only property which returns the names of the instances
-    #: base classes, stopping at Declarative.
+    #: A read-only property which returns the names of the instance's
+    #: base classes, stopping at Object.
     base_names = Property
 
     #: A read-only property which returns the parent of this object.
@@ -175,11 +145,10 @@ class Object(HasStrictTraits):
     #: fired. It should not be manipulated by user code.
     initialized = Bool(False)
 
-    #: A pipe interface to use for sending messages by the object. If
-    #: the pipe is None the object will walk up the ancestor tree in
-    #: order to find a pipe to use. To silence an object, set this
-    #: attribute to a null pipe interface.
-    action_pipe = Instance(ActionPipeInterface)
+    #: A Session object to use for messaging. If the session is None,
+    #: the object will inherit the session from its ancestors. This
+    #: should not be directly manipulated by user code.
+    session = Instance('enaml.session.Session') # circular import
 
     #: A loopback guard which can be used to prevent a signal loopback
     #: cycle when setting attributes from within an action handler.
@@ -191,8 +160,10 @@ class Object(HasStrictTraits):
     _published_attrs = Instance(set, ())
 
     #: Class level storage for Object instances. Objects are added to
-    #: this dict as they are created. The instances are stored weakly.
-    _objects = WeakValueDictionary()
+    #: this dict as they are created. Instances are stored strongly so
+    #: that orphaned widgets are not garbage collected until they are
+    #: explicitly destroyed.
+    _objects = {}
 
     @classmethod
     def lookup_object(cls, object_id):
@@ -274,6 +245,9 @@ class Object(HasStrictTraits):
         self._children = ()
         for child in children:
             child._destroy(False)
+        # XXX remove from the session if top-level? It may not matter...
+        self.session = None
+        type(self)._objects.pop(self.object_id, None)
 
     #--------------------------------------------------------------------------
     # Property Methods
@@ -287,7 +261,7 @@ class Object(HasStrictTraits):
 
         """
         base_names = []
-        for base in type(self).mro():
+        for base in type(self).mro()[1:]:
             base_names.append(base.__name__)
             if base is Object:
                 break
@@ -320,9 +294,9 @@ class Object(HasStrictTraits):
         if self.initialized:
             return
 
-        # Refresh the pipe before initializing the children, so that
-        # when they do the same, the only have to hop 1 time at max.
-        self.inherit_pipe()
+        # Refresh the session before initializing the children so that
+        # when they do the same, they only have to hop 1 time at max.
+        self.inherit_session()
         for child in self._children:
             child.initialize()
 
@@ -599,26 +573,25 @@ class Object(HasStrictTraits):
             msg = "Unhandled action '%s' for Object %s:%s"
             logger.warn(msg % (action, self.class_name, self.object_id))
 
-    def inherit_pipe(self):
-        """ Inherit the action pipe from the ancestors of this object.
+    def inherit_session(self):
+        """ Inherit the session from the ancestors of this object.
 
-        If the `action_pipe` for this instance is None, then this method
+        If the `session` object for this instance is None, this method
         will walk the tree of ancestors until it finds an object with a
-        non null `action_pipe`. That pipe will then be used as the pipe
-        for this object.
+        non None `session` which will be used as the session object.
 
         """
-        if self.action_pipe is None:
+        if self.session is None:
             parent = self._parent
             while parent is not None:
-                pipe = parent.action_pipe
-                if pipe is not None:
-                    self.action_pipe = pipe
+                session = parent.session
+                if session is not None:
+                    self.session = session
                     return
                 parent = parent._parent
 
     def send_action(self, action, content):
-        """ Send an action on the action pipe for this object.
+        """ Send an action to the client of this object.
 
         The action will only be sent if the object is fully initialized.
 
@@ -632,12 +605,12 @@ class Object(HasStrictTraits):
 
         """
         if self.initialized:
-            pipe = self.action_pipe
-            if pipe is None:
-                self.inherit_pipe()
-                pipe = self.action_pipe
-            if pipe is not None:
-                pipe.send(self.object_id, action, content)
+            session = self.session
+            if session is None:
+                self.inherit_session()
+                session = self.session
+            if session is not None:
+                session.send(self.object_id, action, content)
 
     def snapshot(self):
         """ Create a snapshot of the tree starting from this object.
