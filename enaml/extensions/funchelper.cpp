@@ -5,6 +5,8 @@
 #include <Python.h>
 
 
+extern "C" {
+
 /* Call a function with an optional locals mapping.
 
 This allows Enaml to generate bytecode with the LOAD_GLOBAL opcode
@@ -13,8 +15,6 @@ dynamic scoping. The code below is a slightly tweaked `function_call`
 from Python's funcobject.c
 
 */
-extern "C" {
-
 static PyObject*
 call_func( PyObject* mod, PyObject* args )
 {
@@ -110,8 +110,6 @@ PyMODINIT_FUNC
 initfunchelper( void )
 {
     PyObject* mod = Py_InitModule( "funchelper", funchelper_methods );
-    if( !mod )
-        return;
 }
 
 } // extern "C"
