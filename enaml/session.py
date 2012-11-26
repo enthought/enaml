@@ -33,9 +33,8 @@ class Session(HasTraits):
     socket = Property(fget=lambda self: self._socket)
 
     #: The objects being managed by this session. These are updated
-    #: during the call to the `open` method. This list should not
-    #: be modified by user code.
-    session_objects = Property(fget=lambda self: self._session_objects)
+    #: during the call to the `open` method.
+    objects = Property(fget=lambda self: self._objects)
 
     #: The user groups to which this session belongs. This should be
     #: set by the user *before* the `on_open` method is called.
@@ -48,7 +47,7 @@ class Session(HasTraits):
     _socket = Instance(ActionSocketInterface)
 
     #: Internal storage for the session objects
-    _session_objects = List(Object)
+    _objects = List(Object)
 
     #--------------------------------------------------------------------------
     # Abstract API
@@ -82,22 +81,12 @@ class Session(HasTraits):
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
-    def snapshot(self):
-        """ Get a snapshot of this session.
-
-        Returns
-        -------
-        result : list
-            A list of snapshot dictionaries representing the current
-            state of this session.
-
-        """
-        return [obj.snapshot() for obj in self._session_objects]
-
     def open(self, session_id, socket):
         """ Called by the application when the session is opened.
 
-        This method should never be called by user code.
+        This method will call the `on_open` abstract method which must
+        be implemented by subclasses. The method should never be called
+        by user code.
 
         Parameters
         ----------
@@ -115,11 +104,7 @@ class Session(HasTraits):
             objs = [objs]
         else:
             objs = list(objs)
-        self._session_objects = objs
-        # Apply the session before initialization so that the session
-        # is inherited by every object in the tree. The socket is setup
-        # after initialization so that any messages sent during setup
-        # are ignored.
+        self._objects = objs
         for obj in objs:
             obj.session = self
             obj.initialize()
@@ -129,14 +114,30 @@ class Session(HasTraits):
     def close(self):
         """ Called by the application when the session is closed.
 
+        This method will call the `on_close` method which may be
+        implemented by subclasses. The method should never be called
+        by user code.
+
         """
         self.on_close()
-        for obj in self._session_objects:
+        for obj in self._objects:
             obj.destroy()
-        self._session_objects = []
+        self._objects = []
         socket = self._socket
         if socket is not None:
             socket.on_message(None)
+
+    def snapshot(self):
+        """ Get a snapshot of this session.
+
+        Returns
+        -------
+        result : list
+            A list of snapshot dictionaries representing the current
+            state of this session.
+
+        """
+        return [obj.snapshot() for obj in self._objects]
 
     def send(self, object_id, action, content):
         """ Send a message to a client object.
