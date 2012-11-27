@@ -182,9 +182,9 @@ def stack_item_factory():
     return QtStackItem
 
 
-def text_editor_factory():
-    from .qt_text_editor import QtTextEditor
-    return QtTextEditor
+#def text_editor_factory():
+#    from .qt_text_editor import QtTextEditor
+#    return QtTextEditor
 
 
 def time_selector_factory():
@@ -247,7 +247,6 @@ def register_default():
     register('Splitter', splitter_factory)
     register('Stack', stack_factory)
     register('StackItem', stack_item_factory)
-    register('TextEditor', text_editor_factory)
     register('TimeSelector', time_selector_factory)
     register('ToolBar', tool_bar_factory)
     register('WebView', web_view_factory)
