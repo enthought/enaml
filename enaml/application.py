@@ -458,3 +458,116 @@ class Application(object):
         self._sessions = {}
         Application._instance = None
 
+
+#------------------------------------------------------------------------------
+# Helper Functions
+#------------------------------------------------------------------------------
+def deferred_call(callback, *args, **kwargs):
+    """ Invoke a callable on the next cycle of the main event loop
+    thread.
+
+    This is a convenience function for invoking the same method on the
+    current application instance. If an application instance does not
+    exist, a RuntimeError will be raised.
+
+    Parameters
+    ----------
+    callback : callable
+        The callable object to execute at some point in the future.
+
+    *args, **kwargs
+        Any additional positional and keyword arguments to pass to
+        the callback.
+
+    """
+    app = Application.instance()
+    if app is None:
+        raise RuntimeError('Application instance does not exist')
+    app.deferred_call(callback, *args, **kwargs)
+
+
+def timed_call(ms, callback, *args, **kwargs):
+    """ Invoke a callable on the main event loop thread at a specified
+    time in the future.
+
+    This is a convenience function for invoking the same method on the
+    current application instance. If an application instance does not
+    exist, a RuntimeError will be raised.
+
+    Parameters
+    ----------
+    ms : int
+        The time to delay, in milliseconds, before executing the
+        callable.
+
+    callback : callable
+        The callable object to execute at some point in the future.
+
+    *args, **kwargs
+        Any additional positional and keyword arguments to pass to
+        the callback.
+
+    """
+    app = Application.instance()
+    if app is None:
+        raise RuntimeError('Application instance does not exist')
+    app.timed_call(ms, callback, *args, **kwargs)
+
+
+def is_main_thread():
+    """ Indicates whether the caller is on the main gui thread.
+
+    This is a convenience function for invoking the same method on the
+    current application instance. If an application instance does not
+    exist, a RuntimeError will be raised.
+
+    Returns
+    -------
+    result : bool
+        True if called from the main gui thread. False otherwise.
+
+    """
+    app = Application.instance()
+    if app is None:
+        raise RuntimeError('Application instance does not exist')
+    return app.is_main_thread()
+
+
+def schedule(self, callback, args=None, kwargs=None, priority=0):
+    """ Schedule a callable to be executed on the event loop thread.
+
+    This call is thread-safe.
+
+    This is a convenience function for invoking the same method on the
+    current application instance. If an application instance does not
+    exist, a RuntimeError will be raised.
+
+    Parameters
+    ----------
+    callback : callable
+        The callable object to be executed.
+
+    args : tuple, optional
+        The positional arguments to pass to the callable.
+
+    kwargs : dict, optional
+        The keyword arguments to pass to the callable.
+
+    priority : int, optional
+        The queue priority for the callable. Smaller values indicate
+        lower priority, larger values indicate higher priority. The
+        default priority is zero.
+
+    Returns
+    -------
+    result : ScheduledTask
+        A task object which can be used to unschedule the task or
+        retrieve the results of the callback after the task has
+        been executed.
+
+    """
+    app = Application.instance()
+    if app is None:
+        raise RuntimeError('Application instance does not exist')
+    return app.schedule(callback, args, kwargs, priority)
+
