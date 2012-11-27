@@ -4,29 +4,13 @@
 #------------------------------------------------------------------------------
 import logging
 
+from enaml.dispatch import dispatch_action
+
 from .qt_object import QtObject
 from .qt_widget_registry import QtWidgetRegistry
 
 
 logger = logging.getLogger(__name__)
-
-
-class QtSessionHandler(QtObject):
-    """ An object handler for messages sent to the session.
-
-    """
-    def on_action_message_batch(self, content):
-        """ Handle the 'message_batch' action sent by the Enaml
-        application.
-
-        """
-        for object_id, action, msg_content in content['batch']:
-            obj = QtObject.lookup_object(object_id)
-            if obj is None:
-                msg = "Invalid object id sent to QtSession: %s:%s"
-                logger.warn(msg % (object_id, action))
-            else:
-                obj.handle_action(action, msg_content)
 
 
 class QtSession(object):
@@ -47,7 +31,6 @@ class QtSession(object):
         """
         self._session_id = session_id
         self._widget_groups = widget_groups
-        self._handler = QtSessionHandler(session_id, None, self)
         self._socket = None
         self._objects = []
 
@@ -81,8 +64,6 @@ class QtSession(object):
         """ Close the session and release all object references.
 
         """
-        self._handler.destroy()
-        self._handler = None
         for obj in self._objects:
             obj.destroy()
         self._objects = []
@@ -128,6 +109,9 @@ class QtSession(object):
             self.build(child, obj)
         return obj
 
+    #--------------------------------------------------------------------------
+    # Messaging API
+    #--------------------------------------------------------------------------
     def send(self, object_id, action, content):
         """ Send a message to a server object.
 
@@ -169,10 +153,28 @@ class QtSession(object):
             The content dictionary for the action.
 
         """
-        obj = QtObject.lookup_object(object_id)
-        if obj is None:
-            msg = "Invalid object id sent to QtSession: %s:%s"
-            logger.warn(msg % (object_id, action))
-            return
-        obj.handle_action(action, content)
+        if object_id == self._session_id:
+            obj = self
+        else:
+            obj = QtObject.lookup_object(object_id)
+            if obj is None:
+                msg = "Invalid object id sent to QtSession: %s:%s"
+                logger.warn(msg % (object_id, action))
+                return
+        dispatch_action(obj, action, content)
+
+    #--------------------------------------------------------------------------
+    # Action Handlers
+    #--------------------------------------------------------------------------
+    def on_action_message_batch(self, content):
+        """ Handle the 'message_batch' action sent by the Enaml session.
+
+        """
+        for object_id, action, msg_content in content['batch']:
+            obj = QtObject.lookup_object(object_id)
+            if obj is None:
+                msg = "Invalid object id sent to QtSession %s:%s"
+                logger.warn(msg % (object_id, action))
+            else:
+                dispatch_action(obj, action, msg_content)
 

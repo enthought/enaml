@@ -3,15 +3,11 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import functools
-import logging
 
 from enaml.utils import LoopbackGuard
 
 from .qt.QtCore import QObject
 from .q_deferred_caller import QDeferredCaller
-
-
-logger = logging.getLogger(__name__)
 
 
 def deferred_updates(func):
@@ -523,33 +519,8 @@ class QtObject(object):
         return -1
 
     #--------------------------------------------------------------------------
-    # Messaging Methods
+    # Messaging API
     #--------------------------------------------------------------------------
-    def handle_action(self, action, content):
-        """ Handle an action sent from an Enaml widget.
-
-        This method tells the object to handle a specific action. The
-        default behavior of the method is to dispatch the action to a
-        handler method named `on_action_<action>` where <action> is
-        substituted with the provided action.
-
-        Parameters
-        ----------
-        action : str
-            The action to be performed by the object.
-
-        content : dict
-            The content dictionary for the action.
-
-        """
-        handler_name = 'on_action_' + action
-        handler = getattr(self, handler_name, None)
-        if handler is not None:
-            handler(content)
-        else:
-            msg = "Unhandled action '%s' for QtObject %s:%s"
-            logger.warn(msg % (action, type(self).__name__, self._object_id))
-
     def send_action(self, action, content):
         """ Send an action to the session for this object.
 

@@ -3,7 +3,6 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from collections import defaultdict, deque, namedtuple
-import logging
 import re
 
 from traits.api import (
@@ -11,12 +10,10 @@ from traits.api import (
     cached_property
 )
 
+from enaml.support.resource_handle import ResourceHandle
 from enaml.utils import LoopbackGuard, id_generator
 
 from .trait_types import EnamlEvent
-
-
-logger = logging.getLogger(__name__)
 
 
 #: A namedtuple which contains information about a child change event.
@@ -546,33 +543,8 @@ class Object(HasStrictTraits):
                 child.destroy()
 
     #--------------------------------------------------------------------------
-    # Messaging Methods
+    # Messaging API
     #--------------------------------------------------------------------------
-    def handle_action(self, action, content):
-        """ Handle the specified action with the given content.
-
-        This method tells the object to handle a specific action. The
-        default behavior of the method is to dispatch the action to a
-        handler method named `on_action_<action>` where <action> is
-        substituted with the provided action.
-
-        Parameters
-        ----------
-        action : str
-            The action to be performed by the object.
-
-        content : dict
-            The content dictionary for the action.
-
-        """
-        handler_name = 'on_action_' + action
-        handler = getattr(self, handler_name, None)
-        if handler is not None:
-            handler(content)
-        else:
-            msg = "Unhandled action '%s' for Object %s:%s"
-            logger.warn(msg % (action, self.class_name, self.object_id))
-
     def inherit_session(self):
         """ Inherit the session from the ancestors of this object.
 
@@ -733,8 +705,19 @@ class Object(HasStrictTraits):
             self.send_action(action, content)
 
     #--------------------------------------------------------------------------
-    # Tree Methods
+    # Convenience Methods
     #--------------------------------------------------------------------------
+    def resource(self, name):
+        """ Get a resource handle for the given name.
+
+        Returns
+        -------
+        result : ResourceHandle
+            A handle to a session resource with the given name.
+
+        """
+        return ResourceHandle(self, name)
+
     def traverse(self, depth_first=False):
         """ Yields all of the object in the tree, from this object down.
 
