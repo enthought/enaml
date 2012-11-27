@@ -11,25 +11,8 @@ from .qt_widget_registry import QtWidgetRegistry
 logger = logging.getLogger(__name__)
 
 
-def batch_handler_id(session_id):
-    """ Create a batch handler id for the given session id.
-
-    Parameters
-    ----------
-    session_id : str
-        The identifier for a session.
-
-    Returns
-    -------
-    result : str
-        An identifier for the batch handler for the session.
-
-    """
-    return session_id + '_batch_handler'
-
-
-class QtBatchHandler(QtObject):
-    """ An object handler for managing root level session messages.
+class QtSessionHandler(QtObject):
+    """ An object handler for messages sent to the session.
 
     """
     def on_action_message_batch(self, content):
@@ -60,8 +43,7 @@ class QtSession(object):
 
         """
         self._session_id = session_id
-        batch_id = batch_handler_id(session_id)
-        self._batch_handler = QtBatchHandler(batch_id, None, self)
+        self._batch_handler = QtSessionHandler(session_id, None, self)
         self._socket = None
         self._objects = []
 

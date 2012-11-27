@@ -190,17 +190,16 @@ class QServerSocket(QActionSocket):
     should be collapsed and sent to the client as a batch.
 
     """
-    def __init__(self, batch_id):
+    def __init__(self, session_id):
         """ Initialize a QServerSocket.
 
-        batch_id : str
-            The string identifier to use for a client-side object which
-            handles batch messages. This id should be unique for the
-            session.
+        session_id : str
+            The string identifier to use for sending batched messages
+            to the client session.
 
         """
         super(QServerSocket, self).__init__()
-        self._batch_id = batch_id
+        self._session_id = session_id
         self._batch = None
 
     def send(self, object_id, action, content):
@@ -228,5 +227,6 @@ class QServerSocket(QActionSocket):
         """
         batch = self._batch
         self._batch = None
-        self.send(self._batch_id, 'message_batch', {'batch': batch.messages()})
+        content = {'batch': batch.messages()}
+        self.send(self._session_id, 'message_batch', content)
 

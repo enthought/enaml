@@ -10,7 +10,7 @@ from .qt.QtCore import Qt, QThread
 from .qt.QtGui import QApplication
 from .q_action_socket import QClientSocket, QServerSocket
 from .q_deferred_caller import QDeferredCaller
-from .qt_session import QtSession, batch_handler_id
+from .qt_session import QtSession
 from .qt_factories import register_default
 
 
@@ -184,8 +184,7 @@ class QtApplication(Application):
         """
         sockets = self._sockets
         if session_id not in sockets:
-            batch_id = batch_handler_id(session_id)
-            server_socket = QServerSocket(batch_id)
+            server_socket = QServerSocket(session_id)
             client_socket = QClientSocket()
             conn = Qt.QueuedConnection
             server_socket.messagePosted.connect(client_socket.receive, conn)
