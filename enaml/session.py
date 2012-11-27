@@ -2,16 +2,99 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from collections import Iterable
 import logging
 
-from traits.api import HasTraits, Instance, Property, List, Str
+from traits.api import HasTraits, Instance, List, Str, ReadOnly
 
 from enaml.core.object import Object
-from enaml.socket_interface import ActionSocketInterface
+
+from .application import deferred_call
+from .signaling import Signal
+from .socket_interface import ActionSocketInterface
 
 
 logger = logging.getLogger(__name__)
+
+
+#: The set of actions which should be batched and sent to the client as
+#: a single message. This allows a client to perform intelligent message
+#: handling when dealing with messages that may affect the widget tree.
+BATCH_ACTIONS = set(['destroy', 'children_changed', 'relayout'])
+
+
+class DeferredMessageBatch(object):
+    """ A class which aggregates batch messages.
+
+    Each time a message is added to this object, its tick count is
+    incremented and a tick down event is posted to the event queue.
+    When the object receives the tick down event, it decrements its
+    tick count, and if it's zero, fires the `triggered` signal.
+
+    This allows a consumer of the batch to continually add messages and
+    have the `triggered` signal fired only when the event queue is fully
+    drained of relevant messages.
+
+    """
+    #: A signal emitted when the tick count of the batch reaches zero
+    #: and the owner of the batch should consume the messages.
+    triggered = Signal()
+
+    def __init__(self):
+        """ Initialize a DeferredMessageBatch.
+
+        """
+        self._messages = []
+        self._tick = 0
+
+    #--------------------------------------------------------------------------
+    # Private API
+    #--------------------------------------------------------------------------
+    def _tick_down(self):
+        """ A private handler method which ticks down the batch.
+
+        The tick down events are called in a deferred fashion to allow
+        for the aggregation of batch events. When the tick reaches
+        zero, the `triggered` signal will be emitted.
+
+        """
+        self._tick -= 1
+        if self._tick == 0:
+            self.triggered.emit()
+        else:
+            deferred_call(self._tick_down)
+
+    #--------------------------------------------------------------------------
+    # Public API
+    #--------------------------------------------------------------------------
+    def release(self):
+        """ Release the messages that were added to the batch.
+
+        Returns
+        -------
+        result : list
+            The list of messages added to the batch.
+
+        """
+        messages = self._messages
+        self._messages = []
+        return messages
+
+    def add_message(self, message):
+        """ Add a message to the batch.
+
+        This will cause the batch to tick up and then start the tick
+        down process if necessary.
+
+        Parameters
+        ----------
+        message : object
+            The message object to add to the batch.
+
+        """
+        self._messages.append(message)
+        if self._tick == 0:
+            deferred_call(self._tick_down)
+        self._tick += 1
 
 
 class Session(HasTraits):
@@ -25,29 +108,46 @@ class Session(HasTraits):
 
     """
     #: The string identifier for this session. This is provided by
-    #: the application in the `open` method.
-    session_id = Property(fget=lambda self: self._session_id)
+    #: the application in the `open` method. The value should not
+    #: be manipulated by user code.
+    session_id = ReadOnly
+
+    #: The objects being managed by this session. This list should be
+    #: populated by user code during the `on_open` method.
+    objects =  List(Object)
+
+    #: The widget implementation groups which should be used by the
+    #: widgets in this session. Widget groups are an advanced feature
+    #: which allow the developer to selectively expose toolkit specific
+    #: implementations Enaml widgets. All standard Enaml widgets are
+    #: available in the 'default' group, which means this value will
+    #: rarely need to be changed by the user.
+    widget_groups = List(Str, ['default'])
 
     #: The socket used by this session for communication. This is
-    #: provided by the Application in the `open` method.
-    socket = Property(fget=lambda self: self._socket)
+    #: provided by the Application in the `open` method. The value
+    #: should not normally be manipulated by user code.
+    socket = Instance(ActionSocketInterface)
 
-    #: The objects being managed by this session. These are updated
-    #: during the call to the `open` method.
-    objects = Property(fget=lambda self: self._objects)
+    #: The private deferred message batch used for collapsing layout
+    #: related messages into a single batch to send to the client
+    #: session for more efficient handling.
+    _batch = Instance(DeferredMessageBatch)
+    def __batch_default(self):
+        batch = DeferredMessageBatch()
+        batch.triggered.connect(self._on_batch_triggered)
+        return batch
 
-    #: The user groups to which this session belongs. This should be
-    #: set by the user *before* the `on_open` method is called.
-    user_groups = List(Str, ['users'])
+    #--------------------------------------------------------------------------
+    # Private API
+    #--------------------------------------------------------------------------
+    def _on_batch_triggered(self):
+        """ A signal handler for the `triggered` signal on the deferred
+        message batch.
 
-    #: Internal storage fo the session id.
-    _session_id = Str
-
-    #: Internal storage for the session socket
-    _socket = Instance(ActionSocketInterface)
-
-    #: Internal storage for the session objects
-    _objects = List(Object)
+        """
+        content = {'batch': self._batch.release()}
+        self.send(self.session_id, 'message_batch', content)
 
     #--------------------------------------------------------------------------
     # Abstract API
@@ -98,17 +198,12 @@ class Session(HasTraits):
             for messaging by this session.
 
         """
-        self._session_id = session_id
-        objs = self.on_open()
-        if not isinstance(objs, Iterable):
-            objs = [objs]
-        else:
-            objs = list(objs)
-        self._objects = objs
-        for obj in objs:
+        self.session_id = session_id
+        self.on_open()
+        for obj in self.objects:
             obj.session = self
             obj.initialize()
-        self._socket = socket
+        self.socket = socket
         socket.on_message(self.on_message)
 
     def close(self):
@@ -120,10 +215,10 @@ class Session(HasTraits):
 
         """
         self.on_close()
-        for obj in self._objects:
+        for obj in self.objects:
             obj.destroy()
-        self._objects = []
-        socket = self._socket
+        self.objects = []
+        socket = self.socket
         if socket is not None:
             socket.on_message(None)
 
@@ -137,7 +232,7 @@ class Session(HasTraits):
             state of this session.
 
         """
-        return [obj.snapshot() for obj in self._objects]
+        return [obj.snapshot() for obj in self.objects]
 
     def send(self, object_id, action, content):
         """ Send a message to a client object.
@@ -157,9 +252,12 @@ class Session(HasTraits):
             The content dictionary for the action.
 
         """
-        socket = self._socket
+        socket = self.socket
         if socket is not None:
-            socket.send(object_id, action, content)
+            if action in BATCH_ACTIONS:
+                self._batch.add_message((object_id, action, content))
+            else:
+                socket.send(object_id, action, content)
 
     def on_message(self, object_id, action, content):
         """ Receive a message sent to an object owned by this session.
