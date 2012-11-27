@@ -61,7 +61,7 @@ class QtApplication(Application):
         -------
         result : ActionSocketInterface
             An implementor of ActionSocketInterface which can be used
-            by Enaml Sessione instances for messaging.
+            by Enaml Session instances for messaging.
 
         """
         return self._socket_pair(session_id)[0]

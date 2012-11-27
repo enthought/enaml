@@ -195,7 +195,7 @@ class Application(object):
         -------
         result : ActionSocketInterface
             An implementor of ActionSocketInterface which can be used
-            by Enaml Sessione instances for messaging.
+            by Enaml Session instances for messaging.
 
         """
         raise NotImplementedError
