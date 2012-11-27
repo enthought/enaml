@@ -16,7 +16,7 @@ class QtWidgetRegistry(object):
     _groups = defaultdict(dict)
 
     @classmethod
-    def register(cls, name, factory, group='', strict=False):
+    def register(cls, name, factory, group, strict=False):
         """ Registery a widget factory.
 
         Parameters
@@ -29,10 +29,8 @@ class QtWidgetRegistry(object):
             A callable which takes no arguments and returns the class
             which implements the widget.
 
-        group : str, optional
+        group : str
             The widget group with which this factory is associated.
-            If not provided, the widget will be registered with the
-            default group.
 
         strict : bool, optional
             If True, attempting to register a factory for a widget
@@ -48,7 +46,7 @@ class QtWidgetRegistry(object):
         thisgroup[name] = factory
 
     @classmethod
-    def lookup(cls, name, groups=None):
+    def lookup(cls, name, groups):
         """ Lookup a widget factory.
 
         Parameters
@@ -56,14 +54,12 @@ class QtWidgetRegistry(object):
         name : str
             The name of the Enaml widget for which to lookup a factory.
 
-        groups : list of str, optional
+        groups : list of str
             The list of groups to check for a matching factory. The
             groups are checked in order with the first match being
             returned. If no match is found, None will be returned.
-            The default groups list contains the default group.
 
         """
-        groups = groups or ['']
         thesegroups = cls._groups
         for group in groups:
             if group in thesegroups:

@@ -209,7 +209,8 @@ def window_factory():
 
 def register_default():
     from .qt_widget_registry import QtWidgetRegistry
-    register = QtWidgetRegistry.register
+    reg = QtWidgetRegistry.register
+    register = lambda name, factory: reg(name, factory, 'default')
     register('Action', action_factory)
     register('ActionGroup', action_group_factory)
     register('Calendar', calendar_factory)
