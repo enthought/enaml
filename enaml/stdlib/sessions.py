@@ -8,6 +8,7 @@ This module contains some Session subclasses and associated utilities that
 handle common Session use cases.
 
 """
+from collections import Iterable
 from functools import wraps
 
 from enaml.session import Session
@@ -19,10 +20,11 @@ class SimpleSession(Session):
     and keyword arguments and creates the associated view(s).
 
     """
-    def init(self, sess_callable, *args, **kwargs):
+    def __init__(self, sess_callable, *args, **kwargs):
         """ Initialize the session with the callable and arguments.
 
         """
+        super(SimpleSession, self).__init__()
         self.sess_callable = sess_callable
         self.args = args
         self.kwargs = kwargs
@@ -31,7 +33,11 @@ class SimpleSession(Session):
         """ Create the view from the callable
 
         """
-        return self.sess_callable(*self.args, **self.kwargs)
+        o = self.sess_callable(*self.args, **self.kwargs)
+        if isinstance(o, Iterable):
+            self.objects.extend(o)
+        else:
+            self.objects.append(o)
 
 
 def simple_session(sess_name, sess_descr, sess_callable, *args, **kwargs):
@@ -117,7 +123,6 @@ def show_simple_view(view, toolkit='qt', description=''):
     if toolkit == 'qt':
         from enaml.qt.qt_application import QtApplication
         app = QtApplication([simple_session('main', description, f)])
-    # the wx refactor is not yet complete
     elif toolkit == 'wx':
         from enaml.wx.wx_application import WxApplication
         app = WxApplication([simple_session('main', description, f)])

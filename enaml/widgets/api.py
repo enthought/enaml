@@ -41,7 +41,7 @@ from .split_item import SplitItem
 from .splitter import Splitter
 from .stack import Stack
 from .stack_item import StackItem
-from .text_editor import TextEditor
+#from .text_editor import TextEditor
 from .time_selector import TimeSelector
 from .tool_bar import ToolBar
 from .web_view import WebView

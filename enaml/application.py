@@ -2,14 +2,12 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from abc import ABCMeta, abstractmethod, abstractproperty
+from abc import ABCMeta, abstractmethod
 from heapq import heappush, heappop
 from itertools import count
 import logging
 from threading import Lock
 import uuid
-
-from enaml.core.object import Object
 
 
 logger = logging.getLogger(__name__)
@@ -183,15 +181,21 @@ class Application(object):
     #--------------------------------------------------------------------------
     # Abstract API
     #--------------------------------------------------------------------------
-    @abstractproperty
-    def pipe_interface(self):
-        """ Get the ActionPipeInterface for this application.
+    @abstractmethod
+    def socket(self, session_id):
+        """ Get the ActionSocketInterface for a session.
+
+        Parameters
+        ----------
+        session_id : str
+            The string identifier for the session which will use the
+            created action socket.
 
         Returns
         -------
-        result : ActionPipeInterface
-            An implementor of ActionPipeInterface which can be used by
-            Enaml Object instances to send messages to their clients.
+        result : ActionSocketInterface
+            An implementor of ActionSocketInterface which can be used
+            by Enaml Session instances for messaging.
 
         """
         raise NotImplementedError
@@ -360,6 +364,23 @@ class Application(object):
         ]
         return info
 
+    def session(self, session_id):
+        """ Get the session for the given session id.
+
+        Parameters
+        ----------
+        session_id : str
+            The unique identifier for the session to retrieve.
+
+        Returns
+        -------
+        result : Session or None
+            The session object with the given id, or None if the id
+            does not correspond to an active session.
+
+        """
+        return self._sessions.get(session_id)
+
     def start_session(self, name):
         """ Start a new session of the given name.
 
@@ -381,10 +402,10 @@ class Application(object):
         if name not in self._named_factories:
             raise ValueError('Invalid session name')
         factory = self._named_factories[name]
+        session = factory()
         session_id = uuid.uuid4().hex
-        session = factory(session_id)
         self._sessions[session_id] = session
-        session.open(self.pipe_interface)
+        session.open(session_id, self.socket(session_id))
         return session_id
 
     def end_session(self, session_id):
@@ -423,30 +444,6 @@ class Application(object):
             raise ValueError('Invalid session id')
         return session.snapshot()
 
-    def dispatch_action(self, object_id, action, content):
-        """ Dispatch an action to an object with the given id.
-
-        This method can be called by subclasses when they receive an
-        action message from a client object. If the object does not
-        exist, an exception will be raised.
-
-        Parameters
-        ----------
-        object_id : str
-            The unique identifier for the object.
-
-        action : str
-            The action to be performed by the object.
-
-        content : dict
-            The dictionary of content needed to perform the action.
-
-        """
-        obj = Object.lookup_object(object_id)
-        if obj is None:
-            raise ValueError('Invalid object id')
-        obj.handle_action(action, content)
-
     def destroy(self):
         """ Destroy this application instance.
 
@@ -460,4 +457,117 @@ class Application(object):
         self._named_factories = {}
         self._sessions = {}
         Application._instance = None
+
+
+#------------------------------------------------------------------------------
+# Helper Functions
+#------------------------------------------------------------------------------
+def deferred_call(callback, *args, **kwargs):
+    """ Invoke a callable on the next cycle of the main event loop
+    thread.
+
+    This is a convenience function for invoking the same method on the
+    current application instance. If an application instance does not
+    exist, a RuntimeError will be raised.
+
+    Parameters
+    ----------
+    callback : callable
+        The callable object to execute at some point in the future.
+
+    *args, **kwargs
+        Any additional positional and keyword arguments to pass to
+        the callback.
+
+    """
+    app = Application.instance()
+    if app is None:
+        raise RuntimeError('Application instance does not exist')
+    app.deferred_call(callback, *args, **kwargs)
+
+
+def timed_call(ms, callback, *args, **kwargs):
+    """ Invoke a callable on the main event loop thread at a specified
+    time in the future.
+
+    This is a convenience function for invoking the same method on the
+    current application instance. If an application instance does not
+    exist, a RuntimeError will be raised.
+
+    Parameters
+    ----------
+    ms : int
+        The time to delay, in milliseconds, before executing the
+        callable.
+
+    callback : callable
+        The callable object to execute at some point in the future.
+
+    *args, **kwargs
+        Any additional positional and keyword arguments to pass to
+        the callback.
+
+    """
+    app = Application.instance()
+    if app is None:
+        raise RuntimeError('Application instance does not exist')
+    app.timed_call(ms, callback, *args, **kwargs)
+
+
+def is_main_thread():
+    """ Indicates whether the caller is on the main gui thread.
+
+    This is a convenience function for invoking the same method on the
+    current application instance. If an application instance does not
+    exist, a RuntimeError will be raised.
+
+    Returns
+    -------
+    result : bool
+        True if called from the main gui thread. False otherwise.
+
+    """
+    app = Application.instance()
+    if app is None:
+        raise RuntimeError('Application instance does not exist')
+    return app.is_main_thread()
+
+
+def schedule(self, callback, args=None, kwargs=None, priority=0):
+    """ Schedule a callable to be executed on the event loop thread.
+
+    This call is thread-safe.
+
+    This is a convenience function for invoking the same method on the
+    current application instance. If an application instance does not
+    exist, a RuntimeError will be raised.
+
+    Parameters
+    ----------
+    callback : callable
+        The callable object to be executed.
+
+    args : tuple, optional
+        The positional arguments to pass to the callable.
+
+    kwargs : dict, optional
+        The keyword arguments to pass to the callable.
+
+    priority : int, optional
+        The queue priority for the callable. Smaller values indicate
+        lower priority, larger values indicate higher priority. The
+        default priority is zero.
+
+    Returns
+    -------
+    result : ScheduledTask
+        A task object which can be used to unschedule the task or
+        retrieve the results of the callback after the task has
+        been executed.
+
+    """
+    app = Application.instance()
+    if app is None:
+        raise RuntimeError('Application instance does not exist')
+    return app.schedule(callback, args, kwargs, priority)
 
