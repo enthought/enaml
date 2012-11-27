@@ -8,6 +8,7 @@ This module contains some Session subclasses and associated utilities that
 handle common Session use cases.
 
 """
+from collections import Iterable
 from functools import wraps
 
 from enaml.session import Session
@@ -32,7 +33,11 @@ class SimpleSession(Session):
         """ Create the view from the callable
 
         """
-        return self.sess_callable(*self.args, **self.kwargs)
+        o = self.sess_callable(*self.args, **self.kwargs)
+        if isinstance(o, Iterable):
+            self.objects.extend(o)
+        else:
+            self.objects.append(o)
 
 
 def simple_session(sess_name, sess_descr, sess_callable, *args, **kwargs):
