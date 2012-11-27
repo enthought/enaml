@@ -47,7 +47,7 @@ class QtSession(object):
         """
         self._session_id = session_id
         self._widget_groups = widget_groups
-        self._batch_handler = QtSessionHandler(session_id, None, self)
+        self._handler = QtSessionHandler(session_id, None, self)
         self._socket = None
         self._objects = []
 
@@ -81,8 +81,8 @@ class QtSession(object):
         """ Close the session and release all object references.
 
         """
-        self._batch_handler.destroy()
-        self._batch_handler = None
+        self._handler.destroy()
+        self._handler = None
         for obj in self._objects:
             obj.destroy()
         self._objects = []
