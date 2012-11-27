@@ -76,16 +76,16 @@ class WxObject(object):
         return cls._objects.get(object_id)
 
     @classmethod
-    def construct(cls, tree, parent, pipe, builder):
+    def construct(cls, tree, parent, session):
         """ Construct the WxObject instance for the given parameters.
 
-        This classmethod is called by the WxBuilder object used by the
-        application. When called, it will create a new instance of the
-        class by extracting the object id from the snapshot and calling
-        the class constructor. It then invokes the `create` method on
-        the new instance. This classmethod exists for cases where it is
-        necessary to define custom construction behavior. A subclass
-        may reimplement this method as required.
+        This classmethod is called by the WxSession object which owns
+        the object being built. When called, it creates a new instance
+        of the class by extracting the object id from the snapshot and
+        calling the class' constructor. It then invokes the `create`
+        method on the new instance. This classmethod exists for cases
+        where it is necessary to define custom construction behavior.
+        A subclass may reimplement this method as required.
 
         Parameters
         ----------
@@ -97,12 +97,9 @@ class WxObject(object):
             The parent WxObject to use for this object, or None if this
             object is top-level.
 
-        pipe : wxActionPipe or None
-            The wxActionPipe to use for sending messages to the Enaml
-            object, or None if messaging is not desired.
-
-        builder : WxBuilder
-            The WxBuilder instance that is building this object.
+        session : WxSession
+            The WxSession object which owns this object. The session is
+            used for sending messages to the server side widgets.
 
         Returns
         -------
@@ -112,12 +109,12 @@ class WxObject(object):
         Notes
         -----
         This method does *not* construct the children for this object.
-        That responsibility lies with the WxBuilder object which calls
+        That responsibility lies with the WxSession object which calls
         this constructor.
 
         """
         object_id = tree['object_id']
-        self = cls(object_id, parent, pipe, builder)
+        self = cls(object_id, parent, session)
         self.create(tree)
         return self
 
@@ -190,7 +187,7 @@ class WxObject(object):
         cls._objects[object_id] = self
         return self
 
-    def __init__(self, object_id, parent, pipe, builder):
+    def __init__(self, object_id, parent, session):
         """ Initialize a WxObject.
 
         Parameters
@@ -210,8 +207,7 @@ class WxObject(object):
 
         """
         self._object_id = object_id
-        self._pipe = pipe
-        self._builder = builder
+        self._session = session
         self._parent = None
         self._children = []
         self._widget = None
@@ -391,6 +387,8 @@ class WxObject(object):
 
         # Remove what should be the last remaining strong reference to
         # `self` which will allow this object to be garbage collected.
+        # XXX remove from the session if top-level? It may not matter...
+        self._session = None
         WxObject._objects.pop(self._object_id, None)
 
     #--------------------------------------------------------------------------
@@ -561,9 +559,9 @@ class WxObject(object):
 
         """
         if self._initialized:
-            pipe = self._pipe
-            if pipe is not None:
-                pipe.send(self._object_id, action, content)
+            session = self._session
+            if session is not None:
+                session.send(self._object_id, action, content)
 
     #--------------------------------------------------------------------------
     # Action Handlers
@@ -589,15 +587,13 @@ class WxObject(object):
                 child.set_parent(None)
 
         # Build or reparent the children being added.
-        pipe = self._pipe
-        builder = self._builder
         for tree in content['added']:
             object_id = tree['object_id']
             child = lookup(object_id)
             if child is not None:
                 child.set_parent(self)
             else:
-                child = builder.build(tree, self, pipe)
+                child = self._session.build(tree, self)
                 child.initialize()
 
         # Update the ordering of the children based on the order given

@@ -2,38 +2,24 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from collections import defaultdict
 import logging
 
 import wx
 
 from enaml.application import Application
 
-from .wx_action_pipe import wxActionPipe, EVT_ACTION_PIPE
+from .wx_action_socket import wxActionSocket, EVT_ACTION_SOCKET
 from .wx_deferred_caller import wxDeferredCaller
-from .wx_builder import WxBuilder
-from .wx_object import WxObject
+from .wx_session import WxSession
+from .wx_factories import register_default
 
 
 logger = logging.getLogger(__name__)
 
 
-class WxRootHandler(WxObject):
-    """ An object handler for managing root level application messages.
-
-    """
-    def on_action_message_batch(self, content):
-        """ Handle the 'message_batch' action sent by the Enaml
-        application.
-
-        """
-        for object_id, action, msg_content in content['batch']:
-            obj = WxObject.lookup_object(object_id)
-            if obj is None:
-                msg = "Invalid object id sent to QtApplication: %s:%s"
-                logger.warn(msg % (object_id, action))
-            else:
-                obj.handle_action(action, msg_content)
+# This registers the default Wx factories with the WxWidgetRegistry and
+# allows an application access to the default widget implementations.
+register_default()
 
 
 class WxApplication(Application):
@@ -43,7 +29,7 @@ class WxApplication(Application):
     runs in the local process.
 
     """
-    def __init__(self, factories, builder=None):
+    def __init__(self, factories):
         """ Initialize a WxApplication.
 
         Parameters
@@ -52,41 +38,33 @@ class WxApplication(Application):
             An iterable of SessionFactory instances to pass to the
             superclass constructor.
 
-        builder : WxBuilder or None
-            An optional WxBuilder instance to manage the building of
-            WxObject instances for this application. If not provided,
-            a default builder will be used.
-
         """
         super(WxApplication, self).__init__(factories)
         self._wxapp = wx.GetApp() or wx.PySimpleApp()
         self._wxcaller = wxDeferredCaller()
-        self._enaml_pipe = epipe = wxActionPipe()
-        self._wx_pipe = wxpipe = wxActionPipe()
-        self._wx_builder = builder or WxBuilder()
-        self._wx_objects = defaultdict(list)
-        epipe.Bind(EVT_ACTION_PIPE, self._on_enaml_action)
-        wxpipe.Bind(EVT_ACTION_PIPE, self._on_wx_action)
-        # Create the root handler object for handling batched actions. A
-        # strong reference is kept by the WxObject class, so there is no
-        # need to store a reference to it on the application.
-        WxRootHandler(u'', None, None, None)
+        self._wx_sessions = {}
+        self._sockets = {}
 
     #--------------------------------------------------------------------------
     # Abstract API Implementation
     #--------------------------------------------------------------------------
-    @property
-    def pipe_interface(self):
-        """ Get the ActionPipeInterface for this application.
+    def socket(self, session_id):
+        """ Get the ActionSocketInterface for a session.
+
+        Parameters
+        ----------
+        session_id : str
+            The string identifier for the session which will use the
+            created action socket.
 
         Returns
         -------
-        result : ActionPipeInterface
-            An implementor of ActionPipeInterface which can be used by
-            Enaml Object instances to send messages to their clients.
+        result : ActionSocketInterface
+            An implementor of ActionSocketInterface which can be used
+            by Enaml Session instances for messaging.
 
         """
-        return self._enaml_pipe
+        return self._socket_pair(session_id)[0]
 
     def start(self):
         """ Start the application's main event loop.
@@ -163,14 +141,11 @@ class WxApplication(Application):
 
         """
         sid = super(WxApplication, self).start_session(name)
-        pipe = self._wx_pipe
-        builder = self._wx_builder
-        objects = self._wx_objects[sid]
-        for item in self.snapshot(sid):
-            obj = builder.build(item, None, pipe)
-            if obj is not None:
-                obj.initialize()
-                objects.append(obj)
+        socket = self._socket_pair(sid)[1]
+        groups = self.session(sid).widget_groups[:]
+        wx_session = WxSession(sid, groups)
+        self._wx_sessions[sid] = wx_session
+        wx_session.open(self.snapshot(sid), socket)
         return sid
 
     def end_session(self, session_id):
@@ -181,51 +156,40 @@ class WxApplication(Application):
 
         """
         super(WxApplication, self).end_session(session_id)
-        self._wx_objects.pop(session_id, None)
-
-    def dispatch_wx_action(self, object_id, action, content):
-        """ Dispatch an action to a wx object with the given id.
-
-        This method can be called when a message from an Enaml widget
-        is received and needs to be delivered to the Wx client widget.
-
-        Parameters
-        ----------
-        object_id : str
-            The unique identifier for the object.
-
-        action : str
-            The action to be performed by the object.
-
-        content : dict
-            The dictionary of content needed to perform the action.
-
-        """
-        obj = WxObject.lookup_object(object_id)
-        if obj is None:
-            msg = "Invalid object id sent to WxApplication: %s:%s"
-            logger.warn(msg % (object_id, action))
-            return
-        obj.handle_action(action, content)
+        wx_session = self._wx_sessions.pop(session_id, None)
+        if wx_session is not None:
+            wx_session.close()
+        self._sockets.pop(session_id, None)
 
     #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
-    def _on_enaml_action(self, event):
-        """ Handle an action event being posted by an Enaml object.
+    def _socket_pair(self, session_id):
+        """ Get the socket pair for the given session id.
+
+        If the socket pair does not yet exist, it will be created.
+
+        Parameters
+        ----------
+        session_id : str
+            The identifier of the session that will use the sockets.
+
+        Returns
+        -------
+        result : tuple
+            A 2-tuple of action sockets for the server and client sides,
+            respectively.
 
         """
-        object_id = event.object_id
-        action = event.action
-        content = event.content
-        self.dispatch_wx_action(object_id, action, content)
-
-    def _on_wx_action(self, event):
-        """ Handle an action event being posted by a Wx object.
-
-        """
-        object_id = event.object_id
-        action = event.action
-        content = event.content
-        self.dispatch_action(object_id, action, content)
+        sockets = self._sockets
+        if session_id not in sockets:
+            server_socket = wxActionSocket()
+            client_socket = wxActionSocket()
+            server_socket.Bind(EVT_ACTION_SOCKET, client_socket.receive)
+            client_socket.Bind(EVT_ACTION_SOCKET, server_socket.receive)
+            pair = (server_socket, client_socket)
+            sockets[session_id] = pair
+        else:
+            pair = sockets[session_id]
+        return pair
 
