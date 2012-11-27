@@ -30,8 +30,8 @@ class QActionSocket(QObject):
         self._callback = None
 
     def on_message(self, callback):
-        """ Register a callback for receiving messages sent by a
-        client object.
+        """ Register a callback for receiving messages sent by a client
+        object.
 
         Parameters
         ----------
