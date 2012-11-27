@@ -8,7 +8,7 @@ from enaml.application import Application
 
 from .qt.QtCore import Qt, QThread
 from .qt.QtGui import QApplication
-from .q_action_socket import QClientSocket, QServerSocket
+from .q_action_socket import QActionSocket
 from .q_deferred_caller import QDeferredCaller
 from .qt_session import QtSession
 from .qt_factories import register_default
@@ -144,7 +144,8 @@ class QtApplication(Application):
         """
         sid = super(QtApplication, self).start_session(name)
         socket = self._socket_pair(sid)[1]
-        qt_session = QtSession(sid)
+        groups = self.session(sid).widget_groups[:]
+        qt_session = QtSession(sid, groups)
         self._qt_sessions[sid] = qt_session
         qt_session.open(self.snapshot(sid), socket)
         return sid
@@ -184,8 +185,8 @@ class QtApplication(Application):
         """
         sockets = self._sockets
         if session_id not in sockets:
-            server_socket = QServerSocket(session_id)
-            client_socket = QClientSocket()
+            server_socket = QActionSocket()
+            client_socket = QActionSocket()
             conn = Qt.QueuedConnection
             server_socket.messagePosted.connect(client_socket.receive, conn)
             client_socket.messagePosted.connect(server_socket.receive, conn)

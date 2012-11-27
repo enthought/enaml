@@ -33,7 +33,7 @@ class QtSession(object):
     """ An object which manages a session of Qt client objects.
 
     """
-    def __init__(self, session_id):
+    def __init__(self, session_id, widget_groups):
         """ Initialize a QtSession.
 
         Parameters
@@ -41,8 +41,12 @@ class QtSession(object):
         session_id : str
             The string identifier for this session.
 
+        widget_groups : list of str
+            The list of string widget groups for this session.
+
         """
         self._session_id = session_id
+        self._widget_groups = widget_groups
         self._batch_handler = QtSessionHandler(session_id, None, self)
         self._socket = None
         self._objects = []
@@ -106,10 +110,11 @@ class QtSession(object):
             the building errors will be sent to the error logger.
 
         """
-        factory = QtWidgetRegistry.lookup(tree['class'])
+        groups = self._widget_groups
+        factory = QtWidgetRegistry.lookup(tree['class'], groups)
         if factory is None:
             for class_name in tree['bases']:
-                factory = QtWidgetRegistry.lookup(class_name)
+                factory = QtWidgetRegistry.lookup(class_name, groups)
                 if factory is not None:
                     break
         if factory is None:
