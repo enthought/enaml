@@ -7,8 +7,10 @@ import logging
 from traits.api import HasTraits, Instance, List, Str, ReadOnly
 
 from enaml.core.object import Object
+from enaml.support.resource import ResourceManager
 
 from .application import deferred_call
+from .dispatch import dispatch_action
 from .signaling import Signal
 from .socket_interface import ActionSocketInterface
 
@@ -114,7 +116,12 @@ class Session(HasTraits):
 
     #: The objects being managed by this session. This list should be
     #: populated by user code during the `on_open` method.
-    objects =  List(Object)
+    objects = List(Object)
+
+    #: The resource manager to use for this session. User code can add
+    #: resources to the default manager during the `on_open` method, or
+    #: replace it with a custom resource manager.
+    resources = Instance(ResourceManager, ())
 
     #: The widget implementation groups which should be used by the
     #: widgets in this session. Widget groups are an advanced feature
@@ -137,6 +144,18 @@ class Session(HasTraits):
         batch = DeferredMessageBatch()
         batch.triggered.connect(self._on_batch_triggered)
         return batch
+
+    @classmethod
+    def factory(cls, name='', description='', *args, **kwargs):
+        """ Get a SessionFactory for this Session class.
+
+        """
+        from enaml.session_factory import SessionFactory
+        if not name:
+            name = cls.__name__
+        if not description:
+            description = cls.__doc__
+        return SessionFactory(name, description, cls, *args, **kwargs)
 
     #--------------------------------------------------------------------------
     # Private API
@@ -234,6 +253,9 @@ class Session(HasTraits):
         """
         return [obj.snapshot() for obj in self.objects]
 
+    #--------------------------------------------------------------------------
+    # Messaging API
+    #--------------------------------------------------------------------------
     def send(self, object_id, action, content):
         """ Send a message to a client object.
 
@@ -278,10 +300,13 @@ class Session(HasTraits):
             The content dictionary for the action.
 
         """
-        obj = Object.lookup_object(object_id)
-        if obj is None:
-            msg = "Invalid object id sent to Session: %s:%s"
-            logger.warn(msg % (object_id, action))
-            return
-        obj.handle_action(action, content)
+        if object_id == self.session_id:
+            obj = self
+        else:
+            obj = Object.lookup_object(object_id)
+            if obj is None:
+                msg = "Invalid object id sent to Session: %s:%s"
+                logger.warn(msg % (object_id, action))
+                return
+        dispatch_action(obj, action, content)
 

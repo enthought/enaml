@@ -10,7 +10,6 @@ from traits.api import (
     cached_property
 )
 
-from enaml.support.resource_handle import ResourceHandle
 from enaml.utils import LoopbackGuard, id_generator
 
 from .trait_types import EnamlEvent
@@ -199,7 +198,7 @@ class Object(HasStrictTraits):
         objects[object_id] = self
         return self
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, **kwargs):
         """ Initialize an Object.
 
         Parameters
@@ -211,6 +210,7 @@ class Object(HasStrictTraits):
         """
         super(Object, self).__init__()
         self.set_parent(parent)
+        self.trait_set(**kwargs)
 
     #--------------------------------------------------------------------------
     # Private API
@@ -716,7 +716,10 @@ class Object(HasStrictTraits):
             A handle to a session resource with the given name.
 
         """
-        return ResourceHandle(self, name)
+        session = self.session
+        if session is None:
+            raise RuntimeError("can't get resource handle without a session")
+        return session.resources.get_handle(name)
 
     def traverse(self, depth_first=False):
         """ Yields all of the object in the tree, from this object down.
