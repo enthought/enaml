@@ -2,8 +2,9 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt.QtGui import QWidget, QPainter
+from .qt.QtGui import QWidget, QPainter, QPixmap
 from .qt_control import QtControl
+from .qt_object import QtObject
 
 
 class QImageView(QWidget):
@@ -191,7 +192,7 @@ class QImageView(QWidget):
 
 
 class QtImageView(QtControl):
-    """ A Qt4 implementation of an Enaml ImageView widget.
+    """ A Qt implementation of an Enaml ImageView widget.
 
     """
     #: The internal cached size hint which is used to determine whether
@@ -202,21 +203,21 @@ class QtImageView(QtControl):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
-        """ Creates the underlying QImageView control.
+    def create_widget(self, parent, tree):
+        """ Create the underlying QImageView control.
 
         """
-        self.widget = QImageView(self.parent_widget)
+        return QImageView(parent)
 
-    def initialize(self, attrs):
-        """ Initializes the attributes on the underlying control.
+    def create(self, tree):
+        """ Create and initialize the underlying control.
 
         """
-        super(QtImageView, self).initialize()
-        self.set_scale_to_fit(attrs['scale_to_fit'])
-        self.set_preserve_aspect_ratio(attrs['preserve_aspect_ratio'])
-        self.set_allow_upscaling(attrs['allow_upscaling'])
-        #self.set_image(shell.image)
+        super(QtImageView, self).create(tree)
+        self.set_scale_to_fit(tree['scale_to_fit'])
+        self.set_preserve_aspect_ratio(tree['preserve_aspect_ratio'])
+        self.set_allow_upscaling(tree['allow_upscaling'])
+        self.set_image(tree['image_id'])
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -245,7 +246,7 @@ class QtImageView(QtControl):
         """ Handle the 'set_image' action from the Enaml widget.
 
         """
-        self.set_image(content['image'])
+        self.set_image(content['image_id'])
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -255,25 +256,28 @@ class QtImageView(QtControl):
         control.
 
         """
-        self.widget.setScaledContents(scale_to_fit)
+        self.widget().setScaledContents(scale_to_fit)
 
     def set_preserve_aspect_ratio(self, preserve):
         """ Sets whether or not to preserve the aspect ratio of the
         image when scaling.
 
         """
-        self.widget.setPreserveAspectRatio(preserve)
+        self.widget().setPreserveAspectRatio(preserve)
 
     def set_allow_upscaling(self, allow):
         """ Sets whether or not the image will scale beyond its natural
         size.
 
         """
-        self.widget.setAllowUpscaling(allow)
+        self.widget().setAllowUpscaling(allow)
 
-    def set_image(self, image):
+    def set_image(self, image_id):
         """ Sets the image on the underlying QLabel.
 
         """
-        return
+        img_obj = QtObject.lookup_object(image_id)
+        if img_obj is not None:
+            pixmap = QPixmap.fromImage(img_obj.widget())
+            self.widget().setPixmap(pixmap)
 

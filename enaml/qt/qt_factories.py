@@ -82,6 +82,11 @@ def html_factory():
     return QtHtml
 
 
+def image_factory():
+    from .qt_image import QtImage
+    return QtImage
+
+
 def image_view_factory():
     from .qt_image_view import QtImageView
     return QtImageView
@@ -227,6 +232,7 @@ def register_default():
     register('Form', form_factory)
     register('GroupBox', group_box_factory)
     register('Html', html_factory)
+    register('Image', image_factory)
     register('ImageView', image_view_factory)
     register('Label', label_factory)
     register('MainWindow', main_window_factory)

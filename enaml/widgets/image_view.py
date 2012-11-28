@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from traits.api import Bool, Instance
 
-from enaml.noncomponents.image.abstract_image import AbstractImage
+from enaml.support.resource import ResourceHandle, ResourceID
 
 from .control import Control
 
@@ -14,7 +14,9 @@ class ImageView(Control):
 
     """
     #: The image to display in the control
-    image = Instance(AbstractImage)
+    image = Instance(ResourceHandle)
+
+    image_id = ResourceID('image')
 
     #: Whether or not to scale the image with the size of the component.
     scale_to_fit = Bool(False)
@@ -42,7 +44,7 @@ class ImageView(Control):
         snap['scale_to_fit'] = self.scale_to_fit
         snap['preserve_aspect_ratio'] = self.preserve_aspect_ratio
         snap['allow_upscaling'] = self.allow_upscaling
-        snap['image'] = self.image.as_dict()
+        snap['image_id'] = self.image_id
         return snap
 
     def bind(self):
@@ -60,8 +62,9 @@ class ImageView(Control):
     # Message Handling
     #--------------------------------------------------------------------------
     def _send_image(self):
-        """ Sends the image data, encoded in a base64 format
+        """
 
         """
-        return
+        content = {'image_id': self.image_id}
+        self.send_action('set_image', content)
 
