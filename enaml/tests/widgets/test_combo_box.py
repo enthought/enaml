@@ -16,7 +16,6 @@ from enaml.widgets.api import ComboBox, Window
 
 enamldef MainView(Window):
     ComboBox:
-        #items = []
         items = ["foo", "bar", "baz"]
 """
         self.parse_and_create(enaml_source)
@@ -30,6 +29,8 @@ enamldef MainView(Window):
 
         expected_result =  ["foo", "bar", "baz", "qux"]
 
+        index_before_setting_value = self.server_widget.index
+
         with self.app.process_events():
             self.server_widget.items = expected_result
 
@@ -38,9 +39,13 @@ enamldef MainView(Window):
         ]
 
         self.assertEquals(expected_result, result)
+        self.assertEquals(index_before_setting_value, self.server_widget.index)
+
 
     def test_set_value(self):
         """ Test the setting of a ComboBox's value attribute. """
+
+        self.assertEquals(-1, self.server_widget.index)
 
         with self.app.process_events():
             self.server_widget.items = ["foo", "bar", "baz"]
@@ -110,6 +115,7 @@ enamldef MainView(Window):
 
         with self.app.process_events():
             self.server_widget.items = ["foo", "bar", "baz"]
+        with self.app.process_events():
             self.server_widget.index = 1
 
         self.assertEquals(self.server_widget.index, 1)
@@ -127,6 +133,7 @@ enamldef MainView(Window):
         with self.app.process_events():
             button.click()
 
+        self.assertEquals(self.client_widget.currentIndex(), 1)
         self.assertEquals(self.server_widget.index, 1)
         self.assertEquals(
             self.server_widget.index, self.client_widget.currentIndex()
