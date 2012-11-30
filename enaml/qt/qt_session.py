@@ -2,15 +2,21 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from collections import defaultdict
 import logging
 
-from enaml.dispatch import dispatch_action
+from enaml.utils import make_dispatcher
 
 from .qt_object import QtObject
 from .qt_widget_registry import QtWidgetRegistry
 
 
+#: The logger for the `qt_session` module.
 logger = logging.getLogger(__name__)
+
+
+#: The dispatch function for action dispatching.
+dispatch_action = make_dispatcher('on_action_', logger)
 
 
 class QtSession(object):
@@ -169,8 +175,21 @@ class QtSession(object):
     def on_action_message_batch(self, content):
         """ Handle the 'message_batch' action sent by the Enaml session.
 
+        Actions sent to the message batch are processed in the following
+        order 'children_changed' -> 'destroy' -> 'relayout' -> other...
+
         """
-        for object_id, action, msg_content in content['batch']:
+        actions = defaultdict(list)
+        for item in content['batch']:
+            action = item[1]
+            actions[action].append(item)
+        ordered = []
+        batch_order = ('children_changed', 'destroy', 'relayout')
+        for key in batch_order:
+            ordered.extend(actions.pop(key, ()))
+        for value in actions.itervalues():
+            ordered.extend(value)
+        for object_id, action, msg_content in ordered:
             obj = QtObject.lookup_object(object_id)
             if obj is None:
                 msg = "Invalid object id sent to QtSession %s:%s"
