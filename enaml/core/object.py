@@ -182,7 +182,10 @@ class Object(HasPrivateTraits_Patched):
         session = self._session
         if session is not None:
             session.unregister(self)
-            self._session = None
+        # Clear the object's state. We can't assign an empty dict here
+        # (which would be faster) because traits doesn't do the right
+        # thing for that operation.
+        self.__dict__.clear()
 
     def set_parent(self, parent):
         """ Set the parent for this object.
