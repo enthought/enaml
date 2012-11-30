@@ -2,7 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Any, Property, Disallow, ReadOnly, CTrait
+from traits.api import Any, Property, Disallow, ReadOnly, CTrait, Uninitialized
 
 from .dynamic_scope import DynamicAttributeError
 from .object import Object
@@ -80,7 +80,8 @@ def _compute_default(obj, name):
         raise # Reraise a propagating initialization error.
     except Exception:
         import traceback
-        expr = obj._expressions[name]
+        mangled = _mangle_expression_name(name)
+        expr = obj.__dict__[mangled]
         filename = expr._func.func_code.co_filename
         lineno = expr._func.func_code.co_firstlineno
         args = (filename, lineno, traceback.format_exc())
@@ -167,7 +168,8 @@ class ListenerNotifier(object):
         """ Called by traits to dispatch the notifier.
 
         """
-        obj.run_listeners(name, old, new)
+        if old is not Uninitialized:
+            obj.run_listeners(name, old, new)
 
     def equals(self, other):
         """ Compares this notifier against another for equality.
