@@ -182,9 +182,9 @@ class Object(HasPrivateTraits_Patched):
         session = self._session
         if session is not None:
             session.unregister(self)
-        # Clear the object's state. We can't assign an empty dict here
-        # (which would be faster) because traits doesn't do the right
-        # thing for that operation.
+        # Clear the object's state. Assigning an empty dict here (which
+        # would be faster) doesn't work because ctraits.c doesn't do the
+        # right thing for that operation.
         self.__dict__.clear()
 
     def set_parent(self, parent):
