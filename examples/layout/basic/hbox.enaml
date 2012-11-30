@@ -8,8 +8,8 @@ In this example, we use the `hbox` layout helper to layout the children
 of the Container in a horizontal group. The `hbox` function is a fairly
 sophisticated layout helper which automatically takes into account the
 content boundaries of its parent. It also provides the necessary layout
-spacers in the vertical direction to allow for children of various 
-heights. 
+spacers in the vertical direction to allow for children of various
+heights.
 
 In this example, all widgets have same native height so there is no need
 for extra alignment constraints in the vertical direction. PushButtons

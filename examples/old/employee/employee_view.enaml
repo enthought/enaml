@@ -2,18 +2,25 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+""" This examples shows advanced layouts with forms.
+
+The 'share_layout' flag on the Containers is used to allows the midline
+constraints of the two forms to be aligned. Where this flag not set to
+True, the extra midline constraint between the two forms would be ignored.
+
+"""
 from enaml.layout.api import vertical, horizontal, align, spacer
 from enaml.widgets.api import (
     Window, Label, Field, Form, DateSelector, CheckBox, GroupBox, Container,
     PushButton
 )
-
 from phone_validator import PhoneNumberValidator
 
 
 enamldef EmployeeForm(Form):
     attr employee
     attr show_employer: bool = True
+    share_layout = True
     Label:
         text = "First name:"
     Field:
@@ -60,6 +67,7 @@ enamldef EmployeeForm(Form):
 
 enamldef EmployerForm(Form):
     attr employer
+    share_layout = True
     Label:
         text = "Company:"
     Field:
@@ -81,7 +89,7 @@ enamldef EmployeeView(Window):
     id: main
     attr employee
 
-    title << "Employee Record for: %s, %s" % (employee.last_name, 
+    title << "Employee Record for: %s, %s" % (employee.last_name,
                                               employee.first_name)
     Container:
         constraints << [
@@ -96,12 +104,13 @@ enamldef EmployeeView(Window):
             id: top_box
             share_layout = True
             title = "Personal Details"
+            share_layout = True
             EmployeeForm:
                 id: top_form
                 share_layout = True
                 # We access the employee object through the identifier
-                # 'main' here, because the EmployeeForm also has an 
-                # 'employee' attribute declared, and that would be 
+                # 'main' here, because the EmployeeForm also has an
+                # 'employee' attribute declared, and that would be
                 # found first.
                 employee = main.employee
         GroupBox:
@@ -109,6 +118,7 @@ enamldef EmployeeView(Window):
             share_layout = True
             title = "Employer Details"
             visible << top_form.show_employer
+            share_layout = True
             EmployerForm:
                 id: btm_form
                 share_layout = True

@@ -47,7 +47,7 @@ class QStackItem(QWidget):
 
         """
         self._stack_widget = widget
-        self.layout().addWidget(widget)
+        self.layout().setWidget(widget)
 
 
 class QtStackItem(QtWidgetComponent):

@@ -26,12 +26,11 @@ enamldef Main(Window):
             id: progress
         Label:
             id: label
-            constraints = [width == 80]
             text << '{0}% ({1}/{2})'.format(progress.percentage, progress.value, progress.maximum)
         PushButton:
             id: work_button
             text << "Do Some Work" if progress.percentage < 100 else "Reset"
-            clicked :: 
+            clicked ::
                 if progress.percentage < 100:
                     val = progress.value + random.randint(0, 10)
                     progress.value = min(val, 100)

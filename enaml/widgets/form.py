@@ -26,11 +26,17 @@ class Form(Container):
     #: and widgets are aligned.
     midline = Instance(ConstraintVariable)
     def _midline_default(self):
-        return ConstraintVariable('midline', self.widget_id)
+        return ConstraintVariable('midline', self.object_id)
 
     #: The strength for the form layout constraints.
     # FIXME: Use an Enum.
     layout_strength = Str('strong')
+
+    #: A form hugs its height strongly by default. Forms are typcially
+    #: used to display vertical arrangements of widgets, with forms
+    #: often being stacked on top of each other. For this case, hugging
+    #: the height is desired.
+    hug_height = 'strong'
 
     def _component_constraints(self):
         """ Supplies the constraints which layout the children in a

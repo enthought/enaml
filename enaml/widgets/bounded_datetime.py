@@ -5,7 +5,7 @@
 from datetime import datetime as py_datetime
 
 from dateutil.parser import parse as parse_iso_dt
-from traits.api import Property, BaseInstance, TraitError, on_trait_change
+from traits.api import Property, BaseInstance, on_trait_change
 
 from enaml.core.trait_types import Bounded
 
@@ -70,7 +70,7 @@ class BoundedDatetime(Control):
     # Message Handling
     #--------------------------------------------------------------------------
     def on_action_datetime_changed(self, content):
-        """ The handler for the 'datetime_changed' aciton sent from the
+        """ The handler for the 'datetime_changed' action sent from the
         client widget.
 
         """
@@ -109,16 +109,14 @@ class BoundedDatetime(Control):
         return self._minimum
 
     def _set_minimum(self, datetime):
-        """ Set the minimum datetime. Addtional checks are perfomed to
-        make sure that :attr:`minimum` < :attr:`maximum`
+        """ The property setter for the minimum datetime.
+
+        If the new minimum is greater than the current maximum, then the
+        maximum will be adjusted up.
 
         """
-        if datetime > self.maximum:
-            msg = ("The minimum datetime of DatetimeEdit should be smaller "
-                   "than the current maximum datetime({0}), but a value of "
-                   "{1} was given ")
-            msg = msg.format(self.maximum, datetime)
-            raise TraitError(msg)
+        if datetime > self._maximum:
+            self._maximum = datetime
         self._minimum = datetime
 
     def _get_maximum(self):
@@ -128,16 +126,14 @@ class BoundedDatetime(Control):
         return self._maximum
 
     def _set_maximum(self, datetime):
-        """ Set the maximum datetime. Addtional checks are perfomed to
-        make sure that :attr:`minimum` < :attr:`maximum`
+        """ The property setter for the maximum datetime.
+
+        If the new maximum is less than the current minimum, then the
+        minimum will be ajusted down.
 
         """
-        if datetime < self.minimum:
-            msg = ("The maximum datetime of DatetimeEdit should be larger "
-                   "than the current minimum datetime({0}), but a value of "
-                   "{1} was given ")
-            msg = msg.format(self.minimum, datetime)
-            raise TraitError(msg)
+        if datetime < self._minimum:
+            self._minimum = datetime
         self._maximum = datetime
 
     #--------------------------------------------------------------------------
@@ -148,6 +144,5 @@ class BoundedDatetime(Control):
         """ Actively adapt the datetime to lie within the boundaries.
 
         """
-        if self.initialized:
-            self.datetime = min(max(self.datetime, self.minimum), self.maximum)
+        self.datetime = min(max(self.datetime, self.minimum), self.maximum)
 

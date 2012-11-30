@@ -25,7 +25,7 @@ class QtCalendar(QtBoundedDate):
         """
         super(QtCalendar, self).create(tree)
         self.widget().activated.connect(self.on_date_changed)
-        
+
     #--------------------------------------------------------------------------
     # Abstract Method Implementations
     #--------------------------------------------------------------------------
@@ -49,7 +49,8 @@ class QtCalendar(QtBoundedDate):
             The QDate object to use for setting the date.
 
         """
-        self.widget().setSelectedDate(date)
+        with self.loopback_guard('date'):
+            self.widget().setSelectedDate(date)
 
     def set_max_date(self, date):
         """ Set the widget's maximum date.

@@ -9,6 +9,7 @@
 
 using namespace PythonHelpers;
 
+extern "C" {
 
 // Type structure for WeakMethod instances
 typedef struct {
@@ -315,4 +316,6 @@ initweakmethod( void )
     PyObjectPtr wm_type( reinterpret_cast<PyObject*>( &WeakMethod_Type ), true );
     PyModule_AddObject( mod, "WeakMethod", wm_type.release() );
 }
+
+} // extern "C"
 

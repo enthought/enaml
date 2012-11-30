@@ -28,11 +28,11 @@ def _convert_cn_info(info, owners):
         var = info['var']
         res = coeff * _convert_cn_info(var, owners)
     elif cn_type == 'linear_symbolic':
-        sym_name = info['name'].split('-')[-1]
+        sym_name = info['name']
         owner_id = info['owner']
         owner = owners.get(owner_id, None)
         if owner is None:
-            owner = owners[owner_id] = LayoutBox(info['name'], owner_id)
+            owner = owners[owner_id] = LayoutBox('_virtual', owner_id)
         res = owner.primitive(sym_name)
     else:
         msg = 'Unhandled constraint info type `%s`' % cn_type
@@ -244,7 +244,11 @@ class WxContainer(WxConstraintsWidget):
             self.init_layout()
             self.refresh()
             new_hint = widget.GetBestSize()
-            if old_hint != new_hint:
+            # If the size hint constraints are empty, it indicates that
+            # they were previously cleared. In this case, the layout
+            # system must be notified to rebuild its constraints, even
+            # if the numeric size hint hasn't changed.
+            if old_hint != new_hint or not self._size_hint_cns:
                 self.size_hint_updated()
         else:
             self._layout_owner.relayout()
@@ -306,6 +310,23 @@ class WxContainer(WxConstraintsWidget):
                     self.size_hint_updated()
         else:
             self._layout_owner.replace_constraints(old_cns, new_cns)
+
+    def clear_constraints(self, cns):
+        """ Clear the given constraints from the current layout.
+
+        Parameters
+        ----------
+        cns : list
+            The list of casuarius constraints to remove from the
+            current layout system.
+
+        """
+        if self._owns_layout:
+            manager = self._layout_manager
+            if manager is not None:
+                manager.replace_constraints(cns, [])
+        else:
+            self._layout_owner.clear_constraints(cns)
 
     def layout(self):
         """ The callback invoked by the layout manager when there are
@@ -510,7 +531,7 @@ class WxContainer(WxConstraintsWidget):
         # The mapping of constraint owners and the list of constraint
         # info dictionaries provided by the Enaml widgets.
         box = self.layout_box
-        cn_owners = {self.widget_id(): box}
+        cn_owners = {self.object_id(): box}
         cn_dicts = list(self.user_constraints())
         cn_dicts_extend = cn_dicts.extend
 
@@ -525,7 +546,7 @@ class WxContainer(WxConstraintsWidget):
         WxContainer_ = WxContainer
         for _, updater in layout_table:
             child = updater.item
-            cn_owners[child.widget_id()] = child.layout_box
+            cn_owners[child.object_id()] = child.layout_box
             raw_cns_extend(child.hard_constraints())
             if isinst(child, WxContainer_):
                 if child.transfer_layout_ownership(self):

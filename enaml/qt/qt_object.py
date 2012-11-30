@@ -35,7 +35,7 @@ def deferred_updates(func):
             try:
                 res = func(self, *args, **kwargs)
             finally:
-                QtObject.deferred_call(widget.setUpdatesEnabled, True)
+                self.deferred_call(widget.setUpdatesEnabled, True)
         else:
             res = func(self, *args, **kwargs)
         return res
@@ -75,16 +75,16 @@ class QtObject(object):
         return cls._objects.get(object_id)
 
     @classmethod
-    def construct(cls, tree, parent, pipe, builder):
+    def construct(cls, tree, parent, session):
         """ Construct the QtObject instance for the given parameters.
 
-        This classmethod is called by the QtBuilder object used by the
-        application. When called, it will create a new instance of the
-        class by extracting the object id from the snapshot and calling
-        the class constructor. It then invokes the `create` method on
-        the new instance. This classmethod exists for cases where it is
-        necessary to define custom construction behavior. A subclass
-        may reimplement this method as required.
+        This classmethod is called by the QtSession object which owns
+        the object being built. When called, it creates a new instance
+        of the class by extracting the object id from the snapshot and
+        calling the class' constructor. It then invokes the `create`
+        method on the new instance. This classmethod exists for cases
+        where it is necessary to define custom construction behavior.
+        A subclass may reimplement this method as required.
 
         Parameters
         ----------
@@ -96,12 +96,9 @@ class QtObject(object):
             The parent QtObject to use for this object, or None if this
             object is top-level.
 
-        pipe : QActionPipe or None
-            The QActionPipe to use for sending messages to the Enaml
-            object, or None if messaging is not desired.
-
-        builder : QtBuilder
-            The QtBuilder instance that is building this object.
+        session : QtSession
+            The QtSession object which owns this object. The session is
+            used for sending messages to the server side widgets.
 
         Returns
         -------
@@ -111,12 +108,12 @@ class QtObject(object):
         Notes
         -----
         This method does *not* construct the children for this object.
-        That responsibility lies with the QtBuilder object which calls
+        That responsibility lies with the QtSession object which calls
         this constructor.
 
         """
         object_id = tree['object_id']
-        self = cls(object_id, parent, pipe, builder)
+        self = cls(object_id, parent, session)
         self.create(tree)
         return self
 
@@ -189,7 +186,7 @@ class QtObject(object):
         cls._objects[object_id] = self
         return self
 
-    def __init__(self, object_id, parent, pipe, builder):
+    def __init__(self, object_id, parent, session):
         """ Initialize a QtObject.
 
         Parameters
@@ -201,16 +198,13 @@ class QtObject(object):
             The parent object of this object, or None if this object
             has no parent.
 
-        pipe : QActionPipe or None
-            The action pipe to use for sending actions to Enaml objects.
-
-        builder : QtBuilder
-            The QtBuilder instance that built this object.
+        session : QtSession
+            The QtSession object which owns this object. The session is
+            used for sending messages to the server side widgets.
 
         """
         self._object_id = object_id
-        self._pipe = pipe
-        self._builder = builder
+        self._session = session
         self._parent = None
         self._children = []
         self._widget = None
@@ -246,24 +240,32 @@ class QtObject(object):
         """
         return self._object_id
 
-    def widget_id(self):
-        """ A backwards compatibility method. New code should call the
-        `object_id` method.
-
-        """
-        return self._object_id
-
     def widget(self):
         """ Get the toolkit-specific object for this object.
 
         Returns
         -------
-        result : QObject
+        result : QObject or None
             The toolkit object for this object, or None if it does not
             have a toolkit object.
 
         """
         return self._widget
+
+    def parent_widget(self):
+        """ Get the toolkit-specific parent widget for this object.
+
+        Returns
+        -------
+        result : QObject or None
+            The toolkit object for this object, or None if it does
+            not exist.
+
+        """
+        parent = self._parent
+        if parent is not None:
+            parent = parent.widget()
+        return parent
 
     def create_widget(self, parent, tree):
         """ A method which should be reimplemented by subclasses.
@@ -383,7 +385,7 @@ class QtObject(object):
             self._parent = None
 
         # Finally, unparent the underlying toolkit widget. Since there
-        # should not longer be any public references to it, it will be
+        # should no longer be any public references to it, it will be
         # garbage collected and destroyed. This appears to be a safer
         # approach than calling widget.deleteLater().
         widget = self._widget
@@ -391,8 +393,10 @@ class QtObject(object):
             widget.setParent(None)
             self._widget = None
 
-        # Remove what should be the last remaining strong reference to
+        # Remove what should be the last remaining strong references to
         # `self` which will allow this object to be garbage collected.
+        # XXX remove from the session if top-level? It may not matter...
+        self._session = None
         QtObject._objects.pop(self._object_id, None)
 
     #--------------------------------------------------------------------------
@@ -422,7 +426,6 @@ class QtObject(object):
         """
         return self._children
 
-    @deferred_updates
     def set_parent(self, parent):
         """ Set the parent for this object.
 
@@ -437,11 +440,12 @@ class QtObject(object):
             The parent of this object, or None if it has no parent.
 
         """
-        # Note: The added/removed events must be executed on the next
-        # cycle of the event loop. It's possible that this method is
-        # being called from the `construct` class method and the child
-        # of the widget will not yet exist. This means that child event
-        # handlers that rely on the child widget existing will fail.
+        # Note: If this object is not yet fully intialized, then the
+        # added/removed events must be executed on the next cycle of
+        # the event loop. It's possible that this method is being called
+        # from the `construct` class method and the toolkit widget will
+        # not yet exist. This means that child event handlers that rely
+        # on the child toolkit widget existing will fail.
         curr = self._parent
         if curr is parent or parent is self:
             return
@@ -451,12 +455,18 @@ class QtObject(object):
             if self in curr._children:
                 curr._children.remove(self)
                 if curr._initialized:
-                    QtObject.deferred_call(curr.child_removed, self)
+                    if self._initialized:
+                        curr.child_removed(self)
+                    else:
+                        QtObject.deferred_call(curr.child_removed, self)
 
         if parent is not None:
             parent._children.append(self)
             if parent._initialized:
-                QtObject.deferred_call(parent.child_added, self)
+                if self._initialized:
+                    parent.child_added(self)
+                else:
+                    QtObject.deferred_call(parent.child_added, self)
 
     def child_removed(self, child):
         """ Called when a child is removed from this object.
@@ -541,7 +551,7 @@ class QtObject(object):
             logger.warn(msg % (action, type(self).__name__, self._object_id))
 
     def send_action(self, action, content):
-        """ Send an action on the action pipe for this object.
+        """ Send an action to the session for this object.
 
         The action will only be sent if the object is fully initialized.
 
@@ -555,9 +565,9 @@ class QtObject(object):
 
         """
         if self._initialized:
-            pipe = self._pipe
-            if pipe is not None:
-                pipe.send(self._object_id, action, content)
+            session = self._session
+            if session is not None:
+                session.send(self._object_id, action, content)
 
     #--------------------------------------------------------------------------
     # Action Handlers
@@ -583,15 +593,13 @@ class QtObject(object):
                 child.set_parent(None)
 
         # Build or reparent the children being added.
-        pipe = self._pipe
-        builder = self._builder
         for tree in content['added']:
             object_id = tree['object_id']
             child = lookup(object_id)
             if child is not None:
                 child.set_parent(self)
             else:
-                child = builder.build(tree, self, pipe)
+                child = self._session.build(tree, self)
                 child.initialize()
 
         # Update the ordering of the children based on the order given
@@ -614,5 +622,8 @@ class QtObject(object):
         This method will call the `destroy` method on the object.
 
         """
-        self.destroy()
+        if self._initialized:
+            self.destroy()
+        else:
+            QtObject.deferred_call(self.destroy)
 

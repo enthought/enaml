@@ -5,7 +5,7 @@
 from datetime import date as py_date
 
 from dateutil.parser import parse as parse_iso_dt
-from traits.api import Date, Property, TraitError, on_trait_change
+from traits.api import Date, Property, on_trait_change
 
 from enaml.core.trait_types import Bounded
 
@@ -104,15 +104,14 @@ class BoundedDate(Control):
         return self._minimum
 
     def _set_minimum(self, date):
-        """ Set the minimum date. Addtional checks are applied to make
-        sure that :attr:`minimum` < :attr:`maximum`
+        """ The property setter for the minimum date.
+
+        If the new minimum is greater than the current maximum, then the
+        maximum will be adjusted up.
 
         """
-        if date > self.maximum:
-            msg = ("The minimum date should be smaller than the current "
-                   "maximum date({0}), but a value of {1} was given.")
-            msg = msg.format(self.maximum, date)
-            raise TraitError(msg)
+        if date > self._maximum:
+            self._maximum = date
         self._minimum = date
 
     def _get_maximum(self):
@@ -122,15 +121,14 @@ class BoundedDate(Control):
         return self._maximum
 
     def _set_maximum(self, date):
-        """ Set the maximum date. Addtional checks are applied to make
-        sure that :attr:`minimum` < :attr:`maximum`
+        """ The property setter for the maximum date.
+
+        If the new maximum is less than the current minimum, then the
+        minimum will be ajusted down.
 
         """
-        if date < self.minimum:
-            msg = ("The maximum date should be larger than the current "
-                   "minimum date({0}), but a value of {1} was given.")
-            msg = msg.format(self.minimum, date)
-            raise TraitError(msg)
+        if date < self._minimum:
+            self._minimum = date
         self._maximum = date
 
     #--------------------------------------------------------------------------
@@ -141,6 +139,5 @@ class BoundedDate(Control):
         """ Actively adapt the date to lie within the boundaries.
 
         """
-        if self.initialized:
-            self.date = min(max(self.date, self.minimum), self.maximum)
+        self.date = min(max(self.date, self.minimum), self.maximum)
 

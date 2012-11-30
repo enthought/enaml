@@ -27,7 +27,7 @@ class QCustomScrollArea(QScrollArea):
     layoutRequested = Signal()
 
     #: A private internally cached size hint.
-    _sizeHint = QSize()
+    _size_hint = QSize()
 
     def event(self, event):
         """ A custom event handler which handles LayoutRequest events.
@@ -39,7 +39,7 @@ class QCustomScrollArea(QScrollArea):
         """
         res = super(QCustomScrollArea, self).event(event)
         if event.type() == QEvent.LayoutRequest:
-            self._sizeHint = QSize()
+            self._size_hint = QSize()
             self.layoutRequested.emit()
         return res
 
@@ -50,7 +50,7 @@ class QCustomScrollArea(QScrollArea):
         the cached size hint before setting the widget.
 
         """
-        self._sizeHint = QSize()
+        self._size_hint = QSize()
         self.takeWidget() # Let Python keep ownership of the old widget
         super(QCustomScrollArea, self).setWidget(widget)
 
@@ -67,29 +67,29 @@ class QCustomScrollArea(QScrollArea):
         # of caching the size hint of the scroll widget, it caches the
         # size hint for the entire scroll area, and invalidates it when
         # the widget is changed or it receives a LayoutRequest event.
-        sz = self._sizeHint
-        if sz.isValid():
-            return sz
-        f = 2 * self.frameWidth()
-        sz = QSize(f, f)
-        h = self.fontMetrics().height()
-        w = self.widget()
-        if w is not None:
+        hint = self._size_hint
+        if hint.isValid():
+            return QSize(hint)
+        fw = 2 * self.frameWidth()
+        hint = QSize(fw, fw)
+        font_height = self.fontMetrics().height()
+        widget = self.widget()
+        if widget is not None:
             if self.widgetResizable():
-                sz += w.sizeHint()
+                hint += widget.sizeHint()
             else:
-                sz += w.size()
+                hint += widget.size()
         else:
-            sz += QSize(12 * h, 8 * h)
+            hint += QSize(12 * font_height, 8 * font_height)
         if self.verticalScrollBarPolicy() == Qt.ScrollBarAlwaysOn:
             vbar = self.verticalScrollBar()
-            sz.setWidth(sz.width() + vbar.sizeHint().width())
+            hint.setWidth(hint.width() + vbar.sizeHint().width())
         if self.horizontalScrollBarPolicy() == Qt.ScrollBarAlwaysOn:
             hbar = self.horizontalScrollBar()
-            sz.setHeight(sz.height() + hbar.sizeHint().height())
-        sz = sz.boundedTo(QSize(36 * h, 24 * h))
-        self._sizeHint = sz
-        return sz
+            hint.setHeight(hint.height() + hbar.sizeHint().height())
+        hint = hint.boundedTo(QSize(36 * font_height, 24 * font_height))
+        self._size_hint = hint
+        return QSize(hint)
 
 
 class QtScrollArea(QtConstraintsWidget):

@@ -5,40 +5,11 @@
 from traits.api import Property, Enum, Instance, List
 
 from enaml.application import Application, ScheduledTask
-from enaml.layout.constraint_variable import ConstraintVariable
-from enaml.layout.layout_helpers import expand_constraints, ABConstrainable
+from enaml.layout.ab_constrainable import ABConstrainable
+from enaml.layout.box_model import BoxModel
+from enaml.layout.layout_helpers import expand_constraints
 
 from .widget_component import WidgetComponent
-
-
-class BoxModel(object):
-    """ A class which provides a simple constraints box model.
-
-    Primitive Variables:
-        left, top, width, height
-
-    Derived Variables:
-        right, bottom, v_center, h_center
-
-    """
-    def __init__(self, owner):
-        """ Initialize a BoxModel.
-
-        Parameters
-        ----------
-        owner : string
-            A string which uniquely identifies the owner of this box 
-            model.
-
-        """
-        owner = str(owner)
-        for primitive in ('left', 'top', 'width', 'height'):
-            var = ConstraintVariable(primitive, owner)
-            setattr(self, primitive, var) 
-        self.right = self.left + self.width
-        self.bottom = self.top + self.height
-        self.v_center = self.top + self.height / 2.0
-        self.h_center = self.left + self.width / 2.0
 
 
 #: A traits enum which defines the allowable constraints strengths.
@@ -60,7 +31,7 @@ class ConstraintsWidget(WidgetComponent):
     declare constraints between this widget and other components which
     participate in constraints-based layout.
 
-    Constraints are added to a widget by assigning a list to the 
+    Constraints are added to a widget by assigning a list to the
     'constraints' attribute. This list may contain raw LinearConstraint
     objects (which are created by manipulating the symbolic constraint
     variables) or DeferredConstraints objects which generated these
@@ -77,57 +48,57 @@ class ConstraintsWidget(WidgetComponent):
     #: objects for this component.
     constraints = List
 
-    #: A read-only symbolic object that represents the left boundary of 
+    #: A read-only symbolic object that represents the left boundary of
     #: the component
     left = Property(fget=get_from_box_model)
 
-    #: A read-only symbolic object that represents the top boundary of 
+    #: A read-only symbolic object that represents the top boundary of
     #: the component
     top = Property(fget=get_from_box_model)
 
-    #: A read-only symbolic object that represents the width of the 
+    #: A read-only symbolic object that represents the width of the
     #: component
     width = Property(fget=get_from_box_model)
 
-    #: A read-only symbolic object that represents the height of the 
+    #: A read-only symbolic object that represents the height of the
     #: component
     height = Property(fget=get_from_box_model)
 
-    #: A read-only symbolic object that represents the right boundary 
+    #: A read-only symbolic object that represents the right boundary
     #: of the component
     right = Property(fget=get_from_box_model)
 
-    #: A read-only symbolic object that represents the bottom boundary 
+    #: A read-only symbolic object that represents the bottom boundary
     #: of the component
     bottom = Property(fget=get_from_box_model)
 
-    #: A read-only symbolic object that represents the vertical center 
+    #: A read-only symbolic object that represents the vertical center
     #: of the component
     v_center = Property(fget=get_from_box_model)
 
-    #: A read-only symbolic object that represents the horizontal 
+    #: A read-only symbolic object that represents the horizontal
     #: center of the component
     h_center = Property(fget=get_from_box_model)
 
     #: How strongly a component hugs it's width hint. Valid strengths
-    #: are 'weak', 'medium', 'strong', 'required' and 'ignore'. Default 
-    #: is 'strong'. This trait should be overridden on a per-control 
+    #: are 'weak', 'medium', 'strong', 'required' and 'ignore'. Default
+    #: is 'strong'. This trait should be overridden on a per-control
     #: basis to specify a logical default for the given control.
     hug_width = PolicyEnum('strong')
 
     #: How strongly a component hugs it's height hint. Valid strengths
-    #: are 'weak', 'medium', 'strong', 'required' and 'ignore'. Default 
-    #: is 'strong'. This trait should be overridden on a per-control 
+    #: are 'weak', 'medium', 'strong', 'required' and 'ignore'. Default
+    #: is 'strong'. This trait should be overridden on a per-control
     #: basis to specify a logical default for the given control.
     hug_height = PolicyEnum('strong')
 
-    #: How strongly a component resists clipping its contents. Valid 
-    #: strengths are 'weak', 'medium', 'strong', 'required' and 'ignore'. 
+    #: How strongly a component resists clipping its contents. Valid
+    #: strengths are 'weak', 'medium', 'strong', 'required' and 'ignore'.
     #: The default is 'strong' for width.
     resist_width = PolicyEnum('strong')
 
-    #: How strongly a component resists clipping its contents. Valid 
-    #: strengths are 'weak', 'medium', 'strong', 'required' and 'ignore'. 
+    #: How strongly a component resists clipping its contents. Valid
+    #: strengths are 'weak', 'medium', 'strong', 'required' and 'ignore'.
     #: The default is 'strong' for height.
     resist_height = PolicyEnum('strong')
 
@@ -137,7 +108,7 @@ class ConstraintsWidget(WidgetComponent):
     #: The private storage the box model instance for this component.
     _box_model = Instance(BoxModel)
     def __box_model_default(self):
-        return BoxModel(self.widget_id)
+        return BoxModel(self.object_id)
 
     #--------------------------------------------------------------------------
     # Initialization
@@ -145,12 +116,12 @@ class ConstraintsWidget(WidgetComponent):
     def snapshot(self):
         """ Populates the initial attributes dict for the component.
 
-        A ConstraintsWidget adds the 'layout' key to the creation 
+        A ConstraintsWidget adds the 'layout' key to the creation
         attributes dict. The value is a dict with the following keys.
 
         'constraints'
             A list of dictionaries representing linear constraints.
-        
+
         'resist_clip'
             A tuple containing width and height clip policies.
 
@@ -178,16 +149,16 @@ class ConstraintsWidget(WidgetComponent):
 
         If an Enaml Application instance exists, then multiple `relayout`
         actions will be collapsed into a single action that will be sent
-        on the next cycle of the event loop. If no application exists, 
+        on the next cycle of the event loop. If no application exists,
         then the action is sent immediately.
 
         """
         # The relayout action is deferred until the next cycle of the
-        # event loop for two reasons: 1) So that multiple relayout 
+        # event loop for two reasons: 1) So that multiple relayout
         # requests can be collapsed into a single action. 2) So that
         # all child events (which are fired synchronously) can finish
         # processing and send their actions to the client before the
-        # relayout request is sent. 
+        # relayout request is sent.
         app = Application.instance()
         if app is None:
             self.send_action('relayout', self._layout_info())
@@ -208,7 +179,7 @@ class ConstraintsWidget(WidgetComponent):
     def _layout_info(self):
         """ Creates a dictionary from the current layout information.
 
-        This method uses the current layout state of the component, 
+        This method uses the current layout state of the component,
         comprised of constraints, clip, and hug policies, and creates
         a dictionary which can be serialized and sent to clients.
 
@@ -292,10 +263,10 @@ class ConstraintsWidget(WidgetComponent):
 
         """
         return []
-        
+
     def _default_constraints(self):
         """ Returns a list of constraints to include if the user has
-        not specified their own in the 'constraints' list. 
+        not specified their own in the 'constraints' list.
 
         The default implementation returns an empty list.
 

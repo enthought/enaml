@@ -5,42 +5,11 @@
 from traits.api import Property, Instance, Bool, cached_property
 
 from enaml.core.trait_types import CoercingInstance
-from enaml.layout.constraint_variable import ConstraintVariable
+from enaml.layout.box_model import ContentsBoxModel
 from enaml.layout.geometry import Box
 from enaml.layout.layout_helpers import vbox
 
-from .constraints_widget import ConstraintsWidget, BoxModel, get_from_box_model
-
-
-class ContainerBoxModel(BoxModel):
-    """ A class which provided the box model for a Container.
-
-    Primitive Variables:
-        contents_[left|right|top|bottom]
-
-    Derived Variables:
-        contents_[width|height|v_center|h_center]
-
-    """
-    def __init__(self, owner):
-        """ Initialize a ContainerBoxModel.
-
-        Parameters
-        ----------
-        owner : string
-            A string which uniquely identifies the owner of this box
-            model.
-
-        """
-        super(ContainerBoxModel, self).__init__(owner)
-        for primitive in ('left', 'right', 'top', 'bottom'):
-            attr = 'contents_' + primitive
-            var = ConstraintVariable(attr, owner)
-            setattr(self, attr, var)
-        self.contents_width = self.contents_right - self.contents_left
-        self.contents_height = self.contents_bottom - self.contents_top
-        self.contents_v_center = self.contents_top + self.contents_height / 2.0
-        self.contents_h_center = self.contents_left + self.contents_width / 2.0
+from .constraints_widget import ConstraintsWidget, get_from_box_model
 
 
 class Container(ConstraintsWidget):
@@ -120,9 +89,9 @@ class Container(ConstraintsWidget):
     hug_height = 'ignore'
 
     #: The private storage the box model instance for this component.
-    _box_model = Instance(ContainerBoxModel)
+    _box_model = Instance(ContentsBoxModel)
     def __box_model_default(self):
-        return ContainerBoxModel(self.widget_id)
+        return ContentsBoxModel(self.object_id)
 
     #--------------------------------------------------------------------------
     # Initialization

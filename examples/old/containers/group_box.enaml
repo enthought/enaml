@@ -31,6 +31,7 @@ enamldef Main(Window):
             id: top_box
             share_layout = True
             title = "Personal Details"
+            share_layout = True
             Form:
                 id: top_form
                 share_layout = True
@@ -50,6 +51,7 @@ enamldef Main(Window):
             id: bottom_box
             share_layout = True
             title = "Employment Details"
+            share_layout = True
             Form:
                 id: bottom_form
                 share_layout = True

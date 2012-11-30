@@ -2,21 +2,19 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from abc import ABCMeta, abstractmethod, abstractproperty
+from abc import ABCMeta, abstractmethod
 from heapq import heappush, heappop
 from itertools import count
 import logging
 from threading import Lock
 import uuid
 
-from enaml.core.object import Object
-
 
 logger = logging.getLogger(__name__)
-    
+
 
 class ScheduledTask(object):
-    """ An object representing a task in the scheduler. 
+    """ An object representing a task in the scheduler.
 
     """
     #: A sentinel object indicating that the result of the task is
@@ -30,13 +28,13 @@ class ScheduledTask(object):
         ----------
         callback : callable
             The callable to run when the task is executed.
-        
+
         args : tuple
             The tuple of positional arguments to pass to the callback.
 
         kwargs : dict
             The dict of keyword arguments to pass to the callback.
-        
+
         """
         self._callback = callback
         self._args = args
@@ -64,7 +62,7 @@ class ScheduledTask(object):
             self._pending = False
 
     #--------------------------------------------------------------------------
-    # Public API 
+    # Public API
     #--------------------------------------------------------------------------
     def notify(self, callback):
         """ Set a callback to be run when the task is executed.
@@ -95,7 +93,7 @@ class ScheduledTask(object):
 
     def result(self):
         """ Returns the result of the task, or ScheduledTask.undefined
-        if the task has not yet been executed, was unscheduled before 
+        if the task has not yet been executed, was unscheduled before
         execution, or raised an exception on execution.
 
         """
@@ -156,7 +154,7 @@ class Application(object):
         self._counter = count()
         self._heap_lock = Lock()
         self.add_factories(factories)
-        
+
     #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
@@ -168,9 +166,9 @@ class Application(object):
             task._execute()
         finally:
             self._next_task()
-    
+
     def _next_task(self):
-        """ Pulls the next task off the heap and processes it on the 
+        """ Pulls the next task off the heap and processes it on the
         main gui thread.
 
         """
@@ -183,15 +181,21 @@ class Application(object):
     #--------------------------------------------------------------------------
     # Abstract API
     #--------------------------------------------------------------------------
-    @abstractproperty
-    def pipe_interface(self):
-        """ Get the ActionPipeInterface for this application.
+    @abstractmethod
+    def socket(self, session_id):
+        """ Get the ActionSocketInterface for a session.
+
+        Parameters
+        ----------
+        session_id : str
+            The string identifier for the session which will use the
+            created action socket.
 
         Returns
         -------
-        result : ActionPipeInterface
-            An implementor of ActionPipeInterface which can be used by
-            Enaml Object instances to send messages to their clients.
+        result : ActionSocketInterface
+            An implementor of ActionSocketInterface which can be used
+            by Enaml Session instances for messaging.
 
         """
         raise NotImplementedError
@@ -221,7 +225,7 @@ class Application(object):
             The callable object to execute at some point in the future.
 
         *args, **kwargs
-            Any additional positional and keyword arguments to pass to 
+            Any additional positional and keyword arguments to pass to
             the callback.
 
         """
@@ -229,7 +233,7 @@ class Application(object):
 
     @abstractmethod
     def timed_call(self, ms, callback, *args, **kwargs):
-        """ Invoke a callable on the main event loop thread at a 
+        """ Invoke a callable on the main event loop thread at a
         specified time in the future.
 
         Parameters
@@ -242,8 +246,20 @@ class Application(object):
             The callable object to execute at some point in the future.
 
         *args, **kwargs
-            Any additional positional and keyword arguments to pass to 
+            Any additional positional and keyword arguments to pass to
             the callback.
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def is_main_thread(self):
+        """ Indicates whether the caller is on the main gui thread.
+
+        Returns
+        -------
+        result : bool
+            True if called from the main gui thread. False otherwise.
 
         """
         raise NotImplementedError
@@ -278,7 +294,7 @@ class Application(object):
             A task object which can be used to unschedule the task or
             retrieve the results of the callback after the task has
             been executed.
-            
+
         """
         if args is None:
             args = ()
@@ -291,7 +307,10 @@ class Application(object):
             item = (-priority, self._counter.next(), task)
             heappush(heap, item)
         if needs_start:
-            self.deferred_call(self._next_task)
+            if self.is_main_thread():
+                self._next_task()
+            else:
+                self.deferred_call(self._next_task)
         return task
 
     def has_pending_tasks(self):
@@ -313,7 +332,7 @@ class Application(object):
         Parameters
         ----------
         factories : iterable
-            An iterable of SessionFactory instances to add to the 
+            An iterable of SessionFactory instances to add to the
             application.
 
         """
@@ -340,10 +359,27 @@ class Application(object):
 
         """
         info = [
-            {'name': fact.name, 'description': fact.description} 
+            {'name': fact.name, 'description': fact.description}
             for fact in self._all_factories
         ]
         return info
+
+    def session(self, session_id):
+        """ Get the session for the given session id.
+
+        Parameters
+        ----------
+        session_id : str
+            The unique identifier for the session to retrieve.
+
+        Returns
+        -------
+        result : Session or None
+            The session object with the given id, or None if the id
+            does not correspond to an active session.
+
+        """
+        return self._sessions.get(session_id)
 
     def start_session(self, name):
         """ Start a new session of the given name.
@@ -366,10 +402,10 @@ class Application(object):
         if name not in self._named_factories:
             raise ValueError('Invalid session name')
         factory = self._named_factories[name]
+        session = factory()
         session_id = uuid.uuid4().hex
-        session = factory(session_id)
         self._sessions[session_id] = session
-        session.open(self.pipe_interface)
+        session.open(session_id, self.socket(session_id))
         return session_id
 
     def end_session(self, session_id):
@@ -408,32 +444,8 @@ class Application(object):
             raise ValueError('Invalid session id')
         return session.snapshot()
 
-    def dispatch_action(self, object_id, action, content):
-        """ Dispatch an action to an object with the given id.
-
-        This method can be called by subclasses when they receive an
-        action message from a client object. If the object does not 
-        exist, an exception will be raised.
-
-        Parameters
-        ----------
-        object_id : str
-            The unique identifier for the object.
-
-        action : str
-            The action to be performed by the object.
-
-        content : dict
-            The dictionary of content needed to perform the action.
-
-        """
-        obj = Object.lookup_object(object_id)
-        if obj is None:
-            raise ValueError('Invalid object id')
-        obj.handle_action(action, content)
-
     def destroy(self):
-        """ Destroy this application instance. 
+        """ Destroy this application instance.
 
         Once an application is created, it must be destroyed before a
         new application can be instantiated.
@@ -445,4 +457,117 @@ class Application(object):
         self._named_factories = {}
         self._sessions = {}
         Application._instance = None
+
+
+#------------------------------------------------------------------------------
+# Helper Functions
+#------------------------------------------------------------------------------
+def deferred_call(callback, *args, **kwargs):
+    """ Invoke a callable on the next cycle of the main event loop
+    thread.
+
+    This is a convenience function for invoking the same method on the
+    current application instance. If an application instance does not
+    exist, a RuntimeError will be raised.
+
+    Parameters
+    ----------
+    callback : callable
+        The callable object to execute at some point in the future.
+
+    *args, **kwargs
+        Any additional positional and keyword arguments to pass to
+        the callback.
+
+    """
+    app = Application.instance()
+    if app is None:
+        raise RuntimeError('Application instance does not exist')
+    app.deferred_call(callback, *args, **kwargs)
+
+
+def timed_call(ms, callback, *args, **kwargs):
+    """ Invoke a callable on the main event loop thread at a specified
+    time in the future.
+
+    This is a convenience function for invoking the same method on the
+    current application instance. If an application instance does not
+    exist, a RuntimeError will be raised.
+
+    Parameters
+    ----------
+    ms : int
+        The time to delay, in milliseconds, before executing the
+        callable.
+
+    callback : callable
+        The callable object to execute at some point in the future.
+
+    *args, **kwargs
+        Any additional positional and keyword arguments to pass to
+        the callback.
+
+    """
+    app = Application.instance()
+    if app is None:
+        raise RuntimeError('Application instance does not exist')
+    app.timed_call(ms, callback, *args, **kwargs)
+
+
+def is_main_thread():
+    """ Indicates whether the caller is on the main gui thread.
+
+    This is a convenience function for invoking the same method on the
+    current application instance. If an application instance does not
+    exist, a RuntimeError will be raised.
+
+    Returns
+    -------
+    result : bool
+        True if called from the main gui thread. False otherwise.
+
+    """
+    app = Application.instance()
+    if app is None:
+        raise RuntimeError('Application instance does not exist')
+    return app.is_main_thread()
+
+
+def schedule(self, callback, args=None, kwargs=None, priority=0):
+    """ Schedule a callable to be executed on the event loop thread.
+
+    This call is thread-safe.
+
+    This is a convenience function for invoking the same method on the
+    current application instance. If an application instance does not
+    exist, a RuntimeError will be raised.
+
+    Parameters
+    ----------
+    callback : callable
+        The callable object to be executed.
+
+    args : tuple, optional
+        The positional arguments to pass to the callable.
+
+    kwargs : dict, optional
+        The keyword arguments to pass to the callable.
+
+    priority : int, optional
+        The queue priority for the callable. Smaller values indicate
+        lower priority, larger values indicate higher priority. The
+        default priority is zero.
+
+    Returns
+    -------
+    result : ScheduledTask
+        A task object which can be used to unschedule the task or
+        retrieve the results of the callback after the task has
+        been executed.
+
+    """
+    app = Application.instance()
+    if app is None:
+        raise RuntimeError('Application instance does not exist')
+    return app.schedule(callback, args, kwargs, priority)
 

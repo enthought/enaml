@@ -78,6 +78,7 @@ enamldef MyHtmlWidgets(Container):
 enamldef Main(Window):
     Container:
         padding = 0
+        hug_height = 'strong'
         Splitter:
             hug_height = 'strong'
             SplitItem:

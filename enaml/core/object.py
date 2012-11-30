@@ -2,11 +2,9 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from abc import ABCMeta, abstractmethod
 from collections import defaultdict, deque, namedtuple
 import logging
 import re
-from weakref import WeakValueDictionary
 
 from traits.api import (
     HasStrictTraits, ReadOnly, Str, Property, Tuple, Instance, Bool, Disallow,
@@ -19,34 +17,6 @@ from .trait_types import EnamlEvent
 
 
 logger = logging.getLogger(__name__)
-
-
-class ActionPipeInterface(object):
-    """ An abstract base class defining an action pipe interface.
-
-    Concrete implementations of this interface can be used by Object
-    instances to sent messages to their client objects.
-
-    """
-    __metaclass__ = ABCMeta
-
-    @abstractmethod
-    def send(self, object_id, action, content):
-        """ Send an action to the client of an object.
-
-        Parameters
-        ----------
-        object_id : str
-            The object id for the Object sending the message.
-
-        action : str
-            The action that should be take by the client object.
-
-        content : dict
-            The dictionary of content needed to perform the action.
-
-        """
-        raise NotImplementedError
 
 
 #: A namedtuple which contains information about a child change event.
@@ -134,10 +104,6 @@ class Object(HasStrictTraits):
     #: required, then the object id generator can be overridden.
     object_id = ReadOnly
 
-    #: A backwards compatibility alias for `object_id`. New code should
-    #: access `object_id` directly.
-    widget_id = Property(fget=lambda self: self.object_id)
-
     #: An optional name to give to this object to assist in finding it
     #: in the tree. See e.g. the 'find' method. Note that there is no
     #: uniqueness guarantee associated with the object `name`. It is
@@ -147,8 +113,8 @@ class Object(HasStrictTraits):
     #: A read-only property which returns the instance's class name.
     class_name = Property(fget=lambda self: type(self).__name__)
 
-    #: A read-only property which returns the names of the instances
-    #: base classes, stopping at Declarative.
+    #: A read-only property which returns the names of the instance's
+    #: base classes, stopping at Object.
     base_names = Property
 
     #: A read-only property which returns the parent of this object.
@@ -179,19 +145,25 @@ class Object(HasStrictTraits):
     #: fired. It should not be manipulated by user code.
     initialized = Bool(False)
 
-    #: A pipe interface to use for sending messages by the object. If
-    #: the pipe is None the object will walk up the ancestor tree in
-    #: order to find a pipe to use. To silence an object, set this
-    #: attribute to a null pipe interface.
-    action_pipe = Instance(ActionPipeInterface)
+    #: A Session object to use for messaging. If the session is None,
+    #: the object will inherit the session from its ancestors. This
+    #: should not be directly manipulated by user code.
+    session = Instance('enaml.session.Session') # circular import
 
     #: A loopback guard which can be used to prevent a signal loopback
     #: cycle when setting attributes from within an action handler.
     loopback_guard = Instance(LoopbackGuard, ())
 
+    #: The internal set of published attributes. Publishing is performed
+    #: through an anytrait handler to reduce the number of notifier
+    #: objects which must be created.
+    _published_attrs = Instance(set, ())
+
     #: Class level storage for Object instances. Objects are added to
-    #: this dict as they are created. The instances are stored weakly.
-    _objects = WeakValueDictionary()
+    #: this dict as they are created. Instances are stored strongly so
+    #: that orphaned widgets are not garbage collected until they are
+    #: explicitly destroyed.
+    _objects = {}
 
     @classmethod
     def lookup_object(cls, object_id):
@@ -244,6 +216,40 @@ class Object(HasStrictTraits):
         self.set_parent(parent)
 
     #--------------------------------------------------------------------------
+    # Private API
+    #--------------------------------------------------------------------------
+    def _destroy(self, notify):
+        """ The private destructor implementation.
+
+        This method ensures that only the top-level object notifies the
+        client of the destruction. The destruction of all children of
+        an object is implicit and reduces the number of messages which
+        must be sent to the client.
+
+        Parameters
+        ----------
+        notify : bool
+            Whether to send the 'destroy' action to the client.
+
+        """
+        if notify:
+            self.send_action('destroy', {})
+        self.initialized = False
+        parent = self._parent
+        if parent is not None:
+            if parent.initialized:
+                self.set_parent(None)
+            else:
+                self._parent = None
+        children = self._children
+        self._children = ()
+        for child in children:
+            child._destroy(False)
+        # XXX remove from the session if top-level? It may not matter...
+        self.session = None
+        type(self)._objects.pop(self.object_id, None)
+
+    #--------------------------------------------------------------------------
     # Property Methods
     #--------------------------------------------------------------------------
     def _get_base_names(self):
@@ -255,7 +261,7 @@ class Object(HasStrictTraits):
 
         """
         base_names = []
-        for base in type(self).mro():
+        for base in type(self).mro()[1:]:
             base_names.append(base.__name__)
             if base is Object:
                 break
@@ -288,9 +294,9 @@ class Object(HasStrictTraits):
         if self.initialized:
             return
 
-        # Refresh the pipe before initializing the children, so that
-        # when they do the same, the only have to hop 1 time at max.
-        self.inherit_pipe()
+        # Refresh the session before initializing the children so that
+        # when they do the same, they only have to hop 1 time at max.
+        self.inherit_session()
         for child in self._children:
             child.initialize()
 
@@ -321,18 +327,7 @@ class Object(HasStrictTraits):
         sets the children to an empty tuple, then destroys the children.
 
         """
-        self.send_action('destroy', {})
-        self.initialized = False
-        parent = self._parent
-        if parent is not None:
-            if parent.initialized:
-                self.set_parent(None)
-            else:
-                self._parent = None
-        children = self._children
-        self._children = ()
-        for child in children:
-            child.destroy()
+        self._destroy(True)
 
     #--------------------------------------------------------------------------
     # Parenting Methods
@@ -460,18 +455,15 @@ class Object(HasStrictTraits):
             else:
                 new.append(child)
 
-        if destroy:
-            for child in old:
-                # Set the child's parent to None so that destroy does
-                # not recurse back into a child manipulation method.
-                child._parent = None
-                child.destroy()
-        else:
-            for child in old:
-                child._parent = None
+        for child in old:
+            child._parent = None
 
         with ChildEventContext(self):
             self._children = tuple(new)
+
+        if destroy:
+            for child in old:
+                child.destroy()
 
     def replace_children(self, remove, before, insert, destroy=True):
         """ Perform an 'atomic' remove and insert children operation.
@@ -537,15 +529,8 @@ class Object(HasStrictTraits):
                     with ChildEventContext(old_parent):
                         old_parent._children = old_kids
 
-        if destroy:
-            for child in old:
-                # Set the child's parent to None so that destroy does
-                # not recurse back into a child manipulation method.
-                child._parent = None
-                child.destroy()
-        else:
-            for child in old:
-                child._parent = None
+        for child in old:
+            child._parent = None
 
         with ChildEventContext(self):
             self._children = tuple(new)
@@ -555,6 +540,10 @@ class Object(HasStrictTraits):
                 # including adding more children to their parent.
                 for child in insert_tup:
                     child.initialize()
+
+        if destroy:
+            for child in old:
+                child.destroy()
 
     #--------------------------------------------------------------------------
     # Messaging Methods
@@ -584,26 +573,25 @@ class Object(HasStrictTraits):
             msg = "Unhandled action '%s' for Object %s:%s"
             logger.warn(msg % (action, self.class_name, self.object_id))
 
-    def inherit_pipe(self):
-        """ Inherit the action pipe from the ancestors of this object.
+    def inherit_session(self):
+        """ Inherit the session from the ancestors of this object.
 
-        If the `action_pipe` for this instance is None, then this method
+        If the `session` object for this instance is None, this method
         will walk the tree of ancestors until it finds an object with a
-        non null `action_pipe`. That pipe will then be used as the pipe
-        for this object.
+        non None `session` which will be used as the session object.
 
         """
-        if self.action_pipe is None:
+        if self.session is None:
             parent = self._parent
             while parent is not None:
-                pipe = parent.action_pipe
-                if pipe is not None:
-                    self.action_pipe = pipe
+                session = parent.session
+                if session is not None:
+                    self.session = session
                     return
                 parent = parent._parent
 
     def send_action(self, action, content):
-        """ Send an action on the action pipe for this object.
+        """ Send an action to the client of this object.
 
         The action will only be sent if the object is fully initialized.
 
@@ -617,12 +605,12 @@ class Object(HasStrictTraits):
 
         """
         if self.initialized:
-            pipe = self.action_pipe
-            if pipe is None:
-                self.inherit_pipe()
-                pipe = self.action_pipe
-            if pipe is not None:
-                pipe.send(self.object_id, action, content)
+            session = self.session
+            if session is None:
+                self.inherit_session()
+                session = self.session
+            if session is not None:
+                session.send(self.object_id, action, content)
 
     def snapshot(self):
         """ Create a snapshot of the tree starting from this object.
@@ -642,7 +630,6 @@ class Object(HasStrictTraits):
         """
         snap = {}
         snap['object_id'] = self.object_id
-        snap['widget_id'] = self.widget_id # backwards compatibility
         snap['class'] = self.class_name
         snap['bases'] = self.base_names
         snap['name'] = self.name
@@ -674,7 +661,7 @@ class Object(HasStrictTraits):
         the changed attribute. This method is suitable for most cases
         of simple attribute publishing. More complex cases will need
         to implement their own dispatching handlers. The handler for
-        the changes will only emit the `action` signal if the attribute
+        the changes will only send the action message if the attribute
         name is not held by the loopback guard.
 
         Parameters
@@ -685,10 +672,7 @@ class Object(HasStrictTraits):
             More complex values should use their own dispatch handlers.
 
         """
-        otc = self.on_trait_change
-        handler = self._publish_attr_handler
-        for attr in attrs:
-            otc(handler, attr)
+        self._published_attrs.update(attrs)
 
     def set_guarded(self, **attrs):
         """ A convenience method provided for subclasses to set a
@@ -732,9 +716,8 @@ class Object(HasStrictTraits):
         content['added'] = [c.snapshot() for c in added if c.snappable]
         self.send_action('children_changed', content)
 
-    def _publish_attr_handler(self, name, new):
-        """ A private handler which will emit the `action` signal in
-        response to a trait change event.
+    def _anytrait_changed(self, name, old, new):
+        """ An `anytrait` change handler which publishes action messages.
 
         The action will be created by prefixing the attribute name with
         'set_'. The value of the attribute should be JSON serializable.
@@ -744,7 +727,7 @@ class Object(HasStrictTraits):
         helping to avoid potential loopbacks.
 
         """
-        if name not in self.loopback_guard:
+        if name in self._published_attrs and name not in self.loopback_guard:
             action = 'set_' + name
             content = {name: new}
             self.send_action(action, content)

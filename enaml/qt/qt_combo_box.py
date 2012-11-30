@@ -17,7 +17,9 @@ class QtComboBox(QtControl):
         """ Create the underlying combo box widget.
 
         """
-        return QComboBox(parent)
+        box = QComboBox(parent)
+        box.setInsertPolicy(QComboBox.NoInsert)
+        return box
 
     def create(self, tree):
         """ Create and initialize the underlying widget.
@@ -26,6 +28,7 @@ class QtComboBox(QtControl):
         super(QtComboBox, self).create(tree)
         self.set_items(tree['items'])
         self.set_index(tree['index'])
+        self.set_editable(tree['editable'])
         self.widget().currentIndexChanged.connect(self.on_index_changed)
 
     #--------------------------------------------------------------------------
@@ -43,6 +46,14 @@ class QtComboBox(QtControl):
         """
         self.set_items(content['items'])
 
+    def on_action_set_editable(self, content):
+        """ Handle the 'set_editable' action from the Enaml widget.
+
+        """
+        self.set_editable(content['editable'])
+        # The update is needed to avoid artificats (at least on Windows)
+        self.widget().update()
+
     #--------------------------------------------------------------------------
     # Signal Handlers
     #--------------------------------------------------------------------------
@@ -50,8 +61,9 @@ class QtComboBox(QtControl):
         """ The signal handler for the index changed signal.
 
         """
-        content = {'index': self.widget().currentIndex()}
-        self.send_action('index_changed', content)
+        if 'index' not in self.loopback_guard:
+            content = {'index': self.widget().currentIndex()}
+            self.send_action('index_changed', content)
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -73,8 +85,15 @@ class QtComboBox(QtControl):
                 widget.removeItem(idx)
 
     def set_index(self, index):
-        """ Set the current index of the ComboBox
+        """ Set the current index of the ComboBox.
 
         """
-        self.widget().setCurrentIndex(index)
+        with self.loopback_guard('index'):
+            self.widget().setCurrentIndex(index)
+
+    def set_editable(self, editable):
+        """ Set whether the combo box is editable.
+
+        """
+        self.widget().setEditable(editable)
 

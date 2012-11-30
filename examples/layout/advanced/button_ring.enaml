@@ -6,12 +6,12 @@
 managers.
 
 This example creates a ring of 50 `PushButton` widgets with a `Label` in
-the center. The constraints shown here are generally silly in that the 
-resulting layout is more-or-less useless. Nevertheless, it serves well to 
+the center. The constraints shown here are generally silly in that the
+resulting layout is more-or-less useless. Nevertheless, it serves well to
 demonstrate the power and flexibility of constraints-based layout.
 
-Note that the 'gen_constraints' function is only called once, not on 
-every resize as may be expected when laying out widgets manually. 
+Note that the 'gen_constraints' function is only called once, not on
+every resize as may be expected when laying out widgets manually.
 
 Note that this example also demonstrates that constraints may be defined
 on any subclass of `ConstraintsWidget`. They need not be confined to a
@@ -89,9 +89,9 @@ enamldef Main(MainWindow):
             objects = [SimpleButton(text=str(i)) for i in range(50)]
         Label:
             id: lbl
-            # Constraints can also be directly defined on a component. 
-            # This is provided as a convenience where it makes the code 
-            # clearer and easier to understand. It makes no difference 
+            # Constraints can also be directly defined on a component.
+            # This is provided as a convenience where it makes the code
+            # clearer and easier to understand. It makes no difference
             # if the constraints are defined here, or on the Container.
             constraints = [
                 v_center == cntr.v_center,

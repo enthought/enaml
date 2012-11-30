@@ -14,6 +14,9 @@ from .date_selector import DateSelector
 from .datetime_selector import DatetimeSelector
 from .dock_pane import DockPane
 from .field import Field
+from .file_dialog import FileDialog
+from .flow_area import FlowArea
+from .flow_item import FlowItem
 from .form import Form
 from .group_box import GroupBox
 from .html import Html
@@ -32,12 +35,15 @@ from .push_button import PushButton
 from .radio_button import RadioButton
 from .scroll_area import ScrollArea
 from .slider import Slider
+from .separator import Separator
 from .spin_box import SpinBox
 from .split_item import SplitItem
 from .splitter import Splitter
 from .stack import Stack
 from .stack_item import StackItem
-from .text_editor import TextEditor
+#from .text_editor import TextEditor
+from .time_selector import TimeSelector
 from .tool_bar import ToolBar
+from .web_view import WebView
 from .window import Window
 
