@@ -6,9 +6,9 @@ from traits.api import Unicode, Bool
 
 from enaml.core.declarative import Declarative
 from enaml.core.trait_types import EnamlEvent
+from .widget_base import WidgetBase
 
-
-class Action(Declarative):
+class Action(WidgetBase):
     """ A non visible widget used in a ToolBar or Menu.
 
     An Action represents an actionable item in a ToolBar or a Menu.
