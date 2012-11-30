@@ -365,10 +365,11 @@ class SubscriptionExpression(BaseExpression):
         # a key for the dependencies is computed and a new notifier is
         # created only when the key changes. The key uses the id of an
         # object instead of the object itself so strong references to
-        # the object are not maintained by the expression.
-        id_ = id
+        # the object are not maintained by the expression. A sorted
+        # tuple is used instead of a frozenset to reduced the memory
+        # footprint. It is slightly slower to compute but ~5x smaller.
         traced = tracer.traced_items
-        keyval = frozenset((id_(obj), attr) for obj, attr in traced)
+        keyval = tuple(sorted((id(obj), attr) for obj, attr in traced))
         notifier = self._notifier
         if notifier is None or keyval != notifier.keyval:
             notifier = SubscriptionNotifier(obj, name, keyval)
