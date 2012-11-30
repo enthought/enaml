@@ -66,11 +66,7 @@ def _wired_getter(obj, name):
 
     """
     itraits = obj._instance_traits()
-    new_notifiers = itraits[name]._notifiers(0)
-    old = itraits.pop('_[old]_' + name)
-    if new_notifiers:
-        old._notifiers(1).extend(new_notifiers)
-    itraits[name] = old
+    itraits[name] = itraits[name]._shadowed
     val = _compute_default(obj, name)
     if val is not NotImplemented:
         _set_quiet(obj, name, val)
@@ -86,11 +82,7 @@ def _wired_setter(obj, name, value):
 
     """
     itraits = obj._instance_traits()
-    new_notifiers = itraits[name]._notifiers(0)
-    old = itraits.pop('_[old]_' + name)
-    if new_notifiers:
-        old._notifiers(1).extend(new_notifiers)
-    itraits[name] = old
+    itraits[name] = itraits[name]._shadowed
     setattr(obj, name, value)
 
 
@@ -105,12 +97,13 @@ def _wire_default(obj, name):
     # This is a low-level performance hack that bypasses a mountain
     # of traits cruft and performs the minimum work required to make
     # traits do what we want.
-    itraits = obj._instance_traits()
-    itraits['_[old]_' + name] = obj._trait(name, 2)
     trait = CTrait(4)
     trait.property(_wired_getter, 2, _wired_setter, 3, None, 0)
     trait.handler = Any
-    itraits[name] = trait
+    shadow = obj._trait(name, 2)
+    trait._shadowed = shadow
+    trait._notifiers = shadow._notifiers
+    obj._instance_traits()[name] = trait
 
 
 #------------------------------------------------------------------------------
