@@ -7,11 +7,7 @@ from weakref import ref
 
 from traits.api import HasTraits, Disallow, TraitListObject, TraitDictObject
 
-from enaml.signaling import Signal
-
-from .abstract_expressions import (
-    AbstractExpression, AbstractListener, AbstractListenableExpression
-)
+from .abstract_expressions import AbstractExpression, AbstractListener
 from .code_tracing import CodeTracer, CodeInverter
 from .dynamic_scope import DynamicScope, AbstractScopeListener, Nonlocals
 from .funchelper import call_func
@@ -196,9 +192,9 @@ class BaseExpression(object):
     """ The base class of the standard Enaml expression classes.
 
     """
-    __slots__ = ('_func', '_identifiers')
+    __slots__ = ('_func', '_f_locals')
 
-    def __init__(self, func, identifiers):
+    def __init__(self, func, f_locals):
         """ Initialize a BaseExpression.
 
         Parameters
@@ -208,12 +204,12 @@ class BaseExpression(object):
             has been patched to support the semantics required of the
             expression.
 
-        identifiers : dict
-            The dictionary of identifiers available to the function.
+        f_locals : dict
+            The dictionary of locals available to the function.
 
         """
         self._func = func
-        self._identifiers = identifiers
+        self._f_locals = f_locals
 
 
 #------------------------------------------------------------------------------
@@ -233,7 +229,7 @@ class SimpleExpression(BaseExpression):
 
         """
         overrides = {'nonlocals': Nonlocals(obj, None)}
-        scope = DynamicScope(obj, self._identifiers, overrides, None)
+        scope = DynamicScope(obj, self._f_locals, overrides, None)
         with obj.operators:
             return call_func(self._func, (), {}, scope)
 
@@ -244,14 +240,14 @@ AbstractExpression.register(SimpleExpression)
 #------------------------------------------------------------------------------
 # Notification Expression
 #------------------------------------------------------------------------------
+NotificationEvent = namedtuple('NotificationEvent', 'obj name old new')
+
+
 class NotificationExpression(BaseExpression):
     """ An implementation of AbstractListener for the `::` operator.
 
     """
     __slots__ = ()
-
-    #: A namedtuple which is used to pass arguments to the expression.
-    event = namedtuple('event', 'obj name old new')
 
     #--------------------------------------------------------------------------
     # AbstractListener Interface
@@ -261,10 +257,10 @@ class NotificationExpression(BaseExpression):
 
         """
         overrides = {
-            'event': self.event(obj, name, old, new),
+            'event': NotificationEvent(obj, name, old, new),
             'nonlocals': Nonlocals(obj, None),
         }
-        scope = DynamicScope(obj, self._identifiers, overrides, None)
+        scope = DynamicScope(obj, self._f_locals, overrides, None)
         with obj.operators:
             call_func(self._func, (), {}, scope)
 
@@ -291,7 +287,7 @@ class UpdateExpression(BaseExpression):
         nonlocals = Nonlocals(obj, None)
         overrides = {'nonlocals': nonlocals}
         inverter = StandardInverter(nonlocals)
-        scope = DynamicScope(obj, self._identifiers, overrides, None)
+        scope = DynamicScope(obj, self._f_locals, overrides, None)
         with obj.operators:
             call_func(self._func, (inverter, new), {}, scope)
 
@@ -306,16 +302,15 @@ class SubscriptionNotifier(object):
     """ A simple object used for attaching notification handlers.
 
     """
-    __slots__ = ('expr', 'name', 'keyval', '__weakref__')
+    __slots__ = ('obj', 'name', 'keyval', '__weakref__')
 
-    def __init__(self, expr, name, keyval):
+    def __init__(self, obj, name, keyval):
         """ Initialize a Notifier.
 
         Parameters
         ----------
-        expr : AbstractListenableExpression
-            The expression whose `invalidated` signal should be emitted
-            when the notifier is triggered. It must be weakref-able.
+        obj : Declarative
+            The declarative object which owns the expression.
 
         name : str
             The name to which the expression is bound.
@@ -324,7 +319,7 @@ class SubscriptionNotifier(object):
             An object to use for testing equivalency of notifiers.
 
         """
-        self.expr = ref(expr)
+        self.obj = ref(obj)
         self.name = name
         self.keyval = keyval
 
@@ -332,34 +327,34 @@ class SubscriptionNotifier(object):
         """ Notify that the expression is invalid.
 
         """
-        expr = self.expr()
-        if expr is not None:
-            expr.invalidated.emit(self.name)
+        obj = self.obj()
+        if obj is not None:
+            obj.refresh_expression(self.name)
 
 
 class SubscriptionExpression(BaseExpression):
-    """ An implementation of AbstractListenableExpression for the `<<`
-    operator.
+    """ An implementation of AbstractExpression for the `<<` operator.
 
     """
-    # Note: __slots__ are not declared because Enaml Signals require a
-    # __dict__ to exist on the instance.
+    __slots__ = ('_notifier')
 
-    #: Private storage for the SubscriptionNotifier.
-    _notifier = None
+    def __init__(self, func, f_locals):
+        """ Initialize a SubscriptionExpression.
+
+        """
+        super(SubscriptionExpression, self).__init__(func, f_locals)
+        self._notifier = None
 
     #--------------------------------------------------------------------------
-    # AbstractListenableExpression Interface
+    # AbstractExpression Interface
     #--------------------------------------------------------------------------
-    invalidated = Signal()
-
     def eval(self, obj, name):
         """ Evaluate and return the expression value.
 
         """
         tracer = TraitsTracer()
         overrides = {'nonlocals': Nonlocals(obj, tracer)}
-        scope = DynamicScope(obj, self._identifiers, overrides, tracer)
+        scope = DynamicScope(obj, self._f_locals, overrides, tracer)
         with obj.operators:
             result = call_func(self._func, (tracer,), {}, scope)
 
@@ -376,7 +371,7 @@ class SubscriptionExpression(BaseExpression):
         keyval = frozenset((id_(obj), attr) for obj, attr in traced)
         notifier = self._notifier
         if notifier is None or keyval != notifier.keyval:
-            notifier = SubscriptionNotifier(self, name, keyval)
+            notifier = SubscriptionNotifier(obj, name, keyval)
             self._notifier = notifier
             handler = notifier.notify
             for obj, attr in traced:
@@ -385,17 +380,18 @@ class SubscriptionExpression(BaseExpression):
         return result
 
 
-AbstractListenableExpression.register(SubscriptionExpression)
+AbstractExpression.register(SubscriptionExpression)
 
 
 #------------------------------------------------------------------------------
 # Delegation Expression
 #------------------------------------------------------------------------------
 class DelegationExpression(SubscriptionExpression):
-    """ An object which implements the `:=` operator by implementing the
-    AbstractListenableExpression and AbstractListener interfaces.
+    """ An expression and listener implementation for the `:=` operator.
 
     """
+    __slots__ = ()
+
     #--------------------------------------------------------------------------
     # AbstractListener Interface
     #--------------------------------------------------------------------------
@@ -406,7 +402,7 @@ class DelegationExpression(SubscriptionExpression):
         nonlocals = Nonlocals(obj, None)
         inverter = StandardInverter(nonlocals)
         overrides = {'nonlocals': nonlocals}
-        scope = DynamicScope(obj, self._identifiers, overrides, None)
+        scope = DynamicScope(obj, self._f_locals, overrides, None)
         with obj.operators:
             call_func(self._func._update, (inverter, new), {}, scope)
 

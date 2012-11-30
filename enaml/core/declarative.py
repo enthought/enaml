@@ -2,13 +2,8 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import (
-    Instance, List, Property, Str, Dict, Disallow, ReadOnly, TraitType,
-)
+from traits.api import Any, Instance, Property, Disallow, ReadOnly, CTrait
 
-from .abstract_expressions import (
-    AbstractExpression, AbstractListener, AbstractListenableExpression
-)
 from .dynamic_scope import DynamicAttributeError
 from .object import Object
 from .operator_context import OperatorContext
@@ -16,96 +11,106 @@ from .trait_types import EnamlInstance, EnamlEvent
 
 
 #------------------------------------------------------------------------------
-# Expression Trait
+# Default Value Support
 #------------------------------------------------------------------------------
-class ExpressionTrait(TraitType):
-    """ A custom trait type which is used to help implement expression
-    binding. Instances of this trait are added to an object, but swap
-    themselves out and replace the old trait the first time they are
-    accessed. This allows bound expressions to be initialized in the
-    proper order without requiring an explicit initialization graph.
+def _compute_default(obj, name):
+    """ Compute the value for an expression.
+
+    This is a private function used by Declarative to allow bound
+    expression to provide default values for an attribute without
+    requiring an explicit initialization graph.
 
     """
-    def __init__(self, old_trait):
-        """ Initialize an expression trait.
+    try:
+        return obj.eval_expression(name)
+    except DynamicAttributeError:
+        raise # Reraise a propagating initialization error.
+    except Exception:
+        import traceback
+        expr = obj._expressions[name]
+        filename = expr._func.func_code.co_filename
+        lineno = expr._func.func_code.co_firstlineno
+        args = (filename, lineno, traceback.format_exc())
+        msg = ('Error initializing expression (%r line %s). Orignal '
+               'exception was:\n%s')
+        raise DynamicAttributeError(msg % args)
 
-        Parameters
-        ----------
-        old_trait : ctrait
-            The trait object that the expression trait is temporarily
-            replacing. When a 'get' or 'set' is triggered on this
-            trait, the old trait will be restored and then the default
-            value of the expression will be applied.
 
-        """
-        super(ExpressionTrait, self).__init__()
-        self.old_trait = old_trait
+_quiet = set()
+def _set_quiet(obj, name, value):
+    """ Quietly set the named value on the object.
 
-    def swapout(self, obj, name):
-        """ Restore the old trait onto the object. This method takes
-        care to make sure that listeners are copied over properly.
+    This is a private function used by Declarative to allow bound
+    expression to provide default values for an attribute without
+    requiring an explicit initialization graph. It's a workaround
+    for bug: https://github.com/enthought/traits/issues/26
 
-        """
-        # The default behavior of add_trait does *almost* the right
-        # thing when it copies over notifiers when replacing the
-        # existing trait. What it fails to do is update the owner
-        # attribute of TraitChangeNotifyWrappers which are managing
-        # a bound method notifier. This means that if said notifier
-        # ever dies, it removes itself from the incorrect owner list
-        # and it will be (erroneously) called on the next dispatch
-        # cycle. The logic here makes sure that the owner attribute
-        # of such a notifier is properly updated with its new owner.
-        obj.add_trait(name, self.old_trait)
-        notifiers = obj.trait(name)._notifiers(0)
-        if notifiers is not None:
-            for notifier in notifiers:
-                if hasattr(notifier, 'owner'):
-                    notifier.owner = notifiers
+    """
+    q = _quiet
+    owned = obj not in q
+    if owned:
+        obj._trait_change_notify(False)
+        q.add(obj)
+    setattr(obj, name, value)
+    if owned:
+        obj._trait_change_notify(True)
+        q.discard(obj)
 
-    def compute_default(self, obj, name):
-        """ Returns the default value as computed by the most recently
-        bound expression. If a value cannot be provided, NotImplemented
-        is returned.
 
-        """
-        try:
-            res = obj.eval_expression(name)
-        except DynamicAttributeError:
-            raise # Reraise a propagating initialization error.
-        except Exception:
-            # XXX hack! I'd rather not dig into Declarative's private api.
-            import traceback
-            expr = obj._expressions[name]
-            filename = expr._func.func_code.co_filename
-            lineno = expr._func.func_code.co_firstlineno
-            args = (filename, lineno, traceback.format_exc())
-            msg = ('Error initializing expression (%r line %s). Orignal '
-                   'exception was:\n%s')
-            raise DynamicAttributeError(msg % args)
-        return res
+def _wired_getter(obj, name):
+    """ The wired default expression getter.
 
-    def get(self, obj, name):
-        """ Handle computing the initial value for the expression trait.
-        This method first restores the old trait, then evaluates the
-        expression and sets the value on the trait quietly. It then
-        performs a getattr to return the new value of the trait.
+    This is a private function used by Declarative to allow bound
+    expression to provide default values for an attribute without
+    requiring an explicit initialization graph.
 
-        """
-        self.swapout(obj, name)
-        val = self.compute_default(obj, name)
-        if val is not NotImplemented:
-            obj.trait_setq(**{name: val})
-        return getattr(obj, name, val)
+    """
+    itraits = obj._instance_traits()
+    new_notifiers = itraits[name]._notifiers(0)
+    old = itraits.pop('_[old]_' + name)
+    if new_notifiers:
+        old._notifiers(1).extend(new_notifiers)
+    itraits[name] = old
+    val = _compute_default(obj, name)
+    if val is not NotImplemented:
+        _set_quiet(obj, name, val)
+    return getattr(obj, name, val)
 
-    def set(self, obj, name, val):
-        """ Handle the setting of an initial value for the expression
-        trait. This method first restores the old trait, then sets
-        the value on that trait. In this case, the expression object
-        is not needed.
 
-        """
-        self.swapout(obj, name)
-        setattr(obj, name, val)
+def _wired_setter(obj, name, value):
+    """ The wired default expression setter.
+
+    This is a private function used by Declarative to allow bound
+    expression to provide default values for an attribute without
+    requiring an explicit initialization graph.
+
+    """
+    itraits = obj._instance_traits()
+    new_notifiers = itraits[name]._notifiers(0)
+    old = itraits.pop('_[old]_' + name)
+    if new_notifiers:
+        old._notifiers(1).extend(new_notifiers)
+    itraits[name] = old
+    setattr(obj, name, value)
+
+
+def _wire_default(obj, name):
+    """ Wire an expression trait for default value computation.
+
+    This is a private function used by Declarative to allow bound
+    expression to provide default values for an attribute without
+    requiring an explicit initialization graph.
+
+    """
+    # This is a low-level performance hack that bypasses a mountain
+    # of traits cruft and performs the minimum work required to make
+    # traits do what we want.
+    itraits = obj._instance_traits()
+    itraits['_[old]_' + name] = obj._trait(name, 2)
+    trait = CTrait(4)
+    trait.property(_wired_getter, 2, _wired_setter, 3, None, 0)
+    trait.handler = Any
+    itraits[name] = trait
 
 
 #------------------------------------------------------------------------------
@@ -164,6 +169,27 @@ class UserEvent(EnamlEvent):
 #------------------------------------------------------------------------------
 # Declarative
 #------------------------------------------------------------------------------
+class ListenerNotifier(object):
+    """ A lightweight trait change notifier used by Declarative.
+
+    """
+    def __call__(self, obj, name, old, new):
+        """ Called by traits to dispatch the notifier.
+
+        """
+        obj.run_listeners(name, old, new)
+
+    def equals(self, other):
+        """ Compares this notifier against another for equality.
+
+        """
+        return False
+
+
+# Only a single instance of ListenerNotifier is needed.
+ListenerNotifier = ListenerNotifier()
+
+
 class Declarative(Object):
     """ The most base class of the Enaml declarative objects.
 
@@ -183,17 +209,9 @@ class Declarative(Object):
     #: by user code.
     operators = ReadOnly
 
-    #: The private dictionary of expression objects that are bound to
-    #: attributes on this component. It should not be manipulated by
-    #: user code. Rather, expressions should be bound by the operators
-    #: by calling the '_bind_expression' method.
-    _expressions = Dict(Str, Instance(AbstractExpression))
-
-    #: The private dictionary of listener objects that are bound to
-    #: attributes on this component. It should not be manipulated by
-    #: user code. Rather, expressions should be bound by the operators
-    #: by calling the '_bind_listener' method.
-    _listeners = Dict(Str, List(Instance(AbstractListener)))
+    #: The private dictionary of bindings for this object. It should
+    #: not be manipulated by user code.
+    _bindings = Instance(dict, ())
 
     #: A class attribute used by the Enaml compiler machinery to store
     #: the builder functions on the class. The functions are called
@@ -233,7 +251,9 @@ class Declarative(Object):
         # Apply the keyword arguments after the rest of the tree is
         # created. This makes sure that parameters passed in by the
         # user are not overridden by default expression bindings.
-        self.trait_set(**kwargs)
+        # `trait_set` is slow, don't use it here.
+        for key, value in kwargs.iteritems():
+            setattr(self, key, value)
 
     #--------------------------------------------------------------------------
     # Private API
@@ -296,45 +316,25 @@ class Declarative(Object):
         cls.__base_traits__[name] = ctrait
         cls.__class_traits__[name] = ctrait
 
-    def _on_expr_invalidated(self, name):
-        """ A signal handler invoked when an expression is invalidated.
-
-        This handler is connected to the `invalidated` signal on bound
-        expressions which support dynamic notification. When a given
-        expression is invalidated, it is recomputed and the value of
-        its attribute is updated.
-
-        Parameters
-        ----------
-        name : str
-            The attribute name to which the invalid expression is bound.
-
-        """
-        value = self.eval_expression(name)
-        if value is not NotImplemented:
-            setattr(self, name, value)
-
-    def _anytrait_changed(self, name, old, new):
-        """ An any trait changed handler for listener notification.
-
-        This handler will notify any bound listeners when their attribute
-        of interest has changed. Using an `anytrait` handler reduces the
-        number of notifier objects which must be created.
-
-        """
-        super(Declarative, self)._anytrait_changed(name, old, new)
-        self.run_listeners(name, old, new)
-
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
+    def destroy(self):
+        """ A reimplemented parent class destructor method.
+
+        This method clears the dict of bindings before calling the
+        superclass destructor
+
+        """
+        del self._bindings
+        super(Declarative, self).destroy()
+
     def bind_expression(self, name, expression):
         """ Bind an expression to the given attribute name.
 
         This method can be called to bind a value-providing expression
         to the given attribute name. If the named attribute does not
-        exist, an exception is raised. Listenable expressions are
-        supported.
+        exist, an exception is raised.
 
         Parameters
         ----------
@@ -342,27 +342,21 @@ class Declarative(Object):
             The name of the attribute on which to bind the expression.
 
         expression : AbstractExpression
-            A concrete implementation of AbstractExpression.
+            A concrete implementation of AbstractExpression. This value
+            is not type checked for performance reasons. It is assumed
+            that the caller provides a correct value.
 
         """
-        curr = self.trait(name)
+        curr = self._trait(name, 2)
         if curr is None or curr.trait_type is Disallow:
             msg = "Cannot bind expression. %s object has no attribute '%s'"
             raise AttributeError(msg % (self, name))
-
-        exprs = self._expressions
-        if name in exprs:
-            old = exprs[name]
-            if isinstance(old, AbstractListenableExpression):
-                old.invalidated.disconnect(self._on_expr_invalidated)
-        if isinstance(expression, AbstractListenableExpression):
-            expression.invalidated.connect(self._on_expr_invalidated)
-        exprs[name] = expression
-
-        # Hookup support for default value computation. ExpressionTrait
-        # will call `eval_expression` when its `get` method is called.
-        if not isinstance(curr.trait_type, ExpressionTrait):
-            self.add_trait(name, ExpressionTrait(curr))
+        bindings = self._bindings
+        if name not in bindings:
+            bindings[name] = [expression]
+            _wire_default(self, name)
+        else:
+            bindings[name][0] = expression
 
     def bind_listener(self, name, listener):
         """ A private method used by the Enaml execution engine.
@@ -378,17 +372,24 @@ class Declarative(Object):
             The name of the attribute on which to bind the listener.
 
         listener : AbstractListener
-            A concrete implementation of AbstractListener.
+            A concrete implementation of AbstractListener. This value
+            is not type checked for performance reasons. It is assumed
+            that the caller provides a correct value.
 
         """
-        curr = self.trait(name)
+        curr = self._trait(name, 2)
         if curr is None or curr.trait_type is Disallow:
             msg = "Cannot bind listener. %s object has no attribute '%s'"
             raise AttributeError(msg % (self, name))
-        lsnrs = self._listeners
-        if name not in lsnrs:
-            lsnrs[name] = []
-        lsnrs[name].append(listener)
+        bindings = self._bindings
+        if name not in bindings:
+            bindings[name] = [None, listener]
+            self.add_notifier(name, ListenerNotifier)
+        else:
+            items = bindings[name]
+            if len(items) == 1:
+                self.add_notifier(name, ListenerNotifier)
+            bindings[name].append(listener)
 
     def eval_expression(self, name):
         """ Evaluate a bound expression with the given name.
@@ -405,10 +406,25 @@ class Declarative(Object):
             if there is no expression bound to the given name.
 
         """
-        exprs = self._expressions
-        if name in exprs:
-            return exprs[name].eval(self, name)
+        bindings = self._bindings
+        if name in bindings:
+            expr = bindings[name][0]
+            if expr is not None:
+                return expr.eval(self, name)
         return NotImplemented
+
+    def refresh_expression(self, name):
+        """ Refresh the value of a bound expression.
+
+        Parameters
+        ----------
+        name : str
+            The attribute name to which the invalid expression is bound.
+
+        """
+        value = self.eval_expression(name)
+        if value is not NotImplemented:
+            setattr(self, name, value)
 
     def run_listeners(self, name, old, new):
         """ Run the listeners bound to the given attribute name.
@@ -425,20 +441,10 @@ class Declarative(Object):
             The new value to pass to the listeners.
 
         """
-        lsnrs = self._listeners
-        if name in lsnrs:
-            for listener in lsnrs[name]:
+        bindings = self._bindings
+        if name in bindings:
+            for listener in bindings[name][1:]:
                 listener.value_changed(self, name, old, new)
-
-    def destroy(self):
-        """ A reimplemented parent class destructor method.
-
-        This method clears the dictionary of bound expression objects
-        before proceeding with the standard destruction.
-
-        """
-        self._expressions = {}
-        super(Declarative, self).destroy()
 
     def when(self, switch):
         """ A method which returns `self` or None based on the truthness

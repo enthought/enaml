@@ -225,6 +225,38 @@ def log_exceptions(func):
     return closure
 
 
+
+def make_dispatcher(prefix, logger=None):
+    """ Create a function which will dispatch arguments to specially
+    named handler methods on an object.
+
+    Parameters
+    ----------
+    prefix : str
+        The string to prefix to all dispatch names to construct the
+        name of the handler method.
+
+    logger : logging.Logger, optional
+        A logger to use for logging handler lookup misses.
+
+    Returns
+    -------
+    result : types.FunctionType
+        A function with the signature func(obj, name, *args). Calling
+        it is equivalent to `getattr(obj, prefix + name)(*args)`
+
+    """
+    def dispatcher(obj, name, *args):
+        handler = getattr(obj, prefix + name, None)
+        if handler is not None:
+            handler(*args)
+        elif logger is not None:
+            msg = "no dispatch handler found for '%s' on `%s` object"
+            logger.warn(msg % (name, obj))
+    dispatcher.__name__ = prefix + '_dispatcher'
+    return dispatcher
+
+
 # Backwards comatibility import. WeakMethod was moved to its own module.
 from .weakmethod import WeakMethod
 
