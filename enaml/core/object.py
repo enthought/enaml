@@ -6,7 +6,7 @@ from collections import defaultdict, deque, namedtuple
 import logging
 import re
 
-from traits.api import Property, Str
+from traits.api import Bool, Property, Str
 
 from enaml.utils import make_dispatcher
 
@@ -122,6 +122,10 @@ class Object(HasPrivateTraits_Patched):
     #: kept to all child objects.
     children = Property(fget=lambda self: self._children)
 
+    #: An event fired when an object has been initialized by the
+    #: session. It is emitted once during the `post_init` method.
+    initialized = EnamlEvent
+
     #: An event fired when an object is being destroyed. This event
     #: is fired before an change to the tree structure is made and
     #: allows any listeners to perform last-minute cleanup.
@@ -131,6 +135,11 @@ class Object(HasPrivateTraits_Patched):
     #: will be an instance of Session or None if there is no session.
     #: A strong reference is kept to the session object.
     session = Property(fget=lambda self: self._session)
+
+    #: A read-only property which will return True if the object's
+    #: session is not None. This indicates that the object is ready
+    #: to send and receive messages.
+    ready = Property(fget=lambda self: self._session is not None)
 
     #: A unique identifier which will be supplied by a Session when
     #: the object becomes a member of the session. This identifier
@@ -160,6 +169,33 @@ class Object(HasPrivateTraits_Patched):
             # `trait_set` is slow, don't use it here.
             for key, value in kwargs.iteritems():
                 setattr(self, key, value)
+
+    def initialize(self):
+        """ Called by the session to initialize the object tree.
+
+        This method is called by the session after the full object tree
+        is built, but before it is put in use for message passing.
+
+        """
+        self.pre_initialize()
+        for child in self.children:
+            child.initialize()
+        self.post_initialize()
+
+    def pre_initialize(self):
+        """ Called during the initialization pass before any children
+        are initialized.
+
+        """
+        print 'pre'
+        pass
+
+    def post_initialize(self):
+        """ Called during the initialization pass after all children
+        have been initialized.
+
+        """
+        self.initialized()
 
     def destroy(self):
         """ Destroy this object and all of its children recursively.
@@ -224,6 +260,22 @@ class Object(HasPrivateTraits_Patched):
                 self.set_session(psession)
             with ChildrenEventContext(parent):
                 parent._children += (self,)
+
+    def permute_children(self, permuation):
+        """ Permute the ordering of the object's children.
+
+        This method will emit a `ChildrenEvent` upon completion.
+
+        Parameters
+        ----------
+        permutation : iterable of int
+            An iterable of integers specifing the permutation to apply
+            to the children.
+
+        """
+        with ChildrenEventContext(self):
+            curr = self._children
+            self._children = tuple(curr[idx] for idx in permuation)
 
     def parent_event(self, event):
         """ Handle a `ParentEvent` posted to this object.
@@ -298,7 +350,8 @@ class Object(HasPrivateTraits_Patched):
                 nsession = node._session
                 if nsession is not session:
                     node._session = session
-                    nsession.unregister(node)
+                    if nsession is not None:
+                        nsession.unregister(node)
                     register(node)
 
     def send_action(self, action, content):
