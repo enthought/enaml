@@ -2,7 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Any, Instance, Property, Disallow, ReadOnly, CTrait
+from traits.api import Any, Property, Disallow, ReadOnly, CTrait
 
 from .dynamic_scope import DynamicAttributeError
 from .object import Object
@@ -11,7 +11,60 @@ from .trait_types import EnamlInstance, EnamlEvent
 
 
 #------------------------------------------------------------------------------
-# Default Value Support
+# User Attribute and User Event
+#------------------------------------------------------------------------------
+class UserAttribute(EnamlInstance):
+    """ An EnamlInstance subclass that is used to implement optional
+    attribute typing when adding a new user attribute to an Enaml
+    component.
+
+    """
+    def get(self, obj, name):
+        """ The trait getter method. Returns the value from the object's
+        dict, or raises an uninitialized error if the value doesn't exist.
+
+        """
+        dct = obj.__dict__
+        if name not in dct:
+            self.uninitialized_error(obj, name)
+        return dct[name]
+
+    def set(self, obj, name, value):
+        """ The trait setter method. Sets the value in the object's
+        dict if it is valid, and emits a change notification if the
+        value has changed. The first time the value is set the change
+        notification will carry None as the old value.
+
+        """
+        value = self.validate(obj, name, value)
+        dct = obj.__dict__
+        if name not in dct:
+            old = None
+        else:
+            old = dct[name]
+        dct[name] = value
+        if old != value:
+            obj.trait_property_changed(name, old, value)
+
+    def uninitialized_error(self, obj, name):
+        """ A method which raises a DynamicAttributeError for the given
+        object and attribute name.
+
+        """
+        msg = "Cannot access the uninitialized '%s' attribute of the %s object"
+        raise DynamicAttributeError(msg % (name, obj))
+
+
+class UserEvent(EnamlEvent):
+    """ A simple EnamlEvent subclass used to distinguish between events
+    declared by the framework, and events declared by the user.
+
+    """
+    pass
+
+
+#------------------------------------------------------------------------------
+# Declarative
 #------------------------------------------------------------------------------
 def _compute_default(obj, name):
     """ Compute the value for an expression.
@@ -106,62 +159,6 @@ def _wire_default(obj, name):
     obj._instance_traits()[name] = trait
 
 
-#------------------------------------------------------------------------------
-# User Attribute and User Event
-#------------------------------------------------------------------------------
-class UserAttribute(EnamlInstance):
-    """ An EnamlInstance subclass that is used to implement optional
-    attribute typing when adding a new user attribute to an Enaml
-    component.
-
-    """
-    def get(self, obj, name):
-        """ The trait getter method. Returns the value from the object's
-        dict, or raises an uninitialized error if the value doesn't exist.
-
-        """
-        dct = obj.__dict__
-        if name not in dct:
-            self.uninitialized_error(obj, name)
-        return dct[name]
-
-    def set(self, obj, name, value):
-        """ The trait setter method. Sets the value in the object's
-        dict if it is valid, and emits a change notification if the
-        value has changed. The first time the value is set the change
-        notification will carry None as the old value.
-
-        """
-        value = self.validate(obj, name, value)
-        dct = obj.__dict__
-        if name not in dct:
-            old = None
-        else:
-            old = dct[name]
-        dct[name] = value
-        if old != value:
-            obj.trait_property_changed(name, old, value)
-
-    def uninitialized_error(self, obj, name):
-        """ A method which raises a DynamicAttributeError for the given
-        object and attribute name.
-
-        """
-        msg = "Cannot access the uninitialized '%s' attribute of the %s object"
-        raise DynamicAttributeError(msg % (name, obj))
-
-
-class UserEvent(EnamlEvent):
-    """ A simple EnamlEvent subclass used to distinguish between events
-    declared by the framework, and events declared by the user.
-
-    """
-    pass
-
-
-#------------------------------------------------------------------------------
-# Declarative
-#------------------------------------------------------------------------------
 class ListenerNotifier(object):
     """ A lightweight trait change notifier used by Declarative.
 
@@ -178,9 +175,22 @@ class ListenerNotifier(object):
         """
         return False
 
-
 # Only a single instance of ListenerNotifier is needed.
 ListenerNotifier = ListenerNotifier()
+
+
+# Mangler functions for generated keys to use for storing expressions
+# and listeners in an object's dict. The object's dict is used for
+# storage instead of independent dictionaries in order to reduce the
+# applications memory footprint. In typical applications, each object
+# will have a large amount a state, and therefore plenty of free space
+# in its dict. When large numbers of objects are created, having two
+# more dicts on each object wastes a large amount of space.
+def _mangle_expression_name(name):
+    return '_[expr]_' + name
+
+def _mangle_listener_name(name):
+    return '_[lsnr]_' + name
 
 
 class Declarative(Object):
@@ -201,10 +211,6 @@ class Declarative(Object):
     #: assigned during object instantiation. It should not be edited
     #: by user code.
     operators = ReadOnly
-
-    #: The private dictionary of bindings for this object. It should
-    #: not be manipulated by user code.
-    _bindings = Instance(dict, ())
 
     #: A class attribute used by the Enaml compiler machinery to store
     #: the builder functions on the class. The functions are called
@@ -274,18 +280,18 @@ class Declarative(Object):
             should be a UserAttribute.
 
         """
-        base_traits = cls.__base_traits__
-        if name in base_traits:
-            ttype = base_traits[name].trait_type
-            if not isinstance(ttype, (UserAttribute, UserEvent)):
+        class_traits = cls.__class_traits__
+        if name in class_traits:
+            trait_type = class_traits[name].trait_type
+            if not isinstance(trait_type, (UserAttribute, UserEvent)):
                 msg = ("can't add '%s' attribute. The '%s' attribute on "
                        "enamldef '%s.%s' already exists.")
                 items = (name, name, cls.__module__, cls.__name__)
                 raise TypeError(msg % items)
 
-        trait_attr_cls = UserEvent if is_event else UserAttribute
+        trait_cls = UserEvent if is_event else UserAttribute
         try:
-            user_trait = trait_attr_cls(attr_type)
+            user_trait = trait_cls(attr_type)
         except TypeError:
             msg = ("'%s' is not a valid type for the '%s' attribute "
                    "declaration on enamldef '%s.%s'")
@@ -303,25 +309,15 @@ class Declarative(Object):
         # needed in this case, since this method will only be called by
         # the compiler machinery for brand new subclasses.
         ctrait = user_trait.as_ctrait()
-        anytrait_handler = cls.__prefix_traits__.get('@')
-        if anytrait_handler is not None:
-            ctrait._notifiers(1).append(anytrait_handler)
+        class_traits[name] = ctrait
         cls.__base_traits__[name] = ctrait
-        cls.__class_traits__[name] = ctrait
+        if '@' in cls.__prefix_traits__:
+            anytrait_handler = cls.__prefix_traits__['@']
+            ctrait._notifiers(1).append(anytrait_handler)
 
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
-    def destroy(self):
-        """ A reimplemented parent class destructor method.
-
-        This method clears the dict of bindings before calling the
-        superclass destructor
-
-        """
-        del self._bindings
-        super(Declarative, self).destroy()
-
     def bind_expression(self, name, expression):
         """ Bind an expression to the given attribute name.
 
@@ -344,12 +340,11 @@ class Declarative(Object):
         if curr is None or curr.trait_type is Disallow:
             msg = "Cannot bind expression. %s object has no attribute '%s'"
             raise AttributeError(msg % (self, name))
-        bindings = self._bindings
-        if name not in bindings:
-            bindings[name] = [expression]
+        mangled = _mangle_expression_name(name)
+        dct = self.__dict__
+        if mangled not in dct:
             _wire_default(self, name)
-        else:
-            bindings[name][0] = expression
+        dct[mangled] = expression
 
     def bind_listener(self, name, listener):
         """ A private method used by the Enaml execution engine.
@@ -374,15 +369,13 @@ class Declarative(Object):
         if curr is None or curr.trait_type is Disallow:
             msg = "Cannot bind listener. %s object has no attribute '%s'"
             raise AttributeError(msg % (self, name))
-        bindings = self._bindings
-        if name not in bindings:
-            bindings[name] = [None, listener]
+        mangled = _mangle_listener_name(name)
+        dct = self.__dict__
+        if mangled not in dct:
+            dct[mangled] = [listener]
             self.add_notifier(name, ListenerNotifier)
         else:
-            items = bindings[name]
-            if len(items) == 1:
-                self.add_notifier(name, ListenerNotifier)
-            bindings[name].append(listener)
+            dct[mangled].append(listener)
 
     def eval_expression(self, name):
         """ Evaluate a bound expression with the given name.
@@ -399,11 +392,10 @@ class Declarative(Object):
             if there is no expression bound to the given name.
 
         """
-        bindings = self._bindings
-        if name in bindings:
-            expr = bindings[name][0]
-            if expr is not None:
-                return expr.eval(self, name)
+        mangled = _mangle_expression_name(name)
+        dct = self.__dict__
+        if mangled in dct:
+            return dct[mangled].eval(self, name)
         return NotImplemented
 
     def refresh_expression(self, name):
@@ -434,9 +426,10 @@ class Declarative(Object):
             The new value to pass to the listeners.
 
         """
-        bindings = self._bindings
-        if name in bindings:
-            for listener in bindings[name][1:]:
+        mangled = _mangle_listener_name(name)
+        dct = self.__dict__
+        if mangled in dct:
+            for listener in dct[mangled]:
                 listener.value_changed(self, name, old, new)
 
     def when(self, switch):
