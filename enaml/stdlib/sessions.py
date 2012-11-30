@@ -33,11 +33,11 @@ class SimpleSession(Session):
         """ Create the view from the callable
 
         """
-        o = self.sess_callable(*self.args, **self.kwargs)
-        if isinstance(o, Iterable):
-            self.objects.extend(o)
+        w = self.sess_callable(*self.args, **self.kwargs)
+        if isinstance(w, Iterable):
+            self.windows.extend(w)
         else:
-            self.objects.append(o)
+            self.windows.append(w)
 
 
 def simple_session(sess_name, sess_descr, sess_callable, *args, **kwargs):

@@ -4,13 +4,13 @@
 #------------------------------------------------------------------------------
 import logging
 
-from traits.api import HasTraits, Instance, List, Str, ReadOnly
+from traits.api import HasTraits, Instance, Any, List, Str, ReadOnly
 
-from enaml.core.object import Object
 from enaml.support.resource import ResourceManager
+from enaml.utils import id_generator
+from enaml.widgets.window import Window
 
 from .application import deferred_call
-from .dispatch import dispatch_action
 from .signaling import Signal
 from .socket_interface import ActionSocketInterface
 
@@ -114,9 +114,15 @@ class Session(HasTraits):
     #: be manipulated by user code.
     session_id = ReadOnly
 
-    #: The objects being managed by this session. This list should be
-    #: populated by user code during the `on_open` method.
-    objects = List(Object)
+    #: An identifier generator to use for objects when they register
+    #: themselves with the session.
+    id_generator = Any
+    def _id_generator_default(self):
+        return id_generator('o_')
+
+    #: The toplevel windows which are being managed by this session. This
+    #: list should be populated by user code during the `on_open` method.
+    windows = List(Window)
 
     #: The resource manager to use for this session. User code can add
     #: resources to the default manager during the `on_open` method, or
@@ -135,6 +141,8 @@ class Session(HasTraits):
     #: provided by the Application in the `open` method. The value
     #: should not normally be manipulated by user code.
     socket = Instance(ActionSocketInterface)
+
+    _objects = Instance(dict, ())
 
     #: The private deferred message batch used for collapsing layout
     #: related messages into a single batch to send to the client
@@ -219,9 +227,10 @@ class Session(HasTraits):
         """
         self.session_id = session_id
         self.on_open()
-        for obj in self.objects:
-            obj.session = self
-            obj.initialize()
+        for window in self.windows:
+            window.initialize()
+        for window in self.windows:
+            window.set_session(self)
         self.socket = socket
         socket.on_message(self.on_message)
 
@@ -234,12 +243,20 @@ class Session(HasTraits):
 
         """
         self.on_close()
-        for obj in self.objects:
-            obj.destroy()
-        self.objects = []
+        for window in self.windows:
+            window.destroy()
+        self.windows = []
         socket = self.socket
         if socket is not None:
             socket.on_message(None)
+
+    def register(self, obj):
+        object_id = self.id_generator.next()
+        obj.object_id = object_id
+        self._objects[object_id] = obj
+
+    def unregister(self, obj):
+        self._objects.pop(obj.object_id, None)
 
     def snapshot(self):
         """ Get a snapshot of this session.
@@ -251,7 +268,7 @@ class Session(HasTraits):
             state of this session.
 
         """
-        return [obj.snapshot() for obj in self.objects]
+        return [window.snapshot() for window in self.windows]
 
     #--------------------------------------------------------------------------
     # Messaging API
@@ -303,10 +320,11 @@ class Session(HasTraits):
         if object_id == self.session_id:
             obj = self
         else:
-            obj = Object.lookup_object(object_id)
-            if obj is None:
+            try:
+                obj = self._objects[object_id]
+            except KeyError:
                 msg = "Invalid object id sent to Session: %s:%s"
                 logger.warn(msg % (object_id, action))
                 return
-        dispatch_action(obj, action, content)
+        obj.receive_action(action, content)
 
