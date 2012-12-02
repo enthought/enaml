@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from types import FunctionType
 from ctypes import (
-    pythonapi, py_object, c_int, c_long, Structure, ARRAY, c_void_p
+    pythonapi, py_object, c_int, c_size_t, Structure, ARRAY, c_void_p
 )
 
 
@@ -26,9 +26,9 @@ PyEval_EvalCodeEx.argtypes = [
 
 class PyTupleObject(Structure):
     _fields_ = [
-        ('ob_refcnt', c_long),
+        ('ob_refcnt', c_size_t),
         ('ob_type', py_object),
-        ('ob_size', c_long),
+        ('ob_size', c_size_t),
         ('ob_item', ARRAY(py_object, 1)),
     ]
 OB_ITEM_OFFSET = PyTupleObject.ob_item.offset
