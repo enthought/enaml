@@ -1,0 +1,22 @@
+# Note : You may have to set your ETS_TOOLKIT 
+#        environmental value to match the enaml toolkit
+#        for example, if using QT
+#        import os
+#        os.environ['ETS_TOOLKIT'] = 'qt4' 
+from enaml.widgets.api import MainWindow, TraitsUIItem
+from traits.api import HasTraits, Str
+from traitsui.api import View
+import sys
+print sys.argv
+
+class Test(HasTraits):
+    a = Str('foo')
+    b = Str('bar')
+    traits_view = View('a', 'b')
+    other_view = View('b', 'a', 'a')
+
+
+enamldef Main(MainWindow):
+    TraitsUIItem: titem:
+        model = Test()
+        view = 'other_view'

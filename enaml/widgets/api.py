@@ -44,6 +44,7 @@ from .stack_item import StackItem
 #from .text_editor import TextEditor
 from .time_selector import TimeSelector
 from .tool_bar import ToolBar
+from .traitsui_item import TraitsUIItem
 from .web_view import WebView
 from .window import Window
 
