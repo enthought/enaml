@@ -44,6 +44,9 @@ class QtTraitsItem(QtControl):
         # on qt, we must set this explicitly
         self.ui.control.setParent(self.widget())
         self.widget().layout().addWidget(self.ui.control)
+	size = self.ui.control.sizeHint()
+	self.set_minimum_size((size.width(), size.height()))
+	self.size_hint_updated()
 
     #--------------------------------------------------------------------------
     # Message Handlers
