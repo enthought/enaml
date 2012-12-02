@@ -3,7 +3,7 @@ import wx
 from .wx_control import WxControl
 
 
-class WxTraitsUIItem(WxControl):
+class WxTraitsItem(WxControl):
     """ A Wx implementation of an Enaml TraitsUIItem.
 
     """
@@ -29,7 +29,7 @@ class WxTraitsUIItem(WxControl):
         """ Create and initialize the underlying widget.
 
         """
-        super(WxTraitsUIItem, self).create(tree)
+        super(WxTraitsItem, self).create(tree)
 
     #--------------------------------------------------------------------------
     # Message Handlers

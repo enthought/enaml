@@ -3,11 +3,10 @@
 #        for example, if using QT
 #        import os
 #        os.environ['ETS_TOOLKIT'] = 'qt4' 
-from enaml.widgets.api import MainWindow, TraitsUIItem
+from enaml.widgets.api import MainWindow, TraitsItem, Container, PushButton
 from traits.api import HasTraits, Str
 from traitsui.api import View
-import sys
-print sys.argv
+
 
 class Test(HasTraits):
     a = Str('foo')
@@ -17,6 +16,14 @@ class Test(HasTraits):
 
 
 enamldef Main(MainWindow):
-    TraitsUIItem: titem:
-        model = Test()
-        view = 'other_view'
+    Container:
+        TraitsItem: titem:
+            model = Test()
+            view = 'other_view'
+        PushButton:
+            text = 'Change View'
+            clicked ::
+                if titem.view == 'other_view':
+                    titem.view = 'traits_view'
+                else:
+                    titem.view = 'other_view'

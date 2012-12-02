@@ -197,9 +197,9 @@ def tool_bar_factory():
     return QtToolBar
 
 
-def traitsui_item_factory():
-    from .qt_traitsui_item import QtTraitsUIItem
-    return QtTraitsUIItem
+def traits_item_factory():
+    from .qt_traits_item import QtTraitsItem
+    return QtTraitsItem
 
 
 def web_view_factory():
@@ -254,7 +254,7 @@ def register_default():
     register('StackItem', stack_item_factory)
     register('TimeSelector', time_selector_factory)
     register('ToolBar', tool_bar_factory)
-    register('TraitsUIItem', traitsui_item_factory)
+    register('TraitsItem', traits_item_factory)
     register('WebView', web_view_factory)
     register('Window', window_factory)
 

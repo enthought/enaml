@@ -5,7 +5,7 @@
 #        import os
 #        os.environ['ETS_TOOLKIT'] = 'qt4'
 
-from enaml.widgets.api import MainWindow, Container, TraitsUIItem
+from enaml.widgets.api import MainWindow, Container, TraitsItem
 
 from traits.api import HasTraits, Instance, on_trait_change
 from traitsui.api import View, Item
@@ -26,9 +26,10 @@ class Visualization(HasTraits):
 
 
 enamldef Main(MainWindow):
-    TraitsUIItem:
-        model = Visualization()
-        view = View(Item('scene', editor=SceneEditor(scene_class=MayaviScene),
-                 height=250, width=300, show_label=False),
-                    resizable=True # We need this to resize with the parent widget
-                    )
+    Container:
+        TraitsItem:
+            model = Visualization()
+            view = View(Item('scene', editor=SceneEditor(scene_class=MayaviScene),
+                        height=250, width=300, show_label=False),
+                        resizable=True # We need this to resize with the parent widget
+                        )

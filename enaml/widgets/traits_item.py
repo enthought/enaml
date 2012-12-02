@@ -3,12 +3,11 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from traits.api import HasTraits, Instance, Any
-from traitsui.api import Handler
 
 from .control import Control
 
 
-class TraitsUIItem(Control):
+class TraitsItem(Control):
     """ A control to display a traitsui item
 
     """
@@ -16,12 +15,12 @@ class TraitsUIItem(Control):
     model = Instance(HasTraits)
 
     # optional : the desired handler for the model
-    handler = Instance(Handler)
+    handler = Instance('Handler')
 
     # optional: the desired view for the model
     view = Any
 
-    #: How strongly a component hugs it's contents' width. TraitsUIItems ignore
+    #: How strongly a component hugs it's contents' width. TraitsItems ignore
     #: the width hug by default, so they expand freely in width.
     hug_width = 'ignore'
     hug_height = 'ignore'
@@ -33,7 +32,7 @@ class TraitsUIItem(Control):
         """ Returns the dict of creation attributes for the control.
 
         """
-        snap = super(TraitsUIItem, self).snapshot()
+        snap = super(TraitsItem, self).snapshot()
         snap['model'] = self.model
         snap['handler'] = self.handler
         snap['view'] = self.view
@@ -44,6 +43,6 @@ class TraitsUIItem(Control):
         to bind any event handlers necessary.
 
         """
-        super(TraitsUIItem, self).bind()
+        super(TraitsItem, self).bind()
         self.publish_attributes('model', 'handler', 'view')
 
