@@ -19,7 +19,7 @@ enamldef Main(MainWindow):
     Container:
         TraitsItem: titem:
             model = Test()
-            view = ''
+            view = View('a')
         PushButton:
             text = 'Change View'
             clicked ::

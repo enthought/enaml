@@ -193,6 +193,6 @@ def register_default():
     register('SplitItem', split_item_factory)
     register('Splitter', splitter_factory)
     register('ToolBar', tool_bar_factory)
-    register('TraitItem', traits_item_factory)
+    register('TraitsItem', traits_item_factory)
     register('Window', window_factory)
 

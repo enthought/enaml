@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import HasTraits, Instance, Any
+from traits.api import HasTraits, Instance, Any, Trait, Str
 
 from .control import Control
 
@@ -15,10 +15,10 @@ class TraitsItem(Control):
     model = Instance(HasTraits)
 
     # optional : the desired handler for the model
-    handler = Instance('Handler')
+    handler = Instance('traitsui.api.Handler')
 
     # optional: the desired view for the model
-    view = Any
+    view = Trait('', Str, Instance('traitsui.api.View'))
 
     #: How strongly a component hugs it's contents' width. TraitsItems ignore
     #: the width hug by default, so they expand freely in width.

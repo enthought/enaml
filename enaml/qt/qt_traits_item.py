@@ -32,9 +32,11 @@ class QtTraitsItem(QtControl):
     def init_layout(self):
         '''Create the Traits UI widget and add to our layout
         '''
-        # guard against using a view that is not supported by the model
-        if not self.model.trait_view(self.view):
-            self.view = ''
+	super(QtTraitsItem, self).init_layout()
+        # guard against using a named view that is not supported by the model
+	if isinstance(self.view, (str, unicode)):
+	    if self.model.trait_view(self.view) is None:
+		self.view = ''
         # remove any previous widget before adding a new one
         if self.ui:
             self.widget().layout().removeWidget(self.ui.control)
@@ -44,6 +46,7 @@ class QtTraitsItem(QtControl):
         # on qt, we must set this explicitly
         self.ui.control.setParent(self.widget())
         self.widget().layout().addWidget(self.ui.control)
+	# allow the widget to resize when the view is changed
 	size = self.ui.control.sizeHint()
 	self.set_minimum_size((size.width(), size.height()))
 	self.size_hint_updated()
@@ -63,6 +66,7 @@ class QtTraitsItem(QtControl):
 
         """
         self.handler = content['handler']
+	self.init_layout()
 
     def on_action_set_view(self, content):
         """ Handle the 'set_view' action from the Enaml widget.
