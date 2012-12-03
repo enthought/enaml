@@ -2,7 +2,9 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Any, Property, Disallow, ReadOnly, CTrait, Uninitialized
+from traits.api import (
+    Any, Property, Disallow, ReadOnly, CTrait, Instance, Uninitialized,
+)
 
 from .dynamic_scope import DynamicAttributeError
 from .object import Object
@@ -80,8 +82,7 @@ def _compute_default(obj, name):
         raise # Reraise a propagating initialization error.
     except Exception:
         import traceback
-        mangled = _mangle_expression_name(name)
-        expr = obj.__dict__[mangled]
+        expr = obj._expressions[name]
         filename = expr._func.func_code.co_filename
         lineno = expr._func.func_code.co_firstlineno
         args = (filename, lineno, traceback.format_exc())
@@ -181,20 +182,6 @@ class ListenerNotifier(object):
 ListenerNotifier = ListenerNotifier()
 
 
-# Mangler functions for generated keys to use for storing expressions
-# and listeners in an object's dict. The object's dict is used for
-# storage instead of independent dictionaries in order to reduce the
-# applications memory footprint. In typical applications, each object
-# will have a large amount a state, and therefore plenty of free space
-# in its dict. When large numbers of objects are created, having two
-# more dicts on each object wastes a large amount of space.
-def _mangle_expression_name(name):
-    return '_[expr]_' + name
-
-def _mangle_listener_name(name):
-    return '_[lsnr]_' + name
-
-
 class Declarative(Object):
     """ The most base class of the Enaml declarative objects.
 
@@ -213,6 +200,20 @@ class Declarative(Object):
     #: assigned during object instantiation. It should not be edited
     #: by user code.
     operators = ReadOnly
+
+    #: The dictionary of bound expression objects. XXX These dicts are
+    #: typically small and waste space. We need to switch to a more
+    #: space efficient hash table at some point in the future. For
+    #: pathological cases of large numbers of objects, the savings
+    #: can be as high as 20%.
+    _expressions = Instance(dict, ())
+
+    #: The dictionary of bound listener objects. XXX These dicts are
+    #: typically small and waste space. We need to switch to a more
+    #: space efficient hash table at some point in the future. For
+    #: pathological cases of large numbers of objects, the savings
+    #: can be as high as 20%.
+    _listeners = Instance(dict, ())
 
     #: A class attribute used by the Enaml compiler machinery to store
     #: the builder functions on the class. The functions are called
@@ -342,11 +343,10 @@ class Declarative(Object):
         if curr is None or curr.trait_type is Disallow:
             msg = "Cannot bind expression. %s object has no attribute '%s'"
             raise AttributeError(msg % (self, name))
-        mangled = _mangle_expression_name(name)
-        dct = self.__dict__
-        if mangled not in dct:
+        dct = self._expressions
+        if name not in dct:
             _wire_default(self, name)
-        dct[mangled] = expression
+        dct[name] = expression
 
     def bind_listener(self, name, listener):
         """ A private method used by the Enaml execution engine.
@@ -371,13 +371,12 @@ class Declarative(Object):
         if curr is None or curr.trait_type is Disallow:
             msg = "Cannot bind listener. %s object has no attribute '%s'"
             raise AttributeError(msg % (self, name))
-        mangled = _mangle_listener_name(name)
-        dct = self.__dict__
-        if mangled not in dct:
-            dct[mangled] = [listener]
+        dct = self._listeners
+        if name not in dct:
+            dct[name] = [listener]
             self.add_notifier(name, ListenerNotifier)
         else:
-            dct[mangled].append(listener)
+            dct[name].append(listener)
 
     def eval_expression(self, name):
         """ Evaluate a bound expression with the given name.
@@ -394,10 +393,9 @@ class Declarative(Object):
             if there is no expression bound to the given name.
 
         """
-        mangled = _mangle_expression_name(name)
-        dct = self.__dict__
-        if mangled in dct:
-            return dct[mangled].eval(self, name)
+        dct = self._expressions
+        if name in dct:
+            return dct[name].eval(self, name)
         return NotImplemented
 
     def refresh_expression(self, name):
@@ -428,32 +426,8 @@ class Declarative(Object):
             The new value to pass to the listeners.
 
         """
-        mangled = _mangle_listener_name(name)
-        dct = self.__dict__
-        if mangled in dct:
-            for listener in dct[mangled]:
+        dct = self._listeners
+        if name in dct:
+            for listener in dct[name]:
                 listener.value_changed(self, name, old, new)
-
-    def when(self, switch):
-        """ A method which returns `self` or None based on the truthness
-        of the argument.
-
-        This can be useful to easily turn off the effects of an object
-        in various situations such as constraints-based layout.
-
-        Parameters
-        ----------
-        switch : bool
-            A boolean which indicates whether this instance or None
-            should be returned.
-
-        Returns
-        -------
-        result : self or None
-            If 'switch' is boolean True, self is returned. Otherwise,
-            None is returned.
-
-        """
-        if switch:
-            return self
 

@@ -61,34 +61,30 @@ class Include(Declarative):
     #: are removed from the parent. The default is True.
     destroy_old = Bool(True)
 
-    def initialize(self):
-        """ A reimplemented initialization method.
+    def init_objects(self):
+        """ A method called by a parent widget to allow an `Include`
+        to parent its initial object list.
 
-        This method ensures that the objects are added to the children
-        of the parent and initialized.
+        This method should never be called by user code.
 
         """
         parent = self.parent
-        if parent is not None:
-            # Update the children from within a child event context
-            # to collapse multiple notifications into one.
-            with ChildrenEventContext(parent):
-                objects = self.objects
-                obj_set = set(objects)
-                if len(objects) != len(obj_set):
-                    raise ValueError('Cannot include duplicate objects')
-                # Use the `set_parent` api to ensure child validity. This
-                # loop dwarfs the cost of the other operations when the
-                # number of children is large.
-                for obj in objects:
-                    obj.set_parent(parent)
-                # Compute and apply the permutation for the children to
-                # place them in the correct position. The children are
-                # placed immediately after the include.
-                perm = _permutation(self, objects, obj_set, parent.children)
-                parent.permute_children(perm)
-                for obj in objects:
-                    obj.initialize()
+        with ChildrenEventContext(parent):
+            objects = self.objects
+            obj_set = set(objects)
+            if len(objects) != len(obj_set):
+                raise ValueError('Cannot include duplicate objects')
+            # Use the `set_parent` api to ensure child validity. This
+            # loop dwarfs the cost of the other operations when the
+            # number of children is large.
+            for obj in objects:
+                obj.set_parent(parent)
+            # Compute and apply the permutation for the children to
+            # place them in the correct position. The children are
+            # placed immediately after the include.
+            perm = _permutation(self, objects, obj_set, parent.children)
+            parent.permute_children(perm)
+            # XXX init nested Includes
 
     # def _parent_changed(self, parent):
     #     """ A change handler for the `parent` of the Include.

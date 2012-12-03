@@ -182,20 +182,37 @@ class Application(object):
     # Abstract API
     #--------------------------------------------------------------------------
     @abstractmethod
-    def socket(self, session_id):
-        """ Get the ActionSocketInterface for a session.
+    def start_session(self, name):
+        """ Start a new session of the given name.
+
+        This method will create a new session object for the requested
+        session type and return the new session_id. If the session name
+        is invalid, an exception will be raised.
+
+        Parameters
+        ----------
+        name : str
+            The name of the session to start.
+
+        Returns
+        -------
+        result : str
+            The unique identifier for the created session.
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def end_session(self, session_id):
+        """ End the session with the given session id.
+
+        This method will close down the existing session. If the session
+        id is not valid, an exception will be raised.
 
         Parameters
         ----------
         session_id : str
-            The string identifier for the session which will use the
-            created action socket.
-
-        Returns
-        -------
-        result : ActionSocketInterface
-            An implementor of ActionSocketInterface which can be used
-            by Enaml Session instances for messaging.
+            The unique identifier for the session to close.
 
         """
         raise NotImplementedError
@@ -381,22 +398,23 @@ class Application(object):
         """
         return self._sessions.get(session_id)
 
-    def start_session(self, name):
-        """ Start a new session of the given name.
+    def open_session(self, name):
+        """ Open a session with the given name.
 
-        This method will create a new session object for the requested
-        session type and return the new session_id. If the session name
-        is invalid, an exception will be raised.
+        This method will typically be called by concrete implementations
+        of `Application`. User code should call `start_session` instead.
 
         Parameters
         ----------
         name : str
-            The name of the session to start.
+            The name of an available session to start.
 
         Returns
         -------
         result : str
-            The unique identifier for the created session.
+            A unique identifier for the session instance. The session
+            object can be retrieved using this identifier and the
+            `session` method.
 
         """
         if name not in self._named_factories:
@@ -404,20 +422,20 @@ class Application(object):
         factory = self._named_factories[name]
         session = factory()
         session_id = uuid.uuid4().hex
+        session.open(session_id)
         self._sessions[session_id] = session
-        session.open(session_id, self.socket(session_id))
         return session_id
 
-    def end_session(self, session_id):
-        """ End the session with the given session id.
+    def close_session(self, session_id):
+        """ Close the session with the given identifier.
 
-        This method will close down the existing session. If the session
-        id is not valid, an exception will be raised.
+        This method will typically be called by concreted implementations
+        of `Application`. User code should call `end_session` instead.
 
         Parameters
         ----------
         session_id : str
-            The unique identifier for the session to close.
+            The identifier for the session to close.
 
         """
         if session_id not in self._sessions:

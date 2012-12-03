@@ -4,10 +4,8 @@
 #------------------------------------------------------------------------------
 import logging
 
-from traits.api import HasTraits, Instance, Any, List, Str, ReadOnly
+from traits.api import HasTraits, Instance, List, Str, ReadOnly, Enum, Property
 
-from enaml.support.resource import ResourceManager
-from enaml.utils import id_generator
 from enaml.widgets.window import Window
 
 from .application import deferred_call
@@ -114,20 +112,9 @@ class Session(HasTraits):
     #: be manipulated by user code.
     session_id = ReadOnly
 
-    #: An identifier generator to use for objects when they register
-    #: themselves with the session.
-    id_generator = Any
-    def _id_generator_default(self):
-        return id_generator('o_')
-
     #: The toplevel windows which are being managed by this session. This
     #: list should be populated by user code during the `on_open` method.
     windows = List(Window)
-
-    #: The resource manager to use for this session. User code can add
-    #: resources to the default manager during the `on_open` method, or
-    #: replace it with a custom resource manager.
-    resources = Instance(ResourceManager, ())
 
     #: The widget implementation groups which should be used by the
     #: widgets in this session. Widget groups are an advanced feature
@@ -142,6 +129,37 @@ class Session(HasTraits):
     #: should not normally be manipulated by user code.
     socket = Instance(ActionSocketInterface)
 
+    #: The current state of the session. This value is changed by the
+    #: by the application as it drives the session through its lifetime.
+    #: This should not be manipulated directly by user code.
+    state = Enum(
+        'inactive', 'opening', 'opened', 'activating', 'active', 'closing',
+        'closed',
+    )
+
+    #: A read-only property which is True if the session is inactive.
+    is_inactive = Property(fget=lambda self: self.state == 'inactive')
+
+    #: A read-only property which is True if the session is opening.
+    is_opening = Property(fget=lambda self: self.state == 'opening')
+
+    #: A read-only property which is True if the session is opened.
+    is_opened = Property(fget=lambda self: self.state == 'opened')
+
+    #: A read-only property which is True if the session is activating.
+    is_activating = Property(fget=lambda self: self.state == 'activating')
+
+    #: A read-only property which is True if the session is active.
+    is_active = Property(fget=lambda self: self.state == 'active')
+
+    #: A read-only property which is True if the session is closing.
+    is_closing = Property(fget=lambda self: self.state == 'closing')
+
+    #: A read-only property which is True if the session is closed.
+    is_closed = Property(fget=lambda self: self.state == 'closed')
+
+    #: A private dictionary of objects registered with this session.
+    #: This should not be manipulated by user code.
     _objects = Instance(dict, ())
 
     #: The private deferred message batch used for collapsing layout
@@ -153,9 +171,26 @@ class Session(HasTraits):
         batch.triggered.connect(self._on_batch_triggered)
         return batch
 
+    #--------------------------------------------------------------------------
+    # Class API
+    #--------------------------------------------------------------------------
     @classmethod
     def factory(cls, name='', description='', *args, **kwargs):
         """ Get a SessionFactory for this Session class.
+
+        Parameters
+        ----------
+        name : str, optional
+            The name to use for the session instances. The default uses
+            the class name.
+
+        description : str, optional
+            A human friendly description of the session. The default uses
+            the class docstring.
+
+        *args, **kwargs
+            Any positional and keyword arguments to pass to the session
+            when it is instantiated.
 
         """
         from enaml.session_factory import SessionFactory
@@ -208,8 +243,8 @@ class Session(HasTraits):
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
-    def open(self, session_id, socket):
-        """ Called by the application when the session is opened.
+    def open(self, session_id):
+        """ Called by the application to open the session.
 
         This method will call the `on_open` abstract method which must
         be implemented by subclasses. The method should never be called
@@ -220,28 +255,46 @@ class Session(HasTraits):
         session_id : str
             The identifier to use for this session.
 
+        """
+        self.session_id = session_id
+        self.state = 'opening'
+        self.on_open()
+        for window in self.windows:
+            window.initialize()
+        self.state = 'opened'
+
+    def activate(self, socket):
+        """ Called by the application to activate the session and its
+        windows.
+
+        This method will be called by the Application once during the
+        session lifetime, after the snapshot has been requested and
+        once the application has established the sockets. This method
+        should never be called by user code.
+
+        Parameters
+        ----------
         socket : ActionSocketInterface
             A concrete implementation of ActionSocketInterface to use
             for messaging by this session.
 
         """
-        self.session_id = session_id
-        self.on_open()
+        self.state = 'activating'
         for window in self.windows:
-            window.initialize()
-        for window in self.windows:
-            window.set_session(self)
+            window.activate(self)
         self.socket = socket
         socket.on_message(self.on_message)
+        self.state = 'active'
 
     def close(self):
         """ Called by the application when the session is closed.
 
-        This method will call the `on_close` method which may be
-        implemented by subclasses. The method should never be called
+        This method will call the `on_close` method which can optionally
+        be implemented by subclasses. The method should never be called
         by user code.
 
         """
+        self.state = 'closing'
         self.on_close()
         for window in self.windows:
             window.destroy()
@@ -249,26 +302,48 @@ class Session(HasTraits):
         socket = self.socket
         if socket is not None:
             socket.on_message(None)
-
-    def register(self, obj):
-        object_id = self.id_generator.next()
-        obj.object_id = object_id
-        self._objects[object_id] = obj
-
-    def unregister(self, obj):
-        self._objects.pop(obj.object_id, None)
+            self.socket = None
+        self.state = 'closed'
 
     def snapshot(self):
-        """ Get a snapshot of this session.
+        """ Get a snapshot of the windows of this session.
 
         Returns
         -------
         result : list
             A list of snapshot dictionaries representing the current
-            state of this session.
+            windows for this session.
 
         """
         return [window.snapshot() for window in self.windows]
+
+    def register(self, obj):
+        """ Register an object with the session.
+
+        This method is called by an Object when it is activated by a
+        Session. It should never be called by user code.
+
+        Parameters
+        ----------
+        obj : Object
+            The object to register with the session.
+
+        """
+        self._objects[obj.object_id] = obj
+
+    def unregister(self, obj):
+        """ Unregister an object from the session.
+
+        This method is called by an Object when it is being destroyed.
+        It should never be called by user code.
+
+        Parameters
+        ----------
+        obj : Object
+            The object to unregister from the session.
+
+        """
+        self._objects.pop(obj.object_id, None)
 
     #--------------------------------------------------------------------------
     # Messaging API
@@ -291,12 +366,11 @@ class Session(HasTraits):
             The content dictionary for the action.
 
         """
-        socket = self.socket
-        if socket is not None:
+        if self.is_active:
             if action in BATCH_ACTIONS:
                 self._batch.add_message((object_id, action, content))
             else:
-                socket.send(object_id, action, content)
+                self.socket.send(object_id, action, content)
 
     def on_message(self, object_id, action, content):
         """ Receive a message sent to an object owned by this session.
@@ -317,14 +391,15 @@ class Session(HasTraits):
             The content dictionary for the action.
 
         """
-        if object_id == self.session_id:
-            obj = self
-        else:
-            try:
-                obj = self._objects[object_id]
-            except KeyError:
-                msg = "Invalid object id sent to Session: %s:%s"
-                logger.warn(msg % (object_id, action))
-                return
-        obj.receive_action(action, content)
+        if self.is_active:
+            if object_id == self.session_id:
+                obj = self
+            else:
+                try:
+                    obj = self._objects[object_id]
+                except KeyError:
+                    msg = "Invalid object id sent to Session: %s:%s"
+                    logger.warn(msg % (object_id, action))
+                    return
+            obj.receive_action(action, content)
 

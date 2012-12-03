@@ -6,9 +6,9 @@ from collections import defaultdict, deque, namedtuple
 import logging
 import re
 
-from traits.api import Bool, Property, Str
+from traits.api import Property, Str, Enum, ReadOnly
 
-from enaml.utils import make_dispatcher
+from enaml.utils import make_dispatcher, id_generator
 
 from .has_traits_patch import HasPrivateTraits_Patched
 from .trait_types import EnamlEvent
@@ -34,8 +34,8 @@ ChildrenEvent = namedtuple('ChildrenEvent', 'old new')
 ParentEvent = namedtuple('ParentEvent', 'old new')
 
 
-#: A lazily imported class to avoid a circular import.
-SessionClass = None
+#: The identifier generator for object instances.
+obj_id_generator = id_generator('o_')
 
 
 class ChildrenEventContext(object):
@@ -122,29 +122,64 @@ class Object(HasPrivateTraits_Patched):
     #: kept to all child objects.
     children = Property(fget=lambda self: self._children)
 
-    #: An event fired when an object has been initialized by the
-    #: session. It is emitted once during the `post_init` method.
+    #: An event fired when an the oject has been initialized. It is
+    #: emitted once during an object's lifetime, before the object
+    #: has been registered with a session.
     initialized = EnamlEvent
 
+    #: An event fired when an object has been activated. It is emitted
+    #: once during an object's lifetime, once it has been registered
+    #: with a session.
+    activated = EnamlEvent
+
     #: An event fired when an object is being destroyed. This event
-    #: is fired before an change to the tree structure is made and
-    #: allows any listeners to perform last-minute cleanup.
+    #: is fired once during the object lifetime, before any change to
+    #: the tree structure is made and allows any listeners to perform
+    #: last minute cleanup.
     destroyed = EnamlEvent
 
     #: A read-only property which returns the object's session. This
     #: will be an instance of Session or None if there is no session.
-    #: A strong reference is kept to the session object.
+    #: A strong reference is kept to the session object. This value
+    #: should not be manipulated by user code.
     session = Property(fget=lambda self: self._session)
 
-    #: A read-only property which will return True if the object's
-    #: session is not None. This indicates that the object is ready
-    #: to send and receive messages.
-    ready = Property(fget=lambda self: self._session is not None)
+    #: A read-only value which returns the object's identifier. This
+    #: will be computed the first time it is requested. The default
+    #: value is guaranteed to be unique for the current process. The
+    #: initial value may be supplied by user code if more control is
+    #: needed, with sufficient care that the value is unique.
+    object_id = ReadOnly
+    def _object_id_default(self):
+        return obj_id_generator.next()
 
-    #: A unique identifier which will be supplied by a Session when
-    #: the object becomes a member of the session. This identifier
-    #: should not be edited directly by user code.
-    object_id = Str
+    #: The current state of the object for purposes of messaging. This
+    #: value should not be manipulated directly by user code.
+    state = Enum(
+        'inactive', 'initializing', 'initialized', 'activating', 'active',
+        'destroying', 'destroyed',
+    )
+
+    #: A read-only property which is True if the object is inactive.
+    is_inactive = Property(fget=lambda self: self.state == 'inactive')
+
+    #: A read-only property which is True if the object is initializing.
+    is_initializing = Property(fget=lambda self: self.state == 'initializing')
+
+    #: A read-only property which is True if the object is initialized.
+    is_initialized = Property(fget=lambda self: self.state == 'initialized')
+
+    #: A read-only property which is True if the object is activating.
+    is_activating = Property(fget=lambda self: self.state == 'activating')
+
+    #: A read-only property which is True if the object is active.
+    is_active = Property(fget=lambda self: self.state == 'active')
+
+    #: A read-only property which is True if the object is destroying.
+    is_destroying = Property(fget=lambda self: self.state == 'destroying')
+
+    #: A read-only property which is True if the object is destroyed.
+    is_destroyed = Property(fget=lambda self: self.state == 'destroyed')
 
     def __init__(self, parent=None, **kwargs):
         """ Initialize an Object.
@@ -171,57 +206,141 @@ class Object(HasPrivateTraits_Patched):
                 setattr(self, key, value)
 
     def initialize(self):
-        """ Called by the session to initialize the object tree.
+        """ Called by a session to initialize the object tree.
 
-        This method is called by the session after the full object tree
-        is built, but before it is put in use for message passing.
+        This method is called by a Session object to allow the object
+        tree to perform additional initialization before it is activated
+        for messaging. Subclasses which modify the object tree during
+        the initialization pass are responsible for ensuring that new
+        children are initialized.
 
         """
+        self.state = 'initializing'
         self.pre_initialize()
         for child in self.children:
             child.initialize()
+        self.state = 'initialized'
         self.post_initialize()
 
     def pre_initialize(self):
         """ Called during the initialization pass before any children
         are initialized.
 
+        The object `state` during this call will be 'initializing'.
+
         """
-        print 'pre'
         pass
 
     def post_initialize(self):
         """ Called during the initialization pass after all children
         have been initialized.
 
+        The object `state` during this call will be 'initialized'. The
+        default implementation of this method emits the `initialized`
+        event.
+
         """
         self.initialized()
+
+    def activate(self, session):
+        """ Called by a Session to activate the object tree.
+
+        This method is called by a Session object to activate the object
+        tree for messaging. Subclasses must not modify the object tree
+        during activation.
+
+        Parameters
+        ----------
+        session : Session
+            The session object to use for messaging with this object
+            tree.
+
+        """
+        self.state = 'activating'
+        self.pre_activate(session)
+        self._session = session
+        session.register(self)
+        for child in self._children:
+            child.activate(session)
+        self.state = 'active'
+        self.post_activate(session)
+
+    def pre_activate(self, session):
+        """ Called during the activation pass before any children are
+        activated.
+
+        The object `state` during this call will be 'activating'.
+
+        Parameters
+        ----------
+        session : Session
+            The session object to use for messaging with this object
+            tree.
+
+        """
+        pass
+
+    def post_activate(self, session):
+        """ Called during the activation pass after all children are
+        activated.
+
+        The object `state` during this call will be 'active'. The
+        default implementation emits the `activated` event.
+
+        Parameters
+        ----------
+        session : Session
+            The session object to use for messaging with this object
+            tree.
+
+        """
+        self.activated()
 
     def destroy(self):
         """ Destroy this object and all of its children recursively.
 
         This will emit the `destroyed` event before any change to the
-        object tree is made. After this method returns, the object is
-        considered invalid and should no longer be used.
+        object tree is made. This method will set the `state` flag to
+        'destroying'. After this method returns, the object should be
+        considered invalid and no longer be used.
 
         """
-        self.destroyed()
+        self.pre_destroy()
+        self.state = 'destroying'
         if self._children:
             for child in self._children:
-                child._destroying = True
                 child.destroy()
             self._children = ()
-        if self._destroying:
+        parent = self._parent
+        if parent is not None and parent.is_destroying:
             self._parent = None
         else:
             self.set_parent(None)
         session = self._session
         if session is not None:
             session.unregister(self)
-        # Clear the object's state. Assigning an empty dict here (which
-        # would be faster) doesn't work because ctraits.c doesn't do the
-        # right thing for that operation.
-        self.__dict__.clear()
+        self.state = 'destroyed'
+        self.post_destroy()
+
+    def pre_destroy(self):
+        """ Called during the destruction pass before any children are
+        destroyed.
+
+        The object `state` during this call will be 'active'.
+        default implementation emits the `destroyed` event.
+
+        """
+        self.destroyed()
+
+    def post_destroy(self):
+        """ Called during the destruction pass after all children are
+        destroyed.
+
+        This allows subclass to perform any required cleanup after
+        everything on the base object has been closed.
+
+        """
+        pass
 
     def set_parent(self, parent):
         """ Set the parent for this object.
@@ -236,6 +355,11 @@ class Object(HasPrivateTraits_Patched):
         parent : Object or None
             The Object instance to use for the parent, or None if this
             object should be unparented.
+
+        Notes
+        -----
+        It is the responsibility of the caller to intialize and activate
+        the object if it is parented dynamically at runtime.
 
         """
         old_parent = self._parent
@@ -254,10 +378,6 @@ class Object(HasPrivateTraits_Patched):
             with ChildrenEventContext(old_parent):
                 old_parent._children = old_kids[:idx] + old_kids[idx + 1:]
         if parent is not None:
-            session = self._session
-            psession = parent._session
-            if session is not psession:
-                self.set_session(psession)
             with ChildrenEventContext(parent):
                 parent._children += (self,)
 
@@ -310,54 +430,11 @@ class Object(HasPrivateTraits_Patched):
         """
         self.trait_property_changed('children', event.old, event.new)
 
-    def set_session(self, session):
-        """ Set the session for the object.
-
-        This will update the value of the session on this object and on
-        every object in the subtree. Each object in the subtree will be
-        registered with the session. An error will be raised if the
-        object has a parent with a different session.
-
-        Parameters
-        ----------
-        session : Session
-            The session with which the object and its subtree should be
-            registered.
-
-        """
-        # lazily import the Session class to avoid a circular condition
-        global SessionClass
-        if SessionClass is None:
-            from enaml.session import Session
-            SessionClass = Session
-        if session is not None and not isinstance(session, SessionClass):
-            raise TypeError('session must be a Session or None')
-        parent = self._parent
-        if parent is not None:
-            psession = parent._session
-            if psession is not None and psession is not session:
-                msg = 'a child cannot have a session different from its parent'
-                raise ValueError(msg)
-        if session is None:
-            for node in self.traverse():
-                nsession = node._session
-                if nsession is not None:
-                    nsession.unregister(node)
-                    node._session = None
-        else:
-            register = session.register
-            for node in self.traverse():
-                nsession = node._session
-                if nsession is not session:
-                    node._session = session
-                    if nsession is not None:
-                        nsession.unregister(node)
-                    register(node)
-
     def send_action(self, action, content):
         """ Send an action to the client of this object.
 
-        The action will only be sent if the object has a session.
+        The action will only be sent if the object state is `active`.
+        Subclasses may reimplement this method if more control is needed.
 
         Parameters
         ----------
@@ -368,16 +445,15 @@ class Object(HasPrivateTraits_Patched):
             The content data for the action.
 
         """
-        session = self._session
-        if session is not None:
-            session.send(self.object_id, action, content)
+        if self.is_active:
+            self._session.send(self.object_id, action, content)
 
     def receive_action(self, action, content):
         """ Receive an action from the client of this messenger.
 
         The default implementation will dynamically dispatch the message
-        to specially named handlers. Subclasses may reimplement this
-        method if more control is required.
+        to specially named handlers if the object `state` is 'active'.
+        Subclasses may reimplement this method if more control is needed.
 
         Parameters
         ----------
@@ -388,7 +464,8 @@ class Object(HasPrivateTraits_Patched):
             The content data for the action.
 
         """
-        dispatch_action(self, action, content)
+        if self.is_active:
+            dispatch_action(self, action, content)
 
     def traverse(self, depth_first=False):
         """ Yields all of the object in the tree, from this object down.

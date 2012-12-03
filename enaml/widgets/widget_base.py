@@ -8,6 +8,8 @@ from enaml.core.declarative import Declarative
 from enaml.core.object import Object
 from enaml.utils import LoopbackGuard
 
+from .include import Include
+
 
 class PublishAttributeNotifier(object):
     """ A lightweight trait change notifier used by WidgetBase.
@@ -42,15 +44,27 @@ class WidgetBase(Declarative):
     #--------------------------------------------------------------------------
     # Lifetime Support
     #--------------------------------------------------------------------------
+    def pre_initialize(self):
+        """ A reimplemented pre initialization method.
+
+        This method will init any `Include` children so that they may
+        include their children before the proper initialization pass.
+
+        """
+        super(WidgetBase, self).pre_initialize()
+        for child in self.children:
+            if isinstance(child, Include):
+                child.init_objects()
+
     def post_initialize(self):
         """ A reimplemented post initialization method.
 
-        This method calls the `bind` method before calling the super
+        This method calls the `bind` method after calling the super
         class version.
 
         """
-        self.bind()
         super(WidgetBase, self).post_initialize()
+        self.bind()
 
     def bind(self):
         """ Called during initialization to bind change handlers.
@@ -62,17 +76,17 @@ class WidgetBase(Declarative):
         """
         pass
 
-    def destroy(self):
-        """ A reimplemented destructor.
+    def pre_destroy(self):
+        """ A reimplemented pre destruction method.
 
         If this widget is not being destroyed by its parent, then it
-        will send the 'destroy' action to the client widget before
-        calling the superclass destructor.
+        will send the 'destroy' action to the client widget.
 
         """
-        if not self._destroying:
+        super(WidgetBase, self).pre_destroy()
+        parent = self.parent
+        if parent is None or not parent.is_destroying:
             self.send_action('destroy', {})
-        super(WidgetBase, self).destroy()
 
     #--------------------------------------------------------------------------
     # Snapshot Support
@@ -186,7 +200,9 @@ class WidgetBase(Declarative):
         notification.
 
         """
-        if self.ready:
+        # Children events are fired all the time. Only pull for a new
+        # snapshot if the widget has been fully activated.
+        if self.is_active:
             content = {}
             new_set = set(event.new)
             old_set = set(event.old)

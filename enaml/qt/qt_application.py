@@ -48,23 +48,39 @@ class QtApplication(Application):
     #--------------------------------------------------------------------------
     # Abstract API Implementation
     #--------------------------------------------------------------------------
-    def socket(self, session_id):
-        """ Get the ActionSocketInterface for a session.
+    def start_session(self, name):
+        """ Start a new session of the given name.
+
+        This method will create a new session object for the requested
+        session type and return the new session_id. If the session name
+        is invalid, an exception will be raised.
 
         Parameters
         ----------
-        session_id : str
-            The string identifier for the session which will use the
-            created action socket.
+        name : str
+            The name of the session to start.
 
         Returns
         -------
-        result : ActionSocketInterface
-            An implementor of ActionSocketInterface which can be used
-            by Enaml Session instances for messaging.
+        result : str
+            The unique identifier for the created session.
 
         """
-        return self._socket_pair(session_id)[0]
+        sid = self.open_session(name)
+        esock, qsock = self._socket_pair(sid)
+        groups = self.session(sid).widget_groups[:]
+        qt_session = QtSession(sid, groups)
+        self._qt_sessions[sid] = qt_session
+        qt_session.open(self.snapshot(sid), qsock)
+        self.session(sid).activate(esock)
+        return sid
+
+    def end_session(self, sid):
+        self.close_session(sid)
+        qt_session = self._qt_sessions.pop(sid, None)
+        if qt_session is not None:
+            qt_session.close()
+        self._sockets.pop(sid, None)
 
     def start(self):
         """ Start the application's main event loop.
@@ -130,38 +146,6 @@ class QtApplication(Application):
 
         """
         return QThread.currentThread() == self._qapp.thread()
-
-    #--------------------------------------------------------------------------
-    # Public API
-    #--------------------------------------------------------------------------
-    def start_session(self, name):
-        """ Start a new session of the given name.
-
-        This is an overridden parent class method which will build out
-        the Qt client object tree for the session. It will be displayed
-        when the application is started.
-
-        """
-        sid = super(QtApplication, self).start_session(name)
-        socket = self._socket_pair(sid)[1]
-        groups = self.session(sid).widget_groups[:]
-        qt_session = QtSession(sid, groups)
-        self._qt_sessions[sid] = qt_session
-        qt_session.open(self.snapshot(sid), socket)
-        return sid
-
-    def end_session(self, session_id):
-        """ End the session with the given session id.
-
-        This is an overridden parent class method which will removes
-        the references to the Qt client object trees for the session.
-
-        """
-        super(QtApplication, self).end_session(session_id)
-        qt_session = self._qt_sessions.pop(session_id, None)
-        if qt_session is not None:
-            qt_session.close()
-        self._sockets.pop(session_id, None)
 
     #--------------------------------------------------------------------------
     # Private API
