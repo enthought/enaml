@@ -6,11 +6,12 @@ from collections import defaultdict, deque, namedtuple
 import logging
 import re
 
-from traits.api import Property, Str, Enum, ReadOnly
+from traits.api import (
+    HasPrivateTraits, Disallow, Property, Str, Enum, ReadOnly,
+)
 
 from enaml.utils import make_dispatcher, id_generator
 
-from .has_traits_patch import HasPrivateTraits_Patched
 from .trait_types import EnamlEvent
 
 
@@ -35,7 +36,7 @@ ParentEvent = namedtuple('ParentEvent', 'old new')
 
 
 #: The identifier generator for object instances.
-obj_id_generator = id_generator('o_')
+object_id_generator = id_generator('o_')
 
 
 class ChildrenEventContext(object):
@@ -97,7 +98,7 @@ class ChildrenEventContext(object):
                     parent.children_event(evt)
 
 
-class Object(HasPrivateTraits_Patched):
+class Object(HasPrivateTraits):
     """ The most base class of the Enaml object hierarchy.
 
     An Enaml Object provides supports parent-children relationships and
@@ -123,19 +124,18 @@ class Object(HasPrivateTraits_Patched):
     children = Property(fget=lambda self: self._children)
 
     #: An event fired when an the oject has been initialized. It is
-    #: emitted once during an object's lifetime, before the object
-    #: has been registered with a session.
+    #: emitted once during an object's lifetime, when the object is
+    #: initialized by a Session.
     initialized = EnamlEvent
 
     #: An event fired when an object has been activated. It is emitted
-    #: once during an object's lifetime, once it has been registered
-    #: with a session.
+    #: once during an object's lifetime, when the object is activated
+    #: by a Session.
     activated = EnamlEvent
 
     #: An event fired when an object is being destroyed. This event
-    #: is fired once during the object lifetime, before any change to
-    #: the tree structure is made and allows any listeners to perform
-    #: last minute cleanup.
+    #: is fired once during the object lifetime, just before the
+    #: object is removed from the tree structure.
     destroyed = EnamlEvent
 
     #: A read-only property which returns the object's session. This
@@ -148,13 +148,13 @@ class Object(HasPrivateTraits_Patched):
     #: will be computed the first time it is requested. The default
     #: value is guaranteed to be unique for the current process. The
     #: initial value may be supplied by user code if more control is
-    #: needed, with sufficient care that the value is unique.
+    #: required, with proper care that the value is a unique string.
     object_id = ReadOnly
     def _object_id_default(self):
-        return obj_id_generator.next()
+        return object_id_generator.next()
 
-    #: The current state of the object for purposes of messaging. This
-    #: value should not be manipulated directly by user code.
+    #: The current state of the object in terms of its lifetime within
+    #: a session. This value should not be manipulated by user code.
     state = Enum(
         'inactive', 'initializing', 'initialized', 'activating', 'active',
         'destroying', 'destroyed',
@@ -205,14 +205,15 @@ class Object(HasPrivateTraits_Patched):
             for key, value in kwargs.iteritems():
                 setattr(self, key, value)
 
+    #--------------------------------------------------------------------------
+    # Lifetime API
+    #--------------------------------------------------------------------------
     def initialize(self):
-        """ Called by a session to initialize the object tree.
+        """ Called by a Session to initialize the object tree.
 
         This method is called by a Session object to allow the object
-        tree to perform additional initialization before it is activated
-        for messaging. Subclasses which modify the object tree during
-        the initialization pass are responsible for ensuring that new
-        children are initialized.
+        tree to perform initialization before the object is activated
+        for messaging.
 
         """
         self.state = 'initializing'
@@ -246,14 +247,12 @@ class Object(HasPrivateTraits_Patched):
         """ Called by a Session to activate the object tree.
 
         This method is called by a Session object to activate the object
-        tree for messaging. Subclasses must not modify the object tree
-        during activation.
+        tree for messaging.
 
         Parameters
         ----------
         session : Session
-            The session object to use for messaging with this object
-            tree.
+            The session to use for messaging with this object tree.
 
         """
         self.state = 'activating'
@@ -274,8 +273,7 @@ class Object(HasPrivateTraits_Patched):
         Parameters
         ----------
         session : Session
-            The session object to use for messaging with this object
-            tree.
+            The session to use for messaging with this object tree.
 
         """
         pass
@@ -290,8 +288,7 @@ class Object(HasPrivateTraits_Patched):
         Parameters
         ----------
         session : Session
-            The session object to use for messaging with this object
-            tree.
+            The session to use for messaging with this object tree.
 
         """
         self.activated()
@@ -300,22 +297,27 @@ class Object(HasPrivateTraits_Patched):
         """ Destroy this object and all of its children recursively.
 
         This will emit the `destroyed` event before any change to the
-        object tree is made. This method will set the `state` flag to
-        'destroying'. After this method returns, the object should be
-        considered invalid and no longer be used.
+        object tree is made. After this returns, the object should be
+        considered invalid and should no longer be used.
 
         """
-        self.pre_destroy()
+        # Only send the destroy message if the object's parent is not
+        # being destroyed. This reduces the number of messages since
+        # the automatic destruction of children is assumed.
+        parent = self._parent
+        if parent is None or not parent.is_destroying:
+            self.send_action('destroy', {})
         self.state = 'destroying'
+        self.pre_destroy()
         if self._children:
             for child in self._children:
                 child.destroy()
             self._children = ()
-        parent = self._parent
-        if parent is not None and parent.is_destroying:
-            self._parent = None
-        else:
-            self.set_parent(None)
+        if parent is not None:
+            if parent.is_destroying:
+                self._parent = None
+            else:
+                self.set_parent(None)
         session = self._session
         if session is not None:
             session.unregister(self)
@@ -326,7 +328,7 @@ class Object(HasPrivateTraits_Patched):
         """ Called during the destruction pass before any children are
         destroyed.
 
-        The object `state` during this call will be 'active'.
+        The object `state` during this call will be 'destroying'. The
         default implementation emits the `destroyed` event.
 
         """
@@ -336,12 +338,16 @@ class Object(HasPrivateTraits_Patched):
         """ Called during the destruction pass after all children are
         destroyed.
 
-        This allows subclass to perform any required cleanup after
-        everything on the base object has been closed.
+        The object `state` during this call will be 'destroyed'. This
+        allows subclasses to perform cleanup once the object has been
+        fully removed from the hierarchy.
 
         """
         pass
 
+    #--------------------------------------------------------------------------
+    # Parenting API
+    #--------------------------------------------------------------------------
     def set_parent(self, parent):
         """ Set the parent for this object.
 
@@ -359,7 +365,8 @@ class Object(HasPrivateTraits_Patched):
         Notes
         -----
         It is the responsibility of the caller to intialize and activate
-        the object if it is parented dynamically at runtime.
+        the object if it is reparented dynamically at runtime and should
+        be involved with a session.
 
         """
         old_parent = self._parent
@@ -370,8 +377,7 @@ class Object(HasPrivateTraits_Patched):
         if parent is not None and not isinstance(parent, Object):
             raise TypeError('parent must be an Object or None')
         self._parent = parent
-        evt = ParentEvent(old_parent, parent)
-        self.parent_event(evt)
+        self.parent_event(ParentEvent(old_parent, parent))
         if old_parent is not None:
             old_kids = old_parent._children
             idx = old_kids.index(self)
@@ -390,7 +396,10 @@ class Object(HasPrivateTraits_Patched):
         ----------
         permutation : iterable of int
             An iterable of integers specifing the permutation to apply
-            to the children.
+            to the children. The length of this iterable must be the
+            same as the number of children. For performance reasons,
+            no checks are made to ensure this condition holds. It is
+            the responsibility of the developer to pass good data.
 
         """
         with ChildrenEventContext(self):
@@ -402,9 +411,10 @@ class Object(HasPrivateTraits_Patched):
 
         This event handler is called when the parent on the object has
         changed, but before the children of the new parent have been
-        updated. Sublasses may reimplement this method as required, but
-        should nearly always call super() so that the trait notification
-        is emitted.
+        updated. Sublasses may reimplement this method as required. The
+        default implementation emits the trait change notification, so
+        subclasses which rely on that notification must be sure to call
+        super(...) when reimplmenting this method.
 
         Parameters
         ----------
@@ -418,9 +428,10 @@ class Object(HasPrivateTraits_Patched):
         """ Handle a `ChildrenEvent` posted to this object.
 
         This event handler is called by a `ChildrenEventContext` when
-        the last nested context is exited. Sublasses may reimplement
-        this method as required, but should nearly always call super()
-        so that the trait notification is emitted.
+        the last nested context is exited. The default implementation
+        emits the trait change notification, so subclasses which rely
+        on that notification must be sure to call super(...) when
+        reimplmenting this method.
 
         Parameters
         ----------
@@ -430,16 +441,20 @@ class Object(HasPrivateTraits_Patched):
         """
         self.trait_property_changed('children', event.old, event.new)
 
+    #--------------------------------------------------------------------------
+    # Messaging API
+    #--------------------------------------------------------------------------
     def send_action(self, action, content):
         """ Send an action to the client of this object.
 
-        The action will only be sent if the object state is `active`.
-        Subclasses may reimplement this method if more control is needed.
+        The action will only be sent if the current state of the object
+        is `active`. Subclasses may reimplement this method if more
+        control is needed.
 
         Parameters
         ----------
         action : str
-            The name of the action performed.
+            The name of the action which the client should perform.
 
         content : dict
             The content data for the action.
@@ -449,11 +464,12 @@ class Object(HasPrivateTraits_Patched):
             self._session.send(self.object_id, action, content)
 
     def receive_action(self, action, content):
-        """ Receive an action from the client of this messenger.
+        """ Receive an action from the client of this object.
 
-        The default implementation will dynamically dispatch the message
-        to specially named handlers if the object `state` is 'active'.
-        Subclasses may reimplement this method if more control is needed.
+        The default implementation will dynamically dispatch the action
+        to specially named handlers if the current state of the object
+        is 'active'. Subclasses may reimplement this method if more
+        control is needed.
 
         Parameters
         ----------
@@ -467,8 +483,11 @@ class Object(HasPrivateTraits_Patched):
         if self.is_active:
             dispatch_action(self, action, content)
 
+    #--------------------------------------------------------------------------
+    # Object Tree API
+    #--------------------------------------------------------------------------
     def traverse(self, depth_first=False):
-        """ Yields all of the object in the tree, from this object down.
+        """ Yield all of the objects in the tree, from this object down.
 
         Parameters
         ----------
@@ -486,13 +505,12 @@ class Object(HasPrivateTraits_Patched):
             stack_pop = stack.popleft
             stack_extend = stack.extend
         while stack:
-            item = stack_pop()
-            yield item
-            stack_extend(item._children)
+            obj = stack_pop()
+            yield obj
+            stack_extend(obj._children)
 
     def traverse_ancestors(self, root=None):
-        """ Yields all of the objects in the tree, from the parent of
-        this object up, stopping at the given root.
+        """ Yield all of the objects in the tree, from this object up.
 
         Parameters
         ----------
@@ -506,12 +524,12 @@ class Object(HasPrivateTraits_Patched):
             parent = parent._parent
 
     def find(self, name, regex=False):
-        """ Return the first named object that exists in the subtree.
+        """ Find the first object in the subtree with the given name.
 
         This method will traverse the tree of objects, breadth first,
         from this object downward, looking for an object with the given
-        name. The first one with the given name is returned, or None if
-        no object is found.
+        name. The first object with the given name is returned, or None
+        if no object is found with the given name.
 
         Parameters
         ----------
@@ -526,8 +544,8 @@ class Object(HasPrivateTraits_Patched):
         Returns
         -------
         result : Object or None
-            The first object found with the given name, or None if
-            no object is found.
+            The first object found with the given name, or None if no
+            object is found with the given name.
 
         """
         if regex:
@@ -540,7 +558,7 @@ class Object(HasPrivateTraits_Patched):
                 return obj
 
     def find_all(self, name, regex=False):
-        """ Return all the named objects that exist in the subtree.
+        """ Find all objects in the subtree with the given name.
 
         This method will traverse the tree of objects, breadth first,
         from this object downward, looking for a objects with the given
@@ -561,7 +579,7 @@ class Object(HasPrivateTraits_Patched):
         -------
         result : list of Object
             The list of objects found with the given name, or an empty
-            list if no objects are found.
+            list if no objects are found with the given name.
 
         """
         if regex:
@@ -575,4 +593,24 @@ class Object(HasPrivateTraits_Patched):
             if match(obj.name):
                 push(obj)
         return res
+
+    #--------------------------------------------------------------------------
+    # HasTraits Fixes
+    #--------------------------------------------------------------------------
+    #: The HasTraits class defines a class attribute 'set' which is a
+    #: deprecated alias for the 'trait_set' method. The problem is that
+    #: having that as an attribute interferes with the ability of Enaml
+    #: expressions to resolve the builtin 'set', since dynamic scoping
+    #: takes precedence over builtins. This resets those ill-effects.
+    set = Disallow
+
+    def add_notifier(self, name, notifier):
+        """ Add a notifier to a trait on the object.
+
+        This is different from `on_trait_change` in that it allows the
+        developer to provide the notifier object directly. This allows
+        the possibility of more efficient notifier patterns.
+
+        """
+        self._trait(name, 2)._notifiers(1).append(notifier)
 
