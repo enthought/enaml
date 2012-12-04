@@ -205,7 +205,7 @@ class BaseExpression(object):
             expression.
 
         f_locals : dict
-            The dictionary of locals available to the function.
+            The dictionary of local identifiers for the function.
 
         """
         self._func = func
