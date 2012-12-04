@@ -33,8 +33,10 @@ PublishAttributeNotifier = PublishAttributeNotifier()
 
 
 class WidgetBase(Declarative):
-    """ A base class which provides an api for sharing state between
-    the server-side Enaml object and client-side toolkit objects.
+    """ A base class for Enaml widgets.
+
+    This class provides apis for sharing state between the server-side
+    Enaml object and client-side toolkit implementation objects.
 
     """
     #: A loopback guard which can be used to prevent a notification
@@ -42,13 +44,13 @@ class WidgetBase(Declarative):
     loopback_guard = Instance(LoopbackGuard, ())
 
     #--------------------------------------------------------------------------
-    # Lifetime Support
+    # Lifetime API
     #--------------------------------------------------------------------------
     def pre_initialize(self):
-        """ A reimplemented pre initialization method.
+        """ A reimplemented initialization method.
 
-        This method will init any `Include` children so that they may
-        include their children before the proper initialization pass.
+        This method will setup any `Include` children so that they may
+        prepare their objects before the proper initialization pass.
 
         """
         super(WidgetBase, self).pre_initialize()
@@ -59,7 +61,7 @@ class WidgetBase(Declarative):
     def post_initialize(self):
         """ A reimplemented post initialization method.
 
-        This method calls the `bind` method after calling the super
+        This method calls the `bind` method after calling the superclass
         class version.
 
         """
@@ -67,7 +69,7 @@ class WidgetBase(Declarative):
         self.bind()
 
     def bind(self):
-        """ Called during initialization to bind change handlers.
+        """ Called during initialization pass to bind change handlers.
 
         This method is called at the end of widget initialization to
         provide a subclass the opportunity to setup any required change
@@ -76,29 +78,21 @@ class WidgetBase(Declarative):
         """
         pass
 
-    def pre_destroy(self):
-        """ A reimplemented pre destruction method.
-
-        If this widget is not being destroyed by its parent, then it
-        will send the 'destroy' action to the client widget.
-
-        """
-        super(WidgetBase, self).pre_destroy()
-        parent = self.parent
-        if parent is None or not parent.is_destroying:
-            self.send_action('destroy', {})
-
     #--------------------------------------------------------------------------
-    # Snapshot Support
+    # Snapshot API
     #--------------------------------------------------------------------------
     def snapshot(self):
         """ Get a dictionary representation of the widget tree.
 
+        This method can be called to get a dictionary representation of
+        the current state of the widget tree which can be used by client
+        side implementation to construct their own implementation tree.
+
         Returns
         -------
         result : dict
-            A serializable dictionary representation of the widget
-            tree from this widget down.
+            A serializable dictionary representation of the widget tree
+            from this widget down.
 
         """
         snap = {}
@@ -112,7 +106,9 @@ class WidgetBase(Declarative):
     def snap_children(self):
         """ Get an iterable of children to include in the snapshot.
 
-        Subclasses may reimplement this method as needed.
+        The default implementation returns the list of children which
+        are instances of WidgetBase. Subclasses may reimplement this
+        method if more control is needed.
 
         Returns
         -------
@@ -155,14 +151,18 @@ class WidgetBase(Declarative):
     # Messaging Support
     #--------------------------------------------------------------------------
     def set_guarded(self, **attrs):
-        """ A convenience method provided for subclasses to set a
-        sequence of attributes from within a loopback guard.
+        """ Set attribute values from within a loopback guard.
+
+        This is a convenience method provided for subclasses to set the
+        values of attributes from within a loopback guard. This prevents
+        the change from being published back to client and reduces the
+        chances of getting hung in a feedback loop.
 
         Parameters
         ----------
         **attrs
-            The attributes which should be set on the object from
-            within a loopback guard context.
+            The attributes to set on the object from within a loopback
+            guard context.
 
         """
         with self.loopback_guard(*attrs):
@@ -194,10 +194,10 @@ class WidgetBase(Declarative):
     def children_event(self, event):
         """ Handle a `ChildrenEvent` for the widget.
 
-        If the widget is ready, a `children_changed` action will be sent
-        to the client widget. The action is sent before the superclass'
-        handler is called, and will therefore precede the trait change
-        notification.
+        If the widget state is 'active', a `children_changed` action
+        will be sent to the client widget. The action is sent before
+        the superclass' handler is called, and will therefore precede
+        the trait change notification.
 
         """
         # Children events are fired all the time. Only pull for a new

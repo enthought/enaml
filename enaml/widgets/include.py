@@ -8,41 +8,6 @@ from enaml.core.declarative import Declarative
 from enaml.core.object import Object, ChildrenEventContext
 
 
-def _permutation(target, objects, obj_set, current):
-    """ Compute the permutation for an Include.
-
-    Parameters
-    ----------
-    target : Include
-        The include which exists in `current` which is used as the
-        key value for inserting `objects` into the permutation.
-
-    objects : list
-        The list of Objects which should be inserted after `target`.
-        There must be no duplicates in this list.
-
-    obj_set : set
-        The set of `objects`.
-
-    current : list
-        The current list of objects on which the permutation is
-        computed. There must be no duplicates in this list.
-
-    """
-    indices = {}
-    for idx, curr in enumerate(current):
-        indices[curr] = idx
-    permutation = []
-    for curr in current:
-        if curr is target:
-            permutation.append(indices[curr])
-            for obj in objects:
-                permutation.append(indices[obj])
-        elif curr not in obj_set:
-            permutation.append(indices[curr])
-    return permutation
-
-
 class Include(Declarative):
     """ An object which dynamically inserts children into its parent.
 
@@ -62,95 +27,126 @@ class Include(Declarative):
     destroy_old = Bool(True)
 
     def init_objects(self):
-        """ A method called by a parent widget to allow an `Include`
-        to parent its initial object list.
+        """ A method called by a parent widget to init the Include.
 
-        This method should never be called by user code.
+        This method must be called by objects to initialize the objects
+        in an Include. It should be called before the parent initializes
+        its children. This method should never be called by user code.
 
         """
-        parent = self.parent
-        with ChildrenEventContext(parent):
-            objects = self.objects
-            obj_set = set(objects)
-            if len(objects) != len(obj_set):
-                raise ValueError('Cannot include duplicate objects')
-            # Use the `set_parent` api to ensure child validity. This
-            # loop dwarfs the cost of the other operations when the
-            # number of children is large.
-            for obj in objects:
-                obj.set_parent(parent)
-            # Compute and apply the permutation for the children to
-            # place them in the correct position. The children are
-            # placed immediately after the include.
-            perm = _permutation(self, objects, obj_set, parent.children)
-            parent.permute_children(perm)
-            # XXX init nested Includes
+        self._update_parent(set(), set(self.objects))
+        # XXX init nested Includes
 
-    # def _parent_changed(self, parent):
-    #     """ A change handler for the `parent` of the Include.
+    def parent_event(self, event):
+        """ Handle a `ParentEvent` for the Include.
 
-    #     This handler will reparent the list of objects provided that
-    #     the Include is fully initialized.
+        If the object state is `active` the current include objects will
+        be reparented to the new parent.
 
-    #     """
-    #     if self.initialized:
-    #         objects = self.objects
-    #         if parent is None:
-    #             for child in objects:
-    #                 child.set_parent(None)
-    #         else:
-    #             parent.insert_children(self, objects)
+        """
+        if self.is_active:
+            new = event.new
+            if new is None:
+                if self.destroy_old:
+                    for obj in self.objects:
+                        obj.destroy()
+                else:
+                    for obj in self.objects:
+                        obj.set_parent(None)
+            else:
+                self._update_parent(set(), set(self.objects))
 
     def _objects_changed(self, old, new):
         """ A change handler for the `objects` list of the Include.
 
+        If the object state is 'active' objects which are removed will
+        be unparented and objects which are added will be reparented.
+        Old objects will be destroyed if the `destroy_old` flag is set
+        to True.
+
         """
-        parent = self.parent
-        if parent is not None:
-            old_set = set(old)
-            new_set = set(new)
-            if len(new) != len(new_set):
-                raise ValueError('Cannot include duplicate objects')
-            add = new_set - old_set
-            remove = old_set - new_set
-            with ChildrenEventContext(parent):
-                if self.destroy_old:
-                    for obj in remove:
-                        obj.destroy()
-                else:
-                    for obj in remove:
-                        obj.set_parent(None)
-                for obj in add:
-                    obj.set_parent(parent)
-                perm = _permutation(self, new, new_set, parent.children)
-                parent.permute_children(perm)
+        if self.is_active:
+            parent = self.parent
+            if parent is not None:
+                self._update_parent(set(old), set(new))
 
     def _objects_items_changed(self, event):
         """ Handle the `objects` list changing in-place.
 
-        This handler will replace the old children with the new children
-        in a single atomic operation.
+        If the object state is 'active' objects which are removed will
+        be unparented and objects which are added will be reparented.
+        Old objects will be destroyed if the `destroy_old` flag is set
+        to True.
+
+        """
+        if self.is_active:
+            parent = self.parent
+            if parent is not None:
+                self._update_parent(set(event.removed), set(event.added))
+
+    def _update_parent(self, remove_set, add_set):
+        """ Update the children of the parent.
+
+        Parameters
+        ----------
+        remove_set : set
+            The set of children to remove from the parent. This may
+            overlap with `add_set`. Overlapping objects are ignored.
+
+        add_set : set
+            The set of children to add to the parent. This may overlap
+            with `remove_set`. Overlapping objects are ignored.
 
         """
         parent = self.parent
-        if parent is not None:
-            new = self.objects
-            new_set = set(new)
-            if len(new) != len(new_set):
-                raise ValueError('Cannot include duplicate objects')
-            removed_set = set(event.removed)
-            added_set = set(event.added)
-            add = added_set - removed_set
-            remove = removed_set - added_set
-            with ChildrenEventContext(parent):
-                if self.destroy_old:
-                    for obj in remove:
-                        obj.destroy()
-                else:
-                    for obj in remove:
-                        obj.set_parent(None)
-                for obj in add:
-                    obj.set_parent(parent)
-                perm = _permutation(self, new, new_set, parent.children)
-                parent.permute_children(perm)
+        add = add_set - remove_set
+        remove = remove_set - add_set
+        parent = self.parent
+        with ChildrenEventContext(parent):
+            if self.destroy_old:
+                for obj in remove:
+                    obj.destroy()
+            else:
+                for obj in remove:
+                    obj.set_parent(None)
+            for obj in add:
+                obj.set_parent(parent)
+            parent.permute_children(self._permutation())
+        # XXX init and activate new children if needed
+
+    def _permutation(self):
+        """ Compute the permutation for this Include.
+
+        Returns
+        -------
+        result : list
+            The permutation to apply to the parent so that its children
+            appear in the desired order.
+
+        """
+        # Compute the current indices
+        indices = {}
+        children = self.parent.children
+        for idx, child in enumerate(children):
+            indices[child] = idx
+
+        # Filter the current objects for duplicates
+        obj_set = set()
+        objects = []
+        for obj in self.objects:
+            if obj not in obj_set:
+                obj_set.add(obj)
+                objects.append(obj)
+
+        # Compute the permuted indices
+        permutation = []
+        for child in children:
+            if child is self:
+                permutation.append(indices[child])
+                for obj in objects:
+                    permutation.append(indices[obj])
+            elif child not in obj_set:
+                permutation.append(indices[child])
+
+        return permutation
 
