@@ -6,7 +6,6 @@ import matplotlib
 # We want matplotlib to use a wxPython backend
 matplotlib.use('WXAgg')
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
-from matplotlib.figure import Figure
 from matplotlib.backends.backend_wx import NavigationToolbar2Wx
 
 
@@ -21,7 +20,8 @@ class WxMPLCanvas(WxControl):
         """ Create the underlying mpl_canvas widget.
 
         """
-        return wx.Panel(parent, -1, style=wx.CLIP_CHILDREN)
+        widget = wx.Panel(parent, wx.NewId())
+        return widget
 
     def create(self, tree):
         """ Create and initialize the underlying widget.
@@ -40,10 +40,9 @@ class WxMPLCanvas(WxControl):
         figure = self.figure
         panel = self.widget()
         sizer = wx.BoxSizer(wx.VERTICAL)
-        panel.SetSizer(sizer)
         # matplotlib commands to create a canvas
         if figure.canvas is None:
-            mpl_control = FigureCanvas(panel, -1, figure)
+            mpl_control = FigureCanvas(panel, panel.GetId(), figure)
         else:
             mpl_control = figure.canvas
         sizer.Add(mpl_control, 1, wx.LEFT | wx.TOP | wx.GROW)
@@ -52,7 +51,10 @@ class WxMPLCanvas(WxControl):
         else:
             toolbar = mpl_control.toolbar
         sizer.Add(toolbar, 0, wx.EXPAND)
-        mpl_control.SetMinSize(mpl_control.GetSize())
+        panel.SetSizer(sizer)
+        size = mpl_control.GetSize()
+        size.height += toolbar.GetSize().height
+        self.set_minimum_size((size.width, size.height))
         self.size_hint_updated()
 
     #--------------------------------------------------------------------------

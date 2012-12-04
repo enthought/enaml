@@ -7,9 +7,8 @@ import matplotlib
 matplotlib.use('Qt4Agg')
 if qt_api == 'pyside':
     matplotlib.rcParams['backend.qt4'] = 'PySide'
-from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg as NavigationToolbar
-from matplotlib.figure import Figure
+from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg
+from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg
 from matplotlib.backends.backend_qt4 import cursord
 
 
@@ -24,7 +23,7 @@ class QtMPLCanvas(QtControl):
         """ Create the underlying mpl_canvas widget.
 
         """
-        return QFrame()
+        return QFrame(parent)
 
     def create(self, tree):
         """ Create and initialize the underlying widget.
@@ -44,17 +43,17 @@ class QtMPLCanvas(QtControl):
         figure = self.figure
         widget = self.widget()
         if not figure.canvas:
-            canvas = FigureCanvas(figure)
+            canvas = FigureCanvasQTAgg(figure)
         else:
             canvas = figure.canvas
         canvas.setParent(widget)
         if not hasattr(canvas, 'toolbar'):
-            toolbar =  NavigationToolbar(canvas, canvas)
+            toolbar = NavigationToolbar2QTAgg(canvas, canvas)
         else:
             toolbar = canvas.toolbar
         # override the set_cursor method for Pyside support
         # see monkey patch below
-        toolbar.set_cursor = set_cursor
+        toolbar.set_cursor = lambda cursor: set_cursor(toolbar, cursor)
         vbox = QVBoxLayout()
         vbox.addWidget(canvas)
         vbox.addWidget(toolbar)
@@ -80,6 +79,5 @@ def set_cursor(toolbar, cursor):
     QApplication.restoreOverrideCursor()
     qcursor = QCursor()
     qcursor.setShape(cursord[cursor])
-    QApplication.setOverrideCursor( qcursor )
-
+    QApplication.setOverrideCursor(qcursor)
 
