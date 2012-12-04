@@ -13,17 +13,17 @@ from .trait_types import EnamlInstance, EnamlEvent
 
 
 #------------------------------------------------------------------------------
-# User Attribute and User Event
+# UserAttribute and UserEvent
 #------------------------------------------------------------------------------
 class UserAttribute(EnamlInstance):
-    """ An EnamlInstance subclass that is used to implement optional
-    attribute typing when adding a new user attribute to an Enaml
-    component.
+    """ An EnamlInstance subclass which implements the `attr` keyword.
 
     """
     def get(self, obj, name):
-        """ The trait getter method. Returns the value from the object's
-        dict, or raises an uninitialized error if the value doesn't exist.
+        """ The trait getter method.
+
+        This returns the value from the object's dict, or raises an
+        uninitialized error if the value doesn't exist.
 
         """
         dct = obj.__dict__
@@ -32,10 +32,12 @@ class UserAttribute(EnamlInstance):
         return dct[name]
 
     def set(self, obj, name, value):
-        """ The trait setter method. Sets the value in the object's
-        dict if it is valid, and emits a change notification if the
-        value has changed. The first time the value is set the change
-        notification will carry None as the old value.
+        """ The trait setter method.
+
+        This sets the value in the object's dict if it is valid, and
+        emits a change notification if the value has changed. The first
+        time the value is set the change notification will carry None
+        as the old value.
 
         """
         value = self.validate(obj, name, value)
@@ -49,31 +51,33 @@ class UserAttribute(EnamlInstance):
             obj.trait_property_changed(name, old, value)
 
     def uninitialized_error(self, obj, name):
-        """ A method which raises a DynamicAttributeError for the given
-        object and attribute name.
+        """ Raise a DynamicAttributeError for an object and attr name.
 
         """
-        msg = "Cannot access the uninitialized '%s' attribute of the %s object"
+        msg = "cannot access the uninitialized '%s' attribute of the %s object"
         raise DynamicAttributeError(msg % (name, obj))
 
 
 class UserEvent(EnamlEvent):
-    """ A simple EnamlEvent subclass used to distinguish between events
-    declared by the framework, and events declared by the user.
+    """ An EnamlEvent subclass which implements the `event` keyword.
+
+    This subclass contains no additional logic. Its type is simply used
+    to distinguish between events declared by the framework, and events
+    declared by the user.
 
     """
     pass
 
 
 #------------------------------------------------------------------------------
-# Declarative
+# Declarative Helpers
 #------------------------------------------------------------------------------
 def _compute_default(obj, name):
-    """ Compute the value for an expression.
+    """ Compute the default value for an expression.
 
-    This is a private function used by Declarative to allow bound
-    expression to provide default values for an attribute without
-    requiring an explicit initialization graph.
+    This is a private function used by Declarative for allowing default
+    values of attributes to be provided by bound expression objects
+    without requiring an explicit initialization graph.
 
     """
     try:
@@ -82,6 +86,7 @@ def _compute_default(obj, name):
         raise # Reraise a propagating initialization error.
     except Exception:
         import traceback
+        # XXX I'd rather not hack into Declarative's private api.
         expr = obj._expressions[name]
         filename = expr._func.func_code.co_filename
         lineno = expr._func.func_code.co_firstlineno
@@ -95,10 +100,10 @@ _quiet = set()
 def _set_quiet(obj, name, value):
     """ Quietly set the named value on the object.
 
-    This is a private function used by Declarative to allow bound
-    expression to provide default values for an attribute without
-    requiring an explicit initialization graph. It's a workaround
-    for bug: https://github.com/enthought/traits/issues/26
+    This is a private function used by Declarative for allowing default
+    values of attributes to be provided by bound expression objects
+    without requiring an explicit initialization graph. This is a
+    workaround for bug: https://github.com/enthought/traits/issues/26
 
     """
     q = _quiet
@@ -115,9 +120,9 @@ def _set_quiet(obj, name, value):
 def _wired_getter(obj, name):
     """ The wired default expression getter.
 
-    This is a private function used by Declarative to allow bound
-    expression to provide default values for an attribute without
-    requiring an explicit initialization graph.
+    This is a private function used by Declarative for allowing default
+    values of attributes to be provided by bound expression objects
+    without requiring an explicit initialization graph.
 
     """
     itraits = obj._instance_traits()
@@ -131,9 +136,9 @@ def _wired_getter(obj, name):
 def _wired_setter(obj, name, value):
     """ The wired default expression setter.
 
-    This is a private function used by Declarative to allow bound
-    expression to provide default values for an attribute without
-    requiring an explicit initialization graph.
+    This is a private function used by Declarative for allowing default
+    values of attributes to be provided by bound expression objects
+    without requiring an explicit initialization graph.
 
     """
     itraits = obj._instance_traits()
@@ -144,16 +149,20 @@ def _wired_setter(obj, name, value):
 def _wire_default(obj, name):
     """ Wire an expression trait for default value computation.
 
-    This is a private function used by Declarative to allow bound
-    expression to provide default values for an attribute without
-    requiring an explicit initialization graph.
+    This is a private function used by Declarative for allowing default
+    values of attributes to be provided by bound expression objects
+    without requiring an explicit initialization graph.
 
     """
     # This is a low-level performance hack that bypasses a mountain
     # of traits cruft and performs the minimum work required to make
-    # traits do what we want.
+    # traits do what we want. The speedup of this over `add_trait` is
+    # substantial.
+    # A new 'event' trait type (defaults are overridden)
     trait = CTrait(4)
+    # Override defaults with 2-arg getter, 3-arg setter, no validator
     trait.property(_wired_getter, 2, _wired_setter, 3, None, 0)
+    # Provide a handler else dynamic creation kills performance
     trait.handler = Any
     shadow = obj._trait(name, 2)
     trait._shadowed = shadow
@@ -182,6 +191,9 @@ class ListenerNotifier(object):
 ListenerNotifier = ListenerNotifier()
 
 
+#------------------------------------------------------------------------------
+# Declarative
+#------------------------------------------------------------------------------
 class Declarative(Object):
     """ The most base class of the Enaml declarative objects.
 
@@ -205,14 +217,14 @@ class Declarative(Object):
     #: typically small and waste space. We need to switch to a more
     #: space efficient hash table at some point in the future. For
     #: pathological cases of large numbers of objects, the savings
-    #: can be as high as 20%.
+    #: can be as high as 20% of the heap size.
     _expressions = Instance(dict, ())
 
     #: The dictionary of bound listener objects. XXX These dicts are
     #: typically small and waste space. We need to switch to a more
     #: space efficient hash table at some point in the future. For
     #: pathological cases of large numbers of objects, the savings
-    #: can be as high as 20%.
+    #: can be as high as 20% of the heap size.
     _listeners = Instance(dict, ())
 
     #: A class attribute used by the Enaml compiler machinery to store
@@ -220,7 +232,7 @@ class Declarative(Object):
     #: when a component is instantiated and are the mechanism by which
     #: a component is populated with its declarative children and bound
     #: expression objects.
-    _builders = []
+    _builders = ()
 
     def __init__(self, parent=None, **kwargs):
         """ Initialize a declarative component.
@@ -265,10 +277,10 @@ class Declarative(Object):
         """ A private classmethod used by the Enaml compiler machinery.
 
         This method is used to add user attributes and events to custom
-        derived enamldef components. If the attribute already exists on
-        the class and is not a user defined attribute, then an exception
-        will be raised. The only method of overriding standard trait
-        attributes is through traditional subclassing.
+        derived enamldef classes. If the attribute already exists on the
+        class and is not a user defined attribute, an exception will be
+        raised. The only method of overriding standard trait attributes
+        is through traditional subclassing.
 
         Parameters
         ----------
