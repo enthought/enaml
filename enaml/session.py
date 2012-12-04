@@ -13,6 +13,7 @@ from .signaling import Signal
 from .socket_interface import ActionSocketInterface
 
 
+#: The `session` module logger instance.
 logger = logging.getLogger(__name__)
 
 
@@ -103,30 +104,30 @@ class Session(HasTraits):
 
     The session object is what ensures that each client has their own
     individual instances of objects, so that the only state that is
-    shared between clients is that which is explicitly provided by the
-    developer.
+    shared between simultaneously existing clients is that which is
+    explicitly provided by the developer.
 
     """
     #: The string identifier for this session. This is provided by
-    #: the application in the `open` method. The value should not
-    #: be manipulated by user code.
+    #: the application when the session is opened. The value should
+    #: not be manipulated by user code.
     session_id = ReadOnly
 
-    #: The toplevel windows which are being managed by this session. This
-    #: list should be populated by user code during the `on_open` method.
+    #: The top level windows which are managed by this session. This
+    #: should be populated by user code during the `on_open` method.
     windows = List(Window)
 
     #: The widget implementation groups which should be used by the
     #: widgets in this session. Widget groups are an advanced feature
     #: which allow the developer to selectively expose toolkit specific
-    #: implementations Enaml widgets. All standard Enaml widgets are
-    #: available in the 'default' group, which means this value will
-    #: rarely need to be changed by the user.
+    #: implementations of Enaml widgets. All standard Enaml widgets are
+    #: available in the 'default' group. This value will rarely need to
+    #: be changed by the user.
     widget_groups = List(Str, ['default'])
 
     #: The socket used by this session for communication. This is
-    #: provided by the Application in the `open` method. The value
-    #: should not normally be manipulated by user code.
+    #: provided by the Application when the session is activated.
+    #: The value should not normally be manipulated by user code.
     socket = Instance(ActionSocketInterface)
 
     #: The current state of the session. This value is changed by the
@@ -159,7 +160,7 @@ class Session(HasTraits):
     is_closed = Property(fget=lambda self: self.state == 'closed')
 
     #: A private dictionary of objects registered with this session.
-    #: This should not be manipulated by user code.
+    #: This value should not be manipulated by user code.
     _objects = Instance(dict, ())
 
     #: The private deferred message batch used for collapsing layout
@@ -176,7 +177,7 @@ class Session(HasTraits):
     #--------------------------------------------------------------------------
     @classmethod
     def factory(cls, name='', description='', *args, **kwargs):
-        """ Get a SessionFactory for this Session class.
+        """ Get a SessionFactory instance for this Session class.
 
         Parameters
         ----------
@@ -219,12 +220,9 @@ class Session(HasTraits):
 
         This method must be implemented in a subclass and is called to
         create the Enaml objects for the session. This method will only
-        be called once during the session lifetime.
-
-        Returns
-        -------
-        result : iterable
-            An iterable of Enaml objects for this session.
+        be called once during the session lifetime. User code should
+        create their windows and assign them to the list of `windows`
+        before the method returns.
 
         """
         raise NotImplementedError
@@ -253,7 +251,7 @@ class Session(HasTraits):
         Parameters
         ----------
         session_id : str
-            The identifier to use for this session.
+            The unique identifier to use for this session.
 
         """
         self.session_id = session_id
@@ -268,9 +266,7 @@ class Session(HasTraits):
         windows.
 
         This method will be called by the Application once during the
-        session lifetime, after the snapshot has been requested and
-        once the application has established the sockets. This method
-        should never be called by user code.
+        session lifetime. This should never be called by user code.
 
         Parameters
         ----------
@@ -299,10 +295,9 @@ class Session(HasTraits):
         for window in self.windows:
             window.destroy()
         self.windows = []
-        socket = self.socket
-        if socket is not None:
-            socket.on_message(None)
-            self.socket = None
+        self._objects = {}
+        self.socket.on_message(None)
+        self.socket = None
         self.state = 'closed'
 
     def snapshot(self):
@@ -311,8 +306,8 @@ class Session(HasTraits):
         Returns
         -------
         result : list
-            A list of snapshot dictionaries representing the current
-            windows for this session.
+            A list of snapshots representing the current windows for
+            this session.
 
         """
         return [window.snapshot() for window in self.windows]
