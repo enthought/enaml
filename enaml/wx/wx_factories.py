@@ -92,6 +92,11 @@ def menu_bar_factory():
     return WxMenuBar
 
 
+def mpl_canvas_factory():
+    from .wx_mpl_canvas import WxMPLCanvas
+    return WxMPLCanvas
+
+
 def notebook_factory():
     from .wx_notebook import WxNotebook
     return WxNotebook
@@ -177,6 +182,7 @@ def register_default():
     register('MainWindow', main_window_factory)
     register('Menu', menu_factory)
     register('MenuBar', menu_bar_factory)
+    register('MPLCanvas', mpl_canvas_factory)
     register('Notebook', notebook_factory)
     register('Page', page_factory)
     register('PushButton', push_button_factory)
