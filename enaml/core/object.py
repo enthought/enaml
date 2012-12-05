@@ -15,7 +15,6 @@ from enaml.utils import make_dispatcher, id_generator
 from .trait_types import EnamlEvent
 
 
-#: The logger for the `object` module.
 logger = logging.getLogger(__name__)
 
 
