@@ -34,8 +34,7 @@ class Include(Declarative):
         its children. This method should never be called by user code.
 
         """
-        self._update_parent(set(), set(self.objects))
-        # XXX init nested Includes
+        self.parent.insert_children(self, self.objects)
 
     def parent_event(self, event):
         """ Handle a `ParentEvent` for the Include.
@@ -45,16 +44,15 @@ class Include(Declarative):
 
         """
         if self.is_active:
+            old = event.old
             new = event.new
-            if new is None:
-                if self.destroy_old:
-                    for obj in self.objects:
-                        obj.destroy()
-                else:
-                    for obj in self.objects:
-                        obj.set_parent(None)
-            else:
-                self._update_parent(set(), set(self.objects))
+            with ChildrenEventContext(new):
+                with ChildrenEventContext(old):
+                    if new is None:
+                        for obj in self.objects:
+                            obj.set_parent(None)
+                    else:
+                        new.insert_children(self, self.objects)
 
     def _objects_changed(self, old, new):
         """ A change handler for the `objects` list of the Include.
@@ -68,7 +66,19 @@ class Include(Declarative):
         if self.is_active:
             parent = self.parent
             if parent is not None:
-                self._update_parent(set(old), set(new))
+                with ChildrenEventContext(parent):
+                    new_set = set(new)
+                    if self.destroy_old:
+                        for obj in old:
+                            if obj not in new_set:
+                                obj.destroy()
+                    else:
+                        for obj in old:
+                            if obj not in new_set:
+                                obj.set_parent(None)
+                    if new_set:
+                        parent.insert_children(self, self.objects)
+                        self._activate_objects(new_set)
 
     def _objects_items_changed(self, event):
         """ Handle the `objects` list changing in-place.
@@ -82,71 +92,35 @@ class Include(Declarative):
         if self.is_active:
             parent = self.parent
             if parent is not None:
-                self._update_parent(set(event.removed), set(event.added))
+                with ChildrenEventContext(parent):
+                    add_set = set(event.added)
+                    if self.destroy_old:
+                        for obj in event.removed:
+                            if obj not in add_set:
+                                obj.destroy()
+                    else:
+                        for obj in event.removed:
+                            if obj not in add_set:
+                                obj.set_parent(None)
+                    if add_set:
+                        parent.insert_children(self, self.objects)
+                        self._activate_objects(add_set)
 
-    def _update_parent(self, remove_set, add_set):
-        """ Update the children of the parent.
+    def _activate_objects(self, objects):
+        """ Initialize and activate the given objects.
 
         Parameters
         ----------
-        remove_set : set
-            The set of children to remove from the parent. This may
-            overlap with `add_set`. Overlapping objects are ignored.
-
-        add_set : set
-            The set of children to add to the parent. This may overlap
-            with `remove_set`. Overlapping objects are ignored.
+        objects : iterable
+            An iterable of objects which should be initialized and
+            activated. Objects which are already active are ignored.
 
         """
-        parent = self.parent
-        add = add_set - remove_set
-        remove = remove_set - add_set
-        parent = self.parent
-        with ChildrenEventContext(parent):
-            if self.destroy_old:
-                for obj in remove:
-                    obj.destroy()
-            else:
-                for obj in remove:
-                    obj.set_parent(None)
-            for obj in add:
-                obj.set_parent(parent)
-            parent.permute_children(self._permutation())
-        # XXX init and activate new children if needed
-
-    def _permutation(self):
-        """ Compute the permutation for this Include.
-
-        Returns
-        -------
-        result : list
-            The permutation to apply to the parent so that its children
-            appear in the desired order.
-
-        """
-        # Compute the current indices
-        indices = {}
-        children = self.parent.children
-        for idx, child in enumerate(children):
-            indices[child] = idx
-
-        # Filter the current objects for duplicates
-        obj_set = set()
-        objects = []
-        for obj in self.objects:
-            if obj not in obj_set:
-                obj_set.add(obj)
-                objects.append(obj)
-
-        # Compute the permuted indices
-        permutation = []
-        for child in children:
-            if child is self:
-                permutation.append(indices[child])
-                for obj in objects:
-                    permutation.append(indices[obj])
-            elif child not in obj_set:
-                permutation.append(indices[child])
-
-        return permutation
+        for obj in objects:
+            if obj.is_inactive:
+                obj.initialize()
+        session = self.session
+        for obj in objects:
+            if obj.is_initialized:
+                obj.activate(session)
 
