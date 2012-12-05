@@ -35,9 +35,9 @@ class QtSession(object):
         """
         self._session_id = session_id
         self._widget_groups = widget_groups
-        self._socket = None
-        self._windows = []
         self._registered_objects = {}
+        self._windows = []
+        self._socket = None
 
     #--------------------------------------------------------------------------
     # Public API
