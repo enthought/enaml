@@ -4,6 +4,7 @@
 #------------------------------------------------------------------------------
 from .qt.QtCore import QSize, Signal
 from .qt.QtGui import QFrame, QLayout
+from .q_deferred_caller import deferredCall
 from .q_single_widget_layout import QSingleWidgetLayout
 from .qt_container import QtContainer
 from .qt_widget_component import QtWidgetComponent
@@ -343,5 +344,5 @@ class QtWindow(QtWidgetComponent):
 
         """
         # XXX this could be done better.
-        QtWindow.deferred_call(super(QtWindow, self).set_visible, visible)
+        deferredCall(super(QtWindow, self).set_visible, visible)
 

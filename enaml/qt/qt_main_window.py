@@ -6,6 +6,7 @@ import sys
 
 from .qt.QtCore import Qt, Signal
 from .qt.QtGui import QMainWindow
+from .q_deferred_caller import deferredCall
 from .qt_container import QtContainer
 from .qt_dock_pane import QtDockPane
 from .qt_menu_bar import QtMenuBar
@@ -127,7 +128,7 @@ class QtMainWindow(QtWindow):
             floating = tbar.isFloating()
             main_window.addToolBar(tbar.toolBarArea(), tbar)
             if floating:
-                QtMainWindow.deferred_call(tbar.setFloating, True)
+                deferredCall(tbar.setFloating, True)
 
     #--------------------------------------------------------------------------
     # Utility Methods
@@ -209,7 +210,7 @@ class QtMainWindow(QtWindow):
             floating = bar_widget.isFloating()
             main_window.addToolBar(bar_widget.toolBarArea(), bar_widget)
             if floating:
-                QtMainWindow.deferred_call(bar_widget.setFloating, True)
+                deferredCall(bar_widget.setFloating, True)
             if reshow:
                 main_window.setVisible(True)
 

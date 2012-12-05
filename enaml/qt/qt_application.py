@@ -10,7 +10,7 @@ from enaml.application import Application
 from .qt.QtCore import Qt, QThread
 from .qt.QtGui import QApplication
 from .q_action_socket import QActionSocket
-from .q_deferred_caller import QDeferredCaller
+from .q_deferred_caller import deferredCall, timedCall
 from .qt_session import QtSession
 from .qt_factories import register_default
 
@@ -42,7 +42,6 @@ class QtApplication(Application):
         """
         super(QtApplication, self).__init__(factories)
         self._qapp = QApplication.instance() or QApplication([])
-        self._qcaller = QDeferredCaller()
         self._qt_sessions = {}
         self._sessions = {}
         self._sockets = {}
@@ -173,7 +172,7 @@ class QtApplication(Application):
             the callback.
 
         """
-        self._qcaller.deferredCall(callback, *args, **kwargs)
+        deferredCall(callback, *args, **kwargs)
 
     def timed_call(self, ms, callback, *args, **kwargs):
         """ Invoke a callable on the main event loop thread at a
@@ -193,7 +192,7 @@ class QtApplication(Application):
             the callback.
 
         """
-        self._qcaller.timedCall(ms, callback, *args, **kwargs)
+        timedCall(ms, callback, *args, **kwargs)
 
     def is_main_thread(self):
         """ Indicates whether the caller is on the main gui thread.
