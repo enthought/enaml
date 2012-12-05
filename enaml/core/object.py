@@ -56,8 +56,10 @@ class ChildrenEventContext(object):
 
         Parameters
         ----------
-        parent : Object
+        parent : Object or None
             The Object on which to emit a child event on context exit.
+            To make it easier for reparenting operations, the parent
+            can be None.
 
         """
         self._parent = parent
@@ -73,7 +75,7 @@ class ChildrenEventContext(object):
         counters = self._counters
         count = counters[parent]
         counters[parent] = count + 1
-        if count == 0:
+        if count == 0 and parent is not None:
             self._old = parent._children
 
     def __exit__(self, exc_type, exc_value, traceback):
@@ -90,7 +92,7 @@ class ChildrenEventContext(object):
         counters[parent] -= 1
         if counters[parent] == 0:
             del counters[parent]
-            if exc_type is None:
+            if exc_type is None and parent is not None:
                 old = self._old
                 new = parent._children
                 if old != new:
@@ -387,24 +389,66 @@ class Object(HasPrivateTraits):
             with ChildrenEventContext(parent):
                 parent._children += (self,)
 
-    def permute_children(self, permuation):
-        """ Permute the ordering of the object's children.
+    def insert_children(self, before, insert):
+        """ Insert children into this object at the given location.
 
-        This method will emit a `ChildrenEvent` upon completion.
+        The children will be automatically parented and inserted into
+        the object's children. If any children are already children of
+        this object, then they will be moved appropriately.
 
         Parameters
         ----------
-        permutation : iterable of int
-            An iterable of integers specifing the permutation to apply
-            to the children. The length of this iterable must be the
-            same as the number of children. For performance reasons,
-            no checks are made to ensure this condition holds. It is
-            the responsibility of the developer to pass good data.
+        before : Object or None
+            A child object to use as the marker for inserting the new
+            children. The new children will be inserted directly before
+            this marker. If the Object is None or not a child, then the
+            new children will be added to the end of the children.
+
+        insert : iterable
+            An iterable of Object children to insert into this object.
+
+        Notes
+        -----
+        It is the responsibility of the caller to intialize and activate
+        the object if it is reparented dynamically at runtime and should
+        be involved with a session.
 
         """
+        insert_tup = tuple(insert)
+        insert_set = set(insert_tup)
+        if self in insert_set:
+            raise ValueError('cannot use `self` as Object child')
+        if len(insert_tup) != len(insert_set):
+            raise ValueError('cannot insert duplicate children')
+        if not all(isinstance(child, Object) for child in insert_tup):
+            raise TypeError('children must be an Object instances')
+
+        new = []
+        added = False
+        for child in self._children:
+            if child in insert_set:
+                continue
+            if child is before:
+                new.extend(insert_tup)
+                added = True
+            new.append(child)
+        if not added:
+            new.extend(insert_tup)
+
+        for child in insert_tup:
+            old_parent = child._parent
+            if old_parent is not self:
+                child._parent = self
+                child.parent_event(ParentEvent(old_parent, self))
+                if old_parent is not None:
+                    old_kids = old_parent._children
+                    idx = old_kids.index(child)
+                    old_kids = old_kids[:idx] + old_kids[idx + 1:]
+                    with ChildrenEventContext(old_parent):
+                        old_parent._children = old_kids
+
         with ChildrenEventContext(self):
-            curr = self._children
-            self._children = tuple(curr[idx] for idx in permuation)
+            self._children = tuple(new)
 
     def parent_event(self, event):
         """ Handle a `ParentEvent` posted to this object.
