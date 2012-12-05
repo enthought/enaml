@@ -11,7 +11,6 @@ from .qt_object import QtObject
 from .qt_widget_registry import QtWidgetRegistry
 
 
-#: The logger for the `qt_session` module.
 logger = logging.getLogger(__name__)
 
 
@@ -65,17 +64,6 @@ class QtSession(object):
         # generated during initialization are ignored.
         self._socket = socket
         socket.on_message(self.on_message)
-
-    def close(self):
-        """ Close the session and release all object references.
-
-        """
-        for obj in self._objects:
-            obj.destroy()
-        self._objects = []
-        socket = self._socket
-        if socket is not None:
-            socket.on_message(None)
 
     def build(self, tree, parent):
         """ Build and return a new widget using the given tree dict.
@@ -196,4 +184,14 @@ class QtSession(object):
                 logger.warn(msg % (object_id, action))
             else:
                 dispatch_action(obj, action, msg_content)
+
+    def on_action_close(self, content):
+        """ Handle the 'close' action sent by the Enaml session.
+
+        """
+        for obj in self._objects:
+            obj.destroy()
+        self._objects = []
+        self._socket.on_message(None)
+        self._socket = None
 

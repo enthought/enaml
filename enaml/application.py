@@ -7,7 +7,6 @@ from heapq import heappush, heappop
 from itertools import count
 import logging
 from threading import Lock
-import uuid
 
 
 logger = logging.getLogger(__name__)
@@ -149,7 +148,6 @@ class Application(object):
         """
         self._all_factories = []
         self._named_factories = {}
-        self._sessions = {}
         self._task_heap = []
         self._counter = count()
         self._heap_lock = Lock()
@@ -213,6 +211,36 @@ class Application(object):
         ----------
         session_id : str
             The unique identifier for the session to close.
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def session(self, session_id):
+        """ Get the session for the given session id.
+
+        Parameters
+        ----------
+        session_id : str
+            The unique identifier for the session to retrieve.
+
+        Returns
+        -------
+        result : Session or None
+            The session object with the given id, or None if the id
+            does not correspond to an active session.
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def sessions(self):
+        """ Get the currently active sessions for the application.
+
+        Returns
+        -------
+        result : list
+            The list of currently active sessions for the application.
 
         """
         raise NotImplementedError
@@ -381,87 +409,6 @@ class Application(object):
         ]
         return info
 
-    def session(self, session_id):
-        """ Get the session for the given session id.
-
-        Parameters
-        ----------
-        session_id : str
-            The unique identifier for the session to retrieve.
-
-        Returns
-        -------
-        result : Session or None
-            The session object with the given id, or None if the id
-            does not correspond to an active session.
-
-        """
-        return self._sessions.get(session_id)
-
-    def open_session(self, name):
-        """ Open a session with the given name.
-
-        This method will typically be called by concrete implementations
-        of `Application`. User code should call `start_session` instead.
-
-        Parameters
-        ----------
-        name : str
-            The name of an available session to start.
-
-        Returns
-        -------
-        result : str
-            A unique identifier for the session instance. The session
-            object can be retrieved using this identifier and the
-            `session` method.
-
-        """
-        if name not in self._named_factories:
-            raise ValueError('Invalid session name')
-        factory = self._named_factories[name]
-        session = factory()
-        session_id = uuid.uuid4().hex
-        session.open(session_id)
-        self._sessions[session_id] = session
-        return session_id
-
-    def close_session(self, session_id):
-        """ Close the session with the given identifier.
-
-        This method will typically be called by concreted implementations
-        of `Application`. User code should call `end_session` instead.
-
-        Parameters
-        ----------
-        session_id : str
-            The identifier for the session to close.
-
-        """
-        if session_id not in self._sessions:
-            raise ValueError('Invalid session id')
-        session = self._sessions.pop(session_id)
-        session.close()
-
-    def snapshot(self, session_id):
-        """ Get a snapshot of the Session with the given session_id.
-
-        Parameters
-        ----------
-        session_id : str
-            The unique identifier for the given session.
-
-        Returns
-        -------
-        result : list
-            A list of snapshot dictionaries for the given session.
-
-        """
-        session = self._sessions.get(session_id)
-        if session is None:
-            raise ValueError('Invalid session id')
-        return session.snapshot()
-
     def destroy(self):
         """ Destroy this application instance.
 
@@ -469,11 +416,10 @@ class Application(object):
         new application can be instantiated.
 
         """
-        for session in self._sessions.itervalues():
-            session.close()
+        for session in self.sessions():
+            self.end_session(session.session_id)
         self._all_factories = []
         self._named_factories = {}
-        self._sessions = {}
         Application._instance = None
 
 

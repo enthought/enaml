@@ -13,7 +13,6 @@ from .signaling import Signal
 from .socket_interface import ActionSocketInterface
 
 
-#: The `session` module logger instance.
 logger = logging.getLogger(__name__)
 
 
@@ -161,7 +160,7 @@ class Session(HasTraits):
 
     #: A private dictionary of objects registered with this session.
     #: This value should not be manipulated by user code.
-    _objects = Instance(dict, ())
+    _registered_objects = Instance(dict, ())
 
     #: The private deferred message batch used for collapsing layout
     #: related messages into a single batch to send to the client
@@ -290,12 +289,13 @@ class Session(HasTraits):
         by user code.
 
         """
+        self.send(self.session_id, 'close', {})
         self.state = 'closing'
         self.on_close()
         for window in self.windows:
             window.destroy()
         self.windows = []
-        self._objects = {}
+        self._registered_objects = {}
         self.socket.on_message(None)
         self.socket = None
         self.state = 'closed'
@@ -324,7 +324,7 @@ class Session(HasTraits):
             The object to register with the session.
 
         """
-        self._objects[obj.object_id] = obj
+        self._registered_objects[obj.object_id] = obj
 
     def unregister(self, obj):
         """ Unregister an object from the session.
@@ -338,7 +338,7 @@ class Session(HasTraits):
             The object to unregister from the session.
 
         """
-        self._objects.pop(obj.object_id, None)
+        self._registered_objects.pop(obj.object_id, None)
 
     #--------------------------------------------------------------------------
     # Messaging API
@@ -391,7 +391,7 @@ class Session(HasTraits):
                 obj = self
             else:
                 try:
-                    obj = self._objects[object_id]
+                    obj = self._registered_objects[object_id]
                 except KeyError:
                     msg = "Invalid object id sent to Session: %s:%s"
                     logger.warn(msg % (object_id, action))

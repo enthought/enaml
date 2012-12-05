@@ -3,6 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import logging
+import uuid
 
 from enaml.application import Application
 
@@ -43,6 +44,7 @@ class QtApplication(Application):
         self._qapp = QApplication.instance() or QApplication([])
         self._qcaller = QDeferredCaller()
         self._qt_sessions = {}
+        self._sessions = {}
         self._sockets = {}
 
     #--------------------------------------------------------------------------
@@ -66,21 +68,78 @@ class QtApplication(Application):
             The unique identifier for the created session.
 
         """
-        sid = self.open_session(name)
-        esock, qsock = self._socket_pair(sid)
-        groups = self.session(sid).widget_groups[:]
-        qt_session = QtSession(sid, groups)
-        self._qt_sessions[sid] = qt_session
-        qt_session.open(self.snapshot(sid), qsock)
-        self.session(sid).activate(esock)
-        return sid
+        if name not in self._named_factories:
+            raise ValueError('Invalid session name')
 
-    def end_session(self, sid):
-        self.close_session(sid)
-        qt_session = self._qt_sessions.pop(sid, None)
-        if qt_session is not None:
-            qt_session.close()
-        self._sockets.pop(sid, None)
+        # Create and open a new server-side session.
+        factory = self._named_factories[name]
+        session = factory()
+        session_id = uuid.uuid4().hex
+        session.open(session_id)
+        self._sessions[session_id] = session
+
+        # Create a new client-side session.
+        groups = session.widget_groups[:]
+        qt_session = QtSession(session_id, groups)
+        self._qt_sessions[session_id] = qt_session
+
+        # Setup the sockets for the session pair
+        server_socket = QActionSocket()
+        client_socket = QActionSocket()
+        conn = Qt.QueuedConnection
+        server_socket.messagePosted.connect(client_socket.receive, conn)
+        client_socket.messagePosted.connect(server_socket.receive, conn)
+
+        # Open the client session and activate the server session
+        qt_session.open(session.snapshot(), client_socket)
+        session.activate(server_socket)
+
+        return session_id
+
+    def end_session(self, session_id):
+        """ End the session with the given session id.
+
+        This method will close down the existing session. If the session
+        id is not valid, an exception will be raised.
+
+        Parameters
+        ----------
+        session_id : str
+            The unique identifier for the session to close.
+
+        """
+        if session_id not in self._sessions:
+            raise ValueError('Invalid session id')
+        self._sessions.pop(session_id).close()
+        del self._qt_sessions[session_id]
+
+    def session(self, session_id):
+        """ Get the session for the given session id.
+
+        Parameters
+        ----------
+        session_id : str
+            The unique identifier for the session to retrieve.
+
+        Returns
+        -------
+        result : Session or None
+            The session object with the given id, or None if the id
+            does not correspond to an active session.
+
+        """
+        return self._sessions.get(session_id)
+
+    def sessions(self):
+        """ Get the currently active sessions for the application.
+
+        Returns
+        -------
+        result : list
+            The list of currently active sessions for the application.
+
+        """
+        return self._sessions.values()
 
     def start(self):
         """ Start the application's main event loop.
@@ -146,37 +205,4 @@ class QtApplication(Application):
 
         """
         return QThread.currentThread() == self._qapp.thread()
-
-    #--------------------------------------------------------------------------
-    # Private API
-    #--------------------------------------------------------------------------
-    def _socket_pair(self, session_id):
-        """ Get the socket pair for the given session id.
-
-        If the socket pair does not yet exist, it will be created.
-
-        Parameters
-        ----------
-        session_id : str
-            The identifier of the session that will use the sockets.
-
-        Returns
-        -------
-        result : tuple
-            A 2-tuple of action sockets for the server and client sides,
-            respectively.
-
-        """
-        sockets = self._sockets
-        if session_id not in sockets:
-            server_socket = QActionSocket()
-            client_socket = QActionSocket()
-            conn = Qt.QueuedConnection
-            server_socket.messagePosted.connect(client_socket.receive, conn)
-            client_socket.messagePosted.connect(server_socket.receive, conn)
-            pair = (server_socket, client_socket)
-            sockets[session_id] = pair
-        else:
-            pair = sockets[session_id]
-        return pair
 
