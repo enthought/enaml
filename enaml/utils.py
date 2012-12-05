@@ -108,7 +108,7 @@ class LoopbackGuard(object):
     using the `in` keyword.
 
     """
-    __slots__ = ('locked_items')
+    __slots__ = ('locked_items',)
 
     def __init__(self):
         """ Initialize a loopback guard.
