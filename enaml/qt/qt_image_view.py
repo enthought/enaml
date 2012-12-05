@@ -276,7 +276,7 @@ class QtImageView(QtControl):
         """ Sets the image on the underlying QLabel.
 
         """
-        img_obj = QtObject.lookup_object(image_id)
+        img_obj = self._session.lookup(image_id)
         if img_obj is not None:
             pixmap = QPixmap.fromImage(img_obj.widget())
             self.widget().setPixmap(pixmap)
