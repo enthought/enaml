@@ -7,7 +7,6 @@ import logging
 
 from enaml.utils import make_dispatcher
 
-from .qt_object import QtObject
 from .qt_widget_registry import QtWidgetRegistry
 
 
@@ -37,7 +36,8 @@ class QtSession(object):
         self._session_id = session_id
         self._widget_groups = widget_groups
         self._socket = None
-        self._objects = []
+        self._windows = []
+        self._registered_objects = {}
 
     #--------------------------------------------------------------------------
     # Public API
@@ -51,15 +51,16 @@ class QtSession(object):
             The list of tree snapshots to build for this session.
 
         socket : ActionSocketInterface
-            The socket interface to use for messaging.
+            The socket interface to use for messaging with the server
+            side Enaml objects.
 
         """
-        objects = self._objects
+        windows = self._windows
         for tree in snapshot:
-            obj = self.build(tree, None)
-            if obj is not None:
-                obj.initialize()
-                objects.append(obj)
+            window = self.build(tree, None)
+            if window is not None:
+                windows.append(window)
+                window.initialize()
         # Setup the socket after initialization so that any messages
         # generated during initialization are ignored.
         self._socket = socket
@@ -102,6 +103,49 @@ class QtSession(object):
         for child in tree['children']:
             self.build(child, obj)
         return obj
+
+    def register(self, obj):
+        """ Register an object with the session.
+
+        QtObjects are registered automatically during construction.
+
+        Parameters
+        ----------
+        obj : QtObject
+            The QtObject to register with the session.
+
+        """
+        self._registered_objects[obj.object_id()] = obj
+
+    def unregister(self, obj):
+        """ Unregister an object from the session.
+
+        QtObjects are unregistered automatically during destruction.
+
+        Parameters
+        ----------
+        obj : QtObject
+            The QtObject to unregister from the session.
+
+        """
+        self._registered_objects.pop(obj.object_id(), None)
+
+    def lookup(self, object_id):
+        """ Lookup a registered object with the given object id.
+
+        Parameters
+        ----------
+        object_id : str
+            The object id for the object to lookup.
+
+        Returns
+        -------
+        result : QtObject or None
+            The registered QtObject with the given identifier, or None
+            if no registered object is found.
+
+        """
+        return self._registered_objects.get(object_id)
 
     #--------------------------------------------------------------------------
     # Messaging API
@@ -150,8 +194,9 @@ class QtSession(object):
         if object_id == self._session_id:
             obj = self
         else:
-            obj = QtObject.lookup_object(object_id)
-            if obj is None:
+            try:
+                obj = self._registered_objects[object_id]
+            except KeyError:
                 msg = "Invalid object id sent to QtSession: %s:%s"
                 logger.warn(msg % (object_id, action))
                 return
@@ -177,9 +222,11 @@ class QtSession(object):
             ordered.extend(actions.pop(key, ()))
         for value in actions.itervalues():
             ordered.extend(value)
+        objects = self._registered_objects
         for object_id, action, msg_content in ordered:
-            obj = QtObject.lookup_object(object_id)
-            if obj is None:
+            try:
+                obj = objects[object_id]
+            except KeyError:
                 msg = "Invalid object id sent to QtSession %s:%s"
                 logger.warn(msg % (object_id, action))
             else:
@@ -189,9 +236,10 @@ class QtSession(object):
         """ Handle the 'close' action sent by the Enaml session.
 
         """
-        for obj in self._objects:
-            obj.destroy()
-        self._objects = []
+        for window in self._windows:
+            window.destroy()
+        self._windows = []
+        self._registered_objects = {}
         self._socket.on_message(None)
         self._socket = None
 
