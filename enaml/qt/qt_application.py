@@ -44,7 +44,6 @@ class QtApplication(Application):
         self._qapp = QApplication.instance() or QApplication([])
         self._qt_sessions = {}
         self._sessions = {}
-        self._sockets = {}
 
     #--------------------------------------------------------------------------
     # Abstract API Implementation

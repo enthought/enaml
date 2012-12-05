@@ -47,7 +47,7 @@ class QtSession(object):
 
         Parameters
         ----------
-        snaphshot : list of dicts
+        snapshot : list of dicts
             The list of tree snapshots to build for this session.
 
         socket : ActionSocketInterface
