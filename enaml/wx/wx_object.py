@@ -8,7 +8,7 @@ import wx
 
 from enaml.utils import LoopbackGuard
 
-from .wx_deferred_caller import wxDeferredCaller
+from .wx_deferred_caller import DeferredCall
 
 
 def deferred_updates(func):
@@ -32,7 +32,7 @@ def deferred_updates(func):
             try:
                 res = func(self, *args, **kwargs)
             finally:
-                self.deferred_call(widget.Thaw)
+                DeferredCall(widget.Thaw)
         else:
             res = func(self, *args, **kwargs)
         return res
@@ -44,33 +44,6 @@ class WxObject(object):
     implementation.
 
     """
-    #: Class level storage for WxObject instances. WxObjects are added
-    #: to this dict as they are created. Instances are stored strongly
-    #: so that orphaned widgets are not garbage collected until they
-    #: are explicitly destroyed.
-    _objects = {}
-
-    #: A class level deferred caller. Created on demand.
-    _deferred_caller = None
-
-    @classmethod
-    def lookup_object(cls, object_id):
-        """ A classmethod which finds the object with the given id.
-
-        Parameters
-        ----------
-        object_id : str
-            The identifier for the object to lookup.
-
-        Returns
-        -------
-        result : WxObject or None
-            The WxObject for the given identifier, or None if no object
-            is found.
-
-        """
-        return cls._objects.get(object_id)
-
     @classmethod
     def construct(cls, tree, parent, session):
         """ Construct the WxObject instance for the given parameters.
@@ -112,75 +85,7 @@ class WxObject(object):
         object_id = tree['object_id']
         self = cls(object_id, parent, session)
         self.create(tree)
-        return self
-
-    @classmethod
-    def deferred_call(cls, callback, *args, **kwargs):
-        """ Execute the callback on the main gui thread.
-
-        Parameters
-        ----------
-        callback : callable
-            The callable object to execute on the main thread.
-
-        *args, **kwargs
-            Any additional positional and keyword arguments to pass to
-            the callback.
-
-        """
-        caller = cls._deferred_caller
-        if caller is None:
-            caller = cls._deferred_caller = wxDeferredCaller()
-        caller.DeferredCall(callback, *args, **kwargs)
-
-    @classmethod
-    def timed_call(cls, ms, callback, *args, **kwargs):
-        """ Execute a callback on timer in the main gui thread.
-
-        Parameters
-        ----------
-        ms : int
-            The time to delay, in milliseconds, before executing the
-            callable.
-
-        callback : callable
-            The callable object to execute at on the timer.
-
-        *args, **kwargs
-            Any additional positional and keyword arguments to pass to
-            the callback.
-
-        """
-        caller = cls._deferred_caller
-        if caller is None:
-            caller = cls._deferred_caller = wxDeferredCaller()
-        caller.TimedCall(ms, callback, *args, **kwargs)
-
-    def __new__(cls, object_id, *args, **kwargs):
-        """ Create a new WxObject.
-
-        If the provided object id already exists, an exception will be
-        raised.
-
-        Parameters
-        ----------
-        object_id : str
-            The unique object identifier assigned to this object.
-
-        *args, **kwargs
-            Additional positional and keyword arguments needed to
-            initialize a WxObject.
-
-        Returns
-        -------
-        result : WxObject
-            A new WxObject instance.
-
-        """
-        if object_id in cls._objects:
-            raise ValueError('Duplicate object id')
-        self = super(WxObject, cls).__new__(cls)
-        cls._objects[object_id] = self
+        session.register(self)
         return self
 
     def __init__(self, object_id, parent, session):
@@ -381,11 +286,10 @@ class WxObject(object):
             widget.Destroy()
             self._widget = None
 
-        # Remove what should be the last remaining strong reference to
+        # Remove what should be the last remaining strong references to
         # `self` which will allow this object to be garbage collected.
-        # XXX remove from the session if top-level? It may not matter...
+        self._session.unregister(self)
         self._session = None
-        WxObject._objects.pop(self._object_id, None)
 
     #--------------------------------------------------------------------------
     # Parenting Methods
@@ -445,7 +349,7 @@ class WxObject(object):
                     if self._initialized:
                         curr.child_removed(self)
                     else:
-                        WxObject.deferred_call(curr.child_removed, self)
+                        DeferredCall(curr.child_removed, self)
 
         if parent is not None:
             parent._children.append(self)
@@ -453,7 +357,7 @@ class WxObject(object):
                 if self._initialized:
                     curr.child_added(self)
                 else:
-                    WxObject.deferred_call(parent.child_added, self)
+                    DeferredCall(parent.child_added, self)
 
     def child_removed(self, child):
         """ Called when a child is removed from this object.
@@ -530,9 +434,7 @@ class WxObject(object):
 
         """
         if self._initialized:
-            session = self._session
-            if session is not None:
-                session.send(self._object_id, action, content)
+            self._session.send(self._object_id, action, content)
 
     #--------------------------------------------------------------------------
     # Action Handlers
@@ -551,7 +453,7 @@ class WxObject(object):
         """
         # Unparent the children being removed. Destroying a widget is
         # handled through a separate message.
-        lookup = WxObject.lookup_object
+        lookup = self._session.lookup
         for object_id in content['removed']:
             child = lookup(object_id)
             if child is not None and child._parent is self:
@@ -590,5 +492,5 @@ class WxObject(object):
         if self._initialized:
             self.destroy()
         else:
-            WxObject.deferred_call(self.destroy)
+            DeferredCall(self.destroy)
 

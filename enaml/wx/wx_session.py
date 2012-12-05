@@ -2,15 +2,19 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from collections import defaultdict
 import logging
 
-from enaml.dispatch import dispatch_action
+from enaml.utils import make_dispatcher
 
-from .wx_object import WxObject
 from .wx_widget_registry import WxWidgetRegistry
 
 
 logger = logging.getLogger(__name__)
+
+
+#: The dispatch function for action dispatching.
+dispatch_action = make_dispatcher('on_action_', logger)
 
 
 class WxSession(object):
@@ -31,8 +35,9 @@ class WxSession(object):
         """
         self._session_id = session_id
         self._widget_groups = widget_groups
+        self._registered_objects = {}
+        self._windows = []
         self._socket = None
-        self._objects = []
 
     #--------------------------------------------------------------------------
     # Public API
@@ -42,34 +47,24 @@ class WxSession(object):
 
         Parameters
         ----------
-        snaphshot : list of dicts
+        snapshot : list of dicts
             The list of tree snapshots to build for this session.
 
         socket : ActionSocketInterface
-            The socket interface to use for messaging.
+            The socket interface to use for messaging with the server
+            side Enaml objects.
 
         """
-        objects = self._objects
+        windows = self._windows
         for tree in snapshot:
-            obj = self.build(tree, None)
-            if obj is not None:
-                obj.initialize()
-                objects.append(obj)
+            window = self.build(tree, None)
+            if window is not None:
+                windows.append(window)
+                window.initialize()
         # Setup the socket after initialization so that any messages
         # generated during initialization are ignored.
         self._socket = socket
         socket.on_message(self.on_message)
-
-    def close(self):
-        """ Close the session and release all object references.
-
-        """
-        for obj in self._objects:
-            obj.destroy()
-        self._objects = []
-        socket = self._socket
-        if socket is not None:
-            socket.on_message(None)
 
     def build(self, tree, parent):
         """ Build and return a new widget using the given tree dict.
@@ -109,6 +104,52 @@ class WxSession(object):
             self.build(child, obj)
         return obj
 
+    def register(self, obj):
+        """ Register an object with the session.
+
+        WxObjects are registered automatically during construction.
+
+        Parameters
+        ----------
+        obj : WxObject
+            The WxObject to register with the session.
+
+        """
+        self._registered_objects[obj.object_id()] = obj
+
+    def unregister(self, obj):
+        """ Unregister an object from the session.
+
+        WxObjects are unregistered automatically during destruction.
+
+        Parameters
+        ----------
+        obj : WxObject
+            The WxObject to unregister from the session.
+
+        """
+        self._registered_objects.pop(obj.object_id(), None)
+
+    def lookup(self, object_id):
+        """ Lookup a registered object with the given object id.
+
+        Parameters
+        ----------
+        object_id : str
+            The object id for the object to lookup.
+
+        Returns
+        -------
+        result : WxObject or None
+            The registered WxObject with the given identifier, or None
+            if no registered object is found.
+
+        """
+        return self._registered_objects.get(object_id)
+
+    #--------------------------------------------------------------------------
+    # Messaging API
+    #--------------------------------------------------------------------------
     def send(self, object_id, action, content):
         """ Send a message to a server object.
 
@@ -153,8 +194,9 @@ class WxSession(object):
         if object_id == self._session_id:
             obj = self
         else:
-            obj = WxObject.lookup_object(object_id)
-            if obj is None:
+            try:
+                obj = self._registered_objects[object_id]
+            except KeyError:
                 msg = "Invalid object id sent to WxSession: %s:%s"
                 logger.warn(msg % (object_id, action))
                 return
@@ -166,12 +208,38 @@ class WxSession(object):
     def on_action_message_batch(self, content):
         """ Handle the 'message_batch' action sent by the Enaml session.
 
+        Actions sent to the message batch are processed in the following
+        order 'children_changed' -> 'destroy' -> 'relayout' -> other...
+
         """
-        for object_id, action, msg_content in content['batch']:
-            obj = WxObject.lookup_object(object_id)
-            if obj is None:
-                msg = "Invalid object id sent to WxSession: %s:%s"
+        actions = defaultdict(list)
+        for item in content['batch']:
+            action = item[1]
+            actions[action].append(item)
+        ordered = []
+        batch_order = ('children_changed', 'destroy', 'relayout')
+        for key in batch_order:
+            ordered.extend(actions.pop(key, ()))
+        for value in actions.itervalues():
+            ordered.extend(value)
+        objects = self._registered_objects
+        for object_id, action, msg_content in ordered:
+            try:
+                obj = objects[object_id]
+            except KeyError:
+                msg = "Invalid object id sent to WxSession %s:%s"
                 logger.warn(msg % (object_id, action))
             else:
                 dispatch_action(obj, action, msg_content)
+
+    def on_action_close(self, content):
+        """ Handle the 'close' action sent by the Enaml session.
+
+        """
+        for window in self._windows:
+            window.destroy()
+        self._windows = []
+        self._registered_objects = {}
+        self._socket.on_message(None)
+        self._socket = None
 

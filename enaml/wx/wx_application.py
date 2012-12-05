@@ -3,13 +3,14 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import logging
+import uuid
 
 import wx
 
 from enaml.application import Application
 
 from .wx_action_socket import wxActionSocket, EVT_ACTION_SOCKET
-from .wx_deferred_caller import wxDeferredCaller
+from .wx_deferred_caller import DeferredCall, TimedCall
 from .wx_session import WxSession
 from .wx_factories import register_default
 
@@ -41,30 +42,101 @@ class WxApplication(Application):
         """
         super(WxApplication, self).__init__(factories)
         self._wxapp = wx.GetApp() or wx.PySimpleApp()
-        self._wxcaller = wxDeferredCaller()
         self._wx_sessions = {}
-        self._sockets = {}
+        self._sessions = {}
 
     #--------------------------------------------------------------------------
     # Abstract API Implementation
     #--------------------------------------------------------------------------
-    def socket(self, session_id):
-        """ Get the ActionSocketInterface for a session.
+    def start_session(self, name):
+        """ Start a new session of the given name.
+
+        This method will create a new session object for the requested
+        session type and return the new session_id. If the session name
+        is invalid, an exception will be raised.
+
+        Parameters
+        ----------
+        name : str
+            The name of the session to start.
+
+        Returns
+        -------
+        result : str
+            The unique identifier for the created session.
+
+        """
+        if name not in self._named_factories:
+            raise ValueError('Invalid session name')
+
+        # Create and open a new server-side session.
+        factory = self._named_factories[name]
+        session = factory()
+        session_id = uuid.uuid4().hex
+        session.open(session_id)
+        self._sessions[session_id] = session
+
+        # Create a new client-side session.
+        groups = session.widget_groups[:]
+        wx_session = WxSession(session_id, groups)
+        self._wx_sessions[session_id] = wx_session
+
+        # Setup the sockets for the session pair
+        server_socket = wxActionSocket()
+        client_socket = wxActionSocket()
+        server_socket.Bind(EVT_ACTION_SOCKET, client_socket.receive)
+        client_socket.Bind(EVT_ACTION_SOCKET, server_socket.receive)
+
+        # Open the client session and activate the server session
+        wx_session.open(session.snapshot(), client_socket)
+        session.activate(server_socket)
+
+        return session_id
+
+    def end_session(self, session_id):
+        """ End the session with the given session id.
+
+        This method will close down the existing session. If the session
+        id is not valid, an exception will be raised.
 
         Parameters
         ----------
         session_id : str
-            The string identifier for the session which will use the
-            created action socket.
+            The unique identifier for the session to close.
+
+        """
+        if session_id not in self._sessions:
+            raise ValueError('Invalid session id')
+        self._sessions.pop(session_id).close()
+        del self._wx_sessions[session_id]
+
+    def session(self, session_id):
+        """ Get the session for the given session id.
+
+        Parameters
+        ----------
+        session_id : str
+            The unique identifier for the session to retrieve.
 
         Returns
         -------
-        result : ActionSocketInterface
-            An implementor of ActionSocketInterface which can be used
-            by Enaml Session instances for messaging.
+        result : Session or None
+            The session object with the given id, or None if the id
+            does not correspond to an active session.
 
         """
-        return self._socket_pair(session_id)[0]
+        return self._sessions.get(session_id)
+
+    def sessions(self):
+        """ Get the currently active sessions for the application.
+
+        Returns
+        -------
+        result : list
+            The list of currently active sessions for the application.
+
+        """
+        return self._sessions.values()
 
     def start(self):
         """ Start the application's main event loop.
@@ -96,7 +168,7 @@ class WxApplication(Application):
             the callback.
 
         """
-        self._wxcaller.DeferredCall(callback, *args, **kwargs)
+        DeferredCall(callback, *args, **kwargs)
 
     def timed_call(self, ms, callback, *args, **kwargs):
         """ Invoke a callable on the main event loop thread at a
@@ -116,7 +188,7 @@ class WxApplication(Application):
             the callback.
 
         """
-        self._wxcaller.TimedCall(ms, callback, *args, **kwargs)
+        TimedCall(ms, callback, *args, **kwargs)
 
     def is_main_thread(self):
         """ Indicates whether the caller is on the main gui thread.
@@ -128,68 +200,4 @@ class WxApplication(Application):
 
         """
         return wx.Thread_IsMain()
-
-    #--------------------------------------------------------------------------
-    # Public API
-    #--------------------------------------------------------------------------
-    def start_session(self, name):
-        """ Start a new session of the given name.
-
-        This is an overridden parent class method which will build out
-        the Wx client object tree for the session. It will be displayed
-        when the application is started.
-
-        """
-        sid = super(WxApplication, self).start_session(name)
-        socket = self._socket_pair(sid)[1]
-        groups = self.session(sid).widget_groups[:]
-        wx_session = WxSession(sid, groups)
-        self._wx_sessions[sid] = wx_session
-        wx_session.open(self.snapshot(sid), socket)
-        return sid
-
-    def end_session(self, session_id):
-        """ End the session with the given session id.
-
-        This is an overridden parent class method which will removes
-        the references to the Wx client object trees for the session.
-
-        """
-        super(WxApplication, self).end_session(session_id)
-        wx_session = self._wx_sessions.pop(session_id, None)
-        if wx_session is not None:
-            wx_session.close()
-        self._sockets.pop(session_id, None)
-
-    #--------------------------------------------------------------------------
-    # Private API
-    #--------------------------------------------------------------------------
-    def _socket_pair(self, session_id):
-        """ Get the socket pair for the given session id.
-
-        If the socket pair does not yet exist, it will be created.
-
-        Parameters
-        ----------
-        session_id : str
-            The identifier of the session that will use the sockets.
-
-        Returns
-        -------
-        result : tuple
-            A 2-tuple of action sockets for the server and client sides,
-            respectively.
-
-        """
-        sockets = self._sockets
-        if session_id not in sockets:
-            server_socket = wxActionSocket()
-            client_socket = wxActionSocket()
-            server_socket.Bind(EVT_ACTION_SOCKET, client_socket.receive)
-            client_socket.Bind(EVT_ACTION_SOCKET, server_socket.receive)
-            pair = (server_socket, client_socket)
-            sockets[session_id] = pair
-        else:
-            pair = sockets[session_id]
-        return pair
 
