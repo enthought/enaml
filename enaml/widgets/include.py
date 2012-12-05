@@ -11,11 +11,12 @@ from enaml.core.object import Object, ChildrenEventContext
 class Include(Declarative):
     """ An object which dynamically inserts children into its parent.
 
-    The Include object can be used to cleanly and easily insert objects
-    into the children of its parent. Object assigned to the `objects`
-    list of the Include will be parented by the parent of the Include.
-    By default, an Include is not snappable and therefore acts like a
-    shadow object with no client widget representation.
+    The `Include` object is used to cleanly and easily insert objects
+    into the children of its parent. `Object` instances assigned to the
+    `objects` list of the `Include` will be parented with the parent of
+    the `Include`. The parent of an `Include` should be an instance of
+    `WidgetBase`; if this condition does not hold, the behavior will be
+    undefined.
 
     """
     #: The list of objects belonging to this Include. Objects in this
