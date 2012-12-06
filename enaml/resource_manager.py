@@ -49,7 +49,7 @@ class ResourceManager(HasTraits):
 
         """
         scheme = urlparse(url).scheme
-        handler = getattr(self, 'load_' + scheme, None)
+        handler = getattr(self, '_load_' + scheme, None)
         if handler is None:
             msg = 'unhandled url resource scheme: `%s`'
             logger.error(msg % url)
@@ -57,8 +57,14 @@ class ResourceManager(HasTraits):
             return
         handler(callback, url, **kwargs)
 
-    def load_image(self, callback, url, size=(-1, -1)):
+    #--------------------------------------------------------------------------
+    # Private API
+    #--------------------------------------------------------------------------
+    def _load_image(self, callback, url, size=(-1, -1)):
         """ Load an image resource.
+
+        This is a private handler method called by the `load` method.
+        It should not be called directly by user code.
 
         Parameters
         ----------

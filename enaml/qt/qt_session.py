@@ -7,6 +7,7 @@ import logging
 
 from enaml.utils import make_dispatcher
 
+from .qt_url_manager import QtURLManager
 from .qt_widget_registry import QtWidgetRegistry
 
 
@@ -35,6 +36,7 @@ class QtSession(object):
         """
         self._session_id = session_id
         self._widget_groups = widget_groups
+        self._url_manager = QtURLManager(self)
         self._registered_objects = {}
         self._windows = []
         self._socket = None
@@ -42,7 +44,7 @@ class QtSession(object):
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
-    def open(self, snapshot, socket):
+    def open(self, snapshot):
         """ Open the session using the given snapshot and socket.
 
         Parameters
@@ -50,9 +52,6 @@ class QtSession(object):
         snapshot : list of dicts
             The list of tree snapshots to build for this session.
 
-        socket : ActionSocketInterface
-            The socket interface to use for messaging with the server
-            side Enaml objects.
 
         """
         windows = self._windows
@@ -61,10 +60,23 @@ class QtSession(object):
             if window is not None:
                 windows.append(window)
                 window.initialize()
-        # Setup the socket after initialization so that any messages
-        # generated during initialization are ignored.
+
+    def activate(self, socket):
+        """ Active the session and its windows.
+
+        Parameters
+        ----------
+        socket : ActionSocketInterface
+            The socket interface to use for messaging with the server
+            side Enaml objects.
+
+        """
+        # Setup the socket before activation so that widgets may
+        # request resources from the server for startup purposes.
         self._socket = socket
         socket.on_message(self.on_message)
+        for window in self._windows:
+            window.activate()
 
     def build(self, tree, parent):
         """ Build and return a new widget using the given tree dict.
@@ -147,6 +159,27 @@ class QtSession(object):
         """
         return self._registered_objects.get(object_id)
 
+    def load_url(self, url, **kwargs):
+        """ Asynchronously Load the resource pointed to by the given url.
+
+        Parameters
+        ----------
+        url : str
+            The url pointed to the resource that should be loaded.
+
+        **kwargs
+            Additional metadata related to the url request. i.e.
+            the size for an image url request.
+
+        Returns
+        -------
+        result : DeferredResource
+            A deferred object which will invoke a callback when the
+            resource for the url is loaded.
+
+        """
+        return self._url_manager.load(url, **kwargs)
+
     #--------------------------------------------------------------------------
     # Messaging API
     #--------------------------------------------------------------------------
@@ -192,7 +225,7 @@ class QtSession(object):
 
         """
         if object_id == self._session_id:
-            obj = self
+            dispatch_action(self, action, content)
         else:
             try:
                 obj = self._registered_objects[object_id]
@@ -200,11 +233,18 @@ class QtSession(object):
                 msg = "Invalid object id sent to QtSession: %s:%s"
                 logger.warn(msg % (object_id, action))
                 return
-        dispatch_action(obj, action, content)
+            else:
+                obj.receive_action(action, content)
 
     #--------------------------------------------------------------------------
     # Action Handlers
     #--------------------------------------------------------------------------
+    def on_action_url_reply(self, content):
+        """ Handle the 'url_reply' action from the Enaml session.
+
+        """
+        self._url_manager.on_reply(content)
+
     def on_action_message_batch(self, content):
         """ Handle the 'message_batch' action sent by the Enaml session.
 

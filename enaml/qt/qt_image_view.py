@@ -2,12 +2,11 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt.QtGui import QWidget, QPainter, QPixmap
+from .qt.QtGui import QFrame, QPainter, QPixmap
 from .qt_control import QtControl
-from .qt_object import QtObject
 
 
-class QImageView(QWidget):
+class QImageView(QFrame):
     """ A custom QWidget that will paint a QPixmap as an image. The
     api is similar to QLabel, but with a few more options to control
     how the image scales.
@@ -195,10 +194,8 @@ class QtImageView(QtControl):
     """ A Qt implementation of an Enaml ImageView widget.
 
     """
-    #: The internal cached size hint which is used to determine whether
-    #: or not a size hint updated event should be emitted when the image
-    #: in the control changes.
-    _cached_size_hint = None
+    #: Internal storage for the image source url.
+    _image_source = None
 
     #--------------------------------------------------------------------------
     # Setup methods
@@ -214,14 +211,28 @@ class QtImageView(QtControl):
 
         """
         super(QtImageView, self).create(tree)
+        self._image_source = tree['source']
         self.set_scale_to_fit(tree['scale_to_fit'])
         self.set_preserve_aspect_ratio(tree['preserve_aspect_ratio'])
         self.set_allow_upscaling(tree['allow_upscaling'])
-        self.set_image(tree['image_id'])
+
+    def init_requests(self):
+        """ Initialize the widget requests.
+
+        """
+        # Defer setting the image source until activation, so that the
+        # request for the image data will not be dropped.
+        self.set_source(self._image_source)
 
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
+    def on_action_set_source(self, content):
+        """ Handle the 'set_source' action from the Enaml widget.
+
+        """
+        self.set_source(content['source'])
+
     def on_action_set_scale_to_fit(self, content):
         """ Handle the 'set_scale_to_fit' action from the Enaml widget.
 
@@ -241,12 +252,6 @@ class QtImageView(QtControl):
 
         """
         self.set_allow_upscaling(content['allow_upscaling'])
-
-    def on_action_set_image(self, content):
-        """ Handle the 'set_image' action from the Enaml widget.
-
-        """
-        self.set_image(content['image_id'])
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -272,12 +277,36 @@ class QtImageView(QtControl):
         """
         self.widget().setAllowUpscaling(allow)
 
-    def set_image(self, image_id):
-        """ Sets the image on the underlying QLabel.
+    def set_source(self, source):
+        """ Set the image source for the underlying widget.
+
+        This will trigger a deferred load of the image pointed to by
+        the given source url.
 
         """
-        img_obj = self._session.lookup(image_id)
-        if img_obj is not None:
-            pixmap = QPixmap.fromImage(img_obj.widget())
-            self.widget().setPixmap(pixmap)
+        loader = self._session.load_url(source)
+        loader.on_load(self._on_image_load)
+
+    #--------------------------------------------------------------------------
+    # Private API
+    #--------------------------------------------------------------------------
+    def _on_image_load(self, image):
+        """ A private resource loader callback.
+
+        This method is invoked when the request image is successfully
+        loaded. It will update the image in the image view widget and
+        issue a size hint updated event to the layout system if needed.
+
+        Parameters
+        ----------
+        image : QImage
+            The QImage that was loaded by the resource request.
+
+        """
+        widget = self.widget()
+        old_hint = widget.sizeHint()
+        widget.setPixmap(QPixmap.fromImage(image))
+        new_hint = widget.sizeHint()
+        if old_hint != new_hint:
+            self.size_hint_updated()
 

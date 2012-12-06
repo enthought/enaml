@@ -3,11 +3,19 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import functools
+import logging
 
-from enaml.utils import LoopbackGuard
+from enaml.utils import LoopbackGuard, make_dispatcher
 
 from .qt.QtCore import QObject
 from .q_deferred_caller import deferredCall
+
+
+logger = logging.getLogger(__name__)
+
+
+#: The dispatch function for action dispatching.
+dispatch_action = make_dispatcher('on_action_', logger)
 
 
 def deferred_updates(func):
@@ -251,6 +259,14 @@ class QtObject(object):
         """
         pass
 
+    def activate(self):
+        self.init_requests()
+        for child in self.children():
+            child.activate()
+
+    def init_requests(self):
+        pass
+
     def destroy(self):
         """ Destroy this object.
 
@@ -426,7 +442,7 @@ class QtObject(object):
     # Messaging API
     #--------------------------------------------------------------------------
     def send_action(self, action, content):
-        """ Send an action to the session for this object.
+        """ Send an action to the server side object.
 
         The action will only be sent if the object is fully initialized.
 
@@ -441,6 +457,26 @@ class QtObject(object):
         """
         if self._initialized:
             self._session.send(self._object_id, action, content)
+
+    def receive_action(self, action, content):
+        """ Receive an action from the server side object.
+
+        The default implementation will dynamically dispatch the action
+        to specially named handlers if the current state of the object
+        is 'active'. Subclasses may reimplement this method if more
+        control is needed.
+
+        Parameters
+        ----------
+        action : str
+            The name of the action to perform.
+
+        content : dict
+            The content data for the action.
+
+        """
+        if self._initialized:
+            dispatch_action(self, action, content)
 
     #--------------------------------------------------------------------------
     # Action Handlers

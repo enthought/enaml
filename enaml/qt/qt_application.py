@@ -24,7 +24,7 @@ register_default()
 
 
 class QtApplication(Application):
-    """ A concrete implementation of an Enaml application.
+    """ A Qt implementation of an Enaml application.
 
     A QtApplication uses the Qt toolkit to implement an Enaml UI that
     runs in the local process.
@@ -76,10 +76,11 @@ class QtApplication(Application):
         session.open(session_id)
         self._sessions[session_id] = session
 
-        # Create a new client-side session.
+        # Create and open a new client-side session.
         groups = session.widget_groups[:]
         qt_session = QtSession(session_id, groups)
         self._qt_sessions[session_id] = qt_session
+        qt_session.open(session.snapshot())
 
         # Setup the sockets for the session pair
         server_socket = QActionSocket()
@@ -88,9 +89,12 @@ class QtApplication(Application):
         server_socket.messagePosted.connect(client_socket.receive, conn)
         client_socket.messagePosted.connect(server_socket.receive, conn)
 
-        # Open the client session and activate the server session
-        qt_session.open(session.snapshot(), client_socket)
+        # Activate the server and client sessions. The server session
+        # is activated first so that it is ready to receive messages
+        # sent by the client during activation. These messages will
+        # typically be requests for resources.
         session.activate(server_socket)
+        qt_session.activate(client_socket)
 
         return session_id
 
