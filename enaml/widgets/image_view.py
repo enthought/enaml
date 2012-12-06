@@ -2,9 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Bool, Instance
-
-from enaml.support.resource import ResourceHandle, ResourceID
+from traits.api import Bool, Str
 
 from .control import Control
 
@@ -13,10 +11,8 @@ class ImageView(Control):
     """ A widget which can display an Image with optional scaling.
 
     """
-    #: The image to display in the control
-    image = Instance(ResourceHandle)
-
-    image_id = ResourceID('image')
+    #: The source url of the image to load.
+    source = Str
 
     #: Whether or not to scale the image with the size of the component.
     scale_to_fit = Bool(False)
@@ -41,10 +37,10 @@ class ImageView(Control):
 
         """
         snap = super(ImageView, self).snapshot()
+        snap['source'] = self.source
         snap['scale_to_fit'] = self.scale_to_fit
         snap['preserve_aspect_ratio'] = self.preserve_aspect_ratio
         snap['allow_upscaling'] = self.allow_upscaling
-        snap['image_id'] = self.image_id
         return snap
 
     def bind(self):
@@ -53,18 +49,9 @@ class ImageView(Control):
 
         """
         super(ImageView, self).bind()
-        self.publish_attributes(
-            'scale_to_fit', 'preserve_aspect_ratio', 'allow_upscaling'
+        attrs = (
+            'source', 'scale_to_fit', 'preserve_aspect_ratio',
+            'allow_upscaling',
         )
-        self.on_trait_change(self._send_image, 'image')
-
-    #--------------------------------------------------------------------------
-    # Message Handling
-    #--------------------------------------------------------------------------
-    def _send_image(self):
-        """
-
-        """
-        content = {'image_id': self.image_id}
-        self.send_action('set_image', content)
+        self.publish_attributes(*attrs)
 

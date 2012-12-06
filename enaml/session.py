@@ -3,14 +3,18 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import logging
+from urlparse import urlparse
 
 from traits.api import HasTraits, Instance, List, Str, ReadOnly, Enum, Property
 
 from enaml.widgets.window import Window
 
 from .application import deferred_call
+from .resource_manager import ResourceManager
+from .session_replies import ImageURLReply
 from .signaling import Signal
 from .socket_interface import ActionSocketInterface
+from .utils import make_dispatcher
 
 
 logger = logging.getLogger(__name__)
@@ -20,6 +24,10 @@ logger = logging.getLogger(__name__)
 #: a single message. This allows a client to perform intelligent message
 #: handling when dealing with messages that may affect the widget tree.
 BATCH_ACTIONS = set(['destroy', 'children_changed', 'relayout'])
+
+
+#: The dispatch function for action dispatching on the session.
+dispatch_action = make_dispatcher('on_action_', logger)
 
 
 class DeferredMessageBatch(object):
@@ -123,6 +131,9 @@ class Session(HasTraits):
     #: available in the 'default' group. This value will rarely need to
     #: be changed by the user.
     widget_groups = List(Str, ['default'])
+
+    #: A resource manager used for loading resources for the session.
+    resource_manager = Instance(ResourceManager, ())
 
     #: The socket used by this session for communication. This is
     #: provided by the Application when the session is activated.
@@ -265,7 +276,9 @@ class Session(HasTraits):
         windows.
 
         This method will be called by the Application once during the
-        session lifetime. This should never be called by user code.
+        session lifetime. Once this method returns, the session and
+        its objects will be ready to send and receive messages. This
+        should never be called by user code.
 
         Parameters
         ----------
@@ -388,7 +401,7 @@ class Session(HasTraits):
         """
         if self.is_active:
             if object_id == self.session_id:
-                obj = self
+                dispatch_action(self, action, content)
             else:
                 try:
                     obj = self._registered_objects[object_id]
@@ -396,5 +409,22 @@ class Session(HasTraits):
                     msg = "Invalid object id sent to Session: %s:%s"
                     logger.warn(msg % (object_id, action))
                     return
-            obj.receive_action(action, content)
+                else:
+                    obj.receive_action(action, content)
+
+    #--------------------------------------------------------------------------
+    # Action Handlers
+    #--------------------------------------------------------------------------
+    def on_action_url_request(self, content):
+        """ Handle the 'url_request' action from the client session.
+
+        """
+        url = content['url']
+        scheme = urlparse(url).scheme
+        if scheme == 'image':
+            reply = ImageURLReply(self, content['id'], url)
+            self.resource_manager.load(reply, url, size=content['size'])
+        else:
+            msg = 'unhandled url request: `%s`'
+            logger.error(msg % url)
 
