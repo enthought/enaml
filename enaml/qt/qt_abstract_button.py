@@ -3,8 +3,9 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt.QtCore import QSize
+from .qt.QtGui import QIcon, QImage, QPixmap
+from .qt_constraints_widget import size_hint_may_change
 from .qt_control import QtControl
-#from .qt_image import QtImage
 
 
 class QtAbstractButton(QtControl):
@@ -15,6 +16,8 @@ class QtAbstractButton(QtControl):
     It is not meant to be used directly.
 
     """
+    _icon_source = ''
+
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
@@ -33,11 +36,18 @@ class QtAbstractButton(QtControl):
         self.set_checkable(tree['checkable'])
         self.set_checked(tree['checked'])
         self.set_text(tree['text'])
-        #self.set_icon(tree['icon'])
+        self._icon_source = tree['icon_source']
         self.set_icon_size(tree['icon_size'])
         widget = self.widget()
         widget.clicked.connect(self.on_clicked)
         widget.toggled.connect(self.on_toggled)
+
+    def activate(self):
+        """ Activate the button widget.
+
+        """
+        self.set_icon_source(self._icon_source)
+        super(QtAbstractButton, self).activate()
 
     #--------------------------------------------------------------------------
     # Signal Handlers
@@ -65,17 +75,20 @@ class QtAbstractButton(QtControl):
         """
         self.set_checked(content['checked'])
 
+    @size_hint_may_change
     def on_action_set_text(self, content):
         """ Handle the 'set_text' action from the Enaml widget.
 
         """
-        item = self.widget_item()
-        old_hint = item.sizeHint()
         self.set_text(content['text'])
-        new_hint = item.sizeHint()
-        if old_hint != new_hint:
-            self.size_hint_updated()
 
+    def on_action_set_icon_source(self, content):
+        """ Handle the 'set_icon_source' action from the Enaml widget.
+
+        """
+        self.set_icon_source(content['icon_source'])
+
+    @size_hint_may_change
     def on_action_set_icon_size(self, content):
         """ Handle the 'set_icon_size' action from the Enaml widget.
 
@@ -113,17 +126,28 @@ class QtAbstractButton(QtControl):
         """
         self.widget().setText(text)
 
-    def set_icon(self, icon):
+    def set_icon_source(self, icon_source):
         """ Sets the widget's icon to the provided image.
 
         """
-        return
-        #self._icon = QtImage(icon)
-        #self.widget.setIcon(self._icon.as_QIcon())
+        if icon_source:
+            loader = self._session.load_resource(icon_source)
+            loader.on_load(self._on_icon_load)
+        else:
+            self._on_icon_load(QIcon())
 
     def set_icon_size(self, icon_size):
         """ Sets the widget's icon size to the provided size.
 
         """
         self.widget().setIconSize(QSize(*icon_size))
+
+    #--------------------------------------------------------------------------
+    # Private API
+    #--------------------------------------------------------------------------
+    @size_hint_may_change
+    def _on_icon_load(self, icon):
+        if isinstance(icon, QImage):
+            icon = QIcon(QPixmap.fromImage(icon))
+        self.widget().setIcon(icon)
 

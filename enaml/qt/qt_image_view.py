@@ -2,8 +2,14 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt.QtGui import QFrame, QPainter, QPixmap
+import logging
+
+from .qt.QtGui import QFrame, QPainter, QImage, QPixmap
+from .qt_constraints_widget import size_hint_may_change
 from .qt_control import QtControl
+
+
+logger = logging.getLogger(__name__)
 
 
 class QImageView(QFrame):
@@ -216,13 +222,15 @@ class QtImageView(QtControl):
         self.set_preserve_aspect_ratio(tree['preserve_aspect_ratio'])
         self.set_allow_upscaling(tree['allow_upscaling'])
 
-    def init_requests(self):
-        """ Initialize the widget requests.
+    def activate(self):
+        """ Activate the image view.
+
+        This method will request the initial image source for the
+        widget.
 
         """
-        # Defer setting the image source until activation, so that the
-        # request for the image data will not be dropped.
         self.set_source(self._image_source)
+        super(QtImageView, self).activate()
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -284,12 +292,16 @@ class QtImageView(QtControl):
         the given source url.
 
         """
-        loader = self._session.load_url(source)
-        loader.on_load(self._on_image_load)
+        if source:
+            loader = self._session.load_resource(source)
+            loader.on_load(self._on_image_load)
+        else:
+            self._on_image_load(QImage())
 
     #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
+    @size_hint_may_change
     def _on_image_load(self, image):
         """ A private resource loader callback.
 
@@ -303,10 +315,9 @@ class QtImageView(QtControl):
             The QImage that was loaded by the resource request.
 
         """
-        widget = self.widget()
-        old_hint = widget.sizeHint()
-        widget.setPixmap(QPixmap.fromImage(image))
-        new_hint = widget.sizeHint()
-        if old_hint != new_hint:
-            self.size_hint_updated()
+        if not isinstance(image, QImage):
+            msg = 'got incorrect type for image: `%s`'
+            logger.error(msg % type(image).__name__)
+            image = QImage()
+        self.widget().setPixmap(QPixmap.fromImage(image))
 
