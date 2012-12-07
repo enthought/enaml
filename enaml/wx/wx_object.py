@@ -239,6 +239,18 @@ class WxObject(object):
         """
         pass
 
+    def activate(self):
+        """ A method called by the session to activate the UI.
+
+        This method is called by the session after the server side
+        session has indicated it is ready to accept messages. This
+        provides the object tree to make initial request for data
+        from the server side objects.
+
+        """
+        for child in self.children():
+            child.activate()
+
     def destroy(self):
         """ Destroy this object.
 

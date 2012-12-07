@@ -42,17 +42,13 @@ class WxSession(object):
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
-    def open(self, snapshot, socket):
-        """ Open the session using the given snapshot and socket.
+    def open(self, snapshot):
+        """ Open the session using the given snapshot.
 
         Parameters
         ----------
         snapshot : list of dicts
             The list of tree snapshots to build for this session.
-
-        socket : ActionSocketInterface
-            The socket interface to use for messaging with the server
-            side Enaml objects.
 
         """
         windows = self._windows
@@ -61,10 +57,23 @@ class WxSession(object):
             if window is not None:
                 windows.append(window)
                 window.initialize()
-        # Setup the socket after initialization so that any messages
-        # generated during initialization are ignored.
+
+    def activate(self, socket):
+        """ Active the session and its windows.
+
+        Parameters
+        ----------
+        socket : ActionSocketInterface
+            The socket interface to use for messaging with the server
+            side Enaml objects.
+
+        """
+        # Setup the socket before activation so that widgets may
+        # request resources from the server for startup purposes.
         self._socket = socket
         socket.on_message(self.on_message)
+        for window in self._windows:
+            window.activate()
 
     def build(self, tree, parent):
         """ Build and return a new widget using the given tree dict.

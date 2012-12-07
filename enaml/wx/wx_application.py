@@ -76,10 +76,11 @@ class WxApplication(Application):
         session.open(session_id)
         self._sessions[session_id] = session
 
-        # Create a new client-side session.
+        # Create and open a new client-side session.
         groups = session.widget_groups[:]
         wx_session = WxSession(session_id, groups)
         self._wx_sessions[session_id] = wx_session
+        wx_session.open(session.snapshot())
 
         # Setup the sockets for the session pair
         server_socket = wxActionSocket()
@@ -87,9 +88,12 @@ class WxApplication(Application):
         server_socket.Bind(EVT_ACTION_SOCKET, client_socket.receive)
         client_socket.Bind(EVT_ACTION_SOCKET, server_socket.receive)
 
-        # Open the client session and activate the server session
-        wx_session.open(session.snapshot(), client_socket)
+        # Activate the server and client sessions. The server session
+        # is activated first so that it is ready to receive messages
+        # sent by the client during activation. These messages will
+        # typically be requests for resources.
         session.activate(server_socket)
+        wx_session.activate(client_socket)
 
         return session_id
 
