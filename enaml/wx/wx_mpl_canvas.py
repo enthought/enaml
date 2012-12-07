@@ -56,6 +56,9 @@ class WxMPLCanvas(WxControl):
         size.height += toolbar.GetSize().height
         self.set_minimum_size((size.width, size.height))
         self.size_hint_updated()
+        # allow Matplotlib canvas keyboard events
+        panel.SetFocus()
+
 
     #--------------------------------------------------------------------------
     # Message Handlers

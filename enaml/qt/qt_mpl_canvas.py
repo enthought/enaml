@@ -1,4 +1,5 @@
 from .qt.QtGui import QFrame, QVBoxLayout, QCursor, QApplication
+from .qt.QtCore import Qt
 from .qt import qt_api
 from .qt_control import QtControl
 
@@ -60,6 +61,9 @@ class QtMPLCanvas(QtControl):
         widget.setLayout(vbox)
         widget.setMinimumSize(widget.sizeHint())
         self.size_hint_updated()
+        # allow Matplotlib canvas keyboard events
+        widget.setFocusPolicy(Qt.ClickFocus)
+        widget.setFocus()
 
     #--------------------------------------------------------------------------
     # Message Handlers
