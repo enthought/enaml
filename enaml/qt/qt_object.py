@@ -260,12 +260,16 @@ class QtObject(object):
         pass
 
     def activate(self):
-        self.init_requests()
+        """ A method called by the session to activate the UI.
+
+        This method is called by the session after the server side
+        session has indicated it is ready to accept messages. This
+        provides the object tree to make initial request for data
+        from the server side objects.
+
+        """
         for child in self.children():
             child.activate()
-
-    def init_requests(self):
-        pass
 
     def destroy(self):
         """ Destroy this object.
