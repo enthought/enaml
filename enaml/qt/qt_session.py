@@ -7,7 +7,7 @@ import logging
 
 from enaml.utils import make_dispatcher
 
-from .qt_url_manager import QtURLManager
+from .qt_resource_manager import QtResourceManager
 from .qt_widget_registry import QtWidgetRegistry
 
 
@@ -16,6 +16,50 @@ logger = logging.getLogger(__name__)
 
 #: The dispatch function for action dispatching.
 dispatch_action = make_dispatcher('on_action_', logger)
+
+
+class URLRequest(object):
+    """ A simple object for making url requests.
+
+    """
+    __slots__ = ('_session',)
+
+    def __init__(self, session):
+        """ Initialize a URLRequest.
+
+        Parameters
+        ----------
+        session : Session
+            The session object for which the url is being requested.
+
+        """
+        self._session = session
+
+    def __call__(self, req_id, url, metadata):
+        """ Make a request for the given url resource.
+
+        Parameters
+        ----------
+        req_id : str
+            A unique identifier for this request.
+
+        url : str
+            The resource url which should be requested.
+
+        metadata : dict
+            Additional metadata to pass along with the request.
+
+        Returns
+        -------
+        result : bool
+
+        """
+        content = {}
+        content['id'] = req_id
+        content['url'] = url
+        content['metadata'] = metadata
+        session = self._session
+        session.send(session._session_id, 'url_request', content)
 
 
 class QtSession(object):
@@ -36,7 +80,7 @@ class QtSession(object):
         """
         self._session_id = session_id
         self._widget_groups = widget_groups
-        self._url_manager = QtURLManager(self)
+        self._resource_manager = QtResourceManager()
         self._registered_objects = {}
         self._windows = []
         self._socket = None
@@ -45,13 +89,12 @@ class QtSession(object):
     # Public API
     #--------------------------------------------------------------------------
     def open(self, snapshot):
-        """ Open the session using the given snapshot and socket.
+        """ Open the session using the given snapshot.
 
         Parameters
         ----------
         snapshot : list of dicts
             The list of tree snapshots to build for this session.
-
 
         """
         windows = self._windows
@@ -159,7 +202,7 @@ class QtSession(object):
         """
         return self._registered_objects.get(object_id)
 
-    def load_url(self, url, **kwargs):
+    def load_resource(self, url, metadata=None):
         """ Asynchronously Load the resource pointed to by the given url.
 
         Parameters
@@ -167,9 +210,9 @@ class QtSession(object):
         url : str
             The url pointed to the resource that should be loaded.
 
-        **kwargs
-            Additional metadata related to the url request. i.e.
-            the size for an image url request.
+        metadata : dict, optional
+            Additional metadata required by the session to load the
+            requested resource.
 
         Returns
         -------
@@ -178,7 +221,10 @@ class QtSession(object):
             resource for the url is loaded.
 
         """
-        return self._url_manager.load(url, **kwargs)
+        if metadata is None:
+            metadata = {}
+        request = URLRequest(self)
+        return self._resource_manager.load(request, url, metadata)
 
     #--------------------------------------------------------------------------
     # Messaging API
@@ -243,7 +289,15 @@ class QtSession(object):
         """ Handle the 'url_reply' action from the Enaml session.
 
         """
-        self._url_manager.on_reply(content)
+        url = content['url']
+        req_id = content['id']
+        status = content['status']
+        manager = self._resource_manager
+        if status == 'ok':
+            resource = content['resource']
+            manager.on_load(req_id, url, resource)
+        else:
+            manager.on_fail(req_id, url)
 
     def on_action_message_batch(self, content):
         """ Handle the 'message_batch' action sent by the Enaml session.
@@ -280,6 +334,7 @@ class QtSession(object):
             window.destroy()
         self._windows = []
         self._registered_objects = {}
+        self._resource_manager = None
         self._socket.on_message(None)
         self._socket = None
 
