@@ -2,10 +2,29 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from functools import wraps
+
 from casuarius import ConstraintVariable
 
 from .qt.QtCore import QRect
 from .qt_widget_component import QtWidgetComponent
+
+
+def size_hint_may_change(func):
+    """ A method decorator which will track a widget for size hint
+    changes around the bounds of a function.
+
+    """
+    @wraps(func)
+    def closure(self, *args, **kwargs):
+        item = self.widget_item()
+        old_hint = item.sizeHint()
+        r = func(self, *args, **kwargs)
+        new_hint = item.sizeHint()
+        if old_hint != new_hint:
+            self.size_hint_updated()
+        return r
+    return closure
 
 
 class LayoutBox(object):
