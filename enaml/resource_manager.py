@@ -7,6 +7,7 @@ from urlparse import urlparse
 
 from traits.api import HasTraits, Dict, Str
 
+from .icon_provider import IconProvider
 from .image_provider import ImageProvider
 
 
@@ -29,23 +30,26 @@ class ResourceManager(HasTraits):
     #: provider `foo` is use to request path `/bar/baz`.
     image_providers = Dict(Str, ImageProvider)
 
-    def load(self, callback, url, **kwargs):
+    #: A dict of icon providers for the `icon://...` scheme.
+    icon_providers = Dict(Str, IconProvider)
+
+    def load(self, reply, url, metadata):
         """ Load a resource from the manager.
 
         Parameters
         ----------
-        callback : callable
-            A callable object which will be invoked with the loaded
-            resource object, or None if the loading fails. It must be
-            safe to invoke this callback from a thread.
+        reply : URLReply
+            A url reply which will be invoked with the loaded resource
+            object, or None if the loading fails. It must be safe to
+            invoke this reply from a thread.
 
         url : str
             The url pointing to the resource to load.
 
-        **kwargs
-            Addition metadata required to load the resource of the
+        metadata : dict
+            Additional metadata required to load the resource of the
             given type. See the individual loading handlers for the
-            supported keywords.
+            supported metadata.
 
         """
         scheme = urlparse(url).scheme
@@ -53,14 +57,14 @@ class ResourceManager(HasTraits):
         if handler is None:
             msg = 'unhandled url resource scheme: `%s`'
             logger.error(msg % url)
-            callback(None)
+            reply(None)
             return
-        handler(callback, url, **kwargs)
+        handler(reply, url, metadata)
 
     #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
-    def _load_image(self, callback, url, size=(-1, -1)):
+    def _load_image(self, reply, url, metadata):
         """ Load an image resource.
 
         This is a private handler method called by the `load` method.
@@ -68,18 +72,19 @@ class ResourceManager(HasTraits):
 
         Parameters
         ----------
-        callback : callable
-            A callable object which will be invoked with an `Image`
+        reply : URLReply
+            A url reply which will be invoked with the loaded image
             object, or None if the loading fails. It must be safe to
-            invoke this callback from a thread.
+            invoke this reply from a thread.
 
         url : str
             The url pointing to the image to load.
 
-        size : tuple, optional
-            The requested size for the image. The default is (-1, -1)
-            and indicates that the image should be loaded using its
-            natural size.
+        metadata : dict
+            The image loader accepts optional 'size' metadata which
+            is the desired size with which to load the image. The
+            default is (-1, -1) which indicates the images natural
+            size should be used.
 
         """
         spec = urlparse(url)
@@ -87,7 +92,38 @@ class ResourceManager(HasTraits):
         if provider is None:
             msg = 'no image provider registered for url: `%s`'
             logger.error(msg % url)
-            callback(None)
+            reply(None)
             return
-        provider.request_image(spec.path, size, callback)
+        size = metadata.get('size', (-1, -1))
+        provider.request_image(spec.path, size, reply)
+
+    def _load_icon(self, reply, url, metadata):
+        """ Load an icon resource.
+
+        This is a private handler method called by the `load` method.
+        It should not be called directly by user code.
+
+        Parameters
+        ----------
+        reply : URLReply
+            A url reply which will be invoked with the loaded icon
+            object, or None if the loading fails. It must be safe to
+            invoke this reply from a thread.
+
+        url : str
+            The url pointing to the icon to load.
+
+        metadata : dict
+            The icon loader does not accept any metadata. Any data
+            in this dict will be ignored.
+
+        """
+        spec = urlparse(url)
+        provider = self.icon_providers.get(spec.netloc)
+        if provider is None:
+            msg = 'no icon provider registered for url: `%s`'
+            logger.error(msg % url)
+            reply(None)
+            return
+        provider.request_icon(spec.path, reply)
 

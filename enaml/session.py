@@ -3,7 +3,6 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import logging
-from urlparse import urlparse
 
 from traits.api import HasTraits, Instance, List, Str, ReadOnly, Enum, Property
 
@@ -11,7 +10,6 @@ from enaml.widgets.window import Window
 
 from .application import deferred_call
 from .resource_manager import ResourceManager
-from .session_replies import ImageURLReply
 from .signaling import Signal
 from .socket_interface import ActionSocketInterface
 from .utils import make_dispatcher
@@ -103,6 +101,53 @@ class DeferredMessageBatch(object):
         if self._tick == 0:
             deferred_call(self._tick_down)
         self._tick += 1
+
+
+class URLReply(object):
+    """ A reply object for sending a loaded resource to a client session.
+
+    """
+    __slots__ = ('_session', '_req_id', '_url')
+
+    def __init__(self, session, req_id, url):
+        """ Initialize a URLReply.
+
+        Parameters
+        ----------
+        session : Session
+            The session object for which the image is being loaded.
+
+        req_id : str
+            The identifier that was sent with the originating request.
+            This identifier will be included in the response.
+
+        url : str
+            The url that was sent with the originating request. This
+            url will be included in the response.
+
+        """
+        self._session = session
+        self._req_id = req_id
+        self._url = url
+
+    def __call__(self, resource):
+        """ Send the reply to the client session.
+
+        Parameters
+        ----------
+        resource : Resource
+            The loaded resource object, or None if the resource failed
+            to load.
+
+        """
+        reply = {'id': self._req_id, 'url': self._url}
+        if resource is None:
+            reply['status'] = 'fail'
+        else:
+            reply['status'] = 'ok'
+            reply['resource'] = resource.snapshot()
+        session = self._session
+        session.send(session.session_id, 'url_reply', reply)
 
 
 class Session(HasTraits):
@@ -420,11 +465,7 @@ class Session(HasTraits):
 
         """
         url = content['url']
-        scheme = urlparse(url).scheme
-        if scheme == 'image':
-            reply = ImageURLReply(self, content['id'], url)
-            self.resource_manager.load(reply, url, size=content['size'])
-        else:
-            msg = 'unhandled url request: `%s`'
-            logger.error(msg % url)
+        metadata = content['metadata']
+        reply = URLReply(self, content['id'], url)
+        self.resource_manager.load(reply, url, metadata)
 

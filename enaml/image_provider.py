@@ -4,11 +4,13 @@
 #------------------------------------------------------------------------------
 from abc import ABCMeta, abstractmethod
 
-from traits.api import HasTraits, Enum, Str, Tuple, Int
+from traits.api import Enum, Str, Tuple, Int
+
+from .resource import Resource
 
 
-class Image(HasTraits):
-    """ A simple object representing an image.
+class Image(Resource):
+    """ A resource object representing an image.
 
     Instances of this class are created by an `ImageProvider` when it
     handles a request for an image. Instances of this class should be
@@ -40,9 +42,19 @@ class Image(HasTraits):
     #: The bytestring holding the data for the image.
     data = Str
 
+    def snapshot(self):
+        """ Get a snapshot dictionary for this image.
+
+        """
+        snap = super(Image, self).snapshot()
+        snap['format'] = self.format
+        snap['size'] = self.size
+        snap['data'] = self.data
+        return snap
+
 
 class ImageProvider(object):
-    """ The basic Enaml image resource class.
+    """ An abstract API definition for an image provider object.
 
     """
     __metaclass__ = ABCMeta
