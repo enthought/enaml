@@ -152,6 +152,11 @@ def tool_bar_factory():
     return WxToolBar
 
 
+def traits_item_factory():
+    from .wx_traits_item import WxTraitsItem
+    return WxTraitsItem
+
+
 def window_factory():
     from .wx_window import WxWindow
     return WxWindow
@@ -188,5 +193,6 @@ def register_default():
     register('SplitItem', split_item_factory)
     register('Splitter', splitter_factory)
     register('ToolBar', tool_bar_factory)
+    register('TraitsItem', traits_item_factory)
     register('Window', window_factory)
 
