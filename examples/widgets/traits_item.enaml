@@ -1,0 +1,41 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2012, Enthought, Inc.
+#  All rights reserved.
+#
+# Special thanks to Steven Silvester for contributing this module!
+#------------------------------------------------------------------------------
+""" An example of embedding a traitsui view inside an Enaml application.
+
+Note: The ETS_TOOLKIT environment variable must match the Enaml toolkit.
+      For example if using Qt, the ETS_TOOLKIT env must be 'qt4'.
+
+"""
+from enaml.widgets.api import Window, TraitsItem, Container, ComboBox
+
+from traits.api import HasTraits, Str
+from traitsui.api import View
+
+
+class Test(HasTraits):
+    a = Str('foo')
+    b = Str('bar')
+
+
+views = {
+    'one': View('a'),
+    'two': View('a', 'b'),
+    'three': View('b', 'a', 'a'),
+}
+
+
+enamldef Main(Window):
+    Container:
+        hug_height = 'strong'
+        TraitsItem:
+            model = Test()
+            view << views[cbox.selected_item]
+            hug_height = 'strong'
+        ComboBox: cbox:
+            items = ['one', 'two', 'three']
+            index = 0
+
