@@ -4,13 +4,27 @@
 #------------------------------------------------------------------------------
 import logging
 
-from .qt.QtGui import QImage
+from .qt.QtGui import QImage, QIcon, QPixmap
 
 
 logger = logging.getLogger(__name__)
 
 
-def on_convert_Image(image):
+_ICON_MODE_MAP = {
+    'normal': QIcon.Normal,
+    'disabled': QIcon.Disabled,
+    'active': QIcon.Active,
+    'selected': QIcon.Selected,
+}
+
+
+_ICON_STATE_MAP = {
+    'off': QIcon.Off,
+    'on': QIcon.On,
+}
+
+
+def convert_from_Image(image):
     """ Convert the given resource dict into a QImage.
 
     Parameters
@@ -26,10 +40,31 @@ def on_convert_Image(image):
     """
     format = image['format']
     if format == 'auto':
-        qimage = QImage.fromData(image['data'])
-    else:
-        qimage = QImage()
-    return qimage
+        format = ''
+    return QImage.fromData(image['data'], format)
+
+
+def convert_from_Icon(icon):
+    """ Convert the given resource dict into a QIcon.
+
+    Parameters
+    ----------
+    image : dict
+        A dictionary representation of an Enaml Icon.
+
+    Returns
+    -------
+    result : QIcon
+        The QIcon instance for the given Enaml icon dict.
+
+    """
+    qicon = QIcon()
+    for img in icon['images']:
+        mode = _ICON_MODE_MAP[img['mode']]
+        state = _ICON_STATE_MAP[img['state']]
+        image = convert_resource(img['image'])
+        qicon.addPixmap(QPixmap.fromImage(image), mode, state)
+    return qicon
 
 
 def convert_resource(resource):
@@ -49,7 +84,7 @@ def convert_resource(resource):
     """
     items = globals()
     name = resource['class']
-    handler = items.get('on_convert_' + name)
+    handler = items.get('convert_from_' + name)
     if handler is None:
         for name in resource['bases']:
             handler = items.get('load_' + name)
