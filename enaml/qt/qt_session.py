@@ -224,7 +224,7 @@ class QtSession(object):
         if metadata is None:
             metadata = {}
         request = URLRequest(self)
-        return self._resource_manager.load(request, url, metadata)
+        return self._resource_manager.load(url, metadata, request)
 
     #--------------------------------------------------------------------------
     # Messaging API

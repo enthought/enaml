@@ -82,7 +82,7 @@ class QtResourceManager(object):
         self._handles = {}
         self._pending = {}
 
-    def load(self, request, url, metadata):
+    def load(self, url, metadata, request):
         """ Load the resource handle for the given url.
 
         This method will asynchronously load the resource for the given
@@ -90,10 +90,6 @@ class QtResourceManager(object):
 
         Parameters
         ----------
-        request : URLRequest
-            An URLRequest instance to use for making requests from the
-            server side session, if such requests are required.
-
         url : str
             The url pointing to the resource to load.
 
@@ -101,6 +97,10 @@ class QtResourceManager(object):
             Additional metadata required by the session to load the
             requested resource. See the individual load handlers for
             the supported metadata.
+
+        request : URLRequest
+            An URLRequest instance to use for making requests from the
+            server side session, if such requests are required.
 
         Returns
         -------
@@ -141,10 +141,10 @@ class QtResourceManager(object):
         Parameters
         ----------
         req_id : str
-            A unique identifier for this request.
+            The unique identifier for the request.
 
         url : str
-            The resource url which should be requested.
+            The resource url which was requested.
 
         resource : dict
             The dictionary representation of the loaded resource.
@@ -173,10 +173,10 @@ class QtResourceManager(object):
         Parameters
         ----------
         req_id : str
-            A unique identifier for this request.
+            The unique identifier for the request.
 
         url : str
-            The resource url which should be requested.
+            The resource url which was requested.
 
         resource : dict
             The dictionary representation of the resrouce

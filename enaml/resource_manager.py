@@ -33,16 +33,11 @@ class ResourceManager(HasTraits):
     #: A dict of icon providers for the `icon://...` scheme.
     icon_providers = Dict(Str, IconProvider)
 
-    def load(self, reply, url, metadata):
+    def load(self, url, metadata, reply):
         """ Load a resource from the manager.
 
         Parameters
         ----------
-        reply : URLReply
-            A url reply which will be invoked with the loaded resource
-            object, or None if the loading fails. It must be safe to
-            invoke this reply from a thread.
-
         url : str
             The url pointing to the resource to load.
 
@@ -50,6 +45,11 @@ class ResourceManager(HasTraits):
             Additional metadata required to load the resource of the
             given type. See the individual loading handlers for the
             supported metadata.
+
+        reply : URLReply
+            A url reply which will be invoked with the loaded resource
+            object, or None if the loading fails. It must be safe to
+            invoke this reply from a thread.
 
         """
         scheme = urlparse(url).scheme
@@ -59,12 +59,12 @@ class ResourceManager(HasTraits):
             logger.error(msg % url)
             reply(None)
             return
-        handler(reply, url, metadata)
+        handler(url, metadata, reply)
 
     #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
-    def _load_image(self, reply, url, metadata):
+    def _load_image(self, url, metadata, reply):
         """ Load an image resource.
 
         This is a private handler method called by the `load` method.
@@ -72,11 +72,6 @@ class ResourceManager(HasTraits):
 
         Parameters
         ----------
-        reply : URLReply
-            A url reply which will be invoked with the loaded image
-            object, or None if the loading fails. It must be safe to
-            invoke this reply from a thread.
-
         url : str
             The url pointing to the image to load.
 
@@ -85,6 +80,11 @@ class ResourceManager(HasTraits):
             is the desired size with which to load the image. The
             default is (-1, -1) which indicates the images natural
             size should be used.
+
+        reply : URLReply
+            A url reply which will be invoked with the loaded image
+            object, or None if the loading fails. It must be safe to
+            invoke this reply from a thread.
 
         """
         spec = urlparse(url)
@@ -97,7 +97,7 @@ class ResourceManager(HasTraits):
         size = metadata.get('size', (-1, -1))
         provider.request_image(spec.path, size, reply)
 
-    def _load_icon(self, reply, url, metadata):
+    def _load_icon(self, url, metadata, reply):
         """ Load an icon resource.
 
         This is a private handler method called by the `load` method.
@@ -105,17 +105,17 @@ class ResourceManager(HasTraits):
 
         Parameters
         ----------
-        reply : URLReply
-            A url reply which will be invoked with the loaded icon
-            object, or None if the loading fails. It must be safe to
-            invoke this reply from a thread.
-
         url : str
             The url pointing to the icon to load.
 
         metadata : dict
             The icon loader does not accept any metadata. Any data
             in this dict will be ignored.
+
+        reply : URLReply
+            A url reply which will be invoked with the loaded icon
+            object, or None if the loading fails. It must be safe to
+            invoke this reply from a thread.
 
         """
         spec = urlparse(url)

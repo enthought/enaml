@@ -467,5 +467,5 @@ class Session(HasTraits):
         url = content['url']
         metadata = content['metadata']
         reply = URLReply(self, content['id'], url)
-        self.resource_manager.load(reply, url, metadata)
+        self.resource_manager.load(url, metadata, reply)
 
