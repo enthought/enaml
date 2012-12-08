@@ -1,0 +1,18 @@
+from enaml.widgets.api import MainWindow, Container, MPLCanvas, Label
+from matplotlib.figure import Figure
+
+
+fig = Figure()
+ax = fig.add_subplot(111)
+ax.plot([1, 2, 3])
+
+
+enamldef Main(MainWindow):
+    id : main
+    attr figure = fig
+    Container:
+        MPLCanvas:
+            id : mpl_canvas
+            figure := main.figure
+        Label:
+            text = 'Test'
