@@ -200,8 +200,8 @@ class QtImageView(QtControl):
     """ A Qt implementation of an Enaml ImageView widget.
 
     """
-    #: Internal storage for the image source url.
-    _image_source = None
+    #: Temporary internal storage for the image source url.
+    _image_source = ''
 
     #--------------------------------------------------------------------------
     # Setup methods
@@ -305,7 +305,7 @@ class QtImageView(QtControl):
     def _on_image_load(self, image):
         """ A private resource loader callback.
 
-        This method is invoked when the request image is successfully
+        This method is invoked when the requested image is successfully
         loaded. It will update the image in the image view widget and
         issue a size hint updated event to the layout system if needed.
 
