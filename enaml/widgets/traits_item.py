@@ -40,8 +40,8 @@ class TraitsItem(Control):
         """
         snap = super(TraitsItem, self).snapshot()
         snap['model'] = self.model
-        snap['handler'] = self.handler
         snap['view'] = self.view
+        snap['handler'] = self.handler
         return snap
 
     def bind(self):
@@ -49,5 +49,5 @@ class TraitsItem(Control):
 
         """
         super(TraitsItem, self).bind()
-        self.publish_attributes('model', 'handler', 'view')
+        self.publish_attributes('model', 'view', 'handler')
 
