@@ -2,11 +2,12 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Unicode, Bool
+from traits.api import Unicode, Bool, Str
 
-from enaml.core.declarative import Declarative
 from enaml.core.trait_types import EnamlEvent
+
 from .widget_base import WidgetBase
+
 
 class Action(WidgetBase):
     """ A non visible widget used in a ToolBar or Menu.
@@ -28,9 +29,8 @@ class Action(WidgetBase):
     #: hovers over the action.
     status_tip = Unicode
 
-    #: The an icon to display with this action when appropriate, such as
-    #: when the action is a member of a menu or a toolbar.
-    #icon = Instance(AbstractTkIcon)
+    #: The source url for the icon to use for the Action.
+    icon_source = Str
 
     #: Whether or not the action can be checked.
     checkable = Bool(False)
@@ -66,6 +66,7 @@ class Action(WidgetBase):
         snap['text'] = self.text
         snap['tool_tip'] = self.tool_tip
         snap['status_tip'] = self.status_tip
+        snap['icon_source'] = self.icon_source
         snap['checkable'] = self.checkable
         snap['checked'] = self.checked
         snap['enabled'] = self.enabled
@@ -79,8 +80,8 @@ class Action(WidgetBase):
         """
         super(Action, self).bind()
         attrs = (
-            'text', 'tool_tip', 'status_tip', 'checkable', 'checked',
-            'enabled', 'visible', 'separator'
+            'text', 'tool_tip', 'status_tip', 'icon_source', 'checkable',
+            'checked', 'enabled', 'visible', 'separator'
         )
         self.publish_attributes(*attrs)
 
