@@ -210,3 +210,20 @@ class QtResourceManager(object):
         """
         return metadata.get('size', (-1, -1))
 
+    def _make_icon_key(self, metatdata):
+        """ Make a key value for the icon metadata.
+
+        Parameters
+        ----------
+        metadata : dict
+            The icon accepts no metadata. Any data in this dict will be
+            ignored.
+
+        Returns
+        -------
+        result : None
+            This method always returns None.
+
+        """
+        return None
+
