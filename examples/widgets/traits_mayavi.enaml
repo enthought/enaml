@@ -1,35 +1,45 @@
-# NOTE: If using PySide, upgrade to mayavi 4.2.0 for this to work
-#        You may have to set your ETS_TOOLKIT
-#        environmental value to match the enaml toolkit
-#        for example, if using QT
-#        import os
-#        os.environ['ETS_TOOLKIT'] = 'qt4'
+#------------------------------------------------------------------------------
+#  Copyright (c) 2012, Enthought, Inc.
+#  All rights reserved.
+#
+# Special thanks to Steven Silvester for contributing this module!
+#------------------------------------------------------------------------------
+""" An example of embedding a Mayavi scene inside an Enaml application.
 
-from enaml.widgets.api import MainWindow, Container, TraitsItem
+Note: The ETS_TOOLKIT environment variable must match the Enaml toolkit.
+      For example if using Qt, the ETS_TOOLKIT env must be 'qt4'.
+      If using PySide, upgrade to mayavi 4.2.0 for this to work.
+
+"""
+from enaml.widgets.api import Window, Container, TraitsItem
 
 from traits.api import HasTraits, Instance, on_trait_change
 from traitsui.api import View, Item
+
 from mayavi.core.ui.api import MayaviScene, MlabSceneModel, SceneEditor
 
 
 class Visualization(HasTraits):
+    """ A simple mayavi visualization.
+
+    """
     scene = Instance(MlabSceneModel, ())
 
     @on_trait_change('scene.activated')
     def update_plot(self):
-        # This function is called when the view is opened. We don't
-        # populate the scene when the view is not yet open, as some
-        # VTK features require a GLContext.
-
-        # We can do normal mlab calls on the embedded scene.
+        # This method is called when the view is opened. The is not
+        # populated unitl the scene is activated, since VTK requires
+        # GLContext for certain features.
         self.scene.mlab.test_points3d()
 
 
-enamldef Main(MainWindow):
+enamldef Main(Window):
     Container:
+        padding = 0
         TraitsItem:
             model = Visualization()
-            view = View(Item('scene', editor=SceneEditor(scene_class=MayaviScene),
-                        height=250, width=300, show_label=False),
-                        resizable=True # We need this to resize with the parent widget
-                        )
+            view = View(
+                Item('scene', editor=SceneEditor(scene_class=MayaviScene),
+                     height=250, width=300, show_label=False),
+            )
+

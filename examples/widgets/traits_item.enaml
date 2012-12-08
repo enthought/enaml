@@ -1,9 +1,17 @@
-# Note : You may have to set your ETS_TOOLKIT 
-#        environmental value to match the enaml toolkit
-#        for example, if using QT
-#        import os
-#        os.environ['ETS_TOOLKIT'] = 'qt4' 
-from enaml.widgets.api import MainWindow, TraitsItem, Container, PushButton
+#------------------------------------------------------------------------------
+#  Copyright (c) 2012, Enthought, Inc.
+#  All rights reserved.
+#
+# Special thanks to Steven Silvester for contributing this module!
+#------------------------------------------------------------------------------
+""" An example of embedding a traitsui view inside an Enaml application.
+
+Note: The ETS_TOOLKIT environment variable must match the Enaml toolkit.
+      For example if using Qt, the ETS_TOOLKIT env must be 'qt4'.
+
+"""
+from enaml.widgets.api import Window, TraitsItem, Container, ComboBox
+
 from traits.api import HasTraits, Str
 from traitsui.api import View
 
@@ -11,19 +19,23 @@ from traitsui.api import View
 class Test(HasTraits):
     a = Str('foo')
     b = Str('bar')
-    traits_view = View('a', 'b')
-    other_view = View('b', 'a', 'a')
 
 
-enamldef Main(MainWindow):
+views = {
+    'one': View('a'),
+    'two': View('a', 'b'),
+    'three': View('b', 'a', 'a'),
+}
+
+
+enamldef Main(Window):
     Container:
-        TraitsItem: titem:
+        hug_height = 'strong'
+        TraitsItem:
             model = Test()
-            view = View('a')
-        PushButton:
-            text = 'Change View'
-            clicked ::
-                if titem.view == 'other_view':
-                    titem.view = 'traits_view'
-                else:
-                    titem.view = 'other_view'
+            view << views[cbox.selected_item]
+            hug_height = 'strong'
+        ComboBox: cbox:
+            items = ['one', 'two', 'three']
+            index = 0
+
