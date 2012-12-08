@@ -31,7 +31,7 @@ class IconImage(HasTraits):
         """ Get a snapshot dictionary for this icon image.
 
         """
-        snap = super(IconImage, self).snapshot()
+        snap = {}
         snap['mode'] = self.mode
         snap['state'] = self.state
         snap['image'] = self.image.snapshot() if self.image else None
@@ -55,7 +55,7 @@ class Icon(Resource):
         """
         snap = super(Icon, self).snapshot()
         snap['images'] = [image.snapshot() for image in self.images]
-        return image
+        return snap
 
 
 class IconProvider(object):
