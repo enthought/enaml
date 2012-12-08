@@ -2,10 +2,15 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+import logging
+
 from .qt.QtCore import QSize
 from .qt.QtGui import QIcon, QImage, QPixmap
 from .qt_constraints_widget import size_hint_may_change
 from .qt_control import QtControl
+
+
+logger = logging.getLogger(__name__)
 
 
 class QtAbstractButton(QtControl):
@@ -16,6 +21,7 @@ class QtAbstractButton(QtControl):
     It is not meant to be used directly.
 
     """
+    #: Temporary internal storage for the icon source url.
     _icon_source = ''
 
     #--------------------------------------------------------------------------
@@ -147,7 +153,23 @@ class QtAbstractButton(QtControl):
     #--------------------------------------------------------------------------
     @size_hint_may_change
     def _on_icon_load(self, icon):
+        """ A private resource loader callback.
+
+        This method is invoked when the requested icon is successfully
+        loaded. It will update the icon on the button widget and issue
+        a size hint updated event to the layout system if needed.
+
+        Parameters
+        ----------
+        icon : QIcon or QImage
+            The icon or image that was loaded by the request.
+
+        """
         if isinstance(icon, QImage):
             icon = QIcon(QPixmap.fromImage(icon))
+        elif not isinstance(icon, QIcon):
+            msg = 'got incorrect type for icon: `%s`'
+            logger.error(msg % type(icon).__name__)
+            icon = QIcon()
         self.widget().setIcon(icon)
 
