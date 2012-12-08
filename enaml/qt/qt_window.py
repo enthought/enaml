@@ -2,12 +2,17 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+import logging
+
 from .qt.QtCore import QSize, Signal
-from .qt.QtGui import QFrame, QLayout
+from .qt.QtGui import QFrame, QLayout, QIcon, QImage, QPixmap
 from .q_deferred_caller import deferredCall
 from .q_single_widget_layout import QSingleWidgetLayout
 from .qt_container import QtContainer
 from .qt_widget_component import QtWidgetComponent
+
+
+logger = logging.getLogger(__name__)
 
 
 class QWindowLayout(QSingleWidgetLayout):
@@ -179,6 +184,9 @@ class QtWindow(QtWidgetComponent):
     """ A Qt implementation of an Enaml Window.
 
     """
+    #: Temporary internal storage for the icon source url.
+    _icon_source = ''
+
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
@@ -195,6 +203,7 @@ class QtWindow(QtWidgetComponent):
         super(QtWindow, self).create(tree)
         self.set_title(tree['title'])
         self.set_initial_size(tree['initial_size'])
+        self._icon_source = tree['icon_source']
         self.widget().closed.connect(self.on_closed)
 
     def init_layout(self):
@@ -203,6 +212,13 @@ class QtWindow(QtWidgetComponent):
         """
         super(QtWindow, self).init_layout()
         self.widget().setCentralWidget(self.central_widget())
+
+    def activate(self):
+        """ Activate the window.
+
+        """
+        self.set_icon_source(self._icon_source)
+        super(QtWindow, self).activate()
 
     #--------------------------------------------------------------------------
     # Utility Methods
@@ -276,11 +292,11 @@ class QtWindow(QtWidgetComponent):
         """
         self.restore()
 
-    def on_action_set_icon(self, content):
-        """ Handle the 'set-icon' action from the Enaml widget.
+    def on_action_set_icon_source(self, content):
+        """ Handle the 'set_icon_source' action from the Enaml widget.
 
         """
-        pass
+        self.set_icon_source(content['icon_source'])
 
     def on_action_set_title(self, content):
         """ Handle the 'set-title' action from the Enaml widget.
@@ -315,11 +331,15 @@ class QtWindow(QtWidgetComponent):
         """
         self.widget().showNormal()
 
-    def set_icon(self, icon):
-        """ Set the window icon.
+    def set_icon_source(self, icon_source):
+        """ Set the window icon source.
 
         """
-        pass
+        if icon_source:
+            loader = self._session.load_resource(icon_source)
+            loader.on_load(self._on_icon_load)
+        else:
+            self._on_icon_load(QIcon())
 
     def set_title(self, title):
         """ Set the title of the window.
@@ -345,4 +365,28 @@ class QtWindow(QtWidgetComponent):
         """
         # XXX this could be done better.
         deferredCall(super(QtWindow, self).set_visible, visible)
+
+    #--------------------------------------------------------------------------
+    # Private API
+    #--------------------------------------------------------------------------
+    def _on_icon_load(self, icon):
+        """ A private resource loader callback.
+
+        This method is invoked when the requested icon is successfully
+        loaded. It will update the icon on the action and issue a size
+        hint updated event to the layout system if needed.
+
+        Parameters
+        ----------
+        icon : QIcon or QImage
+            The icon or image that was loaded by the request.
+
+        """
+        if isinstance(icon, QImage):
+            icon = QIcon(QPixmap.fromImage(icon))
+        elif not isinstance(icon, QIcon):
+            msg = 'got incorrect type for icon: `%s`'
+            logger.error(msg % type(icon).__name__)
+            icon = QIcon()
+        self.widget().setWindowIcon(icon)
 

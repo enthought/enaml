@@ -2,15 +2,23 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt.QtGui import QAction, QKeySequence
+import logging
+
+from .qt.QtGui import QAction, QKeySequence, QIcon, QImage, QPixmap
 from .qt_object import QtObject
+
+
+logger = logging.getLogger(__name__)
 
 
 class QtAction(QtObject):
     """ A Qt implementation of an Enaml Action.
 
     """
-    # FIXME Currently, the checked state of the action is lost when 
+    #: Temporary internal storage for the icon source url.
+    _icon_source = ''
+
+    # FIXME Currently, the checked state of the action is lost when
     # switching from checkable to non-checkable and back again.
     #--------------------------------------------------------------------------
     # Setup Methods
@@ -29,6 +37,7 @@ class QtAction(QtObject):
         self.set_text(tree['text'])
         self.set_tool_tip(tree['tool_tip'])
         self.set_status_tip(tree['status_tip'])
+        self._icon_source = tree['icon_source']
         self.set_checkable(tree['checkable'])
         self.set_checked(tree['checked'])
         self.set_enabled(tree['enabled'])
@@ -37,6 +46,13 @@ class QtAction(QtObject):
         widget = self.widget()
         widget.triggered.connect(self.on_triggered)
         widget.toggled.connect(self.on_toggled)
+
+    def activate(self):
+        """ Activate the action.
+
+        """
+        self.set_icon_source(self._icon_source)
+        super(QtAction, self).activate()
 
     #--------------------------------------------------------------------------
     # Signal Handlers
@@ -76,6 +92,12 @@ class QtAction(QtObject):
 
         """
         self.set_status_tip(content['status_tip'])
+
+    def on_action_set_icon_source(self, content):
+        """ Handle the 'set_icon_source' action from the Enaml widget.
+
+        """
+        self.set_icon_source(content['icon_source'])
 
     def on_action_set_checkable(self, content):
         """ Handle the 'set_checkable' action from the Enaml widget.
@@ -133,6 +155,16 @@ class QtAction(QtObject):
         """
         self.widget().setStatusTip(status_tip)
 
+    def set_icon_source(self, icon_source):
+        """ Set the icon source for the action.
+
+        """
+        if icon_source:
+            loader = self._session.load_resource(icon_source)
+            loader.on_load(self._on_icon_load)
+        else:
+            self._on_icon_load(QIcon())
+
     def set_checkable(self, checkable):
         """ Set the checkable state on the underlying control.
 
@@ -163,4 +195,28 @@ class QtAction(QtObject):
 
         """
         self.widget().setSeparator(separator)
+
+    #--------------------------------------------------------------------------
+    # Private API
+    #--------------------------------------------------------------------------
+    def _on_icon_load(self, icon):
+        """ A private resource loader callback.
+
+        This method is invoked when the requested icon is successfully
+        loaded. It will update the icon on the action and issue a size
+        hint updated event to the layout system if needed.
+
+        Parameters
+        ----------
+        icon : QIcon or QImage
+            The icon or image that was loaded by the request.
+
+        """
+        if isinstance(icon, QImage):
+            icon = QIcon(QPixmap.fromImage(icon))
+        elif not isinstance(icon, QIcon):
+            msg = 'got incorrect type for icon: `%s`'
+            logger.error(msg % type(icon).__name__)
+            icon = QIcon()
+        self.widget().setIcon(icon)
 
