@@ -91,9 +91,8 @@ class QtMPLCanvas(QtControl):
             widget has changed. The default is True.
 
         """
-        # Delete the old widgets in the layout, it's too much shennigans
-        # to try to reuse old widgets. If the size hint event should
-        # be emitted, compute the old size hint first.
+        # Delete the old widgets in the layout, it's just shenanigans
+        # to try to reuse the old widgets when the figure changes.
         widget = self.widget()
         if notify:
             item = self.widget_item()
