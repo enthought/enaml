@@ -92,6 +92,11 @@ def menu_bar_factory():
     return WxMenuBar
 
 
+def mpl_canvas_factory():
+    from .wx_mpl_canvas import WxMPLCanvas
+    return WxMPLCanvas
+
+
 def notebook_factory():
     from .wx_notebook import WxNotebook
     return WxNotebook
@@ -152,6 +157,11 @@ def tool_bar_factory():
     return WxToolBar
 
 
+def traits_item_factory():
+    from .wx_traits_item import WxTraitsItem
+    return WxTraitsItem
+
+
 def window_factory():
     from .wx_window import WxWindow
     return WxWindow
@@ -177,6 +187,7 @@ def register_default():
     register('MainWindow', main_window_factory)
     register('Menu', menu_factory)
     register('MenuBar', menu_bar_factory)
+    register('MPLCanvas', mpl_canvas_factory)
     register('Notebook', notebook_factory)
     register('Page', page_factory)
     register('PushButton', push_button_factory)
@@ -188,5 +199,6 @@ def register_default():
     register('SplitItem', split_item_factory)
     register('Splitter', splitter_factory)
     register('ToolBar', tool_bar_factory)
+    register('TraitsItem', traits_item_factory)
     register('Window', window_factory)
 

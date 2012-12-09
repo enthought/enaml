@@ -28,6 +28,7 @@ from .mdi_area import MdiArea
 from .mdi_window import MdiWindow
 from .menu import Menu
 from .menu_bar import MenuBar
+from .mpl_canvas import MPLCanvas
 from .notebook import Notebook
 from .page import Page
 from .progress_bar import ProgressBar
@@ -44,6 +45,7 @@ from .stack_item import StackItem
 #from .text_editor import TextEditor
 from .time_selector import TimeSelector
 from .tool_bar import ToolBar
+from .traits_item import TraitsItem
 from .web_view import WebView
 from .window import Window
 

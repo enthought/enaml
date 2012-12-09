@@ -7,7 +7,7 @@ from __future__ import absolute_import
 import unittest
 import cPickle
 
-from ..layout import geometry
+from enaml.layout import geometry
 
 
 class TestPickleGeometry(unittest.TestCase):

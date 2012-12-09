@@ -122,6 +122,11 @@ def menu_bar_factory():
     return QtMenuBar
 
 
+def mpl_canvas_factory():
+    from .qt_mpl_canvas import QtMPLCanvas
+    return QtMPLCanvas
+
+
 def notebook_factory():
     from .qt_notebook import QtNotebook
     return QtNotebook
@@ -202,6 +207,11 @@ def tool_bar_factory():
     return QtToolBar
 
 
+def traits_item_factory():
+    from .qt_traits_item import QtTraitsItem
+    return QtTraitsItem
+
+
 def web_view_factory():
     from .qt_web_view import QtWebView
     return QtWebView
@@ -240,6 +250,7 @@ def register_default():
     register('MdiWindow', mdi_window_factory)
     register('Menu', menu_factory)
     register('MenuBar', menu_bar_factory)
+    register('MPLCanvas', mpl_canvas_factory)
     register('Notebook', notebook_factory)
     register('Page', page_factory)
     register('PushButton', push_button_factory)
@@ -255,6 +266,7 @@ def register_default():
     register('StackItem', stack_item_factory)
     register('TimeSelector', time_selector_factory)
     register('ToolBar', tool_bar_factory)
+    register('TraitsItem', traits_item_factory)
     register('WebView', web_view_factory)
     register('Window', window_factory)
 
