@@ -1,11 +1,14 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2012, Enthought, Inc.
+#  All rights reserved.
+#
+# Special thanks to Steven Silvester for contributing this module!
+#------------------------------------------------------------------------------
 import wx
 
 from .wx_control import WxControl
 
-import matplotlib
-# We want matplotlib to use a wxPython backend
-matplotlib.use('WXAgg')
-from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
+from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg
 from matplotlib.backends.backend_wx import NavigationToolbar2Wx
 
 
@@ -13,14 +16,22 @@ class WxMPLCanvas(WxControl):
     """ A Wx implementation of an Enaml MPLCanvas.
 
     """
+    #: Internal storage for the matplotlib figure.
+    _figure = None
+
+    #: Internal storage for whether or not to show the toolbar.
+    _toolbar_visible = False
+
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
     def create_widget(self, parent, tree):
-        """ Create the underlying mpl_canvas widget.
+        """ Create the underlying widget.
 
         """
-        widget = wx.Panel(parent, wx.NewId())
+        widget = wx.Panel(parent)
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        widget.SetSizer(sizer)
         return widget
 
     def create(self, tree):
@@ -28,37 +39,15 @@ class WxMPLCanvas(WxControl):
 
         """
         super(WxMPLCanvas, self).create(tree)
-        self.figure = tree['figure']
+        self._figure = tree['figure']
+        self._toolbar_visible = tree['toolbar_visible']
 
     def init_layout(self):
-        """ A method that allows widgets to do layout initialization.
+        """ Initialize the layout of the underlying widget.
 
-        This method is called after all widgets in a tree have had
-        their 'create' method called. It is useful for doing any
-        initialization related to layout.
         """
-        figure = self.figure
-        panel = self.widget()
-        sizer = wx.BoxSizer(wx.VERTICAL)
-        # matplotlib commands to create a canvas
-        if figure.canvas is None:
-            mpl_control = FigureCanvas(panel, panel.GetId(), figure)
-        else:
-            mpl_control = figure.canvas
-        sizer.Add(mpl_control, 1, wx.LEFT | wx.TOP | wx.GROW)
-        if not hasattr(mpl_control, 'toolbar'):
-            toolbar = NavigationToolbar2Wx(mpl_control)
-        else:
-            toolbar = mpl_control.toolbar
-        sizer.Add(toolbar, 0, wx.EXPAND)
-        panel.SetSizer(sizer)
-        size = mpl_control.GetSize()
-        size.height += toolbar.GetSize().height
-        self.set_minimum_size((size.width, size.height))
-        self.size_hint_updated()
-        # allow Matplotlib canvas keyboard events
-        panel.SetFocus()
-
+        super(WxMPLCanvas, self).init_layout()
+        self.refresh_mpl_widget(notify=False)
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -67,4 +56,71 @@ class WxMPLCanvas(WxControl):
         """ Handle the 'set_figure' action from the Enaml widget.
 
         """
-        raise NotImplementedError
+        self._figure = content['figure']
+        self.refresh_mpl_widget()
+
+    def on_action_set_toolbar_visible(self, content):
+        """ Handle the 'set_toolbar_visible' action from the Enaml
+        widget.
+
+        """
+        visible = content['toolbar_visible']
+        self._toolbar_visible = visible
+        widget = self.widget()
+        sizer = widget.GetSizer()
+        children = sizer.GetChildren()
+        if len(children) == 2:
+            widget.Freeze()
+            old_hint = widget.GetBestSize()
+            toolbar = children[0]
+            toolbar.Show(visible)
+            new_hint = widget.GetBestSize()
+            if old_hint != new_hint:
+                self.size_hint_updated()
+            sizer.Layout()
+            widget.Thaw()
+
+    #--------------------------------------------------------------------------
+    # Widget Update Methods
+    #--------------------------------------------------------------------------
+    def refresh_mpl_widget(self, notify=True):
+        """ Create the mpl widget and update the underlying control.
+
+        Parameters
+        ----------
+        notify : bool, optional
+            Whether to notify the layout system if the size hint of the
+            widget has changed. The default is True.
+
+        """
+        # Delete the old widgets in the layout, it's too much shennigans
+        # to try to reuse old widgets. If the size hint event should
+        # be emitted, compute the old size hint first.
+        widget = self.widget()
+        widget.Freeze()
+        if notify:
+            old_hint = widget.GetBestSize()
+        sizer = widget.GetSizer()
+        sizer.Clear(True)
+
+        # Create the new figure and toolbar widgets. It seems that key
+        # events will not be processed without an mpl figure manager.
+        # However, a figure manager will create a new toplevel window,
+        # which is certainly not desired in this case. This appears to
+        # be a limitation of matplotlib.
+        figure = self._figure
+        if figure is not None:
+            canvas = FigureCanvasWxAgg(widget, -1, figure)
+            toolbar = NavigationToolbar2Wx(canvas)
+            toolbar.Show(self._toolbar_visible)
+            sizer.Add(toolbar, 0, wx.EXPAND)
+            sizer.Add(canvas, 1, wx.EXPAND)
+
+        if notify:
+            new_hint = widget.GetBestSize()
+            if old_hint != new_hint:
+                self.size_hint_updated()
+
+        sizer.Layout()
+        widget.Thaw()
+
