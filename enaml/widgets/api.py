@@ -28,6 +28,7 @@ from .mdi_area import MdiArea
 from .mdi_window import MdiWindow
 from .menu import Menu
 from .menu_bar import MenuBar
+from .mpl_canvas import MPLCanvas
 from .notebook import Notebook
 from .page import Page
 from .progress_bar import ProgressBar
