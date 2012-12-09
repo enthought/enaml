@@ -42,7 +42,6 @@ passing in an asyncronous manner.
     enaml.widgets.mdi_window.MdiWindow
     enaml.widgets.menu.Menu
     enaml.widgets.menu_bar.MenuBar
-    enaml.widgets.messenger_widget.MessengerWidget
     enaml.widgets.notebook.Notebook
     enaml.widgets.page.Page
     enaml.widgets.progress_bar.ProgressBar
@@ -68,7 +67,6 @@ Base widgets
     :toctree: widgets
     :template: widget.rst
 
-    enaml.widgets.messenger_widget.MessengerWidget
     enaml.widgets.widget_component.WidgetComponent
     enaml.widgets.constraints_widget.ConstraintsWidget
     enaml.widgets.abstract_button.AbstractButton

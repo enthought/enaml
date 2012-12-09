@@ -15,16 +15,6 @@ The top-level enaml package contains modules used throughout the Enaml library.
 .. automodule:: enaml.colors
 
 
-:mod:`message` Module
----------------------
-.. automodule:: enaml.message
-
-
-:mod:`request` Module
----------------------
-.. automodule:: enaml.request
-
-
 :mod:`runner` Module
 --------------------
 

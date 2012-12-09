@@ -99,35 +99,17 @@ example, we'll be working with the client and server both running locally and
 in the same process.  Enaml has some utility functions to help with common
 situations.
 
-The first thing we do is create the application object which offers the 
-``Main`` view as a session::
+The only thing we need to to is to pass the view to the ``show_simple_view``
+function::
 
-    app = simple_app(
-        'main', 'A customized hello world example', Main,
-        message="Hello, world, from Python!"
-    )
+    main_view = Main()
+    show_simple_view(main_view)
 
-The first two arguments are a name and brief description of the session offered
-by the application.  The third is the view that we want to use to create this
-session, in this case ``Main``.  Everything beyond this is optional, but we want
-to override the default message for the view with a customized one.
+This function will take care of creating the session factory, the
+application, start the session and finally start the server.
 
-For writing traditional single-process GUI applications, this pattern will
-satisfy the majority of use-cases.
-
-Now that we have an application, we need a server object to serve it, and a
-client to display it.  In this case we use the Qt local server and client::
-
-    server = QtLocalServer(app)
-    client = server.local_client()
-
-Once we have a client, we need to tell it to start the sessions of interest::
-
-    client.start_session('main')
-
-The client has to wait for the server to be available before actually bringing
-up a GUI, so the last step is to start the server::
-
-    server.start()
+In the next example we will see how we can get to the lower level and control
+the session factory and how we interact with the application.
 
 .. image:: images/hello_world_python.png
+
