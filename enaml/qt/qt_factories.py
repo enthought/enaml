@@ -117,6 +117,11 @@ def menu_bar_factory():
     return QtMenuBar
 
 
+def mpl_canvas_factory():
+    from .qt_mpl_canvas import QtMPLCanvas
+    return QtMPLCanvas
+
+
 def notebook_factory():
     from .qt_notebook import QtNotebook
     return QtNotebook
@@ -239,6 +244,7 @@ def register_default():
     register('MdiWindow', mdi_window_factory)
     register('Menu', menu_factory)
     register('MenuBar', menu_bar_factory)
+    register('MPLCanvas', mpl_canvas_factory)
     register('Notebook', notebook_factory)
     register('Page', page_factory)
     register('PushButton', push_button_factory)
