@@ -7,10 +7,10 @@ from traits.api import Unicode, Enum, Property, Str, cached_property
 from enaml.core.trait_types import EnamlEvent
 
 from .container import Container
-from .widget_component import WidgetComponent, SizeTuple
+from .widget import Widget, SizeTuple
 
 
-class Window(WidgetComponent):
+class Window(Widget):
     """ A top-level Window component.
 
     A Window component is represents of a top-level visible component

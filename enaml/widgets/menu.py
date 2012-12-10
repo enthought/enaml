@@ -6,10 +6,10 @@ from traits.api import Bool, Unicode, Property, cached_property
 
 from .action import Action
 from .action_group import ActionGroup
-from .widget_component import WidgetComponent
+from .widget import Widget
 
 
-class Menu(WidgetComponent):
+class Menu(Widget):
     """ A widget used as a menu in a MenuBar.
 
     """

@@ -5,10 +5,10 @@
 from traits.api import Either, Int, Property, cached_property
 
 from .container import Container
-from .widget_component import WidgetComponent
+from .widget import Widget
 
 
-class SplitItem(WidgetComponent):
+class SplitItem(Widget):
     """ A widget which can be used as an item in a Splitter.
 
     A SplitItem is a widget which can be used as a child of a Splitter

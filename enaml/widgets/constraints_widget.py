@@ -9,7 +9,7 @@ from enaml.layout.ab_constrainable import ABConstrainable
 from enaml.layout.box_model import BoxModel
 from enaml.layout.layout_helpers import expand_constraints
 
-from .widget_component import WidgetComponent
+from .widget import Widget
 
 
 #: A traits enum which defines the allowable constraints strengths.
@@ -23,8 +23,8 @@ def get_from_box_model(self, name):
     return getattr(self._box_model, name)
 
 
-class ConstraintsWidget(WidgetComponent):
-    """ A WidgetComponent subclass which adds constraint information.
+class ConstraintsWidget(Widget):
+    """ A Widget subclass which adds constraint information.
 
     A ConstraintsWidget is augmented with symbolic constraint variables
     which define a box model on the widget. This box model is used to

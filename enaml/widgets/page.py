@@ -7,10 +7,10 @@ from traits.api import Unicode, Bool, Property, cached_property
 from enaml.core.trait_types import EnamlEvent
 
 from .container import Container
-from .widget_component import WidgetComponent
+from .widget import Widget
 
 
-class Page(WidgetComponent):
+class Page(Widget):
     """ A widget which can be used as a page in a Notebook control.
 
     A Page is a widget which can be used as a child of a Notebook
