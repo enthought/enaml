@@ -7,10 +7,10 @@ from traits.api import List, Enum, Unicode, Bool,  Property, cached_property
 from enaml.core.trait_types import EnamlEvent
 
 from .container import Container
-from .widget_component import WidgetComponent
+from .widget import Widget
 
 
-class DockPane(WidgetComponent):
+class DockPane(Widget):
     """ A widget which can be docked in a MainWindow.
 
     A DockPane is a widget which can be docked in designated dock areas

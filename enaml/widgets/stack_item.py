@@ -5,10 +5,10 @@
 from traits.api import Property, cached_property
 
 from .container import Container
-from .widget_component import WidgetComponent
+from .widget import Widget
 
 
-class StackItem(WidgetComponent):
+class StackItem(Widget):
     """ A widget which can be used as an item in a Stack.
 
     A StackItem is a widget which can be used as a child of a Stack

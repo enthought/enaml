@@ -41,9 +41,6 @@ def _make_enamldef_helper_(name, base, builder):
         msg = "can't derive enamldef from '%s'"
         raise TypeError(msg % base)
     decl_cls = EnamlDef(name, (base,), dct)
-    # The list of builder functions is created in reverse order, with
-    # the oldest builder appearing first in the list, so that newer
-    # builders will override the effects of older builders.
-    decl_cls._builders = base._builders + [builder]
+    decl_cls._builders = base._builders + (builder,)
     return decl_cls
 

@@ -2,31 +2,64 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from collections import defaultdict
 import logging
 
-from .qt_object import QtObject
+from enaml.utils import make_dispatcher
+
+from .qt_resource_manager import QtResourceManager
 from .qt_widget_registry import QtWidgetRegistry
 
 
 logger = logging.getLogger(__name__)
 
 
-class QtSessionHandler(QtObject):
-    """ An object handler for messages sent to the session.
+#: The dispatch function for action dispatching.
+dispatch_action = make_dispatcher('on_action_', logger)
+
+
+class URLRequest(object):
+    """ A simple object for making url requests.
 
     """
-    def on_action_message_batch(self, content):
-        """ Handle the 'message_batch' action sent by the Enaml
-        application.
+    __slots__ = ('_session',)
+
+    def __init__(self, session):
+        """ Initialize a URLRequest.
+
+        Parameters
+        ----------
+        session : Session
+            The session object for which the url is being requested.
 
         """
-        for object_id, action, msg_content in content['batch']:
-            obj = QtObject.lookup_object(object_id)
-            if obj is None:
-                msg = "Invalid object id sent to QtSession: %s:%s"
-                logger.warn(msg % (object_id, action))
-            else:
-                obj.handle_action(action, msg_content)
+        self._session = session
+
+    def __call__(self, req_id, url, metadata):
+        """ Make a request for the given url resource.
+
+        Parameters
+        ----------
+        req_id : str
+            A unique identifier for this request.
+
+        url : str
+            The resource url which should be requested.
+
+        metadata : dict
+            Additional metadata to pass along with the request.
+
+        Returns
+        -------
+        result : bool
+
+        """
+        content = {}
+        content['id'] = req_id
+        content['url'] = url
+        content['metadata'] = metadata
+        session = self._session
+        session.send(session._session_id, 'url_request', content)
 
 
 class QtSession(object):
@@ -47,48 +80,46 @@ class QtSession(object):
         """
         self._session_id = session_id
         self._widget_groups = widget_groups
-        self._handler = QtSessionHandler(session_id, None, self)
+        self._resource_manager = QtResourceManager()
+        self._registered_objects = {}
+        self._windows = []
         self._socket = None
-        self._objects = []
 
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
-    def open(self, snapshot, socket):
-        """ Open the session using the given snapshot and socket.
+    def open(self, snapshot):
+        """ Open the session using the given snapshot.
 
         Parameters
         ----------
-        snaphshot : list of dicts
+        snapshot : list of dicts
             The list of tree snapshots to build for this session.
 
+        """
+        windows = self._windows
+        for tree in snapshot:
+            window = self.build(tree, None)
+            if window is not None:
+                windows.append(window)
+                window.initialize()
+
+    def activate(self, socket):
+        """ Active the session and its windows.
+
+        Parameters
+        ----------
         socket : ActionSocketInterface
-            The socket interface to use for messaging.
+            The socket interface to use for messaging with the server
+            side Enaml objects.
 
         """
-        objects = self._objects
-        for tree in snapshot:
-            obj = self.build(tree, None)
-            if obj is not None:
-                obj.initialize()
-                objects.append(obj)
-        # Setup the socket after initialization so that any messages
-        # generated during initialization are ignored.
+        # Setup the socket before activation so that widgets may
+        # request resources from the server for startup purposes.
         self._socket = socket
         socket.on_message(self.on_message)
-
-    def close(self):
-        """ Close the session and release all object references.
-
-        """
-        self._handler.destroy()
-        self._handler = None
-        for obj in self._objects:
-            obj.destroy()
-        self._objects = []
-        socket = self._socket
-        if socket is not None:
-            socket.on_message(None)
+        for window in self._windows:
+            window.activate()
 
     def build(self, tree, parent):
         """ Build and return a new widget using the given tree dict.
@@ -128,6 +159,76 @@ class QtSession(object):
             self.build(child, obj)
         return obj
 
+    def register(self, obj):
+        """ Register an object with the session.
+
+        QtObjects are registered automatically during construction.
+
+        Parameters
+        ----------
+        obj : QtObject
+            The QtObject to register with the session.
+
+        """
+        self._registered_objects[obj.object_id()] = obj
+
+    def unregister(self, obj):
+        """ Unregister an object from the session.
+
+        QtObjects are unregistered automatically during destruction.
+
+        Parameters
+        ----------
+        obj : QtObject
+            The QtObject to unregister from the session.
+
+        """
+        self._registered_objects.pop(obj.object_id(), None)
+
+    def lookup(self, object_id):
+        """ Lookup a registered object with the given object id.
+
+        Parameters
+        ----------
+        object_id : str
+            The object id for the object to lookup.
+
+        Returns
+        -------
+        result : QtObject or None
+            The registered QtObject with the given identifier, or None
+            if no registered object is found.
+
+        """
+        return self._registered_objects.get(object_id)
+
+    def load_resource(self, url, metadata=None):
+        """ Asynchronously Load the resource pointed to by the given url.
+
+        Parameters
+        ----------
+        url : str
+            The url pointed to the resource that should be loaded.
+
+        metadata : dict, optional
+            Additional metadata required by the session to load the
+            requested resource.
+
+        Returns
+        -------
+        result : DeferredResource
+            A deferred object which will invoke a callback when the
+            resource for the url is loaded.
+
+        """
+        if metadata is None:
+            metadata = {}
+        request = URLRequest(self)
+        return self._resource_manager.load(url, metadata, request)
+
+    #--------------------------------------------------------------------------
+    # Messaging API
+    #--------------------------------------------------------------------------
     def send(self, object_id, action, content):
         """ Send a message to a server object.
 
@@ -169,10 +270,71 @@ class QtSession(object):
             The content dictionary for the action.
 
         """
-        obj = QtObject.lookup_object(object_id)
-        if obj is None:
-            msg = "Invalid object id sent to QtSession: %s:%s"
-            logger.warn(msg % (object_id, action))
-            return
-        obj.handle_action(action, content)
+        if object_id == self._session_id:
+            dispatch_action(self, action, content)
+        else:
+            try:
+                obj = self._registered_objects[object_id]
+            except KeyError:
+                msg = "Invalid object id sent to QtSession: %s:%s"
+                logger.warn(msg % (object_id, action))
+                return
+            else:
+                obj.receive_action(action, content)
+
+    #--------------------------------------------------------------------------
+    # Action Handlers
+    #--------------------------------------------------------------------------
+    def on_action_url_reply(self, content):
+        """ Handle the 'url_reply' action from the Enaml session.
+
+        """
+        url = content['url']
+        req_id = content['id']
+        status = content['status']
+        manager = self._resource_manager
+        if status == 'ok':
+            resource = content['resource']
+            manager.on_load(req_id, url, resource)
+        else:
+            manager.on_fail(req_id, url)
+
+    def on_action_message_batch(self, content):
+        """ Handle the 'message_batch' action sent by the Enaml session.
+
+        Actions sent to the message batch are processed in the following
+        order 'children_changed' -> 'destroy' -> 'relayout' -> other...
+
+        """
+        actions = defaultdict(list)
+        for item in content['batch']:
+            action = item[1]
+            actions[action].append(item)
+        ordered = []
+        batch_order = ('children_changed', 'destroy', 'relayout')
+        for key in batch_order:
+            ordered.extend(actions.pop(key, ()))
+        for value in actions.itervalues():
+            ordered.extend(value)
+        objects = self._registered_objects
+        for object_id, action, msg_content in ordered:
+            try:
+                obj = objects[object_id]
+            except KeyError:
+                msg = "Invalid object id sent to QtSession %s:%s"
+                logger.warn(msg % (object_id, action))
+            else:
+                dispatch_action(obj, action, msg_content)
+
+    def on_action_close(self, content):
+        """ Handle the 'close' action sent by the Enaml session.
+
+        """
+        for window in self._windows:
+            window.destroy()
+        self._windows = []
+        self._registered_objects = {}
+        self._resource_manager = None
+        self._socket.on_message(None)
+        self._socket = None
 

@@ -8,7 +8,7 @@ import wx.lib.newevent
 from .wx_container import WxContainer
 from .wx_single_widget_sizer import wxSingleWidgetSizer
 from .wx_upstream import aui
-from .wx_widget_component import WxWidgetComponent
+from .wx_widget import WxWidget
 
 
 #: A mapping from Enaml dock areas to wx aui dock area enums
@@ -516,7 +516,7 @@ class wxDockPane(wx.Panel):
             self._PaneInfoOperation(closure)
 
 
-class WxDockPane(WxWidgetComponent):
+class WxDockPane(WxWidget):
     """ A Wx implementation of an Enaml DockPane.
 
     """

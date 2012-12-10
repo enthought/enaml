@@ -7,7 +7,7 @@ from .qt.QtGui import QFrame, QLayout
 from .q_flow_layout import QFlowLayout, AbstractFlowWidget, FlowLayoutData
 from .q_single_widget_layout import QSingleWidgetLayout
 from .qt_container import QtContainer
-from .qt_widget_component import QtWidgetComponent
+from .qt_widget import QtWidget
 
 
 _ALIGN_MAP = {
@@ -200,7 +200,7 @@ class QFlowItem(QFrame):
 AbstractFlowWidget.register(QFlowItem)
 
 
-class QtFlowItem(QtWidgetComponent):
+class QtFlowItem(QtWidget):
     """ A Qt implementation of an Enaml FlowItem.
 
     """

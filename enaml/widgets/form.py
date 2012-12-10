@@ -70,6 +70,9 @@ class Form(Container):
             constraints.append(cn)
 
         # Arrange each label/widget pair horizontally in the form
+        # XXX this is a highly inefficient way to generate these
+        # constraints. It starts to be noticeably slow when the
+        # form has around 20 rows. This can be done better.
         labels_widgets = zip(labels, widgets)
         vbox_args = [hbox(label, widget) for label, widget in labels_widgets]
         if odd_child is not None:

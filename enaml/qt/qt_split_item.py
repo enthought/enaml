@@ -2,14 +2,14 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt.QtGui import QWidget
+from .qt.QtGui import QFrame
 from .q_single_widget_layout import QSingleWidgetLayout
 from .qt_container import QtContainer
-from .qt_widget_component import QtWidgetComponent
+from .qt_widget import QtWidget
 
 
-class QSplitItem(QWidget):
-    """ A QWidget subclass which acts as an item QSplitter.
+class QSplitItem(QFrame):
+    """ A QFrame subclass which acts as an item QSplitter.
 
     """
     def __init__(self, *args, **kwargs):
@@ -50,7 +50,7 @@ class QSplitItem(QWidget):
         self.layout().setWidget(widget)
 
 
-class QtSplitItem(QtWidgetComponent):
+class QtSplitItem(QtWidget):
     """ A Qt implementation of an Enaml SplitItem.
 
     """

@@ -124,10 +124,26 @@ class DynamicScope(object):
                 return value
         raise KeyError(name)
 
+    def __setitem__(self, name, value):
+        """ Set an item in the scope.
+
+        Parameters
+        ----------
+        name : str
+            The name of the item to set in the scope.
+
+        value : object
+            The object to set in the scope.
+
+        """
+        # This method is required for pdb to function properly.
+        self._overrides[name] = value
+
     def __contains__(self, name):
         """ Returns True if the name is in scope, False otherwise.
 
         """
+        # This method is required for pdb to function properly.
         if isinstance(name, basestring):
             # Temporarily disable the listener during scope testing.
             listener = self._listener

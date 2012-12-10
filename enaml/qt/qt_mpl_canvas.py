@@ -6,6 +6,7 @@
 #------------------------------------------------------------------------------
 from .qt.QtCore import Qt
 from .qt.QtGui import QFrame, QVBoxLayout
+from .qt_constraints_widget import size_hint_guard
 from .qt_control import QtControl
 
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg
@@ -49,7 +50,7 @@ class QtMPLCanvas(QtControl):
 
         """
         super(QtMPLCanvas, self).init_layout()
-        self.refresh_mpl_widget(notify=False)
+        self.refresh_mpl_widget()
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -59,7 +60,8 @@ class QtMPLCanvas(QtControl):
 
         """
         self._figure = content['figure']
-        self.refresh_mpl_widget()
+        with size_hint_guard(self):
+            self.refresh_mpl_widget()
 
     def on_action_set_toolbar_visible(self, content):
         """ Handle the 'set_toolbar_visible' action from the Enaml
@@ -70,33 +72,20 @@ class QtMPLCanvas(QtControl):
         self._toolbar_visible = visible
         layout = self.widget().layout()
         if layout.count() == 2:
-            item = self.widget_item()
-            old_hint = item.sizeHint()
-            toolbar = layout.itemAt(0).widget()
-            toolbar.setVisible(visible)
-            new_hint = item.sizeHint()
-            if old_hint != new_hint:
-                self.size_hint_updated()
+            with size_hint_guard(self):
+                toolbar = layout.itemAt(0).widget()
+                toolbar.setVisible(visible)
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
-    def refresh_mpl_widget(self, notify=True):
+    def refresh_mpl_widget(self):
         """ Create the mpl widget and update the underlying control.
-
-        Parameters
-        ----------
-        notify : bool, optional
-            Whether to notify the layout system if the size hint of the
-            widget has changed. The default is True.
 
         """
         # Delete the old widgets in the layout, it's just shenanigans
         # to try to reuse the old widgets when the figure changes.
         widget = self.widget()
-        if notify:
-            item = self.widget_item()
-            old_hint = item.sizeHint()
         layout = widget.layout()
         while layout.count():
             layout_item = layout.takeAt(0)
@@ -118,9 +107,4 @@ class QtMPLCanvas(QtControl):
             toolbar.setVisible(self._toolbar_visible)
             layout.addWidget(toolbar)
             layout.addWidget(canvas)
-
-        if notify:
-            new_hint = item.sizeHint()
-            if old_hint != new_hint:
-                self.size_hint_updated()
 

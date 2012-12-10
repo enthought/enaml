@@ -1,10 +1,10 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2011, Enthought, Inc.
+#  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from traits.api import Bool, Str, Tuple, Range, Enum
 
-from enaml.core.declarative import Declarative
+from enaml.core.messenger import Messenger
 
 
 #: A predefined trait which defines a size tuple. A size value of
@@ -12,16 +12,8 @@ from enaml.core.declarative import Declarative
 SizeTuple = Tuple(Range(low=-1, value=-1), Range(low=-1, value=-1))
 
 
-#: The standard attributes to proxy for a widget component.
-_WIDGET_ATTRS = [
-    'enabled', 'visible', 'bgcolor', 'fgcolor', 'font', 'minimum_size',
-    'maximum_size', 'show_focus_rect'
-]
-
-
-class WidgetComponent(Declarative):
-    """ A Declarative subclass which represents the base of all widgets
-    in Enaml.
+class Widget(Messenger):
+    """ The base class of all visible widgets in Enaml.
 
     """
     #: Whether or not the widget is enabled.
@@ -57,19 +49,25 @@ class WidgetComponent(Declarative):
     # Initialization
     #--------------------------------------------------------------------------
     def snapshot(self):
-        """ Return the initial properties for a widget component.
-
-        """
-        snap = super(WidgetComponent, self).snapshot()
-        get = getattr
-        attrs = dict((attr, get(self, attr)) for attr in _WIDGET_ATTRS)
-        snap.update(attrs)
+        snap = super(Widget, self).snapshot()
+        snap['enabled'] = self.enabled
+        snap['visible'] = self.visible
+        snap['bgcolor'] = self.bgcolor
+        snap['fgcolor'] = self.fgcolor
+        snap['font'] = self.font
+        snap['minimum_size'] = self.minimum_size
+        snap['maximum_size'] = self.maximum_size
+        snap['show_focus_rect'] = self.show_focus_rect
         return snap
 
     def bind(self):
         """ Bind the change handlers for a widget component.
 
         """
-        super(WidgetComponent, self).bind()
-        self.publish_attributes(*_WIDGET_ATTRS)
+        super(Widget, self).bind()
+        attrs = (
+            'enabled', 'visible', 'bgcolor', 'fgcolor', 'font',
+            'minimum_size', 'maximum_size', 'show_focus_rect',
+        )
+        self.publish_attributes(*attrs)
 

@@ -2,9 +2,15 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+import logging
+
 from .qt.QtCore import QSize
+from .qt.QtGui import QIcon, QImage, QPixmap
+from .qt_constraints_widget import size_hint_guard
 from .qt_control import QtControl
-#from .qt_image import QtImage
+
+
+logger = logging.getLogger(__name__)
 
 
 class QtAbstractButton(QtControl):
@@ -15,6 +21,9 @@ class QtAbstractButton(QtControl):
     It is not meant to be used directly.
 
     """
+    #: Temporary internal storage for the icon source url.
+    _icon_source = ''
+
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
@@ -33,11 +42,18 @@ class QtAbstractButton(QtControl):
         self.set_checkable(tree['checkable'])
         self.set_checked(tree['checked'])
         self.set_text(tree['text'])
-        #self.set_icon(tree['icon'])
+        self._icon_source = tree['icon_source']
         self.set_icon_size(tree['icon_size'])
         widget = self.widget()
         widget.clicked.connect(self.on_clicked)
         widget.toggled.connect(self.on_toggled)
+
+    def activate(self):
+        """ Activate the button widget.
+
+        """
+        self.set_icon_source(self._icon_source)
+        super(QtAbstractButton, self).activate()
 
     #--------------------------------------------------------------------------
     # Signal Handlers
@@ -69,18 +85,21 @@ class QtAbstractButton(QtControl):
         """ Handle the 'set_text' action from the Enaml widget.
 
         """
-        item = self.widget_item()
-        old_hint = item.sizeHint()
-        self.set_text(content['text'])
-        new_hint = item.sizeHint()
-        if old_hint != new_hint:
-            self.size_hint_updated()
+        with size_hint_guard(self):
+            self.set_text(content['text'])
+
+    def on_action_set_icon_source(self, content):
+        """ Handle the 'set_icon_source' action from the Enaml widget.
+
+        """
+        self.set_icon_source(content['icon_source'])
 
     def on_action_set_icon_size(self, content):
         """ Handle the 'set_icon_size' action from the Enaml widget.
 
         """
-        self.set_icon_size(content['icon_size'])
+        with size_hint_guard(self):
+            self.set_icon_size(content['icon_size'])
 
     #--------------------------------------------------------------------------
     # Widget update methods
@@ -113,17 +132,44 @@ class QtAbstractButton(QtControl):
         """
         self.widget().setText(text)
 
-    def set_icon(self, icon):
+    def set_icon_source(self, icon_source):
         """ Sets the widget's icon to the provided image.
 
         """
-        return
-        #self._icon = QtImage(icon)
-        #self.widget.setIcon(self._icon.as_QIcon())
+        if icon_source:
+            loader = self._session.load_resource(icon_source)
+            loader.on_load(self._on_icon_load)
+        else:
+            self._on_icon_load(QIcon())
 
     def set_icon_size(self, icon_size):
         """ Sets the widget's icon size to the provided size.
 
         """
         self.widget().setIconSize(QSize(*icon_size))
+
+    #--------------------------------------------------------------------------
+    # Private API
+    #--------------------------------------------------------------------------
+    def _on_icon_load(self, icon):
+        """ A private resource loader callback.
+
+        This method is invoked when the requested icon is successfully
+        loaded. It will update the icon on the button widget and issue
+        a size hint updated event to the layout system if needed.
+
+        Parameters
+        ----------
+        icon : QIcon or QImage
+            The icon or image that was loaded by the request.
+
+        """
+        if isinstance(icon, QImage):
+            icon = QIcon(QPixmap.fromImage(icon))
+        elif not isinstance(icon, QIcon):
+            msg = 'got incorrect type for icon: `%s`'
+            logger.error(msg % type(icon).__name__)
+            icon = QIcon()
+        with size_hint_guard(self):
+            self.widget().setIcon(icon)
 

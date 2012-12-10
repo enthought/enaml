@@ -3,10 +3,10 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt.QtGui import QMdiSubWindow, QLayout
-from .qt_widget_component import QtWidgetComponent
+from .qt_widget import QtWidget
 
 
-class QtMdiWindow(QtWidgetComponent):
+class QtMdiWindow(QtWidget):
     """ A Qt implementation of an Enaml MdiWindow.
 
     """
@@ -50,7 +50,7 @@ class QtMdiWindow(QtWidgetComponent):
         """
         widget = None
         for child in self.children():
-            if isinstance(child, QtWidgetComponent):
+            if isinstance(child, QtWidget):
                 widget = child.widget()
         return widget
 
@@ -61,14 +61,14 @@ class QtMdiWindow(QtWidgetComponent):
         """ Handle the child removed event for a QtMdiWindow.
 
         """
-        if isinstance(child, QtWidgetComponent):
+        if isinstance(child, QtWidget):
             self._set_window_widget(self.mdi_widget())
 
     def child_added(self, child):
         """ Handle the child added event for a QtMdiWindow.
 
         """
-        if isinstance(child, QtWidgetComponent):
+        if isinstance(child, QtWidget):
             self._set_window_widget(self.mdi_widget())
 
     #--------------------------------------------------------------------------

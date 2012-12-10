@@ -3,13 +3,14 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import logging
+import uuid
 
 from enaml.application import Application
 
 from .qt.QtCore import Qt, QThread
 from .qt.QtGui import QApplication
 from .q_action_socket import QActionSocket
-from .q_deferred_caller import QDeferredCaller
+from .q_deferred_caller import deferredCall, timedCall
 from .qt_session import QtSession
 from .qt_factories import register_default
 
@@ -23,7 +24,7 @@ register_default()
 
 
 class QtApplication(Application):
-    """ A concrete implementation of an Enaml application.
+    """ A Qt implementation of an Enaml application.
 
     A QtApplication uses the Qt toolkit to implement an Enaml UI that
     runs in the local process.
@@ -41,30 +42,106 @@ class QtApplication(Application):
         """
         super(QtApplication, self).__init__(factories)
         self._qapp = QApplication.instance() or QApplication([])
-        self._qcaller = QDeferredCaller()
         self._qt_sessions = {}
-        self._sockets = {}
+        self._sessions = {}
 
     #--------------------------------------------------------------------------
     # Abstract API Implementation
     #--------------------------------------------------------------------------
-    def socket(self, session_id):
-        """ Get the ActionSocketInterface for a session.
+    def start_session(self, name):
+        """ Start a new session of the given name.
+
+        This method will create a new session object for the requested
+        session type and return the new session_id. If the session name
+        is invalid, an exception will be raised.
+
+        Parameters
+        ----------
+        name : str
+            The name of the session to start.
+
+        Returns
+        -------
+        result : str
+            The unique identifier for the created session.
+
+        """
+        if name not in self._named_factories:
+            raise ValueError('Invalid session name')
+
+        # Create and open a new server-side session.
+        factory = self._named_factories[name]
+        session = factory()
+        session_id = uuid.uuid4().hex
+        session.open(session_id)
+        self._sessions[session_id] = session
+
+        # Create and open a new client-side session.
+        groups = session.widget_groups[:]
+        qt_session = QtSession(session_id, groups)
+        self._qt_sessions[session_id] = qt_session
+        qt_session.open(session.snapshot())
+
+        # Setup the sockets for the session pair
+        server_socket = QActionSocket()
+        client_socket = QActionSocket()
+        conn = Qt.QueuedConnection
+        server_socket.messagePosted.connect(client_socket.receive, conn)
+        client_socket.messagePosted.connect(server_socket.receive, conn)
+
+        # Activate the server and client sessions. The server session
+        # is activated first so that it is ready to receive messages
+        # sent by the client during activation. These messages will
+        # typically be requests for resources.
+        session.activate(server_socket)
+        qt_session.activate(client_socket)
+
+        return session_id
+
+    def end_session(self, session_id):
+        """ End the session with the given session id.
+
+        This method will close down the existing session. If the session
+        id is not valid, an exception will be raised.
 
         Parameters
         ----------
         session_id : str
-            The string identifier for the session which will use the
-            created action socket.
+            The unique identifier for the session to close.
+
+        """
+        if session_id not in self._sessions:
+            raise ValueError('Invalid session id')
+        self._sessions.pop(session_id).close()
+        del self._qt_sessions[session_id]
+
+    def session(self, session_id):
+        """ Get the session for the given session id.
+
+        Parameters
+        ----------
+        session_id : str
+            The unique identifier for the session to retrieve.
 
         Returns
         -------
-        result : ActionSocketInterface
-            An implementor of ActionSocketInterface which can be used
-            by Enaml Session instances for messaging.
+        result : Session or None
+            The session object with the given id, or None if the id
+            does not correspond to an active session.
 
         """
-        return self._socket_pair(session_id)[0]
+        return self._sessions.get(session_id)
+
+    def sessions(self):
+        """ Get the currently active sessions for the application.
+
+        Returns
+        -------
+        result : list
+            The list of currently active sessions for the application.
+
+        """
+        return self._sessions.values()
 
     def start(self):
         """ Start the application's main event loop.
@@ -98,7 +175,7 @@ class QtApplication(Application):
             the callback.
 
         """
-        self._qcaller.deferredCall(callback, *args, **kwargs)
+        deferredCall(callback, *args, **kwargs)
 
     def timed_call(self, ms, callback, *args, **kwargs):
         """ Invoke a callable on the main event loop thread at a
@@ -118,7 +195,7 @@ class QtApplication(Application):
             the callback.
 
         """
-        self._qcaller.timedCall(ms, callback, *args, **kwargs)
+        timedCall(ms, callback, *args, **kwargs)
 
     def is_main_thread(self):
         """ Indicates whether the caller is on the main gui thread.
@@ -130,69 +207,4 @@ class QtApplication(Application):
 
         """
         return QThread.currentThread() == self._qapp.thread()
-
-    #--------------------------------------------------------------------------
-    # Public API
-    #--------------------------------------------------------------------------
-    def start_session(self, name):
-        """ Start a new session of the given name.
-
-        This is an overridden parent class method which will build out
-        the Qt client object tree for the session. It will be displayed
-        when the application is started.
-
-        """
-        sid = super(QtApplication, self).start_session(name)
-        socket = self._socket_pair(sid)[1]
-        groups = self.session(sid).widget_groups[:]
-        qt_session = QtSession(sid, groups)
-        self._qt_sessions[sid] = qt_session
-        qt_session.open(self.snapshot(sid), socket)
-        return sid
-
-    def end_session(self, session_id):
-        """ End the session with the given session id.
-
-        This is an overridden parent class method which will removes
-        the references to the Qt client object trees for the session.
-
-        """
-        super(QtApplication, self).end_session(session_id)
-        qt_session = self._qt_sessions.pop(session_id, None)
-        if qt_session is not None:
-            qt_session.close()
-        self._sockets.pop(session_id, None)
-
-    #--------------------------------------------------------------------------
-    # Private API
-    #--------------------------------------------------------------------------
-    def _socket_pair(self, session_id):
-        """ Get the socket pair for the given session id.
-
-        If the socket pair does not yet exist, it will be created.
-
-        Parameters
-        ----------
-        session_id : str
-            The identifier of the session that will use the sockets.
-
-        Returns
-        -------
-        result : tuple
-            A 2-tuple of action sockets for the server and client sides,
-            respectively.
-
-        """
-        sockets = self._sockets
-        if session_id not in sockets:
-            server_socket = QActionSocket()
-            client_socket = QActionSocket()
-            conn = Qt.QueuedConnection
-            server_socket.messagePosted.connect(client_socket.receive, conn)
-            client_socket.messagePosted.connect(server_socket.receive, conn)
-            pair = (server_socket, client_socket)
-            sockets[session_id] = pair
-        else:
-            pair = sockets[session_id]
-        return pair
 

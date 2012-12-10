@@ -5,7 +5,7 @@
 import wx
 
 from .wx_menu import WxMenu, EVT_MENU_CHANGED
-from .wx_widget_component import WxWidgetComponent
+from .wx_widget import WxWidget
 
 
 class wxMenuBar(wx.MenuBar):
@@ -177,7 +177,7 @@ class wxMenuBar(wx.MenuBar):
                     self.EnableTop(index, False)
 
 
-class WxMenuBar(WxWidgetComponent):
+class WxMenuBar(WxWidget):
     """ A Wx implementation of an Enaml MenuBar.
 
     """
