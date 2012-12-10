@@ -12,7 +12,7 @@ from enaml.core.messenger import Messenger
 SizeTuple = Tuple(Range(low=-1, value=-1), Range(low=-1, value=-1))
 
 
-class WidgetComponent(Messenger):
+class Widget(Messenger):
     """ The base class of all visible widgets in Enaml.
 
     """
@@ -49,7 +49,7 @@ class WidgetComponent(Messenger):
     # Initialization
     #--------------------------------------------------------------------------
     def snapshot(self):
-        snap = super(WidgetComponent, self).snapshot()
+        snap = super(Widget, self).snapshot()
         snap['enabled'] = self.enabled
         snap['visible'] = self.visible
         snap['bgcolor'] = self.bgcolor
@@ -64,7 +64,7 @@ class WidgetComponent(Messenger):
         """ Bind the change handlers for a widget component.
 
         """
-        super(WidgetComponent, self).bind()
+        super(Widget, self).bind()
         attrs = (
             'enabled', 'visible', 'bgcolor', 'fgcolor', 'font',
             'minimum_size', 'maximum_size', 'show_focus_rect',
