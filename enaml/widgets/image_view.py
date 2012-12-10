@@ -17,11 +17,11 @@ class ImageView(Control):
     #: Whether or not to scale the image with the size of the component.
     scale_to_fit = Bool(False)
 
-    #: Whether or not to preserve the aspect ratio if scaling the image.
-    preserve_aspect_ratio = Bool(True)
-
     #: Whether to allow upscaling of an image if scale_to_fit is True.
     allow_upscaling = Bool(True)
+
+    #: Whether or not to preserve the aspect ratio if scaling the image.
+    preserve_aspect_ratio = Bool(True)
 
     #: An image view hugs its width weakly by default.
     hug_width = 'weak'
@@ -39,8 +39,8 @@ class ImageView(Control):
         snap = super(ImageView, self).snapshot()
         snap['source'] = self.source
         snap['scale_to_fit'] = self.scale_to_fit
-        snap['preserve_aspect_ratio'] = self.preserve_aspect_ratio
         snap['allow_upscaling'] = self.allow_upscaling
+        snap['preserve_aspect_ratio'] = self.preserve_aspect_ratio
         return snap
 
     def bind(self):
@@ -50,8 +50,8 @@ class ImageView(Control):
         """
         super(ImageView, self).bind()
         attrs = (
-            'source', 'scale_to_fit', 'preserve_aspect_ratio',
-            'allow_upscaling',
+            'source', 'scale_to_fit', 'allow_upscaling',
+            'preserve_aspect_ratio',
         )
         self.publish_attributes(*attrs)
 

@@ -30,8 +30,8 @@ class QImageView(QFrame):
         super(QImageView, self).__init__(parent)
         self._pixmap = None
         self._scaled_contents = False
-        self._preserve_aspect_ratio = False
         self._allow_upscaling = False
+        self._preserve_aspect_ratio = False
 
     #--------------------------------------------------------------------------
     # Private API
@@ -151,27 +151,6 @@ class QImageView(QFrame):
         self._scaled_contents = scaled
         self.update()
 
-    def preserveAspectRatio(self):
-        """ Returns whether or not the aspect ratio of the image is
-        maintained during a resize.
-
-        """
-        return self._preserve_aspect_ratio
-
-    def setPreserveAspectRatio(self, preserve):
-        """ Set whether or not to preserve the image aspect ratio.
-
-        Parameters
-        ----------
-        preserve : bool
-            If True then the aspect ratio of the image will be preserved
-            if it is scaled to fit. Otherwise, the aspect ratio will be
-            ignored.
-
-        """
-        self._preserve_aspect_ratio = preserve
-        self.update()
-
     def allowUpscaling(self):
         """ Returns whether or not the image can be scaled greater than
         its natural size.
@@ -193,6 +172,27 @@ class QImageView(QFrame):
 
         """
         self._allow_upscaling = allow
+        self.update()
+
+    def preserveAspectRatio(self):
+        """ Returns whether or not the aspect ratio of the image is
+        maintained during a resize.
+
+        """
+        return self._preserve_aspect_ratio
+
+    def setPreserveAspectRatio(self, preserve):
+        """ Set whether or not to preserve the image aspect ratio.
+
+        Parameters
+        ----------
+        preserve : bool
+            If True then the aspect ratio of the image will be preserved
+            if it is scaled to fit. Otherwise, the aspect ratio will be
+            ignored.
+
+        """
+        self._preserve_aspect_ratio = preserve
         self.update()
 
 
@@ -219,8 +219,8 @@ class QtImageView(QtControl):
         super(QtImageView, self).create(tree)
         self._image_source = tree['source']
         self.set_scale_to_fit(tree['scale_to_fit'])
-        self.set_preserve_aspect_ratio(tree['preserve_aspect_ratio'])
         self.set_allow_upscaling(tree['allow_upscaling'])
+        self.set_preserve_aspect_ratio(tree['preserve_aspect_ratio'])
 
     def activate(self):
         """ Activate the image view.
@@ -247,19 +247,19 @@ class QtImageView(QtControl):
         """
         self.set_scale_to_fit(content['scale_to_fit'])
 
-    def on_action_set_preserve_aspect_ratio(self, content):
-        """ Handle the 'set_preserve_aspect_ratio' action from the
-        Enaml widget
-
-        """
-        self.set_preserve_aspect_ratio(content['preserve_aspect_ratio'])
-
     def on_action_set_allow_upscaling(self, content):
         """ Handle the 'set_allow_upscaling' action from the Enaml
         widget.
 
         """
         self.set_allow_upscaling(content['allow_upscaling'])
+
+    def on_action_set_preserve_aspect_ratio(self, content):
+        """ Handle the 'set_preserve_aspect_ratio' action from the
+        Enaml widget
+
+        """
+        self.set_preserve_aspect_ratio(content['preserve_aspect_ratio'])
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -271,19 +271,19 @@ class QtImageView(QtControl):
         """
         self.widget().setScaledContents(scale_to_fit)
 
-    def set_preserve_aspect_ratio(self, preserve):
-        """ Sets whether or not to preserve the aspect ratio of the
-        image when scaling.
-
-        """
-        self.widget().setPreserveAspectRatio(preserve)
-
     def set_allow_upscaling(self, allow):
         """ Sets whether or not the image will scale beyond its natural
         size.
 
         """
         self.widget().setAllowUpscaling(allow)
+
+    def set_preserve_aspect_ratio(self, preserve):
+        """ Sets whether or not to preserve the aspect ratio of the
+        image when scaling.
+
+        """
+        self.widget().setPreserveAspectRatio(preserve)
 
     def set_source(self, source):
         """ Set the image source for the underlying widget.
