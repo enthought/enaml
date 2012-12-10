@@ -59,7 +59,7 @@ class Icon(Resource):
 
 
 class IconProvider(object):
-    """ An abstract API definition for an image provider object.
+    """ An abstract API definition for an icon provider object.
 
     """
     __metaclass__ = ABCMeta
@@ -77,7 +77,7 @@ class IconProvider(object):
             method will be `icons/foo`.
 
         callback : callable
-            A callable which should be invoked when the image is loaded.
+            A callable which should be invoked when the icon is loaded.
             It accepts a single argument, which is the loaded `Icon`
             object. It is safe to invoke this callable from a thread.
 
