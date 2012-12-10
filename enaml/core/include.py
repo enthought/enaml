@@ -4,8 +4,8 @@
 #------------------------------------------------------------------------------
 from traits.api import List, Instance, Bool
 
-from enaml.core.declarative import Declarative
-from enaml.core.object import Object, ChildrenEventContext
+from .declarative import Declarative
+from .object import Object, ChildrenEventContext
 
 
 class Include(Declarative):
@@ -15,7 +15,7 @@ class Include(Declarative):
     into the children of its parent. `Object` instances assigned to the
     `objects` list of the `Include` will be parented with the parent of
     the `Include`. The parent of an `Include` should be an instance of
-    `WidgetBase`; if this condition does not hold, the behavior will be
+    `Messenger`; if this condition does not hold, the behavior will be
     undefined.
 
     """

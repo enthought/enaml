@@ -4,15 +4,15 @@
 #------------------------------------------------------------------------------
 from traits.api import Instance, Uninitialized
 
-from enaml.core.declarative import Declarative
-from enaml.core.object import Object
 from enaml.utils import LoopbackGuard
 
+from .declarative import Declarative
 from .include import Include
+from .object import Object
 
 
 class PublishAttributeNotifier(object):
-    """ A lightweight trait change notifier used by WidgetBase.
+    """ A lightweight trait change notifier used by Messenger.
 
     """
     def __call__(self, obj, name, old, new):
@@ -32,11 +32,13 @@ class PublishAttributeNotifier(object):
 PublishAttributeNotifier = PublishAttributeNotifier()
 
 
-class WidgetBase(Declarative):
-    """ A base class for Enaml widgets.
+class Messenger(Declarative):
+    """ A base class for creating messaging-enabled Enaml objects.
 
-    This class provides apis for sharing state between the server-side
-    Enaml object and client-side toolkit implementation objects.
+    This is a Declarative subclass which provides convenient APIs for
+    sharing state between a server-side Enaml object and a client-side
+    implementation of that object. It also enables support for the
+    `Include` object type.
 
     """
     #: A loopback guard which can be used to prevent a notification
@@ -53,7 +55,7 @@ class WidgetBase(Declarative):
         prepare their objects before the proper initialization pass.
 
         """
-        super(WidgetBase, self).pre_initialize()
+        super(Messenger, self).pre_initialize()
         for child in self.children:
             if isinstance(child, Include):
                 child.init_objects()
@@ -65,7 +67,7 @@ class WidgetBase(Declarative):
         class version.
 
         """
-        super(WidgetBase, self).post_initialize()
+        super(Messenger, self).post_initialize()
         self.bind()
 
     def bind(self):
@@ -107,16 +109,16 @@ class WidgetBase(Declarative):
         """ Get an iterable of children to include in the snapshot.
 
         The default implementation returns the list of children which
-        are instances of WidgetBase. Subclasses may reimplement this
+        are instances of Messenger. Subclasses may reimplement this
         method if more control is needed.
 
         Returns
         -------
         result : list
-            The list of children which are instances of WidgetBase.
+            The list of children which are instances of Messenger.
 
         """
-        return [c for c in self.children if isinstance(c, WidgetBase)]
+        return [c for c in self.children if isinstance(c, Messenger)]
 
     def class_name(self):
         """ Get the name of the class for this instance.
@@ -209,14 +211,14 @@ class WidgetBase(Declarative):
             added = new_set - old_set
             removed = old_set - new_set
             content['order'] = [
-                c.object_id for c in event.new if isinstance(c, WidgetBase)
+                c.object_id for c in event.new if isinstance(c, Messenger)
             ]
             content['removed'] = [
-                c.object_id for c in removed if isinstance(c, WidgetBase)
+                c.object_id for c in removed if isinstance(c, Messenger)
             ]
             content['added'] = [
-                c.snapshot() for c in added if isinstance(c, WidgetBase)
+                c.snapshot() for c in added if isinstance(c, Messenger)
             ]
             self.send_action('children_changed', content)
-        super(WidgetBase, self).children_event(event)
+        super(Messenger, self).children_event(event)
 
