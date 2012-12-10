@@ -5,7 +5,7 @@
 from .qt.QtCore import Qt, Signal
 from .qt.QtGui import QDockWidget, QWidget
 from .qt_container import QtContainer
-from .qt_widget_component import QtWidgetComponent
+from .qt_widget import QtWidget
 
 
 #: A mapping from Enaml dock areas to Qt dock areas.
@@ -155,7 +155,7 @@ class QCustomDockWidget(QDockWidget):
                 self._hideTitleBar()
 
 
-class QtDockPane(QtWidgetComponent):
+class QtDockPane(QtWidget):
     """ A Qt implementation of an Enaml DockPane.
 
     """

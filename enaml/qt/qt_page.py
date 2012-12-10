@@ -3,14 +3,14 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt.QtCore import Signal
-from .qt.QtGui import QWidget
+from .qt.QtGui import QFrame
 from .q_single_widget_layout import QSingleWidgetLayout
 from .qt_container import QtContainer
-from .qt_widget_component import QtWidgetComponent
+from .qt_widget import QtWidget
 
 
-class QPage(QWidget):
-    """ A QWidget subclass which acts as a page in a QNotebook.
+class QPage(QFrame):
+    """ A QFrame subclass which acts as a page in a QNotebook.
 
     """
     #: A signal emitted when the page has been closed by the user.
@@ -244,7 +244,7 @@ class QPage(QWidget):
         self._pageIndexOperation(closure)
 
 
-class QtPage(QtWidgetComponent):
+class QtPage(QtWidget):
     """ A Qt implementation of an Enaml notebook Page.
 
     """

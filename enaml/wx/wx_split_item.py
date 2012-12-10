@@ -6,7 +6,7 @@ import wx
 
 from .wx_single_widget_sizer import wxSingleWidgetSizer
 from .wx_container import WxContainer
-from .wx_widget_component import WxWidgetComponent
+from .wx_widget import WxWidget
 
 
 class wxSplitItem(wx.Panel):
@@ -51,7 +51,7 @@ class wxSplitItem(wx.Panel):
         self.GetSizer().Add(widget)
 
 
-class WxSplitItem(WxWidgetComponent):
+class WxSplitItem(WxWidget):
     """ A Wx implementation of an Enaml SplitItem.
 
     """

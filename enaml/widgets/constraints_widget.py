@@ -9,7 +9,7 @@ from enaml.layout.ab_constrainable import ABConstrainable
 from enaml.layout.box_model import BoxModel
 from enaml.layout.layout_helpers import expand_constraints
 
-from .widget_component import WidgetComponent
+from .widget import Widget
 
 
 #: A traits enum which defines the allowable constraints strengths.
@@ -23,8 +23,8 @@ def get_from_box_model(self, name):
     return getattr(self._box_model, name)
 
 
-class ConstraintsWidget(WidgetComponent):
-    """ A WidgetComponent subclass which adds constraint information.
+class ConstraintsWidget(Widget):
+    """ A Widget subclass which adds constraint information.
 
     A ConstraintsWidget is augmented with symbolic constraint variables
     which define a box model on the widget. This box model is used to
@@ -140,6 +140,32 @@ class ConstraintsWidget(WidgetComponent):
         super(ConstraintsWidget, self).bind()
         d = 'constraints, hug_width, hug_height, resist_width, resist_height'
         self.on_trait_change(self._send_relayout, d)
+
+    #--------------------------------------------------------------------------
+    # Public API
+    #--------------------------------------------------------------------------
+    def when(self, switch):
+        """ A method which returns `self` or None based on the truthness
+        of the argument.
+
+        This can be useful to easily turn off the effects of an object
+        in constraints-based layout.
+
+        Parameters
+        ----------
+        switch : bool
+            A boolean which indicates whether this instance or None
+            should be returned.
+
+        Returns
+        -------
+        result : self or None
+            If 'switch' is boolean True, self is returned. Otherwise,
+            None is returned.
+
+        """
+        if switch:
+            return self
 
     #--------------------------------------------------------------------------
     # Message Handling

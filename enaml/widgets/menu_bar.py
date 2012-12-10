@@ -5,10 +5,10 @@
 from traits.api import Property, cached_property
 
 from .menu import Menu
-from .widget_component import WidgetComponent
+from .widget import Widget
 
 
-class MenuBar(WidgetComponent):
+class MenuBar(Widget):
     """ A widget used as a menu bar in a MainWindow.
 
     """

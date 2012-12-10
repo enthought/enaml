@@ -2,49 +2,42 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import sys
+import wx
 
 from enaml.colors import parse_color
 
-from .qt.QtGui import QWidget, QWidgetItem, QColor, QApplication
-from .qt.QtCore import Qt, QSize
-from .qt_object import QtObject
+from .wx_layout_request import wxEvtLayoutRequested
+from .wx_object import WxObject
 
 
-def q_parse_color(color):
-    """ Convert a color string into a QColor.
+def wx_parse_color(color):
+    """ Convert a color string into a wxColour.
 
     Parameters
     ----------
     color : string
-        A CSS3 color string to convert to a QColor.
+        A CSS3 color string to convert to a wxColour.
 
     Returns
     -------
-    result : QColor
-        The QColor for the given color string
+    result : wxColour
+        The wxColour for the given color string
 
     """
     rgba = parse_color(color)
     if rgba is None:
-        qcolor = QColor()
+        wx_color = wx.NullColour
     else:
         r, g, b, a = rgba
-        qcolor = QColor.fromRgbF(r, g, b, a)
-    return qcolor
+        i = int
+        wx_color = wx.Colour(i(r * 255), i(g * 255), i(b * 255), i(a * 255))
+    return wx_color
 
 
-class QtWidgetComponent(QtObject):
-    """ A Qt4 implementation of an Enaml WidgetComponent.
+class WxWidget(WxObject):
+    """ A Wx implementation of an Enaml WidgetComponent.
 
     """
-    #: An attribute which will hold the default focus rect state if
-    #: it is ever changed by the user.
-    _default_focus_attr = None
-
-    #: An attribute which will hold the widget item for the widget.
-    _widget_item = None
-
     #: An attribute which indicates whether or not the background
     #: color of the widget has been changed.
     _bgcolor_changed = False
@@ -53,17 +46,20 @@ class QtWidgetComponent(QtObject):
     #: color of the widget has been changed.
     _fgcolor_changed = False
 
+    #--------------------------------------------------------------------------
+    # Setup Methods
+    #--------------------------------------------------------------------------
     def create_widget(self, parent, tree):
-        """ Creates the underlying QWidget object.
+        """ Creates the underlying wx.Panel widget.
 
         """
-        return QWidget(parent)
+        return wx.Panel(parent)
 
     def create(self, tree):
-        """ Create and initialize the underlying widget.
+        """ Create and initialize the widget control.
 
         """
-        super(QtWidgetComponent, self).create(tree)
+        super(WxWidget, self).create(tree)
         self.set_minimum_size(tree['minimum_size'])
         self.set_maximum_size(tree['maximum_size'])
         self.set_bgcolor(tree['bgcolor'])
@@ -74,21 +70,22 @@ class QtWidgetComponent(QtObject):
         self.set_show_focus_rect(tree['show_focus_rect'])
 
     #--------------------------------------------------------------------------
-    # Public Api
+    # Public API
     #--------------------------------------------------------------------------
-    def widget_item(self):
-        """ Get the QWidgetItem for the underlying widget.
+    def update_geometry(self):
+        """ Notify the layout system that this widget has changed.
 
-        Returns
-        -------
-        result : QWidgetItem
-            The QWidgetItem to use for the underlying widget.
+        This method should be called when the geometry of the widget has
+        changed and the layout system should update the layout. This will
+        post a wxEvtLayoutRequested event to the parent of this widget.
 
         """
-        res = self._widget_item
-        if res is None:
-            res = self._widget_item = QWidgetItem(self.widget())
-        return res
+        widget = self.widget()
+        if widget:
+            parent = widget.GetParent()
+            if parent:
+                event = wxEvtLayoutRequested(widget.GetId())
+                wx.PostEvent(parent, event)
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -155,10 +152,7 @@ class QtWidgetComponent(QtObject):
             (-1, -1) indicates the default min size.
 
         """
-        # QWidget uses (0, 0) as the minimum size.
-        if -1 in min_size:
-            min_size = (0, 0)
-        self.widget().setMinimumSize(QSize(*min_size))
+        self.widget().SetMinSize(wx.Size(*min_size))
 
     def set_maximum_size(self, max_size):
         """ Sets the maximum size on the underlying widget.
@@ -170,10 +164,7 @@ class QtWidgetComponent(QtObject):
             (-1, -1) indicates the default max size.
 
         """
-        # QWidget uses 16777215 as the max size
-        if -1 in max_size:
-            max_size = (16777215, 16777215)
-        self.widget().setMaximumSize(QSize(*max_size))
+        self.widget().SetMaxSize(wx.Size(*max_size))
 
     def set_enabled(self, enabled):
         """ Set the enabled state on the underlying widget.
@@ -184,7 +175,7 @@ class QtWidgetComponent(QtObject):
             Whether or not the widget is enabled.
 
         """
-        self.widget().setEnabled(enabled)
+        self.widget().Enable(enabled)
 
     def set_visible(self, visible):
         """ Set the visibility state on the underlying widget.
@@ -195,7 +186,7 @@ class QtWidgetComponent(QtObject):
             Whether or not the widget is visible.
 
         """
-        self.widget().setVisible(visible)
+        self.widget().Show(visible)
 
     def set_bgcolor(self, bgcolor):
         """ Set the background color on the underlying widget.
@@ -207,18 +198,10 @@ class QtWidgetComponent(QtObject):
 
         """
         if bgcolor or self._bgcolor_changed:
+            wx_color = wx_parse_color(bgcolor)
             widget = self.widget()
-            role = widget.backgroundRole()
-            qcolor = q_parse_color(bgcolor)
-            if not qcolor.isValid():
-                app_palette = QApplication.instance().palette(widget)
-                qcolor = app_palette.color(role)
-                widget.setAutoFillBackground(False)
-            else:
-                widget.setAutoFillBackground(True)
-            palette = widget.palette()
-            palette.setColor(role, qcolor)
-            widget.setPalette(palette)
+            widget.SetBackgroundColour(wx_color)
+            widget.Refresh()
             self._bgcolor_changed = True
 
     def set_fgcolor(self, fgcolor):
@@ -231,15 +214,10 @@ class QtWidgetComponent(QtObject):
 
         """
         if fgcolor or self._fgcolor_changed:
+            wx_color = wx_parse_color(fgcolor)
             widget = self.widget()
-            role = widget.foregroundRole()
-            qcolor = q_parse_color(fgcolor)
-            if not qcolor.isValid():
-                app_palette = QApplication.instance().palette(widget)
-                qcolor = app_palette.color(role)
-            palette = widget.palette()
-            palette.setColor(role, qcolor)
-            widget.setPalette(palette)
+            widget.SetForegroundColour(wx_color)
+            widget.Refresh()
             self._fgcolor_changed = True
 
     def set_font(self, font):
@@ -255,17 +233,10 @@ class QtWidgetComponent(QtObject):
 
     def set_show_focus_rect(self, show):
         """ Sets whether or not to show the focus rectangle around
-        the widget. This is currently only supported on OSX.
+        the widget.
+
+        This is currently not supported on Wx.
 
         """
-        if sys.platform == 'darwin':
-            widget = self.widget()
-            attr = Qt.WA_MacShowFocusRect
-            if show is None:
-                if self._default_focus_attr is not None:
-                    widget.setAttribute(attr, self._default_focus_attr)
-            else:
-                if self._default_focus_attr is None:
-                    self._default_focus_attr = widget.testAttribute(attr)
-                widget.setAttribute(attr, show)
+        pass
 

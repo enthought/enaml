@@ -2,10 +2,30 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from contextlib import contextmanager
+
 from casuarius import ConstraintVariable
 
 from .qt.QtCore import QRect
-from .qt_widget_component import QtWidgetComponent
+from .qt_widget import QtWidget
+
+
+@contextmanager
+def size_hint_guard(obj):
+    """ A contenxt manager which will call `size_hint_updated` if the
+    size hint changes during context execution.
+
+    Parameters
+    ----------
+    obj : QtConstraintsWidget
+        The constraints widget withe size hint of interest.
+
+    """
+    old_hint = obj.widget_item().sizeHint()
+    yield
+    new_hint = obj.widget_item().sizeHint()
+    if old_hint != new_hint:
+        obj.size_hint_updated()
 
 
 class LayoutBox(object):
@@ -54,7 +74,7 @@ class LayoutBox(object):
         return res
 
 
-class QtConstraintsWidget(QtWidgetComponent):
+class QtConstraintsWidget(QtWidget):
     """ A Qt implementation of an Enaml ConstraintsWidget.
 
     """

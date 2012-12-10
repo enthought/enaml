@@ -7,7 +7,7 @@ import wx.lib.newevent
 
 from .wx_action import WxAction, EVT_ACTION_CHANGED
 from .wx_action_group import WxActionGroup
-from .wx_widget_component import WxWidgetComponent
+from .wx_widget import WxWidget
 
 
 #: An event emitted when the menu state changes.
@@ -529,7 +529,7 @@ class wxMenu(wx.Menu):
             remove(action)
 
 
-class WxMenu(WxWidgetComponent):
+class WxMenu(WxWidget):
     """ A Wx implementation of an Enaml Menu.
 
     """

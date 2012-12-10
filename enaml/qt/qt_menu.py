@@ -6,7 +6,7 @@ from .qt.QtCore import Qt
 from .qt.QtGui import QMenu
 from .qt_action import QtAction
 from .qt_action_group import QtActionGroup
-from .qt_widget_component import QtWidgetComponent
+from .qt_widget import QtWidget
 
 
 class QCustomMenu(QMenu):
@@ -93,7 +93,7 @@ class QCustomMenu(QMenu):
             remove(action)
 
 
-class QtMenu(QtWidgetComponent):
+class QtMenu(QtWidget):
     """ A Qt implementation of an Enaml Menu.
 
     """

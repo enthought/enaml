@@ -8,10 +8,10 @@ from enaml.core.trait_types import CoercingInstance
 from enaml.layout.geometry import Size
 
 from .container import Container
-from .widget_component import WidgetComponent
+from .widget import Widget
 
 
-class FlowItem(WidgetComponent):
+class FlowItem(Widget):
     """ A widget which can be used as an item in a FlowArea.
 
     A FlowItem is a widget which can be used as a child of a FlowArea

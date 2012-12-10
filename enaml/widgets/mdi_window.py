@@ -4,15 +4,15 @@
 #------------------------------------------------------------------------------
 from traits.api import Property, cached_property
 
-from .widget_component import WidgetComponent
+from .widget import Widget
 
 
-class MdiWindow(WidgetComponent):
+class MdiWindow(Widget):
     """ A widget which can be used as a window in an MdiArea.
 
     An MdiWindow is a widget which can be used as an independent window
     in an MdiArea. It can have at most a single child widget which is
-    an instance of WidgetComponent.
+    an instance of Widget.
 
     """
     #: A read only property which returns the pane's dock widget.
@@ -27,13 +27,13 @@ class MdiWindow(WidgetComponent):
 
         Returns
         -------
-        result : WidgetComponent or None
+        result : Widget or None
             The mdi widget for the MdiWindow, or None if not provided.
 
         """
         widget = None
         for child in self.children:
-            if isinstance(child, WidgetComponent):
+            if isinstance(child, Widget):
                 widget = child
         return widget
 

@@ -2,15 +2,15 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Unicode, Enum, Property, cached_property
+from traits.api import Unicode, Enum, Property, Str, cached_property
 
 from enaml.core.trait_types import EnamlEvent
 
 from .container import Container
-from .widget_component import WidgetComponent, SizeTuple
+from .widget import Widget, SizeTuple
 
 
-class Window(WidgetComponent):
+class Window(Widget):
     """ A top-level Window component.
 
     A Window component is represents of a top-level visible component
@@ -39,9 +39,8 @@ class Window(WidgetComponent):
     #: Returns the central widget in use for the Window
     central_widget = Property(depends_on='children')
 
-    #: The titlebar icon.
-    # XXX needs to be implemented
-    #icon = Instance()
+    #: The source url for the titlebar icon.
+    icon_source = Str
 
     #--------------------------------------------------------------------------
     # Initialization
@@ -54,6 +53,7 @@ class Window(WidgetComponent):
         snap['title'] = self.title
         snap['initial_size'] = self.initial_size
         snap['modality'] = self.modality
+        snap['icon_source'] = self.icon_source
         return snap
 
     def bind(self):
@@ -62,7 +62,7 @@ class Window(WidgetComponent):
 
         """
         super(Window, self).bind()
-        self.publish_attributes('title', 'modality')
+        self.publish_attributes('title', 'modality', 'icon_source')
 
     #--------------------------------------------------------------------------
     # Private API

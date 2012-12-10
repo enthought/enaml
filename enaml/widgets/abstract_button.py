@@ -4,13 +4,11 @@
 #------------------------------------------------------------------------------
 #from base64 import b64encode
 
-from traits.api import Bool, Unicode, Tuple#, Instance
+from traits.api import Bool, Unicode, Tuple, Str, Int
 
 from enaml.core.trait_types import EnamlEvent
 
 from .control import Control
-#from ..noncomponents.image.abstract_image import AbstractImage
-#from ..noncomponents.image import ImageFromFile
 
 
 class AbstractButton(Control):
@@ -21,11 +19,12 @@ class AbstractButton(Control):
     #: The text to use as the button's label.
     text = Unicode
 
-    #: The icon to use for the button.
-    #icon = Instance(AbstractImage, ImageFromFile(''))
+    #: The source url for the icon to use for the button.
+    icon_source = Str
 
-    #: The size to use for the icon.
-    icon_size = Tuple
+    #: The size to use for the icon. The default is an invalid size
+    #: and indicates that an appropriate default should be used.
+    icon_size = Tuple(Int(-1), Int(-1))
 
     #: Whether or not the button is checkable. The default is False.
     checkable = Bool(False)
@@ -57,7 +56,7 @@ class AbstractButton(Control):
         snap['checkable'] = self.checkable
         snap['checked'] = self.checked
         snap['icon_size'] = self.icon_size
-        #snap['icon'] = self.icon.as_dict()
+        snap['icon_source'] = self.icon_source
         return snap
 
     def bind(self):
@@ -65,8 +64,8 @@ class AbstractButton(Control):
 
         """
         super(AbstractButton, self).bind()
-        self.publish_attributes('text', 'checkable', 'checked', 'icon_size')
-        #self.on_trait_change(self._send_icon, 'icon')
+        attrs = ('text', 'checkable', 'checked', 'icon_size', 'icon_source')
+        self.publish_attributes(*attrs)
 
     #--------------------------------------------------------------------------
     # Message Handling

@@ -6,7 +6,7 @@ import wx
 import wx.lib.newevent
 
 from .wx_container import WxContainer
-from .wx_widget_component import WxWidgetComponent
+from .wx_widget import WxWidget
 from .wx_single_widget_sizer import wxSingleWidgetSizer
 
 
@@ -216,7 +216,7 @@ class wxPage(wx.Panel):
         self._PageIndexOperation(closure)
 
 
-class WxPage(WxWidgetComponent):
+class WxPage(WxWidget):
     """ A Wx implementation of an Enaml notebook Page.
 
     """

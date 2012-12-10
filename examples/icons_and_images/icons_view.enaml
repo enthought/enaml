@@ -1,0 +1,110 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2012, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+""" An example of using icons in Enaml.
+
+"""
+from enaml.layout.api import vbox, hbox, spacer
+from enaml.widgets.api import (
+    MainWindow, Container, ToolBar, Action, MenuBar, Menu, PushButton,
+    CheckBox, ActionGroup, Html, FileDialog
+)
+
+
+enamldef IconsView(MainWindow): main:
+    title = 'Icon Example'
+    icon_source = 'icon://myicons/window-icon'
+    MenuBar:
+        Menu:
+            title = 'Player'
+            Action:
+                text = 'Seek Backward'
+                tool_tip = 'Seek Backward'
+                icon_source = 'icon://myicons/seek-backward'
+            Action:
+                text = 'Play/Pause'
+                tool_tip = 'Play' if checked else 'Pause'
+                checkable = True
+                icon_source = 'icon://myicons/play-pause'
+            Action:
+                text = 'Seek Forward'
+                tool_tip = 'Seek Forward'
+                icon_source = 'icon://myicons/seek-forward'
+            Action:
+                separator = True
+            Action:
+                text = 'Close'
+                tool_tip = 'Close'
+                icon_source = 'icon://myicons/close'
+                triggered :: main.close()
+        Menu:
+            title = 'Format'
+            ActionGroup:
+                Action:
+                    text = 'Left'
+                    tool_tip = 'Left Justify'
+                    checkable = True
+                    icon_source = 'icon://myicons/left-justify'
+                Action:
+                    text = 'Right'
+                    tool_tip = 'Right Justify'
+                    checkable = True
+                    icon_source = 'icon://myicons/right-justify'
+                Action:
+                    text = 'Center'
+                    tool_tip = 'Center Justify'
+                    checkable = True
+                    icon_source = 'icon://myicons/center-justify'
+                Action:
+                    text = 'Align'
+                    tool_tip = 'Align Justify'
+                    checkable = True
+                    icon_source = 'icon://myicons/align-justify'
+    ToolBar:
+        Action:
+            text = 'Seek Backward'
+            tool_tip = 'Seek Backward'
+            icon_source = 'icon://myicons/seek-backward'
+        Action:
+            text = 'Play/Pause'
+            tool_tip = 'Play' if checked else 'Pause'
+            checkable = True
+            icon_source = 'icon://myicons/play-pause'
+        Action:
+            text = 'Seek Forward'
+            tool_tip = 'Seek Forward'
+            icon_source = 'icon://myicons/seek-forward'
+        Action:
+            separator = True
+        ActionGroup:
+            Action:
+                text = 'Left'
+                tool_tip = 'Left Justify'
+                checkable = True
+                icon_source = 'icon://myicons/left-justify'
+            Action:
+                text = 'Right'
+                tool_tip = 'Right Justify'
+                checkable = True
+                icon_source = 'icon://myicons/right-justify'
+            Action:
+                text = 'Center'
+                tool_tip = 'Center Justify'
+                checkable = True
+                icon_source = 'icon://myicons/center-justify'
+            Action:
+                text = 'Align'
+                tool_tip = 'Align Justify'
+                checkable = True
+                icon_source = 'icon://myicons/align-justify'
+    Container:
+        constraints = [vbox(html, hbox(spacer, pb))]
+        Html: html:
+            source = '<h1><center>Icon Example</center></h1>'
+        PushButton: pb:
+            icon_source = 'icon://myicons/close'
+            icon_size = (28, 28)
+            text = 'Close'
+            clicked :: main.close()
+

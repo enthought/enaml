@@ -7,7 +7,6 @@ from heapq import heappush, heappop
 from itertools import count
 import logging
 from threading import Lock
-import uuid
 
 
 logger = logging.getLogger(__name__)
@@ -149,7 +148,6 @@ class Application(object):
         """
         self._all_factories = []
         self._named_factories = {}
-        self._sessions = {}
         self._task_heap = []
         self._counter = count()
         self._heap_lock = Lock()
@@ -182,20 +180,67 @@ class Application(object):
     # Abstract API
     #--------------------------------------------------------------------------
     @abstractmethod
-    def socket(self, session_id):
-        """ Get the ActionSocketInterface for a session.
+    def start_session(self, name):
+        """ Start a new session of the given name.
+
+        This method will create a new session object for the requested
+        session type and return the new session_id. If the session name
+        is invalid, an exception will be raised.
+
+        Parameters
+        ----------
+        name : str
+            The name of the session to start.
+
+        Returns
+        -------
+        result : str
+            The unique identifier for the created session.
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def end_session(self, session_id):
+        """ End the session with the given session id.
+
+        This method will close down the existing session. If the session
+        id is not valid, an exception will be raised.
 
         Parameters
         ----------
         session_id : str
-            The string identifier for the session which will use the
-            created action socket.
+            The unique identifier for the session to close.
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def session(self, session_id):
+        """ Get the session for the given session id.
+
+        Parameters
+        ----------
+        session_id : str
+            The unique identifier for the session to retrieve.
 
         Returns
         -------
-        result : ActionSocketInterface
-            An implementor of ActionSocketInterface which can be used
-            by Enaml Session instances for messaging.
+        result : Session or None
+            The session object with the given id, or None if the id
+            does not correspond to an active session.
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def sessions(self):
+        """ Get the currently active sessions for the application.
+
+        Returns
+        -------
+        result : list
+            The list of currently active sessions for the application.
 
         """
         raise NotImplementedError
@@ -364,86 +409,6 @@ class Application(object):
         ]
         return info
 
-    def session(self, session_id):
-        """ Get the session for the given session id.
-
-        Parameters
-        ----------
-        session_id : str
-            The unique identifier for the session to retrieve.
-
-        Returns
-        -------
-        result : Session or None
-            The session object with the given id, or None if the id
-            does not correspond to an active session.
-
-        """
-        return self._sessions.get(session_id)
-
-    def start_session(self, name):
-        """ Start a new session of the given name.
-
-        This method will create a new session object for the requested
-        session type and return the new session_id. If the session name
-        is invalid, an exception will be raised.
-
-        Parameters
-        ----------
-        name : str
-            The name of the session to start.
-
-        Returns
-        -------
-        result : str
-            The unique identifier for the created session.
-
-        """
-        if name not in self._named_factories:
-            raise ValueError('Invalid session name')
-        factory = self._named_factories[name]
-        session = factory()
-        session_id = uuid.uuid4().hex
-        self._sessions[session_id] = session
-        session.open(session_id, self.socket(session_id))
-        return session_id
-
-    def end_session(self, session_id):
-        """ End the session with the given session id.
-
-        This method will close down the existing session. If the session
-        id is not valid, an exception will be raised.
-
-        Parameters
-        ----------
-        session_id : str
-            The unique identifier for the session to close.
-
-        """
-        if session_id not in self._sessions:
-            raise ValueError('Invalid session id')
-        session = self._sessions.pop(session_id)
-        session.close()
-
-    def snapshot(self, session_id):
-        """ Get a snapshot of the Session with the given session_id.
-
-        Parameters
-        ----------
-        session_id : str
-            The unique identifier for the given session.
-
-        Returns
-        -------
-        result : list
-            A list of snapshot dictionaries for the given session.
-
-        """
-        session = self._sessions.get(session_id)
-        if session is None:
-            raise ValueError('Invalid session id')
-        return session.snapshot()
-
     def destroy(self):
         """ Destroy this application instance.
 
@@ -451,11 +416,10 @@ class Application(object):
         new application can be instantiated.
 
         """
-        for session in self._sessions.itervalues():
-            session.close()
+        for session in self.sessions():
+            self.end_session(session.session_id)
         self._all_factories = []
         self._named_factories = {}
-        self._sessions = {}
         Application._instance = None
 
 

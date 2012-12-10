@@ -1,0 +1,46 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2012, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+""" An example of using images in Enaml.
+
+"""
+from enaml.layout.api import vbox, hbox, spacer, align
+from enaml.widgets.api import (
+    Window, Container, ImageView, ComboBox, CheckBox, Label,
+)
+
+
+enamldef ImagesView(Window):
+    attr images
+    title = 'Image Example'
+    initial_size = (640, 480)
+    Container:
+        constraints = [
+            vbox(
+                hbox(lbl, cbox, 30, cb1, cb2, cb3, spacer),
+                img,
+            ),
+            align('v_center', lbl, cbox, cb1, cb2, cb3),
+        ]
+        Label: lbl:
+            text = 'Image:'
+        ComboBox: cbox:
+            items = images
+            index = 0
+        CheckBox: cb1:
+            text = 'Scale To Fit'
+            checked := img.scale_to_fit
+        CheckBox: cb2:
+            text = 'Allow Upscaling'
+            checked := img.allow_upscaling
+        CheckBox: cb3:
+            text = 'Preserve Aspect Ratio'
+            checked := img.preserve_aspect_ratio
+        ImageView: img:
+            bgcolor = 'gray'
+            resist_width = 'weak'
+            resist_height = 'weak'
+            scale_to_fit = True
+            source << 'image://myimages/' + cbox.selected_item
+

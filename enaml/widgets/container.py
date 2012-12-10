@@ -104,6 +104,20 @@ class Container(ConstraintsWidget):
         self.on_trait_change(self._send_relayout, 'share_layout, padding')
 
     #--------------------------------------------------------------------------
+    # Children Events
+    #--------------------------------------------------------------------------
+    def children_event(self, event):
+        """ Handle a `ChildrenEvent` on a container.
+
+        This event handler will send a relayout event if the `Container`
+        is active and the user has not defined their own constraints.
+
+        """
+        super(Container, self).children_event(event)
+        if self.is_active and not self.constraints:
+            self._send_relayout()
+
+    #--------------------------------------------------------------------------
     # Constraints Generation
     #--------------------------------------------------------------------------
     def _layout_info(self):

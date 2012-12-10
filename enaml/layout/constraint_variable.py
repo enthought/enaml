@@ -15,9 +15,11 @@ def almost_equal(a, b, eps=1e-8):
 
 class LinearSymbolic(object):
 
+    __slots__ = ()
+
     def nonlinear(self, msg):
         raise TypeError('Non-linear expression: %s' % msg)
-    
+
     def nonlinear_op(self, op):
         raise TypeError('Non-linear operator: `%s`' % op)
 
@@ -29,10 +31,10 @@ class LinearSymbolic(object):
 
     def __add__(self, other):
         raise NotImplementedError
-    
+
     def __mul__(self, other):
         raise NotImplementedError
-    
+
     def __div__(self, other):
         raise NotImplementedError
 
@@ -56,22 +58,22 @@ class LinearSymbolic(object):
 
     def __floordiv__(self, other):
         self.nonlinear_op('//')
-    
+
     def __rfloordiv__(self, other):
         self.nonlinear_op('//')
 
     def __mod__(self, other):
         self.nonlinear_op('%')
-    
+
     def __divmod__(self, other):
         self.nonlinear_op('divmod')
-    
+
     def __rdivmod__(self, other):
         self.nonlinear_op('divmod')
 
     def __pow__(self, other, mod):
         self.nonlinear_op('**')
-    
+
     def __rpow__(self, other, mod):
         self.nonlinear_op('**')
 
@@ -83,13 +85,13 @@ class LinearSymbolic(object):
 
     def __rshift__(self, other):
         self.nonlinear_op('>>')
-    
+
     def __rrshift__(self, other):
         self.nonlinear_op('>>')
 
     def __and__(self, other):
         self.nonlinear_op('&')
-    
+
     def __rand__(self, other):
         self.nonlinear_op('&')
 
@@ -101,7 +103,7 @@ class LinearSymbolic(object):
 
     def __xor__(self, other):
         self.nonlinear_op('^')
-    
+
     def __rxor__(self, other):
         self.nonlinear_op('^')
 
@@ -147,6 +149,8 @@ class LinearSymbolic(object):
 
 class ConstraintVariable(LinearSymbolic):
 
+    __slots__ = ('name', 'owner')
+
     def __init__(self, name, owner):
         self.name = name
         self.owner = owner
@@ -185,7 +189,7 @@ class ConstraintVariable(LinearSymbolic):
         else:
             return NotImplemented
         return expr
-    
+
     def __mul__(self, other):
         if not isinstance(self, LinearSymbolic):
             self, other = other, self
@@ -196,7 +200,7 @@ class ConstraintVariable(LinearSymbolic):
         else:
             return NotImplemented
         return res
-    
+
     def __div__(self, other):
         if not isinstance(self, LinearSymbolic):
             other.nonlinear('[ %s ] / [ %s ]' % (self, other))
@@ -210,6 +214,8 @@ class ConstraintVariable(LinearSymbolic):
 
 
 class Term(LinearSymbolic):
+
+    __slots__ = ('var', 'coeff')
 
     def __init__(self, var, coeff=1.0):
         self.var = var
@@ -235,8 +241,8 @@ class Term(LinearSymbolic):
         else:
             template = '{coeff} * {name}'
         kwargs = {
-            'coeff': self.coeff, 
-            'name': self.var.name, 
+            'coeff': self.coeff,
+            'name': self.var.name,
         }
         return template.format(**kwargs)
 
@@ -258,7 +264,7 @@ class Term(LinearSymbolic):
         else:
             return NotImplemented
         return expr
-    
+
     def __mul__(self, other):
         if not isinstance(self, LinearSymbolic):
             self, other = other, self
@@ -269,7 +275,7 @@ class Term(LinearSymbolic):
         else:
             return NotImplemented
         return res
-    
+
     def __div__(self, other):
         if not isinstance(self, LinearSymbolic):
             other.nonlinear('[ %s ] / [ %s ]' % (self, other))
@@ -283,6 +289,8 @@ class Term(LinearSymbolic):
 
 
 class LinearExpression(LinearSymbolic):
+
+    __slots__ = ('terms', 'constant')
 
     @staticmethod
     def reduce_terms(terms):
@@ -337,7 +345,7 @@ class LinearExpression(LinearSymbolic):
         else:
             return NotImplemented
         return expr
-    
+
     def __mul__(self, other):
         if not isinstance(self, LinearSymbolic):
             self, other = other, self
@@ -350,7 +358,7 @@ class LinearExpression(LinearSymbolic):
         else:
             return NotImplemented
         return res
-    
+
     def __div__(self, other):
         if not isinstance(self, LinearSymbolic):
             self, other = other, self
@@ -364,6 +372,8 @@ class LinearExpression(LinearSymbolic):
 
 
 class LinearConstraint(object):
+
+    __slots__ = ('lhs', 'rhs', 'strength', 'weight', 'op')
 
     def __init__(self, lhs, rhs, strength='required', weight=1.0):
         self.lhs = lhs
@@ -421,7 +431,7 @@ class LinearConstraint(object):
             msg += 'Got {!r} instead.'
             raise ValueError(msg.format(other))
         return type(self)(self.lhs, self.rhs, strength, weight)
-        
+
     def __ror__(self, other):
         return self.__or__(other)
 
@@ -431,6 +441,8 @@ class LinearConstraint(object):
 
 class LEConstraint(LinearConstraint):
 
+    __slots__ = ()
+
     def __init__(self, lhs, rhs, strength='required', weight=1.0):
         super(LEConstraint, self).__init__(lhs, rhs, strength, weight)
         self.op = '<='
@@ -438,12 +450,16 @@ class LEConstraint(LinearConstraint):
 
 class GEConstraint(LinearConstraint):
 
+    __slots__ = ()
+
     def __init__(self, lhs, rhs, strength='required', weight=1.0):
         super(GEConstraint, self).__init__(lhs, rhs, strength, weight)
         self.op = b'>='
 
 
 class EQConstraint(LinearConstraint):
+
+    __slots__ = ()
 
     def __init__(self, lhs, rhs, strength='required', weight=1.0):
         super(EQConstraint, self).__init__(lhs, rhs, strength, weight)

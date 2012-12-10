@@ -4,13 +4,15 @@
 #------------------------------------------------------------------------------
 import logging
 
-from traits.api import HasTraits, Instance, List, Str, ReadOnly
+from traits.api import HasTraits, Instance, List, Str, ReadOnly, Enum, Property
 
-from enaml.core.object import Object
+from enaml.widgets.window import Window
 
 from .application import deferred_call
+from .resource_manager import ResourceManager
 from .signaling import Signal
 from .socket_interface import ActionSocketInterface
+from .utils import make_dispatcher
 
 
 logger = logging.getLogger(__name__)
@@ -20,6 +22,10 @@ logger = logging.getLogger(__name__)
 #: a single message. This allows a client to perform intelligent message
 #: handling when dealing with messages that may affect the widget tree.
 BATCH_ACTIONS = set(['destroy', 'children_changed', 'relayout'])
+
+
+#: The dispatch function for action dispatching on the session.
+dispatch_action = make_dispatcher('on_action_', logger)
 
 
 class DeferredMessageBatch(object):
@@ -97,37 +103,120 @@ class DeferredMessageBatch(object):
         self._tick += 1
 
 
+class URLReply(object):
+    """ A reply object for sending a loaded resource to a client session.
+
+    """
+    __slots__ = ('_session', '_req_id', '_url')
+
+    def __init__(self, session, req_id, url):
+        """ Initialize a URLReply.
+
+        Parameters
+        ----------
+        session : Session
+            The session object for which the image is being loaded.
+
+        req_id : str
+            The identifier that was sent with the originating request.
+            This identifier will be included in the response.
+
+        url : str
+            The url that was sent with the originating request. This
+            url will be included in the response.
+
+        """
+        self._session = session
+        self._req_id = req_id
+        self._url = url
+
+    def __call__(self, resource):
+        """ Send the reply to the client session.
+
+        Parameters
+        ----------
+        resource : Resource
+            The loaded resource object, or None if the resource failed
+            to load.
+
+        """
+        reply = {'id': self._req_id, 'url': self._url}
+        if resource is None:
+            reply['status'] = 'fail'
+        else:
+            reply['status'] = 'ok'
+            reply['resource'] = resource.snapshot()
+        session = self._session
+        session.send(session.session_id, 'url_reply', reply)
+
+
 class Session(HasTraits):
     """ An object representing the session between a client and its
     Enaml objects.
 
     The session object is what ensures that each client has their own
     individual instances of objects, so that the only state that is
-    shared between clients is that which is explicitly provided by the
-    developer.
+    shared between simultaneously existing clients is that which is
+    explicitly provided by the developer.
 
     """
     #: The string identifier for this session. This is provided by
-    #: the application in the `open` method. The value should not
-    #: be manipulated by user code.
+    #: the application when the session is opened. The value should
+    #: not be manipulated by user code.
     session_id = ReadOnly
 
-    #: The objects being managed by this session. This list should be
-    #: populated by user code during the `on_open` method.
-    objects =  List(Object)
+    #: The top level windows which are managed by this session. This
+    #: should be populated by user code during the `on_open` method.
+    windows = List(Window)
 
     #: The widget implementation groups which should be used by the
     #: widgets in this session. Widget groups are an advanced feature
     #: which allow the developer to selectively expose toolkit specific
-    #: implementations Enaml widgets. All standard Enaml widgets are
-    #: available in the 'default' group, which means this value will
-    #: rarely need to be changed by the user.
+    #: implementations of Enaml widgets. All standard Enaml widgets are
+    #: available in the 'default' group. This value will rarely need to
+    #: be changed by the user.
     widget_groups = List(Str, ['default'])
 
+    #: A resource manager used for loading resources for the session.
+    resource_manager = Instance(ResourceManager, ())
+
     #: The socket used by this session for communication. This is
-    #: provided by the Application in the `open` method. The value
-    #: should not normally be manipulated by user code.
+    #: provided by the Application when the session is activated.
+    #: The value should not normally be manipulated by user code.
     socket = Instance(ActionSocketInterface)
+
+    #: The current state of the session. This value is changed by the
+    #: by the application as it drives the session through its lifetime.
+    #: This should not be manipulated directly by user code.
+    state = Enum(
+        'inactive', 'opening', 'opened', 'activating', 'active', 'closing',
+        'closed',
+    )
+
+    #: A read-only property which is True if the session is inactive.
+    is_inactive = Property(fget=lambda self: self.state == 'inactive')
+
+    #: A read-only property which is True if the session is opening.
+    is_opening = Property(fget=lambda self: self.state == 'opening')
+
+    #: A read-only property which is True if the session is opened.
+    is_opened = Property(fget=lambda self: self.state == 'opened')
+
+    #: A read-only property which is True if the session is activating.
+    is_activating = Property(fget=lambda self: self.state == 'activating')
+
+    #: A read-only property which is True if the session is active.
+    is_active = Property(fget=lambda self: self.state == 'active')
+
+    #: A read-only property which is True if the session is closing.
+    is_closing = Property(fget=lambda self: self.state == 'closing')
+
+    #: A read-only property which is True if the session is closed.
+    is_closed = Property(fget=lambda self: self.state == 'closed')
+
+    #: A private dictionary of objects registered with this session.
+    #: This value should not be manipulated by user code.
+    _registered_objects = Instance(dict, ())
 
     #: The private deferred message batch used for collapsing layout
     #: related messages into a single batch to send to the client
@@ -137,6 +226,35 @@ class Session(HasTraits):
         batch = DeferredMessageBatch()
         batch.triggered.connect(self._on_batch_triggered)
         return batch
+
+    #--------------------------------------------------------------------------
+    # Class API
+    #--------------------------------------------------------------------------
+    @classmethod
+    def factory(cls, name='', description='', *args, **kwargs):
+        """ Get a SessionFactory instance for this Session class.
+
+        Parameters
+        ----------
+        name : str, optional
+            The name to use for the session instances. The default uses
+            the class name.
+
+        description : str, optional
+            A human friendly description of the session. The default uses
+            the class docstring.
+
+        *args, **kwargs
+            Any positional and keyword arguments to pass to the session
+            when it is instantiated.
+
+        """
+        from enaml.session_factory import SessionFactory
+        if not name:
+            name = cls.__name__
+        if not description:
+            description = cls.__doc__
+        return SessionFactory(name, description, cls, *args, **kwargs)
 
     #--------------------------------------------------------------------------
     # Private API
@@ -157,12 +275,9 @@ class Session(HasTraits):
 
         This method must be implemented in a subclass and is called to
         create the Enaml objects for the session. This method will only
-        be called once during the session lifetime.
-
-        Returns
-        -------
-        result : iterable
-            An iterable of Enaml objects for this session.
+        be called once during the session lifetime. User code should
+        create their windows and assign them to the list of `windows`
+        before the method returns.
 
         """
         raise NotImplementedError
@@ -181,8 +296,8 @@ class Session(HasTraits):
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
-    def open(self, session_id, socket):
-        """ Called by the application when the session is opened.
+    def open(self, session_id):
+        """ Called by the application to open the session.
 
         This method will call the `on_open` abstract method which must
         be implemented by subclasses. The method should never be called
@@ -191,49 +306,101 @@ class Session(HasTraits):
         Parameters
         ----------
         session_id : str
-            The identifier to use for this session.
+            The unique identifier to use for this session.
 
+        """
+        self.session_id = session_id
+        self.state = 'opening'
+        self.on_open()
+        for window in self.windows:
+            window.initialize()
+        self.state = 'opened'
+
+    def activate(self, socket):
+        """ Called by the application to activate the session and its
+        windows.
+
+        This method will be called by the Application once during the
+        session lifetime. Once this method returns, the session and
+        its objects will be ready to send and receive messages. This
+        should never be called by user code.
+
+        Parameters
+        ----------
         socket : ActionSocketInterface
             A concrete implementation of ActionSocketInterface to use
             for messaging by this session.
 
         """
-        self.session_id = session_id
-        self.on_open()
-        for obj in self.objects:
-            obj.session = self
-            obj.initialize()
+        self.state = 'activating'
+        for window in self.windows:
+            window.activate(self)
         self.socket = socket
         socket.on_message(self.on_message)
+        self.state = 'active'
 
     def close(self):
         """ Called by the application when the session is closed.
 
-        This method will call the `on_close` method which may be
-        implemented by subclasses. The method should never be called
+        This method will call the `on_close` method which can optionally
+        be implemented by subclasses. The method should never be called
         by user code.
 
         """
+        self.send(self.session_id, 'close', {})
+        self.state = 'closing'
         self.on_close()
-        for obj in self.objects:
-            obj.destroy()
-        self.objects = []
-        socket = self.socket
-        if socket is not None:
-            socket.on_message(None)
+        for window in self.windows:
+            window.destroy()
+        self.windows = []
+        self._registered_objects = {}
+        self.socket.on_message(None)
+        self.socket = None
+        self.state = 'closed'
 
     def snapshot(self):
-        """ Get a snapshot of this session.
+        """ Get a snapshot of the windows of this session.
 
         Returns
         -------
         result : list
-            A list of snapshot dictionaries representing the current
-            state of this session.
+            A list of snapshots representing the current windows for
+            this session.
 
         """
-        return [obj.snapshot() for obj in self.objects]
+        return [window.snapshot() for window in self.windows]
 
+    def register(self, obj):
+        """ Register an object with the session.
+
+        This method is called by an Object when it is activated by a
+        Session. It should never be called by user code.
+
+        Parameters
+        ----------
+        obj : Object
+            The object to register with the session.
+
+        """
+        self._registered_objects[obj.object_id] = obj
+
+    def unregister(self, obj):
+        """ Unregister an object from the session.
+
+        This method is called by an Object when it is being destroyed.
+        It should never be called by user code.
+
+        Parameters
+        ----------
+        obj : Object
+            The object to unregister from the session.
+
+        """
+        self._registered_objects.pop(obj.object_id, None)
+
+    #--------------------------------------------------------------------------
+    # Messaging API
+    #--------------------------------------------------------------------------
     def send(self, object_id, action, content):
         """ Send a message to a client object.
 
@@ -252,12 +419,11 @@ class Session(HasTraits):
             The content dictionary for the action.
 
         """
-        socket = self.socket
-        if socket is not None:
+        if self.is_active:
             if action in BATCH_ACTIONS:
                 self._batch.add_message((object_id, action, content))
             else:
-                socket.send(object_id, action, content)
+                self.socket.send(object_id, action, content)
 
     def on_message(self, object_id, action, content):
         """ Receive a message sent to an object owned by this session.
@@ -278,10 +444,28 @@ class Session(HasTraits):
             The content dictionary for the action.
 
         """
-        obj = Object.lookup_object(object_id)
-        if obj is None:
-            msg = "Invalid object id sent to Session: %s:%s"
-            logger.warn(msg % (object_id, action))
-            return
-        obj.handle_action(action, content)
+        if self.is_active:
+            if object_id == self.session_id:
+                dispatch_action(self, action, content)
+            else:
+                try:
+                    obj = self._registered_objects[object_id]
+                except KeyError:
+                    msg = "Invalid object id sent to Session: %s:%s"
+                    logger.warn(msg % (object_id, action))
+                    return
+                else:
+                    obj.receive_action(action, content)
+
+    #--------------------------------------------------------------------------
+    # Action Handlers
+    #--------------------------------------------------------------------------
+    def on_action_url_request(self, content):
+        """ Handle the 'url_request' action from the client session.
+
+        """
+        url = content['url']
+        metadata = content['metadata']
+        reply = URLReply(self, content['id'], url)
+        self.resource_manager.load(url, metadata, reply)
 

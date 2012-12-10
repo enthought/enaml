@@ -6,6 +6,7 @@
 #------------------------------------------------------------------------------
 from .qt.QtGui import QFrame
 from .q_single_widget_layout import QSingleWidgetLayout
+from .qt_constraints_widget import size_hint_guard
 from .qt_control import QtControl
 
 
@@ -51,7 +52,7 @@ class QtTraitsItem(QtControl):
 
         """
         super(QtTraitsItem, self).init_layout()
-        self.refresh_traits_widget(notify=False)
+        self.refresh_traits_widget()
 
     #--------------------------------------------------------------------------
     # Message Handlers
@@ -61,33 +62,30 @@ class QtTraitsItem(QtControl):
 
         """
         self._model = content['model']
-        self.refresh_traits_widget()
+        with size_hint_guard(self):
+            self.refresh_traits_widget()
 
     def on_action_set_view(self, content):
         """ Handle the 'set_view' action from the Enaml widget.
 
         """
         self._view = content['view']
-        self.refresh_traits_widget()
+        with size_hint_guard(self):
+            self.refresh_traits_widget()
 
     def on_action_set_handler(self, content):
         """ Handle the 'set_handler' action from the Enaml widget.
 
         """
         self._handler = content['handler']
-        self.refresh_traits_widget()
+        with size_hint_guard(self):
+            self.refresh_traits_widget()
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
-    def refresh_traits_widget(self, notify=True):
+    def refresh_traits_widget(self):
         """ Create the traits widget and update the underlying control.
-
-        Parameters
-        ----------
-        notify : bool, optional
-            Whether to notify the layout system if the size hint of the
-            widget has changed. The default is True.
 
         """
         widget = self.widget()
@@ -101,13 +99,5 @@ class QtTraitsItem(QtControl):
                 parent=widget, view=view, handler=handler, kind='subpanel',
             )
             control = ui.control
-        if notify:
-            item = self.widget_item()
-            old_hint = item.sizeHint()
-            widget.layout().setWidget(control)
-            new_hint = item.sizeHint()
-            if old_hint != new_hint:
-        	   self.size_hint_updated()
-        else:
-            widget.layout().setWidget(control)
+        widget.layout().setWidget(control)
 

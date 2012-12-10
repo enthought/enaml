@@ -5,13 +5,17 @@
 import functools
 import logging
 
-from enaml.utils import LoopbackGuard
+from enaml.utils import LoopbackGuard, make_dispatcher
 
 from .qt.QtCore import QObject
-from .q_deferred_caller import QDeferredCaller
+from .q_deferred_caller import deferredCall
 
 
 logger = logging.getLogger(__name__)
+
+
+#: The dispatch function for action dispatching.
+dispatch_action = make_dispatcher('on_action_', logger)
 
 
 def deferred_updates(func):
@@ -35,7 +39,7 @@ def deferred_updates(func):
             try:
                 res = func(self, *args, **kwargs)
             finally:
-                self.deferred_call(widget.setUpdatesEnabled, True)
+                deferredCall(widget.setUpdatesEnabled, True)
         else:
             res = func(self, *args, **kwargs)
         return res
@@ -47,33 +51,6 @@ class QtObject(object):
     implementation.
 
     """
-    #: Class level storage for QtObject instances. QtObjects are added
-    #: to this dict as they are created. Instances are stored strongly
-    #: so that orphaned widgets are not garbage collected until they
-    #: are explicitly destroyed.
-    _objects = {}
-
-    #: A class level deferred caller. Created on demand.
-    _deferred_caller = None
-
-    @classmethod
-    def lookup_object(cls, object_id):
-        """ A classmethod which finds the object with the given id.
-
-        Parameters
-        ----------
-        object_id : str
-            The identifier for the object to lookup.
-
-        Returns
-        -------
-        result : QtObject or None
-            The QtObject for the given identifier, or None if no object
-            is found.
-
-        """
-        return cls._objects.get(object_id)
-
     @classmethod
     def construct(cls, tree, parent, session):
         """ Construct the QtObject instance for the given parameters.
@@ -115,75 +92,7 @@ class QtObject(object):
         object_id = tree['object_id']
         self = cls(object_id, parent, session)
         self.create(tree)
-        return self
-
-    @classmethod
-    def deferred_call(cls, callback, *args, **kwargs):
-        """ Execute the callback on the main gui thread.
-
-        Parameters
-        ----------
-        callback : callable
-            The callable object to execute on the main thread.
-
-        *args, **kwargs
-            Any additional positional and keyword arguments to pass to
-            the callback.
-
-        """
-        caller = cls._deferred_caller
-        if caller is None:
-            caller = cls._deferred_caller = QDeferredCaller()
-        caller.deferredCall(callback, *args, **kwargs)
-
-    @classmethod
-    def timed_call(cls, ms, callback, *args, **kwargs):
-        """ Execute a callback on timer in the main gui thread.
-
-        Parameters
-        ----------
-        ms : int
-            The time to delay, in milliseconds, before executing the
-            callable.
-
-        callback : callable
-            The callable object to execute at on the timer.
-
-        *args, **kwargs
-            Any additional positional and keyword arguments to pass to
-            the callback.
-
-        """
-        caller = cls._deferred_caller
-        if caller is None:
-            caller = cls._deferred_caller = QDeferredCaller()
-        caller.timedCall(ms, callback, *args, **kwargs)
-
-    def __new__(cls, object_id, *args, **kwargs):
-        """ Create a new QtObject.
-
-        If the provided object id already exists, an exception will be
-        raised.
-
-        Parameters
-        ----------
-        object_id : str
-            The unique object identifier assigned to this object.
-
-        *args, **kwargs
-            Additional positional and keyword arguments needed to
-            initialize a QtObject.
-
-        Returns
-        -------
-        result : QtObject
-            A new QtObject instance.
-
-        """
-        if object_id in cls._objects:
-            raise ValueError('Duplicate object id')
-        self = super(QtObject, cls).__new__(cls)
-        cls._objects[object_id] = self
+        session.register(self)
         return self
 
     def __init__(self, object_id, parent, session):
@@ -350,6 +259,18 @@ class QtObject(object):
         """
         pass
 
+    def activate(self):
+        """ A method called by the session to activate the UI.
+
+        This method is called by the session after the server side
+        session has indicated it is ready to accept messages. This
+        provides the object tree to make initial request for data
+        from the server side objects.
+
+        """
+        for child in self.children():
+            child.activate()
+
     def destroy(self):
         """ Destroy this object.
 
@@ -395,9 +316,8 @@ class QtObject(object):
 
         # Remove what should be the last remaining strong references to
         # `self` which will allow this object to be garbage collected.
-        # XXX remove from the session if top-level? It may not matter...
+        self._session.unregister(self)
         self._session = None
-        QtObject._objects.pop(self._object_id, None)
 
     #--------------------------------------------------------------------------
     # Parenting Methods
@@ -458,7 +378,7 @@ class QtObject(object):
                     if self._initialized:
                         curr.child_removed(self)
                     else:
-                        QtObject.deferred_call(curr.child_removed, self)
+                        deferredCall(curr.child_removed, self)
 
         if parent is not None:
             parent._children.append(self)
@@ -466,7 +386,7 @@ class QtObject(object):
                 if self._initialized:
                     parent.child_added(self)
                 else:
-                    QtObject.deferred_call(parent.child_added, self)
+                    deferredCall(parent.child_added, self)
 
     def child_removed(self, child):
         """ Called when a child is removed from this object.
@@ -523,35 +443,10 @@ class QtObject(object):
         return -1
 
     #--------------------------------------------------------------------------
-    # Messaging Methods
+    # Messaging API
     #--------------------------------------------------------------------------
-    def handle_action(self, action, content):
-        """ Handle an action sent from an Enaml widget.
-
-        This method tells the object to handle a specific action. The
-        default behavior of the method is to dispatch the action to a
-        handler method named `on_action_<action>` where <action> is
-        substituted with the provided action.
-
-        Parameters
-        ----------
-        action : str
-            The action to be performed by the object.
-
-        content : dict
-            The content dictionary for the action.
-
-        """
-        handler_name = 'on_action_' + action
-        handler = getattr(self, handler_name, None)
-        if handler is not None:
-            handler(content)
-        else:
-            msg = "Unhandled action '%s' for QtObject %s:%s"
-            logger.warn(msg % (action, type(self).__name__, self._object_id))
-
     def send_action(self, action, content):
-        """ Send an action to the session for this object.
+        """ Send an action to the server side object.
 
         The action will only be sent if the object is fully initialized.
 
@@ -565,9 +460,27 @@ class QtObject(object):
 
         """
         if self._initialized:
-            session = self._session
-            if session is not None:
-                session.send(self._object_id, action, content)
+            self._session.send(self._object_id, action, content)
+
+    def receive_action(self, action, content):
+        """ Receive an action from the server side object.
+
+        The default implementation will dynamically dispatch the action
+        to specially named handlers if the current state of the object
+        is 'active'. Subclasses may reimplement this method if more
+        control is needed.
+
+        Parameters
+        ----------
+        action : str
+            The name of the action to perform.
+
+        content : dict
+            The content data for the action.
+
+        """
+        if self._initialized:
+            dispatch_action(self, action, content)
 
     #--------------------------------------------------------------------------
     # Action Handlers
@@ -586,7 +499,7 @@ class QtObject(object):
         """
         # Unparent the children being removed. Destroying a widget is
         # handled through a separate message.
-        lookup = QtObject.lookup_object
+        lookup = self._session.lookup
         for object_id in content['removed']:
             child = lookup(object_id)
             if child is not None and child._parent is self:
@@ -625,5 +538,5 @@ class QtObject(object):
         if self._initialized:
             self.destroy()
         else:
-            QtObject.deferred_call(self.destroy)
+            deferredCall(self.destroy)
 
