@@ -1,6 +1,21 @@
 Enaml Release Notes
 ===================
 
+0.6.0 - 12/10/2012
+------------------
+- Add Icon and Image support using a lazy loading resource sub-framework. 77d5ca3b01_
+- Add a traitsui support via the TraitsItem widget (care of Steven Silvester). 9cb9126da1_
+- Add matplotlib support via the MPLCanvas widget (care of Steven Silvester). eaa6294566_
+- Updated Session api which is more intuitive and easier to use.
+- Updated Object api which is more intuitive and easier to use.
+- Object lifecycle reflected in a `state` attribute.
+- Huge reduction in memory usage when creating large numbers of objects.
+- Huge reduction in time to create large numbers of objects.
+- New widget registry make it easier to register custom widgets. cc791a52d7_
+- Better and faster code analysis via code tracers. 4eceb09f70_
+- Fix a parser bug related to relative imports. 3e43e73e90_
+- Various other tweaks, bugfixes, and api cleanup.
+
 0.5.1 - 11/19/2012
 ------------------
 - Fix a method naming bug in QSingleWidgetLayout. 7a4c9de7e6_
@@ -10,13 +25,17 @@ Enaml Release Notes
 - Destroy child widgets after the children change event is emitted. c695ae35ee_
 - Add a preliminary WebView widget. 27faa381dc_
 
-
 0.5.0 - 11/16/2012
 ------------------
 - Merge the feature-async branch into mainline. f86dad8f6e_
 - First release with release notes. 8dbed4b9cd_
 
-
+.. _77d5ca3b01: https://github.com/enthought/enaml/commit/77d5ca3b0135fa982663d4ce9cf801119617c611
+.. _eaa6294566: https://github.com/enthought/enaml/commit/eaa62945663fa9c96aee822c9f31ef966c88fd62
+.. _9cb9126da1: https://github.com/enthought/enaml/commit/9cb9126da1e590814ad6dbee9a732c9add185ed6
+.. _cc791a52d7: https://github.com/enthought/enaml/commit/cc791a52d772b07c7482427b5b60dcff9d5436c1
+.. _4eceb09f70: https://github.com/enthought/enaml/commit/4eceb09f707e7795182013b9f874abf0afbaab41
+.. _3e43e73e90: https://github.com/enthought/enaml/commit/3e43e73e90bd392a63a1faa53f821672fdb8c44f
 .. _27faa381dc: https://github.com/enthought/enaml/commit/27faa381dc5dd6c5cc41a0826df35b71339d3e7e
 .. _c695ae35ee: https://github.com/enthought/enaml/commit/c695ae35ee9fcf35964df88831de0d3b30883f78
 .. _e869f7124f: https://github.com/enthought/enaml/commit/e869f7124f0e13bea7f35d5f5a91bc89dc1dcd4e
