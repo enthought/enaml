@@ -7,7 +7,7 @@ import wx
 from .wx_container import WxContainer
 from .wx_layout_request import EVT_COMMAND_LAYOUT_REQUESTED
 from .wx_single_widget_sizer import wxSingleWidgetSizer
-from .wx_widget_component import WxWidgetComponent
+from .wx_widget import WxWidget
 
 
 class wxCustomWindow(wx.Frame):
@@ -75,7 +75,7 @@ class wxCustomWindow(wx.Frame):
         self.UpdateClientSizeHints()
 
 
-class WxWindow(WxWidgetComponent):
+class WxWindow(WxWidget):
     """ A Wx implementation of an Enaml Window.
 
     """

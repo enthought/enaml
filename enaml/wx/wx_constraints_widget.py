@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from casuarius import ConstraintVariable
 
-from .wx_widget_component import WxWidgetComponent
+from .wx_widget import WxWidget
 
 
 class LayoutBox(object):
@@ -54,7 +54,7 @@ class LayoutBox(object):
         return res
 
 
-class WxConstraintsWidget(WxWidgetComponent):
+class WxConstraintsWidget(WxWidget):
     """ A Wx implementation of an Enaml ConstraintsWidget.
 
     """

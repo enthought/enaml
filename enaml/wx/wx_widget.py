@@ -34,7 +34,7 @@ def wx_parse_color(color):
     return wx_color
 
 
-class WxWidgetComponent(WxObject):
+class WxWidget(WxObject):
     """ A Wx implementation of an Enaml WidgetComponent.
 
     """
@@ -59,7 +59,7 @@ class WxWidgetComponent(WxObject):
         """ Create and initialize the widget control.
 
         """
-        super(WxWidgetComponent, self).create(tree)
+        super(WxWidget, self).create(tree)
         self.set_minimum_size(tree['minimum_size'])
         self.set_maximum_size(tree['maximum_size'])
         self.set_bgcolor(tree['bgcolor'])
