@@ -1,6 +1,10 @@
 Enaml Release Notes
 ===================
 
+0.6.1 - 12/10/2012
+------------------
+- Fix critical bug in compiler and expression objects. dfb6f648a1_
+
 0.6.0 - 12/10/2012
 ------------------
 - Add Icon and Image support using a lazy loading resource sub-framework. 77d5ca3b01_
@@ -30,6 +34,7 @@ Enaml Release Notes
 - Merge the feature-async branch into mainline. f86dad8f6e_
 - First release with release notes. 8dbed4b9cd_
 
+.. _dfb6f648a1: https://github.com/enthought/enaml/commit/dfb6f648a15370249b0a57433b8839a4caba7d35
 .. _77d5ca3b01: https://github.com/enthought/enaml/commit/77d5ca3b0135fa982663d4ce9cf801119617c611
 .. _eaa6294566: https://github.com/enthought/enaml/commit/eaa62945663fa9c96aee822c9f31ef966c88fd62
 .. _9cb9126da1: https://github.com/enthought/enaml/commit/9cb9126da1e590814ad6dbee9a732c9add185ed6
