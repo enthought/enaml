@@ -305,7 +305,7 @@ class SubscriptionNotifier(object):
     __slots__ = ('obj', 'name', 'keyval', '__weakref__')
 
     def __init__(self, obj, name, keyval):
-        """ Initialize a Notifier.
+        """ Initialize a SubscriptionNotifier.
 
         Parameters
         ----------
