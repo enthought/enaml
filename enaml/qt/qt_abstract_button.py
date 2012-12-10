@@ -6,7 +6,7 @@ import logging
 
 from .qt.QtCore import QSize
 from .qt.QtGui import QIcon, QImage, QPixmap
-from .qt_constraints_widget import size_hint_may_change
+from .qt_constraints_widget import size_hint_guard
 from .qt_control import QtControl
 
 
@@ -81,12 +81,12 @@ class QtAbstractButton(QtControl):
         """
         self.set_checked(content['checked'])
 
-    @size_hint_may_change
     def on_action_set_text(self, content):
         """ Handle the 'set_text' action from the Enaml widget.
 
         """
-        self.set_text(content['text'])
+        with size_hint_guard(self):
+            self.set_text(content['text'])
 
     def on_action_set_icon_source(self, content):
         """ Handle the 'set_icon_source' action from the Enaml widget.
@@ -94,12 +94,12 @@ class QtAbstractButton(QtControl):
         """
         self.set_icon_source(content['icon_source'])
 
-    @size_hint_may_change
     def on_action_set_icon_size(self, content):
         """ Handle the 'set_icon_size' action from the Enaml widget.
 
         """
-        self.set_icon_size(content['icon_size'])
+        with size_hint_guard(self):
+            self.set_icon_size(content['icon_size'])
 
     #--------------------------------------------------------------------------
     # Widget update methods
@@ -151,7 +151,6 @@ class QtAbstractButton(QtControl):
     #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
-    @size_hint_may_change
     def _on_icon_load(self, icon):
         """ A private resource loader callback.
 
@@ -171,5 +170,6 @@ class QtAbstractButton(QtControl):
             msg = 'got incorrect type for icon: `%s`'
             logger.error(msg % type(icon).__name__)
             icon = QIcon()
-        self.widget().setIcon(icon)
+        with size_hint_guard(self):
+            self.widget().setIcon(icon)
 

@@ -9,7 +9,9 @@ from enaml.layout.layout_manager import LayoutManager
 
 from .qt.QtCore import QSize, Signal
 from .qt.QtGui import QFrame
-from .qt_constraints_widget import QtConstraintsWidget, LayoutBox
+from .qt_constraints_widget import (
+    QtConstraintsWidget, LayoutBox, size_hint_guard,
+)
 
 
 def _convert_cn_info(info, owners):
@@ -278,14 +280,10 @@ class QtContainer(QtConstraintsWidget):
         if self._owns_layout:
             manager = self._layout_manager
             if manager is not None:
-                item = self.widget_item()
-                old_hint = item.sizeHint()
-                manager.replace_constraints(old_cns, new_cns)
-                self.refresh_sizes()
-                self.refresh()
-                new_hint = item.sizeHint()
-                if old_hint != new_hint:
-                    self.size_hint_updated()
+                with size_hint_guard(self):
+                    manager.replace_constraints(old_cns, new_cns)
+                    self.refresh_sizes()
+                    self.refresh()
         else:
             self._layout_owner.replace_constraints(old_cns, new_cns)
 

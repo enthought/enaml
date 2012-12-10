@@ -5,7 +5,7 @@
 import logging
 
 from .qt.QtGui import QFrame, QPainter, QImage, QPixmap
-from .qt_constraints_widget import size_hint_may_change
+from .qt_constraints_widget import size_hint_guard
 from .qt_control import QtControl
 
 
@@ -301,7 +301,6 @@ class QtImageView(QtControl):
     #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
-    @size_hint_may_change
     def _on_image_load(self, image):
         """ A private resource loader callback.
 
@@ -319,5 +318,6 @@ class QtImageView(QtControl):
             msg = 'got incorrect type for image: `%s`'
             logger.error(msg % type(image).__name__)
             image = QImage()
-        self.widget().setPixmap(QPixmap.fromImage(image))
+        with size_hint_guard(self):
+            self.widget().setPixmap(QPixmap.fromImage(image))
 
