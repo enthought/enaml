@@ -4,11 +4,11 @@
 #------------------------------------------------------------------------------
 from traits.api import Enum, Bool, Callable, List, Unicode
 
-from enaml.core.declarative import Declarative
+from enaml.core.messenger import Messenger
 from enaml.core.trait_types import EnamlEvent
 
 
-class FileDialog(Declarative):
+class FileDialog(Messenger):
     """ A dialog widget that allows the user to open and save files and
     directories.
 

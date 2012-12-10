@@ -4,12 +4,12 @@
 #------------------------------------------------------------------------------
 from traits.api import Bool, Property, cached_property
 
-from enaml.core.declarative import Declarative
+from enaml.core.messenger import Messenger
 
 from .action import Action
 
 
-class ActionGroup(Declarative):
+class ActionGroup(Messenger):
     """ A non visible widget used to group actions.
 
     An action group can be used in a MenuBar or a ToolBar to group a

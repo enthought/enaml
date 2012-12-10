@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from traits.api import Bool, Str, Tuple, Range, Enum
 
-from .widget_base import WidgetBase
+from enaml.core.messenger import Messenger
 
 
 #: A predefined trait which defines a size tuple. A size value of
@@ -12,9 +12,8 @@ from .widget_base import WidgetBase
 SizeTuple = Tuple(Range(low=-1, value=-1), Range(low=-1, value=-1))
 
 
-class WidgetComponent(WidgetBase):
-    """ A Declarative subclass which represents the base of all widgets
-    in Enaml.
+class WidgetComponent(Messenger):
+    """ The base class of all visible widgets in Enaml.
 
     """
     #: Whether or not the widget is enabled.

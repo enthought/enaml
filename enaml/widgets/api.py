@@ -2,6 +2,10 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+# Convenience imports
+from enaml.core.include import Include
+
+# Widget imports
 from .action import Action
 from .action_group import ActionGroup
 from .bounded_date import BoundedDate
@@ -21,7 +25,6 @@ from .form import Form
 from .group_box import GroupBox
 from .html import Html
 from .image_view import ImageView
-from .include import Include
 from .label import Label
 from .main_window import MainWindow
 from .mdi_area import MdiArea
