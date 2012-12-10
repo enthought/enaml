@@ -224,13 +224,13 @@ class SimpleExpression(BaseExpression):
     #--------------------------------------------------------------------------
     # AbstractExpression Interface
     #--------------------------------------------------------------------------
-    def eval(self, obj, name):
+    def eval(self, owner, name):
         """ Evaluate and return the expression value.
 
         """
-        overrides = {'nonlocals': Nonlocals(obj, None)}
-        scope = DynamicScope(obj, self._f_locals, overrides, None)
-        with obj.operators:
+        overrides = {'nonlocals': Nonlocals(owner, None)}
+        scope = DynamicScope(owner, self._f_locals, overrides, None)
+        with owner.operators:
             return call_func(self._func, (), {}, scope)
 
 
@@ -252,16 +252,16 @@ class NotificationExpression(BaseExpression):
     #--------------------------------------------------------------------------
     # AbstractListener Interface
     #--------------------------------------------------------------------------
-    def value_changed(self, obj, name, old, new):
-        """ Called when the attribute on the object has changed.
+    def value_changed(self, owner, name, old, new):
+        """ Called when the attribute on the owner has changed.
 
         """
         overrides = {
-            'event': NotificationEvent(obj, name, old, new),
-            'nonlocals': Nonlocals(obj, None),
+            'event': NotificationEvent(owner, name, old, new),
+            'nonlocals': Nonlocals(owner, None),
         }
-        scope = DynamicScope(obj, self._f_locals, overrides, None)
-        with obj.operators:
+        scope = DynamicScope(owner, self._f_locals, overrides, None)
+        with owner.operators:
             call_func(self._func, (), {}, scope)
 
 
@@ -280,15 +280,15 @@ class UpdateExpression(BaseExpression):
     #--------------------------------------------------------------------------
     # AbstractListener Interface
     #--------------------------------------------------------------------------
-    def value_changed(self, obj, name, old, new):
-        """ Called when the attribute on the object has changed.
+    def value_changed(self, owner, name, old, new):
+        """ Called when the attribute on the owner has changed.
 
         """
-        nonlocals = Nonlocals(obj, None)
+        nonlocals = Nonlocals(owner, None)
         overrides = {'nonlocals': nonlocals}
         inverter = StandardInverter(nonlocals)
-        scope = DynamicScope(obj, self._f_locals, overrides, None)
-        with obj.operators:
+        scope = DynamicScope(owner, self._f_locals, overrides, None)
+        with owner.operators:
             call_func(self._func, (inverter, new), {}, scope)
 
 
@@ -302,14 +302,14 @@ class SubscriptionNotifier(object):
     """ A simple object used for attaching notification handlers.
 
     """
-    __slots__ = ('obj', 'name', 'keyval', '__weakref__')
+    __slots__ = ('owner', 'name', 'keyval', '__weakref__')
 
-    def __init__(self, obj, name, keyval):
+    def __init__(self, owner, name, keyval):
         """ Initialize a SubscriptionNotifier.
 
         Parameters
         ----------
-        obj : Declarative
+        owner : Declarative
             The declarative object which owns the expression.
 
         name : str
@@ -319,7 +319,7 @@ class SubscriptionNotifier(object):
             An object to use for testing equivalency of notifiers.
 
         """
-        self.obj = ref(obj)
+        self.owner = ref(owner)
         self.name = name
         self.keyval = keyval
 
@@ -327,9 +327,9 @@ class SubscriptionNotifier(object):
         """ Notify that the expression is invalid.
 
         """
-        obj = self.obj()
-        if obj is not None:
-            obj.refresh_expression(self.name)
+        owner = self.owner()
+        if owner is not None:
+            owner.refresh_expression(self.name)
 
 
 class SubscriptionExpression(BaseExpression):
@@ -348,14 +348,14 @@ class SubscriptionExpression(BaseExpression):
     #--------------------------------------------------------------------------
     # AbstractExpression Interface
     #--------------------------------------------------------------------------
-    def eval(self, obj, name):
+    def eval(self, owner, name):
         """ Evaluate and return the expression value.
 
         """
         tracer = TraitsTracer()
-        overrides = {'nonlocals': Nonlocals(obj, tracer)}
-        scope = DynamicScope(obj, self._f_locals, overrides, tracer)
-        with obj.operators:
+        overrides = {'nonlocals': Nonlocals(owner, tracer)}
+        scope = DynamicScope(owner, self._f_locals, overrides, tracer)
+        with owner.operators:
             result = call_func(self._func, (tracer,), {}, scope)
 
         # In most cases, the objects comprising the dependencies of an
@@ -372,7 +372,7 @@ class SubscriptionExpression(BaseExpression):
         keyval = tuple(sorted((id(obj), attr) for obj, attr in traced))
         notifier = self._notifier
         if notifier is None or keyval != notifier.keyval:
-            notifier = SubscriptionNotifier(obj, name, keyval)
+            notifier = SubscriptionNotifier(owner, name, keyval)
             self._notifier = notifier
             handler = notifier.notify
             for obj, attr in traced:
@@ -396,15 +396,15 @@ class DelegationExpression(SubscriptionExpression):
     #--------------------------------------------------------------------------
     # AbstractListener Interface
     #--------------------------------------------------------------------------
-    def value_changed(self, obj, name, old, new):
-        """ Called when the attribute on the object has changed.
+    def value_changed(self, owner, name, old, new):
+        """ Called when the attribute on the owner has changed.
 
         """
-        nonlocals = Nonlocals(obj, None)
+        nonlocals = Nonlocals(owner, None)
         inverter = StandardInverter(nonlocals)
         overrides = {'nonlocals': nonlocals}
-        scope = DynamicScope(obj, self._f_locals, overrides, None)
-        with obj.operators:
+        scope = DynamicScope(owner, self._f_locals, overrides, None)
+        with owner.operators:
             call_func(self._func._update, (inverter, new), {}, scope)
 
 

@@ -9,7 +9,8 @@ import types
 from .byteplay import (
     Code, LOAD_FAST, CALL_FUNCTION, LOAD_GLOBAL, STORE_FAST, LOAD_CONST,
     LOAD_ATTR, STORE_SUBSCR, RETURN_VALUE, POP_TOP, MAKE_FUNCTION, STORE_NAME,
-    LOAD_NAME, DUP_TOP, SetLineno, BINARY_SUBSCR, STORE_ATTR, ROT_TWO
+    LOAD_NAME, DUP_TOP, SetLineno, BINARY_SUBSCR, STORE_ATTR, ROT_TWO,
+    DELETE_NAME, DELETE_FAST
 )
 from .code_tracing import inject_tracing, inject_inversion
 
@@ -59,7 +60,10 @@ from .code_tracing import inject_tracing, inject_inversion
 #     upfront, instead of needed to specialize at runtime for a given
 #     operator context. This results in a much smaller footprint since
 #     then number of code objects created is n instead of n x m.
-COMPILER_VERSION = 6
+# 7 : Fix bug with local deletes - 10 December 2012
+#     This fixes a bug in the locals optimization where the DELETE_NAME
+#     opcode was not being replaced with DELETE_FAST.
+COMPILER_VERSION = 7
 
 
 # The Enaml compiler translates an Enaml AST into Python bytecode.
@@ -157,8 +161,9 @@ def optimize_locals(codelist):
     """ Optimize the given code object for fast locals access.
 
     All STORE_NAME opcodes will be replaced with STORE_FAST. Names which
-    are stored and then loaded via LOAD_NAME are rewritten to LOAD_FAST.
-    This transformation is applied in-place.
+    are stored and then loaded via LOAD_NAME are rewritten to LOAD_FAST
+    and DELETE_NAME is rewritten to DELETE_FAST. This transformation is
+    applied in-place.
 
     Parameters
     ----------
@@ -174,6 +179,8 @@ def optimize_locals(codelist):
     for idx, (op, op_arg) in enumerate(codelist):
         if op == LOAD_NAME and op_arg in fast_locals:
             codelist[idx] = (LOAD_FAST, op_arg)
+        elif op == DELETE_NAME and op_arg in fast_locals:
+            codelist[idx] = (DELETE_FAST, op_arg)
 
 
 def compile_simple(py_ast, filename):
