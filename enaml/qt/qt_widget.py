@@ -34,8 +34,8 @@ def q_parse_color(color):
     return qcolor
 
 
-class QtWidgetComponent(QtObject):
-    """ A Qt4 implementation of an Enaml WidgetComponent.
+class QtWidget(QtObject):
+    """ A Qt4 implementation of an Enaml Widget.
 
     """
     #: An attribute which will hold the default focus rect state if
@@ -63,7 +63,7 @@ class QtWidgetComponent(QtObject):
         """ Create and initialize the underlying widget.
 
         """
-        super(QtWidgetComponent, self).create(tree)
+        super(QtWidget, self).create(tree)
         self.set_minimum_size(tree['minimum_size'])
         self.set_maximum_size(tree['maximum_size'])
         self.set_bgcolor(tree['bgcolor'])

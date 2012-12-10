@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 class QImageView(QFrame):
-    """ A custom QWidget that will paint a QPixmap as an image. The
+    """ A custom QFrame that will paint a QPixmap as an image. The
     api is similar to QLabel, but with a few more options to control
     how the image scales.
 

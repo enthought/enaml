@@ -7,7 +7,7 @@ from functools import wraps
 from casuarius import ConstraintVariable
 
 from .qt.QtCore import QRect
-from .qt_widget_component import QtWidgetComponent
+from .qt_widget import QtWidget
 
 
 def size_hint_may_change(func):
@@ -73,7 +73,7 @@ class LayoutBox(object):
         return res
 
 
-class QtConstraintsWidget(QtWidgetComponent):
+class QtConstraintsWidget(QtWidget):
     """ A Qt implementation of an Enaml ConstraintsWidget.
 
     """

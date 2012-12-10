@@ -2,14 +2,14 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt.QtGui import QWidget
+from .qt.QtGui import QFrame
 from .q_single_widget_layout import QSingleWidgetLayout
 from .qt_container import QtContainer
-from .qt_widget_component import QtWidgetComponent
+from .qt_widget import QtWidget
 
 
-class QStackItem(QWidget):
-    """ A QWidget subclass which acts as an item QStack.
+class QStackItem(QFrame):
+    """ A QFrame subclass which acts as an item QStack.
 
     """
     def __init__(self, *args, **kwargs):
@@ -50,7 +50,7 @@ class QStackItem(QWidget):
         self.layout().setWidget(widget)
 
 
-class QtStackItem(QtWidgetComponent):
+class QtStackItem(QtWidget):
     """ A Qt implementation of an Enaml StackItem.
 
     """

@@ -9,7 +9,7 @@ from .qt.QtGui import QFrame, QLayout, QIcon, QImage, QPixmap
 from .q_deferred_caller import deferredCall
 from .q_single_widget_layout import QSingleWidgetLayout
 from .qt_container import QtContainer
-from .qt_widget_component import QtWidgetComponent
+from .qt_widget import QtWidget
 
 
 logger = logging.getLogger(__name__)
@@ -180,7 +180,7 @@ class QWindow(QFrame):
         self.layout().update()
 
 
-class QtWindow(QtWidgetComponent):
+class QtWindow(QtWidget):
     """ A Qt implementation of an Enaml Window.
 
     """

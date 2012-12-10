@@ -6,10 +6,10 @@ import sys
 
 from .qt.QtGui import QMainWindow, QMenuBar
 from .qt_menu import QtMenu
-from .qt_widget_component import QtWidgetComponent
+from .qt_widget import QtWidget
 
 
-class QtMenuBar(QtWidgetComponent):
+class QtMenuBar(QtWidget):
     """ A Qt implementation of an Enaml MenuBar.
 
     """
