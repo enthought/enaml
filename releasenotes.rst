@@ -1,6 +1,10 @@
 Enaml Release Notes
 ===================
 
+0.6.3 - 12/11/2012
+------------------
+- Fix critical bug related to traits Disallow and the `attr` keyword. 25755e2bbd_
+
 0.6.2 - 12/11/2012
 ------------------
 - Fix critical bug for broken dynamic scoping. a788869ab0_
@@ -38,6 +42,7 @@ Enaml Release Notes
 - Merge the feature-async branch into mainline. f86dad8f6e_
 - First release with release notes. 8dbed4b9cd_
 
+.. _25755e2bbd: https://github.com/enthought/enaml/commit/25755e2bbd5e2e38e42d30776e1864d52c992af3
 .. _a788869ab0: https://github.com/enthought/enaml/commit/a788869ab0a410c478cbe4cc066fc8ee35b266b8
 .. _dfb6f648a1: https://github.com/enthought/enaml/commit/dfb6f648a15370249b0a57433b8839a4caba7d35
 .. _77d5ca3b01: https://github.com/enthought/enaml/commit/77d5ca3b0135fa982663d4ce9cf801119617c611
