@@ -7,7 +7,7 @@ import logging
 import re
 
 from traits.api import (
-    HasPrivateTraits, Disallow, Property, Str, Enum, ReadOnly,
+    HasStrictTraits, Disallow, Property, Str, Enum, ReadOnly, Any,
 )
 
 from enaml.utils import make_dispatcher, id_generator
@@ -99,7 +99,7 @@ class ChildrenEventContext(object):
                     parent.children_event(evt)
 
 
-class Object(HasPrivateTraits):
+class Object(HasStrictTraits):
     """ The most base class of the Enaml object hierarchy.
 
     An Enaml Object provides supports parent-children relationships and
@@ -181,6 +181,12 @@ class Object(HasPrivateTraits):
 
     #: A read-only property which is True if the object is destroyed.
     is_destroyed = Property(fget=lambda self: self.state == 'destroyed')
+
+    #: Private storage traits. These should *never* be manipulated by
+    #: user code. For performance reasons, these are not type-checked.
+    _parent = Any       # Object or None
+    _children = Any     # tuple of Object
+    _session = Any      # Session or None
 
     def __init__(self, parent=None, **kwargs):
         """ Initialize an Object.
