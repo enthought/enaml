@@ -1,6 +1,10 @@
 Enaml Release Notes
 ===================
 
+0.6.2 - 12/11/2012
+------------------
+- Fix critical bug for broken dynamic scoping. a788869ab0_
+
 0.6.1 - 12/10/2012
 ------------------
 - Fix critical bug in compiler and expression objects. dfb6f648a1_
@@ -34,6 +38,7 @@ Enaml Release Notes
 - Merge the feature-async branch into mainline. f86dad8f6e_
 - First release with release notes. 8dbed4b9cd_
 
+.. _a788869ab0: https://github.com/enthought/enaml/commit/a788869ab0a410c478cbe4cc066fc8ee35b266b8
 .. _dfb6f648a1: https://github.com/enthought/enaml/commit/dfb6f648a15370249b0a57433b8839a4caba7d35
 .. _77d5ca3b01: https://github.com/enthought/enaml/commit/77d5ca3b0135fa982663d4ce9cf801119617c611
 .. _eaa6294566: https://github.com/enthought/enaml/commit/eaa62945663fa9c96aee822c9f31ef966c88fd62
