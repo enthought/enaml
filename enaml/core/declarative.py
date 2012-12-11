@@ -298,11 +298,12 @@ class Declarative(Object):
         class_traits = cls.__class_traits__
         if name in class_traits:
             trait_type = class_traits[name].trait_type
-            if not isinstance(trait_type, (UserAttribute, UserEvent)):
-                msg = ("can't add '%s' attribute. The '%s' attribute on "
-                       "enamldef '%s.%s' already exists.")
-                items = (name, name, cls.__module__, cls.__name__)
-                raise TypeError(msg % items)
+            if trait_type is not Disallow:
+                if not isinstance(trait_type, (UserAttribute, UserEvent)):
+                    msg = ("can't add '%s' attribute. The '%s' attribute on "
+                           "enamldef '%s.%s' already exists.")
+                    items = (name, name, cls.__module__, cls.__name__)
+                    raise TypeError(msg % items)
 
         trait_cls = UserEvent if is_event else UserAttribute
         try:
