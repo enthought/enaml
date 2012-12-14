@@ -1,7 +1,7 @@
 ==============================
 Enaml is not a Markup Language
 ==============================
-**E**\naml is **N**\ot **A** **M**\arkup **L**\anguage. |Enaml| is a library for
+**E**\naml is **N**\ot **A** **M**\arkup **L**\anguage. Enaml is a library for
 creating professional quality user interfaces with minimal effort. Enaml combines
 a domain specific declarative language with a constraints based layout system to
 allow users to easily define rich UIs with complex and flexible layouts. Enaml
