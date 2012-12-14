@@ -1,7 +1,0 @@
-<map id="inheritancec97026dbc5" name="inheritancec97026dbc5">
-<area shape="rect" id="node7" href="enaml.components.constraints_widget.ConstraintsWidget.html#enaml.backends.qt.qt_constraints_widget.QtConstraintsWidget" title="QtConstraintsWidget" alt="" coords="385,28,459,42"/>
-<area shape="rect" id="node14" href="enaml.components.widget_component.WidgetComponent.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent" title="QtWidgetComponent" alt="" coords="276,28,350,42"/>
-<area shape="rect" id="node17" href="enaml.components.base_widget_component.BaseWidgetComponent.html#enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent" title="QtBaseWidgetComponent" alt="" coords="145,28,233,42"/>
-<area shape="rect" id="node6" href="enaml.components.control.Control.html#enaml.backends.qt.qt_control.QtControl" title="QtControl" alt="" coords="510,28,551,42"/>
-<area shape="rect" id="node21" href="#enaml.backends.qt.qt_datetime_edit.QtDatetimeEdit" title="QtDatetimeEdit" alt="" coords="709,15,765,29"/>
-</map>

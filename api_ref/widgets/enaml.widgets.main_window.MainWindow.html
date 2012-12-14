@@ -1,0 +1,309 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>MainWindow &mdash; enaml 0.6.3 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.6.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.6.3 documentation" href="../../index.html" />
+    <link rel="up" title="Widgets" href="../enaml.widgets.html" />
+    <link rel="next" title="MdiWindow" href="enaml.widgets.mdi_window.MdiWindow.html" />
+    <link rel="prev" title="WebView" href="enaml.widgets.web_view.WebView.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.mdi_window.MdiWindow.html" title="MdiWindow"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.web_view.WebView.html" title="WebView"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" accesskey="U">Widgets</a> &raquo;</li>
+  
+    <li><a href="#">MainWindow</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">MainWindow</a><ul>
+<li><a class="reference internal" href="#backends">Backends</a><ul>
+<li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/api_ref/widgets/enaml.widgets.main_window.MainWindow.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="mainwindow">
+<h1>MainWindow<a class="headerlink" href="#mainwindow" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="enaml.widgets.main_window.MainWindow">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.main_window.</tt><tt class="descname">MainWindow</tt><big>(</big><em>parent=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/main_window.html#MainWindow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.main_window.MainWindow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.window.Window.html#enaml.widgets.window.Window" title="enaml.widgets.window.Window"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.window.Window</span></tt></a></p>
+<p>A top level main window widget.</p>
+<p>MainWindow widgets are top level widgets which provide additional
+functionality beyond frame decoration. A MainWindow may optionally
+contain a MenuBar, any number of ToolBars, a StatusBar, and any
+number of DockPanes. Like Window, a MainWindow can have at most one
+central Container widget, which will be expanded to fit into the
+available space.</p>
+<dl class="attribute">
+<dt id="enaml.widgets.main_window.MainWindow.menu_bar">
+<tt class="descname">menu_bar</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.main_window.MainWindow.menu_bar" title="Permalink to this definition">¶</a></dt>
+<dd><p>A read only property which returns the window&#8217;s MenuBar.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.main_window.MainWindow.tool_bars">
+<tt class="descname">tool_bars</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.main_window.MainWindow.tool_bars" title="Permalink to this definition">¶</a></dt>
+<dd><p>A read only property which returns the window&#8217;s ToolBars.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.main_window.MainWindow.dock_panes">
+<tt class="descname">dock_panes</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.main_window.MainWindow.dock_panes" title="Permalink to this definition">¶</a></dt>
+<dd><p>A read only property which returns the window&#8217;s DockPanes.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.main_window.MainWindow.__implements__">
+<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.widgets.main_window.MainWindow.__implements__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="backends">
+<h2>Backends<a class="headerlink" href="#backends" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="qt">
+<h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-3cfdedd54aaf66a1cc27a96d3a357c7f4b441d6f.png" alt="Inheritance diagram of enaml.qt.qt_main_window.QtMainWindow" usemap="#inheritancec00d2262cd" class="inheritance"/>
+<map id="inheritancec00d2262cd" name="inheritancec00d2262cd">
+<area shape="rect" id="node1" href="enaml.widgets.widget.Widget.html#enaml.qt.qt_widget.QtWidget" title="QtWidget" alt="" coords="125,5,200,30"/>
+<area shape="rect" id="node4" href="enaml.widgets.window.Window.html#enaml.qt.qt_window.QtWindow" title="QtWindow" alt="" coords="249,5,330,30"/>
+<area shape="rect" id="node6" href="#enaml.qt.qt_main_window.QtMainWindow" title="QtMainWindow" alt="" coords="379,5,487,30"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.qt.qt_main_window.QtMainWindow">
+<em class="property">class </em><tt class="descclassname">enaml.qt.qt_main_window.</tt><tt class="descname">QtMainWindow</tt><big>(</big><em>object_id</em>, <em>parent</em>, <em>session</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_main_window.html#QtMainWindow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_main_window.QtMainWindow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.window.Window.html#enaml.qt.qt_window.QtWindow" title="enaml.qt.qt_window.QtWindow"><tt class="xref py py-class docutils literal"><span class="pre">enaml.qt.qt_window.QtWindow</span></tt></a></p>
+<p>A Qt implementation of an Enaml MainWindow.</p>
+<dl class="method">
+<dt id="enaml.qt.qt_main_window.QtMainWindow.create_widget">
+<tt class="descname">create_widget</tt><big>(</big><em>parent</em>, <em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_main_window.html#QtMainWindow.create_widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_main_window.QtMainWindow.create_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the underlying widget QMainWindow widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_main_window.QtMainWindow.init_layout">
+<tt class="descname">init_layout</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_main_window.html#QtMainWindow.init_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_main_window.QtMainWindow.init_layout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the layout for the underlying widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_main_window.QtMainWindow.components">
+<tt class="descname">components</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_main_window.html#QtMainWindow.components"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_main_window.QtMainWindow.components" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a dictionary of the main window components.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (dict) &#8211; A dicionary of main window components categorized by their function.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_main_window.QtMainWindow.child_removed">
+<tt class="descname">child_removed</tt><big>(</big><em>child</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_main_window.html#QtMainWindow.child_removed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_main_window.QtMainWindow.child_removed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the child removed event for a QtMainWindow.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_main_window.QtMainWindow.child_added">
+<tt class="descname">child_added</tt><big>(</big><em>child</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_main_window.html#QtMainWindow.child_added"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_main_window.QtMainWindow.child_added" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the child added event for a QtMainWindow.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_main_window.QtMainWindow.set_visible">
+<tt class="descname">set_visible</tt><big>(</big><em>visible</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_main_window.html#QtMainWindow.set_visible"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_main_window.QtMainWindow.set_visible" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the visibility of the underlying control.</p>
+<p>This is an overridden parent class method which keeps track of
+the visible flag set by the Enaml widget.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="wx">
+<h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-55b6e5877399edeeddb0f3ebd44b8fe0edd0b278.png" alt="Inheritance diagram of enaml.wx.wx_main_window.WxMainWindow" usemap="#inheritance9475562265" class="inheritance"/>
+<map id="inheritance9475562265" name="inheritance9475562265">
+<area shape="rect" id="node1" href="enaml.widgets.widget.Widget.html#enaml.wx.wx_widget.WxWidget" title="WxWidget" alt="" coords="131,5,211,30"/>
+<area shape="rect" id="node5" href="enaml.widgets.window.Window.html#enaml.wx.wx_window.WxWindow" title="WxWindow" alt="" coords="259,5,346,30"/>
+<area shape="rect" id="node4" href="#enaml.wx.wx_main_window.WxMainWindow" title="WxMainWindow" alt="" coords="395,5,509,30"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.wx.wx_main_window.WxMainWindow">
+<em class="property">class </em><tt class="descclassname">enaml.wx.wx_main_window.</tt><tt class="descname">WxMainWindow</tt><big>(</big><em>object_id</em>, <em>parent</em>, <em>session</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_main_window.html#WxMainWindow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_main_window.WxMainWindow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.window.Window.html#enaml.wx.wx_window.WxWindow" title="enaml.wx.wx_window.WxWindow"><tt class="xref py py-class docutils literal"><span class="pre">enaml.wx.wx_window.WxWindow</span></tt></a></p>
+<p>A Wx implementation of an Enaml MainWindow.</p>
+<dl class="method">
+<dt id="enaml.wx.wx_main_window.WxMainWindow.create_widget">
+<tt class="descname">create_widget</tt><big>(</big><em>parent</em>, <em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_main_window.html#WxMainWindow.create_widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_main_window.WxMainWindow.create_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the underlying wx.Frame widget and dock manager.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_main_window.WxMainWindow.init_layout">
+<tt class="descname">init_layout</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_main_window.html#WxMainWindow.init_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_main_window.WxMainWindow.init_layout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform the layout initialization for the main window.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_main_window.WxMainWindow.components">
+<tt class="descname">components</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_main_window.html#WxMainWindow.components"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_main_window.WxMainWindow.components" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a dictionary of the main window components.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (dict) &#8211; A dicionary of main window components categorized by their function.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_main_window.WxMainWindow.child_removed">
+<tt class="descname">child_removed</tt><big>(</big><em>child</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_main_window.html#WxMainWindow.child_removed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_main_window.WxMainWindow.child_removed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the child removed event for a WxMainWindow.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_main_window.WxMainWindow.child_added">
+<tt class="descname">child_added</tt><big>(</big><em>child</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_main_window.html#WxMainWindow.child_added"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_main_window.WxMainWindow.child_added" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the child added event for a WxMainWindow.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.mdi_window.MdiWindow.html" title="MdiWindow"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.web_view.WebView.html" title="WebView"
+             >previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" >Widgets</a> &raquo;</li>
+  
+    <li><a href="#">MainWindow</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Dec 13, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

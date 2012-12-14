@@ -1,0 +1,7 @@
+<map id="inheritance7b36ec93a9" name="inheritance7b36ec93a9">
+<area shape="rect" id="node1" href="enaml.widgets.abstract_button.AbstractButton.html#enaml.qt.qt_abstract_button.QtAbstractButton" title="QtAbstractButton" alt="" coords="514,4,623,28"/>
+<area shape="rect" id="node6" href="#enaml.qt.qt_radio_button.QtRadioButton" title="QtRadioButton" alt="" coords="668,4,762,28"/>
+<area shape="rect" id="node2" href="enaml.widgets.control.Control.html#enaml.qt.qt_control.QtControl" title="QtControl" alt="" coords="399,4,469,28"/>
+<area shape="rect" id="node4" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.qt.qt_constraints_widget.QtConstraintsWidget" title="QtConstraintsWidget" alt="" coords="227,4,355,28"/>
+<area shape="rect" id="node8" href="enaml.widgets.widget.Widget.html#enaml.qt.qt_widget.QtWidget" title="QtWidget" alt="" coords="115,4,183,28"/>
+</map>

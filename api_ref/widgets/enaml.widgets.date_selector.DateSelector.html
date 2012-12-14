@@ -1,0 +1,444 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>DateSelector &mdash; enaml 0.6.3 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.6.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.6.3 documentation" href="../../index.html" />
+    <link rel="up" title="Widgets" href="../enaml.widgets.html" />
+    <link rel="next" title="DatetimeSelector" href="enaml.widgets.datetime_selector.DatetimeSelector.html" />
+    <link rel="prev" title="ComboBox" href="enaml.widgets.combo_box.ComboBox.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.datetime_selector.DatetimeSelector.html" title="DatetimeSelector"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.combo_box.ComboBox.html" title="ComboBox"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" accesskey="U">Widgets</a> &raquo;</li>
+  
+    <li><a href="#">DateSelector</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">DateSelector</a><ul>
+<li><a class="reference internal" href="#backends">Backends</a><ul>
+<li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/api_ref/widgets/enaml.widgets.date_selector.DateSelector.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="dateselector">
+<h1>DateSelector<a class="headerlink" href="#dateselector" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="enaml.widgets.date_selector.DateSelector">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.date_selector.</tt><tt class="descname">DateSelector</tt><big>(</big><em>parent=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/date_selector.html#DateSelector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.date_selector.DateSelector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.bounded_date.BoundedDate.html#enaml.widgets.bounded_date.BoundedDate" title="enaml.widgets.bounded_date.BoundedDate"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.bounded_date.BoundedDate</span></tt></a></p>
+<p>A widget to edit a Python datetime.date object.</p>
+<p>A DateSelector displays a Python datetime.date using an appropriate
+toolkit specific control. This is a geometrically smaller control
+than what is provided by Calendar.</p>
+<dl class="attribute">
+<dt id="enaml.widgets.date_selector.DateSelector.date_format">
+<tt class="descname">date_format</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.date_selector.DateSelector.date_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>A python date format string to format the date for display. If
+If none is supplied (or is invalid) the system locale setting
+is used. This may not be supported by all backends.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.date_selector.DateSelector.calendar_popup">
+<tt class="descname">calendar_popup</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.date_selector.DateSelector.calendar_popup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether to use a calendar popup for selecting the date.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.date_selector.DateSelector.hug_width">
+<tt class="descname">hug_width</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.date_selector.DateSelector.hug_width" title="Permalink to this definition">¶</a></dt>
+<dd><p>How strongly to hugs the content width. A DateSelector ignores
+the width hug by default, so it expands freely in width.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.date_selector.DateSelector.snapshot">
+<tt class="descname">snapshot</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/date_selector.html#DateSelector.snapshot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.date_selector.DateSelector.snapshot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a dictionary which contains all the state necessary to
+initialize a client widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.date_selector.DateSelector.bind">
+<tt class="descname">bind</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/date_selector.html#DateSelector.bind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.date_selector.DateSelector.bind" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method called after initialization which allows the widget
+to bind any event handlers necessary.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.date_selector.DateSelector.__implements__">
+<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.widgets.date_selector.DateSelector.__implements__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="backends">
+<h2>Backends<a class="headerlink" href="#backends" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="qt">
+<h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-aeae93255da4b1451781604c25803f0faba145e8.png" alt="Inheritance diagram of enaml.qt.qt_date_selector.QtDateSelector" usemap="#inheritancedea8e1583b" class="inheritance"/>
+<map id="inheritancedea8e1583b" name="inheritancedea8e1583b">
+<area shape="rect" id="node1" href="enaml.widgets.bounded_date.BoundedDate.html#enaml.qt.qt_bounded_date.QtBoundedDate" title="QtBoundedDate" alt="" coords="516,4,618,28"/>
+<area shape="rect" id="node10" href="#enaml.qt.qt_date_selector.QtDateSelector" title="QtDateSelector" alt="" coords="663,4,762,28"/>
+<area shape="rect" id="node2" href="enaml.widgets.control.Control.html#enaml.qt.qt_control.QtControl" title="QtControl" alt="" coords="401,4,470,28"/>
+<area shape="rect" id="node4" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.qt.qt_constraints_widget.QtConstraintsWidget" title="QtConstraintsWidget" alt="" coords="228,4,356,28"/>
+<area shape="rect" id="node6" href="enaml.widgets.widget.Widget.html#enaml.qt.qt_widget.QtWidget" title="QtWidget" alt="" coords="115,4,184,28"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.qt.qt_date_selector.QtDateSelector">
+<em class="property">class </em><tt class="descclassname">enaml.qt.qt_date_selector.</tt><tt class="descname">QtDateSelector</tt><big>(</big><em>object_id</em>, <em>parent</em>, <em>session</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_date_selector.html#QtDateSelector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_date_selector.QtDateSelector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.bounded_date.BoundedDate.html#enaml.qt.qt_bounded_date.QtBoundedDate" title="enaml.qt.qt_bounded_date.QtBoundedDate"><tt class="xref py py-class docutils literal"><span class="pre">enaml.qt.qt_bounded_date.QtBoundedDate</span></tt></a></p>
+<p>A Qt implementation of an Enaml DateSelector.</p>
+<dl class="method">
+<dt id="enaml.qt.qt_date_selector.QtDateSelector.create_widget">
+<tt class="descname">create_widget</tt><big>(</big><em>parent</em>, <em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_date_selector.html#QtDateSelector.create_widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_date_selector.QtDateSelector.create_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the underlying QDateEdit widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_date_selector.QtDateSelector.create">
+<tt class="descname">create</tt><big>(</big><em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_date_selector.html#QtDateSelector.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_date_selector.QtDateSelector.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create and initialize the underlying widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_date_selector.QtDateSelector.on_action_set_date_format">
+<tt class="descname">on_action_set_date_format</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_date_selector.html#QtDateSelector.on_action_set_date_format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_date_selector.QtDateSelector.on_action_set_date_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_date_format&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_date_selector.QtDateSelector.on_action_set_calendar_popup">
+<tt class="descname">on_action_set_calendar_popup</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_date_selector.html#QtDateSelector.on_action_set_calendar_popup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_date_selector.QtDateSelector.on_action_set_calendar_popup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_calendar_popup&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_date_selector.QtDateSelector.get_date">
+<tt class="descname">get_date</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_date_selector.html#QtDateSelector.get_date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_date_selector.QtDateSelector.get_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the current date in the control.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (QDate) &#8211; The current control date as a QDate object.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_date_selector.QtDateSelector.set_date">
+<tt class="descname">set_date</tt><big>(</big><em>date</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_date_selector.html#QtDateSelector.set_date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_date_selector.QtDateSelector.set_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the widget&#8217;s current date.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>date</strong> (<em>QDate</em>) &#8211; The QDate object to use for setting the date.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_date_selector.QtDateSelector.set_max_date">
+<tt class="descname">set_max_date</tt><big>(</big><em>date</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_date_selector.html#QtDateSelector.set_max_date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_date_selector.QtDateSelector.set_max_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the widget&#8217;s maximum date.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>date</strong> (<em>QDate</em>) &#8211; The QDate object to use for setting the maximum date.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_date_selector.QtDateSelector.set_min_date">
+<tt class="descname">set_min_date</tt><big>(</big><em>date</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_date_selector.html#QtDateSelector.set_min_date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_date_selector.QtDateSelector.set_min_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the widget&#8217;s minimum date.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>date</strong> (<em>QDate</em>) &#8211; The QDate object to use for setting the minimum date.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_date_selector.QtDateSelector.set_date_format">
+<tt class="descname">set_date_format</tt><big>(</big><em>date_format</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_date_selector.html#QtDateSelector.set_date_format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_date_selector.QtDateSelector.set_date_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the widget&#8217;s date format.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>date_format</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; A Python time formatting string.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_date_selector.QtDateSelector.set_calendar_popup">
+<tt class="descname">set_calendar_popup</tt><big>(</big><em>popup</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_date_selector.html#QtDateSelector.set_calendar_popup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_date_selector.QtDateSelector.set_calendar_popup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set whether a calendar popup is available on the widget.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>popup</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; Whether the calendar popup is enabled.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="wx">
+<h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-dcba2d0b95064d4f7e52eb5ebb6bc9a8b6c1a8c6.png" alt="Inheritance diagram of enaml.wx.wx_date_selector.WxDateSelector" usemap="#inheritance6cb5728571" class="inheritance"/>
+<map id="inheritance6cb5728571" name="inheritance6cb5728571">
+<area shape="rect" id="node1" href="#enaml.wx.wx_date_selector.WxDateSelector" title="WxDateSelector" alt="" coords="662,4,763,27"/>
+<area shape="rect" id="node2" href="enaml.widgets.bounded_date.BoundedDate.html#enaml.wx.wx_bounded_date.WxBoundedDate" title="WxBoundedDate" alt="" coords="517,4,619,27"/>
+<area shape="rect" id="node4" href="enaml.widgets.control.Control.html#enaml.wx.wx_control.WxControl" title="WxControl" alt="" coords="401,4,473,27"/>
+<area shape="rect" id="node6" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.wx.wx_constraints_widget.WxConstraintsWidget" title="WxConstraintsWidget" alt="" coords="230,4,358,27"/>
+<area shape="rect" id="node8" href="enaml.widgets.widget.Widget.html#enaml.wx.wx_widget.WxWidget" title="WxWidget" alt="" coords="116,4,187,27"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.wx.wx_date_selector.WxDateSelector">
+<em class="property">class </em><tt class="descclassname">enaml.wx.wx_date_selector.</tt><tt class="descname">WxDateSelector</tt><big>(</big><em>object_id</em>, <em>parent</em>, <em>session</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_date_selector.html#WxDateSelector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_date_selector.WxDateSelector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.bounded_date.BoundedDate.html#enaml.wx.wx_bounded_date.WxBoundedDate" title="enaml.wx.wx_bounded_date.WxBoundedDate"><tt class="xref py py-class docutils literal"><span class="pre">enaml.wx.wx_bounded_date.WxBoundedDate</span></tt></a></p>
+<p>A Wx implementation of an Enaml DateSelector.</p>
+<dl class="method">
+<dt id="enaml.wx.wx_date_selector.WxDateSelector.create_widget">
+<tt class="descname">create_widget</tt><big>(</big><em>parent</em>, <em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_date_selector.html#WxDateSelector.create_widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_date_selector.WxDateSelector.create_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the underlying wx.DatePickerCtrl.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_date_selector.WxDateSelector.create">
+<tt class="descname">create</tt><big>(</big><em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_date_selector.html#WxDateSelector.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_date_selector.WxDateSelector.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create and initialize the date selector control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_date_selector.WxDateSelector.on_action_set_date_format">
+<tt class="descname">on_action_set_date_format</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_date_selector.html#WxDateSelector.on_action_set_date_format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_date_selector.WxDateSelector.on_action_set_date_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_date_format&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_date_selector.WxDateSelector.get_date">
+<tt class="descname">get_date</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_date_selector.html#WxDateSelector.get_date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_date_selector.WxDateSelector.get_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the current date in the control.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (wxDateTime) &#8211; The current control date as a wxDateTime object.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_date_selector.WxDateSelector.set_date">
+<tt class="descname">set_date</tt><big>(</big><em>date</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_date_selector.html#WxDateSelector.set_date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_date_selector.WxDateSelector.set_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the widget&#8217;s current date.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>date</strong> (<em>wxDateTime</em>) &#8211; The wxDateTime object to use for setting the date.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_date_selector.WxDateSelector.set_max_date">
+<tt class="descname">set_max_date</tt><big>(</big><em>date</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_date_selector.html#WxDateSelector.set_max_date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_date_selector.WxDateSelector.set_max_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the widget&#8217;s maximum date.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>date</strong> (<em>wxDateTime</em>) &#8211; The wxDateTime object to use for setting the maximum date.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_date_selector.WxDateSelector.set_min_date">
+<tt class="descname">set_min_date</tt><big>(</big><em>date</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_date_selector.html#WxDateSelector.set_min_date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_date_selector.WxDateSelector.set_min_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the widget&#8217;s minimum date.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>date</strong> (<em>wxDateTime</em>) &#8211; The wxDateTime object to use for setting the minimum date.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_date_selector.WxDateSelector.set_date_format">
+<tt class="descname">set_date_format</tt><big>(</big><em>date_format</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_date_selector.html#WxDateSelector.set_date_format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_date_selector.WxDateSelector.set_date_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the widget&#8217;s date format.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>date_format</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; A Python time formatting string.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Changing the format on wx is not supported.
+See <a class="reference external" href="http://trac.wxwidgets.org/ticket/10988">http://trac.wxwidgets.org/ticket/10988</a></p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.datetime_selector.DatetimeSelector.html" title="DatetimeSelector"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.combo_box.ComboBox.html" title="ComboBox"
+             >previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" >Widgets</a> &raquo;</li>
+  
+    <li><a href="#">DateSelector</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Dec 13, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

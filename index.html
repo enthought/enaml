@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Welcome to Enaml’s documentation! &mdash; enaml 0.2alpha documentation</title>
+    <title>Welcome to Enaml’s documentation! &mdash; enaml 0.6.3 documentation</title>
     
     <link rel="stylesheet" href="_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.2alpha',
+        VERSION:     '0.6.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="shortcut icon" href="_static/et.ico"/>
-    <link rel="top" title="enaml 0.2alpha documentation" href="#" />
+    <link rel="top" title="enaml 0.6.3 documentation" href="#" />
     <link rel="next" title="Enaml Getting Started Guide and Tutorials" href="instructional/index.html" /> 
   </head>
   <body>
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="instructional/index.html" title="Enaml Getting Started Guide and Tutorials"
              accesskey="N">next</a> |</li>
-        <li><a href="#">enaml 0.2alpha documentation</a> &raquo;</li>
+        <li><a href="#">enaml 0.6.3 documentation</a> &raquo;</li>
   
 
       </ul>
@@ -84,49 +84,47 @@
             
   <div class="section" id="welcome-to-enaml-s-documentation">
 <h1>Welcome to Enaml&#8217;s documentation!<a class="headerlink" href="#welcome-to-enaml-s-documentation" title="Permalink to this headline">¶</a></h1>
-<p><strong>E</strong>naml is <strong>N</strong>ot <strong>A</strong> <strong>M</strong>arkup <strong>L</strong>anguage. Enaml is a tool for
-building <em>durable visual layers that hold up well under heavy use</em>. It is a
-declarative language based on Python, analogous to Qt&#8217;s QML, that makes
-development of GUI&#8217;s for Python both easy and effective. Enaml currently
-supports wxWidgets as a backend via wxPython, and Qt as a backend via PySide
-and PyQt4. However, it is not tied to a single widget toolkit.</p>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">Enaml is currently under heavy development and the
-documentation is not always up-to-date. Please recompile in order to
-have the latest changes from the source code.</p>
-</div>
+<p><strong>E</strong>naml is <strong>N</strong>ot <strong>A</strong> <strong>M</strong>arkup <strong>L</strong>anguage. Enaml is a library for
+creating professional quality user interfaces with minimal effort. Enaml combines
+a domain specific declarative language with a constraints based layout system to
+allow users to easily define rich UIs with complex and flexible layouts. Enaml
+applications can transparently run on multiple backends (Qt and Wx) and on
+multiple operating systems (Windows, OSX, Linux).</p>
+<p>Other great Enaml features include</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>Declarative UI specification langauge that is a strict superset of Python</li>
+<li>Architecture design which encourages Model View separation</li>
+<li>Subscription based operators which allow state and events to freely flow between models and views</li>
+<li>Ability to easily subclass widgets to override functionality of builtin widgets</li>
+<li>Support for custom UI widgets</li>
+<li>Class based widget design encourages re-use of UI code</li>
+<li>Well documented code base that is easy to understand</li>
+</ol>
+</div></blockquote>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="instructional/index.html">Getting Started Guide &amp; Tutorials</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="instructional/overview.html">Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="instructional/tutorials_home.html">Tutorials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="instructional/tutorials_home.html">Enaml Tutorials</a></li>
 <li class="toctree-l2"><a class="reference internal" href="instructional/example.html">Examples</a></li>
 <li class="toctree-l2"><a class="reference internal" href="instructional/faq.html">Help and Troubleshooting</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="tech_ref/index.html">Technical Reference</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="tech_ref/enaml_file.html">.enaml Files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tech_ref/grammar_ref.html">Grammar Reference</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="architecture/index.html">Architecture Reference</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="architecture/architecture.html">Design and Architecture</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api_ref/index.html">API Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="api_ref/enaml.html"> Base</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api_ref/enaml.core.html"> Core</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_ref/enaml.parsing.html"> Parsing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_ref/enaml.styling.html"> Styling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_ref/enaml.stdlib.html"> Stdlib</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api_ref/enaml.widgets.html"> Widgets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_ref/enaml.item_models.html"> Item Models</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_ref/enaml.util.html"> Utility</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="developer_guide/index.html">Developer&#8217;s Guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="developer_guide/developers_corner.html">Developer&#8217;s corner</a></li>
-<li class="toctree-l2"><a class="reference internal" href="developer_guide/enaml.tests.html">Testing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tech_ref/index.html">Technical Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tech_ref/enaml_file.html">.enaml Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tech_ref/grammar_ref.html">Grammar Reference</a></li>
 </ul>
 </li>
 </ul>
@@ -154,14 +152,14 @@ have the latest changes from the source code.</p>
         <li class="right" >
           <a href="instructional/index.html" title="Enaml Getting Started Guide and Tutorials"
              >next</a> |</li>
-        <li><a href="#">enaml 0.2alpha documentation</a> &raquo;</li>
+        <li><a href="#">enaml 0.6.3 documentation</a> &raquo;</li>
   
 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jun 12, 2012.
+      Last updated on Dec 13, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

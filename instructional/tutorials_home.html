@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Enaml Tutorials &mdash; enaml 0.2alpha documentation</title>
+    <title>Enaml Tutorials &mdash; enaml 0.6.3 documentation</title>
     
     <link rel="stylesheet" href="../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2alpha',
+        VERSION:     '0.6.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2alpha documentation" href="../index.html" />
+    <link rel="top" title="enaml 0.6.3 documentation" href="../index.html" />
     <link rel="up" title="Enaml Getting Started Guide and Tutorials" href="index.html" />
     <link rel="next" title="“Hello World” tutorial" href="tut_hello_world.html" />
     <link rel="prev" title="Overview" href="overview.html" /> 
@@ -51,7 +51,7 @@
         <li class="right" >
           <a href="overview.html" title="Overview"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
   
     <li><a href="#">Enaml Tutorials</a></li>
@@ -102,7 +102,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="tut_person.html">Building basic GUI&#8217;s - &#8220;John Doe&#8221;</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="tut_person.html#enaml-imports">Enaml Imports</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tut_person.html#personform-definitions-block"><tt class="docutils literal"><span class="pre">PersonForm</span></tt> Definitions Block</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tut_person.html#personform-definition-block"><tt class="docutils literal"><span class="pre">PersonForm</span></tt> Definition Block</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tut_person.html#built-in-components">Built-in Components</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tut_person.html#delegation-operator">Delegation Operator :=</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tut_person.html#standard-library-of-derived-components">Standard Library of Derived Components</a></li>
@@ -110,20 +110,11 @@
 <li class="toctree-l2"><a class="reference internal" href="tut_person.html#hooking-up-an-enaml-view-to-a-traits-object">Hooking up an Enaml View to a Traits Object</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="tut_more_widgets.html">More about widgets and components - &#8220;Progress&#8221;</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="tut_more_widgets.html#python-code-in-enaml-files">Python Code in Enaml Files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tut_more_widgets.html#id-tags"><tt class="docutils literal"><span class="pre">id</span></tt> Tags</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tut_more_widgets.html#subscription-operator">Subscription Operator <tt class="docutils literal"><span class="pre">&lt;&lt;</span></tt></a></li>
-<li class="toctree-l2"><a class="reference internal" href="tut_more_widgets.html#notification-operators-and">Notification Operators <tt class="docutils literal"><span class="pre">::</span></tt> and <tt class="docutils literal"><span class="pre">&gt;&gt;</span></tt></a></li>
-<li class="toctree-l2"><a class="reference internal" href="tut_more_widgets.html#constraints">Constraints</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="tut_even_more_widgets.html">Even more widget goodness</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="tut_even_more_widgets.html#building-views-from-parts">Building Views From Parts</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tut_even_more_widgets.html#custom-validators">Custom Validators</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tut_even_more_widgets.html#visibility-of-widgets-and-constraints">Visibility of Widgets and Constraints</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tut_even_more_widgets.html#more-constraints">More Constraints</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tut_even_more_widgets.html#other-things-to-note">Other Things to Note</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tut_employee.html">More complex GUI with constraints - &#8220;Employee&#8221;</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tut_employee.html#employeeform-definition-block"><tt class="docutils literal"><span class="pre">EmployeeForm</span></tt> Definition block</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tut_employee.html#using-validation-on-fields">Using validation on fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tut_employee.html#dynamic-interaction-with-widgets">Dynamic interaction with widgets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tut_employee.html#customizing-your-layout">Customizing your layout</a></li>
 </ul>
 </li>
 </ul>
@@ -154,7 +145,7 @@
         <li class="right" >
           <a href="overview.html" title="Overview"
              >previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
   
     <li><a href="#">Enaml Tutorials</a></li>
@@ -164,7 +155,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jun 12, 2012.
+      Last updated on Dec 13, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

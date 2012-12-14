@@ -1,0 +1,240 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.core.include &mdash; enaml 0.6.3 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.6.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.6.3 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.core.include</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.core.include</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2012, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Instance</span><span class="p">,</span> <span class="n">Bool</span>
+
+<span class="kn">from</span> <span class="nn">.declarative</span> <span class="kn">import</span> <span class="n">Declarative</span>
+<span class="kn">from</span> <span class="nn">.object</span> <span class="kn">import</span> <span class="n">Object</span><span class="p">,</span> <span class="n">ChildrenEventContext</span>
+
+
+<div class="viewcode-block" id="Include"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.include.Include">[docs]</a><span class="k">class</span> <span class="nc">Include</span><span class="p">(</span><span class="n">Declarative</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; An object which dynamically inserts children into its parent.</span>
+
+<span class="sd">    The `Include` object is used to cleanly and easily insert objects</span>
+<span class="sd">    into the children of its parent. `Object` instances assigned to the</span>
+<span class="sd">    `objects` list of the `Include` will be parented with the parent of</span>
+<span class="sd">    the `Include`. The parent of an `Include` should be an instance of</span>
+<span class="sd">    `Messenger`; if this condition does not hold, the behavior will be</span>
+<span class="sd">    undefined.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#: The list of objects belonging to this Include. Objects in this</span>
+    <span class="c">#: list will be automatically parented with the Include&#39;s parent.</span>
+    <span class="n">objects</span> <span class="o">=</span> <span class="n">List</span><span class="p">(</span><span class="n">Instance</span><span class="p">(</span><span class="n">Object</span><span class="p">))</span>
+
+    <span class="c">#: A boolean flag indicating whether to destroy the old objects that</span>
+    <span class="c">#: are removed from the parent. The default is True.</span>
+    <span class="n">destroy_old</span> <span class="o">=</span> <span class="n">Bool</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Include.init_objects"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.include.Include.init_objects">[docs]</a>    <span class="k">def</span> <span class="nf">init_objects</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A method called by a parent widget to init the Include.</span>
+
+<span class="sd">        This method must be called by objects to initialize the objects</span>
+<span class="sd">        in an Include. It should be called before the parent initializes</span>
+<span class="sd">        its children. This method should never be called by user code.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">insert_children</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">objects</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Include.parent_event"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.include.Include.parent_event">[docs]</a>    <span class="k">def</span> <span class="nf">parent_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle a `ParentEvent` for the Include.</span>
+
+<span class="sd">        If the object state is `active` the current include objects will</span>
+<span class="sd">        be reparented to the new parent.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_active</span><span class="p">:</span>
+            <span class="n">old</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">old</span>
+            <span class="n">new</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">new</span>
+            <span class="k">with</span> <span class="n">ChildrenEventContext</span><span class="p">(</span><span class="n">new</span><span class="p">):</span>
+                <span class="k">with</span> <span class="n">ChildrenEventContext</span><span class="p">(</span><span class="n">old</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">new</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">objects</span><span class="p">:</span>
+                            <span class="n">obj</span><span class="o">.</span><span class="n">set_parent</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">new</span><span class="o">.</span><span class="n">insert_children</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">objects</span><span class="p">)</span>
+</div>
+    <span class="k">def</span> <span class="nf">_objects_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A change handler for the `objects` list of the Include.</span>
+
+<span class="sd">        If the object state is &#39;active&#39; objects which are removed will</span>
+<span class="sd">        be unparented and objects which are added will be reparented.</span>
+<span class="sd">        Old objects will be destroyed if the `destroy_old` flag is set</span>
+<span class="sd">        to True.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_active</span><span class="p">:</span>
+            <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span>
+            <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">ChildrenEventContext</span><span class="p">(</span><span class="n">parent</span><span class="p">):</span>
+                    <span class="n">new_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">new</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">destroy_old</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">old</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">obj</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">new_set</span><span class="p">:</span>
+                                <span class="n">obj</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">old</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">obj</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">new_set</span><span class="p">:</span>
+                                <span class="n">obj</span><span class="o">.</span><span class="n">set_parent</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">new_set</span><span class="p">:</span>
+                        <span class="n">parent</span><span class="o">.</span><span class="n">insert_children</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">objects</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_activate_objects</span><span class="p">(</span><span class="n">new_set</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_objects_items_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the `objects` list changing in-place.</span>
+
+<span class="sd">        If the object state is &#39;active&#39; objects which are removed will</span>
+<span class="sd">        be unparented and objects which are added will be reparented.</span>
+<span class="sd">        Old objects will be destroyed if the `destroy_old` flag is set</span>
+<span class="sd">        to True.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_active</span><span class="p">:</span>
+            <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span>
+            <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">ChildrenEventContext</span><span class="p">(</span><span class="n">parent</span><span class="p">):</span>
+                    <span class="n">add_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">added</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">destroy_old</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">event</span><span class="o">.</span><span class="n">removed</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">obj</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">add_set</span><span class="p">:</span>
+                                <span class="n">obj</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">event</span><span class="o">.</span><span class="n">removed</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">obj</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">add_set</span><span class="p">:</span>
+                                <span class="n">obj</span><span class="o">.</span><span class="n">set_parent</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">add_set</span><span class="p">:</span>
+                        <span class="n">parent</span><span class="o">.</span><span class="n">insert_children</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">objects</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_activate_objects</span><span class="p">(</span><span class="n">add_set</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_activate_objects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">objects</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize and activate the given objects.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        objects : iterable</span>
+<span class="sd">            An iterable of objects which should be initialized and</span>
+<span class="sd">            activated. Objects which are already active are ignored.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">objects</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">is_inactive</span><span class="p">:</span>
+                <span class="n">obj</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+        <span class="n">session</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span>
+        <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">objects</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">is_initialized</span><span class="p">:</span>
+                <span class="n">obj</span><span class="o">.</span><span class="n">activate</span><span class="p">(</span><span class="n">session</span><span class="p">)</span>
+</pre></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.core.include</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Dec 13, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

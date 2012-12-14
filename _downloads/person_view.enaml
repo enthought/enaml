@@ -2,6 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from enaml.widgets.api import Window, Label, Field, Form
 from enaml.stdlib.fields import IntField
 
 
@@ -10,19 +11,20 @@ enamldef PersonForm(Form):
     Label:
         text = 'First Name'
     Field:
-        value := person.first_name
+        text := person.first_name
     Label:
         text = 'Last Name'
     Field:
-        value := person.last_name
+        text := person.last_name
     Label:
         text = 'Age'
     IntField:
-        value := person.age 
+        minimum = 0
+        value := person.age
 
 
-enamldef PersonView(MainWindow):
+enamldef PersonView(Window):
     attr person
     PersonForm:
-        person = parent.person
-            
+        person := parent.person
+

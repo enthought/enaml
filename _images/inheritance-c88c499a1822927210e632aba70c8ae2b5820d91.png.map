@@ -1,6 +1,0 @@
-<map id="inheritance2eedbd750c" name="inheritance2eedbd750c">
-<area shape="rect" id="node1" href="enaml.components.constraints_widget.ConstraintsWidget.html#enaml.backends.wx.wx_constraints_widget.WXConstraintsWidget" title="WXConstraintsWidget" alt="" coords="560,4,671,24"/>
-<area shape="rect" id="node13" href="#enaml.backends.wx.wx_splitter.WXSplitter" title="WXSplitter" alt="" coords="704,22,764,42"/>
-<area shape="rect" id="node2" href="enaml.components.widget_component.WidgetComponent.html#enaml.backends.wx.wx_widget_component.WXWidgetComponent" title="WXWidgetComponent" alt="" coords="399,4,510,24"/>
-<area shape="rect" id="node8" href="enaml.components.base_widget_component.BaseWidgetComponent.html#enaml.backends.wx.wx_base_widget_component.WXBaseWidgetComponent" title="WXBaseWidgetComponent" alt="" coords="210,4,341,24"/>
-</map>

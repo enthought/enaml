@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Examples Gallery &mdash; enaml 0.2alpha documentation</title>
+    <title>Examples Gallery &mdash; enaml 0.6.3 documentation</title>
     
     <link rel="stylesheet" href="../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2alpha',
+        VERSION:     '0.6.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,10 +27,10 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2alpha documentation" href="../index.html" />
+    <link rel="top" title="enaml 0.6.3 documentation" href="../index.html" />
     <link rel="up" title="Enaml Getting Started Guide and Tutorials" href="index.html" />
     <link rel="next" title="Hello World Example" href="ex_hello_world.html" />
-    <link rel="prev" title="More on Enaml Widgets" href="tut_even_more_widgets.html" /> 
+    <link rel="prev" title="Mary Sue tutorial" href="tut_employee.html" /> 
   </head>
   <body>
     <div class="related">
@@ -49,9 +49,9 @@
           <a href="ex_hello_world.html" title="Hello World Example"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="tut_even_more_widgets.html" title="More on Enaml Widgets"
+          <a href="tut_employee.html" title="Mary Sue tutorial"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
   
     <li><a href="#">Examples Gallery</a></li>
@@ -70,22 +70,10 @@
 <li><a class="reference internal" href="#tutorial-examples">Tutorial Examples</a><ul>
 </ul>
 </li>
-<li><a class="reference internal" href="#component-examples">Component Examples</a><ul>
+<li><a class="reference internal" href="#widget-examples">Widget Examples</a><ul>
 </ul>
 </li>
-<li><a class="reference internal" href="#container-examples">Container Examples</a><ul>
-</ul>
-</li>
-<li><a class="reference internal" href="#constrained-layout-examples">Constrained Layout Examples</a><ul>
-</ul>
-</li>
-<li><a class="reference internal" href="#advanced-examples">Advanced Examples</a><ul>
-</ul>
-</li>
-<li><a class="reference internal" href="#standard-library-examples">Standard Library Examples</a><ul>
-</ul>
-</li>
-<li><a class="reference internal" href="#chaco-plot-examples">Chaco Plot Examples</a><ul>
+<li><a class="reference internal" href="#layout-examples">Layout Examples</a><ul>
 </ul>
 </li>
 </ul>
@@ -127,69 +115,51 @@
 <li class="toctree-l1"><a class="reference internal" href="ex_hello_world.html">Hello World Example</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ex_person.html">Person Example</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ex_employee.html">Employee Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="kitchen_sink.html">Kitchen Sink Example</a></li>
 </ul>
 </div>
 </div>
-<div class="section" id="component-examples">
-<h2>Component Examples<a class="headerlink" href="#component-examples" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="widget-examples">
+<h2>Widget Examples<a class="headerlink" href="#widget-examples" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="ex_progress_bar.html">Progress Bar Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ex_progress_bar_timer.html">Progress Bar Timer Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ex_simple_tables.html">Simple Tables Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ex_buttons.html">Buttons Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ex_dock_pane.html">DockPane Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ex_form.html">Form Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ex_group_box.html">GroupBox Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ex_main_window.html">MainWindow Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ex_menu_bar.html">MenuBar Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ex_notebook.html">Notebook Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ex_progress_bar.html">ProgressBar Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ex_scroll_area.html">ScrollArea Example</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ex_slider.html">Slider Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ex_spin_box.html">Spin Box Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ex_spin_box.html">SpinBox Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ex_splitter.html">Splitter Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ex_tool_bar.html">ToolBar Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ex_window.html">Window Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ex_window_children.html">WindowChildren Example</a></li>
 </ul>
 </div>
 </div>
-<div class="section" id="container-examples">
-<h2>Container Examples<a class="headerlink" href="#container-examples" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="layout-examples">
+<h2>Layout Examples<a class="headerlink" href="#layout-examples" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="ex_dialog.html">Dialog Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ex_forms.html">Forms Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ex_group_box.html">Group Box Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ex_scroll_area.html">Scroll Area Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ex_splitter.html">Area Splitter Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ex_tabbed.html">Tabbed Container Example</a></li>
-</ul>
-</div>
-</div>
-<div class="section" id="constrained-layout-examples">
-<h2>Constrained Layout Examples<a class="headerlink" href="#constrained-layout-examples" title="Permalink to this headline">¶</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="ex_boxes.html">Constrained Boxes Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ex_constrained.html">Constrained Layout Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ex_find_replace.html">Find Replace Example (Variable-width Buttons Aligned)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ex_nested.html">Nested Containers Example</a></li>
-</ul>
-</div>
-</div>
-<div class="section" id="advanced-examples">
-<h2>Advanced Examples<a class="headerlink" href="#advanced-examples" title="Permalink to this headline">¶</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="ex_multi_scroll_area.html">Multiple Scrolling Areas Example</a></li>
-</ul>
-</div>
-</div>
-<div class="section" id="standard-library-examples">
-<h2>Standard Library Examples<a class="headerlink" href="#standard-library-examples" title="Permalink to this headline">¶</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="ex_radio_group.html">Radio Button Group Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ex_stacked.html">Stacked Forms Example</a></li>
-</ul>
-</div>
-</div>
-<div class="section" id="chaco-plot-examples">
-<h2>Chaco Plot Examples<a class="headerlink" href="#chaco-plot-examples" title="Permalink to this headline">¶</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="ex_sine_plot.html">Chaco Sine Plot Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ex_lotka_volterra.html">Chaco Lotka-Volterra Population Model Plot Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ex_align.html">Align Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ex_align_offset.html">AlignOffset Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ex_hbox.html">Hbox Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ex_hbox_equal_widths.html">HboxEqualWidths Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ex_hbox_spacing.html">HboxSpacing Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ex_horizontal.html">Horizontal Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ex_linear_relations.html">LinearRelations Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ex_vbox.html">Vbox Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ex_vertical.html">Vertical Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ex_button_ring.html">ButtonRing Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ex_find_replace.html">FindReplace Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ex_fluid.html">Fluid Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ex_manual_hbox.html">ManualHbox Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ex_manual_vbox.html">ManualVbox Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ex_nested_boxes.html">NestedBoxes Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ex_nested_containers.html">NestedContainers Example</a></li>
 </ul>
 </div>
 </div>
@@ -217,9 +187,9 @@
           <a href="ex_hello_world.html" title="Hello World Example"
              >next</a> |</li>
         <li class="right" >
-          <a href="tut_even_more_widgets.html" title="More on Enaml Widgets"
+          <a href="tut_employee.html" title="Mary Sue tutorial"
              >previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
   
     <li><a href="#">Examples Gallery</a></li>
@@ -229,7 +199,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jun 12, 2012.
+      Last updated on Dec 13, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

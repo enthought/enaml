@@ -1,0 +1,238 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.qt.qt_bounded_time &mdash; enaml 0.6.3 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.6.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.6.3 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.qt.qt_bounded_time</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.qt.qt_bounded_time</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2012, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">.qt.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span><span class="p">,</span> <span class="n">QTime</span>
+<span class="kn">from</span> <span class="nn">.qt_control</span> <span class="kn">import</span> <span class="n">QtControl</span>
+
+
+<span class="k">def</span> <span class="nf">as_qtime</span><span class="p">(</span><span class="n">iso_time</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Convert an iso time string to a QTime.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">QTime</span><span class="o">.</span><span class="n">fromString</span><span class="p">(</span><span class="n">iso_time</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ISODate</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">as_iso_time</span><span class="p">(</span><span class="n">qtime</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Convert a QTime object into and iso time string.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">qtime</span><span class="o">.</span><span class="n">toString</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">ISODate</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="QtBoundedTime"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.bounded_time.BoundedTime.html#enaml.qt.qt_bounded_time.QtBoundedTime">[docs]</a><span class="k">class</span> <span class="nc">QtBoundedTime</span><span class="p">(</span><span class="n">QtControl</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A base class for implementing Qt-Enaml time widgets.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Setup Methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="QtBoundedTime.create"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.bounded_time.BoundedTime.html#enaml.qt.qt_bounded_time.QtBoundedTime.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tree</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Create and initialize the underyling time widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">QtBoundedTime</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_min_time</span><span class="p">(</span><span class="n">as_qtime</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="s">&#39;minimum&#39;</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_max_time</span><span class="p">(</span><span class="n">as_qtime</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="s">&#39;maximum&#39;</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_time</span><span class="p">(</span><span class="n">as_qtime</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="s">&#39;time&#39;</span><span class="p">]))</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Message Handlers</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="QtBoundedTime.on_action_set_time"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.bounded_time.BoundedTime.html#enaml.qt.qt_bounded_time.QtBoundedTime.on_action_set_time">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_set_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;set_time&#39; action from the Enaml widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_time</span><span class="p">(</span><span class="n">as_qtime</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s">&#39;time&#39;</span><span class="p">]))</span>
+</div>
+<div class="viewcode-block" id="QtBoundedTime.on_action_set_minimum"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.bounded_time.BoundedTime.html#enaml.qt.qt_bounded_time.QtBoundedTime.on_action_set_minimum">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_set_minimum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;set_minimum&#39; action from the Enaml widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_min_time</span><span class="p">(</span><span class="n">as_qtime</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s">&#39;minimum&#39;</span><span class="p">]))</span>
+</div>
+<div class="viewcode-block" id="QtBoundedTime.on_action_set_maximum"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.bounded_time.BoundedTime.html#enaml.qt.qt_bounded_time.QtBoundedTime.on_action_set_maximum">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_set_maximum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;set_maximum&#39; action from the Enaml widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_max_time</span><span class="p">(</span><span class="n">as_qtime</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s">&#39;maximum&#39;</span><span class="p">]))</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Signal Handlers</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="QtBoundedTime.on_time_changed"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.bounded_time.BoundedTime.html#enaml.qt.qt_bounded_time.QtBoundedTime.on_time_changed">[docs]</a>    <span class="k">def</span> <span class="nf">on_time_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A signal handler to connect to the time changed signal of</span>
+<span class="sd">        the underlying widget.</span>
+
+<span class="sd">        This will convert the QTime to iso format and send the Enaml</span>
+<span class="sd">        widget the &#39;time_changed&#39; action.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s">&#39;time&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loopback_guard</span><span class="p">:</span>
+            <span class="n">qtime</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_time</span><span class="p">()</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;time&#39;</span><span class="p">:</span> <span class="n">as_iso_time</span><span class="p">(</span><span class="n">qtime</span><span class="p">)}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">send_action</span><span class="p">(</span><span class="s">&#39;time_changed&#39;</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Abstract Methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="QtBoundedTime.get_time"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.bounded_time.BoundedTime.html#enaml.qt.qt_bounded_time.QtBoundedTime.get_time">[docs]</a>    <span class="k">def</span> <span class="nf">get_time</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Return the current time in the control.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : QTime</span>
+<span class="sd">            The current control time as a QTime object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+<div class="viewcode-block" id="QtBoundedTime.set_time"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.bounded_time.BoundedTime.html#enaml.qt.qt_bounded_time.QtBoundedTime.set_time">[docs]</a>    <span class="k">def</span> <span class="nf">set_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the widget&#39;s current time.</span>
+
+<span class="sd">        Implementations should enter the loopback guard using the key</span>
+<span class="sd">        &#39;time&#39; before setting the time.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        time : QTime</span>
+<span class="sd">            The QTime object to use for setting the time.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+<div class="viewcode-block" id="QtBoundedTime.set_max_time"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.bounded_time.BoundedTime.html#enaml.qt.qt_bounded_time.QtBoundedTime.set_max_time">[docs]</a>    <span class="k">def</span> <span class="nf">set_max_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the widget&#39;s maximum time.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        time : QTime</span>
+<span class="sd">            The QTime object to use for setting the maximum time.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+<div class="viewcode-block" id="QtBoundedTime.set_min_time"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.bounded_time.BoundedTime.html#enaml.qt.qt_bounded_time.QtBoundedTime.set_min_time">[docs]</a>    <span class="k">def</span> <span class="nf">set_min_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the widget&#39;s minimum time.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        time : QTime</span>
+<span class="sd">            The QTime object to use for setting the minimum time.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.qt.qt_bounded_time</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Dec 13, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

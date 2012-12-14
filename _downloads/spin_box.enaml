@@ -1,61 +1,25 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2011, Enthought, Inc.
+#  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-""" SpinBox example
+""" An example of the `SpinBox` widget.
 
-An demonstration of how to use a spin box to select from a list
-of months.
+This example demonstrates the use of a simple `SpinBox` control which is
+used to select from a discrete range of integer values.
 
 """
-from enaml.validation import AbstractValidator
+from enaml.widgets.api import Window, Form, Label, Field, SpinBox
 
 
-class MonthSpinValidator(AbstractValidator):
-
-    months = ('January', 'February', 'March', 'April', 'May', 'June', 'July', 
-              'August', 'September', 'October', 'November', 'December')
-
-    int_map = dict((i + 1, s) for (i, s) in enumerate(months))
-
-    month_map = dict((value.lower(), key) for (key, value) in int_map.iteritems())
-
-    def validate(self, text):
-        text = text.lower().strip()
-        if text in self.month_map:
-            return self.ACCEPTABLE
-        
-        try:
-            i = int(text)
-        except ValueError:
-            pass
-        else:
-            if i in self.int_map:
-                return self.ACCEPTABLE
-        
-        return self.INTERMEDIATE
-
-    def convert(self, text):
-        text = text.lower().strip()
-        i = self.month_map.get(text)
-        if i is None:
-            i = int(text) 
-        return i
-
-    def format(self, value):
-        s = self.int_map.get(value)
-        if s is None:
-            raise ValueError
-        return s
-
-
-enamldef Main(MainWindow):
-    title = 'SpinBox'
-    Container:
+enamldef Main(Window):
+    title = 'SpinBox Example'
+    Form:
+        Label:
+            text = 'Select Age'
         SpinBox:
-            validator = MonthSpinValidator()
-            low = 1
-            high = 12
-            value :: print 'new value', value
-            wrap = True
-
+            id: sbox 
+            maximum = 100
+            minimum = 0
+        Field:
+            text << u'Age: {}'.format(sbox.value)
+            read_only = True

@@ -1,0 +1,204 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Control &mdash; enaml 0.6.3 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.6.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.6.3 documentation" href="../../index.html" />
+    <link rel="up" title="Widgets" href="../enaml.widgets.html" />
+    <link rel="next" title="AbstractButton" href="enaml.widgets.abstract_button.AbstractButton.html" />
+    <link rel="prev" title="ConstraintsWidget" href="enaml.widgets.constraints_widget.ConstraintsWidget.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.abstract_button.AbstractButton.html" title="AbstractButton"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.constraints_widget.ConstraintsWidget.html" title="ConstraintsWidget"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" accesskey="U">Widgets</a> &raquo;</li>
+  
+    <li><a href="#">Control</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Control</a><ul>
+<li><a class="reference internal" href="#backends">Backends</a><ul>
+<li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/api_ref/widgets/enaml.widgets.control.Control.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="control">
+<h1>Control<a class="headerlink" href="#control" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="enaml.widgets.control.Control">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.control.</tt><tt class="descname">Control</tt><big>(</big><em>parent=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/control.html#Control"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.control.Control" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.widgets.constraints_widget.ConstraintsWidget" title="enaml.widgets.constraints_widget.ConstraintsWidget"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.constraints_widget.ConstraintsWidget</span></tt></a></p>
+<p>A widget which represents a leaf node in the hierarchy.</p>
+<p>A Control is conceptually the same as a ConstraintsWidget, except
+that it does not have widget children. This base class serves as
+a placeholder for potential future functionality.</p>
+<dl class="attribute">
+<dt id="enaml.widgets.control.Control.__implements__">
+<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.widgets.control.Control.__implements__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="backends">
+<h2>Backends<a class="headerlink" href="#backends" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="qt">
+<h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-e6c1e827fbf60281e014c9d533e7cdb2485beff0.png" alt="Inheritance diagram of enaml.qt.qt_control.QtControl" usemap="#inheritance18b9b5eaf9" class="inheritance"/>
+<map id="inheritance18b9b5eaf9" name="inheritance18b9b5eaf9">
+<area shape="rect" id="node1" href="#enaml.qt.qt_control.QtControl" title="QtControl" alt="" coords="435,5,511,30"/>
+<area shape="rect" id="node2" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.qt.qt_constraints_widget.QtConstraintsWidget" title="QtConstraintsWidget" alt="" coords="248,5,387,30"/>
+<area shape="rect" id="node4" href="enaml.widgets.widget.Widget.html#enaml.qt.qt_widget.QtWidget" title="QtWidget" alt="" coords="125,5,200,30"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.qt.qt_control.QtControl">
+<em class="property">class </em><tt class="descclassname">enaml.qt.qt_control.</tt><tt class="descname">QtControl</tt><big>(</big><em>object_id</em>, <em>parent</em>, <em>session</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_control.html#QtControl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_control.QtControl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.qt.qt_constraints_widget.QtConstraintsWidget" title="enaml.qt.qt_constraints_widget.QtConstraintsWidget"><tt class="xref py py-class docutils literal"><span class="pre">enaml.qt.qt_constraints_widget.QtConstraintsWidget</span></tt></a></p>
+<p>A Qt implementation of an Enaml Control.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="wx">
+<h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-6b57193e657c6c4578ea020f26caf508091db5d4.png" alt="Inheritance diagram of enaml.wx.wx_control.WxControl" usemap="#inheritancea378c2db74" class="inheritance"/>
+<map id="inheritancea378c2db74" name="inheritancea378c2db74">
+<area shape="rect" id="node1" href="#enaml.wx.wx_control.WxControl" title="WxControl" alt="" coords="451,5,533,30"/>
+<area shape="rect" id="node2" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.wx.wx_constraints_widget.WxConstraintsWidget" title="WxConstraintsWidget" alt="" coords="259,5,403,30"/>
+<area shape="rect" id="node4" href="enaml.widgets.widget.Widget.html#enaml.wx.wx_widget.WxWidget" title="WxWidget" alt="" coords="131,5,211,30"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.wx.wx_control.WxControl">
+<em class="property">class </em><tt class="descclassname">enaml.wx.wx_control.</tt><tt class="descname">WxControl</tt><big>(</big><em>object_id</em>, <em>parent</em>, <em>session</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_control.html#WxControl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_control.WxControl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.wx.wx_constraints_widget.WxConstraintsWidget" title="enaml.wx.wx_constraints_widget.WxConstraintsWidget"><tt class="xref py py-class docutils literal"><span class="pre">enaml.wx.wx_constraints_widget.WxConstraintsWidget</span></tt></a></p>
+<p>A Wx implementation of an Enaml Control.</p>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.abstract_button.AbstractButton.html" title="AbstractButton"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.constraints_widget.ConstraintsWidget.html" title="ConstraintsWidget"
+             >previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" >Widgets</a> &raquo;</li>
+  
+    <li><a href="#">Control</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Dec 13, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

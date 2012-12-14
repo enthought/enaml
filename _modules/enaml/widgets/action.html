@@ -1,0 +1,216 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.widgets.action &mdash; enaml 0.6.3 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.6.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.6.3 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.widgets.action</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.widgets.action</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2012, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">Unicode</span><span class="p">,</span> <span class="n">Bool</span><span class="p">,</span> <span class="n">Str</span>
+
+<span class="kn">from</span> <span class="nn">enaml.core.messenger</span> <span class="kn">import</span> <span class="n">Messenger</span>
+<span class="kn">from</span> <span class="nn">enaml.core.trait_types</span> <span class="kn">import</span> <span class="n">EnamlEvent</span>
+
+
+<div class="viewcode-block" id="Action"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.action.Action.html#enaml.widgets.action.Action">[docs]</a><span class="k">class</span> <span class="nc">Action</span><span class="p">(</span><span class="n">Messenger</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A non visible widget used in a ToolBar or Menu.</span>
+
+<span class="sd">    An Action represents an actionable item in a ToolBar or a Menu.</span>
+<span class="sd">    Though an Action itself is a non-visible component, it will be</span>
+<span class="sd">    rendered in an appropriate fashion for the location where it is</span>
+<span class="sd">    used.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#: The text label associate with the action.</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">Unicode</span>
+
+    <span class="c">#: The tool tip text to use for this action. Typically displayed</span>
+    <span class="c">#: as a small label when the user hovers over the action.</span>
+    <span class="n">tool_tip</span> <span class="o">=</span> <span class="n">Unicode</span>
+
+    <span class="c">#: The text that is displayed in the status bar when the user</span>
+    <span class="c">#: hovers over the action.</span>
+    <span class="n">status_tip</span> <span class="o">=</span> <span class="n">Unicode</span>
+
+    <span class="c">#: The source url for the icon to use for the Action.</span>
+    <span class="n">icon_source</span> <span class="o">=</span> <span class="n">Str</span>
+
+    <span class="c">#: Whether or not the action can be checked.</span>
+    <span class="n">checkable</span> <span class="o">=</span> <span class="n">Bool</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+
+    <span class="c">#: Whether or not the action is checked. This value only has meaning</span>
+    <span class="c">#: if &#39;checkable&#39; is set to True.</span>
+    <span class="n">checked</span> <span class="o">=</span> <span class="n">Bool</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+
+    <span class="c">#: Whether or not the item representing the action is enabled.</span>
+    <span class="n">enabled</span> <span class="o">=</span> <span class="n">Bool</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="c">#: Whether or not the item representing the action is visible.</span>
+    <span class="n">visible</span> <span class="o">=</span> <span class="n">Bool</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="c">#: Whether or not the action should be treated as a separator. If</span>
+    <span class="c">#: this value is True, none of the other values have meaning.</span>
+    <span class="n">separator</span> <span class="o">=</span> <span class="n">Bool</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+
+    <span class="c">#: An event fired when the action is triggered by user interaction.</span>
+    <span class="n">triggered</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
+
+    <span class="c">#: An event fired when a checkable action changes its checked state.</span>
+    <span class="n">toggled</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Initialization</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="Action.snapshot"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.action.Action.html#enaml.widgets.action.Action.snapshot">[docs]</a>    <span class="k">def</span> <span class="nf">snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the snapshot dict for the Action.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">snap</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">Action</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">snapshot</span><span class="p">()</span>
+        <span class="n">snap</span><span class="p">[</span><span class="s">&#39;text&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span>
+        <span class="n">snap</span><span class="p">[</span><span class="s">&#39;tool_tip&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tool_tip</span>
+        <span class="n">snap</span><span class="p">[</span><span class="s">&#39;status_tip&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">status_tip</span>
+        <span class="n">snap</span><span class="p">[</span><span class="s">&#39;icon_source&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">icon_source</span>
+        <span class="n">snap</span><span class="p">[</span><span class="s">&#39;checkable&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkable</span>
+        <span class="n">snap</span><span class="p">[</span><span class="s">&#39;checked&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">checked</span>
+        <span class="n">snap</span><span class="p">[</span><span class="s">&#39;enabled&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">enabled</span>
+        <span class="n">snap</span><span class="p">[</span><span class="s">&#39;visible&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">visible</span>
+        <span class="n">snap</span><span class="p">[</span><span class="s">&#39;separator&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">separator</span>
+        <span class="k">return</span> <span class="n">snap</span>
+</div>
+<div class="viewcode-block" id="Action.bind"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.action.Action.html#enaml.widgets.action.Action.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Binds the change handlers for the Action.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Action</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">bind</span><span class="p">()</span>
+        <span class="n">attrs</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s">&#39;text&#39;</span><span class="p">,</span> <span class="s">&#39;tool_tip&#39;</span><span class="p">,</span> <span class="s">&#39;status_tip&#39;</span><span class="p">,</span> <span class="s">&#39;icon_source&#39;</span><span class="p">,</span> <span class="s">&#39;checkable&#39;</span><span class="p">,</span>
+            <span class="s">&#39;checked&#39;</span><span class="p">,</span> <span class="s">&#39;enabled&#39;</span><span class="p">,</span> <span class="s">&#39;visible&#39;</span><span class="p">,</span> <span class="s">&#39;separator&#39;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">publish_attributes</span><span class="p">(</span><span class="o">*</span><span class="n">attrs</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Message Handling</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="Action.on_action_triggered"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.action.Action.html#enaml.widgets.action.Action.on_action_triggered">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_triggered</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;triggered&#39; action from the client widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_guarded</span><span class="p">(</span><span class="n">checked</span><span class="o">=</span><span class="n">content</span><span class="p">[</span><span class="s">&#39;checked&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">triggered</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Action.on_action_toggled"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.action.Action.html#enaml.widgets.action.Action.on_action_toggled">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_toggled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;toggled&#39; action from the client widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_guarded</span><span class="p">(</span><span class="n">checked</span><span class="o">=</span><span class="n">content</span><span class="p">[</span><span class="s">&#39;checked&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toggled</span><span class="p">()</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.widgets.action</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Dec 13, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

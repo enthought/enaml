@@ -1,22 +1,27 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2011, Enthought, Inc.
+#  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-""" A find-replace dialog.
+""" An example demonstrating the layout for a find-replace dialog.
 
-To make the buttons look nice, we set weak constraints requesting that 
-the adjacent buttons have the same width after satisfying all of the 
-other constraints. The left border of the Fields should be aligned. The 
-width taken up by the buttons is controlled by the lower row since the 
-PushButton labels "Replace" and "Replace & Find" take up more space than 
-"Find" and "Find Next". The lower row's buttons are not equal widths, 
-because that would take up a bunch of extra space, but the top row's 
+To make the buttons look nice, weak constraints are set requesting that
+the adjacent buttons have the same width after satisfying all of the
+other constraints. The left border of the Fields should be aligned. The
+width taken up by the buttons is controlled by the lower row since the
+PushButton labels "Replace" and "Replace & Find" take up more space than
+"Find" and "Find Next". The lower row's buttons are not equal widths,
+because that would take up a bunch of extra space, but the top row's
 buttons do expand equally to take up the available space.
 
 """
-enamldef Main(MainWindow):
+from enaml.layout.api import hbox, vbox, spacer, align
+from enaml.widgets.api import Window, Container, PushButton, Field
+
+
+enamldef Main(Window):
     title = "Find & Replace"
     Container:
+        hug_height = 'strong'
         constraints = [
             vbox(
                 hbox(find, find_next, find_field),
@@ -45,10 +50,8 @@ enamldef Main(MainWindow):
             text = "Replace"
         PushButton:
             id: replace_and_find
-            # FIXME: On Qt, the double-& is necessary to get a single & in the
-            # label. This is probably related to accelerator keys.
             text = "Replace && Find"
-        Field:  
+        Field:
             id: find_field
         Field:
             id: replace_field

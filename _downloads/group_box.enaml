@@ -1,31 +1,34 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2011, Enthought, Inc.
+#  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-""" Group boxes.
+""" An example of the `GroupBox` widget.
 
-We create two GroupBoxes containing Form layouts. The GroupBoxes have
-informative titles. CheckBoxes on the bottom of the window allow you to 
-toggle the presence of the titles and whether they should be shown in a 
-"flat" style or the default style.
+A `GroupBox` is a simple subclass of `Container` which draws itself with
+an optional bounding box and title.
 
 """
-enamldef Main(MainWindow):
+from enaml.layout.api import vbox, hbox, spacer, align
+from enaml.widgets.api import (
+    Window, Container, GroupBox, Form, Label, Field, CheckBox, ComboBox,
+)
+
+
+enamldef Main(Window):
     title = "Group Boxes"
     Container:
         constraints = [
             vbox(
-                top_box,
-                bottom_box,
-                hbox(spacer, title_check, flat_check),
+                grp_box,
+                hbox(spacer, title_check, flat_check, combo_box),
             ),
-            align('midline', top_form, bottom_form),
+            align('v_center', title_check, flat_check, combo_box),
         ]
         GroupBox:
-            id: top_box
-            title = "Personal Details"
+            id: grp_box
+            title << "Personal Details" if title_check.checked else ""
+            title_align << combo_box.items[combo_box.index]
             Form:
-                id: top_form
                 Label:
                     text = "First name:"
                 Field:
@@ -38,37 +41,16 @@ enamldef Main(MainWindow):
                     text = "Home phone:"
                 Field:
                     pass
-        GroupBox:
-            id: bottom_box
-            title = "Employment Details"
-            Form:
-                id: bottom_form
-                Label:
-                    text = "Employer:"
-                Field:
-                    pass
-                Label:
-                    text = "Office or Desk phone:"
-                Field:
-                    pass
         CheckBox:
             id: title_check
-            text = "Show titles"
+            text = "Show Title"
             checked = True
-            toggled ::
-                if top_box.title:
-                    top_box.title = ""
-                else:
-                    top_box.title = "Personal Details"
-                if bottom_box.title:
-                    bottom_box.title = ""
-                else:
-                    bottom_box.title = "Employment Details"
         CheckBox:
             id: flat_check
             text = "Flat"
-            checked = False
-            toggled ::
-                for box in (top_box, bottom_box):
-                    box.flat = not box.flat
+            checked := grp_box.flat
+        ComboBox:
+            id: combo_box
+            index = 0
+            items = ['left', 'center', 'right']
 

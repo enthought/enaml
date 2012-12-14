@@ -1,0 +1,269 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.stdlib &mdash; enaml 0.6.3 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.6.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../_static/et.ico"/>
+    <link rel="top" title="enaml 0.6.3 documentation" href="../index.html" />
+    <link rel="up" title="Enaml API Reference" href="index.html" />
+    <link rel="next" title="Widgets" href="enaml.widgets.html" />
+    <link rel="prev" title="enaml.core" href="enaml.core.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.html" title="Widgets"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="enaml.core.html" title="enaml.core"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Enaml API Reference</a> &raquo;</li>
+  
+    <li><a href="#">enaml.stdlib</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">enaml.stdlib</a><ul>
+<li><a class="reference internal" href="#fields-module"><tt class="docutils literal"><span class="pre">fields</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-enaml.stdlib.sessions"><tt class="docutils literal"><span class="pre">sessions</span></tt> Module</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/api_ref/enaml.stdlib.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="enaml-stdlib">
+<h1>enaml.stdlib<a class="headerlink" href="#enaml-stdlib" title="Permalink to this headline">¶</a></h1>
+<p>The <tt class="xref py py-mod docutils literal"><span class="pre">enaml.stdlib</span></tt> package contains the standard library built around
+the widgets and core functionnalities.</p>
+<div class="section" id="fields-module">
+<h2><tt class="xref py py-mod docutils literal"><span class="pre">fields</span></tt> Module<a class="headerlink" href="#fields-module" title="Permalink to this headline">¶</a></h2>
+<p>The following fields all inherit from Field, and do the appropriate type
+of validation:</p>
+<dl class="enaml_decl">
+<dt id="enaml.stdlib.fields.IntField">
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">IntField</tt><big>(</big><em>derives from &lt;class 'enaml.widgets.field.Field'&gt;</em><big>)</big><a class="headerlink" href="#enaml.stdlib.fields.IntField" title="Permalink to this definition">¶</a></dt>
+<dd><p>A field that only accept integer inputs.</p>
+</dd></dl>
+
+<dl class="enaml_decl">
+<dt id="enaml.stdlib.fields.FloatField">
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">FloatField</tt><big>(</big><em>derives from &lt;class 'enaml.widgets.field.Field'&gt;</em><big>)</big><a class="headerlink" href="#enaml.stdlib.fields.FloatField" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Field that only accept floating point values.</p>
+</dd></dl>
+
+<dl class="enaml_decl">
+<dt id="enaml.stdlib.fields.RegexField">
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">RegexField</tt><big>(</big><em>derives from &lt;class 'enaml.widgets.field.Field'&gt;</em><big>)</big><a class="headerlink" href="#enaml.stdlib.fields.RegexField" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Field that only accepts values validated by a given regular 
+expression.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-enaml.stdlib.sessions">
+<span id="sessions-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">sessions</span></tt> Module<a class="headerlink" href="#module-enaml.stdlib.sessions" title="Permalink to this headline">¶</a></h2>
+<p>Enaml Standard Library - Sessions</p>
+<p>This module contains some Session subclasses and associated utilities that
+handle common Session use cases.</p>
+<dl class="class">
+<dt id="enaml.stdlib.sessions.SimpleSession">
+<em class="property">class </em><tt class="descclassname">enaml.stdlib.sessions.</tt><tt class="descname">SimpleSession</tt><big>(</big><em>sess_callable</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/enaml/stdlib/sessions.html#SimpleSession"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.stdlib.sessions.SimpleSession" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.html#enaml.session.Session" title="enaml.session.Session"><tt class="xref py py-class docutils literal"><span class="pre">enaml.session.Session</span></tt></a></p>
+<p>A concrete Session class that receives a callable, positional,
+and keyword arguments and creates the associated view(s).</p>
+<dl class="method">
+<dt id="enaml.stdlib.sessions.SimpleSession.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>sess_callable</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/enaml/stdlib/sessions.html#SimpleSession.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.stdlib.sessions.SimpleSession.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the session with the callable and arguments.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.stdlib.sessions.SimpleSession.on_open">
+<tt class="descname">on_open</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/stdlib/sessions.html#SimpleSession.on_open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.stdlib.sessions.SimpleSession.on_open" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the view from the callable</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.stdlib.sessions.SimpleSession.__implements__">
+<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.stdlib.sessions.SimpleSession.__implements__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="enaml.stdlib.sessions.simple_session">
+<tt class="descclassname">enaml.stdlib.sessions.</tt><tt class="descname">simple_session</tt><big>(</big><em>sess_name</em>, <em>sess_descr</em>, <em>sess_callable</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/enaml/stdlib/sessions.html#simple_session"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.stdlib.sessions.simple_session" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a SessionFactory instance for a callable.</p>
+<p>This creates a SessionFactory instance which will create instances
+of SimpleSession when prompted by the application.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>sess_name</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; A unique, human-friendly name for the session.</li>
+<li><strong>sess_descr</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; A brief description of the session.</li>
+<li><strong>sess_callable</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#callable" title="(in Python v2.7)"><em>callable</em></a>) &#8211; A callable which will return an Enaml view or iterable of views.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt><a href="#id1"><span class="problematic" id="id2">*</span></a>args, <a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs</dt>
+<dd>Optional positional and keyword arguments to pass to the callable
+when the session is created.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="enaml.stdlib.sessions.view_factory">
+<tt class="descclassname">enaml.stdlib.sessions.</tt><tt class="descname">view_factory</tt><big>(</big><em>sess_name=None</em>, <em>sess_descr=None</em><big>)</big><a class="reference internal" href="../_modules/enaml/stdlib/sessions.html#view_factory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.stdlib.sessions.view_factory" title="Permalink to this definition">¶</a></dt>
+<dd><p>A decorator that creates a session factory from a callable.</p>
+<p>This can be used in the following ways:</p>
+<blockquote>
+<div><p>&#64;view_factory
+def view(...):</p>
+<blockquote>
+<div>...
+return View(...)</div></blockquote>
+<p>&#64;view_factory(&#8216;my-views&#8217;, &#8216;This is several views&#8217;)
+def views(...):</p>
+<blockquote>
+<div>...
+return [View1(...), View2(...)]</div></blockquote>
+<p>simple = view_factory(Main)</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="enaml.stdlib.sessions.show_simple_view">
+<tt class="descclassname">enaml.stdlib.sessions.</tt><tt class="descname">show_simple_view</tt><big>(</big><em>view</em>, <em>toolkit='qt'</em>, <em>description=''</em><big>)</big><a class="reference internal" href="../_modules/enaml/stdlib/sessions.html#show_simple_view"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.stdlib.sessions.show_simple_view" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display a simple view to the screen in the local process.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>view</strong> (<em>Object</em>) &#8211; The top level Object to use as the view.</li>
+<li><strong>toolkit</strong> (<em>string, optional</em>) &#8211; The toolkit backend to use to display the view. Currently
+supported values are &#8216;qt&#8217; and &#8216;wx&#8217;. The default is &#8216;qt&#8217;.
+Note that not all functionality is available on Wx.</li>
+<li><strong>description</strong> (<em>string, optional</em>) &#8211; An optional description to give to the session.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.html" title="Widgets"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="enaml.core.html" title="enaml.core"
+             >previous</a> |</li>
+        <li><a href="../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Enaml API Reference</a> &raquo;</li>
+  
+    <li><a href="#">enaml.stdlib</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Dec 13, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

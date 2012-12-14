@@ -2,7 +2,10 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-enamldef Main(MainWindow):
+from enaml.widgets.api import Window, Container, Label
+
+
+enamldef Main(Window):
     attr message = "Hello, world!"
     Container:
         Label:

@@ -1,0 +1,650 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.application &mdash; enaml 0.6.3 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.6.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.6.3 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.application</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.application</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2012, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">heapq</span> <span class="kn">import</span> <span class="n">heappush</span><span class="p">,</span> <span class="n">heappop</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">count</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Lock</span>
+
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="ScheduledTask"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.application.ScheduledTask">[docs]</a><span class="k">class</span> <span class="nc">ScheduledTask</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; An object representing a task in the scheduler.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#: A sentinel object indicating that the result of the task is</span>
+    <span class="c">#: undefined or that the task has not yet been executed.</span>
+    <span class="n">undefined</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
+
+<div class="viewcode-block" id="ScheduledTask.__init__"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.application.ScheduledTask.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize a ScheduledTask.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        callback : callable</span>
+<span class="sd">            The callable to run when the task is executed.</span>
+
+<span class="sd">        args : tuple</span>
+<span class="sd">            The tuple of positional arguments to pass to the callback.</span>
+
+<span class="sd">        kwargs : dict</span>
+<span class="sd">            The dict of keyword arguments to pass to the callback.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_callback</span> <span class="o">=</span> <span class="n">callback</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_args</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_valid</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pending</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_notify</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Private API</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+    <span class="k">def</span> <span class="nf">_execute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Execute the underlying task. This should only been called</span>
+<span class="sd">        by the scheduler loop.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_valid</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_callback</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_notify</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_notify</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_result</span><span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_notify</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pending</span> <span class="o">=</span> <span class="bp">False</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Public API</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="ScheduledTask.notify"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.application.ScheduledTask.notify">[docs]</a>    <span class="k">def</span> <span class="nf">notify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set a callback to be run when the task is executed.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        callback : callable</span>
+<span class="sd">            A callable which accepts a single argument which is the</span>
+<span class="sd">            results of the task. It will be invoked immediate after</span>
+<span class="sd">            the task is executed, on the main event loop thread.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_notify</span> <span class="o">=</span> <span class="n">callback</span>
+</div>
+<div class="viewcode-block" id="ScheduledTask.pending"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.application.ScheduledTask.pending">[docs]</a>    <span class="k">def</span> <span class="nf">pending</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns True if this task is pending execution, False</span>
+<span class="sd">        otherwise.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pending</span>
+</div>
+<div class="viewcode-block" id="ScheduledTask.unschedule"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.application.ScheduledTask.unschedule">[docs]</a>    <span class="k">def</span> <span class="nf">unschedule</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Unschedule the task so that it will not be executed. If</span>
+<span class="sd">        the task has already been executed, this call has no effect.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_valid</span> <span class="o">=</span> <span class="bp">False</span>
+</div>
+<div class="viewcode-block" id="ScheduledTask.result"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.application.ScheduledTask.result">[docs]</a>    <span class="k">def</span> <span class="nf">result</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the result of the task, or ScheduledTask.undefined</span>
+<span class="sd">        if the task has not yet been executed, was unscheduled before</span>
+<span class="sd">        execution, or raised an exception on execution.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span>
+
+</div></div>
+<div class="viewcode-block" id="Application"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.application.Application">[docs]</a><span class="k">class</span> <span class="nc">Application</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; The application object which manages the top-level communication</span>
+<span class="sd">    protocol for serving Enaml views.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">ABCMeta</span>
+
+    <span class="c">#: Private storage for the singleton application instance.</span>
+    <span class="n">_instance</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Application.instance"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.application.Application.instance">[docs]</a>    <span class="k">def</span> <span class="nf">instance</span><span class="p">():</span>
+        <span class="sd">&quot;&quot;&quot; Get the global Application instance.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : Application or None</span>
+<span class="sd">            The global application instance, or None if one has not yet</span>
+<span class="sd">            been created.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Application</span><span class="o">.</span><span class="n">_instance</span>
+</div>
+<div class="viewcode-block" id="Application.__new__"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.application.Application.__new__">[docs]</a>    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Create a new Enaml Application.</span>
+
+<span class="sd">        There may be only one application instance in existence at any</span>
+<span class="sd">        point in time. Attempting to create a new Application when one</span>
+<span class="sd">        exists will raise an exception.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">Application</span><span class="o">.</span><span class="n">_instance</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&#39;An Application instance already exists&#39;</span><span class="p">)</span>
+        <span class="bp">self</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">Application</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">)</span>
+        <span class="n">Application</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="k">return</span> <span class="bp">self</span>
+</div>
+<div class="viewcode-block" id="Application.__init__"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.application.Application.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">factories</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize an Enaml Application.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        factories : iterable</span>
+<span class="sd">            An iterable of SessionFactory instances that will be used</span>
+<span class="sd">            to create the sessions for the application.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_all_factories</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_named_factories</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_task_heap</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_counter</span> <span class="o">=</span> <span class="n">count</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_heap_lock</span> <span class="o">=</span> <span class="n">Lock</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_factories</span><span class="p">(</span><span class="n">factories</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Private API</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+    <span class="k">def</span> <span class="nf">_process_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Processes the given task, then dispatches the next task.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">task</span><span class="o">.</span><span class="n">_execute</span><span class="p">()</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_next_task</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_next_task</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Pulls the next task off the heap and processes it on the</span>
+<span class="sd">        main gui thread.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">heap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_task_heap</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_heap_lock</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">heap</span><span class="p">:</span>
+                <span class="n">priority</span><span class="p">,</span> <span class="n">ignored</span><span class="p">,</span> <span class="n">task</span> <span class="o">=</span> <span class="n">heappop</span><span class="p">(</span><span class="n">heap</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">deferred_call</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_process_task</span><span class="p">,</span> <span class="n">task</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Abstract API</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="Application.start_session"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.application.Application.start_session">[docs]</a>    <span class="k">def</span> <span class="nf">start_session</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Start a new session of the given name.</span>
+
+<span class="sd">        This method will create a new session object for the requested</span>
+<span class="sd">        session type and return the new session_id. If the session name</span>
+<span class="sd">        is invalid, an exception will be raised.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name : str</span>
+<span class="sd">            The name of the session to start.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : str</span>
+<span class="sd">            The unique identifier for the created session.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="Application.end_session"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.application.Application.end_session">[docs]</a>    <span class="k">def</span> <span class="nf">end_session</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; End the session with the given session id.</span>
+
+<span class="sd">        This method will close down the existing session. If the session</span>
+<span class="sd">        id is not valid, an exception will be raised.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        session_id : str</span>
+<span class="sd">            The unique identifier for the session to close.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="Application.session"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.application.Application.session">[docs]</a>    <span class="k">def</span> <span class="nf">session</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get the session for the given session id.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        session_id : str</span>
+<span class="sd">            The unique identifier for the session to retrieve.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : Session or None</span>
+<span class="sd">            The session object with the given id, or None if the id</span>
+<span class="sd">            does not correspond to an active session.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="Application.sessions"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.application.Application.sessions">[docs]</a>    <span class="k">def</span> <span class="nf">sessions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get the currently active sessions for the application.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : list</span>
+<span class="sd">            The list of currently active sessions for the application.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="Application.start"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.application.Application.start">[docs]</a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Start the application&#39;s main event loop.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="Application.stop"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.application.Application.stop">[docs]</a>    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Stop the application&#39;s main event loop.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="Application.deferred_call"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.application.Application.deferred_call">[docs]</a>    <span class="k">def</span> <span class="nf">deferred_call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Invoke a callable on the next cycle of the main event loop</span>
+<span class="sd">        thread.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        callback : callable</span>
+<span class="sd">            The callable object to execute at some point in the future.</span>
+
+<span class="sd">        *args, **kwargs</span>
+<span class="sd">            Any additional positional and keyword arguments to pass to</span>
+<span class="sd">            the callback.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="Application.timed_call"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.application.Application.timed_call">[docs]</a>    <span class="k">def</span> <span class="nf">timed_call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ms</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Invoke a callable on the main event loop thread at a</span>
+<span class="sd">        specified time in the future.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        ms : int</span>
+<span class="sd">            The time to delay, in milliseconds, before executing the</span>
+<span class="sd">            callable.</span>
+
+<span class="sd">        callback : callable</span>
+<span class="sd">            The callable object to execute at some point in the future.</span>
+
+<span class="sd">        *args, **kwargs</span>
+<span class="sd">            Any additional positional and keyword arguments to pass to</span>
+<span class="sd">            the callback.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="Application.is_main_thread"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.application.Application.is_main_thread">[docs]</a>    <span class="k">def</span> <span class="nf">is_main_thread</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Indicates whether the caller is on the main gui thread.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : bool</span>
+<span class="sd">            True if called from the main gui thread. False otherwise.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Public API</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="Application.schedule"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.application.Application.schedule">[docs]</a>    <span class="k">def</span> <span class="nf">schedule</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">priority</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Schedule a callable to be executed on the event loop thread.</span>
+
+<span class="sd">        This call is thread-safe.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        callback : callable</span>
+<span class="sd">            The callable object to be executed.</span>
+
+<span class="sd">        args : tuple, optional</span>
+<span class="sd">            The positional arguments to pass to the callable.</span>
+
+<span class="sd">        kwargs : dict, optional</span>
+<span class="sd">            The keyword arguments to pass to the callable.</span>
+
+<span class="sd">        priority : int, optional</span>
+<span class="sd">            The queue priority for the callable. Smaller values indicate</span>
+<span class="sd">            lower priority, larger values indicate higher priority. The</span>
+<span class="sd">            default priority is zero.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : ScheduledTask</span>
+<span class="sd">            A task object which can be used to unschedule the task or</span>
+<span class="sd">            retrieve the results of the callback after the task has</span>
+<span class="sd">            been executed.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">args</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="p">()</span>
+        <span class="k">if</span> <span class="n">kwargs</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">task</span> <span class="o">=</span> <span class="n">ScheduledTask</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">heap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_task_heap</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_heap_lock</span><span class="p">:</span>
+            <span class="n">needs_start</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">heap</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">priority</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_counter</span><span class="o">.</span><span class="n">next</span><span class="p">(),</span> <span class="n">task</span><span class="p">)</span>
+            <span class="n">heappush</span><span class="p">(</span><span class="n">heap</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">needs_start</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_main_thread</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_next_task</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">deferred_call</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_next_task</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">task</span>
+</div>
+<div class="viewcode-block" id="Application.has_pending_tasks"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.application.Application.has_pending_tasks">[docs]</a>    <span class="k">def</span> <span class="nf">has_pending_tasks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get whether or not the application has pending tasks.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : bool</span>
+<span class="sd">            True if there are pending tasks. False otherwise.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_heap_lock</span><span class="p">:</span>
+            <span class="n">has_pending</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_heap</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="n">has_pending</span>
+</div>
+<div class="viewcode-block" id="Application.add_factories"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.application.Application.add_factories">[docs]</a>    <span class="k">def</span> <span class="nf">add_factories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">factories</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Add session factories to the application.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        factories : iterable</span>
+<span class="sd">            An iterable of SessionFactory instances to add to the</span>
+<span class="sd">            application.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">all_factories</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_factories</span>
+        <span class="n">named_factories</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_named_factories</span>
+        <span class="k">for</span> <span class="n">factory</span> <span class="ow">in</span> <span class="n">factories</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">name</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">named_factories</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Multiple session factories named `</span><span class="si">%s</span><span class="s">`; &#39;</span> <span class="o">%</span> <span class="n">name</span>
+                <span class="n">msg</span> <span class="o">+=</span> <span class="s">&#39;replacing previous value.&#39;</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                <span class="n">old_factory</span> <span class="o">=</span> <span class="n">named_factories</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+                <span class="n">all_factories</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">old_factory</span><span class="p">)</span>
+            <span class="n">all_factories</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">factory</span><span class="p">)</span>
+            <span class="n">named_factories</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">factory</span>
+</div>
+<div class="viewcode-block" id="Application.discover"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.application.Application.discover">[docs]</a>    <span class="k">def</span> <span class="nf">discover</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get a dictionary of session information for the application.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : list</span>
+<span class="sd">            A list of dicts of information about the available sessions.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span><span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="n">fact</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s">&#39;description&#39;</span><span class="p">:</span> <span class="n">fact</span><span class="o">.</span><span class="n">description</span><span class="p">}</span>
+            <span class="k">for</span> <span class="n">fact</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_factories</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="n">info</span>
+</div>
+<div class="viewcode-block" id="Application.destroy"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.application.Application.destroy">[docs]</a>    <span class="k">def</span> <span class="nf">destroy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Destroy this application instance.</span>
+
+<span class="sd">        Once an application is created, it must be destroyed before a</span>
+<span class="sd">        new application can be instantiated.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">session</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sessions</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">end_session</span><span class="p">(</span><span class="n">session</span><span class="o">.</span><span class="n">session_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_all_factories</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_named_factories</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">Application</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="bp">None</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Helper Functions</span>
+<span class="c">#------------------------------------------------------------------------------</span></div></div>
+<div class="viewcode-block" id="deferred_call"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.application.deferred_call">[docs]</a><span class="k">def</span> <span class="nf">deferred_call</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Invoke a callable on the next cycle of the main event loop</span>
+<span class="sd">    thread.</span>
+
+<span class="sd">    This is a convenience function for invoking the same method on the</span>
+<span class="sd">    current application instance. If an application instance does not</span>
+<span class="sd">    exist, a RuntimeError will be raised.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    callback : callable</span>
+<span class="sd">        The callable object to execute at some point in the future.</span>
+
+<span class="sd">    *args, **kwargs</span>
+<span class="sd">        Any additional positional and keyword arguments to pass to</span>
+<span class="sd">        the callback.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">app</span> <span class="o">=</span> <span class="n">Application</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">app</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&#39;Application instance does not exist&#39;</span><span class="p">)</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">deferred_call</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="timed_call"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.application.timed_call">[docs]</a><span class="k">def</span> <span class="nf">timed_call</span><span class="p">(</span><span class="n">ms</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Invoke a callable on the main event loop thread at a specified</span>
+<span class="sd">    time in the future.</span>
+
+<span class="sd">    This is a convenience function for invoking the same method on the</span>
+<span class="sd">    current application instance. If an application instance does not</span>
+<span class="sd">    exist, a RuntimeError will be raised.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ms : int</span>
+<span class="sd">        The time to delay, in milliseconds, before executing the</span>
+<span class="sd">        callable.</span>
+
+<span class="sd">    callback : callable</span>
+<span class="sd">        The callable object to execute at some point in the future.</span>
+
+<span class="sd">    *args, **kwargs</span>
+<span class="sd">        Any additional positional and keyword arguments to pass to</span>
+<span class="sd">        the callback.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">app</span> <span class="o">=</span> <span class="n">Application</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">app</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&#39;Application instance does not exist&#39;</span><span class="p">)</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">timed_call</span><span class="p">(</span><span class="n">ms</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="is_main_thread"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.application.is_main_thread">[docs]</a><span class="k">def</span> <span class="nf">is_main_thread</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; Indicates whether the caller is on the main gui thread.</span>
+
+<span class="sd">    This is a convenience function for invoking the same method on the</span>
+<span class="sd">    current application instance. If an application instance does not</span>
+<span class="sd">    exist, a RuntimeError will be raised.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    result : bool</span>
+<span class="sd">        True if called from the main gui thread. False otherwise.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">app</span> <span class="o">=</span> <span class="n">Application</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">app</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&#39;Application instance does not exist&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">app</span><span class="o">.</span><span class="n">is_main_thread</span><span class="p">()</span>
+
+</div>
+<div class="viewcode-block" id="schedule"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.application.schedule">[docs]</a><span class="k">def</span> <span class="nf">schedule</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">priority</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Schedule a callable to be executed on the event loop thread.</span>
+
+<span class="sd">    This call is thread-safe.</span>
+
+<span class="sd">    This is a convenience function for invoking the same method on the</span>
+<span class="sd">    current application instance. If an application instance does not</span>
+<span class="sd">    exist, a RuntimeError will be raised.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    callback : callable</span>
+<span class="sd">        The callable object to be executed.</span>
+
+<span class="sd">    args : tuple, optional</span>
+<span class="sd">        The positional arguments to pass to the callable.</span>
+
+<span class="sd">    kwargs : dict, optional</span>
+<span class="sd">        The keyword arguments to pass to the callable.</span>
+
+<span class="sd">    priority : int, optional</span>
+<span class="sd">        The queue priority for the callable. Smaller values indicate</span>
+<span class="sd">        lower priority, larger values indicate higher priority. The</span>
+<span class="sd">        default priority is zero.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    result : ScheduledTask</span>
+<span class="sd">        A task object which can be used to unschedule the task or</span>
+<span class="sd">        retrieve the results of the callback after the task has</span>
+<span class="sd">        been executed.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">app</span> <span class="o">=</span> <span class="n">Application</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">app</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&#39;Application instance does not exist&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">app</span><span class="o">.</span><span class="n">schedule</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">priority</span><span class="p">)</span>
+</pre></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.application</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Dec 13, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.utils &mdash; enaml 0.2alpha documentation</title>
+    <title>enaml.utils &mdash; enaml 0.6.3 documentation</title>
     
     <link rel="stylesheet" href="../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.2alpha',
+        VERSION:     '0.6.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2alpha documentation" href="../../index.html" />
+    <link rel="top" title="enaml 0.6.3 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+        <li><a href="../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.utils</a></li>
@@ -85,6 +85,49 @@
 <span class="sd">&quot;&quot;&quot; An amalgamation of utilities used throughout the Enaml framework.</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">shuffle</span>
+<span class="kn">from</span> <span class="nn">string</span> <span class="kn">import</span> <span class="n">letters</span><span class="p">,</span> <span class="n">digits</span>
+
+
+<div class="viewcode-block" id="id_generator"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.utils.id_generator">[docs]</a><span class="k">def</span> <span class="nf">id_generator</span><span class="p">(</span><span class="n">stem</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A unique identifier generator.</span>
+
+<span class="sd">    For a given stem, the returned generator is guaranteed to yield</span>
+<span class="sd">    consecutively increasing identifiers using a randomly ordered</span>
+<span class="sd">    base 62 charset. The identifiers are only guaranteed unique for a</span>
+<span class="sd">    given instance of the generator. The randomness is employed to</span>
+<span class="sd">    improve the hashing characteristics of the returned identifiers.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    stem : str</span>
+<span class="sd">        A string stem to prepend to a incrementing integer value.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">charset</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">digits</span> <span class="o">+</span> <span class="n">letters</span><span class="p">)</span>
+    <span class="n">shuffle</span><span class="p">(</span><span class="n">charset</span><span class="p">)</span>
+    <span class="n">charset</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">charset</span><span class="p">)</span>
+    <span class="n">charsetlen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">charset</span><span class="p">)</span>
+    <span class="n">places</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">push</span> <span class="o">=</span> <span class="n">places</span><span class="o">.</span><span class="n">append</span>
+    <span class="n">enumerate_</span> <span class="o">=</span> <span class="nb">enumerate</span>
+    <span class="n">join</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span>
+    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">stem</span> <span class="o">+</span> <span class="n">join</span><span class="p">(</span><span class="n">charset</span><span class="p">[</span><span class="n">digit</span><span class="p">]</span> <span class="k">for</span> <span class="n">digit</span> <span class="ow">in</span> <span class="n">places</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">digit</span> <span class="ow">in</span> <span class="n">enumerate_</span><span class="p">(</span><span class="n">places</span><span class="p">):</span>
+            <span class="n">digit</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">digit</span> <span class="o">==</span> <span class="n">charsetlen</span><span class="p">:</span>
+                <span class="n">places</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">places</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">digit</span>
+                <span class="k">break</span>
+        <span class="k">if</span> <span class="n">places</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">push</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+</div>
 <div class="viewcode-block" id="abstractclassmethod"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.utils.abstractclassmethod">[docs]</a><span class="k">class</span> <span class="nc">abstractclassmethod</span><span class="p">(</span><span class="nb">classmethod</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A backport of the Python 3&#39;s abc.abstractclassmethod.</span>
 
@@ -94,7 +137,223 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
         <span class="n">func</span><span class="o">.</span><span class="n">__isabstractmethod__</span> <span class="o">=</span> <span class="bp">True</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">abstractclassmethod</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-</pre></div></div>
+
+</div>
+<div class="viewcode-block" id="LoopbackContext"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.utils.LoopbackContext">[docs]</a><span class="k">class</span> <span class="nc">LoopbackContext</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A context manager generated by LoopbackGuard.</span>
+
+<span class="sd">    Instances of this class manage acquiring and releasing the lock</span>
+<span class="sd">    items for instances of LoopbackGuard.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;_guard&#39;</span><span class="p">,</span> <span class="s">&#39;_items&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="LoopbackContext.__init__"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.utils.LoopbackContext.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">guard</span><span class="p">,</span> <span class="n">items</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize a LoopbackContext</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        guard : LoopbackGuard</span>
+<span class="sd">            The loopback guard instance for which we will acquire the</span>
+<span class="sd">            lock for the items.</span>
+
+<span class="sd">        items : iterable</span>
+<span class="sd">            An iterable items which will be passed to the &#39;acquire&#39;</span>
+<span class="sd">            method on the loopback guard.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_guard</span> <span class="o">=</span> <span class="n">guard</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_items</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="LoopbackContext.__enter__"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.utils.LoopbackContext.__enter__">[docs]</a>    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Acquire the guard lock on the lock items.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_guard</span><span class="o">.</span><span class="n">acquire</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="LoopbackContext.__exit__"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.utils.LoopbackContext.__exit__">[docs]</a>    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Release the guard lock on the lock items.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_guard</span><span class="o">.</span><span class="n">release</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">)</span>
+
+</div></div>
+<div class="viewcode-block" id="LoopbackGuard"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.utils.LoopbackGuard">[docs]</a><span class="k">class</span> <span class="nc">LoopbackGuard</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A guard object to protect against feedback loops.</span>
+
+<span class="sd">    Instances of this class are used by objects to protect against</span>
+<span class="sd">    loopback conditions while updating attributes. Instances of this</span>
+<span class="sd">    class are callable and return a guarding context manager for the</span>
+<span class="sd">    provided lock items. The guard can be tested for a locked item</span>
+<span class="sd">    using the `in` keyword.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;locked_items&#39;</span><span class="p">,)</span>
+
+<div class="viewcode-block" id="LoopbackGuard.__init__"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.utils.LoopbackGuard.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize a loopback guard.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">locked_items</span> <span class="o">=</span> <span class="bp">None</span>
+</div>
+<div class="viewcode-block" id="LoopbackGuard.__call__"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.utils.LoopbackGuard.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">items</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Return a context manager which will guard the given items.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        items</span>
+<span class="sd">            The items for which to acquire the guard from within the</span>
+<span class="sd">            returned context manager. These items must be hashable.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : LoopbackContext</span>
+<span class="sd">            A context manager which will acquire the guard for the</span>
+<span class="sd">            provided items.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">LoopbackContext</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">items</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="LoopbackGuard.__contains__"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.utils.LoopbackGuard.__contains__">[docs]</a>    <span class="k">def</span> <span class="nf">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns whether or not the given item is currently guarded.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        item : object</span>
+<span class="sd">            The item to check for guarded state.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : bool</span>
+<span class="sd">            True if the item is currently guarded, False otherwise.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">locked_items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">locked_items</span>
+        <span class="k">if</span> <span class="n">locked_items</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">locked_items</span>
+        <span class="k">return</span> <span class="bp">False</span>
+</div>
+<div class="viewcode-block" id="LoopbackGuard.acquire"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.utils.LoopbackGuard.acquire">[docs]</a>    <span class="k">def</span> <span class="nf">acquire</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">items</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Acquire the guard for the given items.</span>
+
+<span class="sd">        This method is normally called by the LoopbackContext returned</span>
+<span class="sd">        by calling this instance. User code should not typically call</span>
+<span class="sd">        this method directly. It is safe to call this method multiple</span>
+<span class="sd">        times for and item, provided it is paired with the same number</span>
+<span class="sd">        of calls to release(...). The guard will be released when the</span>
+<span class="sd">        acquired count on the item reaches zeros.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        items : iterable</span>
+<span class="sd">            An iterable of objects for which to acquire the guard. The</span>
+<span class="sd">            items must be hashable.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">locked_items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">locked_items</span>
+        <span class="k">if</span> <span class="n">locked_items</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">locked_items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">locked_items</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+            <span class="n">locked_items</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+</div>
+<div class="viewcode-block" id="LoopbackGuard.release"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.utils.LoopbackGuard.release">[docs]</a>    <span class="k">def</span> <span class="nf">release</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">items</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Release the guard for the given lock items.</span>
+
+<span class="sd">        This method is normally called by the LoopbackContext returned</span>
+<span class="sd">        by calling this instance. User code should not normally call</span>
+<span class="sd">        this method directly. It is safe to call this method multiple</span>
+<span class="sd">        times for and item, provided it is paired with the same number</span>
+<span class="sd">        of calls to acquire(...). The guard will be released when the</span>
+<span class="sd">        acquired count on the item reaches zeros.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        items : iterable</span>
+<span class="sd">            An iterable of objects for which to release the guard. The</span>
+<span class="sd">            items must be hashable.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">locked_items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">locked_items</span>
+        <span class="k">if</span> <span class="n">locked_items</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+                <span class="n">locked_items</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="o">-=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">locked_items</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">del</span> <span class="n">locked_items</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">locked_items</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">locked_items</span> <span class="o">=</span> <span class="bp">None</span>
+
+</div></div>
+<div class="viewcode-block" id="ObjectDict"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.utils.ObjectDict">[docs]</a><span class="k">class</span> <span class="nc">ObjectDict</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A dict subclass which exposes its keys as attributes.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+</div>
+<div class="viewcode-block" id="log_exceptions"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.utils.log_exceptions">[docs]</a><span class="k">def</span> <span class="nf">log_exceptions</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A decorator which will catch errors raised by a function and</span>
+<span class="sd">    convert them into log error messages.</span>
+
+<span class="sd">    When a decorated function raises an Exception, the return value</span>
+<span class="sd">    will be None.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">closure</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="c"># Get the logger for the wrapped function.</span>
+            <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="n">__module__</span><span class="p">)</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="s">&#39;Exception occured in `</span><span class="si">%s</span><span class="s">`:&#39;</span> <span class="o">%</span> <span class="n">func</span><span class="o">.</span><span class="n">__name__</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">return</span> <span class="n">res</span>
+    <span class="k">return</span> <span class="n">closure</span>
+
+
+</div>
+<div class="viewcode-block" id="make_dispatcher"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.utils.make_dispatcher">[docs]</a><span class="k">def</span> <span class="nf">make_dispatcher</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Create a function which will dispatch arguments to specially</span>
+<span class="sd">    named handler methods on an object.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    prefix : str</span>
+<span class="sd">        The string to prefix to all dispatch names to construct the</span>
+<span class="sd">        name of the handler method.</span>
+
+<span class="sd">    logger : logging.Logger, optional</span>
+<span class="sd">        A logger to use for logging handler lookup misses.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    result : types.FunctionType</span>
+<span class="sd">        A function with the signature func(obj, name, *args). Calling</span>
+<span class="sd">        it is equivalent to `getattr(obj, prefix + name)(*args)`</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">dispatcher</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="n">handler</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">prefix</span> <span class="o">+</span> <span class="n">name</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">handler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">handler</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">logger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;no dispatch handler found for &#39;</span><span class="si">%s</span><span class="s">&#39; on `</span><span class="si">%s</span><span class="s">` object&quot;</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">obj</span><span class="p">))</span>
+    <span class="n">dispatcher</span><span class="o">.</span><span class="n">__name__</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s">&#39;_dispatcher&#39;</span>
+    <span class="k">return</span> <span class="n">dispatcher</span>
+
+
+<span class="c"># Backwards comatibility import. WeakMethod was moved to its own module.</span></div>
+<span class="kn">from</span> <span class="nn">.weakmethod</span> <span class="kn">import</span> <span class="n">WeakMethod</span>
+</pre></div>
 
           </div>
         </div>
@@ -113,7 +372,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+        <li><a href="../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.utils</a></li>
@@ -123,7 +382,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jun 12, 2012.
+      Last updated on Dec 13, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

@@ -1,0 +1,559 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.core.declarative &mdash; enaml 0.6.3 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.6.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.6.3 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.core.declarative</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.core.declarative</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2012, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Any</span><span class="p">,</span> <span class="n">Property</span><span class="p">,</span> <span class="n">Disallow</span><span class="p">,</span> <span class="n">ReadOnly</span><span class="p">,</span> <span class="n">CTrait</span><span class="p">,</span> <span class="n">Instance</span><span class="p">,</span> <span class="n">Uninitialized</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">.dynamic_scope</span> <span class="kn">import</span> <span class="n">DynamicAttributeError</span>
+<span class="kn">from</span> <span class="nn">.object</span> <span class="kn">import</span> <span class="n">Object</span>
+<span class="kn">from</span> <span class="nn">.operator_context</span> <span class="kn">import</span> <span class="n">OperatorContext</span>
+<span class="kn">from</span> <span class="nn">.trait_types</span> <span class="kn">import</span> <span class="n">EnamlInstance</span><span class="p">,</span> <span class="n">EnamlEvent</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># UserAttribute and UserEvent</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="UserAttribute"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.declarative.UserAttribute">[docs]</a><span class="k">class</span> <span class="nc">UserAttribute</span><span class="p">(</span><span class="n">EnamlInstance</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; An EnamlInstance subclass which implements the `attr` keyword.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="UserAttribute.get"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.declarative.UserAttribute.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The trait getter method.</span>
+
+<span class="sd">        This returns the value from the object&#39;s dict, or raises an</span>
+<span class="sd">        uninitialized error if the value doesn&#39;t exist.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dct</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">__dict__</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dct</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">uninitialized_error</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dct</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+</div>
+<div class="viewcode-block" id="UserAttribute.set"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.declarative.UserAttribute.set">[docs]</a>    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The trait setter method.</span>
+
+<span class="sd">        This sets the value in the object&#39;s dict if it is valid, and</span>
+<span class="sd">        emits a change notification if the value has changed. The first</span>
+<span class="sd">        time the value is set the change notification will carry None</span>
+<span class="sd">        as the old value.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="n">dct</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">__dict__</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dct</span><span class="p">:</span>
+            <span class="n">old</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">old</span> <span class="o">=</span> <span class="n">dct</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="n">dct</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">if</span> <span class="n">old</span> <span class="o">!=</span> <span class="n">value</span><span class="p">:</span>
+            <span class="n">obj</span><span class="o">.</span><span class="n">trait_property_changed</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">old</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="UserAttribute.uninitialized_error"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.declarative.UserAttribute.uninitialized_error">[docs]</a>    <span class="k">def</span> <span class="nf">uninitialized_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Raise a DynamicAttributeError for an object and attr name.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;cannot access the uninitialized &#39;</span><span class="si">%s</span><span class="s">&#39; attribute of the </span><span class="si">%s</span><span class="s"> object&quot;</span>
+        <span class="k">raise</span> <span class="n">DynamicAttributeError</span><span class="p">(</span><span class="n">msg</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">obj</span><span class="p">))</span>
+
+</div></div>
+<div class="viewcode-block" id="UserEvent"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.declarative.UserEvent">[docs]</a><span class="k">class</span> <span class="nc">UserEvent</span><span class="p">(</span><span class="n">EnamlEvent</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; An EnamlEvent subclass which implements the `event` keyword.</span>
+
+<span class="sd">    This subclass contains no additional logic. Its type is simply used</span>
+<span class="sd">    to distinguish between events declared by the framework, and events</span>
+<span class="sd">    declared by the user.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Declarative Helpers</span>
+<span class="c">#------------------------------------------------------------------------------</span></div>
+<span class="k">def</span> <span class="nf">_compute_default</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Compute the default value for an expression.</span>
+
+<span class="sd">    This is a private function used by Declarative for allowing default</span>
+<span class="sd">    values of attributes to be provided by bound expression objects</span>
+<span class="sd">    without requiring an explicit initialization graph.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">eval_expression</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">DynamicAttributeError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="c"># Reraise a propagating initialization error.</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">traceback</span>
+        <span class="c"># XXX I&#39;d rather not hack into Declarative&#39;s private api.</span>
+        <span class="n">expr</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">_expressions</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">expr</span><span class="o">.</span><span class="n">_func</span><span class="o">.</span><span class="n">func_code</span><span class="o">.</span><span class="n">co_filename</span>
+        <span class="n">lineno</span> <span class="o">=</span> <span class="n">expr</span><span class="o">.</span><span class="n">_func</span><span class="o">.</span><span class="n">func_code</span><span class="o">.</span><span class="n">co_firstlineno</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">lineno</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Error initializing expression (</span><span class="si">%r</span><span class="s"> line </span><span class="si">%s</span><span class="s">). Orignal &#39;</span>
+               <span class="s">&#39;exception was:</span><span class="se">\n</span><span class="si">%s</span><span class="s">&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">DynamicAttributeError</span><span class="p">(</span><span class="n">msg</span> <span class="o">%</span> <span class="n">args</span><span class="p">)</span>
+
+
+<span class="n">_quiet</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">_set_quiet</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Quietly set the named value on the object.</span>
+
+<span class="sd">    This is a private function used by Declarative for allowing default</span>
+<span class="sd">    values of attributes to be provided by bound expression objects</span>
+<span class="sd">    without requiring an explicit initialization graph. This is a</span>
+<span class="sd">    workaround for bug: https://github.com/enthought/traits/issues/26</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">_quiet</span>
+    <span class="n">owned</span> <span class="o">=</span> <span class="n">obj</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">q</span>
+    <span class="k">if</span> <span class="n">owned</span><span class="p">:</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">_trait_change_notify</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+        <span class="n">q</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">owned</span><span class="p">:</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">_trait_change_notify</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">q</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_wired_getter</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; The wired default expression getter.</span>
+
+<span class="sd">    This is a private function used by Declarative for allowing default</span>
+<span class="sd">    values of attributes to be provided by bound expression objects</span>
+<span class="sd">    without requiring an explicit initialization graph.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">itraits</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">_instance_traits</span><span class="p">()</span>
+    <span class="n">itraits</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">itraits</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">_shadowed</span>
+    <span class="n">val</span> <span class="o">=</span> <span class="n">_compute_default</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">NotImplemented</span><span class="p">:</span>
+        <span class="n">_set_quiet</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_wired_setter</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; The wired default expression setter.</span>
+
+<span class="sd">    This is a private function used by Declarative for allowing default</span>
+<span class="sd">    values of attributes to be provided by bound expression objects</span>
+<span class="sd">    without requiring an explicit initialization graph.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">itraits</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">_instance_traits</span><span class="p">()</span>
+    <span class="n">itraits</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">itraits</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">_shadowed</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_wire_default</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Wire an expression trait for default value computation.</span>
+
+<span class="sd">    This is a private function used by Declarative for allowing default</span>
+<span class="sd">    values of attributes to be provided by bound expression objects</span>
+<span class="sd">    without requiring an explicit initialization graph.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># This is a low-level performance hack that bypasses a mountain</span>
+    <span class="c"># of traits cruft and performs the minimum work required to make</span>
+    <span class="c"># traits do what we want. The speedup of this over `add_trait` is</span>
+    <span class="c"># substantial.</span>
+    <span class="c"># A new &#39;event&#39; trait type (defaults are overridden)</span>
+    <span class="n">trait</span> <span class="o">=</span> <span class="n">CTrait</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+    <span class="c"># Override defaults with 2-arg getter, 3-arg setter, no validator</span>
+    <span class="n">trait</span><span class="o">.</span><span class="n">property</span><span class="p">(</span><span class="n">_wired_getter</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">_wired_setter</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="c"># Provide a handler else dynamic creation kills performance</span>
+    <span class="n">trait</span><span class="o">.</span><span class="n">handler</span> <span class="o">=</span> <span class="n">Any</span>
+    <span class="n">shadow</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">_trait</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">trait</span><span class="o">.</span><span class="n">_shadowed</span> <span class="o">=</span> <span class="n">shadow</span>
+    <span class="n">trait</span><span class="o">.</span><span class="n">_notifiers</span> <span class="o">=</span> <span class="n">shadow</span><span class="o">.</span><span class="n">_notifiers</span>
+    <span class="n">obj</span><span class="o">.</span><span class="n">_instance_traits</span><span class="p">()[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">trait</span>
+
+
+<span class="k">class</span> <span class="nc">ListenerNotifier</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A lightweight trait change notifier used by Declarative.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Called by traits to dispatch the notifier.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">old</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">Uninitialized</span><span class="p">:</span>
+            <span class="n">obj</span><span class="o">.</span><span class="n">run_listeners</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">equals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Compares this notifier against another for equality.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">False</span>
+
+<span class="c"># Only a single instance of ListenerNotifier is needed.</span>
+<span class="n">ListenerNotifier</span> <span class="o">=</span> <span class="n">ListenerNotifier</span><span class="p">()</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Declarative</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="Declarative"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.declarative.Declarative">[docs]</a><span class="k">class</span> <span class="nc">Declarative</span><span class="p">(</span><span class="n">Object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; The most base class of the Enaml declarative objects.</span>
+
+<span class="sd">    This class provides the core functionality required of declarative</span>
+<span class="sd">    Enaml types. It can be used directly in a declarative Enaml object</span>
+<span class="sd">    tree to store and react to state changes. It has no concept of a</span>
+<span class="sd">    visual representation; that functionality is added by subclasses.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#: A readonly property which returns the current instance of the</span>
+    <span class="c">#: component. This allows declarative Enaml expressions to access</span>
+    <span class="c">#: &#39;self&#39; according to Enaml&#39;s dynamic scoping rules.</span>
+    <span class="bp">self</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">self</span><span class="p">)</span>
+
+    <span class="c">#: The operator context used to build out this instance. This is</span>
+    <span class="c">#: assigned during object instantiation. It should not be edited</span>
+    <span class="c">#: by user code.</span>
+    <span class="n">operators</span> <span class="o">=</span> <span class="n">ReadOnly</span>
+
+    <span class="c">#: The dictionary of bound expression objects. XXX These dicts are</span>
+    <span class="c">#: typically small and waste space. We need to switch to a more</span>
+    <span class="c">#: space efficient hash table at some point in the future. For</span>
+    <span class="c">#: pathological cases of large numbers of objects, the savings</span>
+    <span class="c">#: can be as high as 20% of the heap size.</span>
+    <span class="n">_expressions</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="p">())</span>
+
+    <span class="c">#: The dictionary of bound listener objects. XXX These dicts are</span>
+    <span class="c">#: typically small and waste space. We need to switch to a more</span>
+    <span class="c">#: space efficient hash table at some point in the future. For</span>
+    <span class="c">#: pathological cases of large numbers of objects, the savings</span>
+    <span class="c">#: can be as high as 20% of the heap size.</span>
+    <span class="n">_listeners</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="p">())</span>
+
+    <span class="c">#: A class attribute used by the Enaml compiler machinery to store</span>
+    <span class="c">#: the builder functions on the class. The functions are called</span>
+    <span class="c">#: when a component is instantiated and are the mechanism by which</span>
+    <span class="c">#: a component is populated with its declarative children and bound</span>
+    <span class="c">#: expression objects.</span>
+    <span class="n">_builders</span> <span class="o">=</span> <span class="p">()</span>
+
+<div class="viewcode-block" id="Declarative.__init__"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.declarative.Declarative.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize a declarative component.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        parent : Object or None, optional</span>
+<span class="sd">            The Object instance which is the parent of this object, or</span>
+<span class="sd">            None if the object has no parent. Defaults to None.</span>
+
+<span class="sd">        **kwargs</span>
+<span class="sd">            Additional keyword arguments needed for initialization.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Declarative</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="c"># If any builders are present, they need to be invoked before</span>
+        <span class="c"># applying any other keyword arguments so that bound expressions</span>
+        <span class="c"># do not override the keywords. The builders in the list exist</span>
+        <span class="c"># in the reverse order of a typical mro. The most base builder</span>
+        <span class="c"># gets to add its children and bind its expressions first.</span>
+        <span class="c"># Builders that come later can then override these bindings.</span>
+        <span class="c"># Each component gets it&#39;s own identifier namespace and current</span>
+        <span class="c"># operator context.</span>
+        <span class="n">operators</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">operators</span> <span class="o">=</span> <span class="n">OperatorContext</span><span class="o">.</span><span class="n">active_context</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_builders</span><span class="p">:</span>
+            <span class="n">identifiers</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">builder</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_builders</span><span class="p">:</span>
+                <span class="n">builder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">identifiers</span><span class="p">,</span> <span class="n">operators</span><span class="p">)</span>
+
+        <span class="c"># Apply the keyword arguments after the rest of the tree is</span>
+        <span class="c"># created. This makes sure that parameters passed in by the</span>
+        <span class="c"># user are not overridden by default expression bindings.</span>
+        <span class="c"># `trait_set` is slow, don&#39;t use it here.</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Private API</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_add_user_attribute</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">attr_type</span><span class="p">,</span> <span class="n">is_event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A private classmethod used by the Enaml compiler machinery.</span>
+
+<span class="sd">        This method is used to add user attributes and events to custom</span>
+<span class="sd">        derived enamldef classes. If the attribute already exists on the</span>
+<span class="sd">        class and is not a user defined attribute, an exception will be</span>
+<span class="sd">        raised. The only method of overriding standard trait attributes</span>
+<span class="sd">        is through traditional subclassing.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name : str</span>
+<span class="sd">            The name of the attribute to add to the class.</span>
+
+<span class="sd">        attr_type : type</span>
+<span class="sd">            The type of the attribute.</span>
+
+<span class="sd">        is_event : bool</span>
+<span class="sd">            True if the attribute should be a UserEvent, False if it</span>
+<span class="sd">            should be a UserAttribute.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">class_traits</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">__class_traits__</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">class_traits</span><span class="p">:</span>
+            <span class="n">trait_type</span> <span class="o">=</span> <span class="n">class_traits</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">trait_type</span>
+            <span class="k">if</span> <span class="n">trait_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">Disallow</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">trait_type</span><span class="p">,</span> <span class="p">(</span><span class="n">UserAttribute</span><span class="p">,</span> <span class="n">UserEvent</span><span class="p">)):</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;can&#39;t add &#39;</span><span class="si">%s</span><span class="s">&#39; attribute. The &#39;</span><span class="si">%s</span><span class="s">&#39; attribute on &quot;</span>
+                           <span class="s">&quot;enamldef &#39;</span><span class="si">%s</span><span class="s">.</span><span class="si">%s</span><span class="s">&#39; already exists.&quot;</span><span class="p">)</span>
+                    <span class="n">items</span> <span class="o">=</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">cls</span><span class="o">.</span><span class="n">__module__</span><span class="p">,</span> <span class="n">cls</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span> <span class="o">%</span> <span class="n">items</span><span class="p">)</span>
+
+        <span class="n">trait_cls</span> <span class="o">=</span> <span class="n">UserEvent</span> <span class="k">if</span> <span class="n">is_event</span> <span class="k">else</span> <span class="n">UserAttribute</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">user_trait</span> <span class="o">=</span> <span class="n">trait_cls</span><span class="p">(</span><span class="n">attr_type</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;&#39;</span><span class="si">%s</span><span class="s">&#39; is not a valid type for the &#39;</span><span class="si">%s</span><span class="s">&#39; attribute &quot;</span>
+                   <span class="s">&quot;declaration on enamldef &#39;</span><span class="si">%s</span><span class="s">.</span><span class="si">%s</span><span class="s">&#39;&quot;</span><span class="p">)</span>
+            <span class="n">items</span> <span class="o">=</span> <span class="p">(</span><span class="n">attr_type</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">cls</span><span class="o">.</span><span class="n">__module__</span><span class="p">,</span> <span class="n">cls</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span> <span class="o">%</span> <span class="n">items</span><span class="p">)</span>
+
+        <span class="c"># XXX HasTraits.add_class_trait will raise an exception if the</span>
+        <span class="c"># the trait is already defined. There does not appear to be a</span>
+        <span class="c"># way to turn this off, nor does there appear to be a way to</span>
+        <span class="c"># formally remove a class trait. So, we just do what the traits</span>
+        <span class="c"># metaclass does when adding traits and directly add the ctrait</span>
+        <span class="c"># to the appropriate class dictionaries. The add_class_trait</span>
+        <span class="c"># classmethod does some extra work to make sure that the trait</span>
+        <span class="c"># is added to all subclasses, but that does not appear to be</span>
+        <span class="c"># needed in this case, since this method will only be called by</span>
+        <span class="c"># the compiler machinery for brand new subclasses.</span>
+        <span class="n">ctrait</span> <span class="o">=</span> <span class="n">user_trait</span><span class="o">.</span><span class="n">as_ctrait</span><span class="p">()</span>
+        <span class="n">class_traits</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ctrait</span>
+        <span class="n">cls</span><span class="o">.</span><span class="n">__base_traits__</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ctrait</span>
+        <span class="k">if</span> <span class="s">&#39;@&#39;</span> <span class="ow">in</span> <span class="n">cls</span><span class="o">.</span><span class="n">__prefix_traits__</span><span class="p">:</span>
+            <span class="n">anytrait_handler</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">__prefix_traits__</span><span class="p">[</span><span class="s">&#39;@&#39;</span><span class="p">]</span>
+            <span class="n">ctrait</span><span class="o">.</span><span class="n">_notifiers</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">anytrait_handler</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Public API</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="Declarative.bind_expression"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.declarative.Declarative.bind_expression">[docs]</a>    <span class="k">def</span> <span class="nf">bind_expression</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">expression</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Bind an expression to the given attribute name.</span>
+
+<span class="sd">        This method can be called to bind a value-providing expression</span>
+<span class="sd">        to the given attribute name. If the named attribute does not</span>
+<span class="sd">        exist, an exception is raised.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name : string</span>
+<span class="sd">            The name of the attribute on which to bind the expression.</span>
+
+<span class="sd">        expression : AbstractExpression</span>
+<span class="sd">            A concrete implementation of AbstractExpression. This value</span>
+<span class="sd">            is not type checked for performance reasons. It is assumed</span>
+<span class="sd">            that the caller provides a correct value.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">curr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trait</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">curr</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">curr</span><span class="o">.</span><span class="n">trait_type</span> <span class="ow">is</span> <span class="n">Disallow</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;Cannot bind expression. </span><span class="si">%s</span><span class="s"> object has no attribute &#39;</span><span class="si">%s</span><span class="s">&#39;&quot;</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">msg</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
+        <span class="n">dct</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expressions</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dct</span><span class="p">:</span>
+            <span class="n">_wire_default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="n">dct</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">expression</span>
+</div>
+<div class="viewcode-block" id="Declarative.bind_listener"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.declarative.Declarative.bind_listener">[docs]</a>    <span class="k">def</span> <span class="nf">bind_listener</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">listener</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A private method used by the Enaml execution engine.</span>
+
+<span class="sd">        This method is called by the Enaml operators to bind the given</span>
+<span class="sd">        listener object to the given attribute name. If the attribute</span>
+<span class="sd">        does not exist, an exception is raised. A strong reference to</span>
+<span class="sd">        the listener object is kept internally.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name : string</span>
+<span class="sd">            The name of the attribute on which to bind the listener.</span>
+
+<span class="sd">        listener : AbstractListener</span>
+<span class="sd">            A concrete implementation of AbstractListener. This value</span>
+<span class="sd">            is not type checked for performance reasons. It is assumed</span>
+<span class="sd">            that the caller provides a correct value.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">curr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trait</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">curr</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">curr</span><span class="o">.</span><span class="n">trait_type</span> <span class="ow">is</span> <span class="n">Disallow</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;Cannot bind listener. </span><span class="si">%s</span><span class="s"> object has no attribute &#39;</span><span class="si">%s</span><span class="s">&#39;&quot;</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">msg</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
+        <span class="n">dct</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_listeners</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dct</span><span class="p">:</span>
+            <span class="n">dct</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">listener</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_notifier</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">ListenerNotifier</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dct</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">listener</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Declarative.eval_expression"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.declarative.Declarative.eval_expression">[docs]</a>    <span class="k">def</span> <span class="nf">eval_expression</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Evaluate a bound expression with the given name.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name : str</span>
+<span class="sd">            The name of the attribute with the bound expression.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : object or NotImplemented</span>
+<span class="sd">            The result of evaluating the expression, or NotImplemented</span>
+<span class="sd">            if there is no expression bound to the given name.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dct</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expressions</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">dct</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">dct</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">NotImplemented</span>
+</div>
+<div class="viewcode-block" id="Declarative.refresh_expression"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.declarative.Declarative.refresh_expression">[docs]</a>    <span class="k">def</span> <span class="nf">refresh_expression</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Refresh the value of a bound expression.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name : str</span>
+<span class="sd">            The attribute name to which the invalid expression is bound.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval_expression</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">NotImplemented</span><span class="p">:</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Declarative.run_listeners"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.declarative.Declarative.run_listeners">[docs]</a>    <span class="k">def</span> <span class="nf">run_listeners</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Run the listeners bound to the given attribute name.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name : str</span>
+<span class="sd">            The name of the attribute with the bound listeners.</span>
+
+<span class="sd">        old : object</span>
+<span class="sd">            The old value to pass to the listeners.</span>
+
+<span class="sd">        new : object</span>
+<span class="sd">            The new value to pass to the listeners.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dct</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_listeners</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">dct</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">listener</span> <span class="ow">in</span> <span class="n">dct</span><span class="p">[</span><span class="n">name</span><span class="p">]:</span>
+                <span class="n">listener</span><span class="o">.</span><span class="n">value_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">)</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.core.declarative</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Dec 13, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

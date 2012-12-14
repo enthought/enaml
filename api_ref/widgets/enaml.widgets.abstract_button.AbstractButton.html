@@ -1,0 +1,471 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>AbstractButton &mdash; enaml 0.6.3 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.6.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.6.3 documentation" href="../../index.html" />
+    <link rel="up" title="Widgets" href="../enaml.widgets.html" />
+    <link rel="next" title="BoundedDate" href="enaml.widgets.bounded_date.BoundedDate.html" />
+    <link rel="prev" title="Control" href="enaml.widgets.control.Control.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.bounded_date.BoundedDate.html" title="BoundedDate"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.control.Control.html" title="Control"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" accesskey="U">Widgets</a> &raquo;</li>
+  
+    <li><a href="#">AbstractButton</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">AbstractButton</a><ul>
+<li><a class="reference internal" href="#backends">Backends</a><ul>
+<li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/api_ref/widgets/enaml.widgets.abstract_button.AbstractButton.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="abstractbutton">
+<h1>AbstractButton<a class="headerlink" href="#abstractbutton" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="enaml.widgets.abstract_button.AbstractButton">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.abstract_button.</tt><tt class="descname">AbstractButton</tt><big>(</big><em>parent=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/abstract_button.html#AbstractButton"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.abstract_button.AbstractButton" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.control.Control.html#enaml.widgets.control.Control" title="enaml.widgets.control.Control"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.control.Control</span></tt></a></p>
+<p>A base class which provides functionality common for several
+button-like widgets.</p>
+<dl class="attribute">
+<dt id="enaml.widgets.abstract_button.AbstractButton.text">
+<tt class="descname">text</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.abstract_button.AbstractButton.text" title="Permalink to this definition">¶</a></dt>
+<dd><p>The text to use as the button&#8217;s label.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.abstract_button.AbstractButton.icon_source">
+<tt class="descname">icon_source</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.abstract_button.AbstractButton.icon_source" title="Permalink to this definition">¶</a></dt>
+<dd><p>The source url for the icon to use for the button.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.abstract_button.AbstractButton.icon_size">
+<tt class="descname">icon_size</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.abstract_button.AbstractButton.icon_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>The size to use for the icon. The default is an invalid size
+and indicates that an appropriate default should be used.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.abstract_button.AbstractButton.checkable">
+<tt class="descname">checkable</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.abstract_button.AbstractButton.checkable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether or not the button is checkable. The default is False.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.abstract_button.AbstractButton.checked">
+<tt class="descname">checked</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.abstract_button.AbstractButton.checked" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether a checkable button is currently checked.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.abstract_button.AbstractButton.clicked">
+<tt class="descname">clicked</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.abstract_button.AbstractButton.clicked" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fired when the button is pressed then released. The payload will
+be the current checked state.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.abstract_button.AbstractButton.toggled">
+<tt class="descname">toggled</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.abstract_button.AbstractButton.toggled" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fired when a checkable button is toggled. The payload will be
+the current checked state.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.abstract_button.AbstractButton.hug_width">
+<tt class="descname">hug_width</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.abstract_button.AbstractButton.hug_width" title="Permalink to this definition">¶</a></dt>
+<dd><p>How strongly a component hugs it&#8217;s contents&#8217; width. Buttons hug
+their contents&#8217; width weakly by default.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.abstract_button.AbstractButton.snapshot">
+<tt class="descname">snapshot</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/abstract_button.html#AbstractButton.snapshot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.abstract_button.AbstractButton.snapshot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the snapshot for an abstract button.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.abstract_button.AbstractButton.bind">
+<tt class="descname">bind</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/abstract_button.html#AbstractButton.bind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.abstract_button.AbstractButton.bind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bind the change handlers for an abstract button.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.abstract_button.AbstractButton.on_action_clicked">
+<tt class="descname">on_action_clicked</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/abstract_button.html#AbstractButton.on_action_clicked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.abstract_button.AbstractButton.on_action_clicked" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;clicked&#8217; action from the UI widget.</p>
+<p>The content will contain the current checked state.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.abstract_button.AbstractButton.on_action_toggled">
+<tt class="descname">on_action_toggled</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/abstract_button.html#AbstractButton.on_action_toggled"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.abstract_button.AbstractButton.on_action_toggled" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;toggled&#8217; action from the UI widget.</p>
+<p>The payload will contain the current checked state.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.abstract_button.AbstractButton.__implements__">
+<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.widgets.abstract_button.AbstractButton.__implements__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="backends">
+<h2>Backends<a class="headerlink" href="#backends" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="qt">
+<h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-9ee1d0533d3f7b969357936168d1a62e8b4bf11c.png" alt="Inheritance diagram of enaml.qt.qt_abstract_button.QtAbstractButton" usemap="#inheritance2d83301132" class="inheritance"/>
+<map id="inheritance2d83301132" name="inheritance2d83301132">
+<area shape="rect" id="node1" href="#enaml.qt.qt_abstract_button.QtAbstractButton" title="QtAbstractButton" alt="" coords="561,5,679,30"/>
+<area shape="rect" id="node2" href="enaml.widgets.control.Control.html#enaml.qt.qt_control.QtControl" title="QtControl" alt="" coords="435,5,511,30"/>
+<area shape="rect" id="node4" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.qt.qt_constraints_widget.QtConstraintsWidget" title="QtConstraintsWidget" alt="" coords="248,5,387,30"/>
+<area shape="rect" id="node6" href="enaml.widgets.widget.Widget.html#enaml.qt.qt_widget.QtWidget" title="QtWidget" alt="" coords="125,5,200,30"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.qt.qt_abstract_button.QtAbstractButton">
+<em class="property">class </em><tt class="descclassname">enaml.qt.qt_abstract_button.</tt><tt class="descname">QtAbstractButton</tt><big>(</big><em>object_id</em>, <em>parent</em>, <em>session</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_abstract_button.html#QtAbstractButton"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_abstract_button.QtAbstractButton" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.control.Control.html#enaml.qt.qt_control.QtControl" title="enaml.qt.qt_control.QtControl"><tt class="xref py py-class docutils literal"><span class="pre">enaml.qt.qt_control.QtControl</span></tt></a></p>
+<p>A Qt implementation of the Enaml AbstractButton class.</p>
+<p>This class can serve as a base class for widgets that implement
+button behavior such as CheckBox, RadioButton and PushButtons.
+It is not meant to be used directly.</p>
+<dl class="method">
+<dt id="enaml.qt.qt_abstract_button.QtAbstractButton.create_widget">
+<tt class="descname">create_widget</tt><big>(</big><em>parent</em>, <em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_abstract_button.html#QtAbstractButton.create_widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_abstract_button.QtAbstractButton.create_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method must be implemented by subclasses to create
+the proper button widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_abstract_button.QtAbstractButton.create">
+<tt class="descname">create</tt><big>(</big><em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_abstract_button.html#QtAbstractButton.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_abstract_button.QtAbstractButton.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create and initialize the abstract button widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_abstract_button.QtAbstractButton.activate">
+<tt class="descname">activate</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_abstract_button.html#QtAbstractButton.activate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_abstract_button.QtAbstractButton.activate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Activate the button widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_abstract_button.QtAbstractButton.on_clicked">
+<tt class="descname">on_clicked</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_abstract_button.html#QtAbstractButton.on_clicked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_abstract_button.QtAbstractButton.on_clicked" title="Permalink to this definition">¶</a></dt>
+<dd><p>The signal handler for the &#8216;clicked&#8217; signal.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_abstract_button.QtAbstractButton.on_toggled">
+<tt class="descname">on_toggled</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_abstract_button.html#QtAbstractButton.on_toggled"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_abstract_button.QtAbstractButton.on_toggled" title="Permalink to this definition">¶</a></dt>
+<dd><p>The signal handler for the &#8216;toggled&#8217; signal.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_abstract_button.QtAbstractButton.on_action_set_checked">
+<tt class="descname">on_action_set_checked</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_abstract_button.html#QtAbstractButton.on_action_set_checked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_abstract_button.QtAbstractButton.on_action_set_checked" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_checked&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_abstract_button.QtAbstractButton.on_action_set_text">
+<tt class="descname">on_action_set_text</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_abstract_button.html#QtAbstractButton.on_action_set_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_abstract_button.QtAbstractButton.on_action_set_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_text&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_abstract_button.QtAbstractButton.on_action_set_icon_source">
+<tt class="descname">on_action_set_icon_source</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_abstract_button.html#QtAbstractButton.on_action_set_icon_source"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_abstract_button.QtAbstractButton.on_action_set_icon_source" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_icon_source&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_abstract_button.QtAbstractButton.on_action_set_icon_size">
+<tt class="descname">on_action_set_icon_size</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_abstract_button.html#QtAbstractButton.on_action_set_icon_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_abstract_button.QtAbstractButton.on_action_set_icon_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_icon_size&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_abstract_button.QtAbstractButton.set_checkable">
+<tt class="descname">set_checkable</tt><big>(</big><em>checkable</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_abstract_button.html#QtAbstractButton.set_checkable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_abstract_button.QtAbstractButton.set_checkable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets whether or not the widget is checkable.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_abstract_button.QtAbstractButton.set_checked">
+<tt class="descname">set_checked</tt><big>(</big><em>checked</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_abstract_button.html#QtAbstractButton.set_checked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_abstract_button.QtAbstractButton.set_checked" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the widget&#8217;s checked state with the provided value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_abstract_button.QtAbstractButton.set_text">
+<tt class="descname">set_text</tt><big>(</big><em>text</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_abstract_button.html#QtAbstractButton.set_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_abstract_button.QtAbstractButton.set_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the widget&#8217;s text with the provided value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_abstract_button.QtAbstractButton.set_icon_source">
+<tt class="descname">set_icon_source</tt><big>(</big><em>icon_source</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_abstract_button.html#QtAbstractButton.set_icon_source"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_abstract_button.QtAbstractButton.set_icon_source" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the widget&#8217;s icon to the provided image.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_abstract_button.QtAbstractButton.set_icon_size">
+<tt class="descname">set_icon_size</tt><big>(</big><em>icon_size</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_abstract_button.html#QtAbstractButton.set_icon_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_abstract_button.QtAbstractButton.set_icon_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the widget&#8217;s icon size to the provided size.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="wx">
+<h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-0b4ece535b31c2e194323235d6c519087f985255.png" alt="Inheritance diagram of enaml.wx.wx_abstract_button.WxAbstractButton" usemap="#inheritance08260a37d0" class="inheritance"/>
+<map id="inheritance08260a37d0" name="inheritance08260a37d0">
+<area shape="rect" id="node1" href="enaml.widgets.control.Control.html#enaml.wx.wx_control.WxControl" title="WxControl" alt="" coords="451,5,533,30"/>
+<area shape="rect" id="node8" href="#enaml.wx.wx_abstract_button.WxAbstractButton" title="WxAbstractButton" alt="" coords="581,5,704,30"/>
+<area shape="rect" id="node2" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.wx.wx_constraints_widget.WxConstraintsWidget" title="WxConstraintsWidget" alt="" coords="259,5,403,30"/>
+<area shape="rect" id="node4" href="enaml.widgets.widget.Widget.html#enaml.wx.wx_widget.WxWidget" title="WxWidget" alt="" coords="131,5,211,30"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.wx.wx_abstract_button.WxAbstractButton">
+<em class="property">class </em><tt class="descclassname">enaml.wx.wx_abstract_button.</tt><tt class="descname">WxAbstractButton</tt><big>(</big><em>object_id</em>, <em>parent</em>, <em>session</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_abstract_button.html#WxAbstractButton"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_abstract_button.WxAbstractButton" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.control.Control.html#enaml.wx.wx_control.WxControl" title="enaml.wx.wx_control.WxControl"><tt class="xref py py-class docutils literal"><span class="pre">enaml.wx.wx_control.WxControl</span></tt></a></p>
+<p>A Wx implementation of the Enaml AbstractButton class.</p>
+<p>This class can serve as a base class for widgets that implement
+button behavior such as CheckBox, RadioButton and PushButtons.
+It is not meant to be used directly.</p>
+<dl class="method">
+<dt id="enaml.wx.wx_abstract_button.WxAbstractButton.create_widget">
+<tt class="descname">create_widget</tt><big>(</big><em>parent</em>, <em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_abstract_button.html#WxAbstractButton.create_widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_abstract_button.WxAbstractButton.create_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method must be implemented by subclasses to create
+the proper button widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_abstract_button.WxAbstractButton.create">
+<tt class="descname">create</tt><big>(</big><em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_abstract_button.html#WxAbstractButton.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_abstract_button.WxAbstractButton.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create and initialize the abstract button widget.</p>
+<p>Subclasses should reimplement this method and bind appropriate
+event handlers to the &#8216;on_clicked&#8217; and &#8216;on_toggled&#8217; event
+handlers.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_abstract_button.WxAbstractButton.on_action_set_checked">
+<tt class="descname">on_action_set_checked</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_abstract_button.html#WxAbstractButton.on_action_set_checked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_abstract_button.WxAbstractButton.on_action_set_checked" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_checked&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_abstract_button.WxAbstractButton.on_action_set_text">
+<tt class="descname">on_action_set_text</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_abstract_button.html#WxAbstractButton.on_action_set_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_abstract_button.WxAbstractButton.on_action_set_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_text&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_abstract_button.WxAbstractButton.on_action_set_icon_size">
+<tt class="descname">on_action_set_icon_size</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_abstract_button.html#WxAbstractButton.on_action_set_icon_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_abstract_button.WxAbstractButton.on_action_set_icon_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_icon_size&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_abstract_button.WxAbstractButton.on_clicked">
+<tt class="descname">on_clicked</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_abstract_button.html#WxAbstractButton.on_clicked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_abstract_button.WxAbstractButton.on_clicked" title="Permalink to this definition">¶</a></dt>
+<dd><p>The event handler for the clicked event.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>event</strong> (<em>wxEvent</em>) &#8211; The wx event object. This is ignored by the handler.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_abstract_button.WxAbstractButton.on_toggled">
+<tt class="descname">on_toggled</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_abstract_button.html#WxAbstractButton.on_toggled"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_abstract_button.WxAbstractButton.on_toggled" title="Permalink to this definition">¶</a></dt>
+<dd><p>The event handler for the toggled event.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>event</strong> (<em>wxEvent</em>) &#8211; The wx event object. This is ignored by the handler.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_abstract_button.WxAbstractButton.set_checkable">
+<tt class="descname">set_checkable</tt><big>(</big><em>checkable</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_abstract_button.html#WxAbstractButton.set_checkable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_abstract_button.WxAbstractButton.set_checkable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets whether or not the widget is checkable.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_abstract_button.WxAbstractButton.get_checked">
+<tt class="descname">get_checked</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_abstract_button.html#WxAbstractButton.get_checked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_abstract_button.WxAbstractButton.get_checked" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the checked state of the widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_abstract_button.WxAbstractButton.set_checked">
+<tt class="descname">set_checked</tt><big>(</big><em>checked</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_abstract_button.html#WxAbstractButton.set_checked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_abstract_button.WxAbstractButton.set_checked" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the widget&#8217;s checked state with the provided value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_abstract_button.WxAbstractButton.set_text">
+<tt class="descname">set_text</tt><big>(</big><em>text</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_abstract_button.html#WxAbstractButton.set_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_abstract_button.WxAbstractButton.set_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the widget&#8217;s text with the provided value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_abstract_button.WxAbstractButton.set_icon">
+<tt class="descname">set_icon</tt><big>(</big><em>icon</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_abstract_button.html#WxAbstractButton.set_icon"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_abstract_button.WxAbstractButton.set_icon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the widget&#8217;s icon to the provided image</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_abstract_button.WxAbstractButton.set_icon_size">
+<tt class="descname">set_icon_size</tt><big>(</big><em>icon_size</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_abstract_button.html#WxAbstractButton.set_icon_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_abstract_button.WxAbstractButton.set_icon_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the widget&#8217;s icon size to the provided tuple</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.bounded_date.BoundedDate.html" title="BoundedDate"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.control.Control.html" title="Control"
+             >previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" >Widgets</a> &raquo;</li>
+  
+    <li><a href="#">AbstractButton</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Dec 13, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

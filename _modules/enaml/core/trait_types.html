@@ -1,0 +1,400 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.core.trait_types &mdash; enaml 0.6.3 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.6.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.6.3 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.core.trait_types</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.core.trait_types</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">TraitType</span><span class="p">,</span> <span class="n">TraitError</span><span class="p">,</span> <span class="n">BaseInstance</span>
+<span class="kn">from</span> <span class="nn">traits.traits</span> <span class="kn">import</span> <span class="n">CTrait</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Enaml Instance</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="EnamlInstance"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.trait_types.EnamlInstance">[docs]</a><span class="k">class</span> <span class="nc">EnamlInstance</span><span class="p">(</span><span class="n">TraitType</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A custom TraitType which serves as a simple isinstance(...)</span>
+<span class="sd">    validator. This class serves as the base class for other custom</span>
+<span class="sd">    trait types such as EnamlEvent.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="EnamlInstance.is_valid_type"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.trait_types.EnamlInstance.is_valid_type">[docs]</a>    <span class="k">def</span> <span class="nf">is_valid_type</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A static method which returns whether or not the given object</span>
+<span class="sd">        can be used as the type in an isinstance(..., type) expression.</span>
+
+<span class="sd">        Paramters</span>
+<span class="sd">        ---------</span>
+<span class="sd">        obj : object</span>
+<span class="sd">            The object which should behave like a type for the purpose</span>
+<span class="sd">            of an isinstance check. This means the object is type</span>
+<span class="sd">            or defines an &#39;__instancecheck__&#39; method.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : bool</span>
+<span class="sd">            True if the object is a type or defines a method named</span>
+<span class="sd">            &#39;__instancecheck__&#39;, False otherwise.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s">&#39;__instancecheck__&#39;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="EnamlInstance.__init__"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.trait_types.EnamlInstance.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base_type</span><span class="o">=</span><span class="nb">object</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize an EnamlInstance.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        base_type : type-like object, optional</span>
+<span class="sd">            An object that behaves like a type for the purposes of a</span>
+<span class="sd">            call to isinstance. The staticmethod &#39;is_valid_attr_type&#39;</span>
+<span class="sd">            defined on this class can be used to test a type before</span>
+<span class="sd">            creating an instance of this class. It is assumed that the</span>
+<span class="sd">            given type passes that test. The default is object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">EnamlInstance</span><span class="o">.</span><span class="n">is_valid_type</span><span class="p">(</span><span class="n">base_type</span><span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s"> is not a valid type object&#39;</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span> <span class="o">%</span> <span class="n">base_type</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">EnamlInstance</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_type</span> <span class="o">=</span> <span class="n">base_type</span>
+</div>
+<div class="viewcode-block" id="EnamlInstance.validate"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.trait_types.EnamlInstance.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The validation handler for an EnamlInstace. It performs a</span>
+<span class="sd">        simple isinstance(...) check using the attribute type provided</span>
+<span class="sd">        to the constructor.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_type</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span>
+</div>
+<div class="viewcode-block" id="EnamlInstance.full_info"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.trait_types.EnamlInstance.full_info">[docs]</a>    <span class="k">def</span> <span class="nf">full_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Overridden parent class method to compute an appropriate info</span>
+<span class="sd">        string for use in error messages.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s">&#39;an instance of </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_type</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Enaml Event</span>
+<span class="c">#------------------------------------------------------------------------------</span></div></div>
+<div class="viewcode-block" id="EnamlEventDispatcher"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.trait_types.EnamlEventDispatcher">[docs]</a><span class="k">class</span> <span class="nc">EnamlEventDispatcher</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A thin object which is used to dispatch a notification for an</span>
+<span class="sd">    EnamlEvent. Instances of this class are callable with at most one</span>
+<span class="sd">    argument, which will be the payload of the event. Instances of this</span>
+<span class="sd">    dispatcher should not be held onto, since they maintain a strong</span>
+<span class="sd">    reference to the underlying object.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="EnamlEventDispatcher.__init__"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.trait_types.EnamlEventDispatcher.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trait</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize an event dispatcher.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trait : Instance(TraitType)</span>
+<span class="sd">            The trait type instance on which validate will be called</span>
+<span class="sd">            with the event payload.</span>
+
+<span class="sd">        obj : Instance(HasTraits)</span>
+<span class="sd">            The HasTraits object on which the event is being emitted.</span>
+
+<span class="sd">        name : string</span>
+<span class="sd">            The name of the event being emitted.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_trait</span> <span class="o">=</span> <span class="n">trait</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span> <span class="o">=</span> <span class="n">obj</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
+</div>
+<div class="viewcode-block" id="EnamlEventDispatcher.__call__"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.trait_types.EnamlEventDispatcher.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">payload</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Dispatches the event with the given payload.</span>
+
+<span class="sd">        Paramters</span>
+<span class="sd">        ---------</span>
+<span class="sd">        payload : object, optional</span>
+<span class="sd">            The payload argument of the event. This object will be</span>
+<span class="sd">            validated against the type declared for the event.</span>
+<span class="sd">            The default payload is None.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_trait</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">trait_property_changed</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
+
+</div></div>
+<div class="viewcode-block" id="EnamlEvent"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.trait_types.EnamlEvent">[docs]</a><span class="k">class</span> <span class="nc">EnamlEvent</span><span class="p">(</span><span class="n">EnamlInstance</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A custom EnamlInstance that is used to implement the event</span>
+<span class="sd">    type in Enaml. An EnamlEvent is read-only, and returns a dispatcher</span>
+<span class="sd">    which can be called to emit the event.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="EnamlEvent.get"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.trait_types.EnamlEvent.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The trait getter method. Returns an EnamlEventDispatcher</span>
+<span class="sd">        instance which can be called to emit the event.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">EnamlEventDispatcher</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="EnamlEvent.set"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.trait_types.EnamlEvent.set">[docs]</a>    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The trait setter method. Fires off a EnamlEventDispatcher</span>
+<span class="sd">        as if the event were called with the payload.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">EnamlEventDispatcher</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">)(</span><span class="n">value</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="EnamlEvent.full_info"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.trait_types.EnamlEvent.full_info">[docs]</a>    <span class="k">def</span> <span class="nf">full_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Overridden parent class method to compute an appropriate info</span>
+<span class="sd">        string for use in error messages.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s">&#39;emitted with an object of </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_type</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Bounded</span>
+<span class="c">#------------------------------------------------------------------------------</span></div></div>
+<div class="viewcode-block" id="Bounded"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.trait_types.Bounded">[docs]</a><span class="k">class</span> <span class="nc">Bounded</span><span class="p">(</span><span class="n">TraitType</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Generic Bounded Trait class.</span>
+
+<span class="sd">    The class defines a generic Trait where the value is validated</span>
+<span class="sd">    on assigment to fall between low and high (static or dynamic) bounds.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">info_text</span> <span class="o">=</span> <span class="s">&quot;Bounded value&quot;</span>
+
+<div class="viewcode-block" id="Bounded.__init__"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.trait_types.Bounded.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">low</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">metadata</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Arguments</span>
+<span class="sd">        ---------</span>
+<span class="sd">        value :</span>
+<span class="sd">            The default value. It can be a python object or a Trait.</span>
+
+<span class="sd">        low :</span>
+<span class="sd">            The lower bound of the Trait.</span>
+
+<span class="sd">        high :</span>
+<span class="sd">            The upper bound of the Trait.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">CTrait</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">validate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_with_trait</span>
+            <span class="n">default_value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">default</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">validate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_bounds</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">low</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">default_value</span> <span class="o">=</span> <span class="n">low</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">default_value</span> <span class="o">=</span> <span class="n">high</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">default_value</span> <span class="o">=</span> <span class="n">value</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">Bounded</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">default_value</span><span class="p">,</span> <span class="o">**</span><span class="n">metadata</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_high</span> <span class="o">=</span> <span class="n">high</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_low</span> <span class="o">=</span> <span class="n">low</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="n">value</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">default_value_type</span> <span class="o">=</span> <span class="mi">8</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">default_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_default_value</span>
+</div>
+    <span class="k">def</span> <span class="nf">_get_default_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handles computing the default value for the Bounded trait.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">reduce</span><span class="p">(</span><span class="nb">getattr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">),</span> <span class="n">obj</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Bounded.validate_with_trait"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.trait_types.Bounded.validate_with_trait">[docs]</a>    <span class="k">def</span> <span class="nf">validate_with_trait</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Validate the trait value.</span>
+
+<span class="sd">        Validation takes place in two steps:</span>
+<span class="sd">        #. The input value is validated based on the expected Trait type.</span>
+<span class="sd">        #. The value it is between the static (or dynamic) bounds.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">value_trait</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">value_trait</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_bounds</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Bounded.validate_bounds"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.trait_types.Bounded.validate_bounds">[docs]</a>    <span class="k">def</span> <span class="nf">validate_bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Validate that the value is in range.</span>
+
+<span class="sd">        .. note:: Any exceptions that may take place are converted to</span>
+<span class="sd">            TraitErrors.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">low</span><span class="p">,</span> <span class="n">high</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bounds</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">low</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">low</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">if</span> <span class="n">high</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">high</span> <span class="o">=</span> <span class="n">value</span>
+
+        <span class="n">is_inside_bounds</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">is_inside_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="n">low</span> <span class="o">&lt;=</span> <span class="n">value</span> <span class="o">&lt;=</span> <span class="n">high</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">raised_exception</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">raised_exception</span><span class="p">,</span> <span class="n">TraitError</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">raised_exception</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Bound checking of {0} caused a the following Python &#39;</span>
+                       <span class="s">&#39;Exception: {1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">raised_exception</span><span class="p">))</span>
+                <span class="k">raise</span> <span class="n">TraitError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_inside_bounds</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;The assigned value must be bounded between {0} &#39;</span>
+                   <span class="s">&#39; and {1}. Got {2} instead.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="n">TraitError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">value</span>
+</div>
+<div class="viewcode-block" id="Bounded.get_bounds"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.trait_types.Bounded.get_bounds">[docs]</a>    <span class="k">def</span> <span class="nf">get_bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get the lower and upper bounds of the Trait.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">low</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_low</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">low</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
+            <span class="n">low</span> <span class="o">=</span> <span class="nb">reduce</span><span class="p">(</span><span class="nb">getattr</span><span class="p">,</span> <span class="n">low</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">),</span> <span class="n">obj</span><span class="p">)</span>
+
+        <span class="n">high</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_high</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">high</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
+            <span class="n">high</span> <span class="o">=</span> <span class="nb">reduce</span><span class="p">(</span><span class="nb">getattr</span><span class="p">,</span> <span class="n">high</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">),</span> <span class="n">obj</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">)</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Coercing Instance</span>
+<span class="c">#------------------------------------------------------------------------------</span></div></div>
+<div class="viewcode-block" id="CoercingInstance"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.trait_types.CoercingInstance">[docs]</a><span class="k">class</span> <span class="nc">CoercingInstance</span><span class="p">(</span><span class="n">BaseInstance</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A BaseInstance subclass which attempts to coerce a value by</span>
+<span class="sd">    calling the class constructor and passing the new value into the</span>
+<span class="sd">    original validate method.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="CoercingInstance.validate"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.trait_types.CoercingInstance.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Attempts to coerce the given value to an appropriate type</span>
+<span class="sd">        by calling the underlying class constructor. The coerced value</span>
+<span class="sd">        is then sent to the superclass&#39; validate method.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">resolve_klass</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">CoercingInstance</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.core.trait_types</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Dec 13, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

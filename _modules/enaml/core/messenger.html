@@ -1,0 +1,337 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.core.messenger &mdash; enaml 0.6.3 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.6.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.6.3 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.core.messenger</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.core.messenger</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2012, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">Instance</span><span class="p">,</span> <span class="n">Uninitialized</span>
+
+<span class="kn">from</span> <span class="nn">enaml.utils</span> <span class="kn">import</span> <span class="n">LoopbackGuard</span>
+
+<span class="kn">from</span> <span class="nn">.declarative</span> <span class="kn">import</span> <span class="n">Declarative</span>
+<span class="kn">from</span> <span class="nn">.include</span> <span class="kn">import</span> <span class="n">Include</span>
+<span class="kn">from</span> <span class="nn">.object</span> <span class="kn">import</span> <span class="n">Object</span>
+
+
+<span class="k">class</span> <span class="nc">PublishAttributeNotifier</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A lightweight trait change notifier used by Messenger.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Called by traits to dispatch the notifier.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">old</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">Uninitialized</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">loopback_guard</span><span class="p">:</span>
+            <span class="n">obj</span><span class="o">.</span><span class="n">send_action</span><span class="p">(</span><span class="s">&#39;set_&#39;</span> <span class="o">+</span> <span class="n">name</span><span class="p">,</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">new</span><span class="p">})</span>
+
+    <span class="k">def</span> <span class="nf">equals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Compares this notifier against another for equality.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">False</span>
+
+<span class="c"># Only a single instance of PublishAttributeNotifier is needed.</span>
+<span class="n">PublishAttributeNotifier</span> <span class="o">=</span> <span class="n">PublishAttributeNotifier</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="Messenger"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.messenger.Messenger">[docs]</a><span class="k">class</span> <span class="nc">Messenger</span><span class="p">(</span><span class="n">Declarative</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A base class for creating messaging-enabled Enaml objects.</span>
+
+<span class="sd">    This is a Declarative subclass which provides convenient APIs for</span>
+<span class="sd">    sharing state between a server-side Enaml object and a client-side</span>
+<span class="sd">    implementation of that object. It also enables support for the</span>
+<span class="sd">    `Include` object type.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#: A loopback guard which can be used to prevent a notification</span>
+    <span class="c">#: cycle when setting attributes from within an action handler.</span>
+    <span class="n">loopback_guard</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="n">LoopbackGuard</span><span class="p">,</span> <span class="p">())</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Lifetime API</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="Messenger.pre_initialize"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.messenger.Messenger.pre_initialize">[docs]</a>    <span class="k">def</span> <span class="nf">pre_initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A reimplemented initialization method.</span>
+
+<span class="sd">        This method will setup any `Include` children so that they may</span>
+<span class="sd">        prepare their objects before the proper initialization pass.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Messenger</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">pre_initialize</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">Include</span><span class="p">):</span>
+                <span class="n">child</span><span class="o">.</span><span class="n">init_objects</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Messenger.post_initialize"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.messenger.Messenger.post_initialize">[docs]</a>    <span class="k">def</span> <span class="nf">post_initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A reimplemented post initialization method.</span>
+
+<span class="sd">        This method calls the `bind` method after calling the superclass</span>
+<span class="sd">        class version.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Messenger</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">post_initialize</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bind</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Messenger.bind"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.messenger.Messenger.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Called during initialization pass to bind change handlers.</span>
+
+<span class="sd">        This method is called at the end of widget initialization to</span>
+<span class="sd">        provide a subclass the opportunity to setup any required change</span>
+<span class="sd">        notification handlers for publishing their state to the client.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Snapshot API</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="Messenger.snapshot"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.messenger.Messenger.snapshot">[docs]</a>    <span class="k">def</span> <span class="nf">snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get a dictionary representation of the widget tree.</span>
+
+<span class="sd">        This method can be called to get a dictionary representation of</span>
+<span class="sd">        the current state of the widget tree which can be used by client</span>
+<span class="sd">        side implementation to construct their own implementation tree.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : dict</span>
+<span class="sd">            A serializable dictionary representation of the widget tree</span>
+<span class="sd">            from this widget down.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">snap</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">snap</span><span class="p">[</span><span class="s">&#39;object_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">object_id</span>
+        <span class="n">snap</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">snap</span><span class="p">[</span><span class="s">&#39;class&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">class_name</span><span class="p">()</span>
+        <span class="n">snap</span><span class="p">[</span><span class="s">&#39;bases&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_names</span><span class="p">()</span>
+        <span class="n">snap</span><span class="p">[</span><span class="s">&#39;children&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">snapshot</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">snap_children</span><span class="p">()]</span>
+        <span class="k">return</span> <span class="n">snap</span>
+</div>
+<div class="viewcode-block" id="Messenger.snap_children"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.messenger.Messenger.snap_children">[docs]</a>    <span class="k">def</span> <span class="nf">snap_children</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get an iterable of children to include in the snapshot.</span>
+
+<span class="sd">        The default implementation returns the list of children which</span>
+<span class="sd">        are instances of Messenger. Subclasses may reimplement this</span>
+<span class="sd">        method if more control is needed.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : list</span>
+<span class="sd">            The list of children which are instances of Messenger.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">Messenger</span><span class="p">)]</span>
+</div>
+<div class="viewcode-block" id="Messenger.class_name"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.messenger.Messenger.class_name">[docs]</a>    <span class="k">def</span> <span class="nf">class_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get the name of the class for this instance.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : str</span>
+<span class="sd">            The name of the class of this instance.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__name__</span>
+</div>
+<div class="viewcode-block" id="Messenger.base_names"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.messenger.Messenger.base_names">[docs]</a>    <span class="k">def</span> <span class="nf">base_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get the list of base class names for this instance.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : list</span>
+<span class="sd">            The list of string names for the base classes of this</span>
+<span class="sd">            instance. The list starts with the parent class of this</span>
+<span class="sd">            instance and terminates with Object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">base</span> <span class="ow">in</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">mro</span><span class="p">()[</span><span class="mi">1</span><span class="p">:]:</span>
+            <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">base</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">base</span> <span class="ow">is</span> <span class="n">Object</span><span class="p">:</span>
+                <span class="k">break</span>
+        <span class="k">return</span> <span class="n">names</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Messaging Support</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="Messenger.set_guarded"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.messenger.Messenger.set_guarded">[docs]</a>    <span class="k">def</span> <span class="nf">set_guarded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set attribute values from within a loopback guard.</span>
+
+<span class="sd">        This is a convenience method provided for subclasses to set the</span>
+<span class="sd">        values of attributes from within a loopback guard. This prevents</span>
+<span class="sd">        the change from being published back to client and reduces the</span>
+<span class="sd">        chances of getting hung in a feedback loop.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        **attrs</span>
+<span class="sd">            The attributes to set on the object from within a loopback</span>
+<span class="sd">            guard context.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">loopback_guard</span><span class="p">(</span><span class="o">*</span><span class="n">attrs</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">attrs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Messenger.publish_attributes"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.messenger.Messenger.publish_attributes">[docs]</a>    <span class="k">def</span> <span class="nf">publish_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">attrs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A convenience method provided for subclasses to publish</span>
+<span class="sd">        attribute changes as actions to the client.</span>
+
+<span class="sd">        The action name is created by prefixing &#39;set_&#39; to the name of</span>
+<span class="sd">        the changed attribute. This method is suitable for most cases</span>
+<span class="sd">        of simple attribute publishing. More complex cases will need</span>
+<span class="sd">        to implement their own dispatching handlers. The handler for</span>
+<span class="sd">        the changes will only send the action message if the attribute</span>
+<span class="sd">        name is not held by the loopback guard.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        *attrs</span>
+<span class="sd">            The string names of the attributes to publish to the client.</span>
+<span class="sd">            The values of these attributes should be JSON serializable.</span>
+<span class="sd">            More complex values should use their own dispatch handlers.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attrs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_notifier</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">PublishAttributeNotifier</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Messenger.children_event"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.messenger.Messenger.children_event">[docs]</a>    <span class="k">def</span> <span class="nf">children_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle a `ChildrenEvent` for the widget.</span>
+
+<span class="sd">        If the widget state is &#39;active&#39;, a `children_changed` action</span>
+<span class="sd">        will be sent to the client widget. The action is sent before</span>
+<span class="sd">        the superclass&#39; handler is called, and will therefore precede</span>
+<span class="sd">        the trait change notification.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Children events are fired all the time. Only pull for a new</span>
+        <span class="c"># snapshot if the widget has been fully activated.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_active</span><span class="p">:</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">new_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">new</span><span class="p">)</span>
+            <span class="n">old_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">old</span><span class="p">)</span>
+            <span class="n">added</span> <span class="o">=</span> <span class="n">new_set</span> <span class="o">-</span> <span class="n">old_set</span>
+            <span class="n">removed</span> <span class="o">=</span> <span class="n">old_set</span> <span class="o">-</span> <span class="n">new_set</span>
+            <span class="n">content</span><span class="p">[</span><span class="s">&#39;order&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">c</span><span class="o">.</span><span class="n">object_id</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">event</span><span class="o">.</span><span class="n">new</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">Messenger</span><span class="p">)</span>
+            <span class="p">]</span>
+            <span class="n">content</span><span class="p">[</span><span class="s">&#39;removed&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">c</span><span class="o">.</span><span class="n">object_id</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">removed</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">Messenger</span><span class="p">)</span>
+            <span class="p">]</span>
+            <span class="n">content</span><span class="p">[</span><span class="s">&#39;added&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">c</span><span class="o">.</span><span class="n">snapshot</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">added</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">Messenger</span><span class="p">)</span>
+            <span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">send_action</span><span class="p">(</span><span class="s">&#39;children_changed&#39;</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Messenger</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">children_event</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.core.messenger</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Dec 13, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

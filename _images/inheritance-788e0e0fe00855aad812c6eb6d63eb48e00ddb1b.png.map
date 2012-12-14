@@ -1,8 +1,0 @@
-<map id="inheritancecea6d771aa" name="inheritancecea6d771aa">
-<area shape="rect" id="node1" href="enaml.components.constraints_widget.ConstraintsWidget.html#enaml.backends.wx.wx_constraints_widget.WXConstraintsWidget" title="WXConstraintsWidget" alt="" coords="398,3,477,17"/>
-<area shape="rect" id="node17" href="enaml.components.control.Control.html#enaml.backends.wx.wx_control.WXControl" title="WXControl" alt="" coords="523,3,567,17"/>
-<area shape="rect" id="node2" href="enaml.components.widget_component.WidgetComponent.html#enaml.backends.wx.wx_widget_component.WXWidgetComponent" title="WXWidgetComponent" alt="" coords="284,3,363,17"/>
-<area shape="rect" id="node8" href="enaml.components.base_widget_component.BaseWidgetComponent.html#enaml.backends.wx.wx_base_widget_component.WXBaseWidgetComponent" title="WXBaseWidgetComponent" alt="" coords="149,3,242,17"/>
-<area shape="rect" id="node21" href="enaml.components.toggle_control.ToggleControl.html#enaml.backends.wx.wx_toggle_control.WXToggleControl" title="WXToggleControl" alt="" coords="619,3,685,17"/>
-<area shape="rect" id="node20" href="#enaml.backends.wx.wx_check_box.WXCheckBox" title="WXCheckBox" alt="" coords="714,16,765,30"/>
-</map>

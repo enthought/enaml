@@ -1,0 +1,584 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.session &mdash; enaml 0.6.3 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.6.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.6.3 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.session</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.session</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2012, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">HasTraits</span><span class="p">,</span> <span class="n">Instance</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Str</span><span class="p">,</span> <span class="n">ReadOnly</span><span class="p">,</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">Property</span>
+
+<span class="kn">from</span> <span class="nn">enaml.widgets.window</span> <span class="kn">import</span> <span class="n">Window</span>
+
+<span class="kn">from</span> <span class="nn">.application</span> <span class="kn">import</span> <span class="n">deferred_call</span>
+<span class="kn">from</span> <span class="nn">.resource_manager</span> <span class="kn">import</span> <span class="n">ResourceManager</span>
+<span class="kn">from</span> <span class="nn">.signaling</span> <span class="kn">import</span> <span class="n">Signal</span>
+<span class="kn">from</span> <span class="nn">.socket_interface</span> <span class="kn">import</span> <span class="n">ActionSocketInterface</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">make_dispatcher</span>
+
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+
+<span class="c">#: The set of actions which should be batched and sent to the client as</span>
+<span class="c">#: a single message. This allows a client to perform intelligent message</span>
+<span class="c">#: handling when dealing with messages that may affect the widget tree.</span>
+<span class="n">BATCH_ACTIONS</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="s">&#39;destroy&#39;</span><span class="p">,</span> <span class="s">&#39;children_changed&#39;</span><span class="p">,</span> <span class="s">&#39;relayout&#39;</span><span class="p">])</span>
+
+
+<span class="c">#: The dispatch function for action dispatching on the session.</span>
+<span class="n">dispatch_action</span> <span class="o">=</span> <span class="n">make_dispatcher</span><span class="p">(</span><span class="s">&#39;on_action_&#39;</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="DeferredMessageBatch"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.session.DeferredMessageBatch">[docs]</a><span class="k">class</span> <span class="nc">DeferredMessageBatch</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A class which aggregates batch messages.</span>
+
+<span class="sd">    Each time a message is added to this object, its tick count is</span>
+<span class="sd">    incremented and a tick down event is posted to the event queue.</span>
+<span class="sd">    When the object receives the tick down event, it decrements its</span>
+<span class="sd">    tick count, and if it&#39;s zero, fires the `triggered` signal.</span>
+
+<span class="sd">    This allows a consumer of the batch to continually add messages and</span>
+<span class="sd">    have the `triggered` signal fired only when the event queue is fully</span>
+<span class="sd">    drained of relevant messages.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#: A signal emitted when the tick count of the batch reaches zero</span>
+    <span class="c">#: and the owner of the batch should consume the messages.</span>
+    <span class="n">triggered</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">()</span>
+
+<div class="viewcode-block" id="DeferredMessageBatch.__init__"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.session.DeferredMessageBatch.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize a DeferredMessageBatch.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_messages</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tick</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Private API</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+    <span class="k">def</span> <span class="nf">_tick_down</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A private handler method which ticks down the batch.</span>
+
+<span class="sd">        The tick down events are called in a deferred fashion to allow</span>
+<span class="sd">        for the aggregation of batch events. When the tick reaches</span>
+<span class="sd">        zero, the `triggered` signal will be emitted.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tick</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tick</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">deferred_call</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tick_down</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Public API</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="DeferredMessageBatch.release"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.session.DeferredMessageBatch.release">[docs]</a>    <span class="k">def</span> <span class="nf">release</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Release the messages that were added to the batch.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : list</span>
+<span class="sd">            The list of messages added to the batch.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">messages</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_messages</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_messages</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">return</span> <span class="n">messages</span>
+</div>
+<div class="viewcode-block" id="DeferredMessageBatch.add_message"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.session.DeferredMessageBatch.add_message">[docs]</a>    <span class="k">def</span> <span class="nf">add_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Add a message to the batch.</span>
+
+<span class="sd">        This will cause the batch to tick up and then start the tick</span>
+<span class="sd">        down process if necessary.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        message : object</span>
+<span class="sd">            The message object to add to the batch.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tick</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">deferred_call</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tick_down</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tick</span> <span class="o">+=</span> <span class="mi">1</span>
+
+</div></div>
+<div class="viewcode-block" id="URLReply"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.session.URLReply">[docs]</a><span class="k">class</span> <span class="nc">URLReply</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A reply object for sending a loaded resource to a client session.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;_session&#39;</span><span class="p">,</span> <span class="s">&#39;_req_id&#39;</span><span class="p">,</span> <span class="s">&#39;_url&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="URLReply.__init__"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.session.URLReply.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">req_id</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize a URLReply.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        session : Session</span>
+<span class="sd">            The session object for which the image is being loaded.</span>
+
+<span class="sd">        req_id : str</span>
+<span class="sd">            The identifier that was sent with the originating request.</span>
+<span class="sd">            This identifier will be included in the response.</span>
+
+<span class="sd">        url : str</span>
+<span class="sd">            The url that was sent with the originating request. This</span>
+<span class="sd">            url will be included in the response.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_session</span> <span class="o">=</span> <span class="n">session</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_req_id</span> <span class="o">=</span> <span class="n">req_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="n">url</span>
+</div>
+<div class="viewcode-block" id="URLReply.__call__"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.session.URLReply.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resource</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Send the reply to the client session.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        resource : Resource</span>
+<span class="sd">            The loaded resource object, or None if the resource failed</span>
+<span class="sd">            to load.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">reply</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;id&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_req_id</span><span class="p">,</span> <span class="s">&#39;url&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">resource</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">reply</span><span class="p">[</span><span class="s">&#39;status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;fail&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">reply</span><span class="p">[</span><span class="s">&#39;status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;ok&#39;</span>
+            <span class="n">reply</span><span class="p">[</span><span class="s">&#39;resource&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">resource</span><span class="o">.</span><span class="n">snapshot</span><span class="p">()</span>
+        <span class="n">session</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_session</span>
+        <span class="n">session</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">session</span><span class="o">.</span><span class="n">session_id</span><span class="p">,</span> <span class="s">&#39;url_reply&#39;</span><span class="p">,</span> <span class="n">reply</span><span class="p">)</span>
+
+</div></div>
+<div class="viewcode-block" id="Session"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.session.Session">[docs]</a><span class="k">class</span> <span class="nc">Session</span><span class="p">(</span><span class="n">HasTraits</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; An object representing the session between a client and its</span>
+<span class="sd">    Enaml objects.</span>
+
+<span class="sd">    The session object is what ensures that each client has their own</span>
+<span class="sd">    individual instances of objects, so that the only state that is</span>
+<span class="sd">    shared between simultaneously existing clients is that which is</span>
+<span class="sd">    explicitly provided by the developer.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#: The string identifier for this session. This is provided by</span>
+    <span class="c">#: the application when the session is opened. The value should</span>
+    <span class="c">#: not be manipulated by user code.</span>
+    <span class="n">session_id</span> <span class="o">=</span> <span class="n">ReadOnly</span>
+
+    <span class="c">#: The top level windows which are managed by this session. This</span>
+    <span class="c">#: should be populated by user code during the `on_open` method.</span>
+    <span class="n">windows</span> <span class="o">=</span> <span class="n">List</span><span class="p">(</span><span class="n">Window</span><span class="p">)</span>
+
+    <span class="c">#: The widget implementation groups which should be used by the</span>
+    <span class="c">#: widgets in this session. Widget groups are an advanced feature</span>
+    <span class="c">#: which allow the developer to selectively expose toolkit specific</span>
+    <span class="c">#: implementations of Enaml widgets. All standard Enaml widgets are</span>
+    <span class="c">#: available in the &#39;default&#39; group. This value will rarely need to</span>
+    <span class="c">#: be changed by the user.</span>
+    <span class="n">widget_groups</span> <span class="o">=</span> <span class="n">List</span><span class="p">(</span><span class="n">Str</span><span class="p">,</span> <span class="p">[</span><span class="s">&#39;default&#39;</span><span class="p">])</span>
+
+    <span class="c">#: A resource manager used for loading resources for the session.</span>
+    <span class="n">resource_manager</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="n">ResourceManager</span><span class="p">,</span> <span class="p">())</span>
+
+    <span class="c">#: The socket used by this session for communication. This is</span>
+    <span class="c">#: provided by the Application when the session is activated.</span>
+    <span class="c">#: The value should not normally be manipulated by user code.</span>
+    <span class="n">socket</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="n">ActionSocketInterface</span><span class="p">)</span>
+
+    <span class="c">#: The current state of the session. This value is changed by the</span>
+    <span class="c">#: by the application as it drives the session through its lifetime.</span>
+    <span class="c">#: This should not be manipulated directly by user code.</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">Enum</span><span class="p">(</span>
+        <span class="s">&#39;inactive&#39;</span><span class="p">,</span> <span class="s">&#39;opening&#39;</span><span class="p">,</span> <span class="s">&#39;opened&#39;</span><span class="p">,</span> <span class="s">&#39;activating&#39;</span><span class="p">,</span> <span class="s">&#39;active&#39;</span><span class="p">,</span> <span class="s">&#39;closing&#39;</span><span class="p">,</span>
+        <span class="s">&#39;closed&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c">#: A read-only property which is True if the session is inactive.</span>
+    <span class="n">is_inactive</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s">&#39;inactive&#39;</span><span class="p">)</span>
+
+    <span class="c">#: A read-only property which is True if the session is opening.</span>
+    <span class="n">is_opening</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s">&#39;opening&#39;</span><span class="p">)</span>
+
+    <span class="c">#: A read-only property which is True if the session is opened.</span>
+    <span class="n">is_opened</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s">&#39;opened&#39;</span><span class="p">)</span>
+
+    <span class="c">#: A read-only property which is True if the session is activating.</span>
+    <span class="n">is_activating</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s">&#39;activating&#39;</span><span class="p">)</span>
+
+    <span class="c">#: A read-only property which is True if the session is active.</span>
+    <span class="n">is_active</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s">&#39;active&#39;</span><span class="p">)</span>
+
+    <span class="c">#: A read-only property which is True if the session is closing.</span>
+    <span class="n">is_closing</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s">&#39;closing&#39;</span><span class="p">)</span>
+
+    <span class="c">#: A read-only property which is True if the session is closed.</span>
+    <span class="n">is_closed</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s">&#39;closed&#39;</span><span class="p">)</span>
+
+    <span class="c">#: A private dictionary of objects registered with this session.</span>
+    <span class="c">#: This value should not be manipulated by user code.</span>
+    <span class="n">_registered_objects</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="p">())</span>
+
+    <span class="c">#: The private deferred message batch used for collapsing layout</span>
+    <span class="c">#: related messages into a single batch to send to the client</span>
+    <span class="c">#: session for more efficient handling.</span>
+    <span class="n">_batch</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="n">DeferredMessageBatch</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__batch_default</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">batch</span> <span class="o">=</span> <span class="n">DeferredMessageBatch</span><span class="p">()</span>
+        <span class="n">batch</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_on_batch_triggered</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">batch</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Class API</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Session.factory"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.session.Session.factory">[docs]</a>    <span class="k">def</span> <span class="nf">factory</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get a SessionFactory instance for this Session class.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name : str, optional</span>
+<span class="sd">            The name to use for the session instances. The default uses</span>
+<span class="sd">            the class name.</span>
+
+<span class="sd">        description : str, optional</span>
+<span class="sd">            A human friendly description of the session. The default uses</span>
+<span class="sd">            the class docstring.</span>
+
+<span class="sd">        *args, **kwargs</span>
+<span class="sd">            Any positional and keyword arguments to pass to the session</span>
+<span class="sd">            when it is instantiated.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">enaml.session_factory</span> <span class="kn">import</span> <span class="n">SessionFactory</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">__name__</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">description</span><span class="p">:</span>
+            <span class="n">description</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">__doc__</span>
+        <span class="k">return</span> <span class="n">SessionFactory</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">description</span><span class="p">,</span> <span class="n">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Private API</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+    <span class="k">def</span> <span class="nf">_on_batch_triggered</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A signal handler for the `triggered` signal on the deferred</span>
+<span class="sd">        message batch.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;batch&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch</span><span class="o">.</span><span class="n">release</span><span class="p">()}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_id</span><span class="p">,</span> <span class="s">&#39;message_batch&#39;</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Abstract API</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="Session.on_open"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.session.Session.on_open">[docs]</a>    <span class="k">def</span> <span class="nf">on_open</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Called by the application when the session is opened.</span>
+
+<span class="sd">        This method must be implemented in a subclass and is called to</span>
+<span class="sd">        create the Enaml objects for the session. This method will only</span>
+<span class="sd">        be called once during the session lifetime. User code should</span>
+<span class="sd">        create their windows and assign them to the list of `windows`</span>
+<span class="sd">        before the method returns.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+<div class="viewcode-block" id="Session.on_close"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.session.Session.on_close">[docs]</a>    <span class="k">def</span> <span class="nf">on_close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Called by the application when the session is closed.</span>
+
+<span class="sd">        This method may be optionally implemented by subclasses so that</span>
+<span class="sd">        they can perform custom cleaup. After this method returns, the</span>
+<span class="sd">        session should be considered invalid. This method is only called</span>
+<span class="sd">        once during the session lifetime.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Public API</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="Session.open"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.session.Session.open">[docs]</a>    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Called by the application to open the session.</span>
+
+<span class="sd">        This method will call the `on_open` abstract method which must</span>
+<span class="sd">        be implemented by subclasses. The method should never be called</span>
+<span class="sd">        by user code.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        session_id : str</span>
+<span class="sd">            The unique identifier to use for this session.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session_id</span> <span class="o">=</span> <span class="n">session_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s">&#39;opening&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">on_open</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">window</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">windows</span><span class="p">:</span>
+            <span class="n">window</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s">&#39;opened&#39;</span>
+</div>
+<div class="viewcode-block" id="Session.activate"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.session.Session.activate">[docs]</a>    <span class="k">def</span> <span class="nf">activate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">socket</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Called by the application to activate the session and its</span>
+<span class="sd">        windows.</span>
+
+<span class="sd">        This method will be called by the Application once during the</span>
+<span class="sd">        session lifetime. Once this method returns, the session and</span>
+<span class="sd">        its objects will be ready to send and receive messages. This</span>
+<span class="sd">        should never be called by user code.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        socket : ActionSocketInterface</span>
+<span class="sd">            A concrete implementation of ActionSocketInterface to use</span>
+<span class="sd">            for messaging by this session.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s">&#39;activating&#39;</span>
+        <span class="k">for</span> <span class="n">window</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">windows</span><span class="p">:</span>
+            <span class="n">window</span><span class="o">.</span><span class="n">activate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">socket</span> <span class="o">=</span> <span class="n">socket</span>
+        <span class="n">socket</span><span class="o">.</span><span class="n">on_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_message</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s">&#39;active&#39;</span>
+</div>
+<div class="viewcode-block" id="Session.close"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.session.Session.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Called by the application when the session is closed.</span>
+
+<span class="sd">        This method will call the `on_close` method which can optionally</span>
+<span class="sd">        be implemented by subclasses. The method should never be called</span>
+<span class="sd">        by user code.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_id</span><span class="p">,</span> <span class="s">&#39;close&#39;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s">&#39;closing&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">on_close</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">window</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">windows</span><span class="p">:</span>
+            <span class="n">window</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">windows</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_registered_objects</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">on_message</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">socket</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s">&#39;closed&#39;</span>
+</div>
+<div class="viewcode-block" id="Session.snapshot"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.session.Session.snapshot">[docs]</a>    <span class="k">def</span> <span class="nf">snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get a snapshot of the windows of this session.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : list</span>
+<span class="sd">            A list of snapshots representing the current windows for</span>
+<span class="sd">            this session.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">window</span><span class="o">.</span><span class="n">snapshot</span><span class="p">()</span> <span class="k">for</span> <span class="n">window</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">windows</span><span class="p">]</span>
+</div>
+<div class="viewcode-block" id="Session.register"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.session.Session.register">[docs]</a>    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Register an object with the session.</span>
+
+<span class="sd">        This method is called by an Object when it is activated by a</span>
+<span class="sd">        Session. It should never be called by user code.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        obj : Object</span>
+<span class="sd">            The object to register with the session.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_registered_objects</span><span class="p">[</span><span class="n">obj</span><span class="o">.</span><span class="n">object_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span>
+</div>
+<div class="viewcode-block" id="Session.unregister"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.session.Session.unregister">[docs]</a>    <span class="k">def</span> <span class="nf">unregister</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Unregister an object from the session.</span>
+
+<span class="sd">        This method is called by an Object when it is being destroyed.</span>
+<span class="sd">        It should never be called by user code.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        obj : Object</span>
+<span class="sd">            The object to unregister from the session.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_registered_objects</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">object_id</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Messaging API</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="Session.send"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.session.Session.send">[docs]</a>    <span class="k">def</span> <span class="nf">send</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">object_id</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Send a message to a client object.</span>
+
+<span class="sd">        This method is called by the `Object` instances owned by this</span>
+<span class="sd">        session to send messages to their client implementations.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        object_id : str</span>
+<span class="sd">            The object id of the client object.</span>
+
+<span class="sd">        action : str</span>
+<span class="sd">            The action that should be performed by the object.</span>
+
+<span class="sd">        content : dict</span>
+<span class="sd">            The content dictionary for the action.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_active</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">BATCH_ACTIONS</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_batch</span><span class="o">.</span><span class="n">add_message</span><span class="p">((</span><span class="n">object_id</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">content</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">object_id</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Session.on_message"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.session.Session.on_message">[docs]</a>    <span class="k">def</span> <span class="nf">on_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">object_id</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Receive a message sent to an object owned by this session.</span>
+
+<span class="sd">        This is a handler method registered as the callback for the</span>
+<span class="sd">        action socket. The message will be routed to the appropriate</span>
+<span class="sd">        `Object` instance.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        object_id : str</span>
+<span class="sd">            The object id of the target object.</span>
+
+<span class="sd">        action : str</span>
+<span class="sd">            The action that should be performed by the object.</span>
+
+<span class="sd">        content : dict</span>
+<span class="sd">            The content dictionary for the action.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_active</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">object_id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_id</span><span class="p">:</span>
+                <span class="n">dispatch_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_registered_objects</span><span class="p">[</span><span class="n">object_id</span><span class="p">]</span>
+                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;Invalid object id sent to Session: </span><span class="si">%s</span><span class="s">:</span><span class="si">%s</span><span class="s">&quot;</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span> <span class="o">%</span> <span class="p">(</span><span class="n">object_id</span><span class="p">,</span> <span class="n">action</span><span class="p">))</span>
+                    <span class="k">return</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">obj</span><span class="o">.</span><span class="n">receive_action</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Action Handlers</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="Session.on_action_url_request"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.session.Session.on_action_url_request">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_url_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;url_request&#39; action from the client session.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">content</span><span class="p">[</span><span class="s">&#39;url&#39;</span><span class="p">]</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="n">content</span><span class="p">[</span><span class="s">&#39;metadata&#39;</span><span class="p">]</span>
+        <span class="n">reply</span> <span class="o">=</span> <span class="n">URLReply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">],</span> <span class="n">url</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resource_manager</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">reply</span><span class="p">)</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.session</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Dec 13, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

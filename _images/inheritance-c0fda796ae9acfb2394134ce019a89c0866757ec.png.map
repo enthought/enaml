@@ -1,6 +1,0 @@
-<map id="inheritance668ae6234d" name="inheritance668ae6234d">
-<area shape="rect" id="node4" href="enaml.components.widget_component.WidgetComponent.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent" title="QtWidgetComponent" alt="" coords="385,4,494,24"/>
-<area shape="rect" id="node5" href="enaml.components.base_widget_component.BaseWidgetComponent.html#enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent" title="QtBaseWidgetComponent" alt="" coords="213,4,342,24"/>
-<area shape="rect" id="node9" href="enaml.components.window.Window.html#enaml.backends.qt.qt_window.QtWindow" title="QtWindow" alt="" coords="557,4,618,24"/>
-<area shape="rect" id="node14" href="#enaml.backends.qt.qt_main_window.QtMainWindow" title="QtMainWindow" alt="" coords="682,22,764,43"/>
-</map>

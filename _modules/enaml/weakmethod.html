@@ -1,0 +1,240 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.weakmethod &mdash; enaml 0.6.3 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.6.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.6.3 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.weakmethod</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.weakmethod</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2012, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">MethodType</span>
+<span class="kn">from</span> <span class="nn">weakref</span> <span class="kn">import</span> <span class="n">ref</span>
+
+
+<div class="viewcode-block" id="WeakMethod"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.weakmethod.WeakMethod">[docs]</a><span class="k">class</span> <span class="nc">WeakMethod</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; An object which weakly binds a method with a lifetime bound</span>
+<span class="sd">    to the lifetime of the underlying object.</span>
+
+<span class="sd">    Instances of WeakMethod are also weakref-able with a lifetime which</span>
+<span class="sd">    is also bound to lifetime of the method owner.</span>
+
+<span class="sd">    If multiple WeakMethods are requested for the same equivalent method</span>
+<span class="sd">    object, the same WeakMethod will be returned. This behavior is the</span>
+<span class="sd">    same as the standard weakref semantics.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;_im_func&#39;</span><span class="p">,</span> <span class="s">&#39;_im_selfref&#39;</span><span class="p">,</span> <span class="s">&#39;_im_class&#39;</span><span class="p">,</span> <span class="s">&#39;__weakref__&#39;</span><span class="p">)</span>
+
+    <span class="c">#: An internal dict which maintains a strong reference to the</span>
+    <span class="c">#: the underlying weak method wrappers until the owner of the</span>
+    <span class="c">#: method is destroyed.</span>
+    <span class="n">_instances</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_remove</span><span class="p">(</span><span class="n">wr_item</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A private weakref callback which will release the internal</span>
+<span class="sd">        strong references to the WeakMethod instances for the object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">del</span> <span class="n">WeakMethod</span><span class="o">.</span><span class="n">_instances</span><span class="p">[</span><span class="n">wr_item</span><span class="p">]</span>
+
+<div class="viewcode-block" id="WeakMethod.__new__"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.weakmethod.WeakMethod.__new__">[docs]</a>    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">method</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Create a new WeakMethod instance or return an equivalent</span>
+<span class="sd">        which already exists.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        method : A bound method object</span>
+<span class="sd">            The bound method which should be wrapped weakly.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># The logic to setup the weakref is as follows:</span>
+        <span class="c">#</span>
+        <span class="c"># The keys of the instances dict should be weakrefs for a given</span>
+        <span class="c"># object and have a callback that will pop the item from the dict</span>
+        <span class="c"># when the underlying object is destroyed. When using weakrefs as</span>
+        <span class="c"># keys in a dictionary, two weakrefs will hash to the same value</span>
+        <span class="c"># and compare equally if their underlying object is the same. This</span>
+        <span class="c"># is true even if the two weakrefs have different callbacks. When</span>
+        <span class="c"># creating weakrefs without callbacks, Python will only create a</span>
+        <span class="c"># single instance for a given object, and return that same weakref</span>
+        <span class="c"># instance for multiple calls. i.e:</span>
+        <span class="c">#</span>
+        <span class="c">#     &gt;&gt;&gt; f = Foo()</span>
+        <span class="c">#     &gt;&gt;&gt; r = weakref.ref(f)</span>
+        <span class="c">#     &gt;&gt;&gt; r is weakref.ref(f)</span>
+        <span class="c">#     True</span>
+        <span class="c">#</span>
+        <span class="c"># However, Python will create a new weakref instance for each</span>
+        <span class="c"># weakref with a callback, even if the callback is the same:</span>
+        <span class="c">#</span>
+        <span class="c">#     &gt;&gt;&gt; def bar(): pass</span>
+        <span class="c">#     &gt;&gt;&gt; f = Foo()</span>
+        <span class="c">#     &gt;&gt;&gt; r = weakref.ref(f, bar)</span>
+        <span class="c">#     &gt;&gt;&gt; r is weakref.ref(f, bar)</span>
+        <span class="c">#     False</span>
+        <span class="c">#</span>
+        <span class="c"># A WeakMethod instance does not rely on a callback. Therefore, a</span>
+        <span class="c"># good amount of space can be saved if all WeakMethod instances for</span>
+        <span class="c"># a given object share the same no-callback weakref for that object,</span>
+        <span class="c"># and the only weakref with callback kept around is the one used as</span>
+        <span class="c"># the key in the dict.</span>
+        <span class="c">#</span>
+        <span class="c"># The logic below first creates a no-callback weakref, which is always</span>
+        <span class="c"># necessary and will only be created by Python once and then reused.</span>
+        <span class="c"># That weakref is used to lookup the item in the dict. If that lookup</span>
+        <span class="c"># succeeds, the weakref with callback already exists and no more work</span>
+        <span class="c"># is required. Otherwise, the weakref with callback is created and</span>
+        <span class="c"># used as the key in the dict.</span>
+        <span class="n">im_selfref</span> <span class="o">=</span> <span class="n">ref</span><span class="p">(</span><span class="n">method</span><span class="o">.</span><span class="n">im_self</span><span class="p">)</span>
+        <span class="n">items</span> <span class="o">=</span> <span class="n">WeakMethod</span><span class="o">.</span><span class="n">_instances</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">im_selfref</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">items</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">items</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">cbref</span> <span class="o">=</span> <span class="n">ref</span><span class="p">(</span><span class="n">method</span><span class="o">.</span><span class="n">im_self</span><span class="p">,</span> <span class="n">WeakMethod</span><span class="o">.</span><span class="n">_remove</span><span class="p">)</span>
+            <span class="n">WeakMethod</span><span class="o">.</span><span class="n">_instances</span><span class="p">[</span><span class="n">cbref</span><span class="p">]</span> <span class="o">=</span> <span class="n">items</span>
+        <span class="n">im_func</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="n">im_func</span>
+        <span class="n">im_class</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="n">im_class</span>
+        <span class="k">for</span> <span class="n">wm</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">wm</span><span class="o">.</span><span class="n">_im_func</span> <span class="ow">is</span> <span class="n">im_func</span> <span class="ow">and</span> <span class="n">wm</span><span class="o">.</span><span class="n">_im_class</span> <span class="ow">is</span> <span class="n">im_class</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">wm</span>
+        <span class="bp">self</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">WeakMethod</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_im_func</span> <span class="o">=</span> <span class="n">im_func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_im_selfref</span> <span class="o">=</span> <span class="n">im_selfref</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_im_class</span> <span class="o">=</span> <span class="n">im_class</span>
+        <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span>
+</div>
+<div class="viewcode-block" id="WeakMethod.__call__"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.weakmethod.WeakMethod.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Invoke the wrapped method by reconstructing the bound</span>
+<span class="sd">        method from its components.</span>
+
+<span class="sd">        If the underlying instance object has been destroyed, this</span>
+<span class="sd">        method will return None.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        *args, **kwargs</span>
+<span class="sd">            The positional and keyword arguments to pass to the method.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">im_self</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_im_selfref</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">im_self</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">method</span> <span class="o">=</span> <span class="n">MethodType</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_im_func</span><span class="p">,</span> <span class="n">im_self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_im_class</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">method</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="c"># Use the faster version of WeakMethod if it&#39;s available.</span></div></div>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">enaml.extensions.weakmethod</span> <span class="kn">import</span> <span class="n">WeakMethod</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">pass</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.weakmethod</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Dec 13, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

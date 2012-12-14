@@ -1,0 +1,529 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.qt.qt_dock_pane &mdash; enaml 0.6.3 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.6.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.6.3 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.qt.qt_dock_pane</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.qt.qt_dock_pane</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2012, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">.qt.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span><span class="p">,</span> <span class="n">Signal</span>
+<span class="kn">from</span> <span class="nn">.qt.QtGui</span> <span class="kn">import</span> <span class="n">QDockWidget</span><span class="p">,</span> <span class="n">QWidget</span>
+<span class="kn">from</span> <span class="nn">.qt_container</span> <span class="kn">import</span> <span class="n">QtContainer</span>
+<span class="kn">from</span> <span class="nn">.qt_widget</span> <span class="kn">import</span> <span class="n">QtWidget</span>
+
+
+<span class="c">#: A mapping from Enaml dock areas to Qt dock areas.</span>
+<span class="n">_DOCK_AREA_MAP</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&#39;top&#39;</span><span class="p">:</span> <span class="n">Qt</span><span class="o">.</span><span class="n">TopDockWidgetArea</span><span class="p">,</span>
+    <span class="s">&#39;right&#39;</span><span class="p">:</span> <span class="n">Qt</span><span class="o">.</span><span class="n">RightDockWidgetArea</span><span class="p">,</span>
+    <span class="s">&#39;bottom&#39;</span><span class="p">:</span> <span class="n">Qt</span><span class="o">.</span><span class="n">BottomDockWidgetArea</span><span class="p">,</span>
+    <span class="s">&#39;left&#39;</span><span class="p">:</span> <span class="n">Qt</span><span class="o">.</span><span class="n">LeftDockWidgetArea</span><span class="p">,</span>
+    <span class="s">&#39;all&#39;</span><span class="p">:</span> <span class="n">Qt</span><span class="o">.</span><span class="n">AllDockWidgetAreas</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<span class="c">#: A mapping from Qt dock areas to Enaml dock areas.</span>
+<span class="n">_DOCK_AREA_INV_MAP</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">Qt</span><span class="o">.</span><span class="n">TopDockWidgetArea</span><span class="p">:</span> <span class="s">&#39;top&#39;</span><span class="p">,</span>
+    <span class="n">Qt</span><span class="o">.</span><span class="n">RightDockWidgetArea</span><span class="p">:</span> <span class="s">&#39;right&#39;</span><span class="p">,</span>
+    <span class="n">Qt</span><span class="o">.</span><span class="n">BottomDockWidgetArea</span><span class="p">:</span> <span class="s">&#39;bottom&#39;</span><span class="p">,</span>
+    <span class="n">Qt</span><span class="o">.</span><span class="n">LeftDockWidgetArea</span><span class="p">:</span> <span class="s">&#39;left&#39;</span><span class="p">,</span>
+    <span class="n">Qt</span><span class="o">.</span><span class="n">AllDockWidgetAreas</span><span class="p">:</span> <span class="s">&#39;all&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<span class="k">class</span> <span class="nc">QCustomDockWidget</span><span class="p">(</span><span class="n">QDockWidget</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A custom QDockWidget which adds some Enaml specific features.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#: A signal emitted when the dock widget is closed by the user.</span>
+    <span class="n">closed</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">()</span>
+
+    <span class="c">#: A signal emitted when the dock widget is floated.</span>
+    <span class="n">floated</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">()</span>
+
+    <span class="c">#: A signal emitted when the dock widget is docked. The payload</span>
+    <span class="c">#: will be the new dock area.</span>
+    <span class="n">docked</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize a QCustomDockWidget.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        *args, **kwargs</span>
+<span class="sd">            The positional and keyword arguments needed to initialize</span>
+<span class="sd">            a QDockWidget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">QCustomDockWidget</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_title_bar_visible</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dock_area</span> <span class="o">=</span> <span class="n">Qt</span><span class="o">.</span><span class="n">LeftDockWidgetArea</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">topLevelChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_onTopLevelChanged</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Private API</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">_onTopLevelChanged</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">top_level</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The signal handler for the the &#39;topLevelChanged&#39; signal.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Hiding the title bar on a floating dock widget causes the</span>
+        <span class="c"># frame to be hidden. We need to make sure its shown when</span>
+        <span class="c"># floating, and hidden again upon docking if needed.</span>
+        <span class="k">if</span> <span class="n">top_level</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_showTitleBar</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">floated</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_title_bar_visible</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_hideTitleBar</span><span class="p">()</span>
+            <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_dock_area</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">dockWidgetArea</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">docked</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dock_area</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_showTitleBar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Shows the title bar for the widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">titleBarWidget</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setTitleBarWidget</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_hideTitleBar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Hides the title bar for the widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">titleBarWidget</span><span class="p">()</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setTitleBarWidget</span><span class="p">(</span><span class="n">QWidget</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">closeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A close event handler which emits the &#39;closed&#39; signal.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">QCustomDockWidget</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">closeEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">closed</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Public API</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">dockArea</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get the current dock area for the dock widget.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : QDockWidgetArea</span>
+<span class="sd">            The dock widget area where this dock widget resides.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dock_area</span>
+
+    <span class="k">def</span> <span class="nf">setDockArea</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">area</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the current dock area for the dock widget.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        area : QDockWidgetArea</span>
+<span class="sd">            The dock widget area where this dock widget should reside.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dock_area</span> <span class="o">=</span> <span class="n">area</span>
+        <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">parent</span><span class="o">.</span><span class="n">setDockWidgetArea</span><span class="p">(</span><span class="n">area</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">titleBarVisible</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get whether or not the title bar is visible.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : bool</span>
+<span class="sd">            Whether or not the title bar is visible.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_title_bar_visible</span>
+
+    <span class="k">def</span> <span class="nf">setTitleBarVisible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set whether or not the title bar is visible.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        visible : bool</span>
+<span class="sd">            Whether or not the title bar is visible.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_title_bar_visible</span> <span class="o">=</span> <span class="n">visible</span>
+        <span class="k">if</span> <span class="n">visible</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_showTitleBar</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">isFloating</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_hideTitleBar</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="QtDockPane"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.dock_pane.DockPane.html#enaml.qt.qt_dock_pane.QtDockPane">[docs]</a><span class="k">class</span> <span class="nc">QtDockPane</span><span class="p">(</span><span class="n">QtWidget</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A Qt implementation of an Enaml DockPane.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Setup Methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="QtDockPane.create_widget"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.dock_pane.DockPane.html#enaml.qt.qt_dock_pane.QtDockPane.create_widget">[docs]</a>    <span class="k">def</span> <span class="nf">create_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">tree</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Create the underlying dock pane widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">QCustomDockWidget</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtDockPane.create"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.dock_pane.DockPane.html#enaml.qt.qt_dock_pane.QtDockPane.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tree</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Create and initialize the dock pane control.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">QtDockPane</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_title_bar_visible</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="s">&#39;title_bar_visible&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_title_bar_orientation</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="s">&#39;title_bar_orientation&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_closable</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="s">&#39;closable&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_movable</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="s">&#39;movable&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_floatable</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="s">&#39;floatable&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_floating</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="s">&#39;floating&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_dock_area</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="s">&#39;dock_area&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_allowed_dock_areas</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="s">&#39;allowed_dock_areas&#39;</span><span class="p">])</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">closed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_closed</span><span class="p">)</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">floated</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_floated</span><span class="p">)</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">docked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_docked</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtDockPane.init_layout"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.dock_pane.DockPane.html#enaml.qt.qt_dock_pane.QtDockPane.init_layout">[docs]</a>    <span class="k">def</span> <span class="nf">init_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the layout initialization for the dock pane.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">QtDockPane</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">init_layout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">setWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dock_widget</span><span class="p">())</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Utility Methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="QtDockPane.dock_widget"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.dock_pane.DockPane.html#enaml.qt.qt_dock_pane.QtDockPane.dock_widget">[docs]</a>    <span class="k">def</span> <span class="nf">dock_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Find and return the dock widget child for this widget.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : QWidget or None</span>
+<span class="sd">            The dock widget defined for this widget, or None if one is</span>
+<span class="sd">            not defined.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">QtContainer</span><span class="p">):</span>
+                <span class="n">widget</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">widget</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Child Events</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="QtDockPane.child_removed"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.dock_pane.DockPane.html#enaml.qt.qt_dock_pane.QtDockPane.child_removed">[docs]</a>    <span class="k">def</span> <span class="nf">child_removed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the child removed event for a QtDockPane.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">QtContainer</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">setWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dock_widget</span><span class="p">())</span>
+</div>
+<div class="viewcode-block" id="QtDockPane.child_added"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.dock_pane.DockPane.html#enaml.qt.qt_dock_pane.QtDockPane.child_added">[docs]</a>    <span class="k">def</span> <span class="nf">child_added</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the child added event for a QtDockPane.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">QtContainer</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">setWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dock_widget</span><span class="p">())</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Signal Handlers</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="QtDockPane.on_closed"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.dock_pane.DockPane.html#enaml.qt.qt_dock_pane.QtDockPane.on_closed">[docs]</a>    <span class="k">def</span> <span class="nf">on_closed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The signal handler for the &#39;closed&#39; signal.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># The closed signal is only emitted when the widget is closed</span>
+        <span class="c"># by the user, so there is no need for a loopback guard.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_action</span><span class="p">(</span><span class="s">&#39;closed&#39;</span><span class="p">,</span> <span class="p">{})</span>
+</div>
+<div class="viewcode-block" id="QtDockPane.on_floated"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.dock_pane.DockPane.html#enaml.qt.qt_dock_pane.QtDockPane.on_floated">[docs]</a>    <span class="k">def</span> <span class="nf">on_floated</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The signal handler for the &#39;floated&#39; signal.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s">&#39;floating&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loopback_guard</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">send_action</span><span class="p">(</span><span class="s">&#39;floated&#39;</span><span class="p">,</span> <span class="p">{})</span>
+</div>
+<div class="viewcode-block" id="QtDockPane.on_docked"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.dock_pane.DockPane.html#enaml.qt.qt_dock_pane.QtDockPane.on_docked">[docs]</a>    <span class="k">def</span> <span class="nf">on_docked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">area</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The signal handler for the &#39;docked&#39; signal.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s">&#39;floating&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loopback_guard</span><span class="p">:</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;dock_area&#39;</span><span class="p">:</span> <span class="n">_DOCK_AREA_INV_MAP</span><span class="p">[</span><span class="n">area</span><span class="p">]}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">send_action</span><span class="p">(</span><span class="s">&#39;docked&#39;</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Message Handling</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="QtDockPane.on_action_set_title"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.dock_pane.DockPane.html#enaml.qt.qt_dock_pane.QtDockPane.on_action_set_title">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_set_title</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;set_title&#39; action from the Enaml widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="QtDockPane.on_action_set_title_bar_visible"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.dock_pane.DockPane.html#enaml.qt.qt_dock_pane.QtDockPane.on_action_set_title_bar_visible">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_set_title_bar_visible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;set_title_bar_visible&#39; action from the Enaml</span>
+<span class="sd">        widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_title_bar_visible</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s">&#39;title_bar_visible&#39;</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="QtDockPane.on_action_set_title_bar_orientation"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.dock_pane.DockPane.html#enaml.qt.qt_dock_pane.QtDockPane.on_action_set_title_bar_orientation">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_set_title_bar_orientation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;set_title_bar_orientation&#39; action from the</span>
+<span class="sd">        Enaml widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_title_bar_orientation</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s">&#39;title_bar_orientation&#39;</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="QtDockPane.on_action_set_closable"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.dock_pane.DockPane.html#enaml.qt.qt_dock_pane.QtDockPane.on_action_set_closable">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_set_closable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;set_closable&#39; action from the Enaml widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_closable</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s">&#39;closable&#39;</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="QtDockPane.on_action_set_movable"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.dock_pane.DockPane.html#enaml.qt.qt_dock_pane.QtDockPane.on_action_set_movable">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_set_movable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;set_movable&#39; action from the Enaml widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_movable</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s">&#39;movable&#39;</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="QtDockPane.on_action_set_floatable"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.dock_pane.DockPane.html#enaml.qt.qt_dock_pane.QtDockPane.on_action_set_floatable">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_set_floatable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;set_floatable&#39; action from the Enaml widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_floatable</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s">&#39;floatable&#39;</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="QtDockPane.on_action_set_floating"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.dock_pane.DockPane.html#enaml.qt.qt_dock_pane.QtDockPane.on_action_set_floating">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_set_floating</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;set_floating&#39; action from the Enaml widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_floating</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s">&#39;floating&#39;</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="QtDockPane.on_action_set_dock_area"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.dock_pane.DockPane.html#enaml.qt.qt_dock_pane.QtDockPane.on_action_set_dock_area">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_set_dock_area</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;set_dock_area&#39; action from the Enaml widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_dock_area</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s">&#39;dock_area&#39;</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="QtDockPane.on_action_set_allowed_dock_areas"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.dock_pane.DockPane.html#enaml.qt.qt_dock_pane.QtDockPane.on_action_set_allowed_dock_areas">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_set_allowed_dock_areas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;set_allowed_dock_areas&#39; action from the Enaml</span>
+<span class="sd">        widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_allowed_dock_areas</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s">&#39;allowed_dock_areas&#39;</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="QtDockPane.on_action_open"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.dock_pane.DockPane.html#enaml.qt.qt_dock_pane.QtDockPane.on_action_open">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;open&#39; action from the Enaml widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtDockPane.on_action_close"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.dock_pane.DockPane.html#enaml.qt.qt_dock_pane.QtDockPane.on_action_close">[docs]</a>    <span class="k">def</span> <span class="nf">on_action_close</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle the &#39;close&#39; action from the Enaml widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Don&#39;t call widget.close() since that will fire a closeEvent.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Widget Update Methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="QtDockPane.set_title"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.dock_pane.DockPane.html#enaml.qt.qt_dock_pane.QtDockPane.set_title">[docs]</a>    <span class="k">def</span> <span class="nf">set_title</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the title on the underlying widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtDockPane.set_title_bar_visible"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.dock_pane.DockPane.html#enaml.qt.qt_dock_pane.QtDockPane.set_title_bar_visible">[docs]</a>    <span class="k">def</span> <span class="nf">set_title_bar_visible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the title bar visibility of the underlying widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">setTitleBarVisible</span><span class="p">(</span><span class="n">visible</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtDockPane.set_title_bar_orientation"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.dock_pane.DockPane.html#enaml.qt.qt_dock_pane.QtDockPane.set_title_bar_orientation">[docs]</a>    <span class="k">def</span> <span class="nf">set_title_bar_orientation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orientation</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the title bar orientation of the underyling widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span>
+        <span class="n">features</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">features</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">orientation</span> <span class="o">==</span> <span class="s">&#39;vertical&#39;</span><span class="p">:</span>
+            <span class="n">features</span> <span class="o">|=</span> <span class="n">QDockWidget</span><span class="o">.</span><span class="n">DockWidgetVerticalTitleBar</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">features</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">QDockWidget</span><span class="o">.</span><span class="n">DockWidgetVerticalTitleBar</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">setFeatures</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtDockPane.set_closable"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.dock_pane.DockPane.html#enaml.qt.qt_dock_pane.QtDockPane.set_closable">[docs]</a>    <span class="k">def</span> <span class="nf">set_closable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">closable</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the closable state on the underlying widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span>
+        <span class="n">features</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">features</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">closable</span><span class="p">:</span>
+            <span class="n">features</span> <span class="o">|=</span> <span class="n">QDockWidget</span><span class="o">.</span><span class="n">DockWidgetClosable</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">features</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">QDockWidget</span><span class="o">.</span><span class="n">DockWidgetClosable</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">setFeatures</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtDockPane.set_movable"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.dock_pane.DockPane.html#enaml.qt.qt_dock_pane.QtDockPane.set_movable">[docs]</a>    <span class="k">def</span> <span class="nf">set_movable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">movable</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the movable state on the underlying widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span>
+        <span class="n">features</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">features</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">movable</span><span class="p">:</span>
+            <span class="n">features</span> <span class="o">|=</span> <span class="n">QDockWidget</span><span class="o">.</span><span class="n">DockWidgetMovable</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">features</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">QDockWidget</span><span class="o">.</span><span class="n">DockWidgetMovable</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">setFeatures</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtDockPane.set_floatable"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.dock_pane.DockPane.html#enaml.qt.qt_dock_pane.QtDockPane.set_floatable">[docs]</a>    <span class="k">def</span> <span class="nf">set_floatable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">floatable</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the floatable state on the underlying widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span>
+        <span class="n">features</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">features</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">floatable</span><span class="p">:</span>
+            <span class="n">features</span> <span class="o">|=</span> <span class="n">QDockWidget</span><span class="o">.</span><span class="n">DockWidgetFloatable</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">features</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">QDockWidget</span><span class="o">.</span><span class="n">DockWidgetFloatable</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">setFeatures</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtDockPane.set_floating"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.dock_pane.DockPane.html#enaml.qt.qt_dock_pane.QtDockPane.set_floating">[docs]</a>    <span class="k">def</span> <span class="nf">set_floating</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">floating</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the floating staet on the underlying widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">loopback_guard</span><span class="p">(</span><span class="s">&#39;floating&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">setFloating</span><span class="p">(</span><span class="n">floating</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtDockPane.set_dock_area"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.dock_pane.DockPane.html#enaml.qt.qt_dock_pane.QtDockPane.set_dock_area">[docs]</a>    <span class="k">def</span> <span class="nf">set_dock_area</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dock_area</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the dock area on the underlying widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">setDockArea</span><span class="p">(</span><span class="n">_DOCK_AREA_MAP</span><span class="p">[</span><span class="n">dock_area</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="QtDockPane.set_allowed_dock_areas"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.dock_pane.DockPane.html#enaml.qt.qt_dock_pane.QtDockPane.set_allowed_dock_areas">[docs]</a>    <span class="k">def</span> <span class="nf">set_allowed_dock_areas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dock_areas</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the allowed dock areas on the underlying widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">qt_areas</span> <span class="o">=</span> <span class="n">Qt</span><span class="o">.</span><span class="n">NoDockWidgetArea</span>
+        <span class="k">for</span> <span class="n">area</span> <span class="ow">in</span> <span class="n">dock_areas</span><span class="p">:</span>
+            <span class="n">qt_areas</span> <span class="o">|=</span> <span class="n">_DOCK_AREA_MAP</span><span class="p">[</span><span class="n">area</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">setAllowedAreas</span><span class="p">(</span><span class="n">qt_areas</span><span class="p">)</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.qt.qt_dock_pane</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Dec 13, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

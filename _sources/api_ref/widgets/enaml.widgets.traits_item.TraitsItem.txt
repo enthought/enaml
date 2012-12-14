@@ -1,0 +1,29 @@
+TraitsItem
+====================================
+
+.. currentmodule:: enaml.widgets.traits_item
+
+.. autoclass:: TraitsItem
+
+
+Backends
+--------
+
+Qt
+^^
+
+.. inheritance-diagram::
+    enaml.qt.qt_traits_item.QtTraitsItem
+    :parts: 1
+
+.. autoclass:: enaml.qt.qt_traits_item.QtTraitsItem
+
+
+Wx
+^^
+
+.. inheritance-diagram::
+    enaml.wx.wx_traits_item.WxTraitsItem
+    :parts: 1
+
+.. autoclass:: enaml.wx.wx_traits_item.WxTraitsItem

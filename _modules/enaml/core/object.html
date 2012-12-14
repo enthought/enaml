@@ -1,0 +1,778 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.core.object &mdash; enaml 0.6.3 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.6.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.6.3 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.core.object</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.core.object</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2012, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span><span class="p">,</span> <span class="n">deque</span><span class="p">,</span> <span class="n">namedtuple</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">HasStrictTraits</span><span class="p">,</span> <span class="n">Disallow</span><span class="p">,</span> <span class="n">Property</span><span class="p">,</span> <span class="n">Str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">ReadOnly</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">enaml.utils</span> <span class="kn">import</span> <span class="n">make_dispatcher</span><span class="p">,</span> <span class="n">id_generator</span>
+
+<span class="kn">from</span> <span class="nn">.trait_types</span> <span class="kn">import</span> <span class="n">EnamlEvent</span>
+
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+
+<span class="c">#: The dispatch function for action dispatching.</span>
+<span class="n">dispatch_action</span> <span class="o">=</span> <span class="n">make_dispatcher</span><span class="p">(</span><span class="s">&#39;on_action_&#39;</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+
+
+<span class="c">#: A namedtuple which contains information about a child change event.</span>
+<span class="c">#: The `old` slot will be the ordered list of old children. The `new`</span>
+<span class="c">#: slot will be the ordered list of new children.</span>
+<span class="n">ChildrenEvent</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s">&#39;ChildrenEvent&#39;</span><span class="p">,</span> <span class="s">&#39;old new&#39;</span><span class="p">)</span>
+
+
+<span class="c">#: A namedtuple which contains information about a parent change event.</span>
+<span class="c">#: The `old` slot will be the old parent and the `new` slot will be</span>
+<span class="c">#: the new parent.</span>
+<span class="n">ParentEvent</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s">&#39;ParentEvent&#39;</span><span class="p">,</span> <span class="s">&#39;old new&#39;</span><span class="p">)</span>
+
+
+<span class="c">#: The identifier generator for object instances.</span>
+<span class="n">object_id_generator</span> <span class="o">=</span> <span class="n">id_generator</span><span class="p">(</span><span class="s">&#39;o_&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="ChildrenEventContext"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.object.ChildrenEventContext">[docs]</a><span class="k">class</span> <span class="nc">ChildrenEventContext</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A context manager which will emit a child event on an Object.</span>
+
+<span class="sd">    This context manager will automatically emit the child event on an</span>
+<span class="sd">    Object when the context is exited. This context manager can also be</span>
+<span class="sd">    safetly nested; only the top-level context for a given object will</span>
+<span class="sd">    emit the child event, effectively collapsing all transient state.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#: Class level storage for tracking nested context managers.</span>
+    <span class="n">_counters</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ChildrenEventContext.__init__"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.object.ChildrenEventContext.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize a ChildrenEventContext.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        parent : Object or None</span>
+<span class="sd">            The Object on which to emit a child event on context exit.</span>
+<span class="sd">            To make it easier for reparenting operations, the parent</span>
+<span class="sd">            can be None.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="n">parent</span>
+</div>
+<div class="viewcode-block" id="ChildrenEventContext.__enter__"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.object.ChildrenEventContext.__enter__">[docs]</a>    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Enter the children event context.</span>
+
+<span class="sd">        This method will snap the current child state of the parent and</span>
+<span class="sd">        use it to diff the state on context exit.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span>
+        <span class="n">counters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_counters</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="n">counters</span><span class="p">[</span><span class="n">parent</span><span class="p">]</span>
+        <span class="n">counters</span><span class="p">[</span><span class="n">parent</span><span class="p">]</span> <span class="o">=</span> <span class="n">count</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">count</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_old</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">_children</span>
+</div>
+<div class="viewcode-block" id="ChildrenEventContext.__exit__"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.object.ChildrenEventContext.__exit__">[docs]</a>    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Exit the children event context.</span>
+
+<span class="sd">        If this context manager is the top-level manager for the parent</span>
+<span class="sd">        object *and* no exception occured in the context, then a child</span>
+<span class="sd">        event will be emitted on the parent. Any exception raised during</span>
+<span class="sd">        the context is propagated.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span>
+        <span class="n">counters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_counters</span>
+        <span class="n">counters</span><span class="p">[</span><span class="n">parent</span><span class="p">]</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">counters</span><span class="p">[</span><span class="n">parent</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">counters</span><span class="p">[</span><span class="n">parent</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">exc_type</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">old</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_old</span>
+                <span class="n">new</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">_children</span>
+                <span class="k">if</span> <span class="n">old</span> <span class="o">!=</span> <span class="n">new</span><span class="p">:</span>
+                    <span class="n">evt</span> <span class="o">=</span> <span class="n">ChildrenEvent</span><span class="p">(</span><span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">)</span>
+                    <span class="n">parent</span><span class="o">.</span><span class="n">children_event</span><span class="p">(</span><span class="n">evt</span><span class="p">)</span>
+
+</div></div>
+<div class="viewcode-block" id="Object"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.object.Object">[docs]</a><span class="k">class</span> <span class="nc">Object</span><span class="p">(</span><span class="n">HasStrictTraits</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; The most base class of the Enaml object hierarchy.</span>
+
+<span class="sd">    An Enaml Object provides supports parent-children relationships and</span>
+<span class="sd">    provides facilities for initializing, navigating, searching, and</span>
+<span class="sd">    destroying the tree. It also contains methods for sending messages</span>
+<span class="sd">    between objects when the object is part of a session.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#: An optional name to give to this object to assist in finding it</span>
+    <span class="c">#: in the tree (see . the &#39;find&#39; method. Note that there is no</span>
+    <span class="c">#: guarantee of uniqueness for an object `name`. It is left to the</span>
+    <span class="c">#: developer to choose an appropriate name.</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">Str</span>
+
+    <span class="c">#: A read-only property which returns the object&#39;s parent. This</span>
+    <span class="c">#: will be an instance Object or None if there is no parent. A</span>
+    <span class="c">#: strong reference is kept to the parent object.</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="p">)</span>
+
+    <span class="c">#: A read-only property which returns the objects children. This</span>
+    <span class="c">#: will be an iterable of Object instances. A strong reference is</span>
+    <span class="c">#: kept to all child objects.</span>
+    <span class="n">children</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">)</span>
+
+    <span class="c">#: An event fired when an the oject has been initialized. It is</span>
+    <span class="c">#: emitted once during an object&#39;s lifetime, when the object is</span>
+    <span class="c">#: initialized by a Session.</span>
+    <span class="n">initialized</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
+
+    <span class="c">#: An event fired when an object has been activated. It is emitted</span>
+    <span class="c">#: once during an object&#39;s lifetime, when the object is activated</span>
+    <span class="c">#: by a Session.</span>
+    <span class="n">activated</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
+
+    <span class="c">#: An event fired when an object is being destroyed. This event</span>
+    <span class="c">#: is fired once during the object lifetime, just before the</span>
+    <span class="c">#: object is removed from the tree structure.</span>
+    <span class="n">destroyed</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
+
+    <span class="c">#: A read-only property which returns the object&#39;s session. This</span>
+    <span class="c">#: will be an instance of Session or None if there is no session.</span>
+    <span class="c">#: A strong reference is kept to the session object. This value</span>
+    <span class="c">#: should not be manipulated by user code.</span>
+    <span class="n">session</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_session</span><span class="p">)</span>
+
+    <span class="c">#: A read-only value which returns the object&#39;s identifier. This</span>
+    <span class="c">#: will be computed the first time it is requested. The default</span>
+    <span class="c">#: value is guaranteed to be unique for the current process. The</span>
+    <span class="c">#: initial value may be supplied by user code if more control is</span>
+    <span class="c">#: required, with proper care that the value is a unique string.</span>
+    <span class="n">object_id</span> <span class="o">=</span> <span class="n">ReadOnly</span>
+    <span class="k">def</span> <span class="nf">_object_id_default</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">object_id_generator</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+
+    <span class="c">#: The current state of the object in terms of its lifetime within</span>
+    <span class="c">#: a session. This value should not be manipulated by user code.</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">Enum</span><span class="p">(</span>
+        <span class="s">&#39;inactive&#39;</span><span class="p">,</span> <span class="s">&#39;initializing&#39;</span><span class="p">,</span> <span class="s">&#39;initialized&#39;</span><span class="p">,</span> <span class="s">&#39;activating&#39;</span><span class="p">,</span> <span class="s">&#39;active&#39;</span><span class="p">,</span>
+        <span class="s">&#39;destroying&#39;</span><span class="p">,</span> <span class="s">&#39;destroyed&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c">#: A read-only property which is True if the object is inactive.</span>
+    <span class="n">is_inactive</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s">&#39;inactive&#39;</span><span class="p">)</span>
+
+    <span class="c">#: A read-only property which is True if the object is initializing.</span>
+    <span class="n">is_initializing</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s">&#39;initializing&#39;</span><span class="p">)</span>
+
+    <span class="c">#: A read-only property which is True if the object is initialized.</span>
+    <span class="n">is_initialized</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s">&#39;initialized&#39;</span><span class="p">)</span>
+
+    <span class="c">#: A read-only property which is True if the object is activating.</span>
+    <span class="n">is_activating</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s">&#39;activating&#39;</span><span class="p">)</span>
+
+    <span class="c">#: A read-only property which is True if the object is active.</span>
+    <span class="n">is_active</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s">&#39;active&#39;</span><span class="p">)</span>
+
+    <span class="c">#: A read-only property which is True if the object is destroying.</span>
+    <span class="n">is_destroying</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s">&#39;destroying&#39;</span><span class="p">)</span>
+
+    <span class="c">#: A read-only property which is True if the object is destroyed.</span>
+    <span class="n">is_destroyed</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s">&#39;destroyed&#39;</span><span class="p">)</span>
+
+    <span class="c">#: Private storage traits. These should *never* be manipulated by</span>
+    <span class="c">#: user code. For performance reasons, these are not type-checked.</span>
+    <span class="n">_parent</span> <span class="o">=</span> <span class="n">Any</span>       <span class="c"># Object or None</span>
+    <span class="n">_children</span> <span class="o">=</span> <span class="n">Any</span>     <span class="c"># tuple of Object</span>
+    <span class="n">_session</span> <span class="o">=</span> <span class="n">Any</span>      <span class="c"># Session or None</span>
+
+<div class="viewcode-block" id="Object.__init__"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.object.Object.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize an Object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        parent : Object or None, optional</span>
+<span class="sd">            The Object instance which is the parent of this object, or</span>
+<span class="sd">            None if the object has no parent. Defaults to None.</span>
+
+<span class="sd">        **kwargs</span>
+<span class="sd">            Additional keyword arguments to apply to the object after</span>
+<span class="sd">            the parent has been set.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Object</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_children</span> <span class="o">=</span> <span class="p">()</span>
+        <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_parent</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="c"># `trait_set` is slow, don&#39;t use it here.</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Lifetime API</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="Object.initialize"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.object.Object.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Called by a Session to initialize the object tree.</span>
+
+<span class="sd">        This method is called by a Session object to allow the object</span>
+<span class="sd">        tree to perform initialization before the object is activated</span>
+<span class="sd">        for messaging.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s">&#39;initializing&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pre_initialize</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+            <span class="n">child</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s">&#39;initialized&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">post_initialize</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Object.pre_initialize"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.object.Object.pre_initialize">[docs]</a>    <span class="k">def</span> <span class="nf">pre_initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Called during the initialization pass before any children</span>
+<span class="sd">        are initialized.</span>
+
+<span class="sd">        The object `state` during this call will be &#39;initializing&#39;.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</div>
+<div class="viewcode-block" id="Object.post_initialize"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.object.Object.post_initialize">[docs]</a>    <span class="k">def</span> <span class="nf">post_initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Called during the initialization pass after all children</span>
+<span class="sd">        have been initialized.</span>
+
+<span class="sd">        The object `state` during this call will be &#39;initialized&#39;. The</span>
+<span class="sd">        default implementation of this method emits the `initialized`</span>
+<span class="sd">        event.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initialized</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Object.activate"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.object.Object.activate">[docs]</a>    <span class="k">def</span> <span class="nf">activate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Called by a Session to activate the object tree.</span>
+
+<span class="sd">        This method is called by a Session object to activate the object</span>
+<span class="sd">        tree for messaging.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        session : Session</span>
+<span class="sd">            The session to use for messaging with this object tree.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s">&#39;activating&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pre_activate</span><span class="p">(</span><span class="n">session</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_session</span> <span class="o">=</span> <span class="n">session</span>
+        <span class="n">session</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">:</span>
+            <span class="n">child</span><span class="o">.</span><span class="n">activate</span><span class="p">(</span><span class="n">session</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s">&#39;active&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">post_activate</span><span class="p">(</span><span class="n">session</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Object.pre_activate"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.object.Object.pre_activate">[docs]</a>    <span class="k">def</span> <span class="nf">pre_activate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Called during the activation pass before any children are</span>
+<span class="sd">        activated.</span>
+
+<span class="sd">        The object `state` during this call will be &#39;activating&#39;.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        session : Session</span>
+<span class="sd">            The session to use for messaging with this object tree.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</div>
+<div class="viewcode-block" id="Object.post_activate"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.object.Object.post_activate">[docs]</a>    <span class="k">def</span> <span class="nf">post_activate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Called during the activation pass after all children are</span>
+<span class="sd">        activated.</span>
+
+<span class="sd">        The object `state` during this call will be &#39;active&#39;. The</span>
+<span class="sd">        default implementation emits the `activated` event.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        session : Session</span>
+<span class="sd">            The session to use for messaging with this object tree.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">activated</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Object.destroy"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.object.Object.destroy">[docs]</a>    <span class="k">def</span> <span class="nf">destroy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Destroy this object and all of its children recursively.</span>
+
+<span class="sd">        This will emit the `destroyed` event before any change to the</span>
+<span class="sd">        object tree is made. After this returns, the object should be</span>
+<span class="sd">        considered invalid and should no longer be used.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Only send the destroy message if the object&#39;s parent is not</span>
+        <span class="c"># being destroyed. This reduces the number of messages since</span>
+        <span class="c"># the automatic destruction of children is assumed.</span>
+        <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span>
+        <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">parent</span><span class="o">.</span><span class="n">is_destroying</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">send_action</span><span class="p">(</span><span class="s">&#39;destroy&#39;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s">&#39;destroying&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pre_destroy</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">:</span>
+                <span class="n">child</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_children</span> <span class="o">=</span> <span class="p">()</span>
+        <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">parent</span><span class="o">.</span><span class="n">is_destroying</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_parent</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span>
+        <span class="n">session</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_session</span>
+        <span class="k">if</span> <span class="n">session</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">session</span><span class="o">.</span><span class="n">unregister</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s">&#39;destroyed&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">post_destroy</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Object.pre_destroy"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.object.Object.pre_destroy">[docs]</a>    <span class="k">def</span> <span class="nf">pre_destroy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Called during the destruction pass before any children are</span>
+<span class="sd">        destroyed.</span>
+
+<span class="sd">        The object `state` during this call will be &#39;destroying&#39;. The</span>
+<span class="sd">        default implementation emits the `destroyed` event.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">destroyed</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Object.post_destroy"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.object.Object.post_destroy">[docs]</a>    <span class="k">def</span> <span class="nf">post_destroy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Called during the destruction pass after all children are</span>
+<span class="sd">        destroyed.</span>
+
+<span class="sd">        The object `state` during this call will be &#39;destroyed&#39;. This</span>
+<span class="sd">        allows subclasses to perform cleanup once the object has been</span>
+<span class="sd">        fully removed from the hierarchy.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Parenting API</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="Object.set_parent"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.object.Object.set_parent">[docs]</a>    <span class="k">def</span> <span class="nf">set_parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the parent for this object.</span>
+
+<span class="sd">        If the parent is not None, the child will be appended to the end</span>
+<span class="sd">        of the parent&#39;s children. If the parent is already the parent of</span>
+<span class="sd">        this object, then this method is a no-op. If this object already</span>
+<span class="sd">        has a parent, then it will be properly reparented.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        parent : Object or None</span>
+<span class="sd">            The Object instance to use for the parent, or None if this</span>
+<span class="sd">            object should be unparented.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        It is the responsibility of the caller to intialize and activate</span>
+<span class="sd">        the object if it is reparented dynamically at runtime and should</span>
+<span class="sd">        be involved with a session.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">old_parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span>
+        <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="n">old_parent</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;cannot use `self` as Object parent&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">Object</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;parent must be an Object or None&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="n">parent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent_event</span><span class="p">(</span><span class="n">ParentEvent</span><span class="p">(</span><span class="n">old_parent</span><span class="p">,</span> <span class="n">parent</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">old_parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">old_kids</span> <span class="o">=</span> <span class="n">old_parent</span><span class="o">.</span><span class="n">_children</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">old_kids</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <span class="k">with</span> <span class="n">ChildrenEventContext</span><span class="p">(</span><span class="n">old_parent</span><span class="p">):</span>
+                <span class="n">old_parent</span><span class="o">.</span><span class="n">_children</span> <span class="o">=</span> <span class="n">old_kids</span><span class="p">[:</span><span class="n">idx</span><span class="p">]</span> <span class="o">+</span> <span class="n">old_kids</span><span class="p">[</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
+        <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">ChildrenEventContext</span><span class="p">(</span><span class="n">parent</span><span class="p">):</span>
+                <span class="n">parent</span><span class="o">.</span><span class="n">_children</span> <span class="o">+=</span> <span class="p">(</span><span class="bp">self</span><span class="p">,)</span>
+</div>
+<div class="viewcode-block" id="Object.insert_children"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.object.Object.insert_children">[docs]</a>    <span class="k">def</span> <span class="nf">insert_children</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">before</span><span class="p">,</span> <span class="n">insert</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Insert children into this object at the given location.</span>
+
+<span class="sd">        The children will be automatically parented and inserted into</span>
+<span class="sd">        the object&#39;s children. If any children are already children of</span>
+<span class="sd">        this object, then they will be moved appropriately.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        before : Object or None</span>
+<span class="sd">            A child object to use as the marker for inserting the new</span>
+<span class="sd">            children. The new children will be inserted directly before</span>
+<span class="sd">            this marker. If the Object is None or not a child, then the</span>
+<span class="sd">            new children will be added to the end of the children.</span>
+
+<span class="sd">        insert : iterable</span>
+<span class="sd">            An iterable of Object children to insert into this object.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        It is the responsibility of the caller to intialize and activate</span>
+<span class="sd">        the object if it is reparented dynamically at runtime and should</span>
+<span class="sd">        be involved with a session.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">insert_tup</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">insert</span><span class="p">)</span>
+        <span class="n">insert_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">insert_tup</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span> <span class="ow">in</span> <span class="n">insert_set</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;cannot use `self` as Object child&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">insert_tup</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">insert_set</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;cannot insert duplicate children&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">Object</span><span class="p">)</span> <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">insert_tup</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;children must be an Object instances&#39;</span><span class="p">)</span>
+
+        <span class="n">new</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">added</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_children</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">insert_set</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">child</span> <span class="ow">is</span> <span class="n">before</span><span class="p">:</span>
+                <span class="n">new</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">insert_tup</span><span class="p">)</span>
+                <span class="n">added</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="n">new</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">added</span><span class="p">:</span>
+            <span class="n">new</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">insert_tup</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">insert_tup</span><span class="p">:</span>
+            <span class="n">old_parent</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">_parent</span>
+            <span class="k">if</span> <span class="n">old_parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">self</span><span class="p">:</span>
+                <span class="n">child</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="bp">self</span>
+                <span class="n">child</span><span class="o">.</span><span class="n">parent_event</span><span class="p">(</span><span class="n">ParentEvent</span><span class="p">(</span><span class="n">old_parent</span><span class="p">,</span> <span class="bp">self</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">old_parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="n">old_kids</span> <span class="o">=</span> <span class="n">old_parent</span><span class="o">.</span><span class="n">_children</span>
+                    <span class="n">idx</span> <span class="o">=</span> <span class="n">old_kids</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+                    <span class="n">old_kids</span> <span class="o">=</span> <span class="n">old_kids</span><span class="p">[:</span><span class="n">idx</span><span class="p">]</span> <span class="o">+</span> <span class="n">old_kids</span><span class="p">[</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
+                    <span class="k">with</span> <span class="n">ChildrenEventContext</span><span class="p">(</span><span class="n">old_parent</span><span class="p">):</span>
+                        <span class="n">old_parent</span><span class="o">.</span><span class="n">_children</span> <span class="o">=</span> <span class="n">old_kids</span>
+
+        <span class="k">with</span> <span class="n">ChildrenEventContext</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_children</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">new</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Object.parent_event"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.object.Object.parent_event">[docs]</a>    <span class="k">def</span> <span class="nf">parent_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle a `ParentEvent` posted to this object.</span>
+
+<span class="sd">        This event handler is called when the parent on the object has</span>
+<span class="sd">        changed, but before the children of the new parent have been</span>
+<span class="sd">        updated. Sublasses may reimplement this method as required. The</span>
+<span class="sd">        default implementation emits the trait change notification, so</span>
+<span class="sd">        subclasses which rely on that notification must be sure to call</span>
+<span class="sd">        super(...) when reimplmenting this method.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        event : ParentEvent</span>
+<span class="sd">            The event for the parent change of this object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trait_property_changed</span><span class="p">(</span><span class="s">&#39;parent&#39;</span><span class="p">,</span> <span class="n">event</span><span class="o">.</span><span class="n">old</span><span class="p">,</span> <span class="n">event</span><span class="o">.</span><span class="n">new</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Object.children_event"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.object.Object.children_event">[docs]</a>    <span class="k">def</span> <span class="nf">children_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Handle a `ChildrenEvent` posted to this object.</span>
+
+<span class="sd">        This event handler is called by a `ChildrenEventContext` when</span>
+<span class="sd">        the last nested context is exited. The default implementation</span>
+<span class="sd">        emits the trait change notification, so subclasses which rely</span>
+<span class="sd">        on that notification must be sure to call super(...) when</span>
+<span class="sd">        reimplmenting this method.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        event : ChildrenEvent</span>
+<span class="sd">            The event for the children change of this object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trait_property_changed</span><span class="p">(</span><span class="s">&#39;children&#39;</span><span class="p">,</span> <span class="n">event</span><span class="o">.</span><span class="n">old</span><span class="p">,</span> <span class="n">event</span><span class="o">.</span><span class="n">new</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Messaging API</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="Object.send_action"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.object.Object.send_action">[docs]</a>    <span class="k">def</span> <span class="nf">send_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Send an action to the client of this object.</span>
+
+<span class="sd">        The action will only be sent if the current state of the object</span>
+<span class="sd">        is `active`. Subclasses may reimplement this method if more</span>
+<span class="sd">        control is needed.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        action : str</span>
+<span class="sd">            The name of the action which the client should perform.</span>
+
+<span class="sd">        content : dict</span>
+<span class="sd">            The content data for the action.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_active</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_session</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">object_id</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Object.receive_action"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.object.Object.receive_action">[docs]</a>    <span class="k">def</span> <span class="nf">receive_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Receive an action from the client of this object.</span>
+
+<span class="sd">        The default implementation will dynamically dispatch the action</span>
+<span class="sd">        to specially named handlers if the current state of the object</span>
+<span class="sd">        is &#39;active&#39;. Subclasses may reimplement this method if more</span>
+<span class="sd">        control is needed.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        action : str</span>
+<span class="sd">            The name of the action to perform.</span>
+
+<span class="sd">        content : dict</span>
+<span class="sd">            The content data for the action.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_active</span><span class="p">:</span>
+            <span class="n">dispatch_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Object Tree API</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="Object.traverse"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.object.Object.traverse">[docs]</a>    <span class="k">def</span> <span class="nf">traverse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">depth_first</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Yield all of the objects in the tree, from this object down.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        depth_first : bool, optional</span>
+<span class="sd">            If True, yield the nodes in depth first order. If False,</span>
+<span class="sd">            yield the nodes in breadth first order. Defaults to False.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">depth_first</span><span class="p">:</span>
+            <span class="n">stack</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="p">]</span>
+            <span class="n">stack_pop</span> <span class="o">=</span> <span class="n">stack</span><span class="o">.</span><span class="n">pop</span>
+            <span class="n">stack_extend</span> <span class="o">=</span> <span class="n">stack</span><span class="o">.</span><span class="n">extend</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">stack</span> <span class="o">=</span> <span class="n">deque</span><span class="p">([</span><span class="bp">self</span><span class="p">])</span>
+            <span class="n">stack_pop</span> <span class="o">=</span> <span class="n">stack</span><span class="o">.</span><span class="n">popleft</span>
+            <span class="n">stack_extend</span> <span class="o">=</span> <span class="n">stack</span><span class="o">.</span><span class="n">extend</span>
+        <span class="k">while</span> <span class="n">stack</span><span class="p">:</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="n">stack_pop</span><span class="p">()</span>
+            <span class="k">yield</span> <span class="n">obj</span>
+            <span class="n">stack_extend</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">_children</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Object.traverse_ancestors"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.object.Object.traverse_ancestors">[docs]</a>    <span class="k">def</span> <span class="nf">traverse_ancestors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Yield all of the objects in the tree, from this object up.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        root : Object, optional</span>
+<span class="sd">            The object at which to stop traversal. Defaults to None.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span>
+        <span class="k">while</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">root</span> <span class="ow">and</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">parent</span>
+            <span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">_parent</span>
+</div>
+<div class="viewcode-block" id="Object.find"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.object.Object.find">[docs]</a>    <span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">regex</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Find the first object in the subtree with the given name.</span>
+
+<span class="sd">        This method will traverse the tree of objects, breadth first,</span>
+<span class="sd">        from this object downward, looking for an object with the given</span>
+<span class="sd">        name. The first object with the given name is returned, or None</span>
+<span class="sd">        if no object is found with the given name.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name : string</span>
+<span class="sd">            The name of the object for which to search.</span>
+
+<span class="sd">        regex : bool, optional</span>
+<span class="sd">            Whether the given name is a regex string which should be</span>
+<span class="sd">            matched against the names of children instead of tested</span>
+<span class="sd">            for equality. Defaults to False.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : Object or None</span>
+<span class="sd">            The first object found with the given name, or None if no</span>
+<span class="sd">            object is found with the given name.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">regex</span><span class="p">:</span>
+            <span class="n">rgx</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="nb">bool</span><span class="p">(</span><span class="n">rgx</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="n">n</span> <span class="o">==</span> <span class="n">name</span>
+        <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">traverse</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">match</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">name</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">obj</span>
+</div>
+<div class="viewcode-block" id="Object.find_all"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.object.Object.find_all">[docs]</a>    <span class="k">def</span> <span class="nf">find_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">regex</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Find all objects in the subtree with the given name.</span>
+
+<span class="sd">        This method will traverse the tree of objects, breadth first,</span>
+<span class="sd">        from this object downward, looking for a objects with the given</span>
+<span class="sd">        name. All of the objects with the given name are returned as a</span>
+<span class="sd">        list.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name : string</span>
+<span class="sd">            The name of the objects for which to search.</span>
+
+<span class="sd">        regex : bool, optional</span>
+<span class="sd">            Whether the given name is a regex string which should be</span>
+<span class="sd">            matched against the names of objects instead of testing</span>
+<span class="sd">            for equality. Defaults to False.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : list of Object</span>
+<span class="sd">            The list of objects found with the given name, or an empty</span>
+<span class="sd">            list if no objects are found with the given name.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">regex</span><span class="p">:</span>
+            <span class="n">rgx</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="nb">bool</span><span class="p">(</span><span class="n">rgx</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="n">n</span> <span class="o">==</span> <span class="n">name</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">push</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">append</span>
+        <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">traverse</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">match</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">name</span><span class="p">):</span>
+                <span class="n">push</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># HasTraits Fixes</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c">#: The HasTraits class defines a class attribute &#39;set&#39; which is a</span>
+    <span class="c">#: deprecated alias for the &#39;trait_set&#39; method. The problem is that</span>
+    <span class="c">#: having that as an attribute interferes with the ability of Enaml</span>
+    <span class="c">#: expressions to resolve the builtin &#39;set&#39;, since dynamic scoping</span>
+    <span class="c">#: takes precedence over builtins. This resets those ill-effects.</span></div>
+    <span class="nb">set</span> <span class="o">=</span> <span class="n">Disallow</span>
+
+<div class="viewcode-block" id="Object.add_notifier"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.object.Object.add_notifier">[docs]</a>    <span class="k">def</span> <span class="nf">add_notifier</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">notifier</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Add a notifier to a trait on the object.</span>
+
+<span class="sd">        This is different from `on_trait_change` in that it allows the</span>
+<span class="sd">        developer to provide the notifier object directly. This allows</span>
+<span class="sd">        the possibility of more efficient notifier patterns.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_trait</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">_notifiers</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">notifier</span><span class="p">)</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.core.object</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Dec 13, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

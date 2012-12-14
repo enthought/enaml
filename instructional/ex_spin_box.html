@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Spin Box Example &mdash; enaml 0.2alpha documentation</title>
+    <title>SpinBox Example &mdash; enaml 0.6.3 documentation</title>
     
     <link rel="stylesheet" href="../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2alpha',
+        VERSION:     '0.6.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,9 +27,9 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2alpha documentation" href="../index.html" />
+    <link rel="top" title="enaml 0.6.3 documentation" href="../index.html" />
     <link rel="up" title="Examples Gallery" href="example.html" />
-    <link rel="next" title="Dialog Example" href="ex_dialog.html" />
+    <link rel="next" title="Splitter Example" href="ex_splitter.html" />
     <link rel="prev" title="Slider Example" href="ex_slider.html" /> 
   </head>
   <body>
@@ -46,16 +46,16 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="ex_dialog.html" title="Dialog Example"
+          <a href="ex_splitter.html" title="Splitter Example"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="ex_slider.html" title="Slider Example"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
           <li><a href="example.html" accesskey="U">Examples Gallery</a> &raquo;</li>
   
-    <li><a href="#">Spin Box Example</a></li>
+    <li><a href="#">SpinBox Example</a></li>
   
 
       </ul>
@@ -91,76 +91,37 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="spin-box-example">
-<h1>Spin Box Example<a class="headerlink" href="#spin-box-example" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="spinbox-example">
+<h1>SpinBox Example<a class="headerlink" href="#spinbox-example" title="Permalink to this headline">¶</a></h1>
 <p><a class="reference download internal" href="../_downloads/spin_box.enaml"><tt class="xref download docutils literal"><span class="pre">spin_box.enaml</span></tt></a></p>
 <div class="highlight-python"><pre>#------------------------------------------------------------------------------
-#  Copyright (c) 2011, Enthought, Inc.
+#  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-""" SpinBox example
+""" An example of the `SpinBox` widget.
 
-An demonstration of how to use a spin box to select from a list
-of months.
+This example demonstrates the use of a simple `SpinBox` control which is
+used to select from a discrete range of integer values.
 
 """
-from enaml.validation import AbstractValidator
+from enaml.widgets.api import Window, Form, Label, Field, SpinBox
 
 
-class MonthSpinValidator(AbstractValidator):
-
-    months = ('January', 'February', 'March', 'April', 'May', 'June', 'July', 
-              'August', 'September', 'October', 'November', 'December')
-
-    int_map = dict((i + 1, s) for (i, s) in enumerate(months))
-
-    month_map = dict((value.lower(), key) for (key, value) in int_map.iteritems())
-
-    def validate(self, text):
-        text = text.lower().strip()
-        if text in self.month_map:
-            return self.ACCEPTABLE
-        
-        try:
-            i = int(text)
-        except ValueError:
-            pass
-        else:
-            if i in self.int_map:
-                return self.ACCEPTABLE
-        
-        return self.INTERMEDIATE
-
-    def convert(self, text):
-        text = text.lower().strip()
-        i = self.month_map.get(text)
-        if i is None:
-            i = int(text) 
-        return i
-
-    def format(self, value):
-        s = self.int_map.get(value)
-        if s is None:
-            raise ValueError
-        return s
-
-
-enamldef Main(MainWindow):
-    title = 'SpinBox'
-    Container:
+enamldef Main(Window):
+    title = 'SpinBox Example'
+    Form:
+        Label:
+            text = 'Select Age'
         SpinBox:
-            validator = MonthSpinValidator()
-            low = 1
-            high = 12
-            value :: print 'new value', value
-            wrap = True
-
+            id: sbox 
+            maximum = 100
+            minimum = 0
+        Field:
+            text &lt;&lt; u'Age: {}'.format(sbox.value)
+            read_only = True
 </pre>
 </div>
-<div class="highlight-python"><pre>$ enaml-run spin_box.enaml
-new value 12
-new value 1
-new value 2</pre>
+<div class="highlight-python"><pre>$ enaml-run spin_box.enaml</pre>
 </div>
 <img alt="../_images/spin_box.png" src="../_images/spin_box.png" />
 </div>
@@ -184,23 +145,23 @@ new value 2</pre>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="ex_dialog.html" title="Dialog Example"
+          <a href="ex_splitter.html" title="Splitter Example"
              >next</a> |</li>
         <li class="right" >
           <a href="ex_slider.html" title="Slider Example"
              >previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
           <li><a href="example.html" >Examples Gallery</a> &raquo;</li>
   
-    <li><a href="#">Spin Box Example</a></li>
+    <li><a href="#">SpinBox Example</a></li>
   
 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jun 12, 2012.
+      Last updated on Dec 13, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

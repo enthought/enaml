@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Scroll Area Example &mdash; enaml 0.2alpha documentation</title>
+    <title>ScrollArea Example &mdash; enaml 0.6.3 documentation</title>
     
     <link rel="stylesheet" href="../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2alpha',
+        VERSION:     '0.6.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,10 +27,10 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2alpha documentation" href="../index.html" />
+    <link rel="top" title="enaml 0.6.3 documentation" href="../index.html" />
     <link rel="up" title="Examples Gallery" href="example.html" />
-    <link rel="next" title="Area Splitter Example" href="ex_splitter.html" />
-    <link rel="prev" title="Group Box Example" href="ex_group_box.html" /> 
+    <link rel="next" title="Slider Example" href="ex_slider.html" />
+    <link rel="prev" title="ProgressBar Example" href="ex_progress_bar.html" /> 
   </head>
   <body>
     <div class="related">
@@ -46,16 +46,16 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="ex_splitter.html" title="Area Splitter Example"
+          <a href="ex_slider.html" title="Slider Example"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="ex_group_box.html" title="Group Box Example"
+          <a href="ex_progress_bar.html" title="ProgressBar Example"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
           <li><a href="example.html" accesskey="U">Examples Gallery</a> &raquo;</li>
   
-    <li><a href="#">Scroll Area Example</a></li>
+    <li><a href="#">ScrollArea Example</a></li>
   
 
       </ul>
@@ -91,97 +91,104 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="scroll-area-example">
-<h1>Scroll Area Example<a class="headerlink" href="#scroll-area-example" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="scrollarea-example">
+<h1>ScrollArea Example<a class="headerlink" href="#scrollarea-example" title="Permalink to this headline">¶</a></h1>
 <p><a class="reference download internal" href="../_downloads/scroll_area.enaml"><tt class="xref download docutils literal"><span class="pre">scroll_area.enaml</span></tt></a></p>
 <div class="highlight-python"><pre>#------------------------------------------------------------------------------
-# Copyright (c) 2011, Enthought, Inc.
-# All rights reserved.
+#  Copyright (c) 2012, Enthought, Inc.
+#  All rights reserved.
 #------------------------------------------------------------------------------
-""" Scroll Area container
+""" An example of the `ScrollArea` widget.
 
-We show a ScrollArea containing a long Form. By default, a ScrollArea starts
-with a limited vertical extent, but gets its initial width from the contained
-widget.
+A `ScrollArea` can have at most one child which must be an instance of
+`Container`. When to show the scroll bars is determined automatically
+based on the sizing constraints of the `Container`. However, that 
+policy can be changed through the attributes 'horizontal_scrollbar' and 
+'vertical_scrollbar'. These attributes can be set to 'as_needed', 
+'always_on', and 'always_off'. The default is 'as_needed'.
 
 """
-enamldef Main(MainWindow):
-    title = "Scroll Area"
-    ScrollArea:
-        preferred_size = (None, 200)
-        Form:
-            Label:
-                text = "First name:"
-            Field:
-                pass
-            Label:
-                text = "Last name:"
-            Field:
-                pass
-            Label:
-                text = "Address:"
-            Field:
-                pass
-            Label:
-                text = ""
-            Field:
-                pass
-            Label:
-                text = "City:"
-            Field:
-                pass
-            Label:
-                text = "State:"
-            Field:
-                pass
-            Label:
-                text = "Postal Code:"
-            Field:
-                pass
-            Label:
-                text = "Country:"
-            Field:
-                pass
-            Label:
-                text = "Phone number:"
-            Field:
-                pass
-            Label:
-                text = "Email:"
-            Field:
-                pass
-            Label:
-                text = "Confirm email:"
-            Field:
-                pass
-            Label:
-                text = "Confirm email:"
-            Field:
-                pass
-            Label:
-                text = "Confirm email:"
-            Field:
-                pass
-            Label:
-                text = "Confirm email:"
-            Field:
-                pass
-            Label:
-                text = "Confirm email:"
-            Field:
-                pass
-            Label:
-                text = "Confirm email:"
-            Field:
-                pass
+from enaml.widgets.api import (
+    Window, ScrollArea, Form, Label, Field, Container,
+)
 
+
+enamldef Main(Window):
+    title = "Scroll Area"
+    Container:
+        padding = 0
+        ScrollArea:
+            constraints = [width &gt;= 200]
+            Form:
+                Label:
+                    text = "First name:"
+                Field:
+                    pass
+                Label:
+                    text = "Last name:"
+                Field:
+                    pass
+                Label:
+                    text = "Address:"
+                Field:
+                    pass
+                Label:
+                    text = ""
+                Field:
+                    pass
+                Label:
+                    text = "City:"
+                Field:
+                    pass
+                Label:
+                    text = "State:"
+                Field:
+                    pass
+                Label:
+                    text = "Postal Code:"
+                Field:
+                    pass
+                Label:
+                    text = "Country:"
+                Field:
+                    pass
+                Label:
+                    text = "Phone number:"
+                Field:
+                    pass
+                Label:
+                    text = "Email:"
+                Field:
+                    pass
+                Label:
+                    text = "Confirm email:"
+                Field:
+                    pass
+                Label:
+                    text = "Confirm email:"
+                Field:
+                    pass
+                Label:
+                    text = "Confirm email:"
+                Field:
+                    pass
+                Label:
+                    text = "Confirm email:"
+                Field:
+                    pass
+                Label:
+                    text = "Confirm email:"
+                Field:
+                    pass
+                Label:
+                    text = "Confirm email:"
+                Field:
+                    pass
 </pre>
 </div>
 <div class="highlight-python"><pre>$ enaml-run scroll_area.enaml</pre>
 </div>
-<img alt="../_images/scroll_area0.png" src="../_images/scroll_area0.png" />
-<img alt="../_images/scroll_area1.png" src="../_images/scroll_area1.png" />
-<img alt="../_images/scroll_area2.png" src="../_images/scroll_area2.png" />
+<img alt="../_images/scroll_area.png" src="../_images/scroll_area.png" />
 </div>
 
 
@@ -203,23 +210,23 @@ enamldef Main(MainWindow):
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="ex_splitter.html" title="Area Splitter Example"
+          <a href="ex_slider.html" title="Slider Example"
              >next</a> |</li>
         <li class="right" >
-          <a href="ex_group_box.html" title="Group Box Example"
+          <a href="ex_progress_bar.html" title="ProgressBar Example"
              >previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
           <li><a href="example.html" >Examples Gallery</a> &raquo;</li>
   
-    <li><a href="#">Scroll Area Example</a></li>
+    <li><a href="#">ScrollArea Example</a></li>
   
 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jun 12, 2012.
+      Last updated on Dec 13, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

@@ -1,0 +1,186 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.widgets.widget &mdash; enaml 0.6.3 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.6.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.6.3 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.widgets.widget</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.widgets.widget</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2012, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">Bool</span><span class="p">,</span> <span class="n">Str</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Range</span><span class="p">,</span> <span class="n">Enum</span>
+
+<span class="kn">from</span> <span class="nn">enaml.core.messenger</span> <span class="kn">import</span> <span class="n">Messenger</span>
+
+
+<span class="c">#: A predefined trait which defines a size tuple. A size value of</span>
+<span class="c">#: (-1, -1) represents a default size.</span>
+<span class="n">SizeTuple</span> <span class="o">=</span> <span class="n">Tuple</span><span class="p">(</span><span class="n">Range</span><span class="p">(</span><span class="n">low</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">value</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span> <span class="n">Range</span><span class="p">(</span><span class="n">low</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">value</span><span class="o">=-</span><span class="mi">1</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="Widget"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.widget.Widget.html#enaml.widgets.widget.Widget">[docs]</a><span class="k">class</span> <span class="nc">Widget</span><span class="p">(</span><span class="n">Messenger</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; The base class of all visible widgets in Enaml.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#: Whether or not the widget is enabled.</span>
+    <span class="n">enabled</span> <span class="o">=</span> <span class="n">Bool</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="c">#: Whether or not the widget is visible.</span>
+    <span class="n">visible</span> <span class="o">=</span> <span class="n">Bool</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="c">#: A flag indicating whether or not to show the focus rectangle for</span>
+    <span class="c">#: the given widget. This is not necessarily support by all widgets</span>
+    <span class="c">#: on all clients. A value of None indicates to use the default as</span>
+    <span class="c">#: supplied by the client.</span>
+    <span class="n">show_focus_rect</span> <span class="o">=</span> <span class="n">Enum</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
+
+    <span class="c">#: The background color of the widget. Supports CSS3 color strings.</span>
+    <span class="n">bgcolor</span> <span class="o">=</span> <span class="n">Str</span>
+
+    <span class="c">#: The foreground color of the widget. Supports CSS3 color strings.</span>
+    <span class="n">fgcolor</span> <span class="o">=</span> <span class="n">Str</span>
+
+    <span class="c">#: The font used for the widget. Supports CSS font formats.</span>
+    <span class="n">font</span> <span class="o">=</span> <span class="n">Str</span>
+
+    <span class="c">#: The minimum size for the widget. The default means that the</span>
+    <span class="c">#: client should determine an intelligent minimum size.</span>
+    <span class="n">minimum_size</span> <span class="o">=</span> <span class="n">SizeTuple</span>
+
+    <span class="c">#: The maximum size for the widget. The default means that the</span>
+    <span class="c">#: client should determine and inteliigent maximum size.</span>
+    <span class="n">maximum_size</span> <span class="o">=</span> <span class="n">SizeTuple</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Initialization</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">snap</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">Widget</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">snapshot</span><span class="p">()</span>
+        <span class="n">snap</span><span class="p">[</span><span class="s">&#39;enabled&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">enabled</span>
+        <span class="n">snap</span><span class="p">[</span><span class="s">&#39;visible&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">visible</span>
+        <span class="n">snap</span><span class="p">[</span><span class="s">&#39;bgcolor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bgcolor</span>
+        <span class="n">snap</span><span class="p">[</span><span class="s">&#39;fgcolor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fgcolor</span>
+        <span class="n">snap</span><span class="p">[</span><span class="s">&#39;font&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">font</span>
+        <span class="n">snap</span><span class="p">[</span><span class="s">&#39;minimum_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">minimum_size</span>
+        <span class="n">snap</span><span class="p">[</span><span class="s">&#39;maximum_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maximum_size</span>
+        <span class="n">snap</span><span class="p">[</span><span class="s">&#39;show_focus_rect&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">show_focus_rect</span>
+        <span class="k">return</span> <span class="n">snap</span>
+
+<div class="viewcode-block" id="Widget.bind"><a class="viewcode-back" href="../../../api_ref/widgets/enaml.widgets.widget.Widget.html#enaml.widgets.widget.Widget.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Bind the change handlers for a widget component.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Widget</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">bind</span><span class="p">()</span>
+        <span class="n">attrs</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s">&#39;enabled&#39;</span><span class="p">,</span> <span class="s">&#39;visible&#39;</span><span class="p">,</span> <span class="s">&#39;bgcolor&#39;</span><span class="p">,</span> <span class="s">&#39;fgcolor&#39;</span><span class="p">,</span> <span class="s">&#39;font&#39;</span><span class="p">,</span>
+            <span class="s">&#39;minimum_size&#39;</span><span class="p">,</span> <span class="s">&#39;maximum_size&#39;</span><span class="p">,</span> <span class="s">&#39;show_focus_rect&#39;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">publish_attributes</span><span class="p">(</span><span class="o">*</span><span class="n">attrs</span><span class="p">)</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.widgets.widget</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Dec 13, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

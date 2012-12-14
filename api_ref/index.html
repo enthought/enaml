@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Enaml API Reference &mdash; enaml 0.2alpha documentation</title>
+    <title>Enaml API Reference &mdash; enaml 0.6.3 documentation</title>
     
     <link rel="stylesheet" href="../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2alpha',
+        VERSION:     '0.6.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,9 +27,9 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2alpha documentation" href="../index.html" />
+    <link rel="top" title="enaml 0.6.3 documentation" href="../index.html" />
     <link rel="next" title="enaml" href="enaml.html" />
-    <link rel="prev" title="Design and Architecture" href="../architecture/architecture.html" /> 
+    <link rel="prev" title="Help and Troubleshooting" href="../instructional/faq.html" /> 
   </head>
   <body>
     <div class="related">
@@ -48,9 +48,9 @@
           <a href="enaml.html" title="enaml"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="../architecture/architecture.html" title="Design and Architecture"
+          <a href="../instructional/faq.html" title="Help and Troubleshooting"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
   
     <li><a href="#">Enaml API Reference</a></li>
   
@@ -93,47 +93,61 @@
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="enaml.html"> Base</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="enaml.html#module-enaml.enums"><tt class="docutils literal"><span class="pre">enums</span></tt> Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="enaml.html#exceptions-module"><tt class="docutils literal"><span class="pre">exceptions</span></tt> Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="enaml.html#guard-module"><tt class="docutils literal"><span class="pre">guard</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enaml.html#module-enaml.application"><tt class="docutils literal"><span class="pre">application</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enaml.html#module-enaml.callableref"><tt class="docutils literal"><span class="pre">callableref</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enaml.html#module-enaml.colors"><tt class="docutils literal"><span class="pre">colors</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enaml.html#module-enaml.icon_provider"><tt class="docutils literal"><span class="pre">icon_provider</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enaml.html#module-enaml.image_provider"><tt class="docutils literal"><span class="pre">image_provider</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enaml.html#module-enaml.resource"><tt class="docutils literal"><span class="pre">resource</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enaml.html#module-enaml.resource_manager"><tt class="docutils literal"><span class="pre">resource_manager</span></tt> Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="enaml.html#module-enaml.runner"><tt class="docutils literal"><span class="pre">runner</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enaml.html#module-enaml.session"><tt class="docutils literal"><span class="pre">session</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enaml.html#module-enaml.session_factory"><tt class="docutils literal"><span class="pre">session_factory</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enaml.html#module-enaml.signaling"><tt class="docutils literal"><span class="pre">signaling</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enaml.html#module-enaml.socket_interface"><tt class="docutils literal"><span class="pre">socket_interface</span></tt> Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="enaml.html#module-enaml.utils"><tt class="docutils literal"><span class="pre">utils</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enaml.html#module-enaml.version"><tt class="docutils literal"><span class="pre">version</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enaml.html#module-enaml.weakmethod"><tt class="docutils literal"><span class="pre">weakmethod</span></tt> Module</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="enaml.core.html"> Core</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="enaml.core.html#module-enaml.core.toolkit"><tt class="docutils literal"><span class="pre">toolkit</span></tt> Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="enaml.core.html#module-enaml.core.import_hooks"><tt class="docutils literal"><span class="pre">import_hooks</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enaml.core.html#module-enaml.core.abstract_expressions"><tt class="docutils literal"><span class="pre">abstract_expressions</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enaml.core.html#module-enaml.core.code_tracing"><tt class="docutils literal"><span class="pre">code_tracing</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enaml.core.html#module-enaml.core.compiler_helpers"><tt class="docutils literal"><span class="pre">compiler_helpers</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enaml.core.html#module-enaml.core.declarative"><tt class="docutils literal"><span class="pre">declarative</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enaml.core.html#enaml-ast-module"><tt class="docutils literal"><span class="pre">enaml_ast</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enaml.core.html#module-enaml.core.enaml_compiler"><tt class="docutils literal"><span class="pre">enaml_compiler</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enaml.core.html#module-enaml.core.enaml_def"><tt class="docutils literal"><span class="pre">enaml_def</span></tt> Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="enaml.core.html#expressions-module"><tt class="docutils literal"><span class="pre">expressions</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enaml.core.html#module-enaml.core.funchelper"><tt class="docutils literal"><span class="pre">funchelper</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enaml.core.html#module-enaml.core.import_hooks"><tt class="docutils literal"><span class="pre">import_hooks</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enaml.core.html#module-enaml.core.include"><tt class="docutils literal"><span class="pre">include</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enaml.core.html#lexer-module"><tt class="docutils literal"><span class="pre">lexer</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enaml.core.html#module-enaml.core.messenger"><tt class="docutils literal"><span class="pre">messenger</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enaml.core.html#module-enaml.core.object"><tt class="docutils literal"><span class="pre">object</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enaml.core.html#module-enaml.core.operator_context"><tt class="docutils literal"><span class="pre">operator_context</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enaml.core.html#module-enaml.core.operators"><tt class="docutils literal"><span class="pre">operators</span></tt> Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="enaml.core.html#parameters">Parameters</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="enaml.parsing.html"> Parsing</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="enaml.parsing.html#enaml-ast-module"><tt class="docutils literal"><span class="pre">enaml_ast</span></tt> Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="enaml.parsing.html#lexer-module"><tt class="docutils literal"><span class="pre">lexer</span></tt> Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="enaml.parsing.html#module-enaml.core.parser"><tt class="docutils literal"><span class="pre">parser</span></tt> Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="enaml.parsing.html#module-enaml.core.enaml_compiler"><tt class="docutils literal"><span class="pre">enaml_compiler</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enaml.core.html#module-enaml.core.parser"><tt class="docutils literal"><span class="pre">parser</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enaml.core.html#module-enaml.core.trait_types"><tt class="docutils literal"><span class="pre">trait_types</span></tt> Module</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="enaml.styling.html"> Styling</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="enaml.styling.html#module-enaml.styling.color"><tt class="docutils literal"><span class="pre">color</span></tt> Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="enaml.styling.html#style-node-module"><tt class="docutils literal"><span class="pre">style_node</span></tt> Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="enaml.styling.html#style-sheet-module"><tt class="docutils literal"><span class="pre">style_sheet</span></tt> Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="enaml.styling.html#module-enaml.styling.style_manager"><tt class="docutils literal"><span class="pre">style_manager</span></tt> Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="enaml.styling.html#style-mixin-module"><tt class="docutils literal"><span class="pre">style_mixin</span></tt> Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="enaml.styling.html#module-enaml.styling.style_trait"><tt class="docutils literal"><span class="pre">style_trait</span></tt> Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="enaml.stdlib.html"> Stdlib</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="enaml.stdlib.html#fields-module"><tt class="docutils literal"><span class="pre">fields</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enaml.stdlib.html#module-enaml.stdlib.sessions"><tt class="docutils literal"><span class="pre">sessions</span></tt> Module</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="enaml.widgets.html"> Widgets</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="enaml.widgets.html#interface">Interface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="enaml.widgets.html#implementation">Implementation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="enaml.widgets.html#standard-widgets">Standard Widgets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enaml.widgets.html#interface">Interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="enaml.widgets.html#base-widgets">Base widgets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="enaml.widgets.html#standard-widgets">Standard widgets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="enaml.widgets.html#window-widgets">Window widgets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="enaml.widgets.html#container-and-layout-widgets">Container and Layout widgets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="enaml.widgets.html#standard-library">Standard library</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="enaml.item_models.html"> Item Models</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="enaml.item_models.html#abstract-item-model-module"><tt class="docutils literal"><span class="pre">abstract_item_model</span></tt> Module</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="enaml.util.html"> Utility</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="enaml.util.html#trait-types-module"><tt class="docutils literal"><span class="pre">trait_types</span></tt> Module</a></li>
 </ul>
 </li>
 </ul>
@@ -162,9 +176,9 @@
           <a href="enaml.html" title="enaml"
              >next</a> |</li>
         <li class="right" >
-          <a href="../architecture/architecture.html" title="Design and Architecture"
+          <a href="../instructional/faq.html" title="Help and Troubleshooting"
              >previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
   
     <li><a href="#">Enaml API Reference</a></li>
   
@@ -173,7 +187,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jun 12, 2012.
+      Last updated on Dec 13, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

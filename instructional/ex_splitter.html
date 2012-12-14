@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Area Splitter Example &mdash; enaml 0.2alpha documentation</title>
+    <title>Splitter Example &mdash; enaml 0.6.3 documentation</title>
     
     <link rel="stylesheet" href="../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2alpha',
+        VERSION:     '0.6.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,10 +27,10 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2alpha documentation" href="../index.html" />
+    <link rel="top" title="enaml 0.6.3 documentation" href="../index.html" />
     <link rel="up" title="Examples Gallery" href="example.html" />
-    <link rel="next" title="Tabbed Container Example" href="ex_tabbed.html" />
-    <link rel="prev" title="Scroll Area Example" href="ex_scroll_area.html" /> 
+    <link rel="next" title="ToolBar Example" href="ex_tool_bar.html" />
+    <link rel="prev" title="SpinBox Example" href="ex_spin_box.html" /> 
   </head>
   <body>
     <div class="related">
@@ -46,16 +46,16 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="ex_tabbed.html" title="Tabbed Container Example"
+          <a href="ex_tool_bar.html" title="ToolBar Example"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="ex_scroll_area.html" title="Scroll Area Example"
+          <a href="ex_spin_box.html" title="SpinBox Example"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
           <li><a href="example.html" accesskey="U">Examples Gallery</a> &raquo;</li>
   
-    <li><a href="#">Area Splitter Example</a></li>
+    <li><a href="#">Splitter Example</a></li>
   
 
       </ul>
@@ -91,76 +91,104 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="area-splitter-example">
-<h1>Area Splitter Example<a class="headerlink" href="#area-splitter-example" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="splitter-example">
+<h1>Splitter Example<a class="headerlink" href="#splitter-example" title="Permalink to this headline">¶</a></h1>
 <p><a class="reference download internal" href="../_downloads/splitter.enaml"><tt class="xref download docutils literal"><span class="pre">splitter.enaml</span></tt></a></p>
 <div class="highlight-python"><pre>#------------------------------------------------------------------------------
-# Copyright (c) 2011, Enthought, Inc.
-# All rights reserved.
+#  Copyright (c) 2012, Enthought, Inc.
+#  All rights reserved.
 #------------------------------------------------------------------------------
-""" Splitter Example
+""" An example of the `Splitter` widget.
 
-A simple demonstration of adding splitters to a Window to manage
-several large space-consuming widgets in a manner that allows the
-user to interactively resize the space allocated to each widget.
+A `Splitter` is a widget which can hold an arbitrary number of children
+which must be instances of `Container`. The `Splitter` will separate
+each `Container` with a bar which can be dragged by the user to change
+the space allocated to the containers. This example shows how complex
+arrangements can be acheived by nesting `Splitter` widgets inside
+child `Container` widgets.
+
+Implementation notes:
+
+    The splitter support on Wx is poor. Certain behaviors, like initial
+    splitter sizing does not work well (if at all). If a production
+    application requires splitter support, prefer the Qt backend over
+    Wx (this is generally a good life-rule).
 
 """
-from enaml.item_models.standard_models import TableModel
-
-import numpy as np
-
-
-# A (1000, 100) table of data
-table =  np.arange(1000*100).reshape((1000, 100))
-
-# A very plain-jane table model
-table_model = TableModel(table)
+from enaml.widgets.api import (
+    Splitter, SplitItem, Form, Container, Window, Label, Field, Html,
+)
 
 
-enamldef Main(MainWindow):
-    title = 'Splitters'
+enamldef MyForm(Form):
+    Label:
+        text = "First name:"
+    Field:
+        pass
+    Label:
+        text = "Last name:"
+    Field:
+        pass
+    Label:
+        text = "Address:"
+    Field:
+        pass
+    Label:
+        text = ""
+    Field:
+        pass
+    Label:
+        text = "City:"
+    Field:
+        pass
+    Label:
+        text = "State:"
+    Field:
+        pass
+    Label:
+        text = "Postal Code:"
+    Field:
+        pass
+    Label:
+        text = "Country:"
+    Field:
+        pass
+
+
+enamldef MyHtmlWidgets(Container):
+    padding = 0
     Splitter:
         orientation = 'vertical'
-        TableView:
-            item_model = table_model
+        SplitItem:
+            Container:
+                Html:
+                    resist_height = 'weak'
+                    source = '&lt;center&gt;&lt;h1&gt;Hello World!&lt;/h1&gt;&lt;/center&gt;'
+        SplitItem:
+            Container:
+                Html:
+                    resist_height = 'weak'
+                    source = '&lt;center&gt;&lt;h1&gt;Hello Enaml!&lt;/h1&gt;&lt;/center&gt;'
+
+
+enamldef Main(Window):
+    Container:
+        padding = 0
+        hug_height = 'strong'
         Splitter:
-            Form:
-                Label:
-                    text = "First name:"
-                Field:
+            hug_height = 'strong'
+            SplitItem:
+                MyForm:
                     pass
-                Label:
-                    text = "Last name:"
-                Field:
+            SplitItem:
+                MyForm:
                     pass
-                Label:
-                    text = "Address:"
-                Field:
+            SplitItem:
+                MyHtmlWidgets:
                     pass
-                Label:
-                    text = ""
-                Field:
+            SplitItem:
+                MyForm:
                     pass
-                Label:
-                    text = "City:"
-                Field:
-                    pass
-                Label:
-                    text = "State:"
-                Field:
-                    pass
-                Label:
-                    text = "Postal Code:"
-                Field:
-                    pass
-                Label:
-                    text = "Country:"
-                Field:
-                    pass
-            TableView:
-                item_model = table_model
-            TableView:
-                item_model = table_model
 
 </pre>
 </div>
@@ -188,23 +216,23 @@ enamldef Main(MainWindow):
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="ex_tabbed.html" title="Tabbed Container Example"
+          <a href="ex_tool_bar.html" title="ToolBar Example"
              >next</a> |</li>
         <li class="right" >
-          <a href="ex_scroll_area.html" title="Scroll Area Example"
+          <a href="ex_spin_box.html" title="SpinBox Example"
              >previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
           <li><a href="example.html" >Examples Gallery</a> &raquo;</li>
   
-    <li><a href="#">Area Splitter Example</a></li>
+    <li><a href="#">Splitter Example</a></li>
   
 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jun 12, 2012.
+      Last updated on Dec 13, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.core.lexer &mdash; enaml 0.2alpha documentation</title>
+    <title>enaml.core.lexer &mdash; enaml 0.6.3 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.2alpha',
+        VERSION:     '0.6.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2alpha documentation" href="../../../index.html" />
+    <link rel="top" title="enaml 0.6.3 documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.core.lexer</a></li>
@@ -83,9 +83,7 @@
 <span class="c">#  All rights reserved.</span>
 <span class="c">#------------------------------------------------------------------------------</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">tokenize</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="kn">import</span> <span class="nn">ply.lex</span> <span class="kn">as</span> <span class="nn">lex</span>
 
@@ -93,27 +91,6 @@
 <span class="c"># Get a save directory for the lex and parse tables</span>
 <span class="n">_lex_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__file__</span><span class="p">),</span> <span class="s">&#39;parse_tab&#39;</span><span class="p">)</span>
 <span class="n">_lex_module</span> <span class="o">=</span> <span class="s">&#39;enaml.core.parse_tab.lextab&#39;</span>
-
-
-<span class="c">#------------------------------------------------------------------------------</span>
-<span class="c"># Deprecation Handling</span>
-<span class="c">#------------------------------------------------------------------------------</span>
-<span class="c"># old decl header</span>
-<span class="n">DECL</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">&#39;^[a-zA-Z_][a-zA-Z0-9_]*\s*\(\s*[a-zA-Z_][a-zA-Z0-9_]*\s*\)\s*:\s*$&#39;</span><span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">warn_old_decl_syntax</span><span class="p">(</span><span class="n">lineno</span><span class="p">):</span>
-    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;Declaring a component without the keyword &#39;enamldef&#39; is &quot;</span>
-           <span class="s">&quot;deprecated and will be removed in futures versions. The keyword &quot;</span>
-           <span class="s">&quot;has been automatically added on line number </span><span class="si">%s</span><span class="s">&quot;</span><span class="p">)</span>
-    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span> <span class="o">%</span> <span class="n">lineno</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">warn_old_tag_syntax</span><span class="p">(</span><span class="n">lineno</span><span class="p">):</span>
-    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;The ::python:: and ::end:: tags are deprecated and will be &quot;</span>
-           <span class="s">&quot;removed in future versions. The tags are no longer required &quot;</span>
-           <span class="s">&quot;and can simply be ommitted. Ignoring tag on line number </span><span class="si">%s</span><span class="s">&quot;</span><span class="p">)</span>
-    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span> <span class="o">%</span> <span class="n">lineno</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">)</span>
 
 
 <span class="c">#------------------------------------------------------------------------------</span>
@@ -193,7 +170,7 @@
 <span class="c">#------------------------------------------------------------------------------</span>
 <span class="c"># Enaml Lexer</span>
 <span class="c">#------------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="EnamlLexer"><a class="viewcode-back" href="../../../api_ref/enaml.parsing.html#enaml.core.lexer.EnamlLexer">[docs]</a><span class="k">class</span> <span class="nc">EnamlLexer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="EnamlLexer"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.lexer.EnamlLexer">[docs]</a><span class="k">class</span> <span class="nc">EnamlLexer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
     <span class="n">operators</span> <span class="o">=</span> <span class="p">(</span>
         <span class="p">(</span><span class="s">r&#39;@&#39;</span><span class="p">,</span> <span class="s">&#39;AT&#39;</span><span class="p">),</span>
@@ -543,19 +520,6 @@
         <span class="n">syntax_error</span><span class="p">(</span><span class="s">&#39;EOL while scanning single quoted string.&#39;</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
     
     <span class="c">#--------------------------------------------------------------------------</span>
-    <span class="c"># Raw Python</span>
-    <span class="c">#--------------------------------------------------------------------------   </span>
-    <span class="c"># Deprecated Backwards Compatibility for :: python :: tags</span>
-    <span class="k">def</span> <span class="nf">t_start_raw_python</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
-        <span class="s">r&#39;::[\t\ ]*python[\t\ ]*::[\t\ ]*&#39;</span>
-        <span class="n">warn_old_tag_syntax</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">lineno</span><span class="p">)</span>
-
-
-    <span class="k">def</span> <span class="nf">t_end_raw_python</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
-        <span class="s">r&#39;::[\t\ ]*end[\t\ ]*::[\t\ ]*&#39;</span>
-        <span class="n">warn_old_tag_syntax</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">lineno</span><span class="p">)</span>
-
-    <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Miscellaneous Token Rules</span>
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># This is placed after the string rules so r&quot;&quot; is not matched as a name.</span>
@@ -588,16 +552,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
 
     <span class="k">def</span> <span class="nf">input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">txt</span><span class="p">):</span>
-        <span class="c"># Support for deprecated component declaration without</span>
-        <span class="c"># keyword. This automatically inserts the keyword before</span>
-        <span class="c"># anything makes it to the parser.</span>
-        <span class="n">new</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">lineno</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">txt</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()):</span>
-            <span class="k">if</span> <span class="n">DECL</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
-                <span class="n">warn_old_decl_syntax</span><span class="p">(</span><span class="n">lineno</span><span class="p">)</span>
-                <span class="n">line</span> <span class="o">=</span> <span class="s">&#39;enamldef &#39;</span> <span class="o">+</span> <span class="n">line</span>
-            <span class="n">new</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-        <span class="n">txt</span> <span class="o">=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">new</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">input</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">next_token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_token_stream</span><span class="p">()</span><span class="o">.</span><span class="n">next</span>
 
@@ -874,7 +828,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.core.lexer</a></li>
@@ -884,7 +838,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jun 12, 2012.
+      Last updated on Dec 13, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

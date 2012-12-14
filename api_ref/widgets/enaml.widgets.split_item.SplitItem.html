@@ -1,0 +1,339 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>SplitItem &mdash; enaml 0.6.3 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.6.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.6.3 documentation" href="../../index.html" />
+    <link rel="up" title="Widgets" href="../enaml.widgets.html" />
+    <link rel="next" title="Splitter" href="enaml.widgets.splitter.Splitter.html" />
+    <link rel="prev" title="ScrollArea" href="enaml.widgets.scroll_area.ScrollArea.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.splitter.Splitter.html" title="Splitter"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.scroll_area.ScrollArea.html" title="ScrollArea"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" accesskey="U">Widgets</a> &raquo;</li>
+  
+    <li><a href="#">SplitItem</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">SplitItem</a><ul>
+<li><a class="reference internal" href="#backends">Backends</a><ul>
+<li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/api_ref/widgets/enaml.widgets.split_item.SplitItem.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="splititem">
+<h1>SplitItem<a class="headerlink" href="#splititem" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="enaml.widgets.split_item.SplitItem">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.split_item.</tt><tt class="descname">SplitItem</tt><big>(</big><em>parent=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/split_item.html#SplitItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.split_item.SplitItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.widget.Widget.html#enaml.widgets.widget.Widget" title="enaml.widgets.widget.Widget"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.widget.Widget</span></tt></a></p>
+<p>A widget which can be used as an item in a Splitter.</p>
+<p>A SplitItem is a widget which can be used as a child of a Splitter
+widget. It can have at most a single child widget which is an
+instance of Container.</p>
+<dl class="attribute">
+<dt id="enaml.widgets.split_item.SplitItem.preferred_size">
+<tt class="descname">preferred_size</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.split_item.SplitItem.preferred_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>The preferred size for this item in the splitter, or None if
+there is no preference for the size. The default is None.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.split_item.SplitItem.split_widget">
+<tt class="descname">split_widget</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.split_item.SplitItem.split_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>A read only property which returns the split widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.split_item.SplitItem.snapshot">
+<tt class="descname">snapshot</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/split_item.html#SplitItem.snapshot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.split_item.SplitItem.snapshot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the dict of creation attributes for the control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.split_item.SplitItem.bind">
+<tt class="descname">bind</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/split_item.html#SplitItem.bind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.split_item.SplitItem.bind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bind the change handlers for the widget.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.split_item.SplitItem.__implements__">
+<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.widgets.split_item.SplitItem.__implements__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="backends">
+<h2>Backends<a class="headerlink" href="#backends" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="qt">
+<h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-3c84f193a17598f5aa1dd2b24ce0970d1018d41b.png" alt="Inheritance diagram of enaml.qt.qt_split_item.QtSplitItem" usemap="#inheritance6546d46c3c" class="inheritance"/>
+<map id="inheritance6546d46c3c" name="inheritance6546d46c3c">
+<area shape="rect" id="node1" href="#enaml.qt.qt_split_item.QtSplitItem" title="QtSplitItem" alt="" coords="249,5,335,30"/>
+<area shape="rect" id="node2" href="enaml.widgets.widget.Widget.html#enaml.qt.qt_widget.QtWidget" title="QtWidget" alt="" coords="125,5,200,30"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.qt.qt_split_item.QtSplitItem">
+<em class="property">class </em><tt class="descclassname">enaml.qt.qt_split_item.</tt><tt class="descname">QtSplitItem</tt><big>(</big><em>object_id</em>, <em>parent</em>, <em>session</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_split_item.html#QtSplitItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_split_item.QtSplitItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.widget.Widget.html#enaml.qt.qt_widget.QtWidget" title="enaml.qt.qt_widget.QtWidget"><tt class="xref py py-class docutils literal"><span class="pre">enaml.qt.qt_widget.QtWidget</span></tt></a></p>
+<p>A Qt implementation of an Enaml SplitItem.</p>
+<dl class="method">
+<dt id="enaml.qt.qt_split_item.QtSplitItem.create_widget">
+<tt class="descname">create_widget</tt><big>(</big><em>parent</em>, <em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_split_item.html#QtSplitItem.create_widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_split_item.QtSplitItem.create_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the underlying QStackItem widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_split_item.QtSplitItem.create">
+<tt class="descname">create</tt><big>(</big><em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_split_item.html#QtSplitItem.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_split_item.QtSplitItem.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create and initialize the underyling widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_split_item.QtSplitItem.init_layout">
+<tt class="descname">init_layout</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_split_item.html#QtSplitItem.init_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_split_item.QtSplitItem.init_layout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the layout for the underyling widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_split_item.QtSplitItem.split_widget">
+<tt class="descname">split_widget</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_split_item.html#QtSplitItem.split_widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_split_item.QtSplitItem.split_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find and return the split widget child for this widget.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (QWidget or None) &#8211; The split widget defined for this widget, or None if one is not defined.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_split_item.QtSplitItem.child_removed">
+<tt class="descname">child_removed</tt><big>(</big><em>child</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_split_item.html#QtSplitItem.child_removed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_split_item.QtSplitItem.child_removed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the child removed event for a QtSplitItem.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_split_item.QtSplitItem.child_added">
+<tt class="descname">child_added</tt><big>(</big><em>child</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_split_item.html#QtSplitItem.child_added"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_split_item.QtSplitItem.child_added" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the child added event for a QtSplitItem.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_split_item.QtSplitItem.on_action_set_preferred_size">
+<tt class="descname">on_action_set_preferred_size</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_split_item.html#QtSplitItem.on_action_set_preferred_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_split_item.QtSplitItem.on_action_set_preferred_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_preferred_size&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_split_item.QtSplitItem.set_preferred_size">
+<tt class="descname">set_preferred_size</tt><big>(</big><em>size</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_split_item.html#QtSplitItem.set_preferred_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_split_item.QtSplitItem.set_preferred_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the preferred size for this item in the splitter.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="wx">
+<h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-346e867d7065aa4f3c71154ab61217d8328eb7a1.png" alt="Inheritance diagram of enaml.wx.wx_split_item.WxSplitItem" usemap="#inheritanceee7d893e04" class="inheritance"/>
+<map id="inheritanceee7d893e04" name="inheritanceee7d893e04">
+<area shape="rect" id="node1" href="enaml.widgets.widget.Widget.html#enaml.wx.wx_widget.WxWidget" title="WxWidget" alt="" coords="131,5,211,30"/>
+<area shape="rect" id="node4" href="#enaml.wx.wx_split_item.WxSplitItem" title="WxSplitItem" alt="" coords="259,5,349,30"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.wx.wx_split_item.WxSplitItem">
+<em class="property">class </em><tt class="descclassname">enaml.wx.wx_split_item.</tt><tt class="descname">WxSplitItem</tt><big>(</big><em>object_id</em>, <em>parent</em>, <em>session</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_split_item.html#WxSplitItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_split_item.WxSplitItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.widget.Widget.html#enaml.wx.wx_widget.WxWidget" title="enaml.wx.wx_widget.WxWidget"><tt class="xref py py-class docutils literal"><span class="pre">enaml.wx.wx_widget.WxWidget</span></tt></a></p>
+<p>A Wx implementation of an Enaml SplitItem.</p>
+<dl class="method">
+<dt id="enaml.wx.wx_split_item.WxSplitItem.create_widget">
+<tt class="descname">create_widget</tt><big>(</big><em>parent</em>, <em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_split_item.html#WxSplitItem.create_widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_split_item.WxSplitItem.create_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the underlying QStackItem widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_split_item.WxSplitItem.create">
+<tt class="descname">create</tt><big>(</big><em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_split_item.html#WxSplitItem.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_split_item.WxSplitItem.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create and initialize the underyling widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_split_item.WxSplitItem.init_layout">
+<tt class="descname">init_layout</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_split_item.html#WxSplitItem.init_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_split_item.WxSplitItem.init_layout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the layout for the underyling widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_split_item.WxSplitItem.split_widget">
+<tt class="descname">split_widget</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_split_item.html#WxSplitItem.split_widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_split_item.WxSplitItem.split_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find and return the split widget child for this widget.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (wxWindow or None) &#8211; The split widget defined for this widget, or None if one is not defined.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_split_item.WxSplitItem.child_removed">
+<tt class="descname">child_removed</tt><big>(</big><em>child</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_split_item.html#WxSplitItem.child_removed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_split_item.WxSplitItem.child_removed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the child removed event for a WxSplitItem.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_split_item.WxSplitItem.child_added">
+<tt class="descname">child_added</tt><big>(</big><em>child</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_split_item.html#WxSplitItem.child_added"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_split_item.WxSplitItem.child_added" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the child added event for a QtSplitItem.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_split_item.WxSplitItem.on_action_set_preferred_size">
+<tt class="descname">on_action_set_preferred_size</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_split_item.html#WxSplitItem.on_action_set_preferred_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_split_item.WxSplitItem.on_action_set_preferred_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_preferred_size&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_split_item.WxSplitItem.set_preferred_size">
+<tt class="descname">set_preferred_size</tt><big>(</big><em>size</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_split_item.html#WxSplitItem.set_preferred_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_split_item.WxSplitItem.set_preferred_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the preferred size for this item in the splitter.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.splitter.Splitter.html" title="Splitter"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.scroll_area.ScrollArea.html" title="ScrollArea"
+             >previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" >Widgets</a> &raquo;</li>
+  
+    <li><a href="#">SplitItem</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Dec 13, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,335 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>TraitsItem &mdash; enaml 0.6.3 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.6.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.6.3 documentation" href="../../index.html" />
+    <link rel="up" title="Widgets" href="../enaml.widgets.html" />
+    <link rel="next" title="WebView" href="enaml.widgets.web_view.WebView.html" />
+    <link rel="prev" title="ToolBar" href="enaml.widgets.tool_bar.ToolBar.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.web_view.WebView.html" title="WebView"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.tool_bar.ToolBar.html" title="ToolBar"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" accesskey="U">Widgets</a> &raquo;</li>
+  
+    <li><a href="#">TraitsItem</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">TraitsItem</a><ul>
+<li><a class="reference internal" href="#backends">Backends</a><ul>
+<li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/api_ref/widgets/enaml.widgets.traits_item.TraitsItem.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="traitsitem">
+<h1>TraitsItem<a class="headerlink" href="#traitsitem" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="enaml.widgets.traits_item.TraitsItem">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.traits_item.</tt><tt class="descname">TraitsItem</tt><big>(</big><em>parent=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/traits_item.html#TraitsItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.traits_item.TraitsItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.control.Control.html#enaml.widgets.control.Control" title="enaml.widgets.control.Control"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.control.Control</span></tt></a></p>
+<p>A control which can be used to embded a traits ui view.</p>
+<dl class="attribute">
+<dt id="enaml.widgets.traits_item.TraitsItem.model">
+<tt class="descname">model</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.traits_item.TraitsItem.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>The traits model being displayed. If no other view is given, the
+view will be retrieved by calling <cite>model.edit_traits()</cite>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.traits_item.TraitsItem.view">
+<tt class="descname">view</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.traits_item.TraitsItem.view" title="Permalink to this definition">¶</a></dt>
+<dd><p>An optional traits ui View definition to use in lieu of the
+default view generated by the model.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.traits_item.TraitsItem.handler">
+<tt class="descname">handler</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.traits_item.TraitsItem.handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>An optional traits ui Handler definition to use in lieu of the
+default handler generated by the model.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.traits_item.TraitsItem.hug_width">
+<tt class="descname">hug_width</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.traits_item.TraitsItem.hug_width" title="Permalink to this definition">¶</a></dt>
+<dd><p>TraitsItem widgets expand freely in height and width by default.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.traits_item.TraitsItem.snapshot">
+<tt class="descname">snapshot</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/traits_item.html#TraitsItem.snapshot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.traits_item.TraitsItem.snapshot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the snapshot dictionary for the TraitsItem widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.traits_item.TraitsItem.bind">
+<tt class="descname">bind</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/traits_item.html#TraitsItem.bind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.traits_item.TraitsItem.bind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bind the change handlers for the control.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.traits_item.TraitsItem.__implements__">
+<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.widgets.traits_item.TraitsItem.__implements__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="backends">
+<h2>Backends<a class="headerlink" href="#backends" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="qt">
+<h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-69db97ff6fefdf1ca5c40b23bb328e091920cad7.png" alt="Inheritance diagram of enaml.qt.qt_traits_item.QtTraitsItem" usemap="#inheritance21f358f412" class="inheritance"/>
+<map id="inheritance21f358f412" name="inheritance21f358f412">
+<area shape="rect" id="node1" href="#enaml.qt.qt_traits_item.QtTraitsItem" title="QtTraitsItem" alt="" coords="561,5,655,30"/>
+<area shape="rect" id="node2" href="enaml.widgets.control.Control.html#enaml.qt.qt_control.QtControl" title="QtControl" alt="" coords="435,5,511,30"/>
+<area shape="rect" id="node6" href="enaml.widgets.widget.Widget.html#enaml.qt.qt_widget.QtWidget" title="QtWidget" alt="" coords="125,5,200,30"/>
+<area shape="rect" id="node5" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.qt.qt_constraints_widget.QtConstraintsWidget" title="QtConstraintsWidget" alt="" coords="248,5,387,30"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.qt.qt_traits_item.QtTraitsItem">
+<em class="property">class </em><tt class="descclassname">enaml.qt.qt_traits_item.</tt><tt class="descname">QtTraitsItem</tt><big>(</big><em>object_id</em>, <em>parent</em>, <em>session</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_traits_item.html#QtTraitsItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_traits_item.QtTraitsItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.control.Control.html#enaml.qt.qt_control.QtControl" title="enaml.qt.qt_control.QtControl"><tt class="xref py py-class docutils literal"><span class="pre">enaml.qt.qt_control.QtControl</span></tt></a></p>
+<p>A Qt implementation of an Enaml TraitsItem.</p>
+<dl class="method">
+<dt id="enaml.qt.qt_traits_item.QtTraitsItem.create_widget">
+<tt class="descname">create_widget</tt><big>(</big><em>parent</em>, <em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_traits_item.html#QtTraitsItem.create_widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_traits_item.QtTraitsItem.create_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the underlying widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_traits_item.QtTraitsItem.create">
+<tt class="descname">create</tt><big>(</big><em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_traits_item.html#QtTraitsItem.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_traits_item.QtTraitsItem.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create and initialize the underlying widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_traits_item.QtTraitsItem.init_layout">
+<tt class="descname">init_layout</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_traits_item.html#QtTraitsItem.init_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_traits_item.QtTraitsItem.init_layout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the layout for the widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_traits_item.QtTraitsItem.on_action_set_model">
+<tt class="descname">on_action_set_model</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_traits_item.html#QtTraitsItem.on_action_set_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_traits_item.QtTraitsItem.on_action_set_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_model&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_traits_item.QtTraitsItem.on_action_set_view">
+<tt class="descname">on_action_set_view</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_traits_item.html#QtTraitsItem.on_action_set_view"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_traits_item.QtTraitsItem.on_action_set_view" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_view&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_traits_item.QtTraitsItem.on_action_set_handler">
+<tt class="descname">on_action_set_handler</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_traits_item.html#QtTraitsItem.on_action_set_handler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_traits_item.QtTraitsItem.on_action_set_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_handler&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_traits_item.QtTraitsItem.refresh_traits_widget">
+<tt class="descname">refresh_traits_widget</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_traits_item.html#QtTraitsItem.refresh_traits_widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_traits_item.QtTraitsItem.refresh_traits_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the traits widget and update the underlying control.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="wx">
+<h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-951e03913f71acfbc6db614c771844736454a557.png" alt="Inheritance diagram of enaml.wx.wx_traits_item.WxTraitsItem" usemap="#inheritance37281ffd47" class="inheritance"/>
+<map id="inheritance37281ffd47" name="inheritance37281ffd47">
+<area shape="rect" id="node1" href="enaml.widgets.control.Control.html#enaml.wx.wx_control.WxControl" title="WxControl" alt="" coords="451,5,533,30"/>
+<area shape="rect" id="node8" href="#enaml.wx.wx_traits_item.WxTraitsItem" title="WxTraitsItem" alt="" coords="581,5,680,30"/>
+<area shape="rect" id="node2" href="enaml.widgets.constraints_widget.ConstraintsWidget.html#enaml.wx.wx_constraints_widget.WxConstraintsWidget" title="WxConstraintsWidget" alt="" coords="259,5,403,30"/>
+<area shape="rect" id="node4" href="enaml.widgets.widget.Widget.html#enaml.wx.wx_widget.WxWidget" title="WxWidget" alt="" coords="131,5,211,30"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.wx.wx_traits_item.WxTraitsItem">
+<em class="property">class </em><tt class="descclassname">enaml.wx.wx_traits_item.</tt><tt class="descname">WxTraitsItem</tt><big>(</big><em>object_id</em>, <em>parent</em>, <em>session</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_traits_item.html#WxTraitsItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_traits_item.WxTraitsItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.control.Control.html#enaml.wx.wx_control.WxControl" title="enaml.wx.wx_control.WxControl"><tt class="xref py py-class docutils literal"><span class="pre">enaml.wx.wx_control.WxControl</span></tt></a></p>
+<p>A Wx implementation of an Enaml TraitsItem.</p>
+<dl class="method">
+<dt id="enaml.wx.wx_traits_item.WxTraitsItem.create_widget">
+<tt class="descname">create_widget</tt><big>(</big><em>parent</em>, <em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_traits_item.html#WxTraitsItem.create_widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_traits_item.WxTraitsItem.create_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the underlying widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_traits_item.WxTraitsItem.create">
+<tt class="descname">create</tt><big>(</big><em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_traits_item.html#WxTraitsItem.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_traits_item.WxTraitsItem.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create and initialize the underlying widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_traits_item.WxTraitsItem.init_layout">
+<tt class="descname">init_layout</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_traits_item.html#WxTraitsItem.init_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_traits_item.WxTraitsItem.init_layout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the layout for the widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_traits_item.WxTraitsItem.on_action_set_model">
+<tt class="descname">on_action_set_model</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_traits_item.html#WxTraitsItem.on_action_set_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_traits_item.WxTraitsItem.on_action_set_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_model&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_traits_item.WxTraitsItem.on_action_set_view">
+<tt class="descname">on_action_set_view</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_traits_item.html#WxTraitsItem.on_action_set_view"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_traits_item.WxTraitsItem.on_action_set_view" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_view&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_traits_item.WxTraitsItem.on_action_set_handler">
+<tt class="descname">on_action_set_handler</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_traits_item.html#WxTraitsItem.on_action_set_handler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_traits_item.WxTraitsItem.on_action_set_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;set_handler&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.wx.wx_traits_item.WxTraitsItem.refresh_traits_widget">
+<tt class="descname">refresh_traits_widget</tt><big>(</big><em>notify=True</em><big>)</big><a class="reference internal" href="../../_modules/enaml/wx/wx_traits_item.html#WxTraitsItem.refresh_traits_widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.wx.wx_traits_item.WxTraitsItem.refresh_traits_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the traits widget and update the underlying control.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>notify</strong> (<em>bool, optional</em>) &#8211; Whether to notify the layout system if the size hint of the
+widget has changed. The default is True.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.web_view.WebView.html" title="WebView"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.tool_bar.ToolBar.html" title="ToolBar"
+             >previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" >Widgets</a> &raquo;</li>
+  
+    <li><a href="#">TraitsItem</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Dec 13, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

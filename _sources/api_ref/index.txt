@@ -1,15 +1,12 @@
 .. api-ref
 
 Enaml API Reference
-===============
+===================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
     Base <enaml>
     Core <enaml.core>
-    Parsing <enaml.parsing>
-    Styling <enaml.styling>
+    Stdlib <enaml.stdlib>
     Widgets <enaml.widgets>
-    Item Models <enaml.item_models>
-    Utility <enaml.util>

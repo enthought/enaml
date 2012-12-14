@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Hello World Example &mdash; enaml 0.2alpha documentation</title>
+    <title>Hello World Example &mdash; enaml 0.6.3 documentation</title>
     
     <link rel="stylesheet" href="../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2alpha',
+        VERSION:     '0.6.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2alpha documentation" href="../index.html" />
+    <link rel="top" title="enaml 0.6.3 documentation" href="../index.html" />
     <link rel="up" title="Examples Gallery" href="example.html" />
     <link rel="next" title="Person Example" href="ex_person.html" />
     <link rel="prev" title="Examples Gallery" href="example.html" /> 
@@ -51,7 +51,7 @@
         <li class="right" >
           <a href="example.html" title="Examples Gallery"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
           <li><a href="example.html" accesskey="U">Examples Gallery</a> &raquo;</li>
   
@@ -98,7 +98,10 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-enamldef Main(MainWindow):
+from enaml.widgets.api import Window, Container, Label
+
+
+enamldef Main(Window):
     attr message = "Hello, world!"
     Container:
         Label:
@@ -115,12 +118,15 @@ enamldef Main(MainWindow):
 <span class="c">#  All rights reserved.</span>
 <span class="c">#------------------------------------------------------------------------------</span>
 <span class="kn">import</span> <span class="nn">enaml</span>
+<span class="kn">from</span> <span class="nn">enaml.stdlib.sessions</span> <span class="kn">import</span> <span class="n">show_simple_view</span>
 
-<span class="k">with</span> <span class="n">enaml</span><span class="o">.</span><span class="n">imports</span><span class="p">():</span>
-    <span class="kn">from</span> <span class="nn">hello_world_view</span> <span class="kn">import</span> <span class="n">Main</span>
 
-<span class="n">view</span> <span class="o">=</span> <span class="n">Main</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s">&quot;Hello, world, from Python!&quot;</span><span class="p">)</span>
-<span class="n">view</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">enaml</span><span class="o">.</span><span class="n">imports</span><span class="p">():</span>
+        <span class="kn">from</span> <span class="nn">hello_world_view</span> <span class="kn">import</span> <span class="n">Main</span>
+
+    <span class="n">main_view</span> <span class="o">=</span> <span class="n">Main</span><span class="p">()</span>
+    <span class="n">show_simple_view</span><span class="p">(</span><span class="n">main_view</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="highlight-python"><pre>$ python hello_world.py</pre>
@@ -152,7 +158,7 @@ enamldef Main(MainWindow):
         <li class="right" >
           <a href="example.html" title="Examples Gallery"
              >previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
           <li><a href="example.html" >Examples Gallery</a> &raquo;</li>
   
@@ -163,7 +169,7 @@ enamldef Main(MainWindow):
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jun 12, 2012.
+      Last updated on Dec 13, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Find Replace Example (Variable-width Buttons Aligned) &mdash; enaml 0.2alpha documentation</title>
+    <title>FindReplace Example &mdash; enaml 0.6.3 documentation</title>
     
     <link rel="stylesheet" href="../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2alpha',
+        VERSION:     '0.6.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,10 +27,10 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2alpha documentation" href="../index.html" />
+    <link rel="top" title="enaml 0.6.3 documentation" href="../index.html" />
     <link rel="up" title="Examples Gallery" href="example.html" />
-    <link rel="next" title="Nested Containers Example" href="ex_nested.html" />
-    <link rel="prev" title="Constrained Layout Example" href="ex_constrained.html" /> 
+    <link rel="next" title="Fluid Example" href="ex_fluid.html" />
+    <link rel="prev" title="ButtonRing Example" href="ex_button_ring.html" /> 
   </head>
   <body>
     <div class="related">
@@ -46,16 +46,16 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="ex_nested.html" title="Nested Containers Example"
+          <a href="ex_fluid.html" title="Fluid Example"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="ex_constrained.html" title="Constrained Layout Example"
+          <a href="ex_button_ring.html" title="ButtonRing Example"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
           <li><a href="example.html" accesskey="U">Examples Gallery</a> &raquo;</li>
   
-    <li><a href="#">Find Replace Example (Variable-width Buttons Aligned)</a></li>
+    <li><a href="#">FindReplace Example</a></li>
   
 
       </ul>
@@ -91,28 +91,33 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="find-replace-example-variable-width-buttons-aligned">
-<h1>Find Replace Example (Variable-width Buttons Aligned)<a class="headerlink" href="#find-replace-example-variable-width-buttons-aligned" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="findreplace-example">
+<h1>FindReplace Example<a class="headerlink" href="#findreplace-example" title="Permalink to this headline">¶</a></h1>
 <p><a class="reference download internal" href="../_downloads/find_replace.enaml"><tt class="xref download docutils literal"><span class="pre">find_replace.enaml</span></tt></a></p>
 <div class="highlight-python"><pre>#------------------------------------------------------------------------------
-#  Copyright (c) 2011, Enthought, Inc.
+#  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-""" A find-replace dialog.
+""" An example demonstrating the layout for a find-replace dialog.
 
-To make the buttons look nice, we set weak constraints requesting that 
-the adjacent buttons have the same width after satisfying all of the 
-other constraints. The left border of the Fields should be aligned. The 
-width taken up by the buttons is controlled by the lower row since the 
-PushButton labels "Replace" and "Replace &amp; Find" take up more space than 
-"Find" and "Find Next". The lower row's buttons are not equal widths, 
-because that would take up a bunch of extra space, but the top row's 
+To make the buttons look nice, weak constraints are set requesting that
+the adjacent buttons have the same width after satisfying all of the
+other constraints. The left border of the Fields should be aligned. The
+width taken up by the buttons is controlled by the lower row since the
+PushButton labels "Replace" and "Replace &amp; Find" take up more space than
+"Find" and "Find Next". The lower row's buttons are not equal widths,
+because that would take up a bunch of extra space, but the top row's
 buttons do expand equally to take up the available space.
 
 """
-enamldef Main(MainWindow):
+from enaml.layout.api import hbox, vbox, spacer, align
+from enaml.widgets.api import Window, Container, PushButton, Field
+
+
+enamldef Main(Window):
     title = "Find &amp; Replace"
     Container:
+        hug_height = 'strong'
         constraints = [
             vbox(
                 hbox(find, find_next, find_field),
@@ -141,10 +146,8 @@ enamldef Main(MainWindow):
             text = "Replace"
         PushButton:
             id: replace_and_find
-            # FIXME: On Qt, the double-&amp; is necessary to get a single &amp; in the
-            # label. This is probably related to accelerator keys.
             text = "Replace &amp;&amp; Find"
-        Field:  
+        Field:
             id: find_field
         Field:
             id: replace_field
@@ -154,10 +157,6 @@ enamldef Main(MainWindow):
 <div class="highlight-python"><pre>$ enaml-run find_replace.enaml</pre>
 </div>
 <img alt="../_images/find_replace.png" src="../_images/find_replace.png" />
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The buttons are nicely aligned, in spite of variable widths.</p>
-</div>
 </div>
 
 
@@ -179,23 +178,23 @@ enamldef Main(MainWindow):
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="ex_nested.html" title="Nested Containers Example"
+          <a href="ex_fluid.html" title="Fluid Example"
              >next</a> |</li>
         <li class="right" >
-          <a href="ex_constrained.html" title="Constrained Layout Example"
+          <a href="ex_button_ring.html" title="ButtonRing Example"
              >previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
           <li><a href="example.html" >Examples Gallery</a> &raquo;</li>
   
-    <li><a href="#">Find Replace Example (Variable-width Buttons Aligned)</a></li>
+    <li><a href="#">FindReplace Example</a></li>
   
 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jun 12, 2012.
+      Last updated on Dec 13, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

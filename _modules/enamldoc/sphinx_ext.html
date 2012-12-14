@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enamldoc.sphinx_ext &mdash; enaml 0.2alpha documentation</title>
+    <title>enamldoc.sphinx_ext &mdash; enaml 0.6.3 documentation</title>
     
     <link rel="stylesheet" href="../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.2alpha',
+        VERSION:     '0.6.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2alpha documentation" href="../../index.html" />
+    <link rel="top" title="enaml 0.6.3 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+        <li><a href="../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enamldoc.sphinx_ext</a></li>
@@ -103,12 +103,10 @@
 
 <span class="kn">from</span> <span class="nn">enaml_domain</span> <span class="kn">import</span> <span class="n">EnamlDomain</span>
 
-<span class="kn">from</span> <span class="nn">enthought.debug.api</span> <span class="kn">import</span> <span class="n">called_from</span>
-
 <span class="kn">from</span> <span class="nn">enaml.core.import_hooks</span> <span class="kn">import</span> <span class="n">EnamlImporter</span>
 <span class="n">EnamlImporter</span><span class="o">.</span><span class="n">install</span><span class="p">()</span>
 
-<span class="kn">from</span> <span class="nn">enaml.core.factory</span> <span class="kn">import</span> <span class="n">EnamlDeclaration</span>
+<span class="kn">from</span> <span class="nn">enaml.core.declarative</span> <span class="kn">import</span> <span class="n">Declarative</span>
 
 <div class="viewcode-block" id="EnamlComponentDocumenter"><a class="viewcode-back" href="../../developer_guide/developers_corner.html#enamldoc.sphinx_ext.EnamlComponentDocumenter">[docs]</a><span class="k">class</span> <span class="nc">EnamlComponentDocumenter</span><span class="p">(</span><span class="n">ModuleLevelDocumenter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Enaml component documenter class</span>
@@ -164,7 +162,7 @@
     <span class="k">pass</span>
 
 </div>
-<div class="viewcode-block" id="EnamlDeclarationDocumenter"><a class="viewcode-back" href="../../developer_guide/developers_corner.html#enamldoc.sphinx_ext.EnamlDeclarationDocumenter">[docs]</a><span class="k">class</span> <span class="nc">EnamlDeclarationDocumenter</span><span class="p">(</span><span class="n">EnamlDocstringSignatureMixin</span><span class="p">,</span>
+<div class="viewcode-block" id="DeclarativeDocumenter"><a class="viewcode-back" href="../../developer_guide/developers_corner.html#enamldoc.sphinx_ext.DeclarativeDocumenter">[docs]</a><span class="k">class</span> <span class="nc">DeclarativeDocumenter</span><span class="p">(</span><span class="n">EnamlDocstringSignatureMixin</span><span class="p">,</span>
                                  <span class="n">EnamlComponentDocumenter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Specialized Documenter subclass for Enaml declarations.</span>
 
@@ -175,9 +173,9 @@
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">can_document_member</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">member</span><span class="p">,</span> <span class="n">membername</span><span class="p">,</span> <span class="n">isattr</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">member</span><span class="p">,</span> <span class="n">EnamlDeclaration</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">member</span><span class="p">,</span> <span class="n">Declarative</span><span class="p">)</span>
 
-<div class="viewcode-block" id="EnamlDeclarationDocumenter.format_args"><a class="viewcode-back" href="../../developer_guide/developers_corner.html#enamldoc.sphinx_ext.EnamlDeclarationDocumenter.format_args">[docs]</a>    <span class="k">def</span> <span class="nf">format_args</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DeclarativeDocumenter.format_args"><a class="viewcode-back" href="../../developer_guide/developers_corner.html#enamldoc.sphinx_ext.DeclarativeDocumenter.format_args">[docs]</a>    <span class="k">def</span> <span class="nf">format_args</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Derivation is shown where normally arguments are shown in a</span>
 <span class="sd">        function prototype.</span>
 
@@ -284,7 +282,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">app</span><span class="o">.</span><span class="n">add_autodocumenter</span><span class="p">(</span><span class="n">EnamlModuleDocumenter</span><span class="p">)</span>
-    <span class="n">app</span><span class="o">.</span><span class="n">add_autodocumenter</span><span class="p">(</span><span class="n">EnamlDeclarationDocumenter</span><span class="p">)</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">add_autodocumenter</span><span class="p">(</span><span class="n">DeclarativeDocumenter</span><span class="p">)</span>
     <span class="c">## app.add_autodocumenter(EnamlDefnDocumenter)</span>
 
     <span class="c"># import the Enaml domain into the sphinx app</span>
@@ -322,7 +320,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+        <li><a href="../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enamldoc.sphinx_ext</a></li>
@@ -332,7 +330,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jun 12, 2012.
+      Last updated on Dec 13, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

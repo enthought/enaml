@@ -1,27 +1,27 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2011, Enthought, Inc.
+#  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-""" Slider Example
+""" An example of the `Slider` widget.
 
-Demonstrates the use of a simple slider control which is used to convert
-a range of integer values into values on a log scale.
+This example demonstrates the use of a simple `Slider` control which is
+used to compute the log of a range of numbers.
 
 """
 import math
+from enaml.widgets.api import Window, Form, Label, Field, Slider
 
 
-enamldef Main(MainWindow):
+enamldef Main(Window):
     title = 'Slider Example'
     Form:
         Label:
             text = 'Log Value'
         Field:
-            value << math.log(val_slider.value)
+            text << u'{}'.format(math.log(val_slider.value))
             read_only = True
         Slider:
             id: val_slider
             tick_interval = 50
             maximum = 1000
             minimum = 1
-

@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Overview &mdash; enaml 0.2alpha documentation</title>
+    <title>Overview &mdash; enaml 0.6.3 documentation</title>
     
     <link rel="stylesheet" href="../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2alpha',
+        VERSION:     '0.6.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2alpha documentation" href="../index.html" />
+    <link rel="top" title="enaml 0.6.3 documentation" href="../index.html" />
     <link rel="up" title="Enaml Getting Started Guide and Tutorials" href="index.html" />
     <link rel="next" title="Enaml Tutorials" href="tutorials_home.html" />
     <link rel="prev" title="Enaml Getting Started Guide and Tutorials" href="index.html" /> 
@@ -51,7 +51,7 @@
         <li class="right" >
           <a href="index.html" title="Enaml Getting Started Guide and Tutorials"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
   
     <li><a href="#">Overview</a></li>
@@ -113,13 +113,14 @@ available GUI toolkit. Enaml abstracts away toolkit-specific details.</p>
 <h2>Goals<a class="headerlink" href="#goals" title="Permalink to this headline">¶</a></h2>
 <p>The goals of the Enaml project are to:</p>
 <ul class="simple">
-<li>Integrate well with <a class="reference external" href="https://github.com/enthought/traits">Traits</a> and
-<a class="reference external" href="http://code.enthought.com/chaco/">Chaco</a> .</li>
 <li>Help <strong>separate</strong> the presentation and content (i.e., MVC)</li>
 <li>Allow a <strong>single</strong> script to work across <em>multiple</em> widget toolkits when
 using the default interfaces.</li>
 <li>Be <strong>extensible</strong> and allow adaptation and addition of the base widgets
 with little effort.</li>
+<li>Integrate well with <a class="reference external" href="https://github.com/enthought/traits">Traits</a></li>
+<li>Have the ability to integrate with other model frameworks which support
+the observer pattern.</li>
 </ul>
 </div>
 <div class="section" id="prerequisites">
@@ -133,8 +134,8 @@ recent (2012-current) versions of the following libraries:</p>
 <li><a class="reference external" href="http://www.pyside.org/">PySide</a></li>
 <li><a class="reference external" href="http://www.riverbankcomputing.co.uk/software/pyqt/intro">PyQt4</a></li>
 <li><a class="reference external" href="http://www.wxpython.org/">wxPython</a> with a recent (&gt; 0.9.1)
-<a class="reference external" href="http://xoomer.virgilio.it/infinity77/AGW_Docs/index.html">agw</a>
-library (Windows only)</li>
+<a class="reference external" href="http://xoomer.virgilio.it/infinity77/AGW_Docs/index.html">agw</a> library
+(only supported on Windows)</li>
 </ul>
 </li>
 <li><a class="reference external" href="http://www.dabeaz.com/ply/">PLY</a> (Python Lex-Yacc),
@@ -158,7 +159,14 @@ installation)</li>
 <p>Alternatively you can work in developing mode:</p>
 <div class="highlight-python"><pre>python setup.py develop</pre>
 </div>
-<p>Next, take a look at the <a class="reference internal" href="tutorials_home.html#tutorials-home"><em>tutorials.</em></a></p>
+<p>Enaml ships with optional high performance C++ extensions. To build them,
+an enviroment variable must be set before running <tt class="docutils literal"><span class="pre">setup.py</span></tt></p>
+<p>On Windows:</p>
+<div class="highlight-python"><pre>set BUILD_ENAML_EXTENSIONS=1</pre>
+</div>
+<p>On OSX or Linux:</p>
+<div class="highlight-python"><pre>export BUILD_ENAML_EXTENSIONS=1</pre>
+</div>
 </div>
 </div>
 
@@ -186,7 +194,7 @@ installation)</li>
         <li class="right" >
           <a href="index.html" title="Enaml Getting Started Guide and Tutorials"
              >previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
   
     <li><a href="#">Overview</a></li>
@@ -196,7 +204,7 @@ installation)</li>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jun 12, 2012.
+      Last updated on Dec 13, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

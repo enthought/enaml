@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Group Box Example &mdash; enaml 0.2alpha documentation</title>
+    <title>GroupBox Example &mdash; enaml 0.6.3 documentation</title>
     
     <link rel="stylesheet" href="../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2alpha',
+        VERSION:     '0.6.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,10 +27,10 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2alpha documentation" href="../index.html" />
+    <link rel="top" title="enaml 0.6.3 documentation" href="../index.html" />
     <link rel="up" title="Examples Gallery" href="example.html" />
-    <link rel="next" title="Scroll Area Example" href="ex_scroll_area.html" />
-    <link rel="prev" title="Forms Example" href="ex_forms.html" /> 
+    <link rel="next" title="MainWindow Example" href="ex_main_window.html" />
+    <link rel="prev" title="Form Example" href="ex_form.html" /> 
   </head>
   <body>
     <div class="related">
@@ -46,16 +46,16 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="ex_scroll_area.html" title="Scroll Area Example"
+          <a href="ex_main_window.html" title="MainWindow Example"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="ex_forms.html" title="Forms Example"
+          <a href="ex_form.html" title="Form Example"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
           <li><a href="example.html" accesskey="U">Examples Gallery</a> &raquo;</li>
   
-    <li><a href="#">Group Box Example</a></li>
+    <li><a href="#">GroupBox Example</a></li>
   
 
       </ul>
@@ -91,37 +91,40 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="group-box-example">
-<h1>Group Box Example<a class="headerlink" href="#group-box-example" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="groupbox-example">
+<h1>GroupBox Example<a class="headerlink" href="#groupbox-example" title="Permalink to this headline">¶</a></h1>
 <p><a class="reference download internal" href="../_downloads/group_box.enaml"><tt class="xref download docutils literal"><span class="pre">group_box.enaml</span></tt></a></p>
 <div class="highlight-python"><pre>#------------------------------------------------------------------------------
-#  Copyright (c) 2011, Enthought, Inc.
+#  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-""" Group boxes.
+""" An example of the `GroupBox` widget.
 
-We create two GroupBoxes containing Form layouts. The GroupBoxes have
-informative titles. CheckBoxes on the bottom of the window allow you to 
-toggle the presence of the titles and whether they should be shown in a 
-"flat" style or the default style.
+A `GroupBox` is a simple subclass of `Container` which draws itself with
+an optional bounding box and title.
 
 """
-enamldef Main(MainWindow):
+from enaml.layout.api import vbox, hbox, spacer, align
+from enaml.widgets.api import (
+    Window, Container, GroupBox, Form, Label, Field, CheckBox, ComboBox,
+)
+
+
+enamldef Main(Window):
     title = "Group Boxes"
     Container:
         constraints = [
             vbox(
-                top_box,
-                bottom_box,
-                hbox(spacer, title_check, flat_check),
+                grp_box,
+                hbox(spacer, title_check, flat_check, combo_box),
             ),
-            align('midline', top_form, bottom_form),
+            align('v_center', title_check, flat_check, combo_box),
         ]
         GroupBox:
-            id: top_box
-            title = "Personal Details"
+            id: grp_box
+            title &lt;&lt; "Personal Details" if title_check.checked else ""
+            title_align &lt;&lt; combo_box.items[combo_box.index]
             Form:
-                id: top_form
                 Label:
                     text = "First name:"
                 Field:
@@ -134,47 +137,24 @@ enamldef Main(MainWindow):
                     text = "Home phone:"
                 Field:
                     pass
-        GroupBox:
-            id: bottom_box
-            title = "Employment Details"
-            Form:
-                id: bottom_form
-                Label:
-                    text = "Employer:"
-                Field:
-                    pass
-                Label:
-                    text = "Office or Desk phone:"
-                Field:
-                    pass
         CheckBox:
             id: title_check
-            text = "Show titles"
+            text = "Show Title"
             checked = True
-            toggled ::
-                if top_box.title:
-                    top_box.title = ""
-                else:
-                    top_box.title = "Personal Details"
-                if bottom_box.title:
-                    bottom_box.title = ""
-                else:
-                    bottom_box.title = "Employment Details"
         CheckBox:
             id: flat_check
             text = "Flat"
-            checked = False
-            toggled ::
-                for box in (top_box, bottom_box):
-                    box.flat = not box.flat
+            checked := grp_box.flat
+        ComboBox:
+            id: combo_box
+            index = 0
+            items = ['left', 'center', 'right']
 
 </pre>
 </div>
 <div class="highlight-python"><pre>$ enaml-run group_box.enaml</pre>
 </div>
-<img alt="../_images/group_box0.png" src="../_images/group_box0.png" />
-<img alt="../_images/group_box1.png" src="../_images/group_box1.png" />
-<img alt="../_images/group_box2.png" src="../_images/group_box2.png" />
+<img alt="../_images/group_box.png" src="../_images/group_box.png" />
 </div>
 
 
@@ -196,23 +176,23 @@ enamldef Main(MainWindow):
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="ex_scroll_area.html" title="Scroll Area Example"
+          <a href="ex_main_window.html" title="MainWindow Example"
              >next</a> |</li>
         <li class="right" >
-          <a href="ex_forms.html" title="Forms Example"
+          <a href="ex_form.html" title="Form Example"
              >previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
           <li><a href="example.html" >Examples Gallery</a> &raquo;</li>
   
-    <li><a href="#">Group Box Example</a></li>
+    <li><a href="#">GroupBox Example</a></li>
   
 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jun 12, 2012.
+      Last updated on Dec 13, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

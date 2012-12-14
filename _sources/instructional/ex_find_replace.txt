@@ -1,9 +1,9 @@
-Find Replace Example (Variable-width Buttons Aligned)
+FindReplace Example
 ===============================================================================
 
-:download:`find_replace.enaml <../../../examples/constrained/find_replace.enaml>`
+:download:`find_replace.enaml <../../../examples/layout/advanced/find_replace.enaml>`
 
-.. literalinclude:: ../../../examples/constrained/find_replace.enaml
+.. literalinclude:: ../../../examples/layout/advanced/find_replace.enaml
     :language: python
 
 ::
@@ -11,5 +11,3 @@ Find Replace Example (Variable-width Buttons Aligned)
  $ enaml-run find_replace.enaml
 
 .. image:: images/find_replace.png
-
-.. note:: The buttons are nicely aligned, in spite of variable widths.

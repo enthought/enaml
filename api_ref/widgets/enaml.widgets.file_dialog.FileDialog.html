@@ -1,0 +1,294 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>FileDialog &mdash; enaml 0.6.3 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.6.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.6.3 documentation" href="../../index.html" />
+    <link rel="up" title="Widgets" href="../enaml.widgets.html" />
+    <link rel="next" title="Html" href="enaml.widgets.html.Html.html" />
+    <link rel="prev" title="Field" href="enaml.widgets.field.Field.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.html.Html.html" title="Html"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.field.Field.html" title="Field"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" accesskey="U">Widgets</a> &raquo;</li>
+  
+    <li><a href="#">FileDialog</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">FileDialog</a><ul>
+<li><a class="reference internal" href="#backends">Backends</a><ul>
+<li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/api_ref/widgets/enaml.widgets.file_dialog.FileDialog.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="filedialog">
+<h1>FileDialog<a class="headerlink" href="#filedialog" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="enaml.widgets.file_dialog.FileDialog">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.file_dialog.</tt><tt class="descname">FileDialog</tt><big>(</big><em>parent=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/file_dialog.html#FileDialog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.file_dialog.FileDialog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../enaml.core.html#enaml.core.messenger.Messenger" title="enaml.core.messenger.Messenger"><tt class="xref py py-class docutils literal"><span class="pre">enaml.core.messenger.Messenger</span></tt></a></p>
+<p>A dialog widget that allows the user to open and save files and
+directories.</p>
+<dl class="attribute">
+<dt id="enaml.widgets.file_dialog.FileDialog.title">
+<tt class="descname">title</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.file_dialog.FileDialog.title" title="Permalink to this definition">¶</a></dt>
+<dd><p>The title to use for the dialog.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.file_dialog.FileDialog.mode">
+<tt class="descname">mode</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.file_dialog.FileDialog.mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>The mode of the dialog.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.file_dialog.FileDialog.path">
+<tt class="descname">path</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.file_dialog.FileDialog.path" title="Permalink to this definition">¶</a></dt>
+<dd><p>The selected path in the dialog. This value will be used to set
+the initial working directory and file, as appropriate, when the
+dialog is opened. It will aslo be updated when the dialog is
+closed and accepted.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.file_dialog.FileDialog.paths">
+<tt class="descname">paths</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.file_dialog.FileDialog.paths" title="Permalink to this definition">¶</a></dt>
+<dd><p>The list of selected paths in the dialog. It will be updated
+when the dialog is closed and accepted. It is output only and
+is only applicable for the <cite>open_files</cite> mode.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.file_dialog.FileDialog.filters">
+<tt class="descname">filters</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.file_dialog.FileDialog.filters" title="Permalink to this definition">¶</a></dt>
+<dd><p>The string filters used to restrict the user&#8217;s selections.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.file_dialog.FileDialog.selected_filter">
+<tt class="descname">selected_filter</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.file_dialog.FileDialog.selected_filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>The selected filter from the list of filters. This value will be
+used as the initial working filter when the dialog is opened. It
+will also be updated when the dialog is closed and accepted.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.file_dialog.FileDialog.native_dialog">
+<tt class="descname">native_dialog</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.file_dialog.FileDialog.native_dialog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether to use a platform native dialog, when available.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.file_dialog.FileDialog.result">
+<tt class="descname">result</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.file_dialog.FileDialog.result" title="Permalink to this definition">¶</a></dt>
+<dd><p>An enum indicating if the dialog was accepted or rejected by
+the user. It will be updated when the dialog is closed. This
+value is output only.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.file_dialog.FileDialog.callback">
+<tt class="descname">callback</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.file_dialog.FileDialog.callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>An optional callback which will be invoked when the dialog is
+closed. This is a convenience to make it easier to handle the
+non-blocking behavior of the dialog. The callback must accept
+a single argument, which will be the dialog instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.file_dialog.FileDialog.closed">
+<tt class="descname">closed</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.file_dialog.FileDialog.closed" title="Permalink to this definition">¶</a></dt>
+<dd><p>An event fired when the dialog is closed. The dialog state will
+be updated before this event is fired.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.file_dialog.FileDialog.destroy_on_close">
+<tt class="descname">destroy_on_close</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.file_dialog.FileDialog.destroy_on_close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether to destroy the dialog widget on close. The default is
+True since dialogs are typically used in a transitory fashion.
+If this value is set to True, the dialog will be destroyed on
+the completion of the <cite>closed</cite> event.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.file_dialog.FileDialog.open">
+<tt class="descname">open</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/file_dialog.html#FileDialog.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.file_dialog.FileDialog.open" title="Permalink to this definition">¶</a></dt>
+<dd><p>Open the dialog for user interaction.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.file_dialog.FileDialog.on_action_closed">
+<tt class="descname">on_action_closed</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/file_dialog.html#FileDialog.on_action_closed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.file_dialog.FileDialog.on_action_closed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;closed&#8217; action from the client widget.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.file_dialog.FileDialog.__implements__">
+<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.widgets.file_dialog.FileDialog.__implements__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="backends">
+<h2>Backends<a class="headerlink" href="#backends" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="qt">
+<h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-9832d611a9e731229df7641139b6bd5bbf5d249c.png" alt="Inheritance diagram of enaml.qt.qt_file_dialog.QtFileDialog" usemap="#inheritance5333c084c2" class="inheritance"/>
+<map id="inheritance5333c084c2" name="inheritance5333c084c2">
+<area shape="rect" id="node1" href="#enaml.qt.qt_file_dialog.QtFileDialog" title="QtFileDialog" alt="" coords="125,5,216,30"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.qt.qt_file_dialog.QtFileDialog">
+<em class="property">class </em><tt class="descclassname">enaml.qt.qt_file_dialog.</tt><tt class="descname">QtFileDialog</tt><big>(</big><em>object_id</em>, <em>parent</em>, <em>session</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_file_dialog.html#QtFileDialog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_file_dialog.QtFileDialog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">enaml.qt.qt_object.QtObject</span></tt></p>
+<p>A Qt implementation of an Enaml FileDialog.</p>
+<dl class="method">
+<dt id="enaml.qt.qt_file_dialog.QtFileDialog.create_widget">
+<tt class="descname">create_widget</tt><big>(</big><em>parent</em>, <em>tree</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_file_dialog.html#QtFileDialog.create_widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_file_dialog.QtFileDialog.create_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the underlying widget.</p>
+<p>The file dialog widget is created on-demand when the open action
+is received. There is no persistent widget created for the file
+dialog.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.qt.qt_file_dialog.QtFileDialog.on_action_open">
+<tt class="descname">on_action_open</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../../_modules/enaml/qt/qt_file_dialog.html#QtFileDialog.on_action_open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.qt.qt_file_dialog.QtFileDialog.on_action_open" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;open&#8217; action from the Enaml widget.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="wx">
+<h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.html.Html.html" title="Html"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.field.Field.html" title="Field"
+             >previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" >Widgets</a> &raquo;</li>
+  
+    <li><a href="#">FileDialog</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Dec 13, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

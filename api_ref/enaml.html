@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml &mdash; enaml 0.2alpha documentation</title>
+    <title>enaml &mdash; enaml 0.6.3 documentation</title>
     
     <link rel="stylesheet" href="../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2alpha',
+        VERSION:     '0.6.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2alpha documentation" href="../index.html" />
+    <link rel="top" title="enaml 0.6.3 documentation" href="../index.html" />
     <link rel="up" title="Enaml API Reference" href="index.html" />
     <link rel="next" title="enaml.core" href="enaml.core.html" />
     <link rel="prev" title="Enaml API Reference" href="index.html" /> 
@@ -51,7 +51,7 @@
         <li class="right" >
           <a href="index.html" title="Enaml API Reference"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Enaml API Reference</a> &raquo;</li>
   
     <li><a href="#">enaml</a></li>
@@ -67,11 +67,21 @@
 <h3>Page Contents</h3>
 <ul>
 <li><a class="reference internal" href="#">enaml</a><ul>
-<li><a class="reference internal" href="#module-enaml.enums"><tt class="docutils literal"><span class="pre">enums</span></tt> Module</a></li>
-<li><a class="reference internal" href="#exceptions-module"><tt class="docutils literal"><span class="pre">exceptions</span></tt> Module</a></li>
-<li><a class="reference internal" href="#guard-module"><tt class="docutils literal"><span class="pre">guard</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-enaml.application"><tt class="docutils literal"><span class="pre">application</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-enaml.callableref"><tt class="docutils literal"><span class="pre">callableref</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-enaml.colors"><tt class="docutils literal"><span class="pre">colors</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-enaml.icon_provider"><tt class="docutils literal"><span class="pre">icon_provider</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-enaml.image_provider"><tt class="docutils literal"><span class="pre">image_provider</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-enaml.resource"><tt class="docutils literal"><span class="pre">resource</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-enaml.resource_manager"><tt class="docutils literal"><span class="pre">resource_manager</span></tt> Module</a></li>
 <li><a class="reference internal" href="#module-enaml.runner"><tt class="docutils literal"><span class="pre">runner</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-enaml.session"><tt class="docutils literal"><span class="pre">session</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-enaml.session_factory"><tt class="docutils literal"><span class="pre">session_factory</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-enaml.signaling"><tt class="docutils literal"><span class="pre">signaling</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-enaml.socket_interface"><tt class="docutils literal"><span class="pre">socket_interface</span></tt> Module</a></li>
 <li><a class="reference internal" href="#module-enaml.utils"><tt class="docutils literal"><span class="pre">utils</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-enaml.version"><tt class="docutils literal"><span class="pre">version</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-enaml.weakmethod"><tt class="docutils literal"><span class="pre">weakmethod</span></tt> Module</a></li>
 </ul>
 </li>
 </ul>
@@ -104,519 +114,861 @@
             
   <div class="section" id="enaml">
 <h1>enaml<a class="headerlink" href="#enaml" title="Permalink to this headline">¶</a></h1>
-<p>The top-level enaml package contains some utility modules used throughout the
-Enaml library.</p>
-<div class="section" id="module-enaml.enums">
-<span id="enums-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">enums</span></tt> Module<a class="headerlink" href="#module-enaml.enums" title="Permalink to this headline">¶</a></h2>
-<dl class="data">
-<dt id="enaml.enums.DialogResult">
-<tt class="descclassname">enaml.enums.</tt><tt class="descname">DialogResult</tt><em class="property"> = &lt;traits.trait_types.Enum object at 0x1eeae90&gt;</em><a class="headerlink" href="#enaml.enums.DialogResult" title="Permalink to this definition">¶</a></dt>
-<dd><p>A dialog&#8217;s result (depending on how it was closed)</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="20%" />
-<col width="80%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">value</th>
-<th class="head">description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">accepted</span></tt></td>
-<td>The user accepted the dialog.</td>
-</tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">rejected</span></tt></td>
-<td>(default) The user declined the default result.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="data">
-<dt id="enaml.enums.Orientation">
-<tt class="descclassname">enaml.enums.</tt><tt class="descname">Orientation</tt><em class="property"> = &lt;traits.trait_types.Enum object at 0x1f4c210&gt;</em><a class="headerlink" href="#enaml.enums.Orientation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generic orientation values.</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="39%" />
-<col width="61%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">value</th>
-<th class="head">description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">horizontal</span></tt></td>
-<td>Horizontal orientation</td>
-</tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">vertical</span></tt></td>
-<td>Vertical orientation</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="data">
-<dt id="enaml.enums.TabPosition">
-<tt class="descclassname">enaml.enums.</tt><tt class="descname">TabPosition</tt><em class="property"> = &lt;traits.trait_types.Enum object at 0x1f4c250&gt;</em><a class="headerlink" href="#enaml.enums.TabPosition" title="Permalink to this definition">¶</a></dt>
-<dd><p>The position of the tabs in a Tabbed container.</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="16%" />
-<col width="84%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">value</th>
-<th class="head">description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">top</span></tt></td>
-<td>(default) Place tabs above the main content.</td>
-</tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">bottom</span></tt></td>
-<td>Place tabs below the main content.</td>
-</tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">left</span></tt></td>
-<td>Place tabs to the left of the main content.</td>
-</tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">right</span></tt></td>
-<td>Place tabs to the right of the main content.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="data">
-<dt id="enaml.enums.HorizontalAlign">
-<tt class="descclassname">enaml.enums.</tt><tt class="descname">HorizontalAlign</tt><em class="property"> = &lt;traits.trait_types.Enum object at 0x1f4c230&gt;</em><a class="headerlink" href="#enaml.enums.HorizontalAlign" title="Permalink to this definition">¶</a></dt>
-<dd><p>Horizontal alingment.</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="16%" />
-<col width="84%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">value</th>
-<th class="head">description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">left</span></tt></td>
-<td>(default) Align left</td>
-</tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">right</span></tt></td>
-<td>Align right</td>
-</tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">center</span></tt></td>
-<td>Align center</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="data">
-<dt id="enaml.enums.Direction">
-<tt class="descclassname">enaml.enums.</tt><tt class="descname">Direction</tt><em class="property"> = &lt;traits.trait_types.Enum object at 0x1f4c270&gt;</em><a class="headerlink" href="#enaml.enums.Direction" title="Permalink to this definition">¶</a></dt>
-<dd><p>A container&#8217;s layout style, based on the order of insertion.</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="27%" />
-<col width="73%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">value</th>
-<th class="head">description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">left_to_right</span></tt></td>
-<td>(default) Position children from left to right.</td>
-</tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">right_to_left</span></tt></td>
-<td>Position children from right to left.</td>
-</tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">top_to_bottom</span></tt></td>
-<td>Position children from top to bottom.</td>
-</tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">bottom_to_top</span></tt></td>
-<td>Position children from bottom to top.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="data">
-<dt id="enaml.enums.Modality">
-<tt class="descclassname">enaml.enums.</tt><tt class="descname">Modality</tt><em class="property"> = &lt;traits.trait_types.Enum object at 0x1f4c290&gt;</em><a class="headerlink" href="#enaml.enums.Modality" title="Permalink to this definition">¶</a></dt>
-<dd><p>A window&#8217;s modality specifies whether it captures focus.</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="30%" />
-<col width="70%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">value</th>
-<th class="head">description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">non_modal</span></tt></td>
-<td>(default) The window is not modal.</td>
-</tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">window_modal</span></tt></td>
-<td>The window blocks input to its parent, and all
-ancestor windows.</td>
-</tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">application_modal</span></tt></td>
-<td>The window blocks input to all other windows in
-the application.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="data">
-<dt id="enaml.enums.TickPosition">
-<tt class="descclassname">enaml.enums.</tt><tt class="descname">TickPosition</tt><em class="property"> = &lt;traits.trait_types.Enum object at 0x1f4c2b0&gt;</em><a class="headerlink" href="#enaml.enums.TickPosition" title="Permalink to this definition">¶</a></dt>
-<dd><p>The position of ticks for a control.</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="19%" />
-<col width="81%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">value</th>
-<th class="head">description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">not_ticks</span></tt></td>
-<td>(default) Do not display ticks.</td>
-</tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">left</span></tt></td>
-<td>Display ticks to the left of the element.</td>
-</tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">right</span></tt></td>
-<td>Display ticks to the right of the element.</td>
-</tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">top</span></tt></td>
-<td>Display ticks above the element.</td>
-</tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">bottom</span></tt></td>
-<td>Display ticks below the element.</td>
-</tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">both</span></tt></td>
-<td>Display ticks both above the element and below it, or to
-both the left and the right. This might vary with
-<a class="reference internal" href="#enaml.enums.Orientation" title="enaml.enums.Orientation"><tt class="xref py py-attr docutils literal"><span class="pre">Orientation</span></tt></a>.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="data">
-<dt id="enaml.enums.Sorted">
-<tt class="descclassname">enaml.enums.</tt><tt class="descname">Sorted</tt><em class="property"> = &lt;traits.trait_types.Enum object at 0x1f4c2d0&gt;</em><a class="headerlink" href="#enaml.enums.Sorted" title="Permalink to this definition">¶</a></dt>
-<dd><p>The ordering of a sort.</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="27%" />
-<col width="73%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">value</th>
-<th class="head">description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">ascending</span></tt></td>
-<td>Elements will be in ascending order.</td>
-</tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">descending</span></tt></td>
-<td>Elements will be in descending order.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="data">
-<dt id="enaml.enums.Validity">
-<tt class="descclassname">enaml.enums.</tt><tt class="descname">Validity</tt><em class="property"> = &lt;traits.trait_types.Enum object at 0x1f4c2f0&gt;</em><a class="headerlink" href="#enaml.enums.Validity" title="Permalink to this definition">¶</a></dt>
-<dd><p>The result of a validation function.</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="23%" />
-<col width="77%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">value</th>
-<th class="head">description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">invalid</span></tt></td>
-<td>The input was clearly invalid.</td>
-</tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">indermediate</span></tt></td>
-<td>The input is invalid, but further input could make it
-valid.</td>
-</tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">acceptable</span></tt></td>
-<td>The input is valid.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="data">
-<dt id="enaml.enums.PolicyEnum">
-<tt class="descclassname">enaml.enums.</tt><tt class="descname">PolicyEnum</tt><em class="property"> = &lt;traits.trait_types.Enum object at 0x1f4c310&gt;</em><a class="headerlink" href="#enaml.enums.PolicyEnum" title="Permalink to this definition">¶</a></dt>
-<dd><p>The strength of widget expand and clip preferences for hug and resist_clip.</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="23%" />
-<col width="77%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">value</th>
-<th class="head">description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">ignore</span></tt></td>
-<td>No constraint shuld be created.</td>
-</tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">weak</span></tt></td>
-<td>The constraint should be created, but is weak.</td>
-</tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">strong</span></tt></td>
-<td>The constraint should be created, but is strong.</td>
-</tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">required</span></tt></td>
-<td>The constraint should be created, and is required.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="data">
-<dt id="enaml.enums.SelectionMode">
-<tt class="descclassname">enaml.enums.</tt><tt class="descname">SelectionMode</tt><em class="property"> = &lt;traits.trait_types.Enum object at 0x1f4c330&gt;</em><a class="headerlink" href="#enaml.enums.SelectionMode" title="Permalink to this definition">¶</a></dt>
-<dd><p>The selection mode for item views.</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="23%" />
-<col width="77%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">value</th>
-<th class="head">description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">extended</span></tt></td>
-<td>Same as contiguous except that the Cmd key can be
-used to start multiple non-contiguous selection
-regions.</td>
-</tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">single</span></tt></td>
-<td>A single item may be selection.</td>
-</tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">contiguous</span></tt></td>
-<td>A contiguous range of items may be selected using the
-Shift key.</td>
-</tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">multi</span></tt></td>
-<td>Clicking on an item toggles its selection.</td>
-</tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">none</span></tt></td>
-<td>No selection allowed.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="data">
-<dt id="enaml.enums.SelectionBehavior">
-<tt class="descclassname">enaml.enums.</tt><tt class="descname">SelectionBehavior</tt><em class="property"> = &lt;traits.trait_types.Enum object at 0x1f4c350&gt;</em><a class="headerlink" href="#enaml.enums.SelectionBehavior" title="Permalink to this definition">¶</a></dt>
-<dd><p>What kind of items may be selected in item views.</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="23%" />
-<col width="77%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">value</th>
-<th class="head">description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">items</span></tt></td>
-<td>Individual items, like table cells.</td>
-</tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">rows</span></tt></td>
-<td>Only whole rows, not individual table cells.</td>
-</tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">columns</span></tt></td>
-<td>Only whole columns, not individual table cells.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="data">
-<dt id="enaml.enums.SelectionCommand">
-<tt class="descclassname">enaml.enums.</tt><tt class="descname">SelectionCommand</tt><em class="property"> = &lt;traits.trait_types.Enum object at 0x1f4c370&gt;</em><a class="headerlink" href="#enaml.enums.SelectionCommand" title="Permalink to this definition">¶</a></dt>
-<dd><p>Exactly what actions to do when programmatically setting the selection in
-item views.</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="27%" />
-<col width="73%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">value</th>
-<th class="head">description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">no_update</span></tt></td>
-<td>Make no selection.</td>
-</tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">clear</span></tt></td>
-<td>Clear the complete selection.</td>
-</tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">select</span></tt></td>
-<td>Select the specified indices.</td>
-</tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">deselect</span></tt></td>
-<td>Deselect the specified indices.</td>
-</tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">toggle</span></tt></td>
-<td>Toggle the selection of the specified indices.</td>
-</tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">current</span></tt></td>
-<td>Update the &#8220;current&#8221; index.</td>
-</tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">rows</span></tt></td>
-<td>Expand the selection to span rows.</td>
-</tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">columns</span></tt></td>
-<td>Expand the selection to span columns.</td>
-</tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">select_current</span></tt></td>
-<td>Select the given selection and update the &#8220;current&#8221;
-index.</td>
-</tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">toggle_current</span></tt></td>
-<td>Toggle the given selection and update the &#8220;current&#8221;
-index.</td>
-</tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">clear_select</span></tt></td>
-<td>Clear the whole selection and select the given
-indices.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</div>
-<div class="section" id="exceptions-module">
-<h2><a class="reference external" href="http://docs.python.org/library/exceptions.html#exceptions" title="(in Python v2.7)"><tt class="xref py py-mod docutils literal"><span class="pre">exceptions</span></tt></a> Module<a class="headerlink" href="#exceptions-module" title="Permalink to this headline">¶</a></h2>
-<p class="graphviz">
-<img src="../_images/inheritance-38a49c73f26494622e3fb18460d82d0de8737f34.png" alt="Inheritance diagram of enaml.exceptions" usemap="#inheritancec8455e7019" class="inheritance"/>
-<map id="inheritancec8455e7019" name="inheritancec8455e7019">
-<area shape="rect" id="node1" href="#enaml.exceptions.ShellExceptionContext" title="ShellExceptionContext" alt="" coords="6,360,173,389"/>
-<area shape="rect" id="node7" href="#enaml.exceptions.ShellNotificationContext" title="ShellNotificationContext" alt="" coords="222,360,400,389"/>
-<area shape="rect" id="node2" href="#enaml.exceptions.EnamlRuntimeError" title="EnamlRuntimeError" alt="" coords="238,5,384,35"/>
-<area shape="rect" id="node3" href="#enaml.exceptions.EnamlError" title="EnamlError" alt="" coords="43,32,135,61"/>
-<area shape="rect" id="node5" href="#enaml.exceptions.EnamlSyntaxError" title="EnamlSyntaxError" alt="" coords="243,59,378,88"/>
-</map>
-</p>
-<span class="target" id="module-enaml.exceptions"></span><dl class="exception">
-<dt id="enaml.exceptions.EnamlError">
-<em class="property">exception </em><tt class="descclassname">enaml.exceptions.</tt><tt class="descname">EnamlError</tt><a class="reference internal" href="../_modules/enaml/exceptions.html#EnamlError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.exceptions.EnamlError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></tt></p>
-<p>A general exception used to indicate an error with Enaml or 
-the Enaml runtime that doesn&#8217;t fit the semantics of any other 
-Python standard exception.</p>
-<dl class="attribute">
-<dt id="enaml.exceptions.EnamlError.__weakref__">
-<tt class="descname">__weakref__</tt><a class="headerlink" href="#enaml.exceptions.EnamlError.__weakref__" title="Permalink to this definition">¶</a></dt>
-<dd><p>list of weak references to the object (if defined)</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="exception">
-<dt id="enaml.exceptions.EnamlSyntaxError">
-<em class="property">exception </em><tt class="descclassname">enaml.exceptions.</tt><tt class="descname">EnamlSyntaxError</tt><a class="reference internal" href="../_modules/enaml/exceptions.html#EnamlSyntaxError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.exceptions.EnamlSyntaxError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#enaml.exceptions.EnamlError" title="enaml.exceptions.EnamlError"><tt class="xref py py-class docutils literal"><span class="pre">enaml.exceptions.EnamlError</span></tt></a></p>
-<p>Derived from EnamlError and used to indicate an Error in the
-syntax of a .enaml file.</p>
-</dd></dl>
-
-<dl class="exception">
-<dt id="enaml.exceptions.EnamlRuntimeError">
-<em class="property">exception </em><tt class="descclassname">enaml.exceptions.</tt><tt class="descname">EnamlRuntimeError</tt><a class="reference internal" href="../_modules/enaml/exceptions.html#EnamlRuntimeError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.exceptions.EnamlRuntimeError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#enaml.exceptions.EnamlError" title="enaml.exceptions.EnamlError"><tt class="xref py py-class docutils literal"><span class="pre">enaml.exceptions.EnamlError</span></tt></a></p>
-<p>An EnamlError that occurs during the execution of an Enaml 
-script that couldn&#8217;t be caught at compile time but prevents the 
-runtime from continuing to execute the script.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="enaml.exceptions.null_handler">
-<tt class="descclassname">enaml.exceptions.</tt><tt class="descname">null_handler</tt><big>(</big><em>obj</em>, <em>trait</em>, <em>old</em>, <em>new</em><big>)</big><a class="reference internal" href="../_modules/enaml/exceptions.html#null_handler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.exceptions.null_handler" title="Permalink to this definition">¶</a></dt>
-<dd><p>A null Traits exception handler.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="enaml.exceptions.notification_context">
-<tt class="descclassname">enaml.exceptions.</tt><tt class="descname">notification_context</tt><big>(</big><em>*args</em>, <em>**kwds</em><big>)</big><a class="reference internal" href="../_modules/enaml/exceptions.html#notification_context"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.exceptions.notification_context" title="Permalink to this definition">¶</a></dt>
-<dd><p>Context manager to temporarily add a TraitsExceptionHandler</p>
-<p>We use a context manager to ensure that the exception handler gets cleared
-no matter what.  Default behaviour is to use the null_handler with
-exceptions re-raised, which means any exceptions which occur will be passed
-through.</p>
-</dd></dl>
-
+<p>The top-level enaml package contains modules used throughout the Enaml library.</p>
+<div class="section" id="module-enaml.application">
+<span id="application-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">application</span></tt> Module<a class="headerlink" href="#module-enaml.application" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="enaml.exceptions.ShellExceptionContext">
-<em class="property">class </em><tt class="descclassname">enaml.exceptions.</tt><tt class="descname">ShellExceptionContext</tt><big>(</big><em>shell_obj</em><big>)</big><a class="reference internal" href="../_modules/enaml/exceptions.html#ShellExceptionContext"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.exceptions.ShellExceptionContext" title="Permalink to this definition">¶</a></dt>
+<dt id="enaml.application.ScheduledTask">
+<em class="property">class </em><tt class="descclassname">enaml.application.</tt><tt class="descname">ScheduledTask</tt><big>(</big><em>callback</em>, <em>args</em>, <em>kwargs</em><big>)</big><a class="reference internal" href="../_modules/enaml/application.html#ScheduledTask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.application.ScheduledTask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
-<p>Context manager to that manages error state of shell objects.</p>
-<p>Any exceptions which occur within a with statement using this context
-will get swallowed and set into the exception trait of the shell object.</p>
+<p>An object representing a task in the scheduler.</p>
 <dl class="attribute">
-<dt id="enaml.exceptions.ShellExceptionContext.__weakref__">
-<tt class="descname">__weakref__</tt><a class="headerlink" href="#enaml.exceptions.ShellExceptionContext.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dt id="enaml.application.ScheduledTask.undefined">
+<tt class="descname">undefined</tt><em class="property"> = &lt;object object at 0x03A55DE8&gt;</em><a class="headerlink" href="#enaml.application.ScheduledTask.undefined" title="Permalink to this definition">¶</a></dt>
+<dd><p>A sentinel object indicating that the result of the task is
+undefined or that the task has not yet been executed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.application.ScheduledTask.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>callback</em>, <em>args</em>, <em>kwargs</em><big>)</big><a class="reference internal" href="../_modules/enaml/application.html#ScheduledTask.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.application.ScheduledTask.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize a ScheduledTask.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>callback</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#callable" title="(in Python v2.7)"><em>callable</em></a>) &#8211; The callable to run when the task is executed.</li>
+<li><strong>args</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a>) &#8211; The tuple of positional arguments to pass to the callback.</li>
+<li><strong>kwargs</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; The dict of keyword arguments to pass to the callback.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.application.ScheduledTask.notify">
+<tt class="descname">notify</tt><big>(</big><em>callback</em><big>)</big><a class="reference internal" href="../_modules/enaml/application.html#ScheduledTask.notify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.application.ScheduledTask.notify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set a callback to be run when the task is executed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>callback</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#callable" title="(in Python v2.7)"><em>callable</em></a>) &#8211; A callable which accepts a single argument which is the
+results of the task. It will be invoked immediate after
+the task is executed, on the main event loop thread.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.application.ScheduledTask.pending">
+<tt class="descname">pending</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/application.html#ScheduledTask.pending"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.application.ScheduledTask.pending" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if this task is pending execution, False
+otherwise.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.application.ScheduledTask.unschedule">
+<tt class="descname">unschedule</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/application.html#ScheduledTask.unschedule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.application.ScheduledTask.unschedule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unschedule the task so that it will not be executed. If
+the task has already been executed, this call has no effect.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.application.ScheduledTask.result">
+<tt class="descname">result</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/application.html#ScheduledTask.result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.application.ScheduledTask.result" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the result of the task, or ScheduledTask.undefined
+if the task has not yet been executed, was unscheduled before
+execution, or raised an exception on execution.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.application.ScheduledTask.__weakref__">
+<tt class="descname">__weakref__</tt><a class="headerlink" href="#enaml.application.ScheduledTask.__weakref__" title="Permalink to this definition">¶</a></dt>
 <dd><p>list of weak references to the object (if defined)</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="class">
-<dt id="enaml.exceptions.ShellNotificationContext">
-<em class="property">class </em><tt class="descclassname">enaml.exceptions.</tt><tt class="descname">ShellNotificationContext</tt><big>(</big><em>shell_obj</em>, <em>handler=&lt;function null_handler at 0x1e60870&gt;</em>, <em>reraise_exceptions=True</em>, <em>main=False</em>, <em>locked=False</em><big>)</big><a class="reference internal" href="../_modules/enaml/exceptions.html#ShellNotificationContext"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.exceptions.ShellNotificationContext" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#enaml.exceptions.ShellExceptionContext" title="enaml.exceptions.ShellExceptionContext"><tt class="xref py py-class docutils literal"><span class="pre">enaml.exceptions.ShellExceptionContext</span></tt></a></p>
-<p>Combination of a ShellExceptionContext and a notification_context</p>
-<p>Default behaviour is to use the null_handler with exceptions re-raised,
-which means any exceptions which occur during traits notification will be
-caught and set to the shell object&#8217;s exception trait.</p>
+<dt id="enaml.application.Application">
+<em class="property">class </em><tt class="descclassname">enaml.application.</tt><tt class="descname">Application</tt><big>(</big><em>factories</em><big>)</big><a class="reference internal" href="../_modules/enaml/application.html#Application"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.application.Application" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>The application object which manages the top-level communication
+protocol for serving Enaml views.</p>
+<dl class="attribute">
+<dt id="enaml.application.Application.__metaclass__">
+<tt class="descname">__metaclass__</tt><a class="headerlink" href="#enaml.application.Application.__metaclass__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">ABCMeta</span></tt></p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="enaml.application.Application.instance">
+<em class="property">static </em><tt class="descname">instance</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/application.html#Application.instance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.application.Application.instance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the global Application instance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (Application or None) &#8211; The global application instance, or None if one has not yet been created.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="enaml.application.Application.__new__">
+<em class="property">static </em><tt class="descname">__new__</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/enaml/application.html#Application.__new__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.application.Application.__new__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new Enaml Application.</p>
+<p>There may be only one application instance in existence at any
+point in time. Attempting to create a new Application when one
+exists will raise an exception.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.application.Application.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>factories</em><big>)</big><a class="reference internal" href="../_modules/enaml/application.html#Application.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.application.Application.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize an Enaml Application.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>factories</strong> (<em>iterable</em>) &#8211; An iterable of SessionFactory instances that will be used
+to create the sessions for the application.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.application.Application.start_session">
+<tt class="descname">start_session</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="../_modules/enaml/application.html#Application.start_session"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.application.Application.start_session" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start a new session of the given name.</p>
+<p>This method will create a new session object for the requested
+session type and return the new session_id. If the session name
+is invalid, an exception will be raised.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The name of the session to start.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (str) &#8211; The unique identifier for the created session.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.application.Application.end_session">
+<tt class="descname">end_session</tt><big>(</big><em>session_id</em><big>)</big><a class="reference internal" href="../_modules/enaml/application.html#Application.end_session"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.application.Application.end_session" title="Permalink to this definition">¶</a></dt>
+<dd><p>End the session with the given session id.</p>
+<p>This method will close down the existing session. If the session
+id is not valid, an exception will be raised.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>session_id</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The unique identifier for the session to close.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.application.Application.session">
+<tt class="descname">session</tt><big>(</big><em>session_id</em><big>)</big><a class="reference internal" href="../_modules/enaml/application.html#Application.session"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.application.Application.session" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the session for the given session id.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>session_id</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The unique identifier for the session to retrieve.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (Session or None) &#8211; The session object with the given id, or None if the id does not correspond to an active session.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.application.Application.sessions">
+<tt class="descname">sessions</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/application.html#Application.sessions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.application.Application.sessions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the currently active sessions for the application.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (list) &#8211; The list of currently active sessions for the application.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.application.Application.start">
+<tt class="descname">start</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/application.html#Application.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.application.Application.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start the application&#8217;s main event loop.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.application.Application.stop">
+<tt class="descname">stop</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/application.html#Application.stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.application.Application.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stop the application&#8217;s main event loop.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.application.Application.deferred_call">
+<tt class="descname">deferred_call</tt><big>(</big><em>callback</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/enaml/application.html#Application.deferred_call"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.application.Application.deferred_call" title="Permalink to this definition">¶</a></dt>
+<dd><p>Invoke a callable on the next cycle of the main event loop
+thread.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>callback</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#callable" title="(in Python v2.7)"><em>callable</em></a>) &#8211; The callable object to execute at some point in the future.</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt><a href="#id1"><span class="problematic" id="id2">*</span></a>args, <a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs</dt>
+<dd>Any additional positional and keyword arguments to pass to
+the callback.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.application.Application.timed_call">
+<tt class="descname">timed_call</tt><big>(</big><em>ms</em>, <em>callback</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/enaml/application.html#Application.timed_call"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.application.Application.timed_call" title="Permalink to this definition">¶</a></dt>
+<dd><p>Invoke a callable on the main event loop thread at a
+specified time in the future.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ms</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The time to delay, in milliseconds, before executing the
+callable.</li>
+<li><strong>callback</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#callable" title="(in Python v2.7)"><em>callable</em></a>) &#8211; The callable object to execute at some point in the future.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt><a href="#id5"><span class="problematic" id="id6">*</span></a>args, <a href="#id7"><span class="problematic" id="id8">**</span></a>kwargs</dt>
+<dd>Any additional positional and keyword arguments to pass to
+the callback.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.application.Application.is_main_thread">
+<tt class="descname">is_main_thread</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/application.html#Application.is_main_thread"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.application.Application.is_main_thread" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indicates whether the caller is on the main gui thread.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (bool) &#8211; True if called from the main gui thread. False otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.application.Application.schedule">
+<tt class="descname">schedule</tt><big>(</big><em>callback</em>, <em>args=None</em>, <em>kwargs=None</em>, <em>priority=0</em><big>)</big><a class="reference internal" href="../_modules/enaml/application.html#Application.schedule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.application.Application.schedule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Schedule a callable to be executed on the event loop thread.</p>
+<p>This call is thread-safe.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>callback</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#callable" title="(in Python v2.7)"><em>callable</em></a>) &#8211; The callable object to be executed.</li>
+<li><strong>args</strong> (<em>tuple, optional</em>) &#8211; The positional arguments to pass to the callable.</li>
+<li><strong>kwargs</strong> (<em>dict, optional</em>) &#8211; The keyword arguments to pass to the callable.</li>
+<li><strong>priority</strong> (<em>int, optional</em>) &#8211; The queue priority for the callable. Smaller values indicate
+lower priority, larger values indicate higher priority. The
+default priority is zero.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>result</strong> (ScheduledTask) &#8211; A task object which can be used to unschedule the task or retrieve the results of the callback after the task has been executed.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.application.Application.has_pending_tasks">
+<tt class="descname">has_pending_tasks</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/application.html#Application.has_pending_tasks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.application.Application.has_pending_tasks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get whether or not the application has pending tasks.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (bool) &#8211; True if there are pending tasks. False otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.application.Application.add_factories">
+<tt class="descname">add_factories</tt><big>(</big><em>factories</em><big>)</big><a class="reference internal" href="../_modules/enaml/application.html#Application.add_factories"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.application.Application.add_factories" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add session factories to the application.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>factories</strong> (<em>iterable</em>) &#8211; An iterable of SessionFactory instances to add to the
+application.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.application.Application.discover">
+<tt class="descname">discover</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/application.html#Application.discover"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.application.Application.discover" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a dictionary of session information for the application.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (list) &#8211; A list of dicts of information about the available sessions.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.application.Application.destroy">
+<tt class="descname">destroy</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/application.html#Application.destroy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.application.Application.destroy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Destroy this application instance.</p>
+<p>Once an application is created, it must be destroyed before a
+new application can be instantiated.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.application.Application.__weakref__">
+<tt class="descname">__weakref__</tt><a class="headerlink" href="#enaml.application.Application.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="enaml.application.deferred_call">
+<tt class="descclassname">enaml.application.</tt><tt class="descname">deferred_call</tt><big>(</big><em>callback</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/enaml/application.html#deferred_call"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.application.deferred_call" title="Permalink to this definition">¶</a></dt>
+<dd><p>Invoke a callable on the next cycle of the main event loop
+thread.</p>
+<p>This is a convenience function for invoking the same method on the
+current application instance. If an application instance does not
+exist, a RuntimeError will be raised.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>callback</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#callable" title="(in Python v2.7)"><em>callable</em></a>) &#8211; The callable object to execute at some point in the future.</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt><a href="#id9"><span class="problematic" id="id10">*</span></a>args, <a href="#id11"><span class="problematic" id="id12">**</span></a>kwargs</dt>
+<dd>Any additional positional and keyword arguments to pass to
+the callback.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="enaml.application.timed_call">
+<tt class="descclassname">enaml.application.</tt><tt class="descname">timed_call</tt><big>(</big><em>ms</em>, <em>callback</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/enaml/application.html#timed_call"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.application.timed_call" title="Permalink to this definition">¶</a></dt>
+<dd><p>Invoke a callable on the main event loop thread at a specified
+time in the future.</p>
+<p>This is a convenience function for invoking the same method on the
+current application instance. If an application instance does not
+exist, a RuntimeError will be raised.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ms</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The time to delay, in milliseconds, before executing the
+callable.</li>
+<li><strong>callback</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#callable" title="(in Python v2.7)"><em>callable</em></a>) &#8211; The callable object to execute at some point in the future.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt><a href="#id13"><span class="problematic" id="id14">*</span></a>args, <a href="#id15"><span class="problematic" id="id16">**</span></a>kwargs</dt>
+<dd>Any additional positional and keyword arguments to pass to
+the callback.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="enaml.application.is_main_thread">
+<tt class="descclassname">enaml.application.</tt><tt class="descname">is_main_thread</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/application.html#is_main_thread"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.application.is_main_thread" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indicates whether the caller is on the main gui thread.</p>
+<p>This is a convenience function for invoking the same method on the
+current application instance. If an application instance does not
+exist, a RuntimeError will be raised.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (bool) &#8211; True if called from the main gui thread. False otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="enaml.application.schedule">
+<tt class="descclassname">enaml.application.</tt><tt class="descname">schedule</tt><big>(</big><em>self</em>, <em>callback</em>, <em>args=None</em>, <em>kwargs=None</em>, <em>priority=0</em><big>)</big><a class="reference internal" href="../_modules/enaml/application.html#schedule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.application.schedule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Schedule a callable to be executed on the event loop thread.</p>
+<p>This call is thread-safe.</p>
+<p>This is a convenience function for invoking the same method on the
+current application instance. If an application instance does not
+exist, a RuntimeError will be raised.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>callback</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#callable" title="(in Python v2.7)"><em>callable</em></a>) &#8211; The callable object to be executed.</li>
+<li><strong>args</strong> (<em>tuple, optional</em>) &#8211; The positional arguments to pass to the callable.</li>
+<li><strong>kwargs</strong> (<em>dict, optional</em>) &#8211; The keyword arguments to pass to the callable.</li>
+<li><strong>priority</strong> (<em>int, optional</em>) &#8211; The queue priority for the callable. Smaller values indicate
+lower priority, larger values indicate higher priority. The
+default priority is zero.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>result</strong> (ScheduledTask) &#8211; A task object which can be used to unschedule the task or retrieve the results of the callback after the task has been executed.</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
-<div class="section" id="guard-module">
-<h2><tt class="xref py py-mod docutils literal"><span class="pre">guard</span></tt> Module<a class="headerlink" href="#guard-module" title="Permalink to this headline">¶</a></h2>
-<span class="target" id="module-enaml.guard"></span><dl class="data">
-<dt id="enaml.guard.guard">
-<tt class="descclassname">enaml.guard.</tt><tt class="descname">guard</tt><em class="property"> = &lt;enaml.guard.guard object at 0x1f4ca50&gt;</em><a class="reference internal" href="../_modules/enaml/guard.html#guard"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.guard.guard" title="Permalink to this definition">¶</a></dt>
-<dd><p>A singleton instance of the guard class. There is no need for more
-than one.</p>
+<div class="section" id="module-enaml.callableref">
+<span id="callableref-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">callableref</span></tt> Module<a class="headerlink" href="#module-enaml.callableref" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="enaml.callableref.CallableRef">
+<em class="property">class </em><tt class="descclassname">enaml.callableref.</tt><tt class="descname">CallableRef</tt><big>(</big><em>obj</em>, <em>callback=None</em><big>)</big><a class="reference internal" href="../_modules/enaml/callableref.html#CallableRef"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.callableref.CallableRef" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>An object which will weakly wrap a callable object.</p>
+<p>This class is useful when weakrefs to callable objects need to be
+used alongside regular callables. It exposes a callable interface
+which will dererence the underlying callable before calling it.</p>
+<dl class="method">
+<dt id="enaml.callableref.CallableRef.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>obj</em>, <em>callback=None</em><big>)</big><a class="reference internal" href="../_modules/enaml/callableref.html#CallableRef.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.callableref.CallableRef.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize a CallableRef.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>obj</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#callable" title="(in Python v2.7)"><em>callable</em></a>) &#8211; The callable object which should be weakly wrapped.</li>
+<li><strong>callback</strong> (<em>callable or None</em>) &#8211; An optional callable to invoke when the object has been
+garbage collected. It will be passed the weakref instance
+for associated with the dead object.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Instances of this class will compare equally to equivalent
+CallableRef instances as well as weakref instances which
+compare equally to the internal weakref.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.callableref.CallableRef.__eq__">
+<tt class="descname">__eq__</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="../_modules/enaml/callableref.html#CallableRef.__eq__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.callableref.CallableRef.__eq__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Custom equality checking for a CallableRef.</p>
+<p>This will return True for an equivalent CallableRef <em>or</em> a
+weakref pointing to the same underlying callable.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.callableref.CallableRef.__call__">
+<tt class="descname">__call__</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/enaml/callableref.html#CallableRef.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.callableref.CallableRef.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Invoke the underlying callable.</p>
+<dl class="docutils">
+<dt><a href="#id17"><span class="problematic" id="id18">*</span></a>args, <a href="#id19"><span class="problematic" id="id20">**</span></a>kwargs</dt>
+<dd>The positional and keyword arguments to pass to the
+callable.</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (object) &#8211; The results of the callable, or None if it has already been garbage collected.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-enaml.colors">
+<span id="colors-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">colors</span></tt> Module<a class="headerlink" href="#module-enaml.colors" title="Permalink to this headline">¶</a></h2>
+<p>A utility module for dealing with colors.</p>
+<dl class="function">
+<dt id="enaml.colors.parse_color">
+<tt class="descclassname">enaml.colors.</tt><tt class="descname">parse_color</tt><big>(</big><em>color</em><big>)</big><a class="reference internal" href="../_modules/enaml/colors.html#parse_color"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.colors.parse_color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse a color string into a tuple of RGBA values.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>color</strong> (<a class="reference external" href="http://docs.python.org/library/string.html#string" title="(in Python v2.7)"><em>string</em></a>) &#8211; A CSS3 string representation of the color.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (tuple or None) &#8211; A tuple of RGBA values. All values are floats in the range 0.0 - 1.0. If the string is invalid, None will be returned.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="enaml.colors.composite_colors">
+<tt class="descclassname">enaml.colors.</tt><tt class="descname">composite_colors</tt><big>(</big><em>first</em>, <em>second</em><big>)</big><a class="reference internal" href="../_modules/enaml/colors.html#composite_colors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.colors.composite_colors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Composite two colors together using their given alpha.</p>
+<p>The first color will be composited on top of the second color.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>first</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a>) &#8211; The rgba tuple of the first color. All values are floats in
+the range 0.0 - 1.0.</li>
+<li><strong>second</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a>) &#8211; The rgba tuple of the second color. The format of this tuple
+is the same as the first color.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>result</strong> (tuple) &#8211; The composited rgba color tuple.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-enaml.icon_provider">
+<span id="icon-provider-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">icon_provider</span></tt> Module<a class="headerlink" href="#module-enaml.icon_provider" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="enaml.icon_provider.IconImage">
+<em class="property">class </em><tt class="descclassname">enaml.icon_provider.</tt><tt class="descname">IconImage</tt><a class="reference internal" href="../_modules/enaml/icon_provider.html#IconImage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.icon_provider.IconImage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">traits.has_traits.HasTraits</span></tt></p>
+<p>An object representing an image in an icon.</p>
+<p>Instances of this class are used to populate the <cite>images</cite> list of
+an <cite>Icon</cite> instance. Instances of this class should be treated as
+read-only once they are created.</p>
+<dl class="attribute">
+<dt id="enaml.icon_provider.IconImage.mode">
+<tt class="descname">mode</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.icon_provider.IconImage.mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>The widget mode for which this icon should apply.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.icon_provider.IconImage.state">
+<tt class="descname">state</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.icon_provider.IconImage.state" title="Permalink to this definition">¶</a></dt>
+<dd><p>The widget state for which this icon should apply.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.icon_provider.IconImage.image">
+<tt class="descname">image</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.icon_provider.IconImage.image" title="Permalink to this definition">¶</a></dt>
+<dd><p>The image to use for this icon.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.icon_provider.IconImage.snapshot">
+<tt class="descname">snapshot</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/icon_provider.html#IconImage.snapshot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.icon_provider.IconImage.snapshot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a snapshot dictionary for this icon image.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.icon_provider.IconImage.__implements__">
+<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.icon_provider.IconImage.__implements__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="enaml.icon_provider.Icon">
+<em class="property">class </em><tt class="descclassname">enaml.icon_provider.</tt><tt class="descname">Icon</tt><a class="reference internal" href="../_modules/enaml/icon_provider.html#Icon"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.icon_provider.Icon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#enaml.resource.Resource" title="enaml.resource.Resource"><tt class="xref py py-class docutils literal"><span class="pre">enaml.resource.Resource</span></tt></a></p>
+<p>A resource object representing an icon.</p>
+<p>Instances of this class are created by an <cite>IconProvider</cite> when it
+handles a request for an icon. Instances of this class should be
+treated as read-only once they are created.</p>
+<dl class="attribute">
+<dt id="enaml.icon_provider.Icon.images">
+<tt class="descname">images</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.icon_provider.Icon.images" title="Permalink to this definition">¶</a></dt>
+<dd><p>The list of icon images which compose this icon.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.icon_provider.Icon.snapshot">
+<tt class="descname">snapshot</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/icon_provider.html#Icon.snapshot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.icon_provider.Icon.snapshot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a snapshot dictionary for this icon.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.icon_provider.Icon.__implements__">
+<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.icon_provider.Icon.__implements__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="enaml.icon_provider.IconProvider">
+<em class="property">class </em><tt class="descclassname">enaml.icon_provider.</tt><tt class="descname">IconProvider</tt><a class="reference internal" href="../_modules/enaml/icon_provider.html#IconProvider"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.icon_provider.IconProvider" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>An abstract API definition for an icon provider object.</p>
+<dl class="attribute">
+<dt id="enaml.icon_provider.IconProvider.__metaclass__">
+<tt class="descname">__metaclass__</tt><a class="headerlink" href="#enaml.icon_provider.IconProvider.__metaclass__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">ABCMeta</span></tt></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.icon_provider.IconProvider.request_icon">
+<tt class="descname">request_icon</tt><big>(</big><em>path</em>, <em>callback</em><big>)</big><a class="reference internal" href="../_modules/enaml/icon_provider.html#IconProvider.request_icon"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.icon_provider.IconProvider.request_icon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Request an icon from this provider.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>path</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The requested path of the icon, with the provider prefix
+removed. For example, if the full icon source path was:
+<cite>icon://myprovider/icons/foo</cite> then the path passed to this
+method will be <cite>icons/foo</cite>.</li>
+<li><strong>callback</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#callable" title="(in Python v2.7)"><em>callable</em></a>) &#8211; A callable which should be invoked when the icon is loaded.
+It accepts a single argument, which is the loaded <cite>Icon</cite>
+object. It is safe to invoke this callable from a thread.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.icon_provider.IconProvider.__weakref__">
+<tt class="descname">__weakref__</tt><a class="headerlink" href="#enaml.icon_provider.IconProvider.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-enaml.image_provider">
+<span id="image-provider-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">image_provider</span></tt> Module<a class="headerlink" href="#module-enaml.image_provider" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="enaml.image_provider.Image">
+<em class="property">class </em><tt class="descclassname">enaml.image_provider.</tt><tt class="descname">Image</tt><a class="reference internal" href="../_modules/enaml/image_provider.html#Image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.image_provider.Image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#enaml.resource.Resource" title="enaml.resource.Resource"><tt class="xref py py-class docutils literal"><span class="pre">enaml.resource.Resource</span></tt></a></p>
+<p>A resource object representing an image.</p>
+<p>Instances of this class are created by an <cite>ImageProvider</cite> when it
+handles a request for an image. Instances of this class should be
+treated as read-only once they are created.</p>
+<dl class="attribute">
+<dt id="enaml.image_provider.Image.format">
+<tt class="descname">format</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.image_provider.Image.format" title="Permalink to this definition">¶</a></dt>
+<dd><p>The format of the image. By default, the consumer of the image
+will probe the header to automatically infer a type.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.image_provider.Image.size">
+<tt class="descname">size</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.image_provider.Image.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>The (width, height) size of the image. An invalid size indicates
+that the size of the image should be automatically inferred.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.image_provider.Image.data">
+<tt class="descname">data</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.image_provider.Image.data" title="Permalink to this definition">¶</a></dt>
+<dd><p>The bytestring holding the data for the image.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.image_provider.Image.snapshot">
+<tt class="descname">snapshot</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/image_provider.html#Image.snapshot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.image_provider.Image.snapshot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a snapshot dictionary for this image.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.image_provider.Image.__implements__">
+<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.image_provider.Image.__implements__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="enaml.image_provider.ImageProvider">
+<em class="property">class </em><tt class="descclassname">enaml.image_provider.</tt><tt class="descname">ImageProvider</tt><a class="reference internal" href="../_modules/enaml/image_provider.html#ImageProvider"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.image_provider.ImageProvider" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>An abstract API definition for an image provider object.</p>
+<dl class="attribute">
+<dt id="enaml.image_provider.ImageProvider.__metaclass__">
+<tt class="descname">__metaclass__</tt><a class="headerlink" href="#enaml.image_provider.ImageProvider.__metaclass__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">ABCMeta</span></tt></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.image_provider.ImageProvider.request_image">
+<tt class="descname">request_image</tt><big>(</big><em>path</em>, <em>size</em>, <em>callback</em><big>)</big><a class="reference internal" href="../_modules/enaml/image_provider.html#ImageProvider.request_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.image_provider.ImageProvider.request_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Request an image from this provider.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>path</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The requested path of the image, with the provider prefix
+removed. For example, if the full image source path was:
+<cite>image://myprovider/icons/foo</cite> then the path passed to
+this method will be <cite>icons/foo</cite>.</li>
+<li><strong>size</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a>) &#8211; A tuple of (width, height) which is the requested size of
+the image. If this value is (-1, -1), then the image should
+be loaded in its original size. Otherwise, the image should
+be loaded in the requested size if possible.</li>
+<li><strong>callback</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#callable" title="(in Python v2.7)"><em>callable</em></a>) &#8211; A callable which should be invoked when the image is loaded.
+It accepts a single argument, which is the loaded <cite>Image</cite>
+object. It is safe to invoke this callable from a thread.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.image_provider.ImageProvider.__weakref__">
+<tt class="descname">__weakref__</tt><a class="headerlink" href="#enaml.image_provider.ImageProvider.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-enaml.resource">
+<span id="resource-module"></span><h2><a class="reference external" href="http://docs.python.org/library/resource.html#resource" title="(in Python v2.7)"><tt class="xref py py-mod docutils literal"><span class="pre">resource</span></tt></a> Module<a class="headerlink" href="#module-enaml.resource" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="enaml.resource.Resource">
+<em class="property">class </em><tt class="descclassname">enaml.resource.</tt><tt class="descname">Resource</tt><a class="reference internal" href="../_modules/enaml/resource.html#Resource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.resource.Resource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">traits.has_traits.HasTraits</span></tt></p>
+<p>A base class to use for creating resource objects.</p>
+<dl class="method">
+<dt id="enaml.resource.Resource.class_name">
+<tt class="descname">class_name</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/resource.html#Resource.class_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.resource.Resource.class_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the class name of this resource.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.resource.Resource.base_names">
+<tt class="descname">base_names</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/resource.html#Resource.base_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.resource.Resource.base_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the base class names of this resource.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.resource.Resource.snapshot">
+<tt class="descname">snapshot</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/resource.html#Resource.snapshot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.resource.Resource.snapshot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a snapshot dictionary for this resource.</p>
+<p>Subclass should reimplement this method to add more metadata
+to the snapshot dictionary.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.resource.Resource.__implements__">
+<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.resource.Resource.__implements__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-enaml.resource_manager">
+<span id="resource-manager-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">resource_manager</span></tt> Module<a class="headerlink" href="#module-enaml.resource_manager" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="enaml.resource_manager.ResourceManager">
+<em class="property">class </em><tt class="descclassname">enaml.resource_manager.</tt><tt class="descname">ResourceManager</tt><a class="reference internal" href="../_modules/enaml/resource_manager.html#ResourceManager"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.resource_manager.ResourceManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">traits.has_traits.HasTraits</span></tt></p>
+<p>A class which manages resource loading for a <cite>Session</cite>.</p>
+<p>A <cite>ResourceManager</cite> is used by a <cite>Session</cite> object to load resources
+when a url resource request is made by a client session. Users work
+with the manager by assigning provider objects associated with a
+host name. For example, a user can provide an image for the url
+<cite>image://filesystem/c:/foo/bar.png</cite> by assigning an <cite>ImageProvider</cite>
+instace to the <cite>image_providers</cite> dict with the key <cite>filesystem</cite>.</p>
+<dl class="attribute">
+<dt id="enaml.resource_manager.ResourceManager.image_providers">
+<tt class="descname">image_providers</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.resource_manager.ResourceManager.image_providers" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dict mapping provider location to image provider object. When
+a resource <cite>image://foo/bar/baz</cite> is requested, the image provider
+provider <cite>foo</cite> is use to request path <cite>/bar/baz</cite>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.resource_manager.ResourceManager.icon_providers">
+<tt class="descname">icon_providers</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.resource_manager.ResourceManager.icon_providers" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dict of icon providers for the <cite>icon://...</cite> scheme.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.resource_manager.ResourceManager.load">
+<tt class="descname">load</tt><big>(</big><em>url</em>, <em>metadata</em>, <em>reply</em><big>)</big><a class="reference internal" href="../_modules/enaml/resource_manager.html#ResourceManager.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.resource_manager.ResourceManager.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a resource from the manager.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>url</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The url pointing to the resource to load.</li>
+<li><strong>metadata</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; Additional metadata required to load the resource of the
+given type. See the individual loading handlers for the
+supported metadata.</li>
+<li><strong>reply</strong> (<em>URLReply</em>) &#8211; A url reply which will be invoked with the loaded resource
+object, or None if the loading fails. It must be safe to
+invoke this reply from a thread.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.resource_manager.ResourceManager.__implements__">
+<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.resource_manager.ResourceManager.__implements__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -624,13 +976,926 @@ than one.</p>
 <span id="runner-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">runner</span></tt> Module<a class="headerlink" href="#module-enaml.runner" title="Permalink to this headline">¶</a></h2>
 <p>Command-line tool to run .enaml files.</p>
 </div>
+<div class="section" id="module-enaml.session">
+<span id="session-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">session</span></tt> Module<a class="headerlink" href="#module-enaml.session" title="Permalink to this headline">¶</a></h2>
+<dl class="data">
+<dt id="enaml.session.BATCH_ACTIONS">
+<tt class="descclassname">enaml.session.</tt><tt class="descname">BATCH_ACTIONS</tt><em class="property"> = set(['destroy', 'children_changed', 'relayout'])</em><a class="headerlink" href="#enaml.session.BATCH_ACTIONS" title="Permalink to this definition">¶</a></dt>
+<dd><p>The set of actions which should be batched and sent to the client as
+a single message. This allows a client to perform intelligent message
+handling when dealing with messages that may affect the widget tree.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="enaml.session.dispatch_action">
+<tt class="descclassname">enaml.session.</tt><tt class="descname">dispatch_action</tt><big>(</big><em>obj</em>, <em>name</em>, <em>*args</em><big>)</big><a class="headerlink" href="#enaml.session.dispatch_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>The dispatch function for action dispatching on the session.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="enaml.session.DeferredMessageBatch">
+<em class="property">class </em><tt class="descclassname">enaml.session.</tt><tt class="descname">DeferredMessageBatch</tt><a class="reference internal" href="../_modules/enaml/session.html#DeferredMessageBatch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.session.DeferredMessageBatch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>A class which aggregates batch messages.</p>
+<p>Each time a message is added to this object, its tick count is
+incremented and a tick down event is posted to the event queue.
+When the object receives the tick down event, it decrements its
+tick count, and if it&#8217;s zero, fires the <cite>triggered</cite> signal.</p>
+<p>This allows a consumer of the batch to continually add messages and
+have the <cite>triggered</cite> signal fired only when the event queue is fully
+drained of relevant messages.</p>
+<dl class="attribute">
+<dt id="enaml.session.DeferredMessageBatch.triggered">
+<tt class="descname">triggered</tt><a class="headerlink" href="#enaml.session.DeferredMessageBatch.triggered" title="Permalink to this definition">¶</a></dt>
+<dd><p>A signal emitted when the tick count of the batch reaches zero
+and the owner of the batch should consume the messages.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.session.DeferredMessageBatch.__init__">
+<tt class="descname">__init__</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/session.html#DeferredMessageBatch.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.session.DeferredMessageBatch.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize a DeferredMessageBatch.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.session.DeferredMessageBatch.release">
+<tt class="descname">release</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/session.html#DeferredMessageBatch.release"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.session.DeferredMessageBatch.release" title="Permalink to this definition">¶</a></dt>
+<dd><p>Release the messages that were added to the batch.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (list) &#8211; The list of messages added to the batch.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.session.DeferredMessageBatch.add_message">
+<tt class="descname">add_message</tt><big>(</big><em>message</em><big>)</big><a class="reference internal" href="../_modules/enaml/session.html#DeferredMessageBatch.add_message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.session.DeferredMessageBatch.add_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a message to the batch.</p>
+<p>This will cause the batch to tick up and then start the tick
+down process if necessary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><em>object</em></a>) &#8211; The message object to add to the batch.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.session.DeferredMessageBatch.__weakref__">
+<tt class="descname">__weakref__</tt><a class="headerlink" href="#enaml.session.DeferredMessageBatch.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="enaml.session.URLReply">
+<em class="property">class </em><tt class="descclassname">enaml.session.</tt><tt class="descname">URLReply</tt><big>(</big><em>session</em>, <em>req_id</em>, <em>url</em><big>)</big><a class="reference internal" href="../_modules/enaml/session.html#URLReply"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.session.URLReply" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>A reply object for sending a loaded resource to a client session.</p>
+<dl class="method">
+<dt id="enaml.session.URLReply.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>session</em>, <em>req_id</em>, <em>url</em><big>)</big><a class="reference internal" href="../_modules/enaml/session.html#URLReply.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.session.URLReply.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize a URLReply.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>session</strong> (<em>Session</em>) &#8211; The session object for which the image is being loaded.</li>
+<li><strong>req_id</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The identifier that was sent with the originating request.
+This identifier will be included in the response.</li>
+<li><strong>url</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The url that was sent with the originating request. This
+url will be included in the response.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.session.URLReply.__call__">
+<tt class="descname">__call__</tt><big>(</big><em>resource</em><big>)</big><a class="reference internal" href="../_modules/enaml/session.html#URLReply.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.session.URLReply.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send the reply to the client session.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resource</strong> (<em>Resource</em>) &#8211; The loaded resource object, or None if the resource failed
+to load.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="enaml.session.Session">
+<em class="property">class </em><tt class="descclassname">enaml.session.</tt><tt class="descname">Session</tt><a class="reference internal" href="../_modules/enaml/session.html#Session"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.session.Session" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">traits.has_traits.HasTraits</span></tt></p>
+<p>An object representing the session between a client and its
+Enaml objects.</p>
+<p>The session object is what ensures that each client has their own
+individual instances of objects, so that the only state that is
+shared between simultaneously existing clients is that which is
+explicitly provided by the developer.</p>
+<dl class="attribute">
+<dt id="enaml.session.Session.session_id">
+<tt class="descname">session_id</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.session.Session.session_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>The string identifier for this session. This is provided by
+the application when the session is opened. The value should
+not be manipulated by user code.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.session.Session.windows">
+<tt class="descname">windows</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.session.Session.windows" title="Permalink to this definition">¶</a></dt>
+<dd><p>The top level windows which are managed by this session. This
+should be populated by user code during the <cite>on_open</cite> method.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.session.Session.widget_groups">
+<tt class="descname">widget_groups</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.session.Session.widget_groups" title="Permalink to this definition">¶</a></dt>
+<dd><p>The widget implementation groups which should be used by the
+widgets in this session. Widget groups are an advanced feature
+which allow the developer to selectively expose toolkit specific
+implementations of Enaml widgets. All standard Enaml widgets are
+available in the &#8216;default&#8217; group. This value will rarely need to
+be changed by the user.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.session.Session.resource_manager">
+<tt class="descname">resource_manager</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.session.Session.resource_manager" title="Permalink to this definition">¶</a></dt>
+<dd><p>A resource manager used for loading resources for the session.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.session.Session.socket">
+<tt class="descname">socket</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.session.Session.socket" title="Permalink to this definition">¶</a></dt>
+<dd><p>The socket used by this session for communication. This is
+provided by the Application when the session is activated.
+The value should not normally be manipulated by user code.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.session.Session.state">
+<tt class="descname">state</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.session.Session.state" title="Permalink to this definition">¶</a></dt>
+<dd><p>The current state of the session. This value is changed by the
+by the application as it drives the session through its lifetime.
+This should not be manipulated directly by user code.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.session.Session.is_inactive">
+<tt class="descname">is_inactive</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.session.Session.is_inactive" title="Permalink to this definition">¶</a></dt>
+<dd><p>A read-only property which is True if the session is inactive.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.session.Session.is_opening">
+<tt class="descname">is_opening</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.session.Session.is_opening" title="Permalink to this definition">¶</a></dt>
+<dd><p>A read-only property which is True if the session is opening.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.session.Session.is_opened">
+<tt class="descname">is_opened</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.session.Session.is_opened" title="Permalink to this definition">¶</a></dt>
+<dd><p>A read-only property which is True if the session is opened.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.session.Session.is_activating">
+<tt class="descname">is_activating</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.session.Session.is_activating" title="Permalink to this definition">¶</a></dt>
+<dd><p>A read-only property which is True if the session is activating.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.session.Session.is_active">
+<tt class="descname">is_active</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.session.Session.is_active" title="Permalink to this definition">¶</a></dt>
+<dd><p>A read-only property which is True if the session is active.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.session.Session.is_closing">
+<tt class="descname">is_closing</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.session.Session.is_closing" title="Permalink to this definition">¶</a></dt>
+<dd><p>A read-only property which is True if the session is closing.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.session.Session.is_closed">
+<tt class="descname">is_closed</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.session.Session.is_closed" title="Permalink to this definition">¶</a></dt>
+<dd><p>A read-only property which is True if the session is closed.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="enaml.session.Session.factory">
+<em class="property">classmethod </em><tt class="descname">factory</tt><big>(</big><em>name=''</em>, <em>description=''</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/enaml/session.html#Session.factory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.session.Session.factory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a SessionFactory instance for this Session class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<em>str, optional</em>) &#8211; The name to use for the session instances. The default uses
+the class name.</li>
+<li><strong>description</strong> (<em>str, optional</em>) &#8211; A human friendly description of the session. The default uses
+the class docstring.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt><a href="#id21"><span class="problematic" id="id22">*</span></a>args, <a href="#id23"><span class="problematic" id="id24">**</span></a>kwargs</dt>
+<dd>Any positional and keyword arguments to pass to the session
+when it is instantiated.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.session.Session.on_open">
+<tt class="descname">on_open</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/session.html#Session.on_open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.session.Session.on_open" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called by the application when the session is opened.</p>
+<p>This method must be implemented in a subclass and is called to
+create the Enaml objects for the session. This method will only
+be called once during the session lifetime. User code should
+create their windows and assign them to the list of <cite>windows</cite>
+before the method returns.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.session.Session.on_close">
+<tt class="descname">on_close</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/session.html#Session.on_close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.session.Session.on_close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called by the application when the session is closed.</p>
+<p>This method may be optionally implemented by subclasses so that
+they can perform custom cleaup. After this method returns, the
+session should be considered invalid. This method is only called
+once during the session lifetime.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.session.Session.open">
+<tt class="descname">open</tt><big>(</big><em>session_id</em><big>)</big><a class="reference internal" href="../_modules/enaml/session.html#Session.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.session.Session.open" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called by the application to open the session.</p>
+<p>This method will call the <cite>on_open</cite> abstract method which must
+be implemented by subclasses. The method should never be called
+by user code.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>session_id</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The unique identifier to use for this session.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.session.Session.activate">
+<tt class="descname">activate</tt><big>(</big><em>socket</em><big>)</big><a class="reference internal" href="../_modules/enaml/session.html#Session.activate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.session.Session.activate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called by the application to activate the session and its
+windows.</p>
+<p>This method will be called by the Application once during the
+session lifetime. Once this method returns, the session and
+its objects will be ready to send and receive messages. This
+should never be called by user code.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>socket</strong> (<em>ActionSocketInterface</em>) &#8211; A concrete implementation of ActionSocketInterface to use
+for messaging by this session.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.session.Session.close">
+<tt class="descname">close</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/session.html#Session.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.session.Session.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called by the application when the session is closed.</p>
+<p>This method will call the <cite>on_close</cite> method which can optionally
+be implemented by subclasses. The method should never be called
+by user code.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.session.Session.snapshot">
+<tt class="descname">snapshot</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/session.html#Session.snapshot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.session.Session.snapshot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a snapshot of the windows of this session.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (list) &#8211; A list of snapshots representing the current windows for this session.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.session.Session.register">
+<tt class="descname">register</tt><big>(</big><em>obj</em><big>)</big><a class="reference internal" href="../_modules/enaml/session.html#Session.register"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.session.Session.register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register an object with the session.</p>
+<p>This method is called by an Object when it is activated by a
+Session. It should never be called by user code.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>obj</strong> (<em>Object</em>) &#8211; The object to register with the session.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.session.Session.unregister">
+<tt class="descname">unregister</tt><big>(</big><em>obj</em><big>)</big><a class="reference internal" href="../_modules/enaml/session.html#Session.unregister"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.session.Session.unregister" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unregister an object from the session.</p>
+<p>This method is called by an Object when it is being destroyed.
+It should never be called by user code.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>obj</strong> (<em>Object</em>) &#8211; The object to unregister from the session.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.session.Session.send">
+<tt class="descname">send</tt><big>(</big><em>object_id</em>, <em>action</em>, <em>content</em><big>)</big><a class="reference internal" href="../_modules/enaml/session.html#Session.send"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.session.Session.send" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send a message to a client object.</p>
+<p>This method is called by the <cite>Object</cite> instances owned by this
+session to send messages to their client implementations.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>object_id</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The object id of the client object.</li>
+<li><strong>action</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The action that should be performed by the object.</li>
+<li><strong>content</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; The content dictionary for the action.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.session.Session.on_message">
+<tt class="descname">on_message</tt><big>(</big><em>object_id</em>, <em>action</em>, <em>content</em><big>)</big><a class="reference internal" href="../_modules/enaml/session.html#Session.on_message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.session.Session.on_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Receive a message sent to an object owned by this session.</p>
+<p>This is a handler method registered as the callback for the
+action socket. The message will be routed to the appropriate
+<cite>Object</cite> instance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>object_id</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The object id of the target object.</li>
+<li><strong>action</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The action that should be performed by the object.</li>
+<li><strong>content</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; The content dictionary for the action.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.session.Session.on_action_url_request">
+<tt class="descname">on_action_url_request</tt><big>(</big><em>content</em><big>)</big><a class="reference internal" href="../_modules/enaml/session.html#Session.on_action_url_request"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.session.Session.on_action_url_request" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the &#8216;url_request&#8217; action from the client session.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.session.Session.__implements__">
+<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.session.Session.__implements__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-enaml.session_factory">
+<span id="session-factory-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">session_factory</span></tt> Module<a class="headerlink" href="#module-enaml.session_factory" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="enaml.session_factory.SessionFactory">
+<em class="property">class </em><tt class="descclassname">enaml.session_factory.</tt><tt class="descname">SessionFactory</tt><big>(</big><em>name</em>, <em>description</em>, <em>session_class</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/enaml/session_factory.html#SessionFactory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.session_factory.SessionFactory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>A class whose instances are used by an Enaml Application to
+create Session instances.</p>
+<dl class="method">
+<dt id="enaml.session_factory.SessionFactory.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>name</em>, <em>description</em>, <em>session_class</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/enaml/session_factory.html#SessionFactory.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.session_factory.SessionFactory.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize a SessionFactory.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; A unique, human-friendly name for the Session that will be
+created.</li>
+<li><strong>description</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; A brief description of the Session that will be created.</li>
+<li><strong>session_class</strong> (<em>Session subclass</em>) &#8211; A concrete subclass of Session that will be created by this
+factory.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt><a href="#id25"><span class="problematic" id="id26">*</span></a>args, <a href="#id27"><span class="problematic" id="id28">**</span></a>kwargs</dt>
+<dd>Optional positional and keyword arguments to pass to the
+__init__() method of the Session that gets created.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.session_factory.SessionFactory.__call__">
+<tt class="descname">__call__</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/session_factory.html#SessionFactory.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.session_factory.SessionFactory.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called by the Enaml Application to create an instance of
+the Session.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (Session) &#8211; A new instance of the Session type provided to the factory.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.session_factory.SessionFactory.__weakref__">
+<tt class="descname">__weakref__</tt><a class="headerlink" href="#enaml.session_factory.SessionFactory.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-enaml.signaling">
+<span id="signaling-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">signaling</span></tt> Module<a class="headerlink" href="#module-enaml.signaling" title="Permalink to this headline">¶</a></h2>
+<dl class="attribute">
+<dt id="enaml.signaling.Signal">
+<tt class="descclassname">enaml.signaling.</tt><tt class="descname">Signal</tt><a class="reference internal" href="../_modules/enaml/signaling.html#Signal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.signaling.Signal" title="Permalink to this definition">¶</a></dt>
+<dd><p>A descriptor which provides notification functionality similar
+to Qt signals and slots.</p>
+<p>A Signal is used by creating an instance in the body of a class
+definition. Slots (callables) are connected to the signal through
+the <cite>connect</cite> and <cite>disconnect</cite> methods. A signal can be emitted by
+calling the <cite>emit</cite> method passing arbitrary positional and keyword
+arguments.</p>
+<p>If a bound method is connected to a signal, then that slot will be
+automatically disconnected when the underlying object instance is
+garbage collected.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="enaml.signaling.BoundSignal">
+<em class="property">class </em><tt class="descclassname">enaml.signaling.</tt><tt class="descname">BoundSignal</tt><big>(</big><em>signal</em>, <em>objref</em><big>)</big><a class="reference internal" href="../_modules/enaml/signaling.html#BoundSignal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.signaling.BoundSignal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>A bound Signal object.</p>
+<p>Instances of this class are created on the fly by a Signal. This
+class performs the actual work for connecting, disconnecting, and
+emitting signals.</p>
+<dl class="method">
+<dt id="enaml.signaling.BoundSignal.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>signal</em>, <em>objref</em><big>)</big><a class="reference internal" href="../_modules/enaml/signaling.html#BoundSignal.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.signaling.BoundSignal.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize a BoundSignal.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>signal</strong> (<em>Signal</em>) &#8211; The Signal instance which created this BoundSignal.</li>
+<li><strong>objref</strong> (<a class="reference external" href="http://docs.python.org/library/weakref.html#weakref" title="(in Python v2.7)"><em>weakref</em></a>) &#8211; A weak reference to the object which owns the signal. The
+weakref should not have been created with a callback, as
+the internal implementation depends on the semantics of
+weakrefs created without callbacks.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.signaling.BoundSignal.__eq__">
+<tt class="descname">__eq__</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="../_modules/enaml/signaling.html#BoundSignal.__eq__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.signaling.BoundSignal.__eq__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Custom equality checking for a BoundSignal.</p>
+<p>A BoundSignal will compare equal to another BoundSignal if the
+unerlying Signal and object reference are equal. This equality
+is part of the mechanism which allows a signal to be connected
+to another signal.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.signaling.BoundSignal.__call__">
+<tt class="descname">__call__</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/enaml/signaling.html#BoundSignal.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.signaling.BoundSignal.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Custom call support for a BoundSignal.</p>
+<p>Calling a signal is indentical invoking the <cite>emit</cite> method. By
+making a signal callable, it is possible to directly connect
+a signal to another signal.</p>
+<dl class="docutils">
+<dt><a href="#id29"><span class="problematic" id="id30">*</span></a>args, <a href="#id31"><span class="problematic" id="id32">**</span></a>kwargs</dt>
+<dd>The positional and keyword arguments to pass to the slots
+connected to the signal.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.signaling.BoundSignal.emit">
+<tt class="descname">emit</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/enaml/signaling.html#BoundSignal.emit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.signaling.BoundSignal.emit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Emit the signal with the given arguments and keywords.</p>
+<p>If a connected slot raises an exceptions, no further slots will
+be invoked and the exception will be bubbled up.</p>
+<dl class="docutils">
+<dt><a href="#id33"><span class="problematic" id="id34">*</span></a>args, <a href="#id35"><span class="problematic" id="id36">**</span></a>kwargs</dt>
+<dd>The positional and keyword arguments to pass to the slots
+connected to the signal.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.signaling.BoundSignal.connect">
+<tt class="descname">connect</tt><big>(</big><em>slot</em><big>)</big><a class="reference internal" href="../_modules/enaml/signaling.html#BoundSignal.connect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.signaling.BoundSignal.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connect the given slot to the signal.</p>
+<p>The slot will be called when the signal is emitted. It will be
+passed any positional and keyword arguments that were emitted
+with the signal. Multiple slots connected to a signal will be
+invoked in the order in which they were connected. Slots which
+are instance methods will be automatically disconnected when
+their underlying instance is garbage collected.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>slot</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#callable" title="(in Python v2.7)"><em>callable</em></a>) &#8211; The callable slot to invoke when the signal is emitted.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.signaling.BoundSignal.disconnect">
+<tt class="descname">disconnect</tt><big>(</big><em>slot</em><big>)</big><a class="reference internal" href="../_modules/enaml/signaling.html#BoundSignal.disconnect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.signaling.BoundSignal.disconnect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disconnect the slot from the signal.</p>
+<p>If the slot was not previously connected, this is a no-op.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>slot</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#callable" title="(in Python v2.7)"><em>callable</em></a>) &#8211; The callable slot to disconnect from the signal.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-enaml.socket_interface">
+<span id="socket-interface-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">socket_interface</span></tt> Module<a class="headerlink" href="#module-enaml.socket_interface" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="enaml.socket_interface.ActionSocketInterface">
+<em class="property">class </em><tt class="descclassname">enaml.socket_interface.</tt><tt class="descname">ActionSocketInterface</tt><a class="reference internal" href="../_modules/enaml/socket_interface.html#ActionSocketInterface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.socket_interface.ActionSocketInterface" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>An abstract base class defining an action socket interface.</p>
+<p>Concrete implementations of this interface can be used by Session
+instances to send and recieve messages to and from their client
+objects.</p>
+<dl class="attribute">
+<dt id="enaml.socket_interface.ActionSocketInterface.__metaclass__">
+<tt class="descname">__metaclass__</tt><a class="headerlink" href="#enaml.socket_interface.ActionSocketInterface.__metaclass__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">ABCMeta</span></tt></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.socket_interface.ActionSocketInterface.on_message">
+<tt class="descname">on_message</tt><big>(</big><em>callback</em><big>)</big><a class="reference internal" href="../_modules/enaml/socket_interface.html#ActionSocketInterface.on_message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.socket_interface.ActionSocketInterface.on_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register a callback for receiving messages sent by a
+client object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>callback</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#callable" title="(in Python v2.7)"><em>callable</em></a>) &#8211; A callable with an argument signature that is equivalent to
+the <cite>send</cite> method. If the callback is a bound method, then
+the lifetime of the callback will be bound to lifetime of
+the method owner object.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.socket_interface.ActionSocketInterface.send">
+<tt class="descname">send</tt><big>(</big><em>object_id</em>, <em>action</em>, <em>content</em><big>)</big><a class="reference internal" href="../_modules/enaml/socket_interface.html#ActionSocketInterface.send"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.socket_interface.ActionSocketInterface.send" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send an action to the client of an object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>object_id</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The object id for the Object sending the message.</li>
+<li><strong>action</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The action that should be take by the client object.</li>
+<li><strong>content</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; The dictionary of content needed to perform the action.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.socket_interface.ActionSocketInterface.__weakref__">
+<tt class="descname">__weakref__</tt><a class="headerlink" href="#enaml.socket_interface.ActionSocketInterface.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 <div class="section" id="module-enaml.utils">
 <span id="utils-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">utils</span></tt> Module<a class="headerlink" href="#module-enaml.utils" title="Permalink to this headline">¶</a></h2>
 <p>An amalgamation of utilities used throughout the Enaml framework.</p>
+<dl class="function">
+<dt id="enaml.utils.id_generator">
+<tt class="descclassname">enaml.utils.</tt><tt class="descname">id_generator</tt><big>(</big><em>stem</em><big>)</big><a class="reference internal" href="../_modules/enaml/utils.html#id_generator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.utils.id_generator" title="Permalink to this definition">¶</a></dt>
+<dd><p>A unique identifier generator.</p>
+<p>For a given stem, the returned generator is guaranteed to yield
+consecutively increasing identifiers using a randomly ordered
+base 62 charset. The identifiers are only guaranteed unique for a
+given instance of the generator. The randomness is employed to
+improve the hashing characteristics of the returned identifiers.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stem</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; A string stem to prepend to a incrementing integer value.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="enaml.utils.abstractclassmethod">
 <tt class="descclassname">enaml.utils.</tt><tt class="descname">abstractclassmethod</tt><a class="reference internal" href="../_modules/enaml/utils.html#abstractclassmethod"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.utils.abstractclassmethod" title="Permalink to this definition">¶</a></dt>
 <dd><p>A backport of the Python 3&#8217;s abc.abstractclassmethod.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="enaml.utils.LoopbackContext">
+<em class="property">class </em><tt class="descclassname">enaml.utils.</tt><tt class="descname">LoopbackContext</tt><big>(</big><em>guard</em>, <em>items</em><big>)</big><a class="reference internal" href="../_modules/enaml/utils.html#LoopbackContext"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.utils.LoopbackContext" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>A context manager generated by LoopbackGuard.</p>
+<p>Instances of this class manage acquiring and releasing the lock
+items for instances of LoopbackGuard.</p>
+<dl class="method">
+<dt id="enaml.utils.LoopbackContext.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>guard</em>, <em>items</em><big>)</big><a class="reference internal" href="../_modules/enaml/utils.html#LoopbackContext.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.utils.LoopbackContext.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize a LoopbackContext</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>guard</strong> (<em>LoopbackGuard</em>) &#8211; The loopback guard instance for which we will acquire the
+lock for the items.</li>
+<li><strong>items</strong> (<em>iterable</em>) &#8211; An iterable items which will be passed to the &#8216;acquire&#8217;
+method on the loopback guard.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.utils.LoopbackContext.__enter__">
+<tt class="descname">__enter__</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/utils.html#LoopbackContext.__enter__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.utils.LoopbackContext.__enter__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Acquire the guard lock on the lock items.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.utils.LoopbackContext.__exit__">
+<tt class="descname">__exit__</tt><big>(</big><em>exc_type</em>, <em>exc_value</em>, <em>traceback</em><big>)</big><a class="reference internal" href="../_modules/enaml/utils.html#LoopbackContext.__exit__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.utils.LoopbackContext.__exit__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Release the guard lock on the lock items.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="enaml.utils.LoopbackGuard">
+<em class="property">class </em><tt class="descclassname">enaml.utils.</tt><tt class="descname">LoopbackGuard</tt><a class="reference internal" href="../_modules/enaml/utils.html#LoopbackGuard"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.utils.LoopbackGuard" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>A guard object to protect against feedback loops.</p>
+<p>Instances of this class are used by objects to protect against
+loopback conditions while updating attributes. Instances of this
+class are callable and return a guarding context manager for the
+provided lock items. The guard can be tested for a locked item
+using the <cite>in</cite> keyword.</p>
+<dl class="method">
+<dt id="enaml.utils.LoopbackGuard.__init__">
+<tt class="descname">__init__</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/utils.html#LoopbackGuard.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.utils.LoopbackGuard.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize a loopback guard.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.utils.LoopbackGuard.__call__">
+<tt class="descname">__call__</tt><big>(</big><em>*items</em><big>)</big><a class="reference internal" href="../_modules/enaml/utils.html#LoopbackGuard.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.utils.LoopbackGuard.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a context manager which will guard the given items.</p>
+<dl class="docutils">
+<dt>items</dt>
+<dd>The items for which to acquire the guard from within the
+returned context manager. These items must be hashable.</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (LoopbackContext) &#8211; A context manager which will acquire the guard for the provided items.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.utils.LoopbackGuard.__contains__">
+<tt class="descname">__contains__</tt><big>(</big><em>item</em><big>)</big><a class="reference internal" href="../_modules/enaml/utils.html#LoopbackGuard.__contains__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.utils.LoopbackGuard.__contains__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns whether or not the given item is currently guarded.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>item</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><em>object</em></a>) &#8211; The item to check for guarded state.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (bool) &#8211; True if the item is currently guarded, False otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.utils.LoopbackGuard.acquire">
+<tt class="descname">acquire</tt><big>(</big><em>items</em><big>)</big><a class="reference internal" href="../_modules/enaml/utils.html#LoopbackGuard.acquire"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.utils.LoopbackGuard.acquire" title="Permalink to this definition">¶</a></dt>
+<dd><p>Acquire the guard for the given items.</p>
+<p>This method is normally called by the LoopbackContext returned
+by calling this instance. User code should not typically call
+this method directly. It is safe to call this method multiple
+times for and item, provided it is paired with the same number
+of calls to release(...). The guard will be released when the
+acquired count on the item reaches zeros.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>items</strong> (<em>iterable</em>) &#8211; An iterable of objects for which to acquire the guard. The
+items must be hashable.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.utils.LoopbackGuard.release">
+<tt class="descname">release</tt><big>(</big><em>items</em><big>)</big><a class="reference internal" href="../_modules/enaml/utils.html#LoopbackGuard.release"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.utils.LoopbackGuard.release" title="Permalink to this definition">¶</a></dt>
+<dd><p>Release the guard for the given lock items.</p>
+<p>This method is normally called by the LoopbackContext returned
+by calling this instance. User code should not normally call
+this method directly. It is safe to call this method multiple
+times for and item, provided it is paired with the same number
+of calls to acquire(...). The guard will be released when the
+acquired count on the item reaches zeros.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>items</strong> (<em>iterable</em>) &#8211; An iterable of objects for which to release the guard. The
+items must be hashable.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="enaml.utils.ObjectDict">
+<em class="property">class </em><tt class="descclassname">enaml.utils.</tt><tt class="descname">ObjectDict</tt><a class="reference internal" href="../_modules/enaml/utils.html#ObjectDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.utils.ObjectDict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">dict</span></tt></a></p>
+<p>A dict subclass which exposes its keys as attributes.</p>
+<dl class="attribute">
+<dt id="enaml.utils.ObjectDict.__weakref__">
+<tt class="descname">__weakref__</tt><a class="headerlink" href="#enaml.utils.ObjectDict.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="enaml.utils.log_exceptions">
+<tt class="descclassname">enaml.utils.</tt><tt class="descname">log_exceptions</tt><big>(</big><em>func</em><big>)</big><a class="reference internal" href="../_modules/enaml/utils.html#log_exceptions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.utils.log_exceptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>A decorator which will catch errors raised by a function and
+convert them into log error messages.</p>
+<p>When a decorated function raises an Exception, the return value
+will be None.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="enaml.utils.make_dispatcher">
+<tt class="descclassname">enaml.utils.</tt><tt class="descname">make_dispatcher</tt><big>(</big><em>prefix</em>, <em>logger=None</em><big>)</big><a class="reference internal" href="../_modules/enaml/utils.html#make_dispatcher"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.utils.make_dispatcher" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a function which will dispatch arguments to specially
+named handler methods on an object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The string to prefix to all dispatch names to construct the
+name of the handler method.</li>
+<li><strong>logger</strong> (<em>logging.Logger, optional</em>) &#8211; A logger to use for logging handler lookup misses.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>result</strong> (types.FunctionType) &#8211; A function with the signature func(obj, name, <a href="#id37"><span class="problematic" id="id38">*</span></a>args). Calling it is equivalent to <cite>getattr(obj, prefix + name)(*args)</cite></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-enaml.version">
+<span id="version-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">version</span></tt> Module<a class="headerlink" href="#module-enaml.version" title="Permalink to this headline">¶</a></h2>
+<p>The version information for this release of Enaml.</p>
+</div>
+<div class="section" id="module-enaml.weakmethod">
+<span id="weakmethod-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">weakmethod</span></tt> Module<a class="headerlink" href="#module-enaml.weakmethod" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="enaml.weakmethod.WeakMethod">
+<em class="property">class </em><tt class="descclassname">enaml.weakmethod.</tt><tt class="descname">WeakMethod</tt><a class="reference internal" href="../_modules/enaml/weakmethod.html#WeakMethod"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.weakmethod.WeakMethod" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>An object which weakly binds a method with a lifetime bound
+to the lifetime of the underlying object.</p>
+<p>Instances of WeakMethod are also weakref-able with a lifetime which
+is also bound to lifetime of the method owner.</p>
+<p>If multiple WeakMethods are requested for the same equivalent method
+object, the same WeakMethod will be returned. This behavior is the
+same as the standard weakref semantics.</p>
+<dl class="staticmethod">
+<dt id="enaml.weakmethod.WeakMethod.__new__">
+<em class="property">static </em><tt class="descname">__new__</tt><big>(</big><em>method</em><big>)</big><a class="reference internal" href="../_modules/enaml/weakmethod.html#WeakMethod.__new__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.weakmethod.WeakMethod.__new__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new WeakMethod instance or return an equivalent
+which already exists.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>method</strong> (<em>A bound method object</em>) &#8211; The bound method which should be wrapped weakly.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.weakmethod.WeakMethod.__call__">
+<tt class="descname">__call__</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/enaml/weakmethod.html#WeakMethod.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.weakmethod.WeakMethod.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Invoke the wrapped method by reconstructing the bound
+method from its components.</p>
+<p>If the underlying instance object has been destroyed, this
+method will return None.</p>
+<dl class="docutils">
+<dt><a href="#id39"><span class="problematic" id="id40">*</span></a>args, <a href="#id41"><span class="problematic" id="id42">**</span></a>kwargs</dt>
+<dd>The positional and keyword arguments to pass to the method.</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.weakmethod.WeakMethod.__weakref__">
+<tt class="descname">__weakref__</tt><a class="headerlink" href="#enaml.weakmethod.WeakMethod.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -660,7 +1925,7 @@ than one.</p>
         <li class="right" >
           <a href="index.html" title="Enaml API Reference"
              >previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml API Reference</a> &raquo;</li>
   
     <li><a href="#">enaml</a></li>
@@ -670,7 +1935,7 @@ than one.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jun 12, 2012.
+      Last updated on Dec 13, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

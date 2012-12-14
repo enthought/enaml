@@ -1,0 +1,228 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.core.funchelper &mdash; enaml 0.6.3 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.6.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.6.3 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.core.funchelper</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.core.funchelper</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2012, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">FunctionType</span>
+<span class="kn">from</span> <span class="nn">ctypes</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">pythonapi</span><span class="p">,</span> <span class="n">py_object</span><span class="p">,</span> <span class="n">c_int</span><span class="p">,</span> <span class="n">c_size_t</span><span class="p">,</span> <span class="n">Structure</span><span class="p">,</span> <span class="n">ARRAY</span><span class="p">,</span> <span class="n">c_void_p</span>
+<span class="p">)</span>
+
+
+<span class="n">PyEval_EvalCodeEx</span> <span class="o">=</span> <span class="n">pythonapi</span><span class="o">.</span><span class="n">PyEval_EvalCodeEx</span>
+<span class="n">PyEval_EvalCodeEx</span><span class="o">.</span><span class="n">restype</span> <span class="o">=</span> <span class="n">py_object</span>
+<span class="n">PyEval_EvalCodeEx</span><span class="o">.</span><span class="n">argtypes</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">py_object</span><span class="p">,</span>      <span class="c"># code object</span>
+    <span class="n">py_object</span><span class="p">,</span>      <span class="c"># globals dict</span>
+    <span class="n">py_object</span><span class="p">,</span>      <span class="c"># locals mapping</span>
+    <span class="n">c_void_p</span><span class="p">,</span>       <span class="c"># args array (PyObject**)</span>
+    <span class="n">c_int</span><span class="p">,</span>          <span class="c"># num args</span>
+    <span class="n">c_void_p</span><span class="p">,</span>       <span class="c"># keywords array (PyObject**)</span>
+    <span class="n">c_int</span><span class="p">,</span>          <span class="c"># num keywords</span>
+    <span class="n">c_void_p</span><span class="p">,</span>       <span class="c"># defaults array (PyObject**)</span>
+    <span class="n">c_int</span><span class="p">,</span>          <span class="c"># num defaults</span>
+    <span class="n">py_object</span><span class="p">,</span>      <span class="c"># closure</span>
+<span class="p">]</span>
+
+
+<span class="k">class</span> <span class="nc">PyTupleObject</span><span class="p">(</span><span class="n">Structure</span><span class="p">):</span>
+    <span class="n">_fields_</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s">&#39;ob_refcnt&#39;</span><span class="p">,</span> <span class="n">c_size_t</span><span class="p">),</span>
+        <span class="p">(</span><span class="s">&#39;ob_type&#39;</span><span class="p">,</span> <span class="n">py_object</span><span class="p">),</span>
+        <span class="p">(</span><span class="s">&#39;ob_size&#39;</span><span class="p">,</span> <span class="n">c_size_t</span><span class="p">),</span>
+        <span class="p">(</span><span class="s">&#39;ob_item&#39;</span><span class="p">,</span> <span class="n">ARRAY</span><span class="p">(</span><span class="n">py_object</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+    <span class="p">]</span>
+<span class="n">OB_ITEM_OFFSET</span> <span class="o">=</span> <span class="n">PyTupleObject</span><span class="o">.</span><span class="n">ob_item</span><span class="o">.</span><span class="n">offset</span>
+
+
+<div class="viewcode-block" id="call_func"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.funchelper.call_func">[docs]</a><span class="k">def</span> <span class="nf">call_func</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">f_locals</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Call a function which has been modified by the Enaml compiler</span>
+<span class="sd">    to support tracing and dynamic scoping.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    func : types.FunctionType</span>
+<span class="sd">        The Python function to call.</span>
+
+<span class="sd">    args : tuple</span>
+<span class="sd">        The tuple of arguments to pass to the function.</span>
+
+<span class="sd">    kwargs : dict</span>
+<span class="sd">        The dictionary of keywords to pass to the function.</span>
+
+<span class="sd">    f_locals : mapping, optional</span>
+<span class="sd">        An optional locals mapping to use with the function.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    result : object</span>
+<span class="sd">        The result of calling the function.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">FunctionType</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;function must be a Python function&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;arguments must be a tuple&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;keywords must be a dict&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">f_locals</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">f_locals</span> <span class="o">=</span> <span class="n">py_object</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">f_locals</span><span class="p">,</span> <span class="s">&#39;__getitem__&#39;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;locals must be a mapping&#39;</span><span class="p">)</span>
+
+    <span class="n">num_args</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="n">args_array</span> <span class="o">=</span> <span class="n">c_void_p</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">+</span> <span class="n">OB_ITEM_OFFSET</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">keywords</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">:</span>
+            <span class="n">keywords</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="n">keywords</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">keywords</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">keywords</span><span class="p">)</span>
+        <span class="n">num_keywords</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">keywords</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">keywords</span> <span class="o">=</span> <span class="p">()</span>
+        <span class="n">num_keywords</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">keywords_array</span> <span class="o">=</span> <span class="n">c_void_p</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="n">keywords</span><span class="p">)</span> <span class="o">+</span> <span class="n">OB_ITEM_OFFSET</span><span class="p">)</span>
+
+    <span class="n">defaults</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">func_defaults</span> <span class="ow">or</span> <span class="p">()</span>
+    <span class="n">num_defaults</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">defaults</span><span class="p">)</span>
+    <span class="n">defaults_array</span> <span class="o">=</span> <span class="n">c_void_p</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="n">defaults</span><span class="p">)</span> <span class="o">+</span> <span class="n">OB_ITEM_OFFSET</span><span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">PyEval_EvalCodeEx</span><span class="p">(</span>
+        <span class="n">func</span><span class="o">.</span><span class="n">func_code</span><span class="p">,</span>
+        <span class="n">func</span><span class="o">.</span><span class="n">func_globals</span><span class="p">,</span>
+        <span class="n">f_locals</span><span class="p">,</span>
+        <span class="n">args_array</span><span class="p">,</span>
+        <span class="n">num_args</span><span class="p">,</span>
+        <span class="n">keywords_array</span><span class="p">,</span>
+        <span class="n">num_keywords</span><span class="p">,</span>
+        <span class="n">defaults_array</span><span class="p">,</span>
+        <span class="n">num_defaults</span><span class="p">,</span>
+        <span class="n">func</span><span class="o">.</span><span class="n">func_closure</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="c"># Use the faster version of `call_func` if it&#39;s available.</span></div>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">enaml.extensions.funchelper</span> <span class="kn">import</span> <span class="n">call_func</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">pass</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.core.funchelper</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Dec 13, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

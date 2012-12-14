@@ -1,8 +1,0 @@
-<map id="inheritancee7e4b1f4d1" name="inheritancee7e4b1f4d1">
-<area shape="rect" id="node19" href="enaml.components.constraints_widget.ConstraintsWidget.html#enaml.backends.qt.qt_constraints_widget.QtConstraintsWidget" title="QtConstraintsWidget" alt="" coords="414,30,493,45"/>
-<area shape="rect" id="node22" href="enaml.components.widget_component.WidgetComponent.html#enaml.backends.qt.qt_widget_component.QtWidgetComponent" title="QtWidgetComponent" alt="" coords="296,30,376,45"/>
-<area shape="rect" id="node23" href="enaml.components.base_widget_component.BaseWidgetComponent.html#enaml.backends.qt.qt_base_widget_component.QtBaseWidgetComponent" title="QtBaseWidgetComponent" alt="" coords="156,30,251,45"/>
-<area shape="rect" id="node5" href="enaml.components.abstract_item_view.AbstractItemView.html#enaml.backends.qt.qt_abstract_item_view.QtAbstractItemView" title="QtAbstractItemView" alt="" coords="619,30,695,45"/>
-<area shape="rect" id="node10" href="#enaml.backends.qt.qt_list_view.QtListView" title="QtListView" alt="" coords="719,16,765,31"/>
-<area shape="rect" id="node6" href="enaml.components.control.Control.html#enaml.backends.qt.qt_control.QtControl" title="QtControl" alt="" coords="534,30,577,45"/>
-</map>

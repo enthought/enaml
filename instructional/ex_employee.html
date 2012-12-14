@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Employee Example &mdash; enaml 0.2alpha documentation</title>
+    <title>Employee Example &mdash; enaml 0.6.3 documentation</title>
     
     <link rel="stylesheet" href="../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2alpha',
+        VERSION:     '0.6.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,9 +27,9 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2alpha documentation" href="../index.html" />
+    <link rel="top" title="enaml 0.6.3 documentation" href="../index.html" />
     <link rel="up" title="Examples Gallery" href="example.html" />
-    <link rel="next" title="Kitchen Sink Example" href="kitchen_sink.html" />
+    <link rel="next" title="Buttons Example" href="ex_buttons.html" />
     <link rel="prev" title="Person Example" href="ex_person.html" /> 
   </head>
   <body>
@@ -46,12 +46,12 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="kitchen_sink.html" title="Kitchen Sink Example"
+          <a href="ex_buttons.html" title="Buttons Example"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="ex_person.html" title="Person Example"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
           <li><a href="example.html" accesskey="U">Examples Gallery</a> &raquo;</li>
   
@@ -98,46 +98,58 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from enaml.layout.api import vertical, horizontal, align, spacer, vbox
+from enaml.widgets.api import (
+    Window, Label, Field, Form, DateSelector, CheckBox, GroupBox, Container,
+    PushButton
+)
+
 from phone_validator import PhoneNumberValidator
 
 
 enamldef EmployeeForm(Form):
     attr employee
-    attr show_employer: bool = False
+    attr show_employer: bool = True
     Label:
         text = "First name:"
     Field:
-        value := employee.first_name
+        text := employee.first_name
     Label:
         text = "Last name:"
     Field:
-        value := employee.last_name
+        text := employee.last_name
     Label:
         text = "Home phone:"
     Field:
-        value := employee.phone
         validator = PhoneNumberValidator()
-        bgcolor &lt;&lt; 'unacceptable' if not acceptable else 'none'
+        text &lt;&lt; '(%s) %s-%s' % employee.phone
+        text ::
+            match = validator.proper.match(text)
+            if match:
+                area = match.group(1)
+                prefix = match.group(2)
+                suffix = match.group(3)
+                employee.phone = tuple(map(int, (area, prefix, suffix)))
     Label:
         text = 'Date of Birth:'
-    DateEdit:
+    DateSelector:
         date := employee.dob
     Label:
         text = 'Age:'
     Label:
         text &lt;&lt; str(employee.age)
     Label:
-        text = 'Password'
+        text = 'Password:'
     Field:
-        password_mode &lt;&lt; 'password' if not pw_cb.checked else 'normal'
-        value :: print 'Password:', value
+        echo_mode &lt;&lt; 'password' if not pw_cb.checked else 'normal'
+        text :: print 'Password:', text
     Label:
         text = 'Show Password:'
-    CheckBox:
-        id: pw_cb
+    CheckBox: pw_cb:
         checked = False
-    ToggleButton:
+    PushButton:
         checked := show_employer
+        checkable = True
         text &lt;&lt; ('Hide' if show_employer else 'Show') + ' Employer Details'
 
 
@@ -146,49 +158,48 @@ enamldef EmployerForm(Form):
     Label:
         text = "Company:"
     Field:
-        value &lt;&lt; employer.company_name
+        text &lt;&lt; employer.company_name
         enabled &lt;&lt; en_cb.checked
     Label:
         text = "Reporting Manager:"
     Field:
-        value &lt;&lt; "%s %s" % (employer.first_name, employer.last_name)
+        text &lt;&lt; "%s %s" % (employer.first_name, employer.last_name)
         enabled &lt;&lt; en_cb.checked
     Label:
         text = "Allow Editing:"
-    CheckBox:
-        id: en_cb
+    CheckBox: en_cb:
         checked = True
 
 
-enamldef EmployeeView(MainWindow):
-    id: main
+enamldef EmployeeView(Window): main:
     attr employee
-
-    title &lt;&lt; "Employee Record for: %s, %s" % (employee.last_name, 
+    title &lt;&lt; "Employee Record for: %s, %s" % (employee.last_name,
                                               employee.first_name)
     Container:
         constraints &lt;&lt; [
-            vertical(top, top_box, bottom_box.when(bottom_box.visible), bottom),
+            vertical(
+                top, top_box, btm_box.when(btm_box.visible), spacer, bottom
+            ),
             horizontal(left, spacer.flex(), top_box, spacer.flex(), right),
-            horizontal(left, spacer.flex(), bottom_box, spacer.flex(), right),
-            align('midline', top_form, bottom_form, clear_invisible=False)
+            horizontal(left, spacer.flex(), btm_box, spacer.flex(), right),
+            align('midline', top_form, btm_form),
         ]
-        GroupBox:
-            id: top_box
+        GroupBox: top_box:
+            share_layout = True
             title = "Personal Details"
-            EmployeeForm:
-                id: top_form
+            EmployeeForm: top_form:
+                share_layout = True
                 # We access the employee object through the identifier
-                # 'main' here, because the EmployeeForm also has an 
-                # 'employee' attribute declared, and that would be 
+                # 'main' here, because the EmployeeForm also has an
+                # 'employee' attribute declared, and that would be
                 # found first.
                 employee = main.employee
-        GroupBox:
-            id: bottom_box
+        GroupBox: btm_box:
+            share_layout = True
             title = "Employer Details"
             visible &lt;&lt; top_form.show_employer
-            EmployerForm:
-                id: bottom_form
+            EmployerForm: btm_form:
+                share_layout = True
                 employer &lt;&lt; employee.boss
 
 </pre>
@@ -201,6 +212,9 @@ enamldef EmployeeView(MainWindow):
 <span class="kn">import</span> <span class="nn">datetime</span>
 
 <span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">HasTraits</span><span class="p">,</span> <span class="n">Str</span><span class="p">,</span> <span class="n">Int</span><span class="p">,</span> <span class="n">Instance</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Date</span><span class="p">,</span> <span class="n">Property</span>
+
+<span class="kn">import</span> <span class="nn">enaml</span>
+<span class="kn">from</span> <span class="nn">enaml.stdlib.sessions</span> <span class="kn">import</span> <span class="n">show_simple_view</span>
 
 
 <span class="k">class</span> <span class="nc">Person</span><span class="p">(</span><span class="n">HasTraits</span><span class="p">):</span>
@@ -262,67 +276,20 @@ enamldef EmployeeView(MainWindow):
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="c"># Create an employee with a boss</span>
-    <span class="n">boss_john</span> <span class="o">=</span> <span class="n">Employer</span><span class="p">(</span><span class="n">first_name</span><span class="o">=</span><span class="s">&#39;John&#39;</span><span class="p">,</span> <span class="n">last_name</span><span class="o">=</span><span class="s">&#39;Paw&#39;</span><span class="p">,</span> 
-                         <span class="n">company_name</span><span class="o">=</span><span class="s">&quot;Packrat&#39;s Cats&quot;</span><span class="p">)</span>
-    <span class="n">employee_mary</span> <span class="o">=</span> <span class="n">Employee</span><span class="p">(</span><span class="n">first_name</span><span class="o">=</span><span class="s">&#39;Mary&#39;</span><span class="p">,</span> <span class="n">last_name</span><span class="o">=</span><span class="s">&#39;Sue&#39;</span><span class="p">,</span> 
-                             <span class="n">boss</span><span class="o">=</span><span class="n">boss_john</span><span class="p">)</span>
+    <span class="n">boss_john</span> <span class="o">=</span> <span class="n">Employer</span><span class="p">(</span>
+        <span class="n">first_name</span><span class="o">=</span><span class="s">&#39;John&#39;</span><span class="p">,</span> <span class="n">last_name</span><span class="o">=</span><span class="s">&#39;Paw&#39;</span><span class="p">,</span> <span class="n">company_name</span><span class="o">=</span><span class="s">&quot;Packrat&#39;s Cats&quot;</span>
+    <span class="p">)</span>
+    <span class="n">employee_mary</span> <span class="o">=</span> <span class="n">Employee</span><span class="p">(</span>
+        <span class="n">first_name</span><span class="o">=</span><span class="s">&#39;Mary&#39;</span><span class="p">,</span> <span class="n">last_name</span><span class="o">=</span><span class="s">&#39;Sue&#39;</span><span class="p">,</span> <span class="n">boss</span><span class="o">=</span><span class="n">boss_john</span>
+    <span class="p">)</span>
 
     <span class="c"># Import our Enaml EmployeeView</span>
-    <span class="kn">import</span> <span class="nn">enaml</span>
     <span class="k">with</span> <span class="n">enaml</span><span class="o">.</span><span class="n">imports</span><span class="p">():</span>
         <span class="kn">from</span> <span class="nn">employee_view</span> <span class="kn">import</span> <span class="n">EmployeeView</span>
-    
+
     <span class="c"># Create a view and show it.</span>
     <span class="n">view</span> <span class="o">=</span> <span class="n">EmployeeView</span><span class="p">(</span><span class="n">employee</span><span class="o">=</span><span class="n">employee_mary</span><span class="p">)</span>
-    <span class="n">view</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-</div>
-<p><a class="reference download internal" href="../_downloads/phone_validator.py"><tt class="xref download docutils literal"><span class="pre">phone_converter.py</span></tt></a></p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c">#------------------------------------------------------------------------------</span>
-<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
-<span class="c">#  All rights reserved.</span>
-<span class="c">#------------------------------------------------------------------------------</span>
-<span class="kn">import</span> <span class="nn">re</span>
-
-<span class="kn">from</span> <span class="nn">enaml.validation</span> <span class="kn">import</span> <span class="n">AbstractValidator</span>
-
-
-<span class="k">class</span> <span class="nc">PhoneNumberValidator</span><span class="p">(</span><span class="n">AbstractValidator</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; A really dumb phone number validator.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">all_digits</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">r&#39;[0-9]{10}$&#39;</span><span class="p">)</span>
-
-    <span class="n">dashes</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">r&#39;([0-9]{3})\-([0-9]{3})\-([0-9]{4})$&#39;</span><span class="p">)</span>
-
-    <span class="n">proper</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">r&#39;\(([0-9]{3})\)\ ([0-9]{3})\-([0-9]{4})$&#39;</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
-        <span class="n">match</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">proper</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">dashes</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
-            <span class="n">area</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-            <span class="n">prefix</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-            <span class="n">suffix</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-            <span class="n">parts</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="p">(</span><span class="n">area</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">suffix</span><span class="p">)))</span>
-            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ACCEPTABLE</span><span class="p">,</span> <span class="n">parts</span><span class="p">)</span>
-        <span class="n">match</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_digits</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
-            <span class="n">area</span> <span class="o">=</span> <span class="n">text</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
-            <span class="n">prefix</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span>
-            <span class="n">suffix</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="mi">6</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
-            <span class="n">parts</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="p">(</span><span class="n">area</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">suffix</span><span class="p">)))</span>
-            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ACCEPTABLE</span><span class="p">,</span> <span class="n">parts</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">INTERMEDIATE</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate</span><span class="p">(</span><span class="n">text</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-    
-    <span class="k">def</span> <span class="nf">convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate</span><span class="p">(</span><span class="n">text</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
-    
-    <span class="k">def</span> <span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="n">area</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">suffix</span> <span class="o">=</span> <span class="n">value</span>
-        <span class="k">return</span> <span class="s">&#39;(</span><span class="si">%s</span><span class="s">) </span><span class="si">%s</span><span class="s">-</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">area</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">suffix</span><span class="p">)</span>
+    <span class="n">show_simple_view</span><span class="p">(</span><span class="n">view</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="highlight-python"><pre>$ python employee.py</pre>
@@ -349,12 +316,12 @@ enamldef EmployeeView(MainWindow):
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="kitchen_sink.html" title="Kitchen Sink Example"
+          <a href="ex_buttons.html" title="Buttons Example"
              >next</a> |</li>
         <li class="right" >
           <a href="ex_person.html" title="Person Example"
              >previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
           <li><a href="example.html" >Examples Gallery</a> &raquo;</li>
   
@@ -365,7 +332,7 @@ enamldef EmployeeView(MainWindow):
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jun 12, 2012.
+      Last updated on Dec 13, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

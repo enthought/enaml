@@ -1,0 +1,247 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.stdlib.sessions &mdash; enaml 0.6.3 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.6.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.6.3 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.stdlib.sessions</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.stdlib.sessions</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2012, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="sd">&quot;&quot;&quot; Enaml Standard Library - Sessions</span>
+
+<span class="sd">This module contains some Session subclasses and associated utilities that</span>
+<span class="sd">handle common Session use cases.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Iterable</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+
+<span class="kn">from</span> <span class="nn">enaml.session</span> <span class="kn">import</span> <span class="n">Session</span>
+<span class="kn">from</span> <span class="nn">enaml.session_factory</span> <span class="kn">import</span> <span class="n">SessionFactory</span>
+
+
+<div class="viewcode-block" id="SimpleSession"><a class="viewcode-back" href="../../../api_ref/enaml.stdlib.html#enaml.stdlib.sessions.SimpleSession">[docs]</a><span class="k">class</span> <span class="nc">SimpleSession</span><span class="p">(</span><span class="n">Session</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A concrete Session class that receives a callable, positional,</span>
+<span class="sd">    and keyword arguments and creates the associated view(s).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="SimpleSession.__init__"><a class="viewcode-back" href="../../../api_ref/enaml.stdlib.html#enaml.stdlib.sessions.SimpleSession.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sess_callable</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize the session with the callable and arguments.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SimpleSession</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sess_callable</span> <span class="o">=</span> <span class="n">sess_callable</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
+</div>
+<div class="viewcode-block" id="SimpleSession.on_open"><a class="viewcode-back" href="../../../api_ref/enaml.stdlib.html#enaml.stdlib.sessions.SimpleSession.on_open">[docs]</a>    <span class="k">def</span> <span class="nf">on_open</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Create the view from the callable</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sess_callable</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">windows</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">windows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+
+</div></div>
+<div class="viewcode-block" id="simple_session"><a class="viewcode-back" href="../../../api_ref/enaml.stdlib.html#enaml.stdlib.sessions.simple_session">[docs]</a><span class="k">def</span> <span class="nf">simple_session</span><span class="p">(</span><span class="n">sess_name</span><span class="p">,</span> <span class="n">sess_descr</span><span class="p">,</span> <span class="n">sess_callable</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Creates a SessionFactory instance for a callable.</span>
+
+<span class="sd">    This creates a SessionFactory instance which will create instances</span>
+<span class="sd">    of SimpleSession when prompted by the application.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    sess_name : str</span>
+<span class="sd">        A unique, human-friendly name for the session.</span>
+
+<span class="sd">    sess_descr : str</span>
+<span class="sd">        A brief description of the session.</span>
+
+<span class="sd">    sess_callable : callable</span>
+<span class="sd">        A callable which will return an Enaml view or iterable of views.</span>
+
+<span class="sd">    *args, **kwargs</span>
+<span class="sd">        Optional positional and keyword arguments to pass to the callable</span>
+<span class="sd">        when the session is created.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fact</span> <span class="o">=</span> <span class="n">SessionFactory</span><span class="p">(</span>
+        <span class="n">sess_name</span><span class="p">,</span> <span class="n">sess_descr</span><span class="p">,</span> <span class="n">SimpleSession</span><span class="p">,</span> <span class="n">sess_callable</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">fact</span>
+
+</div>
+<div class="viewcode-block" id="view_factory"><a class="viewcode-back" href="../../../api_ref/enaml.stdlib.html#enaml.stdlib.sessions.view_factory">[docs]</a><span class="k">def</span> <span class="nf">view_factory</span><span class="p">(</span><span class="n">sess_name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">sess_descr</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A decorator that creates a session factory from a callable.</span>
+
+<span class="sd">    This can be used in the following ways:</span>
+
+<span class="sd">        @view_factory</span>
+<span class="sd">        def view(...):</span>
+<span class="sd">            ...</span>
+<span class="sd">            return View(...)</span>
+
+<span class="sd">        @view_factory(&#39;my-views&#39;, &#39;This is several views&#39;)</span>
+<span class="sd">        def views(...):</span>
+<span class="sd">            ...</span>
+<span class="sd">            return [View1(...), View2(...)]</span>
+
+<span class="sd">        simple = view_factory(Main)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">_name</span><span class="p">,</span> <span class="n">_descr</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">_name</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">_name</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">__name__</span>
+        <span class="k">if</span> <span class="n">_descr</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">_descr</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">__doc__</span> <span class="ow">or</span> <span class="s">&#39;no description&#39;</span>
+        <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">closure</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">simple_session</span><span class="p">(</span><span class="n">_name</span><span class="p">,</span> <span class="n">_descr</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">closure</span>
+    <span class="k">if</span> <span class="n">sess_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="nb">callable</span><span class="p">(</span><span class="n">sess_name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">wrapper</span><span class="p">(</span><span class="n">sess_name</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">sess_descr</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_wrapper</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">wrapper</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">sess_name</span><span class="p">,</span> <span class="n">sess_descr</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_wrapper</span>
+
+</div>
+<div class="viewcode-block" id="show_simple_view"><a class="viewcode-back" href="../../../api_ref/enaml.stdlib.html#enaml.stdlib.sessions.show_simple_view">[docs]</a><span class="k">def</span> <span class="nf">show_simple_view</span><span class="p">(</span><span class="n">view</span><span class="p">,</span> <span class="n">toolkit</span><span class="o">=</span><span class="s">&#39;qt&#39;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Display a simple view to the screen in the local process.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    view : Object</span>
+<span class="sd">        The top level Object to use as the view.</span>
+
+<span class="sd">    toolkit : string, optional</span>
+<span class="sd">        The toolkit backend to use to display the view. Currently</span>
+<span class="sd">        supported values are &#39;qt&#39; and &#39;wx&#39;. The default is &#39;qt&#39;.</span>
+<span class="sd">        Note that not all functionality is available on Wx.</span>
+
+<span class="sd">    description : string, optional</span>
+<span class="sd">        An optional description to give to the session.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">view</span>
+    <span class="k">if</span> <span class="n">toolkit</span> <span class="o">==</span> <span class="s">&#39;qt&#39;</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">enaml.qt.qt_application</span> <span class="kn">import</span> <span class="n">QtApplication</span>
+        <span class="n">app</span> <span class="o">=</span> <span class="n">QtApplication</span><span class="p">([</span><span class="n">simple_session</span><span class="p">(</span><span class="s">&#39;main&#39;</span><span class="p">,</span> <span class="n">description</span><span class="p">,</span> <span class="n">f</span><span class="p">)])</span>
+    <span class="k">elif</span> <span class="n">toolkit</span> <span class="o">==</span> <span class="s">&#39;wx&#39;</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">enaml.wx.wx_application</span> <span class="kn">import</span> <span class="n">WxApplication</span>
+        <span class="n">app</span> <span class="o">=</span> <span class="n">WxApplication</span><span class="p">([</span><span class="n">simple_session</span><span class="p">(</span><span class="s">&#39;main&#39;</span><span class="p">,</span> <span class="n">description</span><span class="p">,</span> <span class="n">f</span><span class="p">)])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Unknown toolkit `</span><span class="si">%s</span><span class="s">`&#39;</span> <span class="o">%</span> <span class="n">toolkit</span><span class="p">)</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">start_session</span><span class="p">(</span><span class="s">&#39;main&#39;</span><span class="p">)</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">app</span>
+</pre></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.stdlib.sessions</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Dec 13, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

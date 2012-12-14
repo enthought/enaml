@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Progress Bar Example &mdash; enaml 0.2alpha documentation</title>
+    <title>ProgressBar Example &mdash; enaml 0.6.3 documentation</title>
     
     <link rel="stylesheet" href="../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2alpha',
+        VERSION:     '0.6.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,10 +27,10 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2alpha documentation" href="../index.html" />
+    <link rel="top" title="enaml 0.6.3 documentation" href="../index.html" />
     <link rel="up" title="Examples Gallery" href="example.html" />
-    <link rel="next" title="Progress Bar Timer Example" href="ex_progress_bar_timer.html" />
-    <link rel="prev" title="Kitchen Sink Example" href="kitchen_sink.html" /> 
+    <link rel="next" title="ScrollArea Example" href="ex_scroll_area.html" />
+    <link rel="prev" title="Notebook Example" href="ex_notebook.html" /> 
   </head>
   <body>
     <div class="related">
@@ -46,16 +46,16 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="ex_progress_bar_timer.html" title="Progress Bar Timer Example"
+          <a href="ex_scroll_area.html" title="ScrollArea Example"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="kitchen_sink.html" title="Kitchen Sink Example"
+          <a href="ex_notebook.html" title="Notebook Example"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
           <li><a href="example.html" accesskey="U">Examples Gallery</a> &raquo;</li>
   
-    <li><a href="#">Progress Bar Example</a></li>
+    <li><a href="#">ProgressBar Example</a></li>
   
 
       </ul>
@@ -91,78 +91,47 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="progress-bar-example">
-<h1>Progress Bar Example<a class="headerlink" href="#progress-bar-example" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="progressbar-example">
+<h1>ProgressBar Example<a class="headerlink" href="#progressbar-example" title="Permalink to this headline">¶</a></h1>
 <p><a class="reference download internal" href="../_downloads/progress_bar.enaml"><tt class="xref download docutils literal"><span class="pre">progress_bar.enaml</span></tt></a></p>
 <div class="highlight-python"><pre>#------------------------------------------------------------------------------
-#  Copyright (c) 2011, Enthought, Inc.
+#  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-""" ProgressBar component
+""" An example of the 'ProgressBar' widget.
 
-In this example, we demonstrate connecting a ProgressBar up to a model.
-This example is entirely synchronous for simplicity. The model will do 
-a chunk of work when the user presses a button. A more typical use case 
-would have a background thread or timer updating the work progress bar 
-as work is accomplished.
+This example demonstrates the use the `ProgressBar` widget by hooking
+it up to a `PushButton` widgets which simulates a work update.
 
 """
 import random
-
-from traits.api import HasTraits, Int
-
-
-class ProgressModel(HasTraits):
-    """ Model a process that does some work on command.
-
-    """
-    # The total units of work to do.
-    work_units = Int(1000)
-
-    # The number of units done.
-    units_done = Int(0)
-
-    def do_work(self):
-        """ Do a random amount of work.
-
-        """
-        nunits = random.randint(10, 100)
-        nunits = min(nunits, self.work_units - self.units_done)
-        self.units_done += nunits
-
-    def reset(self):
-        """ Reset the work done back to 0.
-        
-        """
-        self.units_done = 0
+from enaml.layout.api import hbox, align
+from enaml.widgets.api import (
+    Window, Container, ProgressBar, Label, PushButton
+)
 
 
-enamldef Main(MainWindow):
-    attr model: ProgressModel = ProgressModel()
+enamldef Main(Window):
     title = 'Progress Bar'
     Container:
         constraints = [
-            vbox(progress,
-                hbox(spacer, label, spacer), 
-                hbox(spacer, work_button, spacer),
-                spacer),
-            align('h_center', progress, label, work_button),
+            hbox(work_button, progress, label),
+            align('v_center', work_button, progress, label),
         ]
         ProgressBar:
             id: progress
-            value := model.units_done
-            maximum := model.work_units
         Label:
             id: label
             text &lt;&lt; '{0}% ({1}/{2})'.format(progress.percentage, progress.value, progress.maximum)
         PushButton:
             id: work_button
             text &lt;&lt; "Do Some Work" if progress.percentage &lt; 100 else "Reset"
-            clicked :: 
+            clicked ::
                 if progress.percentage &lt; 100:
-                    model.do_work()
+                    val = progress.value + random.randint(0, 10)
+                    progress.value = min(val, 100)
                 else:
-                    model.reset()
+                    progress.value = 0
 
 </pre>
 </div>
@@ -190,23 +159,23 @@ enamldef Main(MainWindow):
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="ex_progress_bar_timer.html" title="Progress Bar Timer Example"
+          <a href="ex_scroll_area.html" title="ScrollArea Example"
              >next</a> |</li>
         <li class="right" >
-          <a href="kitchen_sink.html" title="Kitchen Sink Example"
+          <a href="ex_notebook.html" title="Notebook Example"
              >previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
           <li><a href="example.html" >Examples Gallery</a> &raquo;</li>
   
-    <li><a href="#">Progress Bar Example</a></li>
+    <li><a href="#">ProgressBar Example</a></li>
   
 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jun 12, 2012.
+      Last updated on Dec 13, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

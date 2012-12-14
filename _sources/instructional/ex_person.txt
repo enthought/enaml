@@ -1,18 +1,18 @@
 Person Example
 ===============================================================================
 
-:download:`hello_world.enaml <../../../examples/person/person_view.enaml>`
+:download:`person_view.enaml <../../../examples/tutorial/person/person_view.enaml>`
 
-.. literalinclude:: ../../../examples/person/person_view.enaml
+.. literalinclude:: ../../../examples/tutorial/person/person_view.enaml
     :language: python
 
-:download:`hello_world.py<../../../examples/person/person.py>`
+:download:`person.py<../../../examples/tutorial/person/person.py>`
 
-.. literalinclude:: ../../../examples/person/person.py
+.. literalinclude:: ../../../examples/tutorial/person/person.py
     :language: python
 
 ::
 
- $ python person.py
+    $ python person.py
 
 .. image:: images/john_doe.png

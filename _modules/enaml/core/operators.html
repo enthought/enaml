@@ -1,0 +1,230 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.core.operators &mdash; enaml 0.6.3 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.6.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.6.3 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.core.operators</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.core.operators</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2012, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="sd">&quot;&quot;&quot; The default Enaml operators.</span>
+
+<span class="sd">The operator functions are called by the Enaml runtime to implement the</span>
+<span class="sd">expression binding semantics of the Enaml operators. The functions are</span>
+<span class="sd">passed a number of arguments in order to perform their work:</span>
+
+<span class="sd">Parameters</span>
+<span class="sd">----------</span>
+<span class="sd">obj : Declarative</span>
+<span class="sd">    The Declarative object which owns the expression which is being</span>
+<span class="sd">    bound.</span>
+
+<span class="sd">name : string</span>
+<span class="sd">    The name of the attribute on the object which is being bound.</span>
+
+<span class="sd">func : types.FunctionType</span>
+<span class="sd">    A function with bytecode that has been patched by the Enaml compiler</span>
+<span class="sd">    for semantics specific to the operator. The docs for each operator</span>
+<span class="sd">    given a more complete description of this function, since it varies</span>
+<span class="sd">    for each operator.</span>
+
+<span class="sd">identifiers : dict</span>
+<span class="sd">    The dictionary of identifiers available to the expression. This dict</span>
+<span class="sd">    is shared amongst all expressions within a given lexical scope. It</span>
+<span class="sd">    should therefore not be modified or copied since identifiers may</span>
+<span class="sd">    continue to be added to this dict as runtime execution continues.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">.expressions</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">SimpleExpression</span><span class="p">,</span> <span class="n">NotificationExpression</span><span class="p">,</span> <span class="n">SubscriptionExpression</span><span class="p">,</span>
+    <span class="n">UpdateExpression</span><span class="p">,</span> <span class="n">DelegationExpression</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="op_simple"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.operators.op_simple">[docs]</a><span class="k">def</span> <span class="nf">op_simple</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">identifiers</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; The default Enaml operator for `=` expressions.</span>
+
+<span class="sd">    This operator binds an instance of SimpleExpression to the attribute</span>
+<span class="sd">    on the object. The function takes no arguments and returns the value</span>
+<span class="sd">    of the expression. It is patched for dynamic scoping and it should be</span>
+<span class="sd">    invoked with `funchelper.call_func(...)`.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">expr</span> <span class="o">=</span> <span class="n">SimpleExpression</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">identifiers</span><span class="p">)</span>
+    <span class="n">obj</span><span class="o">.</span><span class="n">bind_expression</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">expr</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="op_notify"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.operators.op_notify">[docs]</a><span class="k">def</span> <span class="nf">op_notify</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">identifiers</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; The default Enaml operator for `::` expressions.</span>
+
+<span class="sd">    This operator binds an instance of NotificationExpression to the</span>
+<span class="sd">    attribute on the object. The function takes no arguments and will</span>
+<span class="sd">    return None. It is patched for dynamic scoping and it should be</span>
+<span class="sd">    invoked with `funchelper.call_func(...)`.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">expr</span> <span class="o">=</span> <span class="n">NotificationExpression</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">identifiers</span><span class="p">)</span>
+    <span class="n">obj</span><span class="o">.</span><span class="n">bind_listener</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">expr</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="op_update"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.operators.op_update">[docs]</a><span class="k">def</span> <span class="nf">op_update</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">identifiers</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; The default Enaml operator for `&gt;&gt;` expressions.</span>
+
+<span class="sd">    This operator binds an instance of UpdateExpression to the attribute</span>
+<span class="sd">    on the object. The function takes two arguments: a code inverter and</span>
+<span class="sd">    the new value of the attribute, and returns None. It is patched for</span>
+<span class="sd">    dynamic scoping and code inversion and it should be invoked with</span>
+<span class="sd">    `funchelper.call_func(...)`.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">expr</span> <span class="o">=</span> <span class="n">UpdateExpression</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">identifiers</span><span class="p">)</span>
+    <span class="n">obj</span><span class="o">.</span><span class="n">bind_listener</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">expr</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="op_subscribe"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.operators.op_subscribe">[docs]</a><span class="k">def</span> <span class="nf">op_subscribe</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">identifiers</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; The default Enaml operator for `&lt;&lt;` expressions.</span>
+
+<span class="sd">    This operator binds an instance of SubscriptionExpression to the</span>
+<span class="sd">    attribute on the object. The function takes one argument: a code</span>
+<span class="sd">    tracer, and returns the value of the expression. It is patched for</span>
+<span class="sd">    dynamic scoping and code tracing and it should be invoked with</span>
+<span class="sd">    `funchelper.call_func(...)`.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">expr</span> <span class="o">=</span> <span class="n">SubscriptionExpression</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">identifiers</span><span class="p">)</span>
+    <span class="n">obj</span><span class="o">.</span><span class="n">bind_expression</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">expr</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="op_delegate"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.operators.op_delegate">[docs]</a><span class="k">def</span> <span class="nf">op_delegate</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">identifiers</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; The default Enaml operator for `:=` expressions.</span>
+
+<span class="sd">    This operator binds an instance of DelegationExpression to the</span>
+<span class="sd">    attribute on the object. The semantics of the function are the same</span>
+<span class="sd">    as that of `op_subscribe`. The function also has an attribute named</span>
+<span class="sd">    `_update` which is a function implementing `op_update` semantics.</span>
+<span class="sd">    Both functions should be invoked with `funchelper.call_func(...)`.</span>
+<span class="sd">    In this fashion, `op_delegate` is the combination of `op_subscribe`</span>
+<span class="sd">    and `op_update`.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">expr</span> <span class="o">=</span> <span class="n">DelegationExpression</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">identifiers</span><span class="p">)</span>
+    <span class="n">obj</span><span class="o">.</span><span class="n">bind_expression</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">expr</span><span class="p">)</span>
+    <span class="n">obj</span><span class="o">.</span><span class="n">bind_listener</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">expr</span><span class="p">)</span>
+
+</div>
+<span class="n">OPERATORS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&#39;__operator_Equal__&#39;</span><span class="p">:</span> <span class="n">op_simple</span><span class="p">,</span>
+    <span class="s">&#39;__operator_LessLess__&#39;</span><span class="p">:</span> <span class="n">op_subscribe</span><span class="p">,</span>
+    <span class="s">&#39;__operator_ColonEqual__&#39;</span><span class="p">:</span> <span class="n">op_delegate</span><span class="p">,</span>
+    <span class="s">&#39;__operator_ColonColon__&#39;</span><span class="p">:</span> <span class="n">op_notify</span><span class="p">,</span>
+    <span class="s">&#39;__operator_GreaterGreater__&#39;</span><span class="p">:</span> <span class="n">op_update</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.6.3 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.core.operators</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Dec 13, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

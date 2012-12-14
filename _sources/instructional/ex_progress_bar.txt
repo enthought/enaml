@@ -1,9 +1,9 @@
-Progress Bar Example
+ProgressBar Example
 ===============================================================================
 
-:download:`progress_bar.enaml <../../../examples/components/progress_bar.enaml>`
+:download:`progress_bar.enaml <../../../examples/widgets/progress_bar.enaml>`
 
-.. literalinclude:: ../../../examples/components/progress_bar.enaml
+.. literalinclude:: ../../../examples/widgets/progress_bar.enaml
     :language: python
 
 ::

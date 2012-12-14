@@ -1,8 +1,0 @@
-<map id="inheritance86ac437cf0" name="inheritance86ac437cf0">
-<area shape="rect" id="node1" href="enaml.components.bounded_date.BoundedDate.html#enaml.backends.wx.wx_bounded_date.WXBoundedDate" title="WXBoundedDate" alt="" coords="626,3,689,17"/>
-<area shape="rect" id="node24" href="#enaml.backends.wx.wx_date_edit.WXDateEdit" title="WXDateEdit" alt="" coords="718,16,765,31"/>
-<area shape="rect" id="node2" href="enaml.components.control.Control.html#enaml.backends.wx.wx_control.WXControl" title="WXControl" alt="" coords="530,3,575,17"/>
-<area shape="rect" id="node6" href="enaml.components.constraints_widget.ConstraintsWidget.html#enaml.backends.wx.wx_constraints_widget.WXConstraintsWidget" title="WXConstraintsWidget" alt="" coords="405,3,484,17"/>
-<area shape="rect" id="node7" href="enaml.components.widget_component.WidgetComponent.html#enaml.backends.wx.wx_widget_component.WXWidgetComponent" title="WXWidgetComponent" alt="" coords="288,3,368,17"/>
-<area shape="rect" id="node11" href="enaml.components.base_widget_component.BaseWidgetComponent.html#enaml.backends.wx.wx_base_widget_component.WXBaseWidgetComponent" title="WXBaseWidgetComponent" alt="" coords="152,3,246,17"/>
-</map>

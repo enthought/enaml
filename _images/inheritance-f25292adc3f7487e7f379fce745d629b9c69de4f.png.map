@@ -1,7 +1,0 @@
-<map id="inheritancee5c9c9a44f" name="inheritancee5c9c9a44f">
-<area shape="rect" id="node1" href="enaml.components.constraints_widget.ConstraintsWidget.html#enaml.backends.wx.wx_constraints_widget.WXConstraintsWidget" title="WXConstraintsWidget" alt="" coords="476,3,570,20"/>
-<area shape="rect" id="node14" href="enaml.components.control.Control.html#enaml.backends.wx.wx_control.WXControl" title="WXControl" alt="" coords="614,3,666,20"/>
-<area shape="rect" id="node2" href="enaml.components.widget_component.WidgetComponent.html#enaml.backends.wx.wx_widget_component.WXWidgetComponent" title="WXWidgetComponent" alt="" coords="339,3,433,20"/>
-<area shape="rect" id="node8" href="enaml.components.base_widget_component.BaseWidgetComponent.html#enaml.backends.wx.wx_base_widget_component.WXBaseWidgetComponent" title="WXBaseWidgetComponent" alt="" coords="178,3,290,20"/>
-<area shape="rect" id="node13" href="#enaml.backends.wx.wx_spin_box.WXSpinBox" title="WXSpinBox" alt="" coords="710,19,765,36"/>
-</map>
