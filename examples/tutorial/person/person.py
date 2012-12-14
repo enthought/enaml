@@ -41,7 +41,9 @@ if __name__ == '__main__':
     john = Person(first_name='John', last_name='Doe', age=42)
     john.debug = True
 
-    session = simple_session('john', 'A view of the Person john', PersonView, person=john)
+    session = simple_session(
+        'john', 'A view of the Person john', PersonView, person=john
+    )
 
     app = QtApplication([session])
     app.start_session('john')
