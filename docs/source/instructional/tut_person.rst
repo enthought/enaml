@@ -5,7 +5,7 @@ John Doe tutorial
 
 This tutorial expands on the :ref:`"Hello World" Tutorial <hello-world>` to
 introduce the concepts of reusable component declarations and components from
-the standard widget library in |Enaml|. It sets up a GUI with the name and age 
+the standard widget library in |Enaml|. It sets up a GUI with the name and age
 of a person.
 
 Here is the |Enaml| file (:download:`download here
@@ -20,16 +20,16 @@ Here is the Python code (:download:`download here
 .. literalinclude:: ../../../examples/tutorial/person/person.py
     :language: python
 
-The resulting GUI looks like this (in Mac OS):
+The resulting GUI looks like this (on Mac OSX):
 
 .. image:: images/john_doe.png
 
 |Enaml| Imports
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-This .enaml file begins like the :ref:`"Hello World" <hello-world>` example
-with comments, but next we see that we can do imports in Enaml, just like in
-Python.::
+This ``.enaml`` file begins like the :ref:`"Hello World" <hello-world>` example
+with comments, but next we see that we can import other ``.enaml`` files in Enaml,
+just like we can import ``.py`` files.::
 
     from enaml.stdlib.fields import IntField
 
@@ -37,18 +37,18 @@ In this case, we are importing the integer field widget ``IntField`` from
 |Enaml|'s :ref:`standard widget library.<std-library-ref>` This widget
 lets us assign an integer to the ``value`` attribute of the widget. The
 widget automatically converts to and from the ``text`` representation of the
-integer complete with validation and error checking. Note that this import 
-points to a widget definition in an ``.enaml`` file. *The import statement 
-looks like Python but imports from an .enaml file.*
+integer complete with validation and error checking.
+
+Note that this import points to a widget definition in an ``.enaml`` file.
+*The import statement looks like Python but imports from an* ``.enaml`` *file.*
 
 
 ``PersonForm`` Definition Block
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Next, there is a new kind of code block, a **component definition**. We define
-a component, in this case an entry form, using a component hierarchy
-definition. With this block of code, we define a reusable component derived
-from other components.
+Next, there is a **component definition** block. We define a component, in this
+case an entry form, using a component hierarchy definition. With this block of
+code, we define a reusable component derived from other components.
 
 ::
 
@@ -66,19 +66,19 @@ from other components.
             text = 'Age'
         IntField:
             minimum = 0
-            value := person.age 
+            value := person.age
 
 A component definition block header line begins with ``enamldef`` followed by
 the name of the component followed by the base component or widget from which
-it inherits. A widget defined with ``enamldef`` must inherit from a builtin
-widget or another ``enamldef``. The header line ends with a colon::
+it inherits. *A widget defined with* ``enamldef`` *must inherit from a builtin
+widget or another* ``enamldef``. The header line ends with a colon::
 
     enamldef PersonForm(Form):
 
 Indented under the header line are statements declaring either attributes or
-children. ``attr person`` declares a ``person`` attribute of ``PersonForm``. 
-Because no value is specified, this attribute must be supplied by code which
-uses the ``PersonForm``.
+children. ``attr person`` declares a ``person`` attribute of ``PersonForm``.
+Because no default value is specified, this attribute must be supplied by code
+which uses the ``PersonForm``.
 
 Built-in Components
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -88,7 +88,8 @@ are all from the library of |Enaml| :ref:`built-in widgets. <widgets-ref>`
 
 :py:class:`~enaml.widgets.form.Form` is a built-in container that arranges
 alternating child components into two columns. This is typically done in the
-way seen here with alternating ``Label:`` and widget children. In a form with
+way seen here with alternating ``Label`` and widget children, though there
+are no restrictions on the types of widgets which can be used. In a form with
 an odd number of components, the last component spans both columns.
 
 :py:class:`~enaml.widgets.label.Label` is a built-in component for displaying
@@ -106,13 +107,13 @@ In the ``Field`` code block, we notice a new operator ``:=``. This is the
 the |Enaml| :ref:`grammar<grammar-ref>`. It sets up a two-way synchronization
 between the objects on the left-hand and right-hand sides. That is, changes to
 the value of the ``text`` field in the GUI widget are applied to the value of
-``person.first_name``, and changes to the value of ``person.first_name`` are 
+``person.first_name``, and changes to the value of ``person.first_name`` are
 displayed in the GUI component.
 
 Standard Library of Derived Components
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-The ``IntField`` component is derived from ``Field`` and provides a
+The ``IntField`` component is derived from ``Field`` and provides
 string-to-integer conversion, validation, and error reporting functions. By
 using the ``IntField`` component, we add validation to the GUI, as shown in the
 example below, where a non-integer value was entered in the age field:
@@ -140,13 +141,13 @@ Now, on to the Python code.
 Traits Object
 -------------------------------------------------------------------------------
 
-|Enaml| is designed to be model framework independent and ships with a formal 
-API for attaching to any Python model framework which provides notification of 
-state change. However, |Enaml| itself is built with Traits and will work 
+|Enaml| is designed to be model framework independent and ships with a formal
+API for attaching to any Python model framework which provides notification of
+state change. However, |Enaml| itself is built with Traits and will work
 with `Traits objects <http://code.enthought.com/projects/traits/>`_ out of the
-box. The important thing to note is that the ``Person`` attribute names match 
-the attribute names of the ``person`` object used by the ``PersonForm`` in the 
-.enaml file. 
+box. The important thing to note is that the ``Person`` attribute names match
+the attribute names of the ``person`` object used by the ``PersonForm`` in the
+.enaml file.
 ::
 
  class Person(HasTraits):
@@ -189,32 +190,31 @@ In the code block for launching the script from the command line, we create a
         import enaml
         with enaml.imports():
             from person_view import PersonView
-        
+
         john = Person(first_name='John', last_name='Doe', age=42)
         john.debug = True
 
 In the previous example, we have seen the simplest way of creating and
 rendering a view by using the ``show_simple_view`` function. In this example,
-we will get to the heart of Enaml by creating a session factory object and the
-Enaml application::
+we will go slightly lower level in Enaml by creating a session factory object
+and the Enaml application directly::
 
-        from enaml.stdlib.sessions import simple_session
+    from enaml.stdlib.sessions import simple_session
 
-        session = simple_session(
-            'john', 'A view of the Person john', PersonView, person=john
-        ) 
-    
-The first two arguments are a name and brief description of the session. The 
+    session = simple_session(
+        'john', 'A view of the Person john', PersonView, person=john
+    )
+
+The first two arguments are a name and brief description of the session. The
 third is the view that we want to use to create this session, in this case
 ``PersonView``.  Everything beyond this is optional, but we want
-to hook john as the Person instance used by the PersonView. 
+to hook john as the Person instance used by the PersonView.
 
 For writing traditional single-process GUI applications, this pattern will
 satisfy the majority of use-cases.
 
-
 Finally, we need to start the application and pass it a list of session
-factories, start the session named john and run the application.::
+factories, start a session named ``'john'`` and run the application::
 
 
         app = QtApplication([session])

@@ -26,8 +26,8 @@ Documentation
 Sphinx Configuration
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-A Sphinx extension, found in :py:mod:`enamldoc.sphinx_ext` lets Sphinx
-recognize and document |Enaml| objects. 
+A Sphinx extension ``enamldoc``, found in :py:mod:`enamldoc.sphinx_ext` lets
+Sphinx recognize and document |Enaml| objects.
 
 Sphinx Directives and Roles
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -38,7 +38,7 @@ Sphinx Directives and Roles
 
 ..  enaml:enaml_decl:: Foo(Bar)
 
-..  enaml:enaml_decl:: enaml.stdlib.fields.RandomField 
+..  enaml:enaml_decl:: enaml.stdlib.fields.RandomField
 
 .. rst:directive:: autoenaml_decl:: import.hierarchy.enaml_declaration
 
@@ -56,7 +56,7 @@ Sphinx Directives and Roles
     Automatically generate the object description from an |Enaml| file. Specify
     the object to describe as though you were importing it.
 
-.. rst:directive:: automodule:: 
+.. rst:directive:: automodule::
 
     automodule works for |Enaml| files as it does for python modules. No
     special syntax is necessary.
@@ -69,15 +69,6 @@ Sphinx Directives and Roles
 Including the Sphinx extension ``refactor_doc`` allows use of formatted
 docstrings as described below.
 
-Documentation
--------------------------------------------------------------------------------
-
-Sphinx Configuration
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-A Sphinx extension ``enamldoc`` lets Sphinx recognize and document |Enaml|
-objects.
-
 .. automodule:: enamldoc.sphinx_ext
     :members:
 
@@ -87,9 +78,6 @@ objects.
     enamldoc.sphinx_ext.DeclarativeDocumenter
     enamldoc.sphinx_ext.EnamlModuleDocumenter
 
-
-Including the Sphinx extension ``refactordoc`` allows use of formatted
-docstrings as described below.
 
 Sphinx Source
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -128,7 +116,7 @@ can be used as a template
 
 Docstrings
 ++++++++++
- 
+
 The current documentation uses the autodoc extension of the Sphinx
 distribution. The autodoc parsing is also extended to convert heading-based
 docstring descriptions to standard reStructedText role directives.

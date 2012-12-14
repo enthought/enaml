@@ -16,13 +16,14 @@ Goals
 
 The goals of the |Enaml| project are to:
 
-- Integrate well with `Traits <https://github.com/enthought/traits>`_ and
-  `Chaco <http://code.enthought.com/chaco/>`_ .
 - Help **separate** the presentation and content (i.e., MVC)
 - Allow a **single** script to work across *multiple* widget toolkits when
   using the default interfaces.
 - Be **extensible** and allow adaptation and addition of the base widgets
   with little effort.
+- Integrate well with `Traits <https://github.com/enthought/traits>`_
+- Have the ability to integrate with other model frameworks which support
+  the observer pattern.
 
 .. _dependencies:
 
@@ -40,8 +41,9 @@ recent (2012-current) versions of the following libraries:
   - `PySide <http://www.pyside.org/>`_
   - `PyQt4 <http://www.riverbankcomputing.co.uk/software/pyqt/intro>`_
   - `wxPython <http://www.wxpython.org/>`_ with a recent (> 0.9.1)
-    `agw <http://xoomer.virgilio.it/infinity77/AGW_Docs/index.html>`_
-    library (Windows only)
+    `agw <http://xoomer.virgilio.it/infinity77/AGW_Docs/index.html>`_ library
+    (only supported on Windows)
+
 - `PLY <http://www.dabeaz.com/ply/>`_ (Python Lex-Yacc),
   for parsing *.enaml* files
 - `casuarius <https://github.enthought.com/casuarius>`_ linear constraint
@@ -68,3 +70,13 @@ Alternatively you can work in developing mode::
 
     python setup.py develop
 
+Enaml ships with optional high performance C++ extensions. To build them,
+an enviroment variable must be set before running ``setup.py``
+
+On Windows::
+
+    set BUILD_ENAML_EXTENSIONS=1
+
+On OSX or Linux::
+
+    export BUILD_ENAML_EXTENSIONS=1

@@ -7,7 +7,7 @@ the widgets and core functionnalities.
 :mod:`fields` Module
 --------------------
 
-The following Fields all inherit from Field, and do the appropriate type
+The following fields all inherit from Field, and do the appropriate type
 of validation:
 
 .. autoenaml_decl:: enaml.stdlib.fields.IntField

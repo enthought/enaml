@@ -7,7 +7,9 @@ Tutorial Examples
 .. toctree::
 
     ex_hello_world
-    
+    ex_person
+    ex_employee
+
 Widget Examples
 -------------------------------------------------------------------------------
 

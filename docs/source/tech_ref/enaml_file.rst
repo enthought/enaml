@@ -1,8 +1,8 @@
 Writing .enaml Files
 ====================
 
-.. warning:: This documentation is not entirely current and may not reflect the
-    way Enaml currently works.
+.. warning:: This documentation is currently under development and may
+    be missing information.
 
 Enaml files contain a domain-specific language for specifying a user-interface
 and dynamically binding and computing values based on user interaction.
@@ -16,7 +16,7 @@ On the Python side, the Enaml code can be imported using a ``with`` statement
 to add the Enaml import hooks.  The ``enamldef`` blocks are then available as
 module-level functions that can be called normally from Python code.  Building
 the UI is then a matter of calling an Enaml ``enamldef`` to build the view, and
-returning that view from a ``Session`` instance. The parameters passed in to
+creating that view from a ``Session`` instance. The parameters passed in to
 the Enaml ``enamldef`` block from the Python side can be any Python or Enaml
 objects that would make sense to use within the Enaml code. For example, if you
 use an attribute of an object in the Enaml code, then passing an object without
@@ -36,23 +36,24 @@ Enaml uses constraints-based layout implemented by the Cassowary layout system.
 Constraints are specified as a system of linear inequalities together with an
 error function which is minimized according to a modified version of the Simplex
 method.  The error function is specified via assigning weights to the various
-inequalities.  The default weights exposed in Enaml are ``'weak'``, ``'strong'``
-and ``'required'``, but other values are possible within the system, if needed.
-While a developer writing Enaml code could specify all constraints
-directly, in practice they will use a set of helper classes, functions and
-attributes to help specify the set of constraints in a more understandable way.
+inequalities.  The default weights exposed in Enaml are ``'weak'``, ``'medium'``,
+``'strong'``, ``'required'``, and ``'ignored'``, but other values are possible
+within the system, if needed. While a developer writing Enaml code could specify
+all constraints directly, in practice they will use a set of helper classes,
+functions and attributes to help specify the set of constraints in a more
+understandable way.
 
 Every widget knows its preferred size, usually by querying the underlying toolkit,
-and can express how closely it adheres to the preferred size via its ``hug__width``,
-``hug_height``, ``resist_clip_width`` and ``resist_clip_height`` which take the
-a weight or ``'ignore'``.  These are set to reasonable defaults for most widgets,
-but they can be overriden. The ``hug`` attributes specify how strongly the widget
-resists expansion by adding a constraint of the appropriate weight that specifies
-that the dimension be equal to the preferred value, while the ``resist_clip``
+and can express how closely it adheres to the preferred size via its ``hug_width``,
+``hug_height``, ``resist_width`` and ``resist_height`` attribute which take one
+of the previously mentioned weights. These are set to reasonable defaults for most
+widgets, but they can be overriden. The ``hug`` attributes specify how strongly
+the widget resists expansion by adding a constraint of the appropriate weight that
+specifies that the dimension be equal to the preferred value, while the ``resist_clip``
 attributes specify how strongly the widget resists compression by adding a constraint
 that specifies that the dimension be greater than or equal to the preferred value.
 
-.. todo:: 
+.. todo::
     Example here
 
 Containers can specify additional constraints that relate their child widgets.
@@ -65,17 +66,18 @@ widgets to use to align with their significant features.
 Additional constraints are specified via the ``constraints`` attribute on the
 container.  The simplest way to specify a constraint is with a simple equality
 or inequality.  Inequalities can be specified in terms of symbols provided
-by the components, which at least default to the box model's symbols: ``top``,
-``bottom``, ``left``, ``right``, ``v_center``, ``h_center``, ``width`` and
-``height``.  Other components may expose other symbols: for example the Form
-widget exposes ``midline`` for aligning the fields of multiple forms along
-the same line.
+by the components, which at least default to the symbols for a basic box model:
+``top``, ``bottom``, ``left``, ``right``, ``v_center``, ``h_center``, ``width``
+and ``height``.  Other components may expose other symbols: for example the
+``Form`` widget exposes ``midline`` for aligning the fields of multiple forms
+along the same line, and a ``Container`` exposes various ``contents`` symbols
+to accound for padding around the boundaries of its children.
 
 .. todo::
      Example here
 
 However, this can get tedious, and so there are some helpers that are
-available to simply specifying layout.  These are:
+available to simplify specifying layout.  These are:
 
     ``spacer``
         A singleton spacer that represents a flexible space in a layout
@@ -98,6 +100,11 @@ available to simply specifying layout.  These are:
     ``align(variable, *items)``
         Align the given string variable name on each of the specified items.
 
+    ``grid(*rows, **config)``
+        A function which takes a variable number of iterable rows and
+        arranges the items in a grid according to the configuration
+        parameters.
+
 By using appropriate combinations of these objects you can specify complex layouts
 quickly and clearly.
 
@@ -109,14 +116,14 @@ Binding Operators
 
 `=`
     *Assignment*. RHS can be any expression. The assignment will be the
-    default value, but the value can be changed later through Python code or
-    expression execution.
+    default value, but the value can be changed later through Python code
+    or other expression execution.
 
 `:=`
-    *Delegation*. RHS must be a simple attribute expression, like foo.bar .
-    Non-attribute expressions here are a runtime error. The value of the
-    view property and value of the attribute are synced, but the type
-    checking of the view property is enforced.
+    *Delegation*. RHS must be a simple lvalue, like ``foo.bar`` or
+    ``spam[idx]``. Non-lvalue expressions here are a syntax error. The
+    value of the view property and value of the attribute are synced,
+    but the type checking of the view property is enforced.
 
 `<<`
     *Subscription*. RHS can be any expression. The expression will be parsed
@@ -126,13 +133,13 @@ Binding Operators
     will be updated.
 
 `>>`
-    *Update*. RHS must be a simple attribute expression. The attribute will
-    receive the view property's value any time it changes.
+    *Update*. RHS must be a simple lvalue. The attribute will receive the
+    view property's value any time it changes.
 
 `::`
-    *Notification*. RHS can be any expression. Additionally, an indented
-    block of code can also be used. The expression/block will be evaluated any
-    time the view property changes.
+    *Notification*. RHS can be any statement. Additionally, an indented
+    block of code can also be used. The statement/block will be evaluated
+    any time the view property changes.
 
 Scoping Rules
 -------------
@@ -146,4 +153,8 @@ Scoping Rules
   this local namespace in order to break naming conflicts between block
   locals and attribute names. To any C++ or Java developers, this will seem
   natural.
+- Each expression has a dynamic scope which exists between its local scope
+  and the global scope. This scope is the chained union of all attribute
+  namespaces of the ancestor tree of the object to which the expression
+  is bound.
 

@@ -14,8 +14,8 @@ Interface
 An Enaml widget's interface describes the attributes and events that the
 widget exposes as its API. Changes to these attributes and events cause
 message to be sent back and forth between the Enaml widget and a given
-toolkit implemenation. Enaml automatically orchestrates this message 
-passing in an asyncronous manner.
+toolkit implemenation. Enaml automatically orchestrates this message
+passing in an asynchronous manner.
 
 .. inheritance-diagram::
     enaml.widgets.abstract_button.AbstractButton
@@ -23,15 +23,20 @@ passing in an asyncronous manner.
     enaml.widgets.action_group.ActionGroup
     enaml.widgets.bounded_date.BoundedDate
     enaml.widgets.bounded_datetime.BoundedDatetime
+    enaml.widgets.bounded_time.BoundedTime
     enaml.widgets.calendar.Calendar
     enaml.widgets.check_box.CheckBox
     enaml.widgets.combo_box.ComboBox
     enaml.widgets.constraints_widget.ConstraintsWidget
     enaml.widgets.container.Container
+    enaml.widgets.control.Control
     enaml.widgets.date_selector.DateSelector
     enaml.widgets.datetime_selector.DatetimeSelector
     enaml.widgets.dock_pane.DockPane
     enaml.widgets.field.Field
+    enaml.widgets.file_dialog.FileDialog
+    enaml.widgets.flow_area.FlowArea
+    enaml.widgets.flow_item.FlowItem
     enaml.widgets.form.Form
     enaml.widgets.group_box.GroupBox
     enaml.widgets.html.Html
@@ -42,36 +47,43 @@ passing in an asyncronous manner.
     enaml.widgets.mdi_window.MdiWindow
     enaml.widgets.menu.Menu
     enaml.widgets.menu_bar.MenuBar
+    enaml.widgets.mpl_canvas.MPLCanvas
     enaml.widgets.notebook.Notebook
     enaml.widgets.page.Page
     enaml.widgets.progress_bar.ProgressBar
     enaml.widgets.push_button.PushButton
     enaml.widgets.radio_button.RadioButton
     enaml.widgets.scroll_area.ScrollArea
+    enaml.widgets.separator.Separator
     enaml.widgets.slider.Slider
     enaml.widgets.spin_box.SpinBox
+    enaml.widgets.split_item.SplitItem
     enaml.widgets.splitter.Splitter
     enaml.widgets.stack.Stack
     enaml.widgets.stack_item.StackItem
-    enaml.widgets.text_editor.TextEditor
+    enaml.widgets.time_selector.TimeSelector
     enaml.widgets.tool_bar.ToolBar
-    enaml.widgets.widget_component.WidgetComponent
+    enaml.widgets.traits_item.TraitsItem
+    enaml.widgets.web_view.WebView
+    enaml.widgets.widget.Widget
     enaml.widgets.window.Window
     :parts: 1
 
 
 Base widgets
-^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^
 
 .. autosummary::
     :toctree: widgets
     :template: widget.rst
 
-    enaml.widgets.widget_component.WidgetComponent
+    enaml.widgets.widget.Widget
     enaml.widgets.constraints_widget.ConstraintsWidget
+    enaml.widgets.control.Control
     enaml.widgets.abstract_button.AbstractButton
     enaml.widgets.bounded_date.BoundedDate
     enaml.widgets.bounded_datetime.BoundedDatetime
+    enaml.widgets.bounded_time.BoundedTime
 
 Standard widgets
 ^^^^^^^^^^^^^^^^
@@ -88,19 +100,24 @@ Standard widgets
     enaml.widgets.date_selector.DateSelector
     enaml.widgets.datetime_selector.DatetimeSelector
     enaml.widgets.field.Field
+    enaml.widgets.file_dialog.FileDialog
     enaml.widgets.html.Html
     enaml.widgets.image_view.ImageView
     enaml.widgets.label.Label
     enaml.widgets.menu.Menu
     enaml.widgets.menu_bar.MenuBar
+    enaml.widgets.mpl_canvas.MPLCanvas
     enaml.widgets.progress_bar.ProgressBar
     enaml.widgets.push_button.PushButton
     enaml.widgets.radio_button.RadioButton
+    enaml.widgets.separator.Separator
     enaml.widgets.slider.Slider
     enaml.widgets.spin_box.SpinBox
-    enaml.widgets.text_editor.TextEditor
+    enaml.widgets.time_selector.TimeSelector
     enaml.widgets.tool_bar.ToolBar
-    
+    enaml.widgets.traits_item.TraitsItem
+    enaml.widgets.web_view.WebView
+
 
 Window widgets
 ^^^^^^^^^^^^^^^^^
@@ -123,12 +140,15 @@ Container and Layout widgets
 
     enaml.widgets.container.Container
     enaml.widgets.dock_pane.DockPane
+    enaml.widgets.flow_area.FlowArea
+    enaml.widgets.flow_item.FlowItem
     enaml.widgets.form.Form
     enaml.widgets.group_box.GroupBox
     enaml.widgets.mdi_area.MdiArea
     enaml.widgets.notebook.Notebook
     enaml.widgets.page.Page
     enaml.widgets.scroll_area.ScrollArea
+    enaml.widgets.split_item.SplitItem
     enaml.widgets.splitter.Splitter
     enaml.widgets.stack.Stack
     enaml.widgets.stack_item.StackItem
@@ -138,12 +158,11 @@ Standard library
 ^^^^^^^^^^^^^^^^
 
 A number of additional widget types are available in the standard widget
-library.  These are not top-level classes implemented in Python, but are 
+library.  These are not top-level classes implemented in Python, but are
 instead |Enaml| widgets implemented using ``enamldef`` declarations.
 
 .. toctree::
    :maxdepth: 2
 
     Standard Widget Library <std_library_ref>
-
 

@@ -1,7 +1,19 @@
 enaml.core
 ==========
 
-The :py:mod:`enaml.core` package contains all of Enaml's core functionality.
+The :py:mod:`enaml.core` package contains all of Enaml's core language functionality.
+
+
+:mod:`abstract_expressions` Module
+----------------------------------
+
+.. automodule:: enaml.core.abstract_expressions
+
+
+:mod:`code_tracing` Module
+--------------------------
+
+.. automodule:: enaml.core.code_tracing
 
 
 :mod:`compiler_helpers` Module
@@ -58,16 +70,22 @@ The :py:mod:`enaml.core` package contains all of Enaml's core functionality.
     :no-undoc-members:
 
 
+:mod:`funchelper` Module
+------------------------
+
+.. automodule:: enaml.core.funchelper
+
+
 :mod:`import_hooks` Module
 --------------------------
 
 .. automodule:: enaml.core.import_hooks
 
 
-:mod:`inverters` Module
------------------------
+:mod:`include` Module
+---------------------
 
-.. automodule:: enaml.core.inverters
+.. automodule:: enaml.core.include
 
 
 :mod:`lexer` Module
@@ -83,10 +101,15 @@ The :py:mod:`enaml.core` package contains all of Enaml's core functionality.
         add_endmarker
 
 
-:mod:`monitors` Module
-----------------------
+:mod:`messenger` Module
+-----------------------
 
-.. automodule:: enaml.core.monitors
+.. automodule:: enaml.core.messenger
+
+
+:mod:`object` Module
+--------------------
+.. automodule:: enaml.core.object
 
 
 :mod:`operator_context` Module
@@ -104,12 +127,6 @@ The :py:mod:`enaml.core` package contains all of Enaml's core functionality.
 --------------------
 
 .. automodule:: enaml.core.parser
-
-
-:mod:`signaling` Module
------------------------
-
-.. automodule:: enaml.core.signaling
 
 
 :mod:`trait_types` Module

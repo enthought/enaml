@@ -38,7 +38,7 @@ Example::
 
     enamldef MyView(Container):
         attr model
-        
+
         CheckBox:
             text = "Enabled"
             checked := model.enabled
@@ -55,9 +55,9 @@ Example::
 
     enamldef MyView(Container):
         attr model
-        
+
         ProgressBar:
-            value << model.progress_percentage
+            value << int(model.progress_percentage) + 1
 
 
 .. _update-opr:
@@ -67,14 +67,14 @@ Example::
 Use when you want to notify the external world about any changes in a
 variable/ui-element. Supports 'assignable' expressions on the right hand side.
 Assignable expressions are expressions that can be used on left hand side of
-Python "\=" operator. getattr is also supported as a special case and is set to
-be equivalent to attribute access expression.
+Python "\=" operator. ``getattr`` is also supported as a special case and is
+set to be equivalent to an attribute assignment expression.
 
 Example::
 
     enamldef MyView(Container):
         attr model
-        
+
         Slider:
             value >> model.value
 
@@ -85,7 +85,7 @@ Example::
 --------------------------
 Use when you just want to execute multiple statements whenever a
 variable/ui-element changes. '::' supports full Python grammar except:
-'def', 'class', 'lambda', 'return', and 'yield' on right hand side.
+'def', 'class', 'lambda', 'return', and 'yield' on the right hand side.
 
 Example::
 
@@ -95,5 +95,7 @@ Example::
             clicked ::
                 print "Somebody clicked me!"
                 do_something_about_it()
-
+        PushButton:
+            text = "Click Me Too!"
+            clicked :: print "Single line statement!"
 

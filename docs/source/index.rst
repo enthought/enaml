@@ -4,18 +4,21 @@ Welcome to Enaml's documentation!
 ====================================
 
 **E**\naml is **N**\ot **A** **M**\arkup **L**\anguage. |Enaml| is a library for
-building beautiful user interfaces with minimal effort. Enaml uses a constraints based layout
-system allowing users to easily express complex UI layouts. Enaml applications can transparently
-run on multiple backends (Qt and Wx) and on multiple operating systems (Windows, OSX, Linux).
+creating professional quality user interfaces with minimal effort. Enaml combines
+a domain specific declarative language with a constraints based layout system to
+allow users to easily define rich UIs with complex and flexible layouts. Enaml
+applications can transparently run on multiple backends (Qt and Wx) and on
+multiple operating systems (Windows, OSX, Linux).
 
 Other great Enaml features include
 
-    1) Architecture design that encourages Model View separation
-    2) Subscription based operators which allow state/events to freely flow between models and views
-    3) Ability to easily subclass widgets to override functionality of builtin widgets
-    4) Support for custom UI widgets
-    5) Class based widget design encourages re-use of UI code
-    6) Well documented code base that is easy to understand
+    1) Declarative UI specification langauge that is a strict superset of Python
+    2) Architecture design which encourages Model View separation
+    3) Subscription based operators which allow state and events to freely flow between models and views
+    4) Ability to easily subclass widgets to override functionality of builtin widgets
+    5) Support for custom UI widgets
+    6) Class based widget design encourages re-use of UI code
+    7) Well documented code base that is easy to understand
 
 
 .. toctree::

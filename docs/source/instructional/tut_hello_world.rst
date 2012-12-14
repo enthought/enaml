@@ -21,7 +21,7 @@ Use the ``enaml-run`` utility to run it from the command line with ::
 
     $ enaml-run hello_world_view.enaml
 
-The resulting GUI looks like this (in Mac OS):
+The resulting GUI looks like this (on Mac OSX):
 
 .. image:: images/hello_world.png
 
@@ -33,25 +33,25 @@ Enaml Definitions
 An |Enaml| view is made up of a series of component *definitions* that look a
 lot like Python classes. In the first line of code, we are defining a new
 component, ``Main``, which derives from ``Window``, a builtin widget in the
-|Enaml| standard library.
+|Enaml| library.
 
 ::
 
     enamldef Main(Window):
 
 With this line of code, we have defined the start of a *definition block*.
- 
+
 In general, we could call this almost anything we want, as long as it is a
-Python-valid name. In this case, however, by giving it the special name "Main"
-we get to run it from the command line with the ``enaml-run`` tool. 
-``enaml-run`` looks for a component named "Main" or a function named "main" 
-in an ".enaml" file and runs it as a standalone application.
+Python-valid name. In this case, however, by giving it the special name ``Main``
+we get to run it from the command line with the ``enaml-run`` tool.
+``enaml-run`` looks for a component named ``Main`` or a function named ``main``
+in an ``.enaml`` file and runs it as a standalone application.
 
 
 Definition Structure
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Inside a definition block, the view is defined in a hierarchical tree of 
+Inside a definition block, the view is defined in a hierarchical tree of
 widgets. `As in Python
 <http://docs.python.org/reference/lexical_analysis.html#indentation>`_ ,
 indentation is used to specify code block structure. That is, statements
@@ -68,8 +68,9 @@ lower indentation level. So in our simple example, the ``Container`` belongs to
 
 The view is made up of a ``Window`` containing a ``Container`` which in
 turn contains a ``Label``, whose ``text`` attribute is set equal to the
-``message`` attribute of ``Main``, which has a default value of 
-``Hello, world!``. This default value can be changed by the calling function.
+``message`` attribute of ``Main``, which has a default value of
+``"Hello, world!"``. This default value can be changed by the code which
+creates an instance of ``Main``.
 (We'll discuss this in more detail in the :ref:`next tutorial <john-doe>`.)
 
 Just like regular Python objects, the widgets used in an Enaml UI must be
@@ -96,20 +97,23 @@ the |Enaml| view.
 Enaml is an inherently asynchronous toolkit, with a server running an
 application which offers UI sessions that a client may view.  For this simple
 example, we'll be working with the client and server both running locally and
-in the same process.  Enaml has some utility functions to help with common
+in the same process. Enaml has some utility functions to help with these common
 situations.
 
-The only thing we need to to is to pass the view to the ``show_simple_view``
-function::
+The only thing we need to do is to pass the view to the ``show_simple_view``
+function, which can be imported from the Enaml standard library::
+
+    from enaml.stdlib.sessions import show_simple_view
 
     main_view = Main()
     show_simple_view(main_view)
 
-This function will take care of creating the session factory, the
-application, start the session and finally start the server.
+This function will take care of creating the server side session factory and
+application, spawning a client side session, and starting the applications
+main event loop.
 
-In the next example we will see how we can get to the lower level and control
-the session factory and how we interact with the application.
+In the next example we will see how we can get to the lower level and directly
+control the session and how we interact with the application.
 
 .. image:: images/hello_world_python.png
 
