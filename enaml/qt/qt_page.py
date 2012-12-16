@@ -263,7 +263,6 @@ class QtPage(QtWidget):
         """
         super(QtPage, self).create(tree)
         self.set_title(tree['title'])
-        self.set_tool_tip(tree['tool_tip'])
         self.set_closable(tree['closable'])
         self.widget().pageClosed.connect(self.on_page_closed)
 
@@ -328,12 +327,6 @@ class QtPage(QtWidget):
         """
         self.set_title(content['title'])
 
-    def on_action_set_tool_tip(self, content):
-        """ Handle the 'set_tool_tip' action from the Enaml widget.
-
-        """
-        self.set_tool_tip(content['tool_tip'])
-
     def on_action_set_closable(self, content):
         """ Handle the 'set_closable' action from the Enaml widget.
 
@@ -385,9 +378,4 @@ class QtPage(QtWidget):
         """
         self.widget().setClosable(closable)
 
-    def set_tool_tip(self, tool_tip):
-        """ Set the tooltip of the tab for this page.
-
-        """
-        self.widget().setToolTip(tool_tip)
 

@@ -24,9 +24,6 @@ class Page(Widget):
     #: The icon to user for the page in the notebook.
     # icon =
 
-    #: The tool tip to use for a page when the user hovers a tab.
-    tool_tip = Unicode
-
     #: Whether or not this individual page is closable. Note that the
     #: 'tabs_closable' flag on the parent Notebook must be set to True
     #: for this to have any effect.
@@ -49,7 +46,6 @@ class Page(Widget):
         """
         snap = super(Page, self).snapshot()
         snap['title'] = self.title
-        snap['tool_tip'] = self.tool_tip
         snap['closable'] = self.closable
         return snap
 
@@ -58,7 +54,7 @@ class Page(Widget):
 
         """
         super(Page, self).bind()
-        self.publish_attributes('title', 'tool_tip', 'closable')
+        self.publish_attributes('title', 'closable')
 
     #--------------------------------------------------------------------------
     # Private API
