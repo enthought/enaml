@@ -350,4 +350,3 @@ class WxPage(WxWidget):
         """
         self.widget().SetClosable(closable)
 
-

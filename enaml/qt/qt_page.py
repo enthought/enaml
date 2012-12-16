@@ -378,4 +378,3 @@ class QtPage(QtWidget):
         """
         self.widget().setClosable(closable)
 
-
