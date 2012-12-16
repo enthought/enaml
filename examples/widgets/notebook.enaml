@@ -32,6 +32,7 @@ enamldef Main(Window):
             Page:
                 title = 'Foo Page'
                 closable = False
+                tool_tip = 'Foo Page here'
                 Container:
                     PushButton:
                         text = 'Open Bar Page'

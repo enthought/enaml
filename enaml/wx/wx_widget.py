@@ -68,6 +68,8 @@ class WxWidget(WxObject):
         self.set_enabled(tree['enabled'])
         self.set_visible(tree['visible'])
         self.set_show_focus_rect(tree['show_focus_rect'])
+        self.set_tool_tip(tree['tool_tip'])
+        self.set_status_tip(tree['status_tip'])
 
     #--------------------------------------------------------------------------
     # Public API
@@ -138,6 +140,18 @@ class WxWidget(WxObject):
 
         """
         self.set_show_focus_rect(content['show_focus_rect'])
+
+    def on_action_set_tool_tip(self, content):
+        """ Handle the 'set_tool_tip' action from the Enaml widget.
+
+        """
+        self.set_tool_tip(content['tool_tip'])
+
+    def on_action_set_status_tip(self, content):
+        """ Handle the 'set_status_tip' action from the Enaml widget.
+
+        """
+        self.set_status_tip(content['status_tip'])
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -240,3 +254,15 @@ class WxWidget(WxObject):
         """
         pass
 
+    def set_tool_tip(self, tool_tip):
+        """ Set the tooltip of for this widget.
+
+        """
+        self.widget().SetToolTipString(tool_tip)
+
+    def set_status_tip(self, status_tip):
+        """ Set the status_tip of for this widget.
+
+        """
+        #self.widget().SetStatusText(status_tip)
+        pass
