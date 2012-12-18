@@ -1,0 +1,29 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2012, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+""" An example of the `FloatSlider` widget.
+
+This example demonstrates the use of a simple `FloatSlider` control which is
+used to compute the log of a range of numbers.
+
+"""
+import math
+from enaml.widgets.api import Window, Form, Label, Field, FloatSlider
+
+
+enamldef Main(Window):
+    title = 'FloatSlider Example'
+    Form:
+        Label:
+            text = 'Log Value'
+        Field:
+            text << u'{}'.format(math.log(val_slider.value))
+            read_only = True
+        FloatSlider:
+            id: val_slider
+            tick_interval = (maximum - minimum) / 10
+            value = 120.0
+            maximum = 1000.0
+            minimum = 120.0
+            precision = 100

@@ -57,6 +57,11 @@ def file_dialog_factory():
     return QtFileDialog
 
 
+def float_slider_factory():
+    from .qt_float_slider import QtFloatSlider
+    return QtFloatSlider
+
+
 def flow_area_factory():
     from .qt_flow_area import QtFlowArea
     return QtFlowArea
@@ -237,6 +242,7 @@ def register_default():
     register('DockPane', dock_pane_factory)
     register('Field', field_factory)
     register('FileDialog', file_dialog_factory)
+    register('FloatSlider', float_slider_factory)
     register('FlowArea', flow_area_factory)
     register('FlowItem', flow_item_factory)
     register('Form', form_factory)

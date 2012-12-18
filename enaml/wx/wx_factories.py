@@ -52,6 +52,11 @@ def field_factory():
     return WxField
 
 
+def float_slider_factory():
+    from .wx_float_slider import WxFloatSlider
+    return WxFloatSlider
+
+
 def form_factory():
     from .wx_form import WxForm
     return WxForm
@@ -180,6 +185,7 @@ def register_default():
     register('DateSelector', date_selector_factory)
     register('DockPane', dock_pane_factory)
     register('Field', field_factory)
+    register('FloatSlider', float_slider_factory)
     register('Form', form_factory)
     register('GroupBox', group_box_factory)
     register('Html', html_factory)

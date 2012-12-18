@@ -19,6 +19,7 @@ from .datetime_selector import DatetimeSelector
 from .dock_pane import DockPane
 from .field import Field
 from .file_dialog import FileDialog
+from .float_slider import FloatSlider
 from .flow_area import FlowArea
 from .flow_item import FlowItem
 from .form import Form
