@@ -64,6 +64,7 @@ class WxEnableCanvas(WxControl):
 
         """
         widget = self.widget()
+        widget.Freeze()
         component = self._component
         if component is not None:
             self._window = EnableWindow(widget, component=component)
@@ -72,4 +73,5 @@ class WxEnableCanvas(WxControl):
             self._window = None
             enable_widget = None
         widget.GetSizer().Add(enable_widget)
+        widget.Thaw()
 
