@@ -12,15 +12,18 @@ from enaml.widgets.api import Window, Container, EnableCanvas, CheckBox
 from chaco.api import ArrayPlotData, Plot, ImageData
 from chaco import default_colormaps as dc
 from scipy.misc import lena
-from traits.api import HasTraits, Instance
+from traits.api import HasTraits, Instance, Array
 
 
 class ImageModel(HasTraits):
     """ Create a Chaco Plot object with the data to analyze.
 
     """
+    #: The plot which will draw the image data.
     plot = Instance(Plot)
-    plot2 = Instance(Plot)
+
+    #: The array data for the plot.
+    data = Array
 
     def __init__(self, **kwargs):
         """ Initialize an ImageModel.
@@ -44,17 +47,11 @@ class ImageModel(HasTraits):
         self.plot = Plot(plot_data, default_origin='top left', padding=30)
         self.plot.img_plot('imagedata', colormap=dc.gray)
 
-        plot2  = ArrayPlotData()
-        plot2.set_data('imagedata', image_source._data.T)
-        self.plot2 = Plot(plot2, default_origin='top left', padding=30)
-        self.plot2.img_plot('imagedata', colormap=dc.gray)
-
 
 enamldef Main(Window):
     attr model = ImageModel()
     initial_size = tuple(reversed(model.data.shape))
     Container:
         EnableCanvas:
-            component << model.plot if not c.checked else model.plot2
-        CheckBox: c:
-            pass
+            component = model.plot
+
