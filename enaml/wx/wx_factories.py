@@ -47,6 +47,11 @@ def dock_pane_factory():
     return WxDockPane
 
 
+def enable_canvas_factory():
+    from .wx_enable_canvas import WxEnableCanvas
+    return WxEnableCanvas
+
+
 def field_factory():
     from .wx_field import WxField
     return WxField
@@ -179,6 +184,7 @@ def register_default():
     register('Container', container_factory)
     register('DateSelector', date_selector_factory)
     register('DockPane', dock_pane_factory)
+    register('EnableCanvas', enable_canvas_factory)
     register('Field', field_factory)
     register('Form', form_factory)
     register('GroupBox', group_box_factory)
