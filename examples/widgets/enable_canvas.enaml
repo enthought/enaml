@@ -1,0 +1,57 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2012, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+""" Use chaco to display an image in an EnableCanvas.
+
+This example requires Scipy for the sample image data.
+
+"""
+from enaml.widgets.api import Window, Container, EnableCanvas, CheckBox
+
+from chaco.api import ArrayPlotData, Plot, ImageData
+from chaco import default_colormaps as dc
+from scipy.misc import lena
+from traits.api import HasTraits, Instance, Array
+
+
+class ImageModel(HasTraits):
+    """ Create a Chaco Plot object with the data to analyze.
+
+    """
+    #: The plot which will draw the image data.
+    plot = Instance(Plot)
+
+    #: The array data for the plot.
+    data = Array
+
+    def __init__(self, **kwargs):
+        """ Initialize an ImageModel.
+
+        Parameters
+        ----------
+        filename : str, optional
+            If provided, then ImageData is loaded with the .fromfile class
+            method, otherwise, a sample image is loaded.
+
+        """
+        super(ImageModel, self).__init__()
+        if 'filename' in kwargs:
+            image_source = ImageData.fromfile(kwargs[filename])
+            self.data = image_source._data
+        else:
+            self.data = lena()
+            image_source = ImageData(data=self.data, value_depth=1)
+        plot_data = ArrayPlotData()
+        plot_data.set_data('imagedata', image_source._data)
+        self.plot = Plot(plot_data, default_origin='top left', padding=30)
+        self.plot.img_plot('imagedata', colormap=dc.gray)
+
+
+enamldef Main(Window):
+    attr model = ImageModel()
+    initial_size = tuple(reversed(model.data.shape))
+    Container:
+        EnableCanvas:
+            component = model.plot
+
