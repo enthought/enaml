@@ -4,8 +4,8 @@
 #------------------------------------------------------------------------------
 import wx
 
-from .wx_single_widget_sizer import wxSingleWidgetSizer
 from .wx_control import WxControl
+from .wx_single_widget_sizer import wxSingleWidgetSizer
 
 from enable.api import Window as EnableWindow
 
