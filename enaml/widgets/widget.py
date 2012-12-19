@@ -45,10 +45,10 @@ class Widget(Messenger):
     #: client should determine and inteliigent maximum size.
     maximum_size = SizeTuple
 
-    #: The tool tip to use when the user hovers over the widget
+    #: The tool tip to show when the user hovers over the widget.
     tool_tip = Unicode
 
-    #: The status tip to use when the user hovers over the widget
+    #: The status tip to show when the user hovers over the widget.
     status_tip = Unicode
 
     #--------------------------------------------------------------------------

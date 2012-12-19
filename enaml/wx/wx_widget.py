@@ -255,14 +255,15 @@ class WxWidget(WxObject):
         pass
 
     def set_tool_tip(self, tool_tip):
-        """ Set the tooltip of for this widget.
+        """ Set the tool tip of for this widget.
 
         """
         self.widget().SetToolTipString(tool_tip)
 
     def set_status_tip(self, status_tip):
-        """ Set the status_tip of for this widget.
+        """ Set the status tip of for this widget.
 
         """
-        #self.widget().SetStatusText(status_tip)
+        # Status tips are not currently supported on Wx
         pass
+

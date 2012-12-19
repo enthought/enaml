@@ -284,13 +284,14 @@ class QtWidget(QtObject):
                 widget.setAttribute(attr, show)
 
     def set_tool_tip(self, tool_tip):
-        """ Set the tooltip for this widget.
+        """ Set the tool tip for this widget.
 
         """
         self.widget().setToolTip(tool_tip)
 
     def set_status_tip(self, status_tip):
-        """ Set the statustip for this widget.
+        """ Set the status tip for this widget.
 
         """
         self.widget().setStatusTip(status_tip)
+

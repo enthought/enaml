@@ -232,6 +232,9 @@ class QPage(QFrame):
     def setToolTip(self, tool_tip):
         """ Set the tool tip for the tab for this page.
 
+        This overrides the default implementation to set the tool tip
+        on the notebook tab.
+
         Parameters
         ----------
         title : unicode

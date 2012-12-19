@@ -105,3 +105,4 @@ class Page(Widget):
         """
         self.set_guarded(visible=False)
         self.send_action('close', {})
+
