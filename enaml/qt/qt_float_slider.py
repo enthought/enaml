@@ -29,6 +29,8 @@ class QtFloatSlider(QtSlider):
         """ Create and initialize the underlying widget.
 
         """
+        # NOTE: The tick interval and value must be set after precision,
+        # minimum and maximum.
         super(QtSlider, self).create(tree)
         self.set_maximum(tree['maximum'])
         self.set_minimum(tree['minimum'])
@@ -38,7 +40,6 @@ class QtFloatSlider(QtSlider):
         self.set_single_step(tree['single_step'])
         self.set_tick_position(tree['tick_position'])
         self.set_tracking(tree['tracking'])
-        # Requires maximum, minimum and precision to be set
         self.set_value(tree['value'])
         self.set_tick_interval(tree['tick_interval'])
         self.widget().valueChanged.connect(self.on_value_changed)

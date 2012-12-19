@@ -40,15 +40,16 @@ class WxFloatSlider(WxSlider):
         # NOTE: The tick interval and value must be set after precision,
         # minimum and maximum.
         super(WxSlider, self).create(tree)
-        self.set_value(tree['value'])
         self.set_maximum(tree['maximum'])
         self.set_minimum(tree['minimum'])
         self.set_orientation(tree['orientation'])
         self.set_page_step(tree['page_step'])
+        self.set_precision(tree['precision'])
         self.set_single_step(tree['single_step'])
         self.set_tick_position(tree['tick_position'])
-        self.set_tick_interval(tree['tick_interval'])
         self.set_tracking(tree['tracking'])
+        self.set_value(tree['value'])
+        self.set_tick_interval(tree['tick_interval'])
         self.widget().Bind(EVT_SLIDER, self.on_value_changed)
 
     #--------------------------------------------------------------------------
