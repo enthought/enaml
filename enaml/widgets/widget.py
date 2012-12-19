@@ -2,7 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Bool, Str, Tuple, Range, Enum
+from traits.api import Bool, Str, Tuple, Range, Enum, Unicode
 
 from enaml.core.messenger import Messenger
 
@@ -45,6 +45,12 @@ class Widget(Messenger):
     #: client should determine and inteliigent maximum size.
     maximum_size = SizeTuple
 
+    #: The tool tip to show when the user hovers over the widget.
+    tool_tip = Unicode
+
+    #: The status tip to show when the user hovers over the widget.
+    status_tip = Unicode
+
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
@@ -58,6 +64,8 @@ class Widget(Messenger):
         snap['minimum_size'] = self.minimum_size
         snap['maximum_size'] = self.maximum_size
         snap['show_focus_rect'] = self.show_focus_rect
+        snap['tool_tip'] = self.tool_tip
+        snap['status_tip'] = self.status_tip
         return snap
 
     def bind(self):
@@ -68,6 +76,7 @@ class Widget(Messenger):
         attrs = (
             'enabled', 'visible', 'bgcolor', 'fgcolor', 'font',
             'minimum_size', 'maximum_size', 'show_focus_rect',
+            'tool_tip', 'status_tip',
         )
         self.publish_attributes(*attrs)
 

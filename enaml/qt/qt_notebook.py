@@ -144,6 +144,7 @@ class QNotebook(QTabWidget):
         if page.isOpen():
             self.addTab(page, page.title())
             index = self.indexOf(page)
+            self.setTabToolTip(index, page.toolTip())
             self.setTabEnabled(index, page.isTabEnabled())
             self.setTabCloseButtonVisible(index, page.isClosable())
         else:
@@ -167,6 +168,7 @@ class QNotebook(QTabWidget):
         if page.isOpen():
             index = min(index, self.count())
             self.insertTab(index, page, page.title())
+            self.setTabToolTip(index, page.toolTip())
             self.setTabEnabled(index, page.isTabEnabled())
             self.setTabCloseButtonVisible(index, page.isClosable())
         else:
