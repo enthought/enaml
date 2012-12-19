@@ -235,7 +235,6 @@ class WxPage(WxWidget):
         """
         super(WxPage, self).create(tree)
         self.set_title(tree['title'])
-        self.set_tool_tip(tree['tool_tip'])
         self.set_closable(tree['closable'])
         self.widget().Bind(EVT_PAGE_CLOSED, self.on_page_closed)
 
@@ -300,12 +299,6 @@ class WxPage(WxWidget):
         """
         self.set_title(content['title'])
 
-    def on_action_set_tool_tip(self, content):
-        """ Handle the 'set_tool_tip' action from the Enaml widget.
-
-        """
-        self.set_tool_tip(content['tool_tip'])
-
     def on_action_set_closable(self, content):
         """ Handle the 'set_closable' action from the Enaml widget.
 
@@ -356,12 +349,4 @@ class WxPage(WxWidget):
 
         """
         self.widget().SetClosable(closable)
-
-    def set_tool_tip(self, tool_tip):
-        """ Set the tooltip of the tab for this page.
-
-        """
-        # XXX Wx notebooks do not support a tab tooltip, so this
-        # setting is simply ignored. (wx trunk now supports this)
-        pass
 
