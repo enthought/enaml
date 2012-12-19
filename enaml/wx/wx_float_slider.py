@@ -2,7 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .wx_slider import WxSlider, wxProperSlider, EVT_SLIDER
+from .wx_slider import WxSlider, EVT_SLIDER
 
 
 class WxFloatSlider(WxSlider):
@@ -25,12 +25,6 @@ class WxFloatSlider(WxSlider):
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
-    def create_widget(self, parent, tree):
-        """ Create the underlying wxProperSlider widget.
-
-        """
-        return wxProperSlider(parent)
-
     def create(self, tree):
         """ Create and initialize the slider control.
 
@@ -69,7 +63,7 @@ class WxFloatSlider(WxSlider):
         slider value has changed.
 
         """
-        int_value = self.widget().value()
+        int_value = self.widget().GetValue()
         float_value = self.int_to_float(int_value)
         content = {'value': float_value}
         self.send_action('value_changed', content)
@@ -85,7 +79,7 @@ class WxFloatSlider(WxSlider):
 
         """
         int_value = self.float_to_int(value)
-        self.widget().setValue(int_value)
+        self.widget().SetValue(int_value)
 
     def set_precision(self, precision):
         """ Set the precision of the underlying widget.
