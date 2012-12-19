@@ -2,54 +2,89 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from abc import ABCMeta, abstractmethod
+import codecs
 
-from enaml.signaling import Signal
+import blist
+
+from .text_interface import TextInterface
 
 
-class TextInterface(object):
-    """ A class which defines a data interface for a TextEditor.
+class BListTextModel(TextInterface):
+    """ A concrete implementation of TextInterface.
 
-    This is a pure abstract class. It provides enough flexibility that
-    implementors are free to choose data structures which suit the task.
-    These can be in-memory, on-disk, or a hybrid of the two.
-
-    Line endings will be removed from all input and output to and from
-    the interface. Proper handling of line endings is an implementation
-    detail for a given use of an interface.
+    This class uses a blist of strings as its internal representation of
+    the text model. It performs admirably for models which contain well
+    over a millions lines of text and should suit most use cases. An
+    instance will typically be created using one of the factory class
+    methods.
 
     """
-    __metaclass__ = ABCMeta
+    @classmethod
+    def from_string(cls, string):
+        """ Create a PlainTextList from a string.
 
-    #: A signal emitted when characters are inserted into the model. It
-    #: carries three arguments: the lineno, the position, and the string
-    #: of inserted characters.
-    chars_inserted = Signal()
+        Parameters
+        ----------
+        string : basestring
+            The string of data. It will be split into separate lines and
+            newline characters will be removed. Non-unicode strings will
+            be converted to unicode.
 
-    #: A signal emitted when characters are replaced in the model. It
-    #: carries four arguments: the lineno, the position, the string of
-    #: removed characters, and the string of inserted characters.
-    chars_replaced = Signal()
+        """
+        string = unicode(string)
+        lines = blist.blist(string.splitlines())
+        self = cls()
+        self._lines = lines
+        return self
 
-    #: A signal emitted when characters are removed from the model. It
-    #: carries three arguments: the lineno, the position, and the string
-    #: of removed characters.
-    chars_removed = Signal()
+    @classmethod
+    def from_file(cls, filename, encoding='utf-8'):
+        """ Create a PlainTextList from a file.
 
-    #: A signal emitted when lines are inserted into the model. It
-    #: carries two arguments: the lineno, and the list of inserted lines.
-    lines_inserted = Signal()
+        Parameters
+        ----------
+        filename : basestring
+            The name of the file which contains the data. Line endings
+            will be removed from the lines as they are read from the
+            file. The entire file is read up-front.
 
-    #: A signal emitted when lines are replaced in the model. It carries
-    #: three arguments: the lineno, the list of removed lines, and the
-    #: list of inserted lines.
-    lines_replaced = Signal()
+        encoding : str, optional
+            The encoding of the file. The default is 'utf-8'.
 
-    #: A signal emitted when lines are removed from the model. It
-    #: carries two aruments: the lineno, and the list of removed lines.
-    lines_removed = Signal()
+        """
+        lines = blist.blist()
+        with codecs.open(filename, encoding=encoding) as f:
+            lines.extend(line.rstrip() for line in f)
+        self = cls()
+        self._lines = lines * 10000
+        return self
 
-    @abstractmethod
+    @classmethod
+    def from_iter(cls, iterable):
+        """ Create a PlainTextList from an iterable.
+
+        Parameters
+        ----------
+        iterable : iterable
+            An iterable which yields the lines of data. The lines will
+            be converted to unicode and stripped of line endings.
+
+        """
+        lines = blist.blist()
+        lines.extend(unicode(line.rstrip()) for line in iterable)
+        self = cls()
+        self._lines = lines
+        return self
+
+    def __init__(self):
+        """ Initialize a PlainTextList.
+
+        """
+        self._lines = blist.blist([u''])
+
+    #--------------------------------------------------------------------------
+    # Text Interface Implementation
+    #--------------------------------------------------------------------------
     def __iter__(self):
         """ Get an iterator over the lines in the model.
 
@@ -61,9 +96,8 @@ class TextInterface(object):
             not be modified while this iterator is being consumed.
 
         """
-        raise NotImplementedError
+        return iter(self._lines)
 
-    @abstractmethod
     def line_count(self):
         """ Get the number of lines in the model.
 
@@ -73,16 +107,15 @@ class TextInterface(object):
             The number of lines in the text model.
 
         """
-        raise NotImplementedError
+        return len(self._lines)
 
-    @abstractmethod
     def line(self, lineno):
         """ Get the line for the given line number.
 
         Parameters
         ----------
         int : lineno
-            The line number for target line. This is zero based and must
+            The line number for target line. This is zero-based and must
             be less than the line count.
 
         Returns
@@ -91,9 +124,8 @@ class TextInterface(object):
             The line of text at the given line number.
 
         """
-        raise NotImplementedError
+        return self._lines[lineno]
 
-    @abstractmethod
     def insert_chars(self, lineno, position, chars):
         """ Insert characters at the given location.
 
@@ -114,9 +146,12 @@ class TextInterface(object):
             The text to insert into the line.
 
         """
-        raise NotImplementedError
+        lines = self._lines
+        line = lines[lineno]
+        edit_line = line[:position] + chars + line[position:]
+        lines[lineno] = edit_line
+        self.chars_inserted.emit(lineno, position, chars)
 
-    @abstractmethod
     def replace_chars(self, lineno, start, end, chars):
         """ Replace characters at the given location.
 
@@ -138,9 +173,13 @@ class TextInterface(object):
             The text to insert into the line at the starting position.
 
         """
-        raise NotImplementedError
+        lines = self._lines
+        line = lines[lineno]
+        rem_chars = line[start:end + 1]
+        edit_line = line[:start] + chars + line[end + 1:]
+        lines[lineno] = edit_line
+        self.chars_replaced.emit(lineno, start, rem_chars, chars)
 
-    @abstractmethod
     def remove_chars(self, lineno, start, end):
         """ Remove characters at the given location.
 
@@ -159,9 +198,13 @@ class TextInterface(object):
             The ending index of the substring to remove, inclusive.
 
         """
-        raise NotImplementedError
+        lines = self._lines
+        line = lines[lineno]
+        rem_chars = line[start:end + 1]
+        edit_line = line[:start] + line[end + 1:]
+        lines[lineno] = edit_line
+        self.chars_removed.emit(lineno, start, rem_chars)
 
-    @abstractmethod
     def insert_lines(self, lineno, lines):
         """ Insert lines at the given location.
 
@@ -177,9 +220,11 @@ class TextInterface(object):
             line endings.
 
         """
-        raise NotImplementedError
+        these_lines = self._lines
+        for line in reversed(lines):
+            these_lines.insert(lineno, line)
+        self.lines_inserted.emit(lineno, lines)
 
-    @abstractmethod
     def replace_lines(self, start, end, lines):
         """ Replace lines at the given location.
 
@@ -198,9 +243,13 @@ class TextInterface(object):
             line endings.
 
         """
-        raise NotImplementedError
+        these_lines = self._lines
+        old_lines = list(these_lines[start:end + 1])
+        del these_lines[start:end + 1]
+        for line in reversed(lines):
+            these_lines.insert(start, line)
+        self.lines_replaced.emit(start, old_lines, lines)
 
-    @abstractmethod
     def remove_lines(self, start, end):
         """ Remove the lines at the given location.
 
@@ -215,5 +264,8 @@ class TextInterface(object):
             The ending line number of the lines to remove, inclusive.
 
         """
-        raise NotImplementedError
+        lines = self._lines
+        old_lines = list(lines[start:end + 1])
+        del lines[start:end + 1]
+        self.lines_removed.emit(start, end, old_lines)
 
