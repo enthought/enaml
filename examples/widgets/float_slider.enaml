@@ -16,9 +16,9 @@ enamldef Main(Window):
     title = 'FloatSlider Example'
     Form:
         Label:
-            text = 'Log Value'
+            text = 'Value'
         Field:
-            text << u'{}'.format(math.log(val_slider.value))
+            text << u'{0}'.format(val_slider.value)
             read_only = True
         FloatSlider:
             id: val_slider
