@@ -17,7 +17,7 @@ from enaml.core.parser import parse
 from enaml.core.enaml_compiler import EnamlCompiler
 
 # Mapping of the --toolkit option to the ETS_TOOLKIT value
-OPTION_TO_ETS = {'default': 'qt', 'wx': 'wx', 'qt': 'qt4'}
+OPTION_TO_ETS = {'default': 'qt4', 'wx': 'wx', 'qt': 'qt4'}
 
 
 def prepare_toolkit(toolkit_option):
