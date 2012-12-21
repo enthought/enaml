@@ -77,7 +77,6 @@ def main():
     # Prepare the toolkit
     toolkit = prepare_toolkit(options.toolkit)
 
-
     if len(args) == 0:
         print 'No .enaml file specified'
         sys.exit()
