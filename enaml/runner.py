@@ -47,8 +47,7 @@ def prepare_toolkit(toolkit_option):
         ets_toolkit = os.environ['ETS_TOOLKIT'].lower().split('.')[0]
     except KeyError:
         enaml_toolkit = 'wx' if toolkit_option == 'wx' else 'qt'
-        compatible_toolkit = 'wx' if enaml_toolkit == 'wx' else 'qt4'
-        os.environ['ETS_TOOLKIT'] = compatible_toolkit
+        os.environ['ETS_TOOLKIT'] = 'wx' if enaml_toolkit == 'wx' else 'qt4'
     else:
         if enaml_toolkit != 'default':
             if ets_toolkit != OPTION_TO_ETS[enaml_toolkit]:
