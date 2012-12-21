@@ -43,15 +43,15 @@ def prepare_toolkit(toolkit_option):
        The toolkit to be used by enaml.
 
     """
-    enaml_toolkit = toolkit_option
     try:
         ets_toolkit = os.environ['ETS_TOOLKIT'].lower().split('.')[0]
     except KeyError:
+        enaml_toolkit = 'wx' if toolkit_option == 'wx' else 'qt'
         compatible_toolkit = 'wx' if enaml_toolkit == 'wx' else 'qt4'
         os.environ['ETS_TOOLKIT'] = compatible_toolkit
     else:
-        if toolkit_option != 'default':
-            if ets_toolkit != OPTION_TO_ETS[toolkit_option]:
+        if enaml_toolkit != 'default':
+            if ets_toolkit != OPTION_TO_ETS[enaml_toolkit]:
                 msg = ('The --toolkit option is different from the '
                        'ETS_TOOLKIT environment variable which can '
                        'cause issues if enable or chaco components '
