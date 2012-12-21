@@ -70,7 +70,7 @@ def main():
     parser.add_option('-c', '--component', default='Main',
                       help='The component to view')
     parser.add_option('-t', '--toolkit', default='default',
-                      help='The GUI toolkit to use')
+                      help='The GUI toolkit to use [default: qt]')
 
     options, args = parser.parse_args()
 
