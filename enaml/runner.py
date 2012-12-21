@@ -57,6 +57,7 @@ def prepare_toolkit(toolkit_option):
                        'cause issues if enable or chaco components '
                        'are used.')
                 warnings.warn(msg)
+            enaml_toolkit = 'qt'
         else:
             enaml_toolkit = 'wx' if ets_toolkit == 'wx' else 'qt'
 
