@@ -16,12 +16,8 @@ from enaml.stdlib.sessions import show_simple_view
 from enaml.core.parser import parse
 from enaml.core.enaml_compiler import EnamlCompiler
 
-# Acceptable enaml toolkit options for enaml-run
-ENAML_TOOLKITS = {'default': 'qt', 'wx': 'wx', 'qt': 'qt'}
-
-
 # Mapping of the --toolkit option to the ETS_TOOLKIT value
-OPTION_TO_ETS = {'default': 'qt4', 'wx': 'wx', 'qt': 'qt4'}
+OPTION_TO_ETS = {'default': 'qt', 'wx': 'wx', 'qt': 'qt4'}
 
 
 def prepare_toolkit(toolkit_option):
@@ -47,16 +43,13 @@ def prepare_toolkit(toolkit_option):
        The toolkit to be used by enaml.
 
     """
-    enaml_toolkit = ENAML_TOOLKITS[toolkit_option]
-
+    enaml_toolkit = toolkit_option
     try:
         ets_toolkit = os.environ['ETS_TOOLKIT'].lower().split('.')[0]
     except KeyError:
-        compatible_toolkit = OPTION_TO_ETS[toolkit_option]
+        compatible_toolkit = 'wx' if enaml_toolkit == 'wx' else 'qt4'
         os.environ['ETS_TOOLKIT'] = compatible_toolkit
     else:
-        # if the -t option is 'default' then enaml obeys ETS_TOOLKIT
-        # so there is no incompatibility.
         if toolkit_option != 'default':
             if ets_toolkit != OPTION_TO_ETS[toolkit_option]:
                 msg = ('The --toolkit option is different from the '
@@ -64,6 +57,8 @@ def prepare_toolkit(toolkit_option):
                        'cause issues if enable or chaco components '
                        'are used.')
                 warnings.warn(msg)
+        else:
+            enaml_toolkit = 'wx' if ets_toolkit == 'wx' else 'qt'
 
     return enaml_toolkit
 
@@ -74,13 +69,14 @@ def main():
     parser.allow_interspersed_args = False
     parser.add_option('-c', '--component', default='Main',
                       help='The component to view')
-    parser.add_option('-t', '--toolkit', default='qt',
-                      help='The GUI toolikit to use')
+    parser.add_option('-t', '--toolkit', default='default',
+                      help='The GUI toolkit to use')
 
     options, args = parser.parse_args()
 
-    # Preapare the toolkit
+    # Prepare the toolkit
     toolkit = prepare_toolkit(options.toolkit)
+
 
     if len(args) == 0:
         print 'No .enaml file specified'
