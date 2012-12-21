@@ -51,7 +51,7 @@ setup(
             'enaml-run = enaml.runner:main',
         ],
     ),
-    test_suite='enaml.tests',
+    test_suite='enaml.test_collector',
     features={'enaml-extensions': enaml_extensions}
 )
 
