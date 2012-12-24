@@ -16,9 +16,6 @@ from enaml.stdlib.sessions import show_simple_view
 from enaml.core.parser import parse
 from enaml.core.enaml_compiler import EnamlCompiler
 
-# Mapping of the --toolkit option to the ETS_TOOLKIT value
-OPTION_TO_ETS = {'default': 'qt4', 'wx': 'wx', 'qt': 'qt4'}
-
 
 def prepare_toolkit(toolkit_option):
     """ Prepares the toolkit to be used by enaml.
@@ -43,20 +40,22 @@ def prepare_toolkit(toolkit_option):
        The toolkit to be used by enaml.
 
     """
-    enaml_toolkit = 'wx' if toolkit_option == 'wx' else 'qt'
     try:
-        ets_toolkit = os.environ['ETS_TOOLKIT'].lower().split('.')[0]
+        ets_toolkit = os.environ['ETS_TOOLKIT'].lower().split('.')[0][:2]
     except KeyError:
+        enaml_toolkit = 'wx' if toolkit_option == 'wx' else 'qt'
         os.environ['ETS_TOOLKIT'] = 'wx' if enaml_toolkit == 'wx' else 'qt4'
     else:
         if toolkit_option == 'default':
-            enaml_toolkit = 'wx' if ets_toolkit == 'wx' else 'qt'
-        elif ets_toolkit != OPTION_TO_ETS[toolkit_option]:
-            msg = ('The --toolkit option is different from the '
-                   'ETS_TOOLKIT environment variable which can '
-                   'cause issues if enable or chaco components '
-                   'are used.')
-            warnings.warn(msg)
+            enaml_toolkit = ets_toolkit
+        else:
+            enaml_toolkit = 'wx' if toolkit_option == 'wx' else 'qt'
+            if ets_toolkit != enaml_toolkit:
+                msg = ('The --toolkit option is different from the '
+                       'ETS_TOOLKIT environment variable which can '
+                       'cause issues if enable or chaco components '
+                       'are used.')
+                warnings.warn(msg)
 
     return enaml_toolkit
 
@@ -68,7 +67,8 @@ def main():
     parser.add_option('-c', '--component', default='Main',
                       help='The component to view')
     parser.add_option('-t', '--toolkit', default='default',
-                      help='The GUI toolkit to use [default: qt]')
+                      help='The GUI toolkit to use [default: qt or '
+                           'ETS_TOOLKIT].')
 
     options, args = parser.parse_args()
 
