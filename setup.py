@@ -30,7 +30,8 @@ enaml_extensions = Feature(
             ['enaml/extensions/funchelper.cpp'],
             language='c++',
         )
-    ])
+    ],
+)
 
 
 setup(
