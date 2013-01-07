@@ -71,7 +71,11 @@ Alternatively you can work in developing mode::
     python setup.py develop
 
 Enaml ships with optional high performance C++ extensions. To build them,
-an enviroment variable must be set before running ``setup.py``
+a ``--with`` option needs to be provided::
+
+    python setup.py --with-enaml-extensions install
+
+Or an enviroment variable must be set before running ``setup.py``.
 
 On Windows::
 
