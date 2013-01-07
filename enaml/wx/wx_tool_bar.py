@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 import wx
 
-from .wx_action import WxAction, wxAction, EVT_ACTION_CHANGED
+from .wx_action import WxAction, EVT_ACTION_CHANGED
 from .wx_action_group import WxActionGroup
 from .wx_constraints_widget import WxConstraintsWidget
 
@@ -33,7 +33,6 @@ class wxToolBar(wx.ToolBar):
         super(wxToolBar, self).__init__(*args, **kwargs)
         self._all_items = []
         self._actions_map = {}
-        self.Bind(wx.EVT_MENU, self.OnMenu)
 
     #--------------------------------------------------------------------------
     # Private API
@@ -75,18 +74,6 @@ class wxToolBar(wx.ToolBar):
                 )
             item.Enable(action.IsEnabled())
         return item
-
-    def OnMenu(self, event):
-        """ The event handler for the EVT_MENU event.
-
-        This handler maps the event to the appropriate wxAction.
-
-        """
-        action = wxAction.FindById(event.GetId())
-        if action is not None:
-            if action.IsCheckable():
-                action.SetChecked(event.Checked())
-            action.Trigger()
 
     def OnActionChanged(self, event):
         """ The event handler for the EVT_ACTION_CHANGED event.

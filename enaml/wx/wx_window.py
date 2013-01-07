@@ -4,6 +4,7 @@
 #------------------------------------------------------------------------------
 import wx
 
+from .wx_action import wxAction
 from .wx_container import WxContainer
 from .wx_layout_request import EVT_COMMAND_LAYOUT_REQUESTED
 from .wx_single_widget_sizer import wxSingleWidgetSizer
@@ -30,7 +31,27 @@ class wxCustomWindow(wx.Frame):
         super(wxCustomWindow, self).__init__(*args, **kwargs)
         self._central_widget = None
         self.SetSizer(wxSingleWidgetSizer())
+        self.Bind(wx.EVT_MENU, self.OnMenu)
 
+    #--------------------------------------------------------------------------
+    # Event Handlers
+    #--------------------------------------------------------------------------
+    def OnMenu(self, event):
+        """ The event handler for the EVT_MENU event.
+
+        This event handler will be called when an action is triggered
+        in a Menu or a ToolBar.
+
+        """
+        action = wxAction.FindById(event.GetId())
+        if action is not None:
+            if action.IsCheckable():
+                action.SetChecked(event.Checked())
+            action.Trigger()
+
+    #--------------------------------------------------------------------------
+    # Public API
+    #--------------------------------------------------------------------------
     def UpdateClientSizeHints(self):
         """ Update the client size hints for the window.
 
