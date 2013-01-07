@@ -30,7 +30,7 @@ def prepare_toolkit(toolkit_option):
     Parameters
     ----------
     toolkit_option : str
-        The toolkit option provided to the enaml-run script
+        The toolkit option provided to the enaml-run script.
 
     Returns
     -------
@@ -46,14 +46,13 @@ def prepare_toolkit(toolkit_option):
             enaml_toolkit = 'wx' if toolkit_option == 'wx' else 'qt'
             if ets_toolkit != enaml_toolkit:
                 msg = (
-                    'The --toolkit option is different from the '
-                    'ETS_TOOLKIT environment variable which can '
-                    'cause issues if enable or chaco components '
-                    'are used.'
+                    'The --toolkit option is different from the ETS_TOOLKIT '
+                    'environment variable, which can cause incompatibility '
+                    'issues when using enable or chaco components.'
                 )
                 warnings.warn(msg)
     else:
-        if toolkit_option = 'wx':
+        if toolkit_option == 'wx':
             enaml_toolkit = 'wx'
             os.environ['ETS_TOOLKIT'] = 'wx'
         else:
@@ -97,7 +96,7 @@ def main():
     module.__file__ = enaml_file
     ns = module.__dict__
 
-    # Put the directory of the Enaml file first in the path so relative 
+    # Put the directory of the Enaml file first in the path so relative
     # imports can work.
     sys.path.insert(0, os.path.abspath(os.path.dirname(enaml_file)))
     # Bung in the command line arguments.
