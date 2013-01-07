@@ -55,8 +55,8 @@ enamldef Main(Window): main:
         PushButton: close_st:
             text = 'Close Static Pages'
             clicked ::
-                static1.close()
                 static2.close()
+                static1.close()
         PushButton: ins_dyn:
             text = 'Insert Dynamic Page'
             clicked ::
