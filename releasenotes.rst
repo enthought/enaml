@@ -1,6 +1,13 @@
 Enaml Release Notes
 ===================
 
+0.6.4 - 01/07/2013
+------------------
+- Add support for icons on notebook pages on the Qt backend. b6426b7ae9_
+- Add support for popup menus in the Wx backend (Qt is already supported). 153f3124b2_
+- Add simpler way of building the optional C++ extensions. 4eebd59ae5_
+- Update enaml-run to play nice with ETS_TOOLKIT. f864975a87_
+
 0.6.3 - 12/11/2012
 ------------------
 - Fix critical bug related to traits Disallow and the `attr` keyword. 25755e2bbd_
@@ -42,6 +49,10 @@ Enaml Release Notes
 - Merge the feature-async branch into mainline. f86dad8f6e_
 - First release with release notes. 8dbed4b9cd_
 
+.. _f864975a87: https://github.com/enthought/enaml/commit/f864975a872189a76dc8a2cf9e2469a78320a906
+.. _4eebd59ae5: https://github.com/enthought/enaml/commit/4eebd59ae51df08d255ffe3860db821781f40579
+.. _153f3124b2: https://github.com/enthought/enaml/commit/153f3124b2c62f2a5e7695e7ea1a8dff067f2fc5
+.. _b6426b7ae9: https://github.com/enthought/enaml/commit/b6426b7ae9bcab9f8549fa635216c6cfd39ee29b
 .. _25755e2bbd: https://github.com/enthought/enaml/commit/25755e2bbd5e2e38e42d30776e1864d52c992af3
 .. _a788869ab0: https://github.com/enthought/enaml/commit/a788869ab0a410c478cbe4cc066fc8ee35b266b8
 .. _dfb6f648a1: https://github.com/enthought/enaml/commit/dfb6f648a15370249b0a57433b8839a4caba7d35

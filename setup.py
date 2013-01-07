@@ -36,7 +36,7 @@ enaml_extensions = Feature(
 
 setup(
     name='enaml',
-    version='0.6.3',
+    version='0.6.4',
     author='Enthought, Inc',
     author_email='info@enthought.com',
     url='https://github.com/enthought/enaml',
