@@ -21,7 +21,7 @@ def prepare_toolkit(toolkit_option):
     """ Prepare the toolkit to be used by Enaml.
 
     This function determines the Enaml toolkit based on the values of
-    the toolkit option and the ETS_TOOLKIT environment variabel. ETS
+    the toolkit option and the ETS_TOOLKIT environment variable. ETS
     gui components default to Wx when ETS_TOOLKIT is not defined, but
     Enaml defaults to Qt. Under this condition, ETS_TOOLKIT is updated
     to be consistent with Enaml. If ETS_TOOLKIT is already set and it
