@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Unicode, Bool, Property, cached_property
+from traits.api import Unicode, Bool, Str, Property, cached_property
 
 from enaml.core.trait_types import EnamlEvent
 
@@ -21,8 +21,8 @@ class Page(Widget):
     #: The title to use for the page in the notebook.
     title = Unicode
 
-    #: The icon to user for the page in the notebook.
-    # icon =
+    #: The source url for the icon to use for the page.
+    icon_source = Str
 
     #: Whether or not this individual page is closable. Note that the
     #: 'tabs_closable' flag on the parent Notebook must be set to True
@@ -47,6 +47,7 @@ class Page(Widget):
         snap = super(Page, self).snapshot()
         snap['title'] = self.title
         snap['closable'] = self.closable
+        snap['icon_source'] = self.icon_source
         return snap
 
     def bind(self):
@@ -54,7 +55,7 @@ class Page(Widget):
 
         """
         super(Page, self).bind()
-        self.publish_attributes('title', 'closable')
+        self.publish_attributes('title', 'closable', 'icon_source')
 
     #--------------------------------------------------------------------------
     # Private API
