@@ -4,152 +4,83 @@
 #------------------------------------------------------------------------------
 from enaml.signaling import Signal
 
-
-class Caret(object):
-    """ A class representing a caret in a text model.
-
-    Zero or more carets are used by a Cursor for editing a text model.
-    For performance reasons all attributes on a Caret are public, but
-    should only be modified by a Cursor.
-
-    """
-    #: A signal emitted when the caret is moved. It has two arguments:
-    #: the old location and the new location. Each location is a tuple
-    #: of (lineno, position) integers.
-    moved = Signal()
-
-    def __init__(self, lineno=0, position=0, desired=0):
-        """ Initialize a Caret.
-
-        Parameters
-        ----------
-        lineno : int, optional
-            The line number of the caret. It must be greater than or
-            equal to zero. The default is zero.
-
-        position: int, optional
-            The position of the caret in the line. It must be greater
-            than or equal to zero. The default is zero.
-
-        desired: int, optional
-            The desired position of the caret in the line. This is used
-            as "memory" for the caret when moving up and down lines. It
-            has no effect on the rendering of the Caret. The default is
-            zero.
-
-        """
-        self.lineno = lineno
-        self.position = position
-        self.desired = desired
-
-    def update(self, lineno=None, position=None, desired=False):
-        """ Update the location of the caret.
-
-        This method will emit the `moved` signal if the updated location
-        differs from the current location.
-
-        Parameters
-        ----------
-        lineno : int, optional
-            The new line number of the caret.
-
-        position : int, optional
-            The new position of the caret in the line.
-
-        desired : bool, optional
-            Whether or not to update the desired position to the given
-            position. The default is False.
-
-        """
-        old_lineno = self.lineno
-        old_position = self.position
-        if lineno is None:
-            lineno = old_lineno
-        if position is None:
-            position = old_position
-        if desired:
-            self.desired = position
-        if old_lineno != lineno or old_position != position:
-            self.lineno = lineno
-            self.position = position
-            old = (old_lineno, old_position)
-            new = (lineno, position)
-            self.moved.emit(old, new)
+from .indexing import Position
 
 
 class Cursor(object):
-    """ A class which defines a Cursor for editing a TextInterface.
+    """ A class representing a cursor in a text document.
 
-    When a Cursor is attached to a TextInterface, the interface should
-    not be edited by any other code, or the cursor will become out of
-    sync with the model.
+    The `position` of a Cursor should be considered read-only by
+    external consumers.
 
     """
-    #: A signal emitted when a caret is added to the cursor. It carries
-    #: two arguments: the lineno, and the position of the caret.
-    caret_added = Signal()
+    #: A signal emitted when the cursor is moved in the text document.
+    #: Handlers must accept two arguments: the old Postion and the
+    #: new Position of the cursor in the document.
+    moved = Signal()
 
-    #: A signal emitted when a caret is removed from the cursor. It
-    #: carries two arguments: the lineno, and the position of the last
-    #: location of the cursor.
-    caret_removed = Signal()
-
-    def __init__(self, text):
+    def __init__(self, document):
         """ Initialize a Cursor.
 
         Parameters
         ----------
-        text : TextInterface
-            The text interface on which this cursor operates.
+        document : Document
+            The document on which this cursor should operate.
 
         """
-        self._text = text
-        self._carets = (Caret(),)
+        self._document = document
+        self._position = Position(0, 0)
+        self._desired = 0
+        document.modified.connect(self._on_document_modified)
 
-    def carets(self):
-        """ Get the active carets for this cursor.
-
-        Returns
-        -------
-        result : tuple
-            A tuple of Caret instances being used by the cursor.
+    #--------------------------------------------------------------------------
+    # Signal Handlers
+    #--------------------------------------------------------------------------
+    def _on_document_modified(self, mod):
+        """ A handler for the `modified` signal on the document.
 
         """
-        return self._carets
+        pass
+
+    #--------------------------------------------------------------------------
+    # Properties
+    #--------------------------------------------------------------------------
+    @property
+    def position(self):
+        """ A read-only property which returns the cursor Position.
+
+        """
+        return self._position
 
     #--------------------------------------------------------------------------
     # Movement
     #--------------------------------------------------------------------------
-    def move(self, lineno, position):
+    def move(self, position):
         """ Move the caret to the given lineno and position.
 
-        This operation will remove all but the primary caret.
-
         Parameters
         ----------
-        lineno : int
-            The target line number.
-
-        position : int
-            The target caret position.
+        position : Position
+            The absolute position in the document to which the cursor
+            should be moved. This position will be clipped to the
+            bounds of the document.
 
         """
-        carets = self._carets
-        if len(carets) > 1:
-            for caret in carets[1:]:
-                self.caret_removed.emit(caret)
-            carets = self._carets = carets[:1]
-        caret = carets[0]
-        text = self._text
-        lineno = max(0, min(lineno, text.line_count() - 1))
-        line = text.line(lineno)
-        pos = max(0, min(position, len(line)))
-        caret.update(lineno, pos, True)
+        doc = self._document
+        old = self._position
+        lineno = max(0, min(position.lineno, len(doc) - 1))
+        line = doc[lineno]
+        column = max(0, min(position.column, len(line)))
+        new = Position(lineno, column)
+        if old != new:
+            self._position = new
+            self._desired = column
+            self.moved.emit(old, new)
 
     def move_up(self, n=1):
-        """ Move the carets up a number of lines.
+        """ Move the cursor up a number of lines.
 
-        When a caret reaches line 0, it will not be moved.
+        When the cursor reaches line 0, it will not be moved.
 
         Parameters
         ----------
@@ -157,16 +88,19 @@ class Cursor(object):
             The number of lines to move. The default is 1.
 
         """
-        text = self._text
-        for caret in self._carets:
-            lineno = max(0, caret.lineno - n)
-            pos = max(0, min(caret.desired, len(text.line(lineno))))
-            caret.update(lineno, pos, False)
+        doc = self._document
+        old = self._position
+        lineno = max(0, old.lineno - n)
+        column = max(0, min(self._desired, len(doc[lineno])))
+        new = Position(lineno, column)
+        if old != new:
+            self._position = new
+            self.moved.emit(old, new)
 
     def move_down(self, n=1):
-        """ Move the carets down a number a lines.
+        """ Move the cursor down a number a lines.
 
-        When a caret reaches the last line, it will not be moved.
+        When the cursor reaches the last line, it will not be moved.
 
         Parameters
         ----------
@@ -174,19 +108,22 @@ class Cursor(object):
             The number of lines to move. The default is 1.
 
         """
-        text = self._text
-        max_line = text.line_count() - 1
-        for caret in self._carets:
-            lineno = min(caret.lineno + n, max_line)
-            pos = max(0, min(caret.desired, len(text.line(lineno))))
-            caret.update(lineno, pos, False)
+        doc = self._document
+        old = self._position
+        max_line = len(doc) - 1
+        lineno = min(old.lineno + n, max_line)
+        column = max(0, min(self._desired, len(doc[lineno])))
+        new = Position(lineno, column)
+        if old != new:
+            self._position = new
+            self.moved.emit(old, new)
 
     def move_left(self, n=1):
-        """ Move the carets left a number of characters.
+        """ Move the cursor left a number of characters.
 
-        When a caret reaches the beginning of a line, it will wrap to
-        the previous line. If the caret is at the beginning of the text
-        model, it will not be moved.
+        When the cursor reaches the beginning of a line, it will wrap to
+        the previous line. If the cursor is at the beginning of the text
+        document, it will not be moved.
 
         Parameters
         ----------
@@ -194,26 +131,27 @@ class Cursor(object):
             The number of characters to move. The default is 1.
 
         """
-        text = self._text
-        for caret in self._carets:
-            pos = caret.position - n
-            lineno = caret.lineno
-            if pos < 0:
-                lineno -= 1
-                while pos < 0 and lineno >= 0:
-                    line = text.line(lineno)
-                    pos += len(line) + 1
-                    lineno -= 1
-                lineno += 1
-                pos = max(0, pos)
-            caret.update(lineno, pos, True)
+        doc = self._document
+        old = self._position
+        lineno = old.lineno
+        column = old.column - n
+        while column < 0 and lineno > 0:
+            lineno -= 1
+            line = doc[lineno]
+            column += len(line) + 1
+        column = max(0, column)
+        new = Position(lineno, column)
+        if old != new:
+            self._position = new
+            self._desired = column
+            self.moved.emit(old, new)
 
     def move_right(self, n=1):
-        """ Move the carets right a number of characters.
+        """ Move the cursor right a number of characters.
 
-        When a caret reaches the end of a line, it will wrap to the next
-        line. If the caret is at the end of the text model, it will not
-        be moved.
+        When the cursor reaches the end of a line, it will wrap to the
+        next line. If the cursor is at the end of the text model, it
+        will not be moved.
 
         Parameters
         ----------
@@ -221,21 +159,67 @@ class Cursor(object):
             The number of characters to move. The default is 1.
 
         """
-        text = self._text
-        max_line = text.line_count() - 1
-        for caret in self._carets:
-            pos = caret.position + n
-            lineno = caret.lineno
-            line = text.line(lineno)
-            if pos > len(line):
-                while True:
-                    if lineno == max_line:
-                        pos = len(line)
-                        break
-                    lineno += 1
-                    pos -= len(line) + 1
-                    line = text.line(lineno)
-                    if pos <= len(line):
-                        break
-            caret.update(lineno, pos, True)
+        doc = self._document
+        old = self._position
+        lineno = old.lineno
+        column = old.column + n
+        last_line = len(doc) - 1
+        line_length = len(doc[lineno])
+        while column > line_length and lineno < last_line:
+            column -= line_length + 1
+            lineno += 1
+            line_length = len(doc[lineno])
+        column = min(column, line_length)
+        new = Position(lineno, column)
+        if old != new:
+            self._position = new
+            self._desired = column
+            self.moved.emit(old, new)
+
+    #--------------------------------------------------------------------------
+    # Editing
+    #--------------------------------------------------------------------------
+    def insert(self, text):
+        doc = self._document
+        doc.insert_inline(self._position, text)
+        new = Position(self.position.lineno, self.position.column + 1)
+        old = self._position
+        self._position = new
+        self.moved.emit(old, new)
+
+    def newline(self):
+        doc = self._document
+        old = self._position
+        new = self._position = Position(old.lineno + 1, 0)
+        doc.insert_newline(old)
+        self.moved.emit(old, new)
+
+    def backspace(self):
+        doc = self._document
+        old = self._position
+        column = old.column
+        lineno = old.lineno
+        if column > 0:
+            self._position = new = Position(lineno, column - 1)
+            self._desired = column - 1
+            doc.remove_inline(lineno, column - 1, column)
+            self.moved.emit(old, new)
+        elif lineno > 0:
+            line = doc[lineno - 1]
+            line_length = len(line)
+            self._position = new = Position(lineno - 1, line_length)
+            self._desired = line_length
+            doc.remove_newline(lineno - 1)
+            self.moved.emit(old, new)
+
+    def delete(self):
+        doc = self._document
+        old = self._position
+        column = old.column
+        lineno = old.lineno
+        line = doc[lineno]
+        if column >= len(line):
+            doc.remove_newline(lineno)
+        else:
+            doc.remove_inline(lineno, column, column + 1)
 
