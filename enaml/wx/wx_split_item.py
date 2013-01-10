@@ -13,18 +13,18 @@ class wxSplitItem(wx.Panel):
     """ A wxPanel subclass which acts as an item in a wxSplitter.
 
     """
-    def __init__(self, *args, **kwargs):
+    def __init__(self, parent):
         """ Initialize a wxSplitItem.
 
         Parameters
         ----------
-        *args, **kwargs
-            The position and keyword arguments required to initialize
-            a wxPanel.
+        parent : wx.Window
+            The parent widget of the split item.
 
         """
-        super(wxSplitItem, self).__init__(*args, **kwargs)
+        super(wxSplitItem, self).__init__(parent)
         self._split_widget = None
+        self._stretch = 0
         self.SetSizer(wxSingleWidgetSizer())
 
     def GetSplitWidget(self):
@@ -50,6 +50,28 @@ class wxSplitItem(wx.Panel):
         self._split_widget = widget
         self.GetSizer().Add(widget)
 
+    def GetStretch(self):
+        """ Get the stretch factor for the widget.
+
+        Returns
+        -------
+        result : int
+            The stretch factor for the widget.
+
+        """
+        return self._stretch
+
+    def SetStretch(self, stretch):
+        """ Set the stretch factor for the widget.
+
+        Parameters
+        ----------
+        stretch : int
+            The stretch factor for the widget.
+
+        """
+        self._stretch = stretch
+
 
 class WxSplitItem(WxWidget):
     """ A Wx implementation of an Enaml SplitItem.
@@ -69,7 +91,8 @@ class WxSplitItem(WxWidget):
 
         """
         super(WxSplitItem, self).create(tree)
-        self.set_preferred_size(tree['preferred_size'])
+        self.set_stretch(tree['stretch'])
+        self.set_collapsible(tree['collapsible'])
 
     def init_layout(self):
         """ Initialize the layout for the underyling widget.
@@ -117,19 +140,31 @@ class WxSplitItem(WxWidget):
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
-    def on_action_set_preferred_size(self, content):
-        """ Handle the 'set_preferred_size' action from the Enaml widget.
+    def on_action_set_stretch(self, content):
+        """ Handle the 'set_stretch' action from the Enaml widget.
 
         """
-        self.set_preferred_size(content['preferred_size'])
+        self.set_stretch(content['stretch'])
+
+    def on_action_set_collapsible(self, content):
+        """ Handle the 'set_collapsible' action from the Enaml widget.
+
+        """
+        self.set_collapsible(content['collapsible'])
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
-    def set_preferred_size(self, size):
-        """ Set the preferred size for this item in the splitter.
+    def set_stretch(self, stretch):
+        """ Set the stretch factor for the underlying widget.
 
         """
-        # XXX implement me
+        self.widget().SetStretch(stretch)
+
+    def set_collapsible(self, collapsible):
+        """ Set the collapsible flag for the underlying widget.
+
+        """
+        # Not supported on Wx
         pass
 
