@@ -20,7 +20,7 @@ enamldef MainView(Window):
 """
         self.parse_and_create(enaml_source)
         self.server_widget = self.find_server_widget(self.view, "ImageView")
-        self.client_widget = self.find_client_widget(self.client_view, "ImageView")
+        self.client_widget = self.find_client_widget(self.client_view, "QtImageView")
 
     def test_set_image(self):
         """ Test the setting of a ImageView's image attribute
@@ -31,18 +31,21 @@ enamldef MainView(Window):
     def test_set_scale_to_fit(self):
         """ Test the setting of a ImageView's scale_to_fit attribute
         """
-        self.server_widget.scale_to_fit = False
-        assert self.client_widget.scale_to_fit == self.server_widget.scale_to_fit
+        with self.app.process_events():
+            self.server_widget.scale_to_fit = False
+        assert self.client_widget.scaledContents() == self.server_widget.scale_to_fit
 
     def test_set_preserve_aspect_ratio(self):
         """ Test the setting of a ImageView's preserve_aspect_ratio attribute
         """
-        self.server_widget.preserve_aspect_ratio = False
-        assert self.client_widget.preserve_aspect_ratio == self.server_widget.preserve_aspect_ratio
+        with self.app.process_events():
+            self.server_widget.preserve_aspect_ratio = False
+        assert self.client_widget.preserveAspectRatio() == self.server_widget.preserve_aspect_ratio
 
     def test_set_allow_upscaling(self):
         """ Test the setting of a ImageView's  attribute
         """
-        self.server_widget.allow_upscaling = False
-        assert self.client_widget.allow_upscaling == self.server_widget.allow_upscaling
+        with self.app.process_events():
+            self.server_widget.allow_upscaling = False
+        assert self.client_widget.allowUpscaling() == self.server_widget.allow_upscaling
 
