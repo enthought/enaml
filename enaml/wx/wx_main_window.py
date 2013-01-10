@@ -150,8 +150,8 @@ class wxMainWindow(wx.Frame):
     def OnMenu(self, event):
         """ The event handler for the EVT_MENU event.
 
-        This event handler will be called by menu item if a menu bar
-        is added to this window.
+        This event handler will be called when an action is triggered
+        in a Menu or a ToolBar.
 
         """
         action = wxAction.FindById(event.GetId())

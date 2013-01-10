@@ -19,7 +19,7 @@ class wxMenu(wx.Menu):
     working with wxMenu and wxAction children.
 
     """
-    def __init__(self, *args, **kwargs):
+    def __init__(self, parent, *args, **kwargs):
         """ Initialize a wxMenu.
 
         Parameters
@@ -30,6 +30,7 @@ class wxMenu(wx.Menu):
 
         """
         super(wxMenu, self).__init__(*args, **kwargs)
+        self._parent = parent
         self._title = u''
         self._all_items = []
         self._menus_map = {}
@@ -38,6 +39,7 @@ class wxMenu(wx.Menu):
         self._bar_enabled = True
         self._visible = True
         self._batch = False
+        self._is_context_menu = False
         self._id = wx.NewId()
 
     #--------------------------------------------------------------------------
@@ -226,6 +228,17 @@ class wxMenu(wx.Menu):
         item.SetItemLabel(menu.GetTitle())
         item.Enable(menu.IsEnabled())
 
+    def OnShowContextMenu(self, event):
+        """ A private event handler for displaying the context menu.
+
+        This handler is connected to the context menu event on the
+        parent widget when this menu is marked as a context menu.
+
+        """
+        parent = self._parent
+        if parent and isinstance(parent, wx.Window):
+            parent.PopupMenu(self)
+
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
@@ -334,6 +347,38 @@ class wxMenu(wx.Menu):
         if self._visible != visible:
             self._visible = visible
             self._EmitChanged()
+
+    def IsContextMenu(self):
+        """ Whether this menu acts as a context menu for its parent.
+
+        Returns
+        -------
+        result : bool
+            True if this menu acts as a context menu, False otherwise.
+
+        """
+        return self._is_context_menu
+
+    def SetContextMenu(self, context):
+        """ Set whether this menu acts as a context menu for its parent.
+
+        Parameters
+        ----------
+        context : bool
+            True if this menu should act as a context menu, False
+            otherwise.
+
+        """
+        old_context = self._is_context_menu
+        self._is_context_menu = context
+        if old_context != context:
+            parent = self._parent
+            if parent:
+                handler = self.OnShowContextMenu
+                if context:
+                    parent.Bind(wx.EVT_CONTEXT_MENU, handler)
+                else:
+                    parent.Unbind(wx.EVT_CONTEXT_MENU, handler=handler)
 
     def AddMenu(self, menu):
         """ Add a wx menu to the Menu.
@@ -540,7 +585,7 @@ class WxMenu(WxWidget):
         """ Create the underlying wx menu widget.
 
         """
-        widget = wxMenu()
+        widget = wxMenu(parent)
         widget.BeginBatch()
         return widget
 
@@ -550,6 +595,7 @@ class WxMenu(WxWidget):
         """
         super(WxMenu, self).create(tree)
         self.set_title(tree['title'])
+        self.set_context_menu(tree['context_menu'])
         self.widget().EndBatch(emit=False)
 
     def init_layout(self):
@@ -633,6 +679,12 @@ class WxMenu(WxWidget):
         """
         self.set_title(content['title'])
 
+    def on_action_set_context_menu(self, content):
+        """ Handle the 'set_context_menu' action from the Enaml widget.
+
+        """
+        self.set_context_menu(content['context_menu'])
+
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
@@ -660,6 +712,12 @@ class WxMenu(WxWidget):
         """
         self.widget().SetVisible(visible)
 
+    def set_context_menu(self, context):
+        """ Set whether or not the menu is a context menu.
+
+        """
+        self.widget().SetContextMenu(context)
+
     def set_minimum_size(self, min_size):
         """ Overridden parent class method.
 
@@ -672,6 +730,14 @@ class WxMenu(WxWidget):
         """ Overridden parent class method.
 
         Menus do not have a maximum size, so this method is a no-op.
+
+        """
+        pass
+
+    def set_tool_tip(self, tool_tip):
+        """ Overridden parent class method.
+
+        Menus do not have a tool tip, so this method is a no-op.
 
         """
         pass

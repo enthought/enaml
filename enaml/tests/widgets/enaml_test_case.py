@@ -21,7 +21,6 @@ class TestingQtApplication(QtApplication):
     events to be processed.
 
     """
-
     def start(self):
         """ Start the application's main event loop.
 
@@ -36,13 +35,12 @@ class TestingQtApplication(QtApplication):
         the events.
 
         """
-
         yield
 
         # From QT Documentation
-        # Immediately dispatches all events which have been previously queued 
+        # Immediately dispatches all events which have been previously queued
         # with QCoreApplication::postEvent().
-        # Events from the window system are not dispatched by this function, 
+        # Events from the window system are not dispatched by this function,
         # but by processEvents().
         self._qapp.sendPostedEvents()
 
@@ -53,7 +51,8 @@ class TestingQtApplication(QtApplication):
 _session_counter = itertools.count()
 def get_unique_session_identifier():
     """ Returns a 'unique' name for a session. """
-    return 'session_{}'.format(_session_counter.next())
+    return 'session_%d' % _session_counter.next()
+
 
 class EnamlTestCase(unittest.TestCase):
     """ Base class for testing Enaml object widgets.
@@ -62,8 +61,6 @@ class EnamlTestCase(unittest.TestCase):
     enaml components.
 
     """
-
-
     def find_client_widget(self, root, type_name):
         """ A simple function that recursively walks a widget tree until it
         finds a widget of a particular type.
@@ -138,10 +135,10 @@ class EnamlTestCase(unittest.TestCase):
         session = self.app._sessions[session_id]
 
         # retrieve the enaml server side root widget
-        self.view = session.session_objects[0]
+        self.view = session.windows[0]
 
         # retrieve the enaml client side root widget
-        self.client_view = self.app._qt_objects[session_id][0]
+        self.client_view = self.app._qt_sessions[session_id]._windows[0]
 
     def tearDown(self):
 

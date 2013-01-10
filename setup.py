@@ -3,11 +3,13 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import os
-from setuptools import setup, find_packages, Extension
+from setuptools import setup, find_packages, Extension, Feature
 
 
-if os.environ.get('BUILD_ENAML_EXTENSIONS'):
-    ext_modules = [
+enaml_extensions = Feature(
+    description='optional optimized c++ extensions',
+    standard=bool(os.environ.get('BUILD_ENAML_EXTENSIONS')),
+    ext_modules=[
         Extension(
             'enaml.extensions.weakmethod',
             ['enaml/extensions/weakmethod.cpp'],
@@ -27,15 +29,14 @@ if os.environ.get('BUILD_ENAML_EXTENSIONS'):
             'enaml.extensions.funchelper',
             ['enaml/extensions/funchelper.cpp'],
             language='c++',
-        ),
-    ]
-else:
-    ext_modules = []
+        )
+    ],
+)
 
 
 setup(
     name='enaml',
-    version='0.6.3',
+    version='0.6.6',
     author='Enthought, Inc',
     author_email='info@enthought.com',
     url='https://github.com/enthought/enaml',
@@ -51,7 +52,7 @@ setup(
             'enaml-run = enaml.runner:main',
         ],
     ),
-    ext_modules=ext_modules,
     test_suite='enaml.test_collector',
+    features={'enaml-extensions': enaml_extensions}
 )
 

@@ -141,15 +141,7 @@ class QNotebook(QTabWidget):
             The QPage instance to add to the notebook.
 
         """
-        if page.isOpen():
-            self.addTab(page, page.title())
-            index = self.indexOf(page)
-            self.setTabToolTip(index, page.toolTip())
-            self.setTabEnabled(index, page.isTabEnabled())
-            self.setTabCloseButtonVisible(index, page.isClosable())
-        else:
-            page.hide()
-            self._hidden_pages[page] = self.count()
+        self.insertPage(self.count(), page)
 
     def insertPage(self, index, page):
         """ Insert a QPage instance into the notebook.
@@ -168,6 +160,7 @@ class QNotebook(QTabWidget):
         if page.isOpen():
             index = min(index, self.count())
             self.insertTab(index, page, page.title())
+            self.setTabIcon(index, page.icon())
             self.setTabToolTip(index, page.toolTip())
             self.setTabEnabled(index, page.isTabEnabled())
             self.setTabCloseButtonVisible(index, page.isClosable())

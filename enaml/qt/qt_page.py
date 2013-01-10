@@ -2,11 +2,16 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+import logging
+
 from .qt.QtCore import Signal
-from .qt.QtGui import QFrame
+from .qt.QtGui import QFrame, QIcon, QImage, QPixmap
 from .q_single_widget_layout import QSingleWidgetLayout
 from .qt_container import QtContainer
 from .qt_widget import QtWidget
+
+
+logger = logging.getLogger(__name__)
 
 
 class QPage(QFrame):
@@ -29,6 +34,7 @@ class QPage(QFrame):
         super(QPage, self).__init__(*args, **kwargs)
         self._title = u''
         self._tool_tip = u''
+        self._icon = QIcon()
         self._closable = True
         self._is_enabled = True
         self._is_open = True
@@ -246,11 +252,39 @@ class QPage(QFrame):
             nb.setTabToolTip(index, tool_tip)
         self._pageIndexOperation(closure)
 
+    def icon(self):
+        """ Get the icon for the page.
+
+        Returns
+        -------
+        result : QIcon
+            The icon for the page.
+
+        """
+        return self._icon
+
+    def setIcon(self, icon):
+        """ Set the icon for the page.
+
+        Parameters
+        ----------
+        icon : QIcon
+            The icon for the page.
+
+        """
+        self._icon = icon
+        def closure(nb, index):
+            nb.setTabIcon(index, icon)
+        self._pageIndexOperation(closure)
+
 
 class QtPage(QtWidget):
     """ A Qt implementation of an Enaml notebook Page.
 
     """
+    #: Temporary internal storage for the icon source url.
+    _icon_source = ''
+
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
@@ -267,6 +301,7 @@ class QtPage(QtWidget):
         super(QtPage, self).create(tree)
         self.set_title(tree['title'])
         self.set_closable(tree['closable'])
+        self._icon_source = tree['icon_source']
         self.widget().pageClosed.connect(self.on_page_closed)
 
     def init_layout(self):
@@ -275,6 +310,13 @@ class QtPage(QtWidget):
         """
         super(QtPage, self).init_layout()
         self.widget().setPageWidget(self.page_widget())
+
+    def activate(self):
+        """ Activate the page widget.
+
+        """
+        self.set_icon_source(self._icon_source)
+        super(QtPage, self).activate()
 
     #--------------------------------------------------------------------------
     # Utility Methods
@@ -336,6 +378,12 @@ class QtPage(QtWidget):
         """
         self.set_closable(content['closable'])
 
+    def on_action_set_icon_source(self, content):
+        """ Handle the 'set_icon_source' action from the Enaml widget.
+
+        """
+        self.set_icon_source(content['icon_source'])
+
     def on_action_open(self, content):
         """ Handle the 'open' action from the Enaml widget.
 
@@ -380,4 +428,37 @@ class QtPage(QtWidget):
 
         """
         self.widget().setClosable(closable)
+
+    def set_icon_source(self, icon_source):
+        """ Sets the widget's icon to the provided image.
+
+        """
+        if icon_source:
+            loader = self._session.load_resource(icon_source)
+            loader.on_load(self._on_icon_load)
+        else:
+            self._on_icon_load(QIcon())
+
+    #--------------------------------------------------------------------------
+    # Private API
+    #--------------------------------------------------------------------------
+    def _on_icon_load(self, icon):
+        """ A private resource loader callback.
+
+        This method is invoked when the requested icon is successfully
+        loaded. It will update the icon on the page widget.
+
+        Parameters
+        ----------
+        icon : QIcon or QImage
+            The icon or image that was loaded by the request.
+
+        """
+        if isinstance(icon, QImage):
+            icon = QIcon(QPixmap.fromImage(icon))
+        elif not isinstance(icon, QIcon):
+            msg = 'got incorrect type for icon: `%s`'
+            logger.error(msg % type(icon).__name__)
+            icon = QIcon()
+        self.widget().setIcon(icon)
 

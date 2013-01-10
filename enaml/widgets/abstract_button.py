@@ -2,11 +2,10 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-#from base64 import b64encode
+from traits.api import Bool, Unicode, Str
 
-from traits.api import Bool, Unicode, Tuple, Str, Int
-
-from enaml.core.trait_types import EnamlEvent
+from enaml.core.trait_types import CoercingInstance, EnamlEvent
+from enaml.layout.geometry import Size
 
 from .control import Control
 
@@ -24,7 +23,7 @@ class AbstractButton(Control):
 
     #: The size to use for the icon. The default is an invalid size
     #: and indicates that an appropriate default should be used.
-    icon_size = Tuple(Int(-1), Int(-1))
+    icon_size = CoercingInstance(Size, (-1, -1))
 
     #: Whether or not the button is checkable. The default is False.
     checkable = Bool(False)
@@ -55,7 +54,7 @@ class AbstractButton(Control):
         snap['text'] = self.text
         snap['checkable'] = self.checkable
         snap['checked'] = self.checked
-        snap['icon_size'] = self.icon_size
+        snap['icon_size'] = tuple(self.icon_size)
         snap['icon_source'] = self.icon_source
         return snap
 

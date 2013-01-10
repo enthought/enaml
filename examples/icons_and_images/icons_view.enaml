@@ -7,8 +7,8 @@
 """
 from enaml.layout.api import vbox, hbox, spacer
 from enaml.widgets.api import (
-    MainWindow, Container, ToolBar, Action, MenuBar, Menu, PushButton,
-    CheckBox, ActionGroup, Html, FileDialog
+    MainWindow, Container, ToolBar, Action, MenuBar, Menu, PushButton, Html,
+    ActionGroup,
 )
 
 
@@ -107,4 +107,3 @@ enamldef IconsView(MainWindow): main:
             icon_size = (28, 28)
             text = 'Close'
             clicked :: main.close()
-

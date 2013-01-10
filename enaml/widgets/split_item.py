@@ -2,7 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Either, Int, Property, cached_property
+from traits.api import Any, Bool, Range, Property, cached_property
 
 from .container import Container
 from .widget import Widget
@@ -16,12 +16,20 @@ class SplitItem(Widget):
     instance of Container.
 
     """
-    #: The preferred size for this item in the splitter, or None if
-    #: there is no preference for the size. The default is None.
-    preferred_size = Either(None, Int)
+    #: The stretch factor for this item. The stretch factor determines
+    #: how much an item is resized relative to its neighbors when the
+    #: splitter space is allocated.
+    stretch = Range(low=0, value=1)
+
+    #: Whether or not the item can be collapsed to zero width by the
+    #: user. This holds regardless of the minimum size of the item.
+    collapsible = Bool(True)
 
     #: A read only property which returns the split widget.
     split_widget = Property(depends_on='children')
+
+    #: This is a deprecated attribute. It should no longer be used.
+    preferred_size = Any
 
     #--------------------------------------------------------------------------
     # Initialization
@@ -31,7 +39,8 @@ class SplitItem(Widget):
 
         """
         snap = super(SplitItem, self).snapshot()
-        snap['preferred_size'] = self.preferred_size
+        snap['stretch'] = self.stretch
+        snap['collapsible'] = self.collapsible
         return snap
 
     def bind(self):
@@ -39,7 +48,7 @@ class SplitItem(Widget):
 
         """
         super(SplitItem, self).bind()
-        self.publish_attributes('preferred_size')
+        self.publish_attributes('stretch', 'collapsible')
 
     #--------------------------------------------------------------------------
     # Private API

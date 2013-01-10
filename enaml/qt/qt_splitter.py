@@ -53,9 +53,6 @@ class QCustomSplitter(QSplitter):
     #: of the splitter is no longer valid.
     layoutRequested = Signal()
 
-    #--------------------------------------------------------------------------
-    # Public API
-    #--------------------------------------------------------------------------
     def createHandle(self):
         """ A reimplemented virtual method to create splitter handles.
 
@@ -145,7 +142,7 @@ class QtSplitter(QtConstraintsWidget):
         # collapsed, the effect of this is to restore the order of event
         # processing.
         if sys.platform == 'win32':
-            widget.splitterMoved.connect(self.on_win32_slider_moved)
+            widget.splitterMoved.connect(self.on_win32_splitter_moved)
 
     #--------------------------------------------------------------------------
     # Child Events
@@ -173,8 +170,8 @@ class QtSplitter(QtConstraintsWidget):
         """
         self.size_hint_updated()
 
-    def on_win32_slider_moved(self):
-        """ Handle the 'sliderMoved' signal from the QSplitter.
+    def on_win32_splitter_moved(self):
+        """ Handle the 'splitterMoved' signal from the QSplitter.
 
         This handler is only connected when running on Windows and it
         serves to make sure paint events get generated during heavy
@@ -216,21 +213,4 @@ class QtSplitter(QtConstraintsWidget):
 
         """
         self.widget().setOpaqueResize(live_drag)
-
-    # def set_preferred_sizes(self, sizes):
-    #     """ Set the preferred sizes for the children.
-
-    #     For sizes not supplied by the user, either via None values or
-    #     a list which is too short, the current size for that element
-    #     will be used in its place.
-
-    #     """
-    #     widget = self.widget()
-    #     curr_sizes = widget.sizes()[:]
-    #     max_idx = min(len(curr_sizes), len(sizes))
-    #     for idx in xrange(max_idx):
-    #         size = sizes[idx]
-    #         if size is not None:
-    #             curr_sizes[idx] = size
-    #     widget.setSizes(curr_sizes)
 
