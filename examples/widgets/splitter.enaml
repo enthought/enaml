@@ -82,12 +82,15 @@ enamldef Main(Window):
         Splitter:
             hug_height = 'strong'
             SplitItem:
+                stretch = 0
+                collapsible = False
                 MyForm:
                     pass
             SplitItem:
                 MyForm:
                     pass
             SplitItem:
+                stretch = 2
                 MyHtmlWidgets:
                     pass
             SplitItem:
