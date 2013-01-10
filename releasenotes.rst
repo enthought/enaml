@@ -1,6 +1,13 @@
 Enaml Release Notes
 ===================
 
+0.6.6 - 01/10/2013
+-------------------
+- Fix the broken unittests and make them Python 2.6 safe. 2c1d7f01d_
+
+.. _22c1d7f01d: https://github.com/enthought/enaml/commit/22c1d7f01d844979c166e2f156d18a553f2c0152
+
+
 0.6.5 - 01/10/2013
 ------------------
 - Add a stretch factor to the Splitter widget. c2272cf1ef_
