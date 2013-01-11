@@ -9,8 +9,16 @@ used to compute the log of a range of numbers.
 
 """
 import math
-from enaml.widgets.api import Window, Form, Label, Field, Slider
+from enaml.widgets.api import Window, Form, Label, Field, Slider, SpinBox
 
+from traits.api import HasTraits, Int
+
+class Foo(HasTraits):
+    value = Int(1)
+    minimum = Int(1)
+    maximum = Int(1000)
+
+foo = Foo()
 
 enamldef Main(Window):
     title = 'Slider Example'
@@ -20,8 +28,28 @@ enamldef Main(Window):
         Field:
             text << u'{}'.format(math.log(val_slider.value))
             read_only = True
+        Label:
+            text << 'Minimum %d' % val_slider.minimum
+        Label:
+            text << 'Maximum %d' % val_slider.maximum
+        Label:
+            text << 'Foo Value %d' % foo.value
+        SpinBox:
+            minimum = -10000
+            maximum = 10000
+            value := foo.value
+        SpinBox:
+            minimum = -10000
+            maximum = 10000
+            value := foo.minimum
+        SpinBox:
+            minimum = -10000
+            maximum = 10000
+            value := foo.maximum
         Slider:
             id: val_slider
             tick_interval = 50
-            maximum = 1000
-            minimum = 1
+            value := foo.value
+            maximum << foo.maximum
+            minimum << foo.minimum
+
