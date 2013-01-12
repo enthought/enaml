@@ -7,13 +7,12 @@ from enaml.grid.tabular_model import TabularModel
 class MyModel(TabularModel):
 
     def row_count(self):
-        return 100
+        return 10
 
     def column_count(self):
-        return 100
+        return 10
 
     def data(self, rows, columns):
-        #print 'requested', rows, columns
         for r in rows:
             for c in columns:
                 yield (r, c)

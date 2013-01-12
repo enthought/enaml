@@ -47,6 +47,9 @@ class QTabularHeader(QFrame):
     def visualIndexAt(self, position):
         raise NotImplementedError
 
+    def lastVisualIndex(self):
+        raise NotImplementedError
+
     def logicalIndexAt(self, position):
         raise NotImplementedError
 
@@ -85,7 +88,14 @@ class QFixedSizeHeader(QTabularHeader):
 
     def visualIndexAt(self, position):
         virtual = position + self._offset
-        return virtual / self._section_size
+        count = self.count()
+        idx = self.count(), virtual / self._section_size
+        if idx > count - 1:
+            return -1
+        return idx
+
+    def lastVisualIndex(self):
+        return self.count() - 1
 
     def logicalIndexAt(self, position):
         return self.visualIndexAt(position)

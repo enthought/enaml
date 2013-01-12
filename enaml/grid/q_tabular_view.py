@@ -5,7 +5,7 @@
 import sys
 
 
-from enaml.qt.qt.QtCore import Qt, QRect
+from enaml.qt.qt.QtCore import Qt, QRect, QLine
 from enaml.qt.qt.QtGui import QPainter, QAbstractScrollArea
 
 from .tabular_model import TabularModel, NullModel
@@ -32,6 +32,16 @@ class QTabularView(QAbstractScrollArea):
         self._h_header = QFixedSizeHeader(Qt.Horizontal)
         viewport = self.viewport()
         viewport.setAttribute(Qt.WA_StaticContents, True)
+        viewport.setAutoFillBackground(True)
+        viewport.setFocusPolicy(Qt.ClickFocus)
+        self.updateScrollBars()
+
+    def updateScrollBars(self):
+        size = self.viewport().size()
+        vrange = self._v_header.length()
+        hrange = self._h_header.length()
+        self.verticalScrollBar().setRange(0, vrange - size.height())
+        self.horizontalScrollBar().setRange(0, hrange - size.width())
 
     def model(self):
         return self._model
@@ -39,21 +49,27 @@ class QTabularView(QAbstractScrollArea):
     def setModel(self, model):
         assert isinstance(model, TabularModel)
         self._model = model
+        self._v_header.setModel(model)
+        self._h_header.setModel(model)
+        self.updateScrollBars()
+
+    def resizeEvent(self, event):
+        super(QTabularView, self).resizeEvent(event)
+        self.updateScrollBars()
 
     def scrollContentsBy(self, dx, dy):
-        print 'scrolling', dx, dy
         if dx != 0:
             header = self._h_header
             old = header.offset()
-            new = self.horizontalScrollbar().value()
+            new = self.horizontalScrollBar().value()
             header.setOffset(new)
-            dx = new - old
+            dx = old - new
         if dy != 0:
             header = self._v_header
             old = header.offset()
-            new = self.verticalScrollbar().value()
+            new = self.verticalScrollBar().value()
             header.setOffset(new)
-            dy = new - old
+            dy = old - new
         self.viewport().scroll(dx, dy)
 
     def paintEvent(self, event):
@@ -61,9 +77,15 @@ class QTabularView(QAbstractScrollArea):
         v_header = self._v_header
         model = self._model
 
+        if h_header.count() == 0 or v_header.count() == 0:
+            return
+        max_x = h_header.length()
+        max_y = v_header.length()
+
         painter = QPainter(self.viewport())
         dr = QRect()
-
+        dl = QLine()
+        print event.region().rects()
         for rect in event.region().rects():
 
             x1 = rect.x()
@@ -71,10 +93,18 @@ class QTabularView(QAbstractScrollArea):
             y1 = rect.y()
             y2 = y1 + rect.height()
 
+            if x1 > max_x or y1 > max_y:
+                continue
+
             first_visual_row = v_header.visualIndexAt(y1)
             last_visual_row = v_header.visualIndexAt(y2)
             first_visual_col = h_header.visualIndexAt(x1)
             last_visual_col = h_header.visualIndexAt(x2)
+
+            if last_visual_row == -1:
+                last_visual_row = v_header.lastVisualIndex()
+            if last_visual_col == -1:
+                last_visual_col = v_header.lastVisualIndex()
 
             row_sizes = []
             row_indices = []
@@ -88,20 +118,41 @@ class QTabularView(QAbstractScrollArea):
                 col_sizes.append(h_header.sectionSize(idx))
                 col_indices.append(h_header.logicalIndex(idx))
 
+            # Draw the data
             data = iter(model.data(row_indices, col_indices))
             y = v_header.sectionPosition(first_visual_row)
             x = h_header.sectionPosition(first_visual_col)
             xr = x
-
+            yr = y
             try:
                 for r_height in row_sizes:
                     xr = x
                     for c_width in col_sizes:
-                        dr.setRect(xr, y, c_width, r_height)
+                        dr.setRect(xr, yr, c_width, r_height)
                         painter.drawText(dr, Qt.AlignCenter, str(data.next()))
                         xr += c_width
-                    y += r_height
+                    yr += r_height
             except StopIteration:
                 pass
+
+
+            # Draw the grid lines
+            painter.save()
+            painter.setPen(Qt.gray)
+            xm = x1 + sum(col_sizes)
+            ym = y1 + sum(row_sizes)
+            if y1 < ym:
+                yr = y
+                for r_height in row_sizes:
+                    dl.setLine(x1, yr, xm, yr)
+                    painter.drawLine(dl)
+                    yr += r_height
+            if x1 < xm:
+                xr = x
+                for c_width in col_sizes:
+                    dl.setLine(xr, y1, xr, ym)
+                    painter.drawLine(dl)
+                    xr += c_width
+            painter.restore()
 
 
