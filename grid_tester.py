@@ -25,7 +25,11 @@ class MyModel(TabularModel):
         return r
 
     def column_count(self):
-        return 100
+        if H_SCROLL == QTabularView.ScrollPerPixel:
+            r = 100
+        else:
+            r = (1 << 31) - 1 # max columns == 2,147,483,647
+        return r
 
     def data(self, rows, columns):
         # uncomment to show requested data block size
@@ -38,8 +42,8 @@ class MyModel(TabularModel):
 if __name__ == '__main__':
     app = QApplication([])
     v = QTabularView()
-    v.setHorizontalScrollMode(H_SCROLL)
-    v.setVerticalScrollMode(V_SCROLL)
+    v.setHorizontalScrollPolicy(H_SCROLL)
+    v.setVerticalScrollPolicy(V_SCROLL)
     v.setModel(MyModel())
     v.show()
     app.exec_()
