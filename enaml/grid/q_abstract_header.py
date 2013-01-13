@@ -66,13 +66,12 @@ class QTabularHeader(QFrame):
         raise NotImplementedError
 
 
-
 class QFixedSizeHeader(QTabularHeader):
 
     def __init__(self, orientation, parent=None):
         super(QFixedSizeHeader, self).__init__(orientation, parent)
         if self.orientation() == Qt.Horizontal:
-            self._section_size = 50
+            self._section_size = 70
         else:
             self._section_size = 17
         self._offset = 0
@@ -89,7 +88,7 @@ class QFixedSizeHeader(QTabularHeader):
     def visualIndexAt(self, position):
         virtual = position + self._offset
         count = self.count()
-        idx = self.count(), virtual / self._section_size
+        idx = virtual / self._section_size
         if idx > count - 1:
             return -1
         return idx
@@ -111,4 +110,7 @@ class QFixedSizeHeader(QTabularHeader):
 
     def sectionPosition(self, visual_index):
         return visual_index * self._section_size - self._offset
+
+    def setOffsetToVisualIndex(self, visual_index):
+        self._offset = visual_index * self._section_size
 
