@@ -204,13 +204,17 @@ class QTabularView(QAbstractScrollArea):
             v_max = max(0, v_header.count() - delta)
             v_bar.setRange(0, v_max)
 
-        # Set the horizontal header geometry.
+        # Set the horizontal header geometry. Only set the full geometry
+        # when the position has a descrepancy, otherwise the damaged
+        # region will not be computed correctly.
         if h_header.x() != geo.x():
             h_header.setGeometry(geo.x(), 0, geo.width(), geo.y())
         else:
             h_header.resize(geo.width(), geo.y())
 
-        # Set the vertical header geometry.
+        # Set the vertical header geometry. Only set the full geometry
+        # when the position has a descrepancy, otherwise the damaged
+        # region will not be computed correctly.
         if v_header.y() != geo.y():
             v_header.setGeometry(0, geo.y(), geo.x(), geo.height())
         else:
