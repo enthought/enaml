@@ -50,15 +50,16 @@ class QTabularView(QAbstractScrollArea):
         """
         super(QTabularView, self).__init__(parent)
         self._model = NullModel()
-        self._v_header = QFixedSizeHeader(Qt.Vertical)
-        self._h_header = QFixedSizeHeader(Qt.Horizontal)
+        self._v_header = QFixedSizeHeader(Qt.Vertical, self)
+        self._h_header = QFixedSizeHeader(Qt.Horizontal, self)
         self._h_scroll_policy = QTabularView.ScrollPerPixel
         self._v_scroll_policy = QTabularView.ScrollPerPixel
         viewport = self.viewport()
         viewport.setAttribute(Qt.WA_StaticContents, True)
         viewport.setAutoFillBackground(True)
         viewport.setFocusPolicy(Qt.ClickFocus)
-        self._updateScrollBars()
+        self._updateViewportMargins()
+        self._updateGeometries()
 
     #--------------------------------------------------------------------------
     # Public API
@@ -87,7 +88,7 @@ class QTabularView(QAbstractScrollArea):
         self._model = model
         self._v_header.setModel(model)
         self._h_header.setModel(model)
-        self._updateScrollBars()
+        self._updateGeometries()
 
     def horizontalScrollPolicy(self):
         """ Get the horizontal scroll policy for the widget.
@@ -116,7 +117,7 @@ class QTabularView(QAbstractScrollArea):
         valid = (QTabularView.ScrollPerPixel, QTabularView.ScrollPerItem)
         assert policy in valid
         self._h_scroll_policy = policy
-        self._updateScrollBars()
+        self._updateGeometries()
 
     def verticalScrollPolicy(self):
         """ Get the vertical scroll policy for the widget.
@@ -145,12 +146,31 @@ class QTabularView(QAbstractScrollArea):
         valid = (QTabularView.ScrollPerPixel, QTabularView.ScrollPerItem)
         assert policy in valid
         self._v_scroll_policy = policy
-        self._updateScrollBars()
+        self._updateGeometries()
 
     #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
-    def _updateScrollBars(self):
+    def _updateViewportMargins(self):
+        """ Update the margins for the viewport.
+
+        This method should be called when either header's header size
+        or visibility changes. The viewport margins will be updated to
+        allow for enough space for each header.
+
+        """
+        v_header = self._v_header
+        h_header = self._h_header
+        left = top = 0
+        # The -1 accounts for the fact that QAbstractScrollArea will
+        # yield a viewport position of (1, 1) with margins of zero.
+        if h_header.isVisibleTo(self):
+            top = h_header.headerSize() - 1
+        if v_header.isVisibleTo(self):
+            left = v_header.headerSize() - 1
+        self.setViewportMargins(left, top, 0, 0)
+
+    def _updateGeometries(self):
         """ Update the current range of the scroll bars.
 
         This method can be called as-needed to update the range of the
@@ -162,21 +182,39 @@ class QTabularView(QAbstractScrollArea):
         # of the header minus the size of the viewport. When scrolling
         # by item, the range is the number of items minus the number
         # of trailing items which can fit on the screen.
-        v_header = self._v_header
         h_header = self._h_header
-        v_bar = self.verticalScrollBar()
+        v_header = self._v_header
         h_bar = self.horizontalScrollBar()
-        size = self.viewport().size()
-        if self._v_scroll_policy == QTabularView.ScrollPerPixel:
-            v_bar.setRange(0, v_header.length() - size.height())
-        else:
-            delta = v_header.trailingSpan(size.height())
-            v_bar.setRange(0, v_header.count() - delta)
+        v_bar = self.verticalScrollBar()
+        geo = self.viewport().geometry()
+
+        # Set the horizontal scrollbar range.
         if self._h_scroll_policy == QTabularView.ScrollPerPixel:
-            h_bar.setRange(0, h_header.length() - size.width())
+            h_bar.setRange(0, h_header.length() - geo.width())
         else:
-            delta = h_header.trailingSpan(size.width())
-            h_bar.setRange(0, h_header.count() - delta)
+            delta = h_header.trailingSpan(geo.width())
+            h_max = max(0, h_header.count() - delta)
+            h_bar.setRange(0, h_max)
+
+        # Set the vertical scrollbar range.
+        if self._v_scroll_policy == QTabularView.ScrollPerPixel:
+            v_bar.setRange(0, v_header.length() - geo.height())
+        else:
+            delta = v_header.trailingSpan(geo.height())
+            v_max = max(0, v_header.count() - delta)
+            v_bar.setRange(0, v_max)
+
+        # Set the horizontal header geometry.
+        if h_header.x() != geo.x():
+            h_header.setGeometry(geo.x(), 0, geo.width(), geo.y())
+        else:
+            h_header.resize(geo.width(), geo.y())
+
+        # Set the vertical header geometry.
+        if v_header.y() != geo.y():
+            v_header.setGeometry(0, geo.y(), geo.x(), geo.height())
+        else:
+            v_header.resize(geo.x(), geo.height())
 
     #--------------------------------------------------------------------------
     # Reimplementations
@@ -189,7 +227,7 @@ class QTabularView(QAbstractScrollArea):
 
         """
         super(QTabularView, self).resizeEvent(event)
-        self._updateScrollBars()
+        self._updateGeometries()
 
     def scrollContentsBy(self, dx, dy):
         """ A reimplemented virtual method.
@@ -199,6 +237,7 @@ class QTabularView(QAbstractScrollArea):
         are taken into account when computing the offsets.
 
         """
+        # Update the horizontal header offset.
         if dx != 0:
             header = self._h_header
             old = header.offset()
@@ -207,6 +246,8 @@ class QTabularView(QAbstractScrollArea):
                 new = header.sectionPosition(new)
             header.setOffset(new)
             dx = old - new
+
+        # Update the vertical header offset.
         if dy != 0:
             header = self._v_header
             old = header.offset()
@@ -215,6 +256,8 @@ class QTabularView(QAbstractScrollArea):
                 new = header.sectionPosition(new)
             header.setOffset(new)
             dy = old - new
+
+        # Scroll the widget by the computed deltas.
         if dx != 0 or dy != 0:
             viewport = self.viewport()
             size = viewport.size()
@@ -230,94 +273,104 @@ class QTabularView(QAbstractScrollArea):
         region of the viewport.
 
         """
+        # If there are no rows or columns, nothing needs to be drawn.
         h_header = self._h_header
         v_header = self._v_header
-        model = self._model
-
         if h_header.count() == 0 or v_header.count() == 0:
             return
 
         painter = QPainter(self.viewport())
-        dr = QRect()
-        dl = QLine()
 
+        # The cell rect is updated during iteration. Only a single rect
+        # object is allocated for the entire paint event.
+        cell_rect = QRect()
+
+        # The grid line is updated during iteration. Only a single line
+        # object is allocated for the entire paint event.
+        grid_line = QLine()
+
+        # Prefetch common attributes as locals.
+        model = self._model
         h_offset = h_header.offset()
         v_offset = v_header.offset()
 
         for rect in event.region().rects():
 
+            # Set the clip rect to avoid overdrawing onto other parts
+            # of the region. This is crucial to elimination overdrawing
+            # of antialiased fonts when scrolling one pixel at a time.
             painter.setClipRect(rect)
 
+            # Compute the index bounds of the dirty rect.
             x1 = rect.x()
             x2 = x1 + rect.width()
             y1 = rect.y()
             y2 = y1 + rect.height()
-
             first_visual_row = v_header.visualIndexAt(y1 + v_offset)
             last_visual_row = v_header.visualIndexAt(y2 + v_offset)
             first_visual_col = h_header.visualIndexAt(x1 + h_offset)
             last_visual_col = h_header.visualIndexAt(x2 + h_offset)
 
+            # If an index is out of bounds, there is nothing to draw.
             if first_visual_row == -1 or first_visual_col == -1:
                 continue
 
+            # Clip the trailing indices to the valid bounds.
             if last_visual_row == -1:
                 last_visual_row = v_header.count() - 1
             if last_visual_col == -1:
                 last_visual_col = h_header.count() - 1
 
-            row_sizes = []
-            row_indices = []
-            for idx in xrange(first_visual_row, last_visual_row + 1):
-                row_sizes.append(v_header.sectionSize(idx))
-                row_indices.append(v_header.logicalIndex(idx))
-
-            col_sizes = []
+            # Compute the logical indices, data, and paint start.
+            col_widths = []
             col_indices = []
             for idx in xrange(first_visual_col, last_visual_col + 1):
-                col_sizes.append(h_header.sectionSize(idx))
+                col_widths.append(h_header.sectionSize(idx))
                 col_indices.append(h_header.logicalIndex(idx))
+            row_heights = []
+            row_indices = []
+            for idx in xrange(first_visual_row, last_visual_row + 1):
+                row_heights.append(v_header.sectionSize(idx))
+                row_indices.append(v_header.logicalIndex(idx))
+            data = iter(model.data(row_indices, col_indices))
+            start_x = h_header.sectionPosition(first_visual_col) - h_offset
+            start_y = v_header.sectionPosition(first_visual_row) - v_offset
 
-            # Compute the drawing variables
-            y = v_header.sectionPosition(first_visual_row) - v_offset
-            x = h_header.sectionPosition(first_visual_col) - h_offset
-            max_x = x + sum(col_sizes) - 1
-            max_y = y + sum(row_sizes) - 1
+            # Compute the paint bounds
+            max_x = start_x + sum(col_widths) - 1
+            max_y = start_y + sum(row_heights) - 1
 
             # Draw the grid lines first since a cell border may overdraw
             # Each line is drawn on the last pixel of the row or column.
             painter.save()
             painter.setPen(Qt.gray)
-            yr = y
-            for r_height in row_sizes:
-                yr += r_height
-                dl.setLine(x1, yr - 1, max_x, yr - 1)
-                painter.drawLine(dl)
-            xr = x
-            for c_width in col_sizes:
-                xr += c_width
-                dl.setLine(xr - 1, y1, xr - 1, max_y)
-                painter.drawLine(dl)
+            x_run = start_x
+            for col_width in col_widths:
+                x_run += col_width
+                grid_line.setLine(x_run - 1, y1, x_run - 1, max_y)
+                painter.drawLine(grid_line)
+            y_run = start_y
+            for row_height in row_heights:
+                y_run += row_height
+                grid_line.setLine(x1, y_run - 1, max_x, y_run - 1)
+                painter.drawLine(grid_line)
             painter.restore()
 
-            # Draw the data
-            data = iter(model.data(row_indices, col_indices))
+            # Draw the cell data for the invalid region.
             try:
                 ndata = data.next
-                setRect = dr.setRect
+                setRect = cell_rect.setRect
                 drawText = painter.drawText
                 str_ = str
                 AlignCenter = Qt.AlignCenter
-                yr = y
-                for r_height in row_sizes:
-                    xr = x
-                    for c_width in col_sizes:
-                        setRect(xr, yr, c_width, r_height)
-                        drawText(dr, AlignCenter, str_(ndata()))
-                        xr += c_width
-                    yr += r_height
+                y_run = start_y
+                for row_height in row_heights:
+                    x_run = start_x
+                    for col_width in col_widths:
+                        setRect(x_run, y_run, col_width, row_height)
+                        drawText(cell_rect, AlignCenter, str_(ndata()))
+                        x_run += col_width
+                    y_run += row_height
             except StopIteration: # ran out of data early
                 pass
-
-
 

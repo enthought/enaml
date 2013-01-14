@@ -38,6 +38,14 @@ class MyModel(TabularModel):
             for c in columns:
                 yield str(r + c)
 
+    def horizontal_header_data(self, columns):
+        for c in columns:
+            yield 'Column %d' % c
+
+    def vertical_header_data(self, rows):
+        for r in rows:
+            yield 'Row %d' % r
+
 
 if __name__ == '__main__':
     app = QApplication([])

@@ -39,6 +39,57 @@ class TabularModel(object):
     def data(self, rows, columns):
         """ Get the data for a span in the table.
 
+        Parameters
+        ----------
+        rows : list
+            The list of integer row indices for the span. The indices
+            will be in model space, but may not be contiguous.
+
+        columns : list
+            The list of integer column indices for the span. The indices
+            will be in model space, but may not be contiguous.
+
+        Returns
+        -------
+        result : iterable
+            A flat row-major iterable of data for the requested span.
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def horizontal_header_data(self, columns):
+        """ Get the horizontal header data for a span in the table.
+
+        Parameters
+        ----------
+        columns : list
+            The list of integer column indices for the span. The indices
+            will be in model space, but may not be contiguous.
+
+        Returns
+        -------
+        result : iterable
+            A flat row-major iterable of data for the requested span.
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def vertical_header_data(self, rows):
+        """ Get the vertical header data for a span in the table.
+
+        Parameters
+        ----------
+        rows : list
+            The list of integer row indices for the span. The indices
+            will be in model space, but may not be contiguous.
+
+        Returns
+        -------
+        result : iterable
+            A flat row-major iterable of data for the requested span.
+
         """
         raise NotImplementedError
 
@@ -52,5 +103,11 @@ class NullModel(TabularModel):
         return 0
 
     def data(self, rows, columns):
+        return ()
+
+    def horizontal_header_data(self, columns):
+        return ()
+
+    def vertical_header_data(self, rows):
         return ()
 

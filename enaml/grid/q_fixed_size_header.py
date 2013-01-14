@@ -12,7 +12,7 @@ class QFixedSizeHeader(QTabularHeader):
 
     A QFixedSizeHeader uses a fixed size for all header sections. This
     means that mapping screen position to index (and vice versa) is a
-    constant time operation. This head will yield the best performance
+    constant time operation. This header will yield the best performance
     of all header implementations and is ideally suited for very large
     data sets.
 
@@ -36,8 +36,10 @@ class QFixedSizeHeader(QTabularHeader):
         self._length = 0
         if self.orientation() == Qt.Horizontal:
             self._section_size = 70
+            self._header_size = 17
         else:
             self._section_size = 17
+            self._header_size = 70
 
     #--------------------------------------------------------------------------
     # Public API
@@ -58,6 +60,20 @@ class QFixedSizeHeader(QTabularHeader):
             count = model.row_count()
         self._count = count
         self._length = count * self._section_size
+
+    def setHeaderSize(self, size):
+        """ Set the display size for the header.
+
+        Parameters
+        -------
+        result : int
+            The size to use by QTabularView when displaying the header.
+            For horizontal headers, this will be the header height. For
+            vertical headers, this will be the header width. This must
+            be greater than or equal to zero.
+
+        """
+        self._header_size = size
 
     def setSectionSize(self, size):
         """ Set the section size to use with the header.
@@ -100,6 +116,19 @@ class QFixedSizeHeader(QTabularHeader):
 
         """
         return self._length
+
+    def headerSize(self):
+        """ Get the display size for the header.
+
+        Returns
+        -------
+        result : int
+            The size to use by QTabularView when displaying the header.
+            For horizontal headers, this will be the header height. For
+            vertical headers, this will be the header width.
+
+        """
+        return self._header_size
 
     def sectionSize(self, visual_index):
         """ Get the size for a given visual section.
