@@ -2,88 +2,227 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Bool, Enum, Property, Int, Either, Range, Float, Instance, HasTraits
+from traits.api import (
+    Any, Bool, Enum, Property, Int, Either, Float, Range, on_trait_change
+)
 
+from enaml.core.declarative import Declarative
 from .constraints_widget import PolicyEnum
 from .control import Control
 
 
-class Transform(HasTraits):
+class SliderTransform(Declarative):
+    """ A base class for creating declarative slider transforms.
 
+    A SliderTransform must be subclassed to be useful. The abstract api
+    defined below must be implemented by the subclass.
+
+    When using a transform with a slider, the transform takes complete
+    ownership of the slider range. That is, no effort is made to listen
+    for outside changes to the slider range, so all changes should be
+    made on the transform.
+
+    """
+    #: The data-space minimum for the transform. This may be redefined
+    #: by a subclass to enforce stronger typing.
+    minimum = Any
+
+    #: The data-space maximum for the transform. This may be redefined
+    #: by a subclass to enforce stronger typing.
+    maximum = Any
+
+    #: The data-space value for the transform. This may be redefined
+    #: by a subclass to enforce stronger typing.
+    value = Any
+
+    #: A boolean flag used to prevent loopback cycles.
+    _guard = Bool(False)
+
+    #--------------------------------------------------------------------------
+    # Private API
+    #--------------------------------------------------------------------------
+    def pre_initialize(self):
+        """ A pre-initialization handler.
+
+        The parent slider values are initialized during the transform
+        initialization pass.
+
+        """
+        self._apply_transform()
+
+    def _apply_transform(self, minimum=True, maximum=True, value=True):
+        """ Apply the current transform to the parent slider.
+
+        Parameters
+        ----------
+        minimum : bool, optional
+            Whether or not to update the slider minimum. The default
+            is False.
+
+        maximum : bool, optional
+            Whether or not to update the slider maximum. The default
+            is False.
+
+        value : bool, optional
+            Whether or not to update the slider value. The default
+            is False.
+
+        """
+        parent = self.parent
+        if parent is not None:
+            if minimum:
+                parent.minimum = self.get_minimum()
+            if maximum:
+                parent.maximum = self.get_maximum()
+            if value:
+                parent.value = self.get_value()
+
+    @on_trait_change('parent:value')
+    def _update_value(self, val):
+        """ Update the transformed value when slider changes.
+
+        """
+        if self.is_active:
+            self._guard = True
+            try:
+                self.set_value(val)
+            finally:
+                self._guard = False
+
+    def _minimum_changed(self):
+        """ Update the slider minimum on transform minimum change.
+
+        """
+        if self.is_active:
+            self._apply_transform(maximum=False, value=False)
+
+    def _maximum_changed(self):
+        """ Update the slider maximum on transform maximum change.
+
+        """
+        if self.is_active:
+            self._apply_transform(minimum=False, value=False)
+
+    def _value_changed(self):
+        """ Update the slider value on transform value change.
+
+        """
+        if self.is_active and not self._guard:
+            self._apply_transform(minimum=False, maximum=False)
+
+    #--------------------------------------------------------------------------
+    # Abstract API
+    #--------------------------------------------------------------------------
     def get_minimum(self):
-        raise NotImplementedError
+        """ Get the minimum value of the transform as an int.
 
-    def set_minimum(self, minimum):
+        Returns
+        -------
+        result : int
+            The minimum value of the transform converted to an int.
+
+        """
         raise NotImplementedError
 
     def get_maximum(self):
-        raise NotImplementedError
+        """ Get the maximum value of the transform as an int.
 
-    def set_maximum(self, maximum):
+        Returns
+        -------
+        result : int
+            The maximum value of the transform converted to an int.
+
+        """
         raise NotImplementedError
 
     def get_value(self):
+        """ Get the value of the transform as an int.
+
+        Returns
+        -------
+        result : int
+            The value of the transform converted to an int.
+
+        """
         raise NotImplementedError
 
     def set_value(self, value):
-        raise NotImplementedError
+        """ Set the value of the transform from an int.
 
-    def get_single_step(self):
-        raise NotImplementedError
+        Parameters
+        ----------
+        value : int
+            The integer value of the slider.
 
-    def set_single_step(self, single_step):
-        raise NotImplementedError
-
-    def get_page_step(self):
-        raise NotImplementedError
-
-    def set_page_step(self, page_step):
+        """
         raise NotImplementedError
 
 
-class NullTransform(Transform):
+class FloatTransform(SliderTransform):
+    """ A concreted SliderTransform for floating point values.
 
-    minimum = Int(0)
+    """
+    #: A redeclared parent class trait which enforces float values.
+    minimum = Float(0.0)
 
-    maximum = Int(100)
+    #: A redeclared parent class trait which enforces float values.
+    maximum = Float(1.0)
 
-    value = Int(0)
+    #: A redeclared parent class trait which enforces float values.
+    value = Float(0.0)
 
-    single_step = Range(low=1)
+    #: The number of stops to use between the minimum and maximum.
+    precision = Range(low=1, value=100)
 
-    page_step = Range(low=1, value=10)
-
-    tick_interval = Range(low=0)
-
+    #--------------------------------------------------------------------------
+    # Abstract API Implementation
+    #--------------------------------------------------------------------------
     def get_minimum(self):
-        return self.minimum
+        """ Get the minimum value of the transform as an int.
 
-    def set_minimum(self, minimum):
-        pass
+        Returns
+        -------
+        result : int
+            The minimum value of the transform converted to an int.
+
+        """
+        return 0
 
     def get_maximum(self):
-        return self.maximum
+        """ Get the maximum value of the transform as an int.
 
-    def set_maximum(self, maximum):
-        pass
+        Returns
+        -------
+        result : int
+            The maximum value of the transform converted to an int.
+
+        """
+        return self.precision
 
     def get_value(self):
-        return self.value
+        """ Get the value of the transform as an int.
 
-    def set_value(self, value):
-        pass
+        Returns
+        -------
+        result : int
+            The value of the transform converted to an int.
 
-    def get_single_step(self):
-        return self.single_step
+        """
+        offset = self.value - self.minimum
+        delta = self.maximum - self.minimum
+        return int(offset * self.precision / delta)
 
-    def set_single_step(self, single_step):
-        pass
+    def set_value(self, val):
+        """ Set the value of the transform from an int.
 
-    def get_page_step(self):
-        return self.page_step
+        Parameters
+        ----------
+        value : int
+            The integer value of the slider.
 
-    def set_page_step(self, page_step):
-        pass
+        """
+        delta = self.maximum - self.minimum
+        self.value = (val * delta / self.precision) + self.minimum
 
 
 class Slider(Control):
@@ -162,8 +301,6 @@ class Slider(Control):
 
     #: An internal override trait for hug_height
     _hug_height = Either(None, PolicyEnum, default=None)
-
-    transform = Instance(SliderTransform)
 
     #--------------------------------------------------------------------------
     # Initialization
@@ -259,16 +396,12 @@ class Slider(Control):
         """ The property getter for the slider 'minimum'.
 
         """
-        if self.transform:
-            return self.transform.get_value_int()
         return self._minimum
 
     def _set_minimum(self, minimum):
         """ The property setter for the 'minimum' attribute.
 
         """
-        if self.transform:
-            return
         # Manually fire the trait change notifications to avoid the
         # need for property depends_on; this saves memory overhead.
         # All data is accessed using the private attributes to avoid
@@ -292,16 +425,12 @@ class Slider(Control):
         """ The property getter for the slider 'maximum'.
 
         """
-        if self.transform:
-            return self.transform.get_max_int()
         return self._maximum
 
     def _set_maximum(self, maximum):
         """ The property setter for the 'maximum' attribute.
 
         """
-        if self.transform:
-            return
         # Manually fire the trait change notifications to avoid the
         # need for property depends_on; this saves memory overhead.
         # All data is accessed using the private attributes to avoid
@@ -325,16 +454,12 @@ class Slider(Control):
         """ The property getter for the slider 'value'.
 
         """
-        if self.transform:
-            return self.transform.get_value_int()
         return self._value
 
     def _set_value(self, value):
         """ The property setter for the 'value' attribute.
 
         """
-        if self.transform:
-            return
         # Manually fire the trait change notifications to avoid the
         # need for property depends_on; this saves memory overhead.
         # The minimum and maximum values are explicity accessed through
