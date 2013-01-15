@@ -20,6 +20,7 @@ from .dock_pane import DockPane
 from .enable_canvas import EnableCanvas
 from .field import Field
 from .file_dialog import FileDialog
+from .float_slider import FloatSlider
 from .flow_area import FlowArea
 from .flow_item import FlowItem
 from .form import Form
