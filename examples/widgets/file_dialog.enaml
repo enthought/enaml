@@ -1,0 +1,28 @@
+from enaml.widgets.api import (
+    Container,
+    FileDialog,
+    Include,
+    PushButton,
+    Window,
+    )
+
+def dir_dialog_callback(dlg):
+    if dlg.result == 'accepted':
+        print dlg.path
+
+enamldef Main(Window): main:
+    Container:
+        PushButton: pb:
+            text = 'Browse'
+            clicked ::
+                dir_dialog = dlg_incld.objects[0]
+                dir_dialog.open()
+
+        Include: dlg_incld:
+            # There is a bug in the life-time management of
+            # FileDialog, so use the Include widget to create the
+            # FileDialog widget at load-time and open it on demand.
+            objects = [FileDialog(main,
+                                mode='directory',
+                                callback=dir_dialog_callback,
+                                destroy_on_close=False)]
