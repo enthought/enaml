@@ -310,6 +310,10 @@ class AlignmentHelper(DeferredConstraints):
 
         """
         items = [item for item in self.items if item is not None]
+        # If there are less than two items, no alignment needs to
+        # happen, so return no constraints.
+        if len(items) < 2:
+            return []
         factories = AlignmentConstraintFactory.from_items(
             items, self.anchor, self.spacing,
         )
