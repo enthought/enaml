@@ -4,8 +4,9 @@
 #------------------------------------------------------------------------------
 import sys
 
+from enaml.colors import parse_color
 from enaml.qt.qt.QtCore import Qt, QRect, QLine
-from enaml.qt.qt.QtGui import QPainter, QAbstractScrollArea
+from enaml.qt.qt.QtGui import QPainter, QAbstractScrollArea, QColor
 
 from .q_fixed_size_header import QFixedSizeHeader
 from .tabular_model import TabularModel, NullModel
@@ -20,6 +21,25 @@ if sys.platform == 'darwin':
     scrollWidget = lambda widget, dx, dy: widget.update()
 else:
     scrollWidget = lambda widget, dx, dy: widget.scroll(dx, dy)
+
+
+def initStyle(style):
+    if 'foreground' in style:
+        r, g, b, a = parse_color(style['foreground'])
+    else:
+        r = g = b = 0.0
+        a = 1.0
+    qfg = QColor.fromRgbF(r, g, b, a)
+    if 'background' in style:
+        r, g, b, a = parse_color(style['background'])
+    else:
+        r = g = b = 1.0
+        a = 1.0
+    qbg = QColor.fromRgbF(r, g, b, a)
+    style['_qtdata'] = {
+        'foreground': qfg,
+        'background': qbg,
+    }
 
 
 class QTabularView(QAbstractScrollArea):
@@ -364,17 +384,31 @@ class QTabularView(QAbstractScrollArea):
             try:
                 ndata = data.next
                 setRect = cell_rect.setRect
-                drawText = painter.drawText
-                str_ = str
-                AlignCenter = Qt.AlignCenter
+                paintCell = self.paintCell
+                save = painter.save
+                restore = painter.restore
                 y_run = start_y
                 for row_height in row_heights:
                     x_run = start_x
                     for col_width in col_widths:
                         setRect(x_run, y_run, col_width, row_height)
-                        drawText(cell_rect, AlignCenter, str_(ndata()))
+                        data, style = ndata()
+                        save()
+                        paintCell(painter, cell_rect, data, style)
+                        restore()
                         x_run += col_width
                     y_run += row_height
             except StopIteration: # ran out of data early
                 pass
 
+    def paintCell(self, painter, rect, data, style):
+        textrect = rect.adjusted(0, 0, -1, -1)
+        if style is None:
+            painter.drawText(textrect, Qt.AlignCenter, str(data))
+            return
+        if '_qtdata' not in style:
+            initStyle(style)
+        qdata = style['_qtdata']
+        painter.fillRect(textrect, qdata['background'])
+        painter.setPen(qdata['foreground'])
+        painter.drawText(textrect, Qt.AlignCenter, str(data))

@@ -15,6 +15,20 @@ V_SCROLL = QTabularView.ScrollPerItem
 #V_SCROLL = QTabularView.ScrollPerPixel
 
 
+negative_red = {
+    'foreground': 'red',
+    'background': 'lightskyblue',
+    'align': 'left',
+}
+
+
+positive_blue = {
+    'foreground': '#3344ee',
+    'background': '#dddddd',
+    'align': 'right',
+}
+
+
 class MyModel(TabularModel):
 
     def row_count(self):
@@ -34,9 +48,17 @@ class MyModel(TabularModel):
     def data(self, rows, columns):
         # uncomment to show requested data block size
         #print 'block size - rows: %d cols: %d' % (len(rows), len(columns))
+        neg = negative_red
+        pos = positive_blue
         for r in rows:
             for c in columns:
-                yield str(r + c)
+                v = r + c
+                if v % 13 == 0 or v % 7 == 0:
+                    yield (str(-v), neg)
+                elif v % 4 == 0:
+                    yield (str(v), pos)
+                else:
+                    yield (str(v), None)
 
     def horizontal_header_data(self, columns):
         for c in columns:
