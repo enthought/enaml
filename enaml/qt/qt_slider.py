@@ -44,9 +44,11 @@ class QtSlider(QtControl):
 
         """
         super(QtSlider, self).create(tree)
-        self.set_value(tree['value'])
-        self.set_maximum(tree['maximum'])
+        # Initialize the value after the minimum and maximum to avoid
+        # the potential for premature internal clipping of the value.
         self.set_minimum(tree['minimum'])
+        self.set_maximum(tree['maximum'])
+        self.set_value(tree['value'])
         self.set_orientation(tree['orientation'])
         self.set_page_step(tree['page_step'])
         self.set_single_step(tree['single_step'])

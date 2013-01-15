@@ -1,57 +1,44 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2011, Enthought, Inc.
+#  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import (
-    Bool, Property, Int, TraitError, Either, Range, on_trait_change,
-    Enum,
-)
-
-from enaml.core.trait_types import Bounded
+from traits.api import Bool, Enum, Property, Int, Either, Range
 
 from .constraints_widget import PolicyEnum
 from .control import Control
-
-
-#: The slider attributes to proxy to clients
-_SLIDER_ATTRS = [
-    'maximum', 'minimum', 'orientation', 'page_step', 'single_step',
-    'tick_interval', 'tick_position', 'tracking', 'value'
-]
-
-
-#: The maximum slider value. Somewhat arbitrary, but the limit in Qt.
-MAX_SLIDER_VALUE = (1 << 16) - 1
 
 
 class Slider(Control):
     """ A simple slider widget that can be used to select from a range
     of integral values.
 
-    """
-    #: The minimum value for the slider. To avoid issues where
-    #: :attr:`minimum` is higher than :attr:`maximum`. The value is
-    #: a positive integer capped by the :attr:`maximum`. If the new
-    #: value of :attr:`minimum` make the current position invalid then
-    #: the current position is set to :attr:minimum. Default value is 0.
-    minimum = Property(Int, depends_on ='_minimum')
+    A `SliderTransform` can be used to transform the integer range
+    of the slider into another data space. For more details, see
+    `enaml.stdlib.slider_transform`.
 
-    #: The internal minimum storage.
+    """
+    #: The minimum slider value. If the minimum value is changed such
+    #: that it becomes greater than the current value or the maximum
+    #: value, then those values will be adjusted. The default is 0.
+    minimum = Property(Int)
+
+    #: The internal minimum value storage.
     _minimum = Int(0)
 
-    #: The maximum value for the slider. Checks make sure that
-    #: :attr:`maximum` cannot be lower than :attr:`minimum`. If the
-    #: new value of :attr:`maximum` make the current position invalid
-    #: then the current position is set to :attr:maximum. The max value
-    #: is restricted to 65535, while the default is 100.
-    maximum = Property(Int, depends_on ='_maximum')
+    #: The maximum slider value. If the maximum value is changed such
+    #: that it becomes smaller than the current value or the minimum
+    #: value, then those values will be adjusted. The default is 100.
+    maximum = Property(Int)
 
     #: The internal maximum storage.
     _maximum = Int(100)
 
-    #: The position value of the Slider. The bounds are defined by
-    #: :attr:minimum: and :attr:maximum:.
-    value = Bounded(low='minimum', high='maximum')
+    #: The position value of the Slider. The value will be clipped to
+    #: always fall between the minimum and maximum.
+    value = Property(Int)
+
+    #: The internal value storage.
+    _value = Int(0)
 
     #: Defines the number of steps that the slider will move when the
     #: user presses the arrow keys. The default is 1. An upper limit
@@ -111,8 +98,15 @@ class Slider(Control):
 
         """
         snap = super(Slider, self).snapshot()
-        for attr in _SLIDER_ATTRS:
-            snap[attr] = getattr(self, attr)
+        snap['minimum'] = self.minimum
+        snap['maximum'] = self.maximum
+        snap['value'] = self.value
+        snap['single_step'] = self.single_step
+        snap['page_step'] = self.page_step
+        snap['tick_position'] = self.tick_position
+        snap['tick_interval'] = self.tick_interval
+        snap['orientation'] = self.orientation
+        snap['tracking'] = self.tracking
         return snap
 
     def bind(self):
@@ -121,7 +115,11 @@ class Slider(Control):
 
         """
         super(Slider, self).bind()
-        self.publish_attributes(*_SLIDER_ATTRS)
+        attrs = (
+            'minimum', 'maximum', 'value', 'single_step', 'page_step',
+            'tick_position', 'tick_interval', 'orientation', 'tracking',
+        )
+        self.publish_attributes(*attrs)
 
     #--------------------------------------------------------------------------
     # Message Handling
@@ -187,21 +185,28 @@ class Slider(Control):
         """
         return self._minimum
 
-    def _set_minimum(self, value):
+    def _set_minimum(self, minimum):
         """ The property setter for the 'minimum' attribute.
 
-        This validates that the value is always smaller than
-        :attr:`maximum`.
-
         """
-        if value > self.maximum:
-            msg = ('The minimum value of the slider should be smaller '
-                   'than the current maximum ({0}), but a value of {1} '
-                   'was given')
-            msg = msg.format(self.maximum, value)
-            raise TraitError(msg)
-        else:
-            self._minimum = value
+        # Manually fire the trait change notifications to avoid the
+        # need for property depends_on; this saves memory overhead.
+        # All data is accessed using the private attributes to avoid
+        # inadvertantly triggering the evaluation of a bound Enaml
+        # attribute, which could fool with the state by setting the
+        # value too soon.
+        old_max = self._maximum
+        if minimum > old_max:
+            self._maximum = minimum
+            self.trait_property_changed('maximum', old_max, minimum)
+        old_val = self._value
+        if minimum > old_val:
+            self._value = minimum
+            self.trait_property_changed('value', old_val, minimum)
+        old_min = self._minimum
+        if minimum != old_min:
+            self._minimum = minimum
+            self.trait_property_changed('minimum', old_min, minimum)
 
     def _get_maximum(self):
         """ The property getter for the slider 'maximum'.
@@ -209,30 +214,48 @@ class Slider(Control):
         """
         return self._maximum
 
-    def _set_maximum(self, value):
+    def _set_maximum(self, maximum):
         """ The property setter for the 'maximum' attribute.
 
-        This validates that the value is always larger than
-        :attr:`minimum`.
+        """
+        # Manually fire the trait change notifications to avoid the
+        # need for property depends_on; this saves memory overhead.
+        # All data is accessed using the private attributes to avoid
+        # inadvertantly triggering the evaluation of a bound Enaml
+        # attribute, which could fool with the state by setting the
+        # value too soon.
+        old_min = self._minimum
+        if maximum < old_min:
+            self._minimum = maximum
+            self.trait_property_changed('minimum', old_min, maximum)
+        old_val = self._value
+        if maximum < old_val:
+            self._value = maximum
+            self.trait_property_changed('value', old_val, maximum)
+        old_max = self._maximum
+        if maximum != old_max:
+            self._maximum = maximum
+            self.trait_property_changed('maximum', old_max, maximum)
+
+    def _get_value(self):
+        """ The property getter for the slider 'value'.
 
         """
-        if  (value < self.minimum) or (value > MAX_SLIDER_VALUE):
-            msg = ('The maximum value of the slider should be larger '
-                   'than the current minimum ({0}) and less than the '
-                   'maximum slider value ({1}), but a value of {2} '
-                   'was given')
-            msg = msg.format(self.minimum, MAX_SLIDER_VALUE, value)
-            raise TraitError(msg)
-        else:
-            self._maximum = value
+        return self._value
 
-    #--------------------------------------------------------------------------
-    # Private API
-    #--------------------------------------------------------------------------
-    @on_trait_change('minimum, maximum')
-    def _adapt_value(self):
-        """ Adapt the value to the min/max boundaries.
+    def _set_value(self, value):
+        """ The property setter for the 'value' attribute.
 
         """
-        self.value = min(max(self.value, self.minimum), self.maximum)
+        # Manually fire the trait change notifications to avoid the
+        # need for property depends_on; this saves memory overhead.
+        # The minimum and maximum values are explicity accessed through
+        # their property so that any bound Enaml attributes can provide
+        # the proper default value. This ensures that the min and max
+        # are alway up-to-date before potentially clipping the value.
+        old_val = self._value
+        new_val = max(self.minimum, min(self.maximum, value))
+        if old_val != new_val:
+            self._value = new_val
+            self.trait_property_changed('value', old_val, new_val)
 

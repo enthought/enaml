@@ -1,0 +1,30 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2013, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+""" An example of the `Slider` widget with a transform.
+
+This example demonstrates the use of a simple `Slider` control along
+with `FloatTransform` from the enaml standard library to slide through
+a range of floating point values.
+
+"""
+from enaml.widgets.api import Window, Form, Label, Field, Slider
+from enaml.stdlib.slider_transforms import FloatTransform
+
+
+enamldef Main(Window):
+    title = 'Slider Transform Example'
+    Form:
+        Label:
+            text = 'Float Value'
+        Field:
+            text << u'%.2f' % transform.value
+            read_only = True
+        Slider: val_slider:
+            tick_interval = 5
+            FloatTransform: transform:
+                minimum = -10.0
+                maximum = 10.0
+                precision = 100
+
