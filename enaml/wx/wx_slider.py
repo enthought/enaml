@@ -155,9 +155,11 @@ class WxSlider(WxControl):
         # NOTE: The tick interval must be set *after* the tick position
         # or Wx will ignore the tick interval. grrr...
         super(WxSlider, self).create(tree)
-        self.set_value(tree['value'])
-        self.set_maximum(tree['maximum'])
+        # Initialize the value after the minimum and maximum to avoid
+        # the potential for premature internal clipping of the value.
         self.set_minimum(tree['minimum'])
+        self.set_maximum(tree['maximum'])
+        self.set_value(tree['value'])
         self.set_orientation(tree['orientation'])
         self.set_page_step(tree['page_step'])
         self.set_single_step(tree['single_step'])
