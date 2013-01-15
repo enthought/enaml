@@ -25,3 +25,4 @@ enamldef Main(Window):
             tick_interval = 50
             maximum = 1000
             minimum = 1
+
