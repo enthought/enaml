@@ -355,12 +355,17 @@ class QTabularHeader(QWidget):
         `paintVertical` depending on the orientation of the header.
 
         """
-        if self._orientation == Qt.Horizontal:
-            self.paintHorizontal(event)
-        else:
-            self.paintVertical(event)
+        painter = QPainter(self)
+        try:
+            if self._orientation == Qt.Horizontal:
+                self.paintHorizontal(painter, event)
+            else:
+                self.paintVertical(painter, event)
+        except Exception:
+            painter.end()
+            raise
 
-    def paintHorizontal(self, event):
+    def paintHorizontal(self, painter, event):
         """ The default horizontal header paint method.
 
         This paint method will render the header as a single row of
@@ -369,12 +374,13 @@ class QTabularHeader(QWidget):
 
         Parameters
         ----------
+        painter : QPainter
+            The painter to use for drawing the header.
+
         event : QPaintEvent
             The paint event passed to the `paintEvent` method.
 
         """
-        painter = QPainter(self)
-
         # The cell rect is updated during iteration. Only a single rect
         # object is allocated for the entire paint event.
         cell_rect = QRect()
@@ -413,7 +419,7 @@ class QTabularHeader(QWidget):
             for idx in xrange(first_visual_col, last_visual_col + 1):
                 col_widths.append(self.sectionSize(idx))
                 col_indices.append(self.logicalIndex(idx))
-            data = iter(self._model.horizontal_header_data(col_indices))
+            data = iter(self._model.column_header_data(col_indices))
             start_x = self.sectionPosition(first_visual_col) - self._offset
 
             # Fill the entire invalid rect with the background gradient.
@@ -461,7 +467,7 @@ class QTabularHeader(QWidget):
             # Restore the painter state for the next loop iteration.
             painter.restore()
 
-    def paintVertical(self, event):
+    def paintVertical(self, painter, event):
         """ The default vertical header paint method.
 
         This paint method will render the header as a single row of
@@ -470,12 +476,13 @@ class QTabularHeader(QWidget):
 
         Parameters
         ----------
+        painter : QPainter
+            The painter to use for drawing the header.
+
         event : QPaintEvent
             The paint event passed to the `paintEvent` method.
 
         """
-        painter = QPainter(self)
-
         # The cell rect is updated during iteration. Only a single rect
         # object is allocated for the entire paint event.
         cell_rect = QRect()
@@ -514,7 +521,7 @@ class QTabularHeader(QWidget):
             for idx in xrange(first_visual_row, last_visual_row + 1):
                 row_heights.append(self.sectionSize(idx))
                 row_indices.append(self.logicalIndex(idx))
-            data = iter(self._model.vertical_header_data(row_indices))
+            data = iter(self._model.row_header_data(row_indices))
             start_y = self.sectionPosition(first_visual_row) - self._offset
 
             # Fill each invalid section with the background gradient.

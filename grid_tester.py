@@ -15,20 +15,6 @@ V_SCROLL = QTabularView.ScrollPerItem
 #V_SCROLL = QTabularView.ScrollPerPixel
 
 
-negative_red = {
-    'foreground': 'red',
-    'background': 'lightskyblue',
-    'align': 'left',
-}
-
-
-positive_blue = {
-    'foreground': '#3344ee',
-    'background': '#dddddd',
-    'align': 'right',
-}
-
-
 class MyModel(TabularModel):
 
     def row_count(self):
@@ -48,33 +34,85 @@ class MyModel(TabularModel):
     def data(self, rows, columns):
         # uncomment to show requested data block size
         #print 'block size - rows: %d cols: %d' % (len(rows), len(columns))
-        neg = negative_red
-        pos = positive_blue
         for r in rows:
             for c in columns:
-                v = r + c
-                if v % 13 == 0 or v % 7 == 0:
-                    yield (str(-v), neg)
-                elif v % 4 == 0:
-                    yield (str(v), pos)
-                else:
-                    yield (str(v), None)
+                yield r + c
 
-    def horizontal_header_data(self, columns):
+    def row_header_data(self, rows):
+        for r in rows:
+            yield 'Row %d' % r
+
+    def column_header_data(self, columns):
         for c in columns:
             yield 'Column %d' % c
 
-    def vertical_header_data(self, rows):
+    row_sty = {
+        'background': 'rgba(245, 245, 50, 0.5)'
+    }
+
+    def row_styles(self, rows):
+        s = self.row_sty
         for r in rows:
-            yield 'Row %d' % r
+            if r % 2:
+                yield s
+            else:
+                yield None
+
+    bold_font = {
+        'family': 'arial',
+        'weight': 'bold',
+        'size': 12,
+    }
+
+    col_sty = {
+        'background': 'rgba(0, 0, 255, 0.5)',
+        'foreground': 'red',
+        'font': bold_font,
+        'border': {
+            'style': 'dashed',
+            'width': 2,
+        },
+        'margin': 5,
+        'padding': 2,
+    }
+
+    def column_styles(self, columns):
+        s = self.col_sty
+        for c in columns:
+            if c % 2:
+                yield s
+            else:
+                yield None
+
+    cell_sty = {
+        'background': 'rgba(40, 60, 100, 0.7)',
+        'foreground': 'lightskyblue',
+        'font': {
+            'style': 'italic'
+        }
+    }
+
+    def cell_styles(self, rows, columns, data):
+        s = self.cell_sty
+        for d in data:
+            if d % 7 == 0:
+                yield s
+            else:
+                yield None
 
 
 if __name__ == '__main__':
     app = QApplication([])
     v = QTabularView()
+    v.rowHeader().setHeaderSize(100)
+    v.rowHeader().setSectionSize(30)
+    v._updateViewportMargins() # XXX make this automatic
+    #v.setVerticalLinesVisible(False)
+    #v.setHorizontalLinesVisible(False)
     v.setHorizontalScrollPolicy(H_SCROLL)
     v.setVerticalScrollPolicy(V_SCROLL)
     v.setModel(MyModel())
     v.show()
     app.exec_()
+
 

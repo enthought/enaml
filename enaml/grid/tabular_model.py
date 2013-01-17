@@ -51,33 +51,15 @@ class TabularModel(object):
 
         Returns
         -------
-        result : iterable
+        result : iterable or None
             A flat row-major iterable of data for the requested span.
 
         """
         raise NotImplementedError
 
     @abstractmethod
-    def horizontal_header_data(self, columns):
-        """ Get the horizontal header data for a span in the table.
-
-        Parameters
-        ----------
-        columns : list
-            The list of integer column indices for the span. The indices
-            will be in model space, but may not be contiguous.
-
-        Returns
-        -------
-        result : iterable
-            A flat row-major iterable of data for the requested span.
-
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def vertical_header_data(self, rows):
-        """ Get the vertical header data for a span in the table.
+    def row_header_data(self, rows):
+        """ Get the row header data for a span in the table.
 
         Parameters
         ----------
@@ -87,11 +69,124 @@ class TabularModel(object):
 
         Returns
         -------
-        result : iterable
-            A flat row-major iterable of data for the requested span.
+        result : iterable or None
+            An iterable of data for the requested span.
 
         """
         raise NotImplementedError
+
+    @abstractmethod
+    def column_header_data(self, columns):
+        """ Get the column header data for a span in the table.
+
+        Parameters
+        ----------
+        columns : list
+            The list of integer column indices for the span. The indices
+            will be in model space, but may not be contiguous.
+
+        Returns
+        -------
+        result : iterable or None
+            An iterable of data for the requested span.
+
+        """
+        raise NotImplementedError
+
+    def row_styles(self, rows):
+        """ Get the row styles for a span in the table.
+
+        Parameters
+        ----------
+        rows : list
+            The list of integer row indices for the span. The indices
+            will be in model space, but may not be contiguous.
+
+        Returns
+        -------
+        result : iterable or None
+            An iterable of dictionary styles for the requested span.
+
+        """
+        return None
+
+    def column_styles(self, columns):
+        """ Get the column styles for a span in the table.
+
+        Parameters
+        ----------
+        columns : list
+            The list of integer column indices for the span. The indices
+            will be in model space, but may not be contiguous.
+
+        Returns
+        -------
+        result : iterable or None
+            An iterable of dictionary styles for the requested span.
+
+        """
+        return None
+
+    def cell_styles(self, rows, columns, data):
+        """ Get the cell styles for a span in the table.
+
+        Parameters
+        ----------
+        rows : list
+            The list of integer row indices for the span. The indices
+            will be in model space, but may not be contiguous.
+
+        columns : list
+            The list of integer column indices for the span. The indices
+            will be in model space, but may not be contiguous.
+
+        data : list
+            The data values for the corresponding indices. This exists
+            as a convenience so that the developer does not need to
+            search for model data twice.
+
+        Returns
+        -------
+        result : iterable or None
+            A flat row-major iterable of dictionary styles for the
+            requested span.
+
+        """
+        return None
+
+    def row_header_styles(self, rows):
+        """ Get the row header styles for a span in the table.
+
+        Parameters
+        ----------
+        rows : list
+            The list of integer row indices for the span. The indices
+            will be in model space, but may not be contiguous.
+
+        Returns
+        -------
+        result : iterable or None
+            An iterable of dictionary styles for the requested span.
+
+        """
+        return None
+
+    def column_header_styles(self, columns):
+        """ Get the column header styles for a span in the table.
+
+        Parameters
+        ----------
+        columns : list
+            The list of integer column indices for the span. The indices
+            will be in model space, but may not be contiguous.
+
+        Returns
+        -------
+        result : iterable or None
+            An iterable of dictionary styles for the requested span.
+
+        """
+        return None
 
 
 class NullModel(TabularModel):
@@ -103,11 +198,11 @@ class NullModel(TabularModel):
         return 0
 
     def data(self, rows, columns):
-        return ()
+        return None
 
-    def horizontal_header_data(self, columns):
-        return ()
+    def row_header_data(self, rows):
+        return None
 
-    def vertical_header_data(self, rows):
-        return ()
+    def column_header_data(self, columns):
+        return None
 

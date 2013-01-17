@@ -4,11 +4,11 @@
 #------------------------------------------------------------------------------
 import sys
 
-from enaml.colors import parse_color
 from enaml.qt.qt.QtCore import Qt, QRect, QLine
-from enaml.qt.qt.QtGui import QPainter, QAbstractScrollArea, QColor
+from enaml.qt.qt.QtGui import QPainter, QAbstractScrollArea, QTextOption
 
 from .q_fixed_size_header import QFixedSizeHeader
+from .qt_tabular_style import QtTabularStyle
 from .tabular_model import TabularModel, NullModel
 
 
@@ -21,25 +21,6 @@ if sys.platform == 'darwin':
     scrollWidget = lambda widget, dx, dy: widget.update()
 else:
     scrollWidget = lambda widget, dx, dy: widget.scroll(dx, dy)
-
-
-def initStyle(style):
-    if 'foreground' in style:
-        r, g, b, a = parse_color(style['foreground'])
-    else:
-        r = g = b = 0.0
-        a = 1.0
-    qfg = QColor.fromRgbF(r, g, b, a)
-    if 'background' in style:
-        r, g, b, a = parse_color(style['background'])
-    else:
-        r = g = b = 1.0
-        a = 1.0
-    qbg = QColor.fromRgbF(r, g, b, a)
-    style['_qtdata'] = {
-        'foreground': qfg,
-        'background': qbg,
-    }
 
 
 class QTabularView(QAbstractScrollArea):
@@ -74,12 +55,15 @@ class QTabularView(QAbstractScrollArea):
         self._h_header = QFixedSizeHeader(Qt.Horizontal, self)
         self._h_scroll_policy = QTabularView.ScrollPerPixel
         self._v_scroll_policy = QTabularView.ScrollPerPixel
+        self._v_lines_visible = True
+        self._h_lines_visible = True
         viewport = self.viewport()
         viewport.setAttribute(Qt.WA_StaticContents, True)
         viewport.setAutoFillBackground(True)
         viewport.setFocusPolicy(Qt.ClickFocus)
         self._updateViewportMargins()
         self._updateGeometries()
+        self.setMouseTracking(True)
 
     #--------------------------------------------------------------------------
     # Public API
@@ -109,6 +93,28 @@ class QTabularView(QAbstractScrollArea):
         self._v_header.setModel(model)
         self._h_header.setModel(model)
         self._updateGeometries()
+
+    def rowHeader(self):
+        """ Get the row header in use by the widget.
+
+        Returns
+        -------
+        result : QTabularHeader
+            The tabular row header for the widget.
+
+        """
+        return self._v_header
+
+    def columnHeader(self):
+        """ Get the column header in use by the widget.
+
+        Returns
+        -------
+        result : QTabularHeader
+            The tabular column header for the widget.
+
+        """
+        return self._h_header
 
     def horizontalScrollPolicy(self):
         """ Get the horizontal scroll policy for the widget.
@@ -167,6 +173,52 @@ class QTabularView(QAbstractScrollArea):
         assert policy in valid
         self._v_scroll_policy = policy
         self._updateGeometries()
+
+    def horizontalLinesVisible(self):
+        """ Get whether or not horizontal grid lines are visible.
+
+        Returns
+        -------
+        result : bool
+            True if horizontal lines are visible, False otherwise.
+
+        """
+        return self._h_lines_visible
+
+    def setHorizontalLinesVisible(self, visible):
+        """ Set whether or not horizontal grid lines are visible.
+
+        Parameters
+        ----------
+        visible : bool
+            True if horizontal lines should be show, False otherwise.
+
+        """
+        self._h_lines_visible = visible
+        self.update()
+
+    def verticalLinesVisible(self):
+        """ Get whether or not vertical grid lines are visible.
+
+        Returns
+        -------
+        result : bool
+            True if vertical lines are visible, False otherwise.
+
+        """
+        return self._v_lines_visible
+
+    def setVerticalLinesVisible(self, visible):
+        """ Set whether or not vertical grid lines are visible.
+
+        Parameters
+        ----------
+        visible : bool
+            True if vertical lines should be show, False otherwise.
+
+        """
+        self._v_lines_visible = visible
+        self.update()
 
     #--------------------------------------------------------------------------
     # Private API
@@ -298,12 +350,23 @@ class QTabularView(QAbstractScrollArea):
 
         """
         # If there are no rows or columns, nothing needs to be drawn.
+        if self._h_header.count() == 0 or self._v_header.count() == 0:
+            return
+        painter = QPainter(self.viewport())
+        try:
+            self.paint(painter, event)
+        except Exception:
+            painter.end()
+            raise
+
+    def paint(self, painter, event):
+
+        # Pre-fetch commons data as locals
+        model = self._model
         h_header = self._h_header
         v_header = self._v_header
-        if h_header.count() == 0 or v_header.count() == 0:
-            return
-
-        painter = QPainter(self.viewport())
+        h_offset = h_header.offset()
+        v_offset = v_header.offset()
 
         # The cell rect is updated during iteration. Only a single rect
         # object is allocated for the entire paint event.
@@ -312,11 +375,6 @@ class QTabularView(QAbstractScrollArea):
         # The grid line is updated during iteration. Only a single line
         # object is allocated for the entire paint event.
         grid_line = QLine()
-
-        # Prefetch common attributes as locals.
-        model = self._model
-        h_offset = h_header.offset()
-        v_offset = v_header.offset()
 
         for rect in event.region().rects():
 
@@ -345,7 +403,7 @@ class QTabularView(QAbstractScrollArea):
             if last_visual_col == -1:
                 last_visual_col = h_header.count() - 1
 
-            # Compute the logical indices, data, and paint start.
+            # Compute the logical indices and sizes for the region.
             col_widths = []
             col_indices = []
             for idx in xrange(first_visual_col, last_visual_col + 1):
@@ -356,59 +414,238 @@ class QTabularView(QAbstractScrollArea):
             for idx in xrange(first_visual_row, last_visual_row + 1):
                 row_heights.append(v_header.sectionSize(idx))
                 row_indices.append(v_header.logicalIndex(idx))
-            data = iter(model.data(row_indices, col_indices))
+
+            # Fetch the data and the styles for the logical indices.
+            num_rows = len(row_indices)
+            num_cols = len(col_indices)
+            num_cells = num_rows * num_cols
+            indexable = (list, tuple)
+
+            row_styles = model.row_styles(row_indices)
+            if row_styles is None:
+                row_styles = [None] * num_rows
+            elif not isinstance(row_styles, indexable):
+                row_styles = list(row_styles)
+            assert len(row_styles) == num_rows
+
+            column_styles = model.column_styles(col_indices)
+            if column_styles is None:
+                column_styles = [None] * num_cols
+            elif not isinstance(column_styles, indexable):
+                column_styles = list(column_styles)
+            assert len(column_styles) == num_cols
+
+            cell_data = model.data(row_indices, col_indices)
+            if cell_data is None:
+                cell_data = [None] * num_cells
+            elif not isinstance(cell_data, indexable):
+                cell_data = list(cell_data)
+            assert len(cell_data) == num_cells
+
+            cell_styles = model.cell_styles(row_indices, col_indices, cell_data)
+            if cell_styles is None:
+                cell_styles = [None] * num_cells
+            elif not isinstance(cell_styles, indexable):
+                cell_styles = list(cell_styles)
+            assert len(cell_styles) == num_cells
+
+            # Compute the painting bounds
             start_x = h_header.sectionPosition(first_visual_col) - h_offset
             start_y = v_header.sectionPosition(first_visual_row) - v_offset
-
-            # Compute the paint bounds
             max_x = start_x + sum(col_widths) - 1
             max_y = start_y + sum(row_heights) - 1
 
-            # Draw the grid lines first since a cell border may overdraw
-            # Each line is drawn on the last pixel of the row or column.
+            # Paint grid lines first since a cell border may paint over.
             painter.save()
             painter.setPen(Qt.gray)
-            x_run = start_x
-            for col_width in col_widths:
-                x_run += col_width
-                grid_line.setLine(x_run - 1, y1, x_run - 1, max_y)
-                painter.drawLine(grid_line)
-            y_run = start_y
-            for row_height in row_heights:
-                y_run += row_height
-                grid_line.setLine(x1, y_run - 1, max_x, y_run - 1)
-                painter.drawLine(grid_line)
-            painter.restore()
-
-            # Draw the cell data for the invalid region.
-            try:
-                ndata = data.next
-                setRect = cell_rect.setRect
-                paintCell = self.paintCell
-                save = painter.save
-                restore = painter.restore
+            if self._v_lines_visible:
+                x_run = start_x
+                for col_width in col_widths:
+                    x_run += col_width
+                    grid_line.setLine(x_run - 1, y1, x_run - 1, max_y)
+                    painter.drawLine(grid_line)
+            if self._h_lines_visible:
                 y_run = start_y
                 for row_height in row_heights:
-                    x_run = start_x
-                    for col_width in col_widths:
-                        setRect(x_run, y_run, col_width, row_height)
-                        data, style = ndata()
-                        save()
-                        paintCell(painter, cell_rect, data, style)
-                        restore()
-                        x_run += col_width
                     y_run += row_height
-            except StopIteration: # ran out of data early
-                pass
+                    grid_line.setLine(x1, y_run - 1, max_x, y_run - 1)
+                    painter.drawLine(grid_line)
+            painter.restore()
 
-    def paintCell(self, painter, rect, data, style):
-        textrect = rect.adjusted(0, 0, -1, -1)
-        if style is None:
-            painter.drawText(textrect, Qt.AlignCenter, str(data))
-            return
-        if '_qtdata' not in style:
-            initStyle(style)
-        qdata = style['_qtdata']
-        painter.fillRect(textrect, qdata['background'])
-        painter.setPen(qdata['foreground'])
-        painter.drawText(textrect, Qt.AlignCenter, str(data))
+            # Prefetch frequently called bound methods as locals.
+            setRect = cell_rect.setRect
+            paintCell = self.paintCell
+            save = painter.save
+            restore = painter.restore
+
+            # Paint the dirty cells. The space available for drawing the
+            # cell includes the grid line on all sides. Grid lines are
+            # shared space between adjacent cells
+            row_idx = 0
+            col_idx = 0
+            cell_idx = 0
+            y_run = start_y
+            for row_height in row_heights:
+                x_run = start_x
+                row_style = row_styles[row_idx]
+                for col_width in col_widths:
+                    setRect(x_run - 1, y_run - 1, col_width + 1, row_height + 1)
+                    save()
+                    paintCell(
+                        painter, cell_rect, cell_data[cell_idx],
+                        cell_styles[cell_idx], column_styles[col_idx],
+                        row_style,
+                    )
+                    restore()
+                    x_run += col_width
+                    cell_idx += 1
+                    col_idx += 1
+                row_idx += 1
+                col_idx = 0
+                y_run += row_height
+
+    def paintCell(self, painter, rect, data, cell_style, col_style, row_style):
+        # If there is no style, short circuit the complex painting.
+        if cell_style is None and col_style is None and row_style is None:
+           if data is not None:
+               painter.drawText(rect, Qt.AlignCenter, str(data))
+           return
+
+        q_cell_style = None
+        if cell_style is not None:
+            if '__q_style' in cell_style:
+                q_cell_style = cell_style['__q_style']
+            else:
+                q_cell_style = QtTabularStyle.init_from(cell_style)
+                cell_style['__q_style'] = q_cell_style
+
+        q_col_style = None
+        if col_style is not None:
+            if '__q_style' in col_style:
+                q_col_style = col_style['__q_style']
+            else:
+                q_col_style = QtTabularStyle.init_from(col_style)
+                col_style['__q_style'] = q_col_style
+
+        q_row_style = None
+        if row_style is not None:
+            if '__q_style' in row_style:
+                q_row_style = row_style['__q_style']
+            else:
+                q_row_style = QtTabularStyle.init_from(row_style)
+                row_style['__q_style'] = q_row_style
+
+        # Extract the style according to precedence.
+        cell_background = None
+        col_background = None
+        row_background = None
+        foreground = None
+        padding = None
+        margin = None
+        border = None
+        align = None
+        font = None
+        if q_cell_style is not None:
+            cell_background = q_cell_style.background
+            foreground = q_cell_style.foreground
+            padding = q_cell_style.padding
+            margin = q_cell_style.margin
+            border = q_cell_style.border
+            align = q_cell_style.align
+            font = q_cell_style.font
+        if q_col_style is not None:
+            col_background = q_col_style.background
+            foreground = foreground or q_col_style.foreground
+            padding = padding or q_col_style.padding
+            margin = margin or q_col_style.margin
+            border = border or q_col_style.border
+            align = align or q_col_style.align
+            font = font or q_col_style.font
+        if q_row_style is not None:
+            row_background = q_row_style.background
+            foreground = foreground or q_row_style.foreground
+            padding = padding or q_row_style.padding
+            margin = margin or q_row_style.margin
+            border = border or q_row_style.border
+            align = align or q_row_style.align
+            font = font or q_row_style.font
+
+        # Adjust for margins.
+        if margin is not None:
+            rect.adjust(*margin)
+        else:
+            # XXX make default margin configurable
+            rect.adjust(1, 1, -1, -1)
+
+        # Fill the background.
+        if row_background is not None:
+            painter.fillRect(rect, row_background)
+        if col_background is not None:
+            painter.fillRect(rect, col_background)
+        if cell_background is not None:
+            painter.fillRect(rect, cell_background)
+
+        # Draw the borders
+        if border is not None:
+            pen = None
+            offset = 0
+            extra = 0
+            x1 = rect.x()
+            y1 = rect.y()
+            x2 = rect.right() + 1
+            y2 = rect.bottom() + 1
+            if border.top is not None:
+                pen = border.top
+                offset, r = divmod(max(1, pen.width()), 2)
+                extra = offset + r
+                painter.setPen(pen)
+                painter.drawLine(
+                    x1 + offset, y1 + offset, x2 - extra, y1 + offset
+                )
+                rect.adjust(0, offset*2, 0, 0)
+            if border.bottom is not None:
+                if border.bottom is not pen:
+                    pen = border.bottom
+                    offset, r = divmod(max(1, pen.width()), 2)
+                    extra = offset + r
+                    painter.setPen(pen)
+                painter.drawLine(
+                    x1 + offset, y2 - extra, x2 - extra, y2 - extra
+                )
+                rect.adjust(0, 0, 0, -offset*2)
+            if border.left is not None:
+                if border.left is not pen:
+                    pen = border.left
+                    offset, r = divmod(max(1, pen.width()), 2)
+                    extra = offset + r
+                    painter.setPen(pen)
+                painter.drawLine(
+                    x1 + offset, y1 + offset, x1 + offset, y2 - extra
+                )
+                rect.adjust(offset*2, 0, 0, 0)
+            if border.right is not None:
+                if border.right is not pen:
+                    pen = border.right
+                    offset, r = divmod(max(1, pen.width()), 2)
+                    extra = offset + r
+                    painter.setPen(pen)
+                painter.drawLine(
+                    x2 - extra, y1 + offset, x2 - extra, y2 - extra
+                )
+                rect.adjust(0, 0, -offset*2, 0)
+
+        # Adjust for padding.
+        if padding is not None:
+            rect.adjust(*padding)
+
+        # Draw the content.
+        if data is not None:
+            if align is None:
+                align = Qt.AlignCenter
+            if font is not None:
+                painter.setFont(font)
+            if foreground is not None:
+                painter.setPen(foreground)
+            # XXX support data formatters.
+            painter.drawText(rect, align, unicode(data))
+
