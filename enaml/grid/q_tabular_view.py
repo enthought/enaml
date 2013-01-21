@@ -10,6 +10,7 @@ from enaml.qt.qt.QtGui import QPainter, QAbstractScrollArea, QTextOption
 from .q_fixed_size_header import QFixedSizeHeader
 from .qt_tabular_style import QtTabularStyle
 from .tabular_model import TabularModel, NullModel
+from .q_tabular_header import QTabularHeader
 
 
 # Qt::WA_StaticContents is broken on OSX. QWidget::scroll also appears
@@ -105,6 +106,21 @@ class QTabularView(QAbstractScrollArea):
         """
         return self._v_header
 
+    def setRowHeader(self, header):
+        """ Set the row header in use by the widget.
+
+        Parameters
+        ----------
+        v_header : QTabularHeader
+            The tabular row header for the widget.
+
+        """
+        assert isinstance(header, QTabularHeader)
+        header.setParent(self)
+        self._v_header = header
+        self._v_header.setModel(self._model)
+        self._updateGeometries()
+
     def columnHeader(self):
         """ Get the column header in use by the widget.
 
@@ -115,6 +131,22 @@ class QTabularView(QAbstractScrollArea):
 
         """
         return self._h_header
+
+    def setColumnHeader(self, header):
+        """ Set the column header in use by the widget.
+
+        Parameters
+        -------
+        result : QTabularHeader
+            The tabular column header for the widget.
+
+        """
+        assert isinstance(header, QTabularHeader)
+        header.setParent(self)
+        self._h_header = header
+        self._h_header.setModel(self._model)
+        self._updateGeometries()
+
 
     def horizontalScrollPolicy(self):
         """ Get the horizontal scroll policy for the widget.
