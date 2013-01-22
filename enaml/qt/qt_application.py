@@ -152,6 +152,10 @@ class QtApplication(Application):
             app._in_event_loop = True
             app.exec_()
             app._in_event_loop = False
+            # Close any remaining open sessions. Copy the keys list
+            # since `end_session` mutates the dict.
+            for sid in self._sessions.keys():
+                self.end_session(sid)
 
     def stop(self):
         """ Stop the application's main event loop.
