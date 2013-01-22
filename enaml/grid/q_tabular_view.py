@@ -5,7 +5,9 @@
 import sys
 
 from enaml.qt.qt.QtCore import Qt, QRect, QLine
-from enaml.qt.qt.QtGui import QPainter, QAbstractScrollArea, QTextOption
+from enaml.qt.qt.QtGui import (
+    QPainter, QAbstractScrollArea, QColor
+    )
 
 from .q_fixed_size_header import QFixedSizeHeader
 from .qt_tabular_style import QtTabularStyle
@@ -22,6 +24,32 @@ if sys.platform == 'darwin':
     scrollWidget = lambda widget, dx, dy: widget.update()
 else:
     scrollWidget = lambda widget, dx, dy: widget.scroll(dx, dy)
+
+
+def debug_color_generator():
+    """ Yield sequence of colors for debugging purposes
+
+    For performance reasons this method should preallocate colors on startup
+    and not generate new colors on every successive call.
+
+    Returns
+    -------
+    value - QColor
+        Color requested by caller.
+
+    """
+    alpha = 125
+    level = 200
+    colors = [
+                QColor(level, 0, 0, alpha),
+                QColor(0, level, 0, alpha),
+                QColor(0, 0, level, alpha)
+            ]
+    idx = 0
+    color_len = len(colors)
+    while 1:
+        yield colors[idx % color_len]
+        idx += 1
 
 
 class QTabularView(QAbstractScrollArea):
@@ -65,6 +93,14 @@ class QTabularView(QAbstractScrollArea):
         self._updateViewportMargins()
         self._updateGeometries()
         self.setMouseTracking(True)
+        # Attribute that controls whether drawing damaged regions is enabled.
+        # If this is True paintUpdatedRegion will be called with each damaged
+        # rect in tabular view after the paint of that damaged rect is over.
+        # ie QTabularView gets a first shot at painting into the damaged rect
+        # then paintUpdatedRegion gets an opportunity to draw over that.
+        self._debug_draw_regions = True
+        # Generator which creates colors used for filling damaged regions.
+        self._debug_color_generator = None
 
     #--------------------------------------------------------------------------
     # Public API
@@ -252,6 +288,51 @@ class QTabularView(QAbstractScrollArea):
         self._v_lines_visible = visible
         self.update()
 
+    def getDebugDrawRegions(self):
+        """ Get value of whether damaged regions are being highlighted.
+
+        Parameters
+        ----------
+        value : bool
+            Set whether or not to highlight regions being updated.
+
+        """
+        return self._debug_draw_regions
+
+    def setDebugDrawRegions(self, value):
+        """ Set whether to highlight regions being painted in paintEvent.
+
+        Parameters
+        ----------
+        value : bool
+            Set whether or not to highlight regions being updated.
+
+        """
+        self._debug_draw_regions = value
+
+    def paintUpdatedRegion(self, painter, rect):
+        """ Draw debug visualization to highlight damaged regions.
+
+        This is meant for development / debugging use only and is useful to
+        keep track of the position and extent of regions being invalidated and
+        redrawn. This function is only invoked if self._debug_draw_regions is
+        True.
+
+        Parameters
+        ----------
+
+        painter : QPainter
+            Active painter which is active on current widget.
+
+        rect : QRect
+            Rectangle which is damaged.
+
+        """
+        if self._debug_color_generator is None:
+            self._debug_color_generator = debug_color_generator()
+        color = self._debug_color_generator.next()
+        painter.fillRect(rect, color)
+
     #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
@@ -420,6 +501,7 @@ class QTabularView(QAbstractScrollArea):
             x2 = x1 + rect.width()
             y1 = rect.y()
             y2 = y1 + rect.height()
+
             first_visual_row = v_header.visualIndexAt(y1 + v_offset)
             last_visual_row = v_header.visualIndexAt(y2 + v_offset)
             first_visual_col = h_header.visualIndexAt(x1 + h_offset)
@@ -535,6 +617,9 @@ class QTabularView(QAbstractScrollArea):
                 row_idx += 1
                 col_idx = 0
                 y_run += row_height
+
+            if self._debug_draw_regions:
+                self.paintUpdatedRegion(painter, rect)
 
     def paintCell(self, painter, rect, data, cell_style, col_style, row_style):
         # If there is no style, short circuit the complex painting.
