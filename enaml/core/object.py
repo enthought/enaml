@@ -535,6 +535,21 @@ class Object(HasStrictTraits):
     #--------------------------------------------------------------------------
     # Object Tree API
     #--------------------------------------------------------------------------
+    def root_object(self):
+        """ Get the root object for this hierarchy.
+
+        Returns
+        -------
+        result : Object
+            The top-most object in the hierarchy to which this object
+            belongs.
+
+        """
+        obj = self
+        while obj._parent is not None:
+            obj = obj._parent
+        return obj
+
     def traverse(self, depth_first=False):
         """ Yield all of the objects in the tree, from this object down.
 
