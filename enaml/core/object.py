@@ -371,9 +371,8 @@ class Object(HasStrictTraits):
 
         Notes
         -----
-        It is the responsibility of the caller to intialize and activate
-        the object if it is reparented dynamically at runtime and should
-        be involved with a session.
+        It is the responsibility of the caller to initialize and activate
+        the object as needed, if it is reparented dynamically at runtime.
 
         """
         old_parent = self._parent
@@ -414,9 +413,8 @@ class Object(HasStrictTraits):
 
         Notes
         -----
-        It is the responsibility of the caller to intialize and activate
-        the object if it is reparented dynamically at runtime and should
-        be involved with a session.
+        It is the responsibility of the caller to initialize and activate
+        the object as needed, if it is reparented dynamically at runtime.
 
         """
         insert_tup = tuple(insert)
@@ -460,10 +458,12 @@ class Object(HasStrictTraits):
 
         This event handler is called when the parent on the object has
         changed, but before the children of the new parent have been
-        updated. Sublasses may reimplement this method as required. The
-        default implementation emits the trait change notification, so
-        subclasses which rely on that notification must be sure to call
-        super(...) when reimplmenting this method.
+        updated. There is no guarantee that the parent has been fully
+        initialized when this is called. Sublasses may reimplement this
+        method as required. The default implementation emits the trait
+        change notification, so subclasses which override the default
+        must be sure to call the superclass version, or emit the trait
+        change themselves.
 
         Parameters
         ----------
@@ -477,10 +477,12 @@ class Object(HasStrictTraits):
         """ Handle a `ChildrenEvent` posted to this object.
 
         This event handler is called by a `ChildrenEventContext` when
-        the last nested context is exited. The default implementation
-        emits the trait change notification, so subclasses which rely
-        on that notification must be sure to call super(...) when
-        reimplmenting this method.
+        the last nested context is exited. There is no guarantee that
+        the children will be fully initialized when this is called.
+        Sublasses may reimplement this method as required. The default
+        implementation emits the trait change notification, so
+        subclasses which override the default must be sure to call the
+        superclass version, or emit the trait change themselves.
 
         Parameters
         ----------
