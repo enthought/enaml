@@ -313,7 +313,7 @@ class Object(HasStrictTraits):
         # the automatic destruction of children is assumed.
         parent = self._parent
         if parent is None or not parent.is_destroying:
-            self.send_action('destroy', {})
+            self.batch_action('destroy', {})
         self.state = 'destroying'
         self.pre_destroy()
         if self._children:
@@ -387,10 +387,10 @@ class Object(HasStrictTraits):
         if old_parent is not None:
             old_kids = old_parent._children
             idx = old_kids.index(self)
-            with ChildrenEventContext(old_parent):
+            with old_parent.children_event_context():
                 old_parent._children = old_kids[:idx] + old_kids[idx + 1:]
         if parent is not None:
-            with ChildrenEventContext(parent):
+            with parent.children_event_context():
                 parent._children += (self,)
 
     def insert_children(self, before, insert):
@@ -447,10 +447,10 @@ class Object(HasStrictTraits):
                     old_kids = old_parent._children
                     idx = old_kids.index(child)
                     old_kids = old_kids[:idx] + old_kids[idx + 1:]
-                    with ChildrenEventContext(old_parent):
+                    with old_parent.children_event_context():
                         old_parent._children = old_kids
 
-        with ChildrenEventContext(self):
+        with self.children_event_context():
             self._children = tuple(new)
 
     def parent_event(self, event):
@@ -492,6 +492,22 @@ class Object(HasStrictTraits):
         """
         self.trait_property_changed('children', event.old, event.new)
 
+    def children_event_context(self):
+        """ Get a context manager for sending children events.
+
+        This method should be called and entered whenever the children
+        of an object are changed. The returned context manager will
+        collapse all nested changes into a single aggregate event.
+
+        Returns
+        -------
+        result : ChildrenEventContext
+            The context manager which should be entered before changing
+            the children of the object.
+
+        """
+        return ChildrenEventContext(self)
+
     #--------------------------------------------------------------------------
     # Messaging API
     #--------------------------------------------------------------------------
@@ -513,6 +529,45 @@ class Object(HasStrictTraits):
         """
         if self.is_active:
             self._session.send(self.object_id, action, content)
+
+    def batch_action(self, action, content):
+        """ Batch an action to be sent to the client at a later time.
+
+        The action will only be batched if the current state of the
+        object is `active`. Subclasses may reimplement this method
+        if more control is needed.
+
+        Parameters
+        ----------
+        action : str
+            The name of the action which the client should perform.
+
+        content : dict
+            The content data for the action.
+
+        """
+        if self.is_active:
+            self._session.batch(self.object_id, action, content)
+
+    def batch_action_task(self, action, task):
+        """ Similar to `batch_action` but takes a callable task.
+
+        The task will only be batched if the current state of the
+        object is `active`. Subclasses may reimplement this method
+        if more control is needed.
+
+        Parameters
+        ----------
+        action : str
+            The name of the action which the client should perform.
+
+        task : callable
+            A callable which will be invoked at a later time. It must
+            return the content dictionary for the action.
+
+        """
+        if self.is_active:
+            self._session.batch_task(self.object_id, action, task)
 
     def receive_action(self, action, content):
         """ Receive an action from the client of this object.

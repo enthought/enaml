@@ -4,7 +4,9 @@
 #------------------------------------------------------------------------------
 import logging
 
-from traits.api import HasTraits, Instance, List, Str, ReadOnly, Enum, Property
+from traits.api import (
+    HasTraits, Instance, List, Str, ReadOnly, Enum, Property, on_trait_change
+)
 
 from enaml.widgets.window import Window
 
@@ -18,27 +20,21 @@ from .utils import make_dispatcher
 logger = logging.getLogger(__name__)
 
 
-#: The set of actions which should be batched and sent to the client as
-#: a single message. This allows a client to perform intelligent message
-#: handling when dealing with messages that may affect the widget tree.
-BATCH_ACTIONS = set(['destroy', 'children_changed', 'relayout'])
-
-
 #: The dispatch function for action dispatching on the session.
 dispatch_action = make_dispatcher('on_action_', logger)
 
 
-class DeferredMessageBatch(object):
-    """ A class which aggregates batch messages.
+class DeferredBatch(object):
+    """ A class which aggregates batch items.
 
-    Each time a message is added to this object, its tick count is
+    Each time an item is added to this object, its tick count is
     incremented and a tick down event is posted to the event queue.
     When the object receives the tick down event, it decrements its
     tick count, and if it's zero, fires the `triggered` signal.
 
-    This allows a consumer of the batch to continually add messages and
-    have the `triggered` signal fired only when the event queue is fully
-    drained of relevant messages.
+    This allows a consumer of the batch to continually add items and
+    have the `triggered` signal fired only when the event queue is
+    fully drained of relevant messages.
 
     """
     #: A signal emitted when the tick count of the batch reaches zero
@@ -46,10 +42,10 @@ class DeferredMessageBatch(object):
     triggered = Signal()
 
     def __init__(self):
-        """ Initialize a DeferredMessageBatch.
+        """ Initialize a DeferredBatch.
 
         """
-        self._messages = []
+        self._items = []
         self._tick = 0
 
     #--------------------------------------------------------------------------
@@ -73,31 +69,31 @@ class DeferredMessageBatch(object):
     # Public API
     #--------------------------------------------------------------------------
     def release(self):
-        """ Release the messages that were added to the batch.
+        """ Release the items that were added to the batch.
 
         Returns
         -------
         result : list
-            The list of messages added to the batch.
+            The list of items added to the batch.
 
         """
-        messages = self._messages
-        self._messages = []
-        return messages
+        items = self._items
+        self._items = []
+        return items
 
-    def add_message(self, message):
-        """ Add a message to the batch.
+    def append(self, item):
+        """ Append an item to the batch.
 
         This will cause the batch to tick up and then start the tick
         down process if necessary.
 
         Parameters
         ----------
-        message : object
-            The message object to add to the batch.
+        item : object
+            The item to add to the batch.
 
         """
-        self._messages.append(message)
+        self._items.append(item)
         if self._tick == 0:
             deferred_call(self._tick_down)
         self._tick += 1
@@ -107,8 +103,6 @@ class URLReply(object):
     """ A reply object for sending a loaded resource to a client session.
 
     """
-    __slots__ = ('_session', '_req_id', '_url')
-
     def __init__(self, session, req_id, url):
         """ Initialize a URLReply.
 
@@ -221,9 +215,9 @@ class Session(HasTraits):
     #: The private deferred message batch used for collapsing layout
     #: related messages into a single batch to send to the client
     #: session for more efficient handling.
-    _batch = Instance(DeferredMessageBatch)
+    _batch = Instance(DeferredBatch)
     def __batch_default(self):
-        batch = DeferredMessageBatch()
+        batch = DeferredBatch()
         batch.triggered.connect(self._on_batch_triggered)
         return batch
 
@@ -264,8 +258,19 @@ class Session(HasTraits):
         message batch.
 
         """
-        content = {'batch': self._batch.release()}
+        batch = [task() for task in self._batch.release()]
+        content = {'batch': batch}
         self.send(self.session_id, 'message_batch', content)
+
+    @on_trait_change('windows:destroyed')
+    def _on_window_destroyed(self, obj, name, old, new):
+        """ A trait handler for the `destroyed` event on the windows.
+
+        This handler will remove a destroyed window from the list of
+        the session's windows.
+
+        """
+        self.windows.remove(obj)
 
     #--------------------------------------------------------------------------
     # Abstract API
@@ -350,13 +355,42 @@ class Session(HasTraits):
         self.send(self.session_id, 'close', {})
         self.state = 'closing'
         self.on_close()
-        for window in self.windows:
+        # The list is copied to avoid issues with the list changing size
+        # while iterating. Windows are removed from the `windows` list
+        # when they fire their `destroyed` event during destruction.
+        for window in self.windows[:]:
             window.destroy()
         self.windows = []
         self._registered_objects = {}
         self.socket.on_message(None)
         self.socket = None
         self.state = 'closed'
+
+    def add_window(self, window):
+        """ Add a window to the session's window list.
+
+        This will add the window to the session and create the client
+        side window if necessary. If the window
+        already exists in the session, this is a no-op.
+
+        Parameters
+        ----------
+        window : Window
+            A new window instance to add to the session. It will not
+            normally have a parent, though this is not enforced.
+
+        """
+        if window not in self.windows:
+            self.windows.append(window)
+            if self.is_active:
+                window.initialize()
+                # If the window has no parent, the client session must
+                # be told to create it. Otherwise, the window's parent
+                # will create it during the children changed event.
+                if window.parent is None:
+                    content = {'window': window.snapshot()}
+                    self.send(self.session_id, 'add_window', content)
+                window.activate(self)
 
     def snapshot(self):
         """ Get a snapshot of the windows of this session.
@@ -420,10 +454,52 @@ class Session(HasTraits):
 
         """
         if self.is_active:
-            if action in BATCH_ACTIONS:
-                self._batch.add_message((object_id, action, content))
-            else:
-                self.socket.send(object_id, action, content)
+            self.socket.send(object_id, action, content)
+
+    def batch(self, object_id, action, content):
+        """ Batch a message to be sent by the session.
+
+        This method can be called to add a message to an internal batch
+        to be sent to the client at a later time. This is useful for
+        queueing messages which are related and are emitted in rapid
+        succession, such as `destroy` and `children_changed`. This can
+        allow the client-side to batch update the ui, avoiding flicker
+        and rendering artifacts. This method should be used with care.
+
+        Parameters
+        ----------
+        object_id : str
+            The object id of the client object.
+
+        action : str
+            The action that should be performed by the object.
+
+        content : dict
+            The content dictionary for the action.
+
+        """
+        task = lambda: (object_id, action, content)
+        self._batch.append(task)
+
+    def batch_task(self, object_id, action, task):
+        """ Similar to `batch` but takes a callable task.
+
+        Parameters
+        ----------
+        object_id : str
+            The object id of the client object.
+
+        action : str
+            The action that should be performed by the object.
+
+        task : callable
+            A callable which will be invoked at a later time to get
+            the content of the message. The callable must return the
+            content dictionary for the action.
+
+        """
+        ctask = lambda: (object_id, action, task())
+        self._batch.append(ctask)
 
     def on_message(self, object_id, action, content):
         """ Receive a message sent to an object owned by this session.
