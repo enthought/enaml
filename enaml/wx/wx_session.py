@@ -214,6 +214,16 @@ class WxSession(object):
     #--------------------------------------------------------------------------
     # Action Handlers
     #--------------------------------------------------------------------------
+    def on_action_add_window(self, content):
+        """ Handle the 'add_window' action from the Enaml session.
+
+        """
+        window = self.build(content['window'], None)
+        if window is not None:
+            self._windows.append(window)
+            window.initialize()
+            window.activate()
+
     def on_action_message_batch(self, content):
         """ Handle the 'message_batch' action sent by the Enaml session.
 

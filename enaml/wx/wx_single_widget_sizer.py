@@ -34,16 +34,17 @@ class wxSingleWidgetSizer(wx.PySizer):
         if present. The old widget is not destroyed.
 
         """
-        self.Clear(deleteWindows=False)
-        old = self._widget
-        if old:
-            old.Hide()
-        self._widget = widget
-        if widget:
-            widget.Show()
-            res = super(wxSingleWidgetSizer, self).Add(widget)
-            self.Layout()
-            return res
+        if self._widget is not widget:
+            self.Clear(deleteWindows=False)
+            old = self._widget
+            if old:
+                old.Hide()
+            self._widget = widget
+            if widget:
+                widget.Show()
+                res = super(wxSingleWidgetSizer, self).Add(widget)
+                self.Layout()
+                return res
 
     def CalcMin(self):
         """ Returns the minimum size for the children this sizer is
