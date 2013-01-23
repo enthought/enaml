@@ -94,6 +94,7 @@ class Window(Widget):
         """ Handle the 'closed' action from the client widget.
 
         """
+        self.set_guarded(visible=False)
         self.closed()
         if self.destroy_on_close:
             self.destroy()

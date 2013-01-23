@@ -32,6 +32,7 @@ class wxCustomWindow(wx.Frame):
         self._central_widget = None
         self.SetSizer(wxSingleWidgetSizer())
         self.Bind(wx.EVT_MENU, self.OnMenu)
+        self.Bind(wx.EVT_CLOSE, self.OnClose)
 
     #--------------------------------------------------------------------------
     # Event Handlers
@@ -48,6 +49,15 @@ class wxCustomWindow(wx.Frame):
             if action.IsCheckable():
                 action.SetChecked(event.Checked())
             action.Trigger()
+
+    def OnClose(self, event):
+        """ The event handler for the EVT_CLOSE event.
+
+        This event handler prevents the frame from being destroyed on
+        close. Instead it just sets the visibility to False.
+
+        """
+        self.Hide()
 
     #--------------------------------------------------------------------------
     # Public API
