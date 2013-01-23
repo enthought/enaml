@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 import logging
 
-from .qt.QtCore import QSize, Signal
+from .qt.QtCore import Qt, QSize, Signal
 from .qt.QtGui import QFrame, QLayout, QIcon, QImage, QPixmap
 from .q_deferred_caller import deferredCall
 from .q_single_widget_layout import QSingleWidgetLayout
@@ -13,6 +13,13 @@ from .qt_widget import QtWidget
 
 
 logger = logging.getLogger(__name__)
+
+
+MODALITY = {
+    'non_modal': Qt.NonModal,
+    'application_modal': Qt.ApplicationModal,
+    'window_modal': Qt.WindowModal,
+}
 
 
 class QWindowLayout(QSingleWidgetLayout):
@@ -60,7 +67,7 @@ class QWindow(QFrame):
     #: A signal emitted when the window is closed.
     closed = Signal()
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, parent=None):
         """ Initialize a QWindow.
 
         Parameters
@@ -70,7 +77,7 @@ class QWindow(QFrame):
             a QFrame.
 
         """
-        super(QWindow, self).__init__(*args, **kwargs)
+        super(QWindow, self).__init__(parent, Qt.Window)
         self._central_widget = None
         self._expl_min_size = QSize()
         self._expl_max_size = QSize()
@@ -203,6 +210,7 @@ class QtWindow(QtWidget):
         super(QtWindow, self).create(tree)
         self.set_title(tree['title'])
         self.set_initial_size(tree['initial_size'])
+        self.set_modality(tree['modality'])
         self._icon_source = tree['icon_source']
         self.widget().closed.connect(self.on_closed)
 
@@ -299,10 +307,16 @@ class QtWindow(QtWidget):
         self.set_icon_source(content['icon_source'])
 
     def on_action_set_title(self, content):
-        """ Handle the 'set-title' action from the Enaml widget.
+        """ Handle the 'set_title' action from the Enaml widget.
 
         """
         self.set_title(content['title'])
+
+    def on_action_set_modality(self, content):
+        """ Handle the 'set_modality' action from the Enaml widget.
+
+        """
+        self.set_modality(content['modality'])
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -354,6 +368,12 @@ class QtWindow(QtWidget):
         if -1 in size:
             return
         self.widget().resize(QSize(*size))
+
+    def set_modality(self, modality):
+        """ Set the modality of the window.
+
+        """
+        self.widget().setWindowModality(MODALITY[modality])
 
     def set_visible(self, visible):
         """ Set the visibility on the window.

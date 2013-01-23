@@ -184,17 +184,16 @@ class ConstraintsWidget(Widget):
         # requests can be collapsed into a single action. 2) So that
         # all child events (which are fired synchronously) can finish
         # processing and send their actions to the client before the
-        # relayout request is sent.
+        # relayout request is sent. The action itself is batched so
+        # that it can be sent along with any object tree changes.
         app = Application.instance()
-        if app is None:
-            self.send_action('relayout', self._layout_info())
-        else:
+        if app is not None:
             task = self._layout_task
             if task is None:
                 def notifier(ignored):
                     self._layout_task = None
                 def layout_task():
-                    self.send_action('relayout', self._layout_info())
+                    self.batch_action('relayout', self._layout_info())
                 task = app.schedule(layout_task)
                 task.notify(notifier)
                 self._layout_task = task
