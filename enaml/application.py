@@ -497,7 +497,7 @@ def is_main_thread():
     return app.is_main_thread()
 
 
-def schedule(self, callback, args=None, kwargs=None, priority=0):
+def schedule(callback, args=None, kwargs=None, priority=0):
     """ Schedule a callable to be executed on the event loop thread.
 
     This call is thread-safe.
