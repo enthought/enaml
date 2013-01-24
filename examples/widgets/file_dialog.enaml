@@ -1,28 +1,53 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2013, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+from os.path import abspath
+
+from enaml.layout.api import hbox, align
 from enaml.widgets.api import (
     Container,
+    Field,
     FileDialog,
-    Include,
+    Label,
     PushButton,
     Window,
     )
 
-def dir_dialog_callback(dlg):
-    if dlg.result == 'accepted':
-        print dlg.path
+def get_file_chooser_callback(obj, attr):
 
-enamldef Main(Window): main:
+    def file_chooser_callback(dlg):
+        if dlg.result == 'accepted':
+            setattr(obj, attr, dlg.path)
+
+    return file_chooser_callback
+
+enamldef Main(Window): window:
+    attr path : unicode = u""
+
+    title = 'File Chooser'
+
     Container:
-        PushButton: pb:
+        constraints = [
+            hbox(lbl, fld, pb),
+            align('v_center', lbl, fld, pb),
+            pb.height == fld.height,
+        ]
+        Label:
+            id: lbl
+            text = 'File'
+        Field:
+            id: fld
+            read_only = True
+            text << window.path
+        PushButton:
+            id: pb
             text = 'Browse'
             clicked ::
-                dir_dialog = dlg_incld.objects[0]
-                dir_dialog.open()
-
-        Include: dlg_incld:
-            # There is a bug in the life-time management of
-            # FileDialog, so use the Include widget to create the
-            # FileDialog widget at load-time and open it on demand.
-            objects = [FileDialog(main,
-                                mode='directory',
-                                callback=dir_dialog_callback,
-                                destroy_on_close=False)]
+                dlg = FileDialog(
+                    window,
+                    title='Choose File',
+                    mode='open_file',
+                    path=abspath(__file__),
+                    callback=get_file_chooser_callback(window, 'path'),
+                ).open()
