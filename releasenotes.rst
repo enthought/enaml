@@ -1,8 +1,25 @@
 Enaml Release Notes
 ===================
 
+0.6.7 - 01/23/2013
+------------------
+- Added a `root_object()` method on the `Object` class which returns the root of the object tree. d9b4830963_
+- Properly handle window modality on the Qt backend. 28f2433814_
+- Add a `destroy_on_close` flag to the `Window` class. 2a63e8cefd_
+- Prevent Wx from destroying top-level windows by default. 8e298e768e_
+- Add support for adding windows to a session at run-time. c090c0fad6_
+- Fix the lifetime bug with the `FileDialog`. 8e354de858_
+
+.. _d9b4830963: https://github.com/enthought/enaml/commit/d9b48309631ed315b67ddf9c4222a2efcf4858ee
+.. _28f2433814: https://github.com/enthought/enaml/commit/28f243381439ce1ce263cad2672b62a96bc87a0c
+.. _2a63e8cefd: https://github.com/enthought/enaml/commit/2a63e8cefde29416291536ec6c02a05b612e11b1
+.. _8e298e768e: https://github.com/enthought/enaml/commit/8e298e768eb45248cc98f682c9cc3b3f473b2a29
+.. _c090c0fad6: https://github.com/enthought/enaml/commit/c090c0fad64a30936fc79774f8e851dca46076b6
+.. _8e354de858: https://github.com/enthought/enaml/commit/8e354de858a6ee5deeda96dafa6322579c5514a6
+
+
 0.6.6 - 01/10/2013
--------------------
+------------------
 - Fix the broken unittests and make them Python 2.6 safe. 2c1d7f01d_
 
 .. _22c1d7f01d: https://github.com/enthought/enaml/commit/22c1d7f01d844979c166e2f156d18a553f2c0152

@@ -32,6 +32,7 @@ class wxCustomWindow(wx.Frame):
         self._central_widget = None
         self.SetSizer(wxSingleWidgetSizer())
         self.Bind(wx.EVT_MENU, self.OnMenu)
+        self.Bind(wx.EVT_CLOSE, self.OnClose)
 
     #--------------------------------------------------------------------------
     # Event Handlers
@@ -48,6 +49,15 @@ class wxCustomWindow(wx.Frame):
             if action.IsCheckable():
                 action.SetChecked(event.Checked())
             action.Trigger()
+
+    def OnClose(self, event):
+        """ The event handler for the EVT_CLOSE event.
+
+        This event handler prevents the frame from being destroyed on
+        close. Instead it just sets the visibility to False.
+
+        """
+        self.Hide()
 
     #--------------------------------------------------------------------------
     # Public API
@@ -210,20 +220,20 @@ class WxWindow(WxWidget):
         """
         self.restore()
 
-    def on_action_set_icon(self, content):
-        """ Handle the 'set-icon' action from the Enaml widget.
+    def on_action_set_icon_source(self, content):
+        """ Handle the 'set_icon_source' action from the Enaml widget.
 
         """
         pass
 
     def on_action_set_title(self, content):
-        """ Handle the 'set-title' action from the Enaml widget.
+        """ Handle the 'set_title' action from the Enaml widget.
 
         """
         self.set_title(content['title'])
 
     def on_action_set_modality(self, content):
-        """ Handle the 'set-modality' action from the Enaml widget.
+        """ Handle the 'set_modality' action from the Enaml widget.
 
         """
         self.set_modality(content['modality'])
@@ -254,12 +264,6 @@ class WxWindow(WxWidget):
 
         """
         self.widget().Maximize(False)
-
-    def set_icon(self, icon):
-        """ Set the window icon.
-
-        """
-        pass
 
     def set_title(self, title):
         """ Set the title of the window.

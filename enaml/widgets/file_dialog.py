@@ -4,6 +4,7 @@
 #------------------------------------------------------------------------------
 from traits.api import Enum, Bool, Callable, List, Unicode
 
+from enaml.application import deferred_call
 from enaml.core.messenger import Messenger
 from enaml.core.trait_types import EnamlEvent
 
@@ -78,7 +79,21 @@ class FileDialog(Messenger):
         content['filters'] = self.filters
         content['selected_filter'] = self.selected_filter
         content['native_dialog'] = self.native_dialog
-        self.send_action('open', content)
+        # A common dialog idiom is as follows:
+        #
+        #    dlg = FileDialog(foo, ...)
+        #    dlg.open()
+        #
+        # With this scenario, the dialog will not have been initialized
+        # by the time the `open` method is called, since the child event
+        # of the dialog parent is batched by the Messenger class. The
+        # 'open' action must therefore be deferred in order to allow the
+        # dialog be fully initialized and capable of sending messages.
+        # Otherwise, the 'open' message will be dropped.
+        if self.is_active:
+            self.send_action('open', content)
+        else:
+            deferred_call(self.send_action, 'open', content)
 
     #--------------------------------------------------------------------------
     # Message Handling
