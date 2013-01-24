@@ -102,6 +102,11 @@ def label_factory():
     return QtLabel
 
 
+def list_control_factory():
+    from .qt_list_control import QtListControl
+    return QtListControl
+
+
 def main_window_factory():
     from .qt_main_window import QtMainWindow
     return QtMainWindow
@@ -251,6 +256,7 @@ def register_default():
     register('Image', image_factory)
     register('ImageView', image_view_factory)
     register('Label', label_factory)
+    register('ListControl', list_control_factory)
     register('MainWindow', main_window_factory)
     register('MdiArea', mdi_area_factory)
     register('MdiWindow', mdi_window_factory)
