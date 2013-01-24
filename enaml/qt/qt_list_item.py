@@ -38,7 +38,7 @@ class QtListItem(QtObject):
         """ Create the underlying list widget item.
 
         """
-        return QListWidgetItem()
+        return QListWidgetItem(parent)
 
     def create(self, tree):
         """ Create and initialize the underlying widget.

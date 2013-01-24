@@ -1,0 +1,24 @@
+from enaml.widgets.api import Window, Container, PushButton, FileDialog, Splitter, Include, SplitItem, Field
+from enaml.widgets.list_control import ListControl
+from enaml.widgets.list_item import ListItem
+
+
+enamldef Main(Window):
+    Container:
+        ListControl:
+            ListItem:
+                text = 'First'
+                background = 'red'
+            Include:
+                objects = [
+                    ListItem(
+                        text='Foo Bar ' + unicode(i),
+                        text_align='center',
+                        background='lightskyblue' if i % 2 else 'goldenrod',
+                        foreground='steelblue' if i % 2 else '',
+                        font='0.5in small-caps' if i % 2 else '',
+                    ) for i in range(1000)
+                ]
+            ListItem:
+                text = 'Last'
+

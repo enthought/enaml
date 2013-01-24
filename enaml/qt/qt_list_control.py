@@ -28,14 +28,15 @@ class QtListControl(QtControl):
     # Widget Update Methods
     #--------------------------------------------------------------------------
     def set_items(self, items):
+        return
         qt_items = []
         session = self._session
-        for tree in items:
-            qt_items.append(QtListItem.construct(tree, self, session))
         widget = self.widget()
         widget.clear()
-        for qt_item in qt_items:
-            widget.addItem(qt_item.widget())
+        for tree in items:
+            qt_items.append(QtListItem.construct(tree, self, session))
+        #for qt_item in qt_items:
+        #    widget.addItem(qt_item.widget())
         for qt_item in qt_items:
             qt_item.initialize()
         for qt_item in qt_items:
