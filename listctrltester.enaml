@@ -1,24 +1,93 @@
-from enaml.widgets.api import Window, Container, PushButton, FileDialog, Splitter, Include, SplitItem, Field
+from enaml.widgets.api import Window, Container, ComboBox, PushButton, FileDialog, Splitter, Include, SplitItem, Field
 from enaml.widgets.list_control import ListControl
 from enaml.widgets.list_item import ListItem
+from enaml.icon_provider import IconProvider, Icon, IconImage
+from enaml.image_provider import Image
+
+def foo(item):
+    print item
+    return eval(item)
+
+
+CHECKS = [None, True, False]
+
+
+class MyIconProvider(IconProvider):
+    """ A custom icon provider for the icon example.
+
+    """
+    path = 'c:/Users/i341972/Desktop/git_repos/enaml/examples/icons_and_images/example_images/inwood_park.jpg'
+
+    def request_icon(self, path, callback):
+        """ Load the requested icon.
+
+        Parameters
+        ----------
+        path : str
+            The requested path of the icon, with the provider prefix
+            removed. For example, if the full icon source path was:
+            'icon://myicons/window-icon' then the path passed to this
+            method will be `/window-icon`.
+
+        callback : callable
+            A callable which should be invoked when the icon is loaded.
+            It accepts a single argument, which is the loaded `Icon`
+            object. It is safe to invoke this callable from a thread.
+
+        """
+        # The mapping from icon name -> path is hard coded here, but
+        # a typical application will have a way to resolve these paths
+        # at runtime.
+        with open(self.path, 'rb') as f:
+            data = f.read()
+        image = Image(data=data)
+        icon_img = IconImage(image=image)
+        icon = Icon(images=[icon_img])
+        callback(icon)
 
 
 enamldef Main(Window):
+    activated :: session.resource_manager.icon_providers['foo'] = MyIconProvider()
     Container:
-        ListControl:
-            ListItem:
+        PushButton:
+            clicked ::
+                for item in inc.objects[::2]:
+                    item.visible = not item.visible
+        PushButton:
+            clicked :: item.destroy()
+        PushButton:
+            clicked :: ListItem(lc, text='whizzle')
+        Field:
+            text := item.text
+        ComboBox: cbox:
+            items = [str(i) for i in CHECKS]
+            index = 0
+        ListControl: lc:
+            icon_size = (100, 50)
+            ListItem: item:
                 text = 'First'
                 background = 'red'
-            Include:
+                editable = True
+                tool_tip << text
+                checkable = True
+                checked << foo(cbox.items[cbox.index])
+                checked :: cbox.index = CHECKS.index(checked)
+                clicked :: print 'i was clicked'
+                double_clicked :: print 'i was double clicked'
+                icon_source = 'icon://foo/bar'
+            Include: inc:
                 objects = [
                     ListItem(
                         text='Foo Bar ' + unicode(i),
-                        text_align='center',
+                        text_align='left',
                         background='lightskyblue' if i % 2 else 'goldenrod',
                         foreground='steelblue' if i % 2 else '',
                         font='0.5in small-caps' if i % 2 else '',
+                        preferred_size = (100, 55),
+                        #checkable=True,
+                        #checked=True,
+                        icon_source = 'icon://foo/bar',
                     ) for i in range(1000)
                 ]
             ListItem:
                 text = 'Last'
-

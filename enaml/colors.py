@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-""" A utility module for dealing with colors.
+""" A utility module for dealing with CSS3 color strings.
 
 """
 from colorsys import hls_to_rgb
@@ -25,8 +25,8 @@ _HSLA_RE = re.compile(r'^hsla\(%s,%s,%s,%s\)$' % (_real, _perc, _perc, _real), r
 
 
 #: A table of all 147 named SVG colors supported by CSS3. These values
-#: will be converted to floating point rgba values color table immediately
-#: after its definition.
+#: will be converted to a floating point rgba color table immediately
+#: after the definition.
 _SVG_COLORS = {
     'aliceblue': (240, 248, 255),
     'antiquewhite': (250, 235, 215),
@@ -174,7 +174,7 @@ _SVG_COLORS = {
     'white': (255, 255, 255),
     'whitesmoke': (245, 245, 245),
     'yellow': (255, 255, 0),
-    'yellowgreen': (154, 205, 50), 
+    'yellowgreen': (154, 205, 50),
 }
 
 
@@ -207,7 +207,7 @@ def _parse_hex_color(color):
             r = int_(hex_str[:2], 16)
             g = int_(hex_str[2:4], 16)
             b = int_(hex_str[4:6], 16)
-        return (r / 255.0, g / 255.0, b / 255.0, 1.0) 
+        return (r / 255.0, g / 255.0, b / 255.0, 1.0)
 
 
 def _parse_rgb_color(color):
@@ -223,16 +223,16 @@ def _parse_rgb_color(color):
         r = max_(0, min_(255, int_(rs))) / 255.0
         g = max_(0, min_(255, int_(gs))) / 255.0
         b = max_(0, min_(255, int_(bs))) / 255.0
-        return (r, g, b, 1.0) 
+        return (r, g, b, 1.0)
 
     float_ = float
     match = _RGB_PER_RE.match(color)
     if match is not None:
         rs, gs, bs = match.groups()
-        r = max_(0.0, min_(100.0, float_(rs))) / 100.0 
+        r = max_(0.0, min_(100.0, float_(rs))) / 100.0
         g = max_(0.0, min_(100.0, float_(gs))) / 100.0
         b = max_(0.0, min_(100.0, float_(bs))) / 100.0
-        return (r, g, b, 1.0) 
+        return (r, g, b, 1.0)
 
     match = _RGBA_NUM_RE.match(color)
     if match is not None:
@@ -246,7 +246,7 @@ def _parse_rgb_color(color):
     match = _RGBA_PER_RE.match(color)
     if match is not None:
         rs, gs, bs, as_ = match.groups()
-        r = max_(0.0, min_(100.0, float_(rs))) / 100.0 
+        r = max_(0.0, min_(100.0, float_(rs))) / 100.0
         g = max_(0.0, min_(100.0, float_(gs))) / 100.0
         b = max_(0.0, min_(100.0, float_(bs))) / 100.0
         a = max_(0.0, min_(1.0, float_(as_)))
@@ -320,7 +320,7 @@ def composite_colors(first, second):
     Parameters
     ----------
     first : tuple
-        The rgba tuple of the first color. All values are floats in 
+        The rgba tuple of the first color. All values are floats in
         the range 0.0 - 1.0.
 
     second : tuple
