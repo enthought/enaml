@@ -35,7 +35,7 @@ class Looper(Declarative):
     #: by the looper when it passes over the objects in the iterable.
     items = Property(fget=lambda self: self._items, depends_on='_items')
 
-    #: Private internal storage for the `items` property looper.
+    #: Private internal storage for the `items` property.
     _items = Tuple
 
     def initialize(self):
