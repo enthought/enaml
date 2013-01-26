@@ -7,7 +7,6 @@ from traits.api import Instance, Uninitialized
 from enaml.utils import LoopbackGuard
 
 from .declarative import Declarative
-from .include import Include
 from .object import Object
 
 
@@ -89,12 +88,11 @@ class ChildrenChangedTask(object):
 
 
 class Messenger(Declarative):
-    """ A base class for creating messaging-enabled Enaml objects.
+    """ A base class for creating messaging enabled Enaml objects.
 
     This is a Declarative subclass which provides convenient APIs for
     sharing state between a server-side Enaml object and a client-side
-    implementation of that object. It also enables support for the
-    `Include` object type.
+    implementation of that object.
 
     """
     #: A loopback guard which can be used to prevent a notification
@@ -104,18 +102,6 @@ class Messenger(Declarative):
     #--------------------------------------------------------------------------
     # Lifetime API
     #--------------------------------------------------------------------------
-    def pre_initialize(self):
-        """ A reimplemented initialization method.
-
-        This method will setup any `Include` children so that they may
-        prepare their objects before the proper initialization pass.
-
-        """
-        super(Messenger, self).pre_initialize()
-        for child in self.children:
-            if isinstance(child, Include):
-                child.init_objects()
-
     def post_initialize(self):
         """ A reimplemented post initialization method.
 

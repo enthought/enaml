@@ -334,6 +334,30 @@ class Declarative(Object):
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
+    def bound_expressions(self):
+        """ Get the bound expressions for this object.
+
+        Returns
+        -------
+        result : dict
+            The dictionary of bound expressions for the object. User
+            code should not modify this return value.
+
+        """
+        return self._expressions
+
+    def bound_listeners(self):
+        """ Get the bound listeners for this object.
+
+        Returns
+        -------
+        result : dict
+            The dictionary of bound listeners for the object. User
+            code should not modify this return value.
+
+        """
+        return self._listeners
+
     def bind_expression(self, name, expression):
         """ Bind an expression to the given attribute name.
 
