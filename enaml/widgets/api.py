@@ -2,7 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-# Convenience imports
+# Backward compatibility imports
 from enaml.core.include import Include
 
 # Widget imports

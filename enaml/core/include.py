@@ -27,15 +27,17 @@ class Include(Declarative):
     #: are removed from the parent. The default is True.
     destroy_old = Bool(True)
 
-    def init_objects(self):
-        """ A method called by a parent widget to init the Include.
+    def pre_initialize(self):
+        """ A pre-initialization handler.
 
-        This method must be called by objects to initialize the objects
-        in an Include. It should be called before the parent initializes
-        its children. This method should never be called by user code.
+        This method will add the include objects to the parent of the
+        include and ensure that they are initialized.
 
         """
+        super(Include, self).pre_initialize()
         self.parent.insert_children(self, self.objects)
+        for obj in self.objects:
+            obj.initialize()
 
     def parent_event(self, event):
         """ Handle a `ParentEvent` for the Include.
