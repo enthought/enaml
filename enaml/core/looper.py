@@ -4,28 +4,27 @@
 #------------------------------------------------------------------------------
 from collections import Iterable
 
-from traits.api import Instance, Property, ReadOnly, Tuple
+from traits.api import Instance, Property, Tuple
 
-from .declarative import Declarative
-
-
-#: A global readonly trait instance that is reused for all loop items.
-_RO_TRAIT = ReadOnly()
+from .templated import Templated
 
 
-class Looper(Declarative):
-    """ A declarative object that repeats its children over an iterable.
+class Looper(Templated):
+    """ A templated object that repeats its templates over an iterable.
 
     The children of a `Looper` are used as a template when creating new
-    objects for each item in the given `iterable`. The objects created
-    for each item in the `iterable` will be given a `loop_index` and a
-    `loop_item` attribute which will contain the index and the item in
-    the iterable, respectively.
+    objects for each item in the given `iterable`. Each iteration of the
+    loop will be given an indenpendent scope which is the union of the
+    outer scope and any identifiers created during the iteration. This
+    scope will also contain `loop_index` and `loop_item` variables which
+    are the index and value of the iterable, respectively.
 
     All items created by the looper will be added as children of the
     parent of the `Looper`. The `Looper` keeps ownership of all items
     it creates. When the iterable for the looper is changed, the old
     items will be destroyed.
+
+    Creating a `Looper` without a parent is a programming error.
 
     """
     #: The iterable to use when creating the items for the looper.
@@ -35,46 +34,36 @@ class Looper(Declarative):
     #: by the looper when it passes over the objects in the iterable.
     items = Property(fget=lambda self: self._items, depends_on='_items')
 
-    #: Private internal storage for the `items` property.
+    #: Private storage for the `items` property.
     _items = Tuple
 
-    def initialize(self):
+    #--------------------------------------------------------------------------
+    # Lifetime API
+    #--------------------------------------------------------------------------
+    def post_initialize(self):
         """ A reimplemented initialization method.
 
         This method will create and initialize the loop items using the
-        children of the looper as a template for creating the new items.
-        The looper's children are not initialized.
+        looper templates to generate the items.
 
         """
-        self.state = 'initializing'
-        self.pre_initialize()
         self._refresh_loop_items()
-        self.state = 'initialized'
-        self.post_initialize()
-
-    def activate(self, session):
-        """ A reimplemented activation method.
-
-        This method does not activate the children of the looper, since
-        they only serve as templates for the creation of the loop items.
-
-        """
-        self.state = 'activating'
-        self.pre_activate(session)
-        self._session = session
-        session.register(self)
-        self.state = 'active'
-        self.post_activate(session)
+        super(Looper, self).post_initialize()
 
     def post_destroy(self):
         """ A post destroy handler.
 
-        The looper will drop all references to the created items when
-        it is destroyed.
+        The looper will destroy all of the items it created if they have
+        not already been destroyed.
 
         """
         super(Looper, self).post_destroy()
+        if len(self._items) > 0:
+            for item in self._items:
+                if not item.is_destroyed:
+                    item.destroy()
         self._items = ()
+        self.iterable = None
 
     #--------------------------------------------------------------------------
     # Private API
@@ -98,34 +87,28 @@ class Looper(Declarative):
         """
         items = []
         iterable = self.iterable
-        template = self.children
-        ro_trait = _RO_TRAIT
+        templates = self._templates
 
-        # The inner loop adds two read only traits to each new item so
-        # that the items can access the `loop_index` and `loop_item`.
-        # The traits are addded manually instead of using `add_trait`,
-        # which avoids a bunch of unneeded and expensive checks. The
-        # same read only trait can be reused with all instances, which
-        # helps to save memory when a large number of items are created.
-        if iterable is not None and len(template) > 0:
+        if iterable is not None and len(templates) > 0:
             for loop_index, loop_item in enumerate(iterable):
-                for target in template:
-                    item = type(target)()
-                    items.append(item)
-                    idict = item.__dict__
-                    idict['loop_index'] = loop_index
-                    idict['loop_item'] = loop_item
-                    itraits = item._instance_traits()
-                    itraits['loop_index'] = ro_trait
-                    itraits['loop_item'] = ro_trait
-                    if isinstance(target, Declarative):
-                        expressions = target.bound_expressions()
-                        listeners = target.bound_listeners()
-                        for key, value in expressions.iteritems():
-                            item.bind_expression(key, value)
-                        for key, values in listeners.iteritems():
-                            for listener in values:
-                                item.bind_listener(key, listener)
+                # Each template is a 3-tuple of identifiers, globals, and
+                # list of description dicts. There will only typically be
+                # one template, but more can exist if the looper was
+                # subclassed via enamldef to provided default children.
+                for identifiers, f_globals, descriptions in templates:
+                    # Each iteration of the loop gets a new scope which
+                    # is the union of the existing scope and the loop
+                    # variables. This also allows the loop children to
+                    # add their own independent identifiers. The loop
+                    # items are constructed with no parent since they
+                    # are parented via `insert_children` later on.
+                    scope = identifiers.copy()
+                    scope['loop_index'] = loop_index
+                    scope['loop_item'] = loop_item
+                    for descr in descriptions:
+                        cls = f_globals[descr['type']]
+                        item = cls._construct(None, descr, scope, f_globals)
+                        items.append(item)
 
         old_items = self._items
         self._items = items = tuple(items)
@@ -133,7 +116,8 @@ class Looper(Declarative):
             with self.parent.children_event_context():
                 if len(old_items) > 0:
                     for old in old_items:
-                        old.destroy()
+                        if not old.is_destroyed:
+                            old.destroy()
                 if len(items) > 0:
                     self.parent.insert_children(self, items)
                     for item in items:

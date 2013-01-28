@@ -2,6 +2,8 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from types import FunctionType
+
 from traits.api import (
     Any, Property, Disallow, ReadOnly, CTrait, Instance, Uninitialized,
 )
@@ -83,7 +85,7 @@ def _compute_default(obj, name):
     try:
         return obj.eval_expression(name)
     except DynamicAttributeError:
-        raise # Reraise a propagating initialization error.
+        raise  # Reraise a propagating initialization error.
     except Exception:
         import traceback
         # XXX I'd rather not hack into Declarative's private api.
@@ -228,11 +230,9 @@ class Declarative(Object):
     _listeners = Instance(dict, ())
 
     #: A class attribute used by the Enaml compiler machinery to store
-    #: the builder functions on the class. The functions are called
-    #: when a component is instantiated and are the mechanism by which
-    #: a component is populated with its declarative children and bound
-    #: expression objects.
-    _builders = ()
+    #: the description and global dictionaries needed to build out the
+    #: component.
+    _descriptions = ()
 
     def __init__(self, parent=None, **kwargs):
         """ Initialize a declarative component.
@@ -248,30 +248,150 @@ class Declarative(Object):
 
         """
         super(Declarative, self).__init__(parent)
-        # If any builders are present, they need to be invoked before
-        # applying any other keyword arguments so that bound expressions
-        # do not override the keywords. The builders in the list exist
-        # in the reverse order of a typical mro. The most base builder
-        # gets to add its children and bind its expressions first.
-        # Builders that come later can then override these bindings.
-        # Each component gets it's own identifier namespace and current
-        # operator context.
-        operators = self.operators = OperatorContext.active_context()
-        if self._builders:
-            identifiers = {}
-            for builder in self._builders:
-                builder(self, identifiers, operators)
+        # If the class attribute `_descriptions` is non-empty, then the
+        # instance was created by an enamldef and needs to be populated
+        # with bound expressions and declarative children.
+        self.operators = OperatorContext.active_context()
+        if len(self._descriptions) > 0:
+            self._populate(self._descriptions)
 
-        # Apply the keyword arguments after the rest of the tree is
-        # created. This makes sure that parameters passed in by the
-        # user are not overridden by default expression bindings.
-        # `trait_set` is slow, don't use it here.
+        # Apply the keyword arguments after the tree is populated. This
+        # makes sure that parameters passed in by the user override the
+        # default expression bindings.
+        # Note: `trait_set` is slow, don't use it here.
         for key, value in kwargs.iteritems():
             setattr(self, key, value)
 
     #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
+    def _populate(self, descriptions):
+        """ Populate this declarative instance from decription dicts.
+
+        This method is `private` in the sense that user code should not
+        ever need to call this method. However, it may be overridden by
+        subclasses which need more control over the population process.
+
+        Parameters
+        ----------
+        descriptions : sequence
+            A sequence of 2-tuples of the form (description, globals)
+            which represent the heierarchy of enamldef classes which
+            generated this instance. The sequence should be ordered
+            such that the most base class is first.
+
+        """
+        for description, f_globals in descriptions:
+            # Each description represents an enamldef block. Each block
+            # gets its own independent identifier scope.
+            identifiers = {}
+
+            # Add this item to the identifier scope.
+            ident = description['identifier']
+            if ident:
+                identifiers[ident] = self
+
+            # Setup the bindings for the item.
+            bindings = description['bindings']
+            if len(bindings) > 0:
+                self._setup_bindings(bindings, identifiers, f_globals)
+
+            # When populating the declarative children, a different code
+            # path is taken. This indirection allows for subclasses to
+            # override how children are created. This is used by classes
+            # like `Looper` and `Conditional` to control scoping.
+            children = description['children']
+            if len(children) > 0:
+                with self.children_event_context():
+                    for child in children:
+                        cls = f_globals[child['type']]
+                        cls._construct(self, child, identifiers, f_globals)
+
+    @classmethod
+    def _construct(cls, parent, description, identifiers, f_globals):
+        """ Construct a declarative instance of this class.
+
+        This classmethod is called when the instance is being created
+        as a declarative child of another instance. This method is
+        `private` in the sense that user code should not ever need to
+        call this method. However, it may be overridden by subclasses
+        which need more control over the construction process.
+
+        Parameters
+        ----------
+        parent : Declarative
+            The declarative parent of the object to be created.
+
+        description : dict
+            The description dictionary for the instance.
+
+        identifiers : dict
+            The dictionary of identifiers to use for the child.
+
+        f_globals : dict
+            The dictionary of globals for the scope in which the child
+            was declared.
+
+        Returns
+        -------
+        result : Declarative
+            A newly constructed and populated declarative instance.
+
+        """
+        # Note: if `cls` is an EnamlDef, it may have its own description
+        # which will trigger a population round from another scope.
+        self = cls(parent)
+
+        # Add this instance to the identifiers if needed.
+        ident = description['identifier']
+        if ident:
+            identifiers[ident] = self
+
+        bindings = description['bindings']
+        if len(bindings) > 0:
+            self._setup_bindings(bindings, identifiers, f_globals)
+
+        # Recursively populate the rest of the declarative children
+        children = description['children']
+        if len(children) > 0:
+            with self.children_event_context():
+                for child in children:
+                    cls = f_globals[child['type']]
+                    cls._construct(self, child, identifiers, f_globals)
+
+        return self
+
+    def _setup_bindings(self, bindings, identifiers, f_globals):
+        """ Setup the expression bindings for this instance.
+
+        Parameters
+        ----------
+        bindings : list
+            A list of binding dicts created by the enaml compiler.
+
+        identifiers : dict
+            The identifiers scope to associate with the bindings.
+
+        f_globals : dict
+            The globals dict to associate with the bindings.
+
+        """
+        # XXX error handling and reporting in case of key errors.
+        operators = self.operators
+        for binding in bindings:
+            operator = operators[binding['operator']]
+            code = binding['code']
+            # If the code is a tuple, it represents a delegation
+            # expression which is a combination of subscription
+            # and update functions.
+            if isinstance(code, tuple):
+                sub_code, upd_code = code
+                func = FunctionType(sub_code, f_globals)
+                func._update = FunctionType(upd_code, f_globals)
+            else:
+                func = FunctionType(code, f_globals)
+            operator(self, binding['name'], func, identifiers)
+
     @classmethod
     def _add_user_attribute(cls, name, attr_type, is_event):
         """ A private classmethod used by the Enaml compiler machinery.
@@ -334,30 +454,6 @@ class Declarative(Object):
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
-    def bound_expressions(self):
-        """ Get the bound expressions for this object.
-
-        Returns
-        -------
-        result : dict
-            The dictionary of bound expressions for the object. User
-            code should not modify this return value.
-
-        """
-        return self._expressions
-
-    def bound_listeners(self):
-        """ Get the bound listeners for this object.
-
-        Returns
-        -------
-        result : dict
-            The dictionary of bound listeners for the object. User
-            code should not modify this return value.
-
-        """
-        return self._listeners
-
     def bind_expression(self, name, expression):
         """ Bind an expression to the given attribute name.
 
