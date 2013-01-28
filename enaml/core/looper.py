@@ -6,6 +6,7 @@ from collections import Iterable
 
 from traits.api import Instance, Property, Tuple
 
+from .declarative import scope_lookup
 from .templated import Templated
 
 
@@ -110,10 +111,11 @@ class Looper(Templated):
                     scope['loop_index'] = loop_index
                     scope['loop_item'] = loop_item
                     for descr in descriptions:
-                        name = descr['type']
-                        cls = self._lookup_name(name, f_globals, descr)
-                        item = cls._construct(None, descr, scope, f_globals)
-                        iteration.append(item)
+                        cls = scope_lookup(descr['type'], f_globals, descr)
+                        instance = cls()
+                        with instance.children_event_context():
+                            instance.populate(descr, scope, f_globals)
+                        iteration.append(instance)
                 items.append(tuple(iteration))
 
         old_items = self._items

@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from traits.api import List
 
-from .declarative import Declarative
+from .declarative import Declarative, setup_bindings
 
 
 class Templated(Declarative):
@@ -33,11 +33,10 @@ class Templated(Declarative):
         self._templates = []
 
     #--------------------------------------------------------------------------
-    # Private API
+    # Declarative API
     #--------------------------------------------------------------------------
-    @classmethod
-    def _construct(cls, parent, description, identifiers, f_globals):
-        """ An overridden parent class constructor.
+    def populate(self, description, identifiers, f_globals):
+        """ An overridden parent class populator.
 
         A `Templated` object never actually constructs its children.
         Instead, the child descriptions are used as templates by the
@@ -46,54 +45,14 @@ class Templated(Declarative):
         the children information in the templates list.
 
         """
-        # Note: if `cls` is an EnamlDef, it may have its own description
-        # which will trigger a population round from another scope.
-        self = cls(parent)
-
-        # Add this instance to the identifiers if needed.
         ident = description['identifier']
         if ident:
             identifiers[ident] = self
-
-        # Setup the bindings for the item.
         bindings = description['bindings']
         if len(bindings) > 0:
-            self._setup_bindings(bindings, identifiers, f_globals)
-
-        # Store the child descriptions as templates.
+            setup_bindings(self, bindings, identifiers, f_globals)
         children = description['children']
         if len(children) > 0:
             template = (identifiers, f_globals, children)
             self._templates.append(template)
-
-        return self
-
-    def _populate(self, descriptions):
-        """ An overridden parent class populator.
-
-        See the documentation for the `_construct` classmethod. These
-        two methods perform a similar task, but `_populate` will only
-        be invoked if the object has been subclassed via enamldef.
-
-        """
-        for description, f_globals in descriptions:
-            # Each description represents an enamldef block. Each block
-            # gets its own independent identifier scope.
-            identifiers = {}
-
-            # Add this item to the identifier scope.
-            ident = description['identifier']
-            if ident:
-                identifiers[ident] = self
-
-            # Setup the bindings for the item.
-            bindings = description['bindings']
-            if len(bindings) > 0:
-                self._setup_bindings(bindings, identifiers, f_globals)
-
-            # Store the child descriptions as templates.
-            children = description['children']
-            if len(children) > 0:
-                template = (identifiers, f_globals, children)
-                self._templates.append(template)
 

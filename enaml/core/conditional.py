@@ -4,6 +4,7 @@
 #------------------------------------------------------------------------------
 from traits.api import Bool, Tuple, Property
 
+from .declarative import scope_lookup
 from .templated import Templated
 
 
@@ -94,10 +95,11 @@ class Conditional(Templated):
                 # parented via `insert_children` later on.
                 scope = identifiers.copy()
                 for descr in descriptions:
-                    name = descr['type']
-                    cls = self._lookup_name(name, f_globals, descr)
-                    item = cls._construct(None, descr, scope, f_globals)
-                    items.append(item)
+                    cls = scope_lookup(descr['type'], f_globals, descr)
+                    instance = cls()
+                    with instance.children_event_context():
+                        instance.populate(descr, scope, f_globals)
+                    items.append(instance)
 
         old_items = self._items
         self._items = items = tuple(items)

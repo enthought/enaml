@@ -194,6 +194,76 @@ class ListenerNotifier(object):
 ListenerNotifier = ListenerNotifier()
 
 
+def scope_lookup(name, scope, description):
+    """ A function which retrieves a name from a scope.
+
+    If the lookup fails, a DeclarativeNameError is raised. This can
+    be used to lookup names for a description dict from a global scope
+    with decent error reporting when the lookup fails.
+
+    Parameters
+    ----------
+    name : str
+        The name to retreive from the scope.
+
+    scope : mapping
+        A mapping object.
+
+    description : dict
+        The description dictionary associated with the lookup.
+
+    """
+    try:
+        item = scope[name]
+    except KeyError:
+        lineno = description['lineno']
+        filename = description['filename']
+        block = description['block']
+        raise DeclarativeNameError(name, filename, lineno, block)
+    return item
+
+
+def setup_bindings(instance, bindings, identifiers, f_globals):
+    """ Setup the expression bindings for a declarative instance.
+
+    Parameters
+    ----------
+    instance : Declarative
+        The declarative instance which owns the bindings.
+
+    bindings : list
+        A list of binding dicts created by the enaml compiler.
+
+    identifiers : dict
+        The identifiers scope to associate with the bindings.
+
+    f_globals : dict
+        The globals dict to associate with the bindings.
+
+    """
+    operators = instance.operators
+    for binding in bindings:
+        opname = binding['operator']
+        try:
+            operator = operators[opname]
+        except KeyError:
+            filename = binding['filename']
+            lineno = binding['lineno']
+            block = binding['block']
+            raise OperatorLookupError(opname, filename, lineno, block)
+        code = binding['code']
+        # If the code is a tuple, it represents a delegation
+        # expression which is a combination of subscription
+        # and update functions.
+        if isinstance(code, tuple):
+            sub_code, upd_code = code
+            func = FunctionType(sub_code, f_globals)
+            func._update = FunctionType(upd_code, f_globals)
+        else:
+            func = FunctionType(code, f_globals)
+        operator(instance, binding['name'], func, identifiers)
+
+
 #------------------------------------------------------------------------------
 # Declarative
 #------------------------------------------------------------------------------
@@ -230,11 +300,6 @@ class Declarative(Object):
     #: can be as high as 20% of the heap size.
     _listeners = Instance(dict, ())
 
-    #: A class attribute used by the Enaml compiler machinery to store
-    #: the description and global dictionaries needed to build out the
-    #: component.
-    _descriptions = ()
-
     def __init__(self, parent=None, **kwargs):
         """ Initialize a declarative component.
 
@@ -248,187 +313,94 @@ class Declarative(Object):
             Additional keyword arguments needed for initialization.
 
         """
-        super(Declarative, self).__init__(parent)
-        # If the class attribute `_descriptions` is non-empty, then the
-        # instance was created by an enamldef and needs to be populated
-        # with bound expressions and declarative children.
+        super(Declarative, self).__init__(parent, **kwargs)
         self.operators = OperatorContext.active_context()
-        if len(self._descriptions) > 0:
-            self._populate(self._descriptions)
-
-        # Apply the keyword arguments after the tree is populated. This
-        # makes sure that parameters passed in by the user override the
-        # default expression bindings.
-        # Note: `trait_set` is slow, don't use it here.
-        for key, value in kwargs.iteritems():
-            setattr(self, key, value)
 
     #--------------------------------------------------------------------------
-    # Private API
+    # Declarative API
     #--------------------------------------------------------------------------
-    def _lookup_name(self, name, scope, description):
-        """ A private method which retrieves a name from a scope.
+    def populate(self, description, identifiers, f_globals):
+        """ Populate this declarative instance from a description.
 
-        If the lookup fails, a DeclarativeNameError is raised. This can
-        be used to lookup names from the global scope with decent error
-        reporting when the lookup fails.
+        This method is called when the object was created from within
+        a declarative context. In particular, there are two times when
+        it may be called:
 
-        Parameters
-        ----------
-        name : str
-            The name to retreive from the scope.
+            - The first is when a type created from the `enamldef`
+              keyword is instatiated; in this case, the method is
+              invoked by the EnamlDef metaclass.
 
-        scope : mapping
-            A mapping object.
+            - The second occurs when the object is instantiated by
+              its parent from within its parent's `populate` method.
 
-        description : dict
-            The description dictionary associated with the lookup.
+        In the first case, the description dict will contain the key
+        `enamldef: True`, indicating that the object is being created
+        from a "top-level" `enamldef` block.
 
-        """
-        try:
-            item = scope[name]
-        except KeyError:
-            lineno = description['lineno']
-            filename = description['filename']
-            block = description['block']
-            raise DeclarativeNameError(name, filename, lineno, block)
-        return item
+        In the second case, the dict will have the key `enamldef: False`
+        indicating that the object is being populated as a declarative
+        child of some other parent.
 
-    def _populate(self, descriptions):
-        """ Populate this declarative instance from decription dicts.
+        Subclasses may reimplement this method to gain custom control
+        over how the children for its instances are created.
 
-        This method is `private` in the sense that user code should not
-        ever need to call this method. However, it may be overridden by
-        subclasses which need more control over the population process.
+        *** This method may be called multiple times ***
 
-        Parameters
-        ----------
-        descriptions : sequence
-            A sequence of 2-tuples of the form (description, globals)
-            which represent the heierarchy of enamldef classes which
-            generated this instance. The sequence should be ordered
-            such that the most base class is first.
+        Consider the following sample:
 
-        """
-        for description, f_globals in descriptions:
-            # Each description represents an enamldef block. Each block
-            # gets its own independent identifier scope.
-            identifiers = {}
+        enamldef Foo(PushButton):
+            text = 'bar'
 
-            # Add this item to the identifier scope.
-            ident = description['identifier']
-            if ident:
-                identifiers[ident] = self
+        enamldef Bar(Foo):
+            fgcolor = 'red'
 
-            # Setup the bindings for the item.
-            bindings = description['bindings']
-            if len(bindings) > 0:
-                self._setup_bindings(bindings, identifiers, f_globals)
+        enamldef Main(Window):
+            Container:
+                Bar:
+                    bgcolor = 'blue'
 
-            # When populating the declarative children, a different code
-            # path is taken. This indirection allows for subclasses to
-            # override how children are created. This is used by classes
-            # like `Looper` and `Conditional` to control scoping.
-            children = description['children']
-            if len(children) > 0:
-                with self.children_event_context():
-                    for child in children:
-                        name = child['type']
-                        cls = self._lookup_name(name, f_globals, child)
-                        cls._construct(self, child, identifiers, f_globals)
-
-    @classmethod
-    def _construct(cls, parent, description, identifiers, f_globals):
-        """ Construct a declarative instance of this class.
-
-        This classmethod is called when the instance is being created
-        as a declarative child of another instance. This method is
-        `private` in the sense that user code should not ever need to
-        call this method. However, it may be overridden by subclasses
-        which need more control over the construction process.
+        The instance of `Bar` which is created as the `Container` child
+        will have its `populate` method called three times: the first
+        to populate the data from the `Foo` block, the second to populate
+        the data from the `Bar` block, and the third to populate the
+        data from the `Main` block.
 
         Parameters
         ----------
-        parent : Declarative
-            The declarative parent of the object to be created.
-
         description : dict
             The description dictionary for the instance.
 
         identifiers : dict
-            The dictionary of identifiers to use for the child.
+            The dictionary of identifiers to use for the bindings.
 
         f_globals : dict
-            The dictionary of globals for the scope in which the child
+            The dictionary of globals for the scope in which the object
             was declared.
 
-        Returns
-        -------
-        result : Declarative
-            A newly constructed and populated declarative instance.
+        Notes
+        -----
+        The caller of this method should enter the child event context
+        of the instance before invoking the method. This reduces the
+        number of child events which are generated during startup.
 
         """
-        # Note: if `cls` is an EnamlDef, it may have its own description
-        # which will trigger a population round from another scope.
-        self = cls(parent)
-
-        # Add this instance to the identifiers if needed.
         ident = description['identifier']
         if ident:
             identifiers[ident] = self
-
         bindings = description['bindings']
         if len(bindings) > 0:
-            self._setup_bindings(bindings, identifiers, f_globals)
-
-        # Recursively populate the rest of the declarative children
+            setup_bindings(self, bindings, identifiers, f_globals)
         children = description['children']
         if len(children) > 0:
-            with self.children_event_context():
-                for child in children:
-                    name = child['type']
-                    cls = self._lookup_name(name, f_globals, child)
-                    cls._construct(self, child, identifiers, f_globals)
+            for child in children:
+                cls = scope_lookup(child['type'], f_globals, child)
+                instance = cls(self)
+                with instance.children_event_context():
+                    instance.populate(child, identifiers, f_globals)
 
-        return self
-
-    def _setup_bindings(self, bindings, identifiers, f_globals):
-        """ Setup the expression bindings for this instance.
-
-        Parameters
-        ----------
-        bindings : list
-            A list of binding dicts created by the enaml compiler.
-
-        identifiers : dict
-            The identifiers scope to associate with the bindings.
-
-        f_globals : dict
-            The globals dict to associate with the bindings.
-
-        """
-        operators = self.operators
-        for binding in bindings:
-            opname = binding['operator']
-            try:
-                operator = operators[opname]
-            except KeyError:
-                filename = binding['filename']
-                lineno = binding['lineno']
-                block = binding['block']
-                raise OperatorLookupError(opname, filename, lineno, block)
-            code = binding['code']
-            # If the code is a tuple, it represents a delegation
-            # expression which is a combination of subscription
-            # and update functions.
-            if isinstance(code, tuple):
-                sub_code, upd_code = code
-                func = FunctionType(sub_code, f_globals)
-                func._update = FunctionType(upd_code, f_globals)
-            else:
-                func = FunctionType(code, f_globals)
-            operator(self, binding['name'], func, identifiers)
-
+    #--------------------------------------------------------------------------
+    # Private API
+    #--------------------------------------------------------------------------
     @classmethod
     def _add_user_attribute(cls, name, attr_type, is_event):
         """ A private classmethod used by the Enaml compiler machinery.
