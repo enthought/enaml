@@ -9,7 +9,7 @@ from traits.api import (
 )
 
 from .dynamic_scope import DynamicAttributeError
-from .exceptions import DeclarativeNameError
+from .exceptions import DeclarativeNameError, OperatorLookupError
 from .object import Object
 from .operator_context import OperatorContext
 from .trait_types import EnamlInstance, EnamlEvent
@@ -409,10 +409,14 @@ class Declarative(Object):
         """
         operators = self.operators
         for binding in bindings:
-            name = binding['operator']
-            # XXX this should really be more descriptive than a NameError
-            # on failure, but it's decent enough for the time being.
-            operator = self._lookup_name(name, operators, binding)
+            opname = binding['operator']
+            try:
+                operator = operators[opname]
+            except KeyError:
+                filename = binding['filename']
+                lineno = binding['lineno']
+                block = binding['block']
+                raise OperatorLookupError(opname, filename, lineno, block)
             code = binding['code']
             # If the code is a tuple, it represents a delegation
             # expression which is a combination of subscription
