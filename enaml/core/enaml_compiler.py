@@ -3,14 +3,12 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import ast
-import itertools
 import types
 
 from .byteplay import (
     Code, LOAD_FAST, CALL_FUNCTION, LOAD_GLOBAL, STORE_FAST, LOAD_CONST,
-    LOAD_ATTR, STORE_SUBSCR, RETURN_VALUE, POP_TOP, MAKE_FUNCTION, STORE_NAME,
-    LOAD_NAME, DUP_TOP, SetLineno, BINARY_SUBSCR, STORE_ATTR, ROT_TWO,
-    DELETE_NAME, DELETE_FAST
+    LOAD_ATTR, RETURN_VALUE, POP_TOP, STORE_NAME, LOAD_NAME, DUP_TOP,
+    DELETE_NAME, DELETE_FAST, SetLineno
 )
 from .code_tracing import inject_tracing, inject_inversion
 
@@ -63,37 +61,77 @@ from .code_tracing import inject_tracing, inject_inversion
 # 7 : Fix bug with local deletes - 10 December 2012
 #     This fixes a bug in the locals optimization where the DELETE_NAME
 #     opcode was not being replaced with DELETE_FAST.
-COMPILER_VERSION = 7
+# 8 : Generate description dicts instead of builders - 27 January 2013
+#     This updates the compiler to generate marshalable description
+#     dicts instead of builder functions. The responsibility of building
+#     out the object tree has been shifted to the Declarative class. This
+#     is a touch slower, but provides a ton more flexibility and enables
+#     templated components like `Looper` and `Conditional`.
+COMPILER_VERSION = 8
 
 
-# The Enaml compiler translates an Enaml AST into Python bytecode.
+# The Enaml compiler translates an Enaml AST into a decription dict
+# which contains information about the tree, including code objects
+# which were compiled with support for runtime introspection. The
+# reason dictionaries are used instead of the AST nodes is because
+# the dictionaries can be marshaled into a .enamlc file, which is
+# faster on subsequent loading than reparsing the entire file.
+#
 #
 # Given this sample declaration in Enaml::
 #
-# FooWindow(Window):
-#     id: foo
-#     a = '12'
-#     PushButton:
-#         id: btn
+# FooWindow(Window): foo:
+#     attr a = '12'
+#     PushButton: btn:
 #         text = 'clickme'
 #
-# The compiler generate bytecode that would corresponds to the following
-# Python code (though the function object is never assigned to a name in
-# the global namespace).
+# The compiler generates a new class called FooWindow which uses Window
+# as the base class. The new class is given the following description
+# dictionary to use when populating new instances. The block and filename
+# information is repeated for each logical production because it makes
+# easier for runtime code to generate useful exceptions without needed
+# to pass the entire parse tree around at every step. The code objects
+# in the binding dictionaries have had their bytecode rewritten to
+# support Enaml's runtime introspection facilities.
 #
-# def FooWindow(instance, identifiers, operators):
-#     f_globals = globals()
-#     _var_1 = instance
-#     identifiers['foo'] = _var_1
-#     op = operators['__operator_Equal__']
-#     op(_var_1, 'a', <function>, identifiers)
-#     _var_2 = f_globals['PushButton'](_var_1)
-#     identifiers['btn'] = _var_2
-#     op = operators['__operator_Equal__']
-#     op(_var_2, 'text', <function>, identifiers)
-#     return _var_1
-#
-# FooWindow = _make_enamldef_helper_('FooWindow', Window, FooWindow)
+# description = {
+#     'enamldef': True,
+#     'type': 'FooWindow',
+#     'base': 'Window',
+#     'doc': '',
+#     'lineno': 1,
+#     'identifier': 'foo',
+#     'filename': 'sample.enaml',
+#     'block': 'FooWindow',
+#     'children': [
+#         { 'enamldef': False,
+#           'type': 'PushButton',
+#           'lineno': 3,
+#           'identifier': 'btn',
+#           'filename': 'sample.enaml',
+#           'block': 'FooWindow',
+#           'children': [],
+#           'bindings': [
+#               { 'operator': '__operator_Equal__',
+#                 'code': <codeobject>,
+#                 'name': 'text',
+#                 'lineno': 4,
+#                 'filename': 'sample.enaml',
+#                 'block': 'FooWindow',
+#               },
+#           ],
+#         },
+#     ],
+#     'bindings': [
+#         { 'operator': '__operator_Equal__',
+#           'code': <codeobject>,
+#           'name': 'a',
+#           'lineno': 2,
+#           'filename': 'sample.enaml',
+#           'block': 'FooWindow',
+#         },
+#     ],
+# }
 
 
 #------------------------------------------------------------------------------
@@ -105,16 +143,6 @@ STARTUP = ['from enaml.core.compiler_helpers import _make_enamldef_helper_']
 
 # Cleanup code that will be included in every compiled enaml module
 CLEANUP = ['del _make_enamldef_helper_']
-
-
-def _var_name_generator():
-    """ Returns a generator that generates sequential variable names for
-    use in a code block.
-
-    """
-    count = itertools.count()
-    while True:
-        yield '_var_' + str(count.next())
 
 
 def update_firstlineno(code, firstlineno):
@@ -397,8 +425,13 @@ class DeclarationCompiler(_NodeVisitor):
     def compile(cls, node, filename):
         """ The main entry point of the DeclarationCompiler.
 
-        This compiler compiles the given Declaration node into a code
-        object for a builder function.
+        This compiler compiles the given Declaration node into a
+        description dictionary which can be used to build out the
+        component tree at run time.
+
+        Top assist with debugging, every production generated by the
+        compiler has the filename, lineno, and block from where it was
+        generated.
 
         Parameters
         ----------
@@ -406,17 +439,12 @@ class DeclarationCompiler(_NodeVisitor):
             The Declaration node to compiler.
 
         filename : str
-            The string filename to use for the generated code objects.
+            The string filename to use for the description.
 
         """
         compiler = cls(filename)
         compiler.visit(node)
-        code_ops = compiler.code_ops
-        code = Code(
-            code_ops, [], ['instance', 'identifiers', 'operators'], False,
-            False, True, node.name, filename, node.lineno, node.doc,
-        )
-        return code
+        return compiler.stack.pop()
 
     def __init__(self, filename):
         """ Initialize a DeclarationCompiler.
@@ -424,64 +452,39 @@ class DeclarationCompiler(_NodeVisitor):
         Parameters
         ----------
         filename : str
-            The filename string to use for the generated code object.
+            The filename string to use for the descriptions.
 
         """
         self.filename = filename
-        self.code_ops = []
-        self.extend_ops = self.code_ops.extend
-        self.name_gen = _var_name_generator()
-        self.name_stack = []
-        self.push_name = self.name_stack.append
-        self.pop_name = self.name_stack.pop
-
-    def curr_name(self):
-        """ Returns the current variable name on the stack.
-
-        """
-        return self.name_stack[-1]
+        self.block = '<undefined>'
+        self.stack = []
 
     def visit_Declaration(self, node):
-        """ Creates the bytecode ops for a declaration node.
+        """ Creates the description dict for a declaration.
 
-        This node visitor pulls the passed in root into a local var
-        and stores it's identifier if one is given. It also loads
-        in the commonly used local variables `f_globals`, and `eval_`.
+        This method will create the root description dict, push it onto
+        the stack, then dispatch to the node's body nodes.
 
         """
-        name = self.name_gen.next()
-        extend_ops = self.extend_ops
-        self.push_name(name)
-
-        extend_ops([
-            (LOAD_NAME, 'globals'),     # f_globals = globals()
-            (CALL_FUNCTION, 0x0000),
-            (STORE_FAST, 'f_globals'),
-            (LOAD_FAST, 'instance'),    # _var_1 = instance
-            (STORE_FAST, name),
-        ])
-
-        if node.identifier:
-            extend_ops([
-                (LOAD_FAST, name),              # identifiers['foo'] = _var_1
-                (LOAD_FAST, 'identifiers'),
-                (LOAD_CONST, node.identifier),
-                (STORE_SUBSCR, None),
-            ])
-
-        visit = self.visit
+        self.block = node.name
+        obj = {
+            'enamldef': True,
+            'type': node.name,
+            'base': node.base,
+            'doc': node.doc,
+            'lineno': node.lineno,
+            'identifier': node.identifier,
+            'filename': self.filename,
+            'block': self.block,
+            'children': [],
+            'bindings': [],
+        }
+        self.stack.append(obj)
         for item in node.body:
-            visit(item)
-
-        extend_ops([
-            (LOAD_FAST, name),      # return _var_1
-            (RETURN_VALUE, None),
-        ])
-
-        self.pop_name()
+            self.visit(item)
 
     def visit_AttributeDeclaration(self, node):
-        """ Creates the bytecode ops for an attribute declaration.
+        """ Add an attribute declaration to the description.
 
         The attributes will have already been added to the subclass, so
         this visitor just dispatches to any default bindings which may
@@ -494,83 +497,53 @@ class DeclarationCompiler(_NodeVisitor):
             self.visit(node.default)
 
     def visit_AttributeBinding(self, node):
-        """ Creates the bytecode ops for an attribute binding.
+        """ Add an attribute binding to the description.
 
-        This visitor handles loading and calling the appropriate
-        operator.
+        This visitor creates the binding dict for the given node and
+        adds it to the bindings list for the object at the top of the
+        stack. It compiles the python ast for the bound expression into
+        a code object that has been hooked for the given operator.
 
         """
+        obj = self.stack[-1]
         py_ast = node.binding.expr.py_ast
         op = node.binding.op
         op_compiler = COMPILE_OP_MAP[op]
         code = op_compiler(py_ast, self.filename)
-        if isinstance(code, tuple): # operator `::`
-            sub_code, upd_code = code
-            self.extend_ops([
-                (SetLineno, node.binding.lineno),
-                (LOAD_FAST, 'operators'),           # operators[op](obj, attr, sub_func, identifiers)
-                (LOAD_CONST, op),
-                (BINARY_SUBSCR, None),
-                (LOAD_FAST, self.curr_name()),
-                (LOAD_CONST, node.name),
-                (LOAD_CONST, sub_code),
-                (MAKE_FUNCTION, 0),
-                (DUP_TOP, None),
-                (LOAD_CONST, upd_code),
-                (MAKE_FUNCTION, 0),
-                (ROT_TWO, None),
-                (STORE_ATTR, '_update'),            # sub_func._update = upd_func
-                (LOAD_FAST, 'identifiers'),
-                (CALL_FUNCTION, 0x0004),
-                (POP_TOP, None),
-            ])
-        else:
-            self.extend_ops([
-                (SetLineno, node.binding.lineno),
-                (LOAD_FAST, 'operators'),           # operators[op](obj, attr, func, identifiers)
-                (LOAD_CONST, op),
-                (BINARY_SUBSCR, None),
-                (LOAD_FAST, self.curr_name()),
-                (LOAD_CONST, node.name),
-                (LOAD_CONST, code),
-                (MAKE_FUNCTION, 0),
-                (LOAD_FAST, 'identifiers'),
-                (CALL_FUNCTION, 0x0004),
-                (POP_TOP, None),
-            ])
+        binding = {
+            'operator': op,
+            'code': code,
+            'name': node.name,
+            'lineno': node.binding.lineno,
+            'filename': self.filename,
+            'block': self.block,
+        }
+        obj['bindings'].append(binding)
 
     def visit_Instantiation(self, node):
-        """ Create the bytecode ops for a component instantiation.
+        """ Create the description for an instantiation.
 
-        This visitor handles calling another derived component and
-        storing its identifier, if given.
+        This visitor creates a new dictionary for the object, pushes
+        it onto the stack, dispatches to the body nodes, then pops
+        the item and adds it to the children of the object at the top
+        of the stack.
 
         """
-        extend_ops = self.extend_ops
-        parent_name = self.curr_name()
-        name = self.name_gen.next()
-        self.push_name(name)
-        extend_ops([
-            (SetLineno, node.lineno),
-            (LOAD_NAME, node.name),     # _var_2 = globals()['PushButton'](parent)
-            (LOAD_FAST, parent_name),
-            (CALL_FUNCTION, 0x0001),
-            (STORE_FAST, name),
-        ])
-
-        if node.identifier:
-            extend_ops([
-                (LOAD_FAST, name),              # identifiers['btn'] = _var_2
-                (LOAD_FAST, 'identifiers'),
-                (LOAD_CONST, node.identifier),
-                (STORE_SUBSCR, None),
-            ])
-
-        visit = self.visit
+        obj = {
+            'enamldef': False,
+            'type': node.name,
+            'lineno': node.lineno,
+            'identifier': node.identifier,
+            'filename': self.filename,
+            'block': self.block,
+            'children': [],
+            'bindings': [],
+        }
+        self.stack.append(obj)
         for item in node.body:
-            visit(item)
-
-        self.pop_name()
+            self.visit(item)
+        self.stack.pop()
+        self.stack[-1]['children'].append(obj)
 
 
 #------------------------------------------------------------------------------
@@ -596,29 +569,28 @@ class EnamlCompiler(_NodeVisitor):
             The string filename of the module ast being compiled.
 
         """
-        compiler = cls(filename)
-        compiler.visit(module_ast)
-
-        module_ops = [(SetLineno, 1)]
-        extend_ops = module_ops.extend
-
         # Generate the startup code for the module
+        module_ops = [(SetLineno, 1)]
         for start in STARTUP:
             start_code = compile(start, filename, mode='exec')
+            bp_code = Code.from_code(start_code)
             # Skip the SetLineo and ReturnValue codes
-            extend_ops(Code.from_code(start_code).code[1:-2])
+            module_ops.extend(bp_code.code[1:-2])
 
         # Add in the code ops for the module
-        extend_ops(compiler.code_ops)
+        compiler = cls(filename)
+        compiler.visit(module_ast)
+        module_ops.extend(compiler.code_ops)
 
         # Generate the cleanup code for the module
         for end in CLEANUP:
             end_code = compile(end, filename, mode='exec')
+            bp_code = Code.from_code(end_code)
             # Skip the SetLineo and ReturnValue codes
-            extend_ops(Code.from_code(end_code).code[1:-2])
+            module_ops.extend(bp_code.code[1:-2])
 
         # Add in the final return value ops
-        extend_ops([
+        module_ops.extend([
             (LOAD_CONST, None),
             (RETURN_VALUE, None),
         ])
@@ -640,7 +612,6 @@ class EnamlCompiler(_NodeVisitor):
         """
         self.filename = filename
         self.code_ops = []
-        self.extend_ops = self.code_ops.extend
 
     def visit_Module(self, node):
         """ The Module node visitor method.
@@ -648,9 +619,8 @@ class EnamlCompiler(_NodeVisitor):
         This visitor dispatches to all of the body nodes of the module.
 
         """
-        visit = self.visit
         for item in node.body:
-            visit(item)
+            self.visit(item)
 
     def visit_Python(self, node):
         """ The Python node visitor method.
@@ -661,7 +631,7 @@ class EnamlCompiler(_NodeVisitor):
         py_code = compile(node.py_ast, self.filename, mode='exec')
         bp_code = Code.from_code(py_code)
         # Skip the SetLineo and ReturnValue codes
-        self.extend_ops(bp_code.code[1:-2])
+        self.code_ops.extend(bp_code.code[1:-2])
 
     def visit_Declaration(self, node):
         """ The Declaration node visitor.
@@ -672,24 +642,24 @@ class EnamlCompiler(_NodeVisitor):
         the builder function for the new type.
 
         """
+        code_ops = self.code_ops
         name = node.name
-        extend_ops = self.extend_ops
-        filename = self.filename
-        func_code = DeclarationCompiler.compile(node, filename)
-        extend_ops([
+        description = DeclarationCompiler.compile(node, self.filename)
+        code_ops.extend([
             (SetLineno, node.lineno),
-            (LOAD_NAME, '_make_enamldef_helper_'),  # Foo = _make_enamldef_helper_(name, base, buildfunc)
+            (LOAD_NAME, '_make_enamldef_helper_'),  # Foo = _make_enamldef_helper_(name, base, description, globals)
             (LOAD_CONST, name),
             (LOAD_NAME, node.base),
-            (LOAD_CONST, func_code),
-            (MAKE_FUNCTION, 0),
-            (CALL_FUNCTION, 0x0003),
+            (LOAD_CONST, description),  # description is a marshalable dict
+            (LOAD_NAME, 'globals'),
+            (CALL_FUNCTION, 0x0000),
+            (CALL_FUNCTION, 0x0004),
             (STORE_NAME, name),
         ])
 
         # We now have a new Declarative subclass stored at 'name' to
         # which we need to add any user defined attributes and events.
-        extend_ops([
+        code_ops.extend([
             (LOAD_NAME, name),
             (LOAD_ATTR, '_add_user_attribute'),
         ])
@@ -699,11 +669,10 @@ class EnamlCompiler(_NodeVisitor):
         # are valid at the class-level. The '_add_user_attribute'
         # class method is left on the top of the stack and popped
         # at the end of the visitors.
-        visit = self.visit_nonstrict
         for child_node in node.body:
-            visit(child_node)
+            self.visit_nonstrict(child_node)
 
-        extend_ops([(POP_TOP, None)])
+        code_ops.append((POP_TOP, None))
 
     def visit_AttributeDeclaration(self, node):
         """ Creates the bytecode ops for an attribute declaration.
@@ -713,9 +682,9 @@ class EnamlCompiler(_NodeVisitor):
 
         """
         attr_type = node.type or 'object'
-        self.extend_ops([
+        self.code_ops.extend([
             (SetLineno, node.lineno),
-            (DUP_TOP, None),                #cls._add_user_attribute(name, type, is_event)
+            (DUP_TOP, None),                # cls._add_user_attribute(name, type, is_event)
             (LOAD_CONST, node.name),
             (LOAD_NAME, attr_type),
             (LOAD_CONST, node.is_event),

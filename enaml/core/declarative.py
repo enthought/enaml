@@ -1,12 +1,15 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2012, Enthought, Inc.
+#  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from types import FunctionType
+
 from traits.api import (
     Any, Property, Disallow, ReadOnly, CTrait, Instance, Uninitialized,
 )
 
 from .dynamic_scope import DynamicAttributeError
+from .exceptions import DeclarativeNameError, OperatorLookupError
 from .object import Object
 from .operator_context import OperatorContext
 from .trait_types import EnamlInstance, EnamlEvent
@@ -83,7 +86,7 @@ def _compute_default(obj, name):
     try:
         return obj.eval_expression(name)
     except DynamicAttributeError:
-        raise # Reraise a propagating initialization error.
+        raise  # Reraise a propagating initialization error.
     except Exception:
         import traceback
         # XXX I'd rather not hack into Declarative's private api.
@@ -191,6 +194,76 @@ class ListenerNotifier(object):
 ListenerNotifier = ListenerNotifier()
 
 
+def scope_lookup(name, scope, description):
+    """ A function which retrieves a name from a scope.
+
+    If the lookup fails, a DeclarativeNameError is raised. This can
+    be used to lookup names for a description dict from a global scope
+    with decent error reporting when the lookup fails.
+
+    Parameters
+    ----------
+    name : str
+        The name to retreive from the scope.
+
+    scope : mapping
+        A mapping object.
+
+    description : dict
+        The description dictionary associated with the lookup.
+
+    """
+    try:
+        item = scope[name]
+    except KeyError:
+        lineno = description['lineno']
+        filename = description['filename']
+        block = description['block']
+        raise DeclarativeNameError(name, filename, lineno, block)
+    return item
+
+
+def setup_bindings(instance, bindings, identifiers, f_globals):
+    """ Setup the expression bindings for a declarative instance.
+
+    Parameters
+    ----------
+    instance : Declarative
+        The declarative instance which owns the bindings.
+
+    bindings : list
+        A list of binding dicts created by the enaml compiler.
+
+    identifiers : dict
+        The identifiers scope to associate with the bindings.
+
+    f_globals : dict
+        The globals dict to associate with the bindings.
+
+    """
+    operators = instance.operators
+    for binding in bindings:
+        opname = binding['operator']
+        try:
+            operator = operators[opname]
+        except KeyError:
+            filename = binding['filename']
+            lineno = binding['lineno']
+            block = binding['block']
+            raise OperatorLookupError(opname, filename, lineno, block)
+        code = binding['code']
+        # If the code is a tuple, it represents a delegation
+        # expression which is a combination of subscription
+        # and update functions.
+        if isinstance(code, tuple):
+            sub_code, upd_code = code
+            func = FunctionType(sub_code, f_globals)
+            func._update = FunctionType(upd_code, f_globals)
+        else:
+            func = FunctionType(code, f_globals)
+        operator(instance, binding['name'], func, identifiers)
+
+
 #------------------------------------------------------------------------------
 # Declarative
 #------------------------------------------------------------------------------
@@ -227,13 +300,6 @@ class Declarative(Object):
     #: can be as high as 20% of the heap size.
     _listeners = Instance(dict, ())
 
-    #: A class attribute used by the Enaml compiler machinery to store
-    #: the builder functions on the class. The functions are called
-    #: when a component is instantiated and are the mechanism by which
-    #: a component is populated with its declarative children and bound
-    #: expression objects.
-    _builders = ()
-
     def __init__(self, parent=None, **kwargs):
         """ Initialize a declarative component.
 
@@ -247,27 +313,90 @@ class Declarative(Object):
             Additional keyword arguments needed for initialization.
 
         """
-        super(Declarative, self).__init__(parent)
-        # If any builders are present, they need to be invoked before
-        # applying any other keyword arguments so that bound expressions
-        # do not override the keywords. The builders in the list exist
-        # in the reverse order of a typical mro. The most base builder
-        # gets to add its children and bind its expressions first.
-        # Builders that come later can then override these bindings.
-        # Each component gets it's own identifier namespace and current
-        # operator context.
-        operators = self.operators = OperatorContext.active_context()
-        if self._builders:
-            identifiers = {}
-            for builder in self._builders:
-                builder(self, identifiers, operators)
+        super(Declarative, self).__init__(parent, **kwargs)
+        self.operators = OperatorContext.active_context()
 
-        # Apply the keyword arguments after the rest of the tree is
-        # created. This makes sure that parameters passed in by the
-        # user are not overridden by default expression bindings.
-        # `trait_set` is slow, don't use it here.
-        for key, value in kwargs.iteritems():
-            setattr(self, key, value)
+    #--------------------------------------------------------------------------
+    # Declarative API
+    #--------------------------------------------------------------------------
+    def populate(self, description, identifiers, f_globals):
+        """ Populate this declarative instance from a description.
+
+        This method is called when the object was created from within
+        a declarative context. In particular, there are two times when
+        it may be called:
+
+            - The first is when a type created from the `enamldef`
+              keyword is instatiated; in this case, the method is
+              invoked by the EnamlDef metaclass.
+
+            - The second occurs when the object is instantiated by
+              its parent from within its parent's `populate` method.
+
+        In the first case, the description dict will contain the key
+        `enamldef: True`, indicating that the object is being created
+        from a "top-level" `enamldef` block.
+
+        In the second case, the dict will have the key `enamldef: False`
+        indicating that the object is being populated as a declarative
+        child of some other parent.
+
+        Subclasses may reimplement this method to gain custom control
+        over how the children for its instances are created.
+
+        *** This method may be called multiple times ***
+
+        Consider the following sample:
+
+        enamldef Foo(PushButton):
+            text = 'bar'
+
+        enamldef Bar(Foo):
+            fgcolor = 'red'
+
+        enamldef Main(Window):
+            Container:
+                Bar:
+                    bgcolor = 'blue'
+
+        The instance of `Bar` which is created as the `Container` child
+        will have its `populate` method called three times: the first
+        to populate the data from the `Foo` block, the second to populate
+        the data from the `Bar` block, and the third to populate the
+        data from the `Main` block.
+
+        Parameters
+        ----------
+        description : dict
+            The description dictionary for the instance.
+
+        identifiers : dict
+            The dictionary of identifiers to use for the bindings.
+
+        f_globals : dict
+            The dictionary of globals for the scope in which the object
+            was declared.
+
+        Notes
+        -----
+        The caller of this method should enter the child event context
+        of the instance before invoking the method. This reduces the
+        number of child events which are generated during startup.
+
+        """
+        ident = description['identifier']
+        if ident:
+            identifiers[ident] = self
+        bindings = description['bindings']
+        if len(bindings) > 0:
+            setup_bindings(self, bindings, identifiers, f_globals)
+        children = description['children']
+        if len(children) > 0:
+            for child in children:
+                cls = scope_lookup(child['type'], f_globals, child)
+                instance = cls(self)
+                with instance.children_event_context():
+                    instance.populate(child, identifiers, f_globals)
 
     #--------------------------------------------------------------------------
     # Private API
@@ -334,30 +463,6 @@ class Declarative(Object):
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
-    def bound_expressions(self):
-        """ Get the bound expressions for this object.
-
-        Returns
-        -------
-        result : dict
-            The dictionary of bound expressions for the object. User
-            code should not modify this return value.
-
-        """
-        return self._expressions
-
-    def bound_listeners(self):
-        """ Get the bound listeners for this object.
-
-        Returns
-        -------
-        result : dict
-            The dictionary of bound listeners for the object. User
-            code should not modify this return value.
-
-        """
-        return self._listeners
-
     def bind_expression(self, name, expression):
         """ Bind an expression to the given attribute name.
 
