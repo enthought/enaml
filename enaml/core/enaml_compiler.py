@@ -3,7 +3,6 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import ast
-import itertools
 import types
 
 from .byteplay import (
@@ -71,37 +70,68 @@ from .code_tracing import inject_tracing, inject_inversion
 COMPILER_VERSION = 8
 
 
-# XXX the description below is incorrect as of compiler version 8
-# and needs to be updated to reflect the current compiler behavior.
+# The Enaml compiler translates an Enaml AST into a decription dict
+# which contains information about the tree, including code objects
+# which were compiled with support for runtime introspection. The
+# reason dictionaries are used instead of the AST nodes is because
+# the dictionaries can be marshaled into a .enamlc file, which is
+# faster on subsequent loading than reparsing the entire file.
 #
-# The Enaml compiler translates an Enaml AST into Python bytecode.
 #
 # Given this sample declaration in Enaml::
 #
-# FooWindow(Window):
-#     id: foo
-#     a = '12'
-#     PushButton:
-#         id: btn
+# FooWindow(Window): foo:
+#     attr a = '12'
+#     PushButton: btn:
 #         text = 'clickme'
 #
-# The compiler generate bytecode that would corresponds to the following
-# Python code (though the function object is never assigned to a name in
-# the global namespace).
+# The compiler generates a new class called FooWindow which uses Window
+# as the base class. The new class is given the following description
+# dictionary to use when populating new instances. The block and filename
+# information is repeated for each logical production because it makes
+# easier for runtime code to generate useful exceptions without needed
+# to pass the entire parse tree around at every step. The code objects
+# in the binding dictionaries have had their bytecode rewritten to
+# support Enaml's runtime introspection facilities.
 #
-# def FooWindow(instance, identifiers, operators):
-#     f_globals = globals()
-#     _var_1 = instance
-#     identifiers['foo'] = _var_1
-#     op = operators['__operator_Equal__']
-#     op(_var_1, 'a', <function>, identifiers)
-#     _var_2 = f_globals['PushButton'](_var_1)
-#     identifiers['btn'] = _var_2
-#     op = operators['__operator_Equal__']
-#     op(_var_2, 'text', <function>, identifiers)
-#     return _var_1
-#
-# FooWindow = _make_enamldef_helper_('FooWindow', Window, FooWindow)
+# description = {
+#     'enamldef': True,
+#     'type': 'FooWindow',
+#     'base': 'Window',
+#     'doc': '',
+#     'lineno': 0,
+#     'identifier': 'foo',
+#     'filename': 'sample.enaml',
+#     'block': 'FooWindow',
+#     'children': [
+#         { 'enamldef': False,
+#           'type': 'PushButton',
+#           'lineno': 2,
+#           'identifier': 'btn',
+#           'filename': 'sample.enaml',
+#           'block': 'FooWindow',
+#           'children': [],
+#           'bindings': [
+#               { 'operator': '__operator_Equal__',
+#                 'code': <codeobject>,
+#                 'name': 'text',
+#                 'lineno': 3,
+#                 'filename': 'sample.enaml',
+#                 'block': 'FooWindow',
+#               },
+#           ],
+#         },
+#     ],
+#     'bindings': [
+#         { 'operator': '__operator_Equal__',
+#           'code': <codeobject>,
+#           'name': 'a',
+#           'lineno': 1,
+#           'filename': 'sample.enaml',
+#           'block': 'FooWindow',
+#         },
+#     ],
+# }
 
 
 #------------------------------------------------------------------------------
@@ -113,16 +143,6 @@ STARTUP = ['from enaml.core.compiler_helpers import _make_enamldef_helper_']
 
 # Cleanup code that will be included in every compiled enaml module
 CLEANUP = ['del _make_enamldef_helper_']
-
-
-def _var_name_generator():
-    """ Returns a generator that generates sequential variable names for
-    use in a code block.
-
-    """
-    count = itertools.count()
-    while True:
-        yield '_var_' + str(count.next())
 
 
 def update_firstlineno(code, firstlineno):
@@ -549,11 +569,8 @@ class EnamlCompiler(_NodeVisitor):
             The string filename of the module ast being compiled.
 
         """
-        compiler = cls(filename)
-        compiler.visit(module_ast)
-        module_ops = [(SetLineno, 1)]
-
         # Generate the startup code for the module
+        module_ops = [(SetLineno, 1)]
         for start in STARTUP:
             start_code = compile(start, filename, mode='exec')
             bp_code = Code.from_code(start_code)
@@ -561,6 +578,8 @@ class EnamlCompiler(_NodeVisitor):
             module_ops.extend(bp_code.code[1:-2])
 
         # Add in the code ops for the module
+        compiler = cls(filename)
+        compiler.visit(module_ast)
         module_ops.extend(compiler.code_ops)
 
         # Generate the cleanup code for the module
@@ -631,7 +650,7 @@ class EnamlCompiler(_NodeVisitor):
             (LOAD_NAME, '_make_enamldef_helper_'),  # Foo = _make_enamldef_helper_(name, base, description, globals)
             (LOAD_CONST, name),
             (LOAD_NAME, node.base),
-            (LOAD_CONST, description),
+            (LOAD_CONST, description),  # description is a marshalable dict
             (LOAD_NAME, 'globals'),
             (CALL_FUNCTION, 0x0000),
             (CALL_FUNCTION, 0x0004),
