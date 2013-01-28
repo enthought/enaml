@@ -43,19 +43,31 @@ class Conditional(Templated):
         self._refresh_conditional_items()
         super(Conditional, self).post_initialize()
 
+    def pre_destroy(self):
+        """ A pre destroy handler.
+
+        The conditional will destroy all of its items, provided that
+        the items are not already destroyed and the parent is not in
+        the process of being destroyed.
+
+        """
+        super(Conditional, self).pre_destroy()
+        if len(self._items) > 0:
+            parent = self.parent
+            if not parent.is_destroying:
+                with parent.children_event_context():
+                    for item in self._items:
+                        if not item.is_destroyed:
+                            item.destroy()
+
     def post_destroy(self):
         """ A post destroy handler.
 
-        The conditional will destroy all of the items it created if they
-        have not already been destroyed. It will also release references
-        to the templates used when generating the items.
+        The conditional will release all references to items after it
+        has been destroyed.
 
         """
         super(Conditional, self).post_destroy()
-        if len(self._items) > 0:
-            for item in self._items:
-                if not item.is_destroyed:
-                    item.destroy()
         self._items = ()
 
     #--------------------------------------------------------------------------
