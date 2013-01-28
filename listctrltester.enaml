@@ -16,7 +16,7 @@ class MyIconProvider(IconProvider):
     """ A custom icon provider for the icon example.
 
     """
-    path = 'c:/Users/i341972/Desktop/git_repos/enaml/examples/icons_and_images/example_images/inwood_park.jpg'
+    path = ''
 
     def request_icon(self, path, callback):
         """ Load the requested icon.
