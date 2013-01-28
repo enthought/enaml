@@ -3,6 +3,8 @@ from enaml.widgets.list_control import ListControl
 from enaml.widgets.list_item import ListItem
 from enaml.icon_provider import IconProvider, Icon, IconImage
 from enaml.image_provider import Image
+from enaml.core.api import Looper
+
 
 def foo(item):
     print item
@@ -16,7 +18,7 @@ class MyIconProvider(IconProvider):
     """ A custom icon provider for the icon example.
 
     """
-    path = ''
+    path = './examples/icons_and_images/example_images/inwood_park.jpg'
 
     def request_icon(self, path, callback):
         """ Load the requested icon.
@@ -51,19 +53,31 @@ enamldef Main(Window):
     Container:
         PushButton:
             clicked ::
-                for item in inc.objects[::2]:
-                    item.visible = not item.visible
+                for item in looper.items[::2]:
+                    item[0].visible = not item[0].visible
         PushButton:
-            clicked :: item.destroy()
+            clicked ::
+                looper.iterable = xrange(25, 30)
+                for c in lc.children:
+                    if hasattr(c, 'text'):
+                        print c.text
+                    else:
+                        print c
         PushButton:
-            clicked :: ListItem(lc, text='whizzle')
+            clicked :: lc.refresh_items_layout()
         Field:
             text := item.text
         ComboBox: cbox:
             items = [str(i) for i in CHECKS]
             index = 0
         ListControl: lc:
+            view_mode = 'icon'
             icon_size = (100, 50)
+            item_spacing = 10
+            #resize_mode = 'fixed'
+            #layout_mode = 'batched'
+            item_wrap = False
+            flow = 'top_to_bottom'
             ListItem: item:
                 text = 'First'
                 background = 'red'
@@ -75,19 +89,18 @@ enamldef Main(Window):
                 clicked :: print 'i was clicked'
                 double_clicked :: print 'i was double clicked'
                 icon_source = 'icon://foo/bar'
-            Include: inc:
-                objects = [
-                    ListItem(
-                        text='Foo Bar ' + unicode(i),
-                        text_align='left',
-                        background='lightskyblue' if i % 2 else 'goldenrod',
-                        foreground='steelblue' if i % 2 else '',
-                        font='0.5in small-caps' if i % 2 else '',
-                        preferred_size = (100, 55),
-                        #checkable=True,
-                        #checked=True,
-                        icon_source = 'icon://foo/bar',
-                    ) for i in range(1000)
-                ]
-            ListItem:
-                text = 'Last'
+            Looper: looper:
+                iterable = xrange(1000)
+                ListItem:
+                    text='Foo Bar ' + unicode(loop_index)
+                    text_align='center'
+                    vertical_text_align='top'
+                    background='lightskyblue' if loop_index % 2 else 'rgba(96, 132, 34, 0.5)'
+                    foreground='steelblue' if loop_index % 2 else ''
+                    font='0.5in small-caps' if loop_index % 2 else ''
+                    #preferred_size = (100, 55)
+                    #checkable=True
+                    #checked=True
+                    icon_source = 'icon://foo/bar'
+            #ListItem:
+            #    text = 'Last'

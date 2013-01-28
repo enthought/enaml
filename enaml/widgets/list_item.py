@@ -12,7 +12,7 @@ from enaml.layout.geometry import Size
 class ListItem(Messenger):
     """ A non-widget used as an item in a `ListControl`
 
-    A `ListItem` reprents an item in a `ListControl`. It contains all
+    A `ListItem` represents an item in a `ListControl`. It contains all
     of the information needed for data and styling.
 
     """
@@ -142,7 +142,6 @@ class ListItem(Messenger):
         """ Handle the 'changed' action from the client widget.
 
         """
-        print 'got change'
         old_checked = self.checked
         new_checked = content['checked']
         was_toggled = old_checked != new_checked
