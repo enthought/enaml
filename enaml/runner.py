@@ -83,7 +83,7 @@ def main():
         enaml_file = args[0]
         script_argv = args[1:]
 
-    with open(enaml_file) as f:
+    with open(enaml_file, 'rU') as f:
         enaml_code = f.read()
 
     # Parse and compile the Enaml source into a code object
