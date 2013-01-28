@@ -106,7 +106,8 @@ class Looper(Templated):
                     scope['loop_index'] = loop_index
                     scope['loop_item'] = loop_item
                     for descr in descriptions:
-                        cls = f_globals[descr['type']]
+                        name = descr['type']
+                        cls = self._lookup_name(name, f_globals, descr)
                         item = cls._construct(None, descr, scope, f_globals)
                         items.append(item)
 

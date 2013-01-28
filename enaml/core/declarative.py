@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2012, Enthought, Inc.
+#  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from types import FunctionType
@@ -9,6 +9,7 @@ from traits.api import (
 )
 
 from .dynamic_scope import DynamicAttributeError
+from .exceptions import DeclarativeNameError
 from .object import Object
 from .operator_context import OperatorContext
 from .trait_types import EnamlInstance, EnamlEvent
@@ -265,6 +266,34 @@ class Declarative(Object):
     #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
+    def _lookup_name(self, name, scope, description):
+        """ A private method which retrieves a name from a scope.
+
+        If the lookup fails, a DeclarativeNameError is raised. This can
+        be used to lookup names from the global scope with decent error
+        reporting when the lookup fails.
+
+        Parameters
+        ----------
+        name : str
+            The name to retreive from the scope.
+
+        scope : mapping
+            A mapping object.
+
+        description : dict
+            The description dictionary associated with the lookup.
+
+        """
+        try:
+            item = scope[name]
+        except KeyError:
+            lineno = description['lineno']
+            filename = description['filename']
+            block = description['block']
+            raise DeclarativeNameError(name, filename, lineno, block)
+        return item
+
     def _populate(self, descriptions):
         """ Populate this declarative instance from decription dicts.
 
@@ -304,7 +333,8 @@ class Declarative(Object):
             if len(children) > 0:
                 with self.children_event_context():
                     for child in children:
-                        cls = f_globals[child['type']]
+                        name = child['type']
+                        cls = self._lookup_name(name, f_globals, child)
                         cls._construct(self, child, identifiers, f_globals)
 
     @classmethod
@@ -356,7 +386,8 @@ class Declarative(Object):
         if len(children) > 0:
             with self.children_event_context():
                 for child in children:
-                    cls = f_globals[child['type']]
+                    name = child['type']
+                    cls = self._lookup_name(name, f_globals, child)
                     cls._construct(self, child, identifiers, f_globals)
 
         return self
@@ -376,10 +407,12 @@ class Declarative(Object):
             The globals dict to associate with the bindings.
 
         """
-        # XXX error handling and reporting in case of key errors.
         operators = self.operators
         for binding in bindings:
-            operator = operators[binding['operator']]
+            name = binding['operator']
+            # XXX this should really be more descriptive than a NameError
+            # on failure, but it's decent enough for the time being.
+            operator = self._lookup_name(name, operators, binding)
             code = binding['code']
             # If the code is a tuple, it represents a delegation
             # expression which is a combination of subscription

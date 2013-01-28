@@ -94,7 +94,8 @@ class Conditional(Templated):
                 # parented via `insert_children` later on.
                 scope = identifiers.copy()
                 for descr in descriptions:
-                    cls = f_globals[descr['type']]
+                    name = descr['type']
+                    cls = self._lookup_name(name, f_globals, descr)
                     item = cls._construct(None, descr, scope, f_globals)
                     items.append(item)
 
