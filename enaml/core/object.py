@@ -313,7 +313,7 @@ class Object(HasStrictTraits):
         # the automatic destruction of children is assumed.
         parent = self._parent
         if parent is None or not parent.is_destroying:
-            self.send_action('destroy', {})
+            self.batch_action('destroy', {})
         self.state = 'destroying'
         self.pre_destroy()
         if self._children:
@@ -371,9 +371,8 @@ class Object(HasStrictTraits):
 
         Notes
         -----
-        It is the responsibility of the caller to intialize and activate
-        the object if it is reparented dynamically at runtime and should
-        be involved with a session.
+        It is the responsibility of the caller to initialize and activate
+        the object as needed, if it is reparented dynamically at runtime.
 
         """
         old_parent = self._parent
@@ -388,10 +387,10 @@ class Object(HasStrictTraits):
         if old_parent is not None:
             old_kids = old_parent._children
             idx = old_kids.index(self)
-            with ChildrenEventContext(old_parent):
+            with old_parent.children_event_context():
                 old_parent._children = old_kids[:idx] + old_kids[idx + 1:]
         if parent is not None:
-            with ChildrenEventContext(parent):
+            with parent.children_event_context():
                 parent._children += (self,)
 
     def insert_children(self, before, insert):
@@ -414,9 +413,8 @@ class Object(HasStrictTraits):
 
         Notes
         -----
-        It is the responsibility of the caller to intialize and activate
-        the object if it is reparented dynamically at runtime and should
-        be involved with a session.
+        It is the responsibility of the caller to initialize and activate
+        the object as needed, if it is reparented dynamically at runtime.
 
         """
         insert_tup = tuple(insert)
@@ -449,10 +447,10 @@ class Object(HasStrictTraits):
                     old_kids = old_parent._children
                     idx = old_kids.index(child)
                     old_kids = old_kids[:idx] + old_kids[idx + 1:]
-                    with ChildrenEventContext(old_parent):
+                    with old_parent.children_event_context():
                         old_parent._children = old_kids
 
-        with ChildrenEventContext(self):
+        with self.children_event_context():
             self._children = tuple(new)
 
     def parent_event(self, event):
@@ -460,10 +458,12 @@ class Object(HasStrictTraits):
 
         This event handler is called when the parent on the object has
         changed, but before the children of the new parent have been
-        updated. Sublasses may reimplement this method as required. The
-        default implementation emits the trait change notification, so
-        subclasses which rely on that notification must be sure to call
-        super(...) when reimplmenting this method.
+        updated. There is no guarantee that the parent has been fully
+        initialized when this is called. Sublasses may reimplement this
+        method as required. The default implementation emits the trait
+        change notification, so subclasses which override the default
+        must be sure to call the superclass version, or emit the trait
+        change themselves.
 
         Parameters
         ----------
@@ -477,10 +477,12 @@ class Object(HasStrictTraits):
         """ Handle a `ChildrenEvent` posted to this object.
 
         This event handler is called by a `ChildrenEventContext` when
-        the last nested context is exited. The default implementation
-        emits the trait change notification, so subclasses which rely
-        on that notification must be sure to call super(...) when
-        reimplmenting this method.
+        the last nested context is exited. There is no guarantee that
+        the children will be fully initialized when this is called.
+        Sublasses may reimplement this method as required. The default
+        implementation emits the trait change notification, so
+        subclasses which override the default must be sure to call the
+        superclass version, or emit the trait change themselves.
 
         Parameters
         ----------
@@ -489,6 +491,22 @@ class Object(HasStrictTraits):
 
         """
         self.trait_property_changed('children', event.old, event.new)
+
+    def children_event_context(self):
+        """ Get a context manager for sending children events.
+
+        This method should be called and entered whenever the children
+        of an object are changed. The returned context manager will
+        collapse all nested changes into a single aggregate event.
+
+        Returns
+        -------
+        result : ChildrenEventContext
+            The context manager which should be entered before changing
+            the children of the object.
+
+        """
+        return ChildrenEventContext(self)
 
     #--------------------------------------------------------------------------
     # Messaging API
@@ -511,6 +529,45 @@ class Object(HasStrictTraits):
         """
         if self.is_active:
             self._session.send(self.object_id, action, content)
+
+    def batch_action(self, action, content):
+        """ Batch an action to be sent to the client at a later time.
+
+        The action will only be batched if the current state of the
+        object is `active`. Subclasses may reimplement this method
+        if more control is needed.
+
+        Parameters
+        ----------
+        action : str
+            The name of the action which the client should perform.
+
+        content : dict
+            The content data for the action.
+
+        """
+        if self.is_active:
+            self._session.batch(self.object_id, action, content)
+
+    def batch_action_task(self, action, task):
+        """ Similar to `batch_action` but takes a callable task.
+
+        The task will only be batched if the current state of the
+        object is `active`. Subclasses may reimplement this method
+        if more control is needed.
+
+        Parameters
+        ----------
+        action : str
+            The name of the action which the client should perform.
+
+        task : callable
+            A callable which will be invoked at a later time. It must
+            return the content dictionary for the action.
+
+        """
+        if self.is_active:
+            self._session.batch_task(self.object_id, action, task)
 
     def receive_action(self, action, content):
         """ Receive an action from the client of this object.
@@ -535,6 +592,21 @@ class Object(HasStrictTraits):
     #--------------------------------------------------------------------------
     # Object Tree API
     #--------------------------------------------------------------------------
+    def root_object(self):
+        """ Get the root object for this hierarchy.
+
+        Returns
+        -------
+        result : Object
+            The top-most object in the hierarchy to which this object
+            belongs.
+
+        """
+        obj = self
+        while obj._parent is not None:
+            obj = obj._parent
+        return obj
+
     def traverse(self, depth_first=False):
         """ Yield all of the objects in the tree, from this object down.
 

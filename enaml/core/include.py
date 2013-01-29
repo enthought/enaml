@@ -5,7 +5,7 @@
 from traits.api import List, Instance, Bool
 
 from .declarative import Declarative
-from .object import Object, ChildrenEventContext
+from .object import Object
 
 
 class Include(Declarative):
@@ -27,15 +27,17 @@ class Include(Declarative):
     #: are removed from the parent. The default is True.
     destroy_old = Bool(True)
 
-    def init_objects(self):
-        """ A method called by a parent widget to init the Include.
+    def pre_initialize(self):
+        """ A pre-initialization handler.
 
-        This method must be called by objects to initialize the objects
-        in an Include. It should be called before the parent initializes
-        its children. This method should never be called by user code.
+        This method will add the include objects to the parent of the
+        include and ensure that they are initialized.
 
         """
+        super(Include, self).pre_initialize()
         self.parent.insert_children(self, self.objects)
+        for obj in self.objects:
+            obj.initialize()
 
     def parent_event(self, event):
         """ Handle a `ParentEvent` for the Include.
@@ -47,8 +49,8 @@ class Include(Declarative):
         if self.is_active:
             old = event.old
             new = event.new
-            with ChildrenEventContext(new):
-                with ChildrenEventContext(old):
+            with new.children_event_context():
+                with old.children_event_context():
                     if new is None:
                         for obj in self.objects:
                             obj.set_parent(None)
@@ -67,7 +69,7 @@ class Include(Declarative):
         if self.is_active:
             parent = self.parent
             if parent is not None:
-                with ChildrenEventContext(parent):
+                with parent.children_event_context():
                     new_set = set(new)
                     if self.destroy_old:
                         for obj in old:
@@ -79,7 +81,6 @@ class Include(Declarative):
                                 obj.set_parent(None)
                     if new_set:
                         parent.insert_children(self, self.objects)
-                        self._activate_objects(new_set)
 
     def _objects_items_changed(self, event):
         """ Handle the `objects` list changing in-place.
@@ -93,7 +94,7 @@ class Include(Declarative):
         if self.is_active:
             parent = self.parent
             if parent is not None:
-                with ChildrenEventContext(parent):
+                with parent.children_event_context():
                     add_set = set(event.added)
                     if self.destroy_old:
                         for obj in event.removed:
@@ -105,23 +106,4 @@ class Include(Declarative):
                                 obj.set_parent(None)
                     if add_set:
                         parent.insert_children(self, self.objects)
-                        self._activate_objects(add_set)
-
-    def _activate_objects(self, objects):
-        """ Initialize and activate the given objects.
-
-        Parameters
-        ----------
-        objects : iterable
-            An iterable of objects which should be initialized and
-            activated. Objects which are already active are ignored.
-
-        """
-        for obj in objects:
-            if obj.is_inactive:
-                obj.initialize()
-        session = self.session
-        for obj in objects:
-            if obj.is_initialized:
-                obj.activate(session)
 

@@ -2,7 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-# Convenience imports
+# Backward compatibility imports
 from enaml.core.include import Include
 
 # Widget imports
@@ -27,6 +27,8 @@ from .group_box import GroupBox
 from .html import Html
 from .image_view import ImageView
 from .label import Label
+from .list_control import ListControl
+from .list_item import ListItem
 from .main_window import MainWindow
 from .mdi_area import MdiArea
 from .mdi_window import MdiWindow

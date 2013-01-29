@@ -367,8 +367,9 @@ class Application(object):
             True if there are pending tasks. False otherwise.
 
         """
+        heap = self._task_heap
         with self._heap_lock:
-            has_pending = len(self._heap) > 0
+            has_pending = len(heap) > 0
         return has_pending
 
     def add_factories(self, factories):
@@ -497,7 +498,7 @@ def is_main_thread():
     return app.is_main_thread()
 
 
-def schedule(self, callback, args=None, kwargs=None, priority=0):
+def schedule(callback, args=None, kwargs=None, priority=0):
     """ Schedule a callable to be executed on the event loop thread.
 
     This call is thread-safe.

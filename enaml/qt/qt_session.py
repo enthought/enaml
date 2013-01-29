@@ -22,8 +22,6 @@ class URLRequest(object):
     """ A simple object for making url requests.
 
     """
-    __slots__ = ('_session',)
-
     def __init__(self, session):
         """ Initialize a URLRequest.
 
@@ -285,6 +283,16 @@ class QtSession(object):
     #--------------------------------------------------------------------------
     # Action Handlers
     #--------------------------------------------------------------------------
+    def on_action_add_window(self, content):
+        """ Handle the 'add_window' action from the Enaml session.
+
+        """
+        window = self.build(content['window'], None)
+        if window is not None:
+            self._windows.append(window)
+            window.initialize()
+            window.activate()
+
     def on_action_url_reply(self, content):
         """ Handle the 'url_reply' action from the Enaml session.
 

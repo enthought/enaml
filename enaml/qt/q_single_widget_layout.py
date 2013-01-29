@@ -78,12 +78,13 @@ class QSingleWidgetLayout(QLayout):
             The widget to manage with this layout.
 
         """
-        self.takeAt(0)
-        if widget is not None:
-            self.addChildWidget(widget)
-            self._item = QSingleWidgetItem(widget)
-            widget.show()
-            self.invalidate()
+        if self.getWidget() is not widget:
+            self.takeAt(0)
+            if widget is not None:
+                self.addChildWidget(widget)
+                self._item = QSingleWidgetItem(widget)
+                widget.show()
+                self.invalidate()
 
     def addWidget(self, widget):
         """ Overridden parent class method. This method redirects to the

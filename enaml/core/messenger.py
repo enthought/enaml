@@ -7,7 +7,6 @@ from traits.api import Instance, Uninitialized
 from enaml.utils import LoopbackGuard
 
 from .declarative import Declarative
-from .include import Include
 from .object import Object
 
 
@@ -32,13 +31,68 @@ class PublishAttributeNotifier(object):
 PublishAttributeNotifier = PublishAttributeNotifier()
 
 
+class ChildrenChangedTask(object):
+    """ A task for posting a children changed event to a client.
+
+    Instances of this class can be posted to the `batch_action_task`
+    method of Object to send a 'children_changed' action to a client
+    object. This task will ensure that new children are initialized
+    and activated using session object of the provided parent.
+
+    """
+    def __init__(self, parent, event):
+        """ Initialize a ChildrenChangedTask.
+
+        Parameters
+        ----------
+        parent : Object
+            The object to which the children event was posted.
+
+        event : ChildrenEvent
+            The children event posted to the parent.
+
+        """
+        self._parent = parent
+        self._event = event
+
+    def __call__(self):
+        """ Create the content dictionary for the task.
+
+        This method will also initialize and activate any new objects
+        which were added to the parent.
+
+        """
+        event = self._event
+        content = {}
+        new_set = set(event.new)
+        old_set = set(event.old)
+        added = new_set - old_set
+        removed = old_set - new_set
+        for obj in added:
+            if obj.is_inactive:
+                obj.initialize()
+        content['order'] = [
+            c.object_id for c in event.new if isinstance(c, Messenger)
+        ]
+        content['removed'] = [
+            c.object_id for c in removed if isinstance(c, Messenger)
+        ]
+        content['added'] = [
+            c.snapshot() for c in added if isinstance(c, Messenger)
+        ]
+        session = self._parent.session
+        for obj in added:
+            if obj.is_initialized:
+                obj.activate(session)
+        return content
+
+
 class Messenger(Declarative):
-    """ A base class for creating messaging-enabled Enaml objects.
+    """ A base class for creating messaging enabled Enaml objects.
 
     This is a Declarative subclass which provides convenient APIs for
     sharing state between a server-side Enaml object and a client-side
-    implementation of that object. It also enables support for the
-    `Include` object type.
+    implementation of that object.
 
     """
     #: A loopback guard which can be used to prevent a notification
@@ -48,18 +102,6 @@ class Messenger(Declarative):
     #--------------------------------------------------------------------------
     # Lifetime API
     #--------------------------------------------------------------------------
-    def pre_initialize(self):
-        """ A reimplemented initialization method.
-
-        This method will setup any `Include` children so that they may
-        prepare their objects before the proper initialization pass.
-
-        """
-        super(Messenger, self).pre_initialize()
-        for child in self.children:
-            if isinstance(child, Include):
-                child.init_objects()
-
     def post_initialize(self):
         """ A reimplemented post initialization method.
 
@@ -202,23 +244,14 @@ class Messenger(Declarative):
         the trait change notification.
 
         """
-        # Children events are fired all the time. Only pull for a new
-        # snapshot if the widget has been fully activated.
-        if self.is_active:
-            content = {}
-            new_set = set(event.new)
-            old_set = set(event.old)
-            added = new_set - old_set
-            removed = old_set - new_set
-            content['order'] = [
-                c.object_id for c in event.new if isinstance(c, Messenger)
-            ]
-            content['removed'] = [
-                c.object_id for c in removed if isinstance(c, Messenger)
-            ]
-            content['added'] = [
-                c.snapshot() for c in added if isinstance(c, Messenger)
-            ]
-            self.send_action('children_changed', content)
         super(Messenger, self).children_event(event)
+        # Children events are fired all the time during initialization,
+        # so only batch the children task if the widget is activated.
+        # The children may not be fully instantiated when this event is
+        # fired, and they may still be executing their constructor. The
+        # batched task allows the children to finish initializing before
+        # their snapshot is taken.
+        if self.is_active:
+            task = ChildrenChangedTask(self, event)
+            self.batch_action_task('children_changed', task)
 

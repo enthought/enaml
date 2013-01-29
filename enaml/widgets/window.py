@@ -2,7 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Unicode, Enum, Property, Str, cached_property
+from traits.api import Unicode, Enum, Property, Str, Bool, cached_property
 
 from enaml.core.trait_types import EnamlEvent
 
@@ -32,6 +32,10 @@ class Window(Widget):
     #: An enum which indicates the modality of the window. The default
     #: value is 'non_modal'.
     modality = Enum('non_modal', 'application_modal', 'window_modal')
+
+    #: If this value is set to True, the window will be destroyed on
+    #: the completion of the `closed` event.
+    destroy_on_close = Bool(True)
 
     #: An event fired when the window is closed.
     closed = EnamlEvent
@@ -90,7 +94,10 @@ class Window(Widget):
         """ Handle the 'closed' action from the client widget.
 
         """
+        self.set_guarded(visible=False)
         self.closed()
+        if self.destroy_on_close:
+            self.destroy()
 
     #--------------------------------------------------------------------------
     # Public API
