@@ -54,7 +54,7 @@ class QtListItem(QtObject):
 
         """
         # QListWidgetItem is not a QObject and is therefore not used as
-        # widget for this item. The creation of the item is performed
+        # a widget for this item. The creation of the item is performed
         # explicitly during the parent layout pass.
         self._tree = tree
         self._item = None
@@ -64,12 +64,13 @@ class QtListItem(QtObject):
         """ A method called by the parent QtListControl.
 
         This method is called during the parent layout pass to allow
-        the QListWidgetItem to be created. The item will be unitialized.
+        the QListWidgetItem to be created. The returned item will be
+        uninitialized.
 
         Returns
         -------
         return : QListWidgetItem
-            The unitialized QListWidgetItem owned by this object.
+            The uninitialized QListWidgetItem owned by this object.
 
         """
         # The `item_owner` ref is used by the parent QtListControl
