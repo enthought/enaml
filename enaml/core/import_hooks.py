@@ -342,7 +342,7 @@ class EnamlImporter(AbstractEnamlImporter):
                 return (code, file_info.src_path)
 
         # Otherwise, compile from source and attempt to cache
-        with open(file_info.src_path) as src_file:
+        with open(file_info.src_path, 'rU') as src_file:
             src = src_file.read()
         ast = parse(src)
         code = EnamlCompiler.compile(ast, file_info.src_path)
