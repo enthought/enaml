@@ -32,7 +32,7 @@ class ListControl(Control):
     #: The flow direction for the layout. A value of 'default' will
     #: allow the toolkit to choose an appropriate value based on the
     #: chosen view mode.
-    flow = Enum('default', 'top_to_bottom', 'left_to_right')
+    flow_mode = Enum('default', 'top_to_bottom', 'left_to_right')
 
     #: Whether or not the layout items should wrap around at the widget
     #: boundaries. A value of None indicates the toolkit should choose
@@ -84,7 +84,7 @@ class ListControl(Control):
         snap = super(ListControl, self).snapshot()
         snap['view_mode'] = self.view_mode
         snap['resize_mode'] = self.resize_mode
-        snap['flow'] = self.flow
+        snap['flow_mode'] = self.flow_mode
         snap['item_wrap'] = self.item_wrap
         snap['word_wrap'] = self.word_wrap
         snap['item_spacing'] = self.item_spacing
@@ -101,7 +101,7 @@ class ListControl(Control):
         """
         super(ListControl, self).bind()
         attrs = (
-            'view_mode', 'resize_mode', 'flow', 'item_wrap', 'word_wrap',
+            'view_mode', 'resize_mode', 'flow_mode', 'item_wrap', 'word_wrap',
             'item_spacing', 'icon_size', 'uniform_item_sizes', 'layout_mode',
             'batch_size',
         )

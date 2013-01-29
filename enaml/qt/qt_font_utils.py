@@ -104,7 +104,7 @@ class QtFontCache(object):
 
         """
         self._default = default
-        self._cache = {} # XXX need an lru cache here.
+        self._cache = {}  # XXX need an lru cache here.
 
     def __getitem__(self, font):
         cache = self._cache
@@ -112,6 +112,8 @@ class QtFontCache(object):
             return cache[font]
         if isinstance(font, basestring):
             font_ = parse_font(font)
+            if font_ is None:
+                return self._default or QFont()
             qfont = self._make_qfont(font_)
             cache[font] = cache[font_] = qfont
         else:

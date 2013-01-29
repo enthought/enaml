@@ -20,15 +20,15 @@ RESIZE_MODES = {
 }
 
 
-LAYOUT_MODES = {
-    'single_pass': QListWidget.SinglePass,
-    'batched': QListWidget.Batched,
+FLOW_MODES = {
+    'left_to_right': QListWidget.LeftToRight,
+    'top_to_bottom': QListWidget.TopToBottom,
 }
 
 
-FLOW = {
-    'left_to_right': QListWidget.LeftToRight,
-    'top_to_bottom': QListWidget.TopToBottom,
+LAYOUT_MODES = {
+    'single_pass': QListWidget.SinglePass,
+    'batched': QListWidget.Batched,
 }
 
 
@@ -40,6 +40,10 @@ class QtListControl(QtControl):
         """ Create the underlying widget.
 
         """
+        # XXX we may want to consider using a QListView with a custom
+        # QAbstractListModel, rather than QListWidget. This way maps
+        # nicely to the tree structure, but may use more memory than
+        # is needed.
         return QListWidget(parent)
 
     def create(self, tree):
@@ -49,7 +53,7 @@ class QtListControl(QtControl):
         super(QtListControl, self).create(tree)
         self.set_view_mode(tree['view_mode'])
         self.set_resize_mode(tree['resize_mode'])
-        self.set_flow(tree['flow'])
+        self.set_flow_mode(tree['flow_mode'])
         self.set_item_wrap(tree['item_wrap'])
         self.set_word_wrap(tree['word_wrap'])
         self.set_item_spacing(tree['item_spacing'])
@@ -64,17 +68,20 @@ class QtListControl(QtControl):
         """
         super(QtListControl, self).init_layout()
         widget = self.widget()
-        kids = [c for c in self.children() if isinstance(c, QtListItem)]
-        for child in kids:
-            widget.addItem(child.create_item())
-        for child in kids:
-            child.initialize_item()
+        for child in self.children():
+            if isinstance(child, QtListItem):
+                widget.addItem(child.create_item())
+                child.initialize_item()
+
         # Late-bind the signal handlers to avoid doing any unnecessary
         # work while the child items are being intialized.
         widget.itemChanged.connect(self.on_item_changed)
         widget.itemClicked.connect(self.on_item_clicked)
         widget.itemDoubleClicked.connect(self.on_item_double_clicked)
 
+    #--------------------------------------------------------------------------
+    # Child Events
+    #--------------------------------------------------------------------------
     def child_removed(self, child):
         """ Handle the child removed event for a QtListControl.
 
@@ -139,6 +146,67 @@ class QtListControl(QtControl):
         """
         self.widget().scheduleDelayedItemsLayout()
 
+    def on_action_set_view_mode(self, content):
+        """ Handle the 'set_view_mode' action from the Enaml widget.
+
+        """
+        self.set_view_mode(content['view_mode'])
+
+    def on_action_set_resize_mode(self, content):
+        """ Handle the 'set_resize_mode' action from the Enaml widget.
+
+        """
+        self.set_resize_mode(content['resize_mode'])
+
+    def on_action_set_flow_mode(self, content):
+        """ Handle the 'set_flow_mode' action from the Enaml widget.
+
+        """
+        self.set_flow_mode(content['flow_mode'])
+
+    def on_action_set_item_wrap(self, content):
+        """ Handle the 'set_item_wrap' action from the Enaml widget.
+
+        """
+        self.set_item_wrap(content['item_wrap'])
+
+    def on_action_set_word_wrap(self, content):
+        """ Handle the 'set_word_wrap' action from the Enaml widget.
+
+        """
+        self.set_word_wrap(content['word_wrap'])
+
+    def on_action_set_item_spacing(self, content):
+        """ Handle the 'set_item_spacing' action from the Enaml widget.
+
+        """
+        self.set_item_spacing(content['item_spacing'])
+
+    def on_action_set_icon_size(self, content):
+        """ Handle the 'set_icon_size' action from the Enaml widget.
+
+        """
+        self.set_icon_size(content['icon_size'])
+
+    def on_action_set_uniform_item_sizes(self, content):
+        """ Handle the 'set_uniform_item_sizes' action from the Enaml
+        widget.
+
+        """
+        self.set_uniform_item_sizes(content['uniform_item_sizes'])
+
+    def on_action_set_layout_mode(self, content):
+        """ Handle the 'set_layout_mode' action from the Enaml widget.
+
+        """
+        self.set_layout_mode(content['layout_mode'])
+
+    def on_action_set_batch_size(self, content):
+        """ Handle the 'set_batch_size' action from the Enaml widget.
+
+        """
+        self.set_batch_size(content['batch_size'])
+
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
@@ -146,31 +214,51 @@ class QtListControl(QtControl):
         """ Set the view mode of the underlying control.
 
         """
-        self.widget().setViewMode(VIEW_MODES[mode])
-        self.widget().setMovement(QListWidget.Static)
+        # Always set static movement for now. This can be revisited in
+        # the future if the need arises to support movable items.
+        widget = self.widget()
+        widget.setViewMode(VIEW_MODES[mode])
+        widget.setMovement(QListWidget.Static)
 
     def set_resize_mode(self, mode):
+        """ Set the resize mode of the underlying control.
+
+        """
         self.widget().setResizeMode(RESIZE_MODES[mode])
 
-    def set_flow(self, flow):
-        if flow == 'default':
-            if self.widget().viewMode() == QListWidget.ListMode:
+    def set_flow_mode(self, mode):
+        """ Set the flow mode of the underlying control.
+
+        """
+        widget = self.widget()
+        if mode == 'default':
+            if widget.viewMode() == QListWidget.ListMode:
                 qflow = QListWidget.TopToBottom
             else:
                 qflow = QListWidget.LeftToRight
         else:
-            qflow = FLOW[flow]
-        self.widget().setFlow(qflow)
+            qflow = FLOW_MODES[mode]
+        widget.setFlow(qflow)
 
     def set_item_wrap(self, wrap):
+        """ Set the item wrapping on the underlying control.
+
+        """
+        widget = self.widget()
         if wrap is None:
-            wrap = self.widget().viewMode() == QListWidget.IconMode
-        self.widget().setWrapping(wrap)
+            wrap = widget.viewMode() == QListWidget.IconMode
+        widget.setWrapping(wrap)
 
     def set_word_wrap(self, wrap):
+        """ Set the word wrap on the underlying control.
+
+        """
         self.widget().setWordWrap(wrap)
 
     def set_item_spacing(self, spacing):
+        """ Set the item spacing on the underlying control.
+
+        """
         self.widget().setSpacing(spacing)
 
     def set_icon_size(self, size):
@@ -180,13 +268,20 @@ class QtListControl(QtControl):
         self.widget().setIconSize(QSize(*size))
 
     def set_uniform_item_sizes(self, uniform):
+        """ Set the uniform item sizes flag on the underlying control.
+
+        """
         self.widget().setUniformItemSizes(uniform)
 
     def set_layout_mode(self, mode):
+        """ Set the layout mode on the underlying control.
+
+        """
         self.widget().setLayoutMode(LAYOUT_MODES[mode])
 
     def set_batch_size(self, size):
+        """ Set the batch size on the underlying control.
+
+        """
         self.widget().setBatchSize(size)
-
-
 

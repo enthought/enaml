@@ -337,17 +337,16 @@ class QtListItem(QtObject):
         """ Set the font for the list item.
 
         """
-        return
         item = self._item
         if not font:
             if item.data(Qt.FontRole) is not None:
                 item.setData(Qt.FontRole, None)
         else:
+            # XXX this may warrant more work
             parent = self.parent()
             cache = getattr(parent, '_items_font_cache', None)
             if cache is None:
                 pfont = parent.widget().font()
-                print 'creating font cache'
                 cache = parent._items_font_cache = QtFontCache(pfont)
             item.setData(Qt.FontRole, cache[font])
 
