@@ -53,21 +53,34 @@ class Looper(Templated):
         self._refresh_loop_items()
         super(Looper, self).post_initialize()
 
+    def pre_destroy(self):
+        """ A pre destroy handler.
+
+        The looper will destroy all of its items, provided that the
+        items are not already destroyed and the parent is not in the
+        process of being destroyed.
+
+        """
+        super(Looper, self).pre_destroy()
+        if len(self._items) > 0:
+            parent = self.parent
+            if not parent.is_destroying:
+                with parent.children_event_context():
+                    for iteration in self._items:
+                        for item in iteration:
+                            if not item.is_destroyed:
+                                item.destroy()
+
     def post_destroy(self):
         """ A post destroy handler.
 
-        The looper will destroy all of the items it created if they have
-        not already been destroyed.
+        The looper will release all references to items after it has
+        been destroyed.
 
         """
         super(Looper, self).post_destroy()
-        if len(self._items) > 0:
-            for iteration in self._items:
-                for item in iteration:
-                    if not item.is_destroyed:
-                        item.destroy()
-        self._items = ()
         self.iterable = None
+        self._items = ()
 
     #--------------------------------------------------------------------------
     # Private API

@@ -203,8 +203,7 @@ class QtAction(QtObject):
         """ A private resource loader callback.
 
         This method is invoked when the requested icon is successfully
-        loaded. It will update the icon on the action and issue a size
-        hint updated event to the layout system if needed.
+        loaded. It will update the icon on the action.
 
         Parameters
         ----------

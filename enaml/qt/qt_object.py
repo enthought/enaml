@@ -118,6 +118,7 @@ class QtObject(object):
         self._children = []
         self._widget = None
         self._initialized = False
+        self._destroying = False
         self.set_parent(parent)
 
     #--------------------------------------------------------------------------
@@ -279,6 +280,10 @@ class QtObject(object):
         removed.
 
         """
+        # Set the destroying flag to True so objects can optimize
+        # their destruction behavior.
+        self._destroying = True
+
         # Destroy the children before destroying the underlying widget
         # this gives the children the opportunity to perform cleanup
         # with an intact parent before being destroyed. Destroying a

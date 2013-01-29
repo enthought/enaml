@@ -49,9 +49,11 @@ class Action(Messenger):
     separator = Bool(False)
 
     #: An event fired when the action is triggered by user interaction.
+    #: They payload will be the current checked state.
     triggered = EnamlEvent
 
     #: An event fired when a checkable action changes its checked state.
+    #: The payload will be the current checked state.
     toggled = EnamlEvent
 
     #--------------------------------------------------------------------------
@@ -91,13 +93,15 @@ class Action(Messenger):
         """ Handle the 'triggered' action from the client widget.
 
         """
-        self.set_guarded(checked=content['checked'])
-        self.triggered()
+        checked = content['checked']
+        self.set_guarded(checked=checked)
+        self.triggered(checked)
 
     def on_action_toggled(self, content):
         """ Handle the 'toggled' action from the client widget.
 
         """
-        self.set_guarded(checked=content['checked'])
-        self.toggled()
+        checked = content['checked']
+        self.set_guarded(checked=checked)
+        self.toggled(checked)
 
