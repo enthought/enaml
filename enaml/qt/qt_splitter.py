@@ -5,7 +5,9 @@
 import sys
 
 from .qt.QtCore import Qt, QEvent, Signal
-from .qt.QtGui import QSplitter, QSplitterHandle, QVBoxLayout, QFrame
+from .qt.QtGui import (
+    QSplitter, QSplitterHandle, QVBoxLayout, QFrame, QApplication
+)
 from .qt_constraints_widget import QtConstraintsWidget
 from .qt_split_item import QtSplitItem
 
@@ -174,13 +176,12 @@ class QtSplitter(QtConstraintsWidget):
         """ Handle the 'splitterMoved' signal from the QSplitter.
 
         This handler is only connected when running on Windows and it
-        serves to make sure paint events get generated during heavy
+        serves to make sure paint events get processed during heavy
         resize events when opaque resizing is turned on.
 
         """
-        widget = self.widget()
-        if widget.opaqueResize():
-            widget.repaint()
+        if self.widget().opaqueResize():
+            QApplication.sendPostedEvents()
 
     #--------------------------------------------------------------------------
     # Message Handler Methods
