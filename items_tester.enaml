@@ -1,0 +1,131 @@
+from traits.api import HasTraits, Int, Str, Float
+from enaml.widgets.items_view import ItemsView, Group, Item
+from enaml.widgets.model_editor import ModelEditor, EditGroup, StringEditor, IntEditor, FloatEditor
+from enaml.widgets.api import Window, Container
+from enaml.core.api import Looper
+
+
+class Foo(HasTraits):
+    a = Int
+    b = Int
+    c = Int
+
+
+class Bar(Foo):
+    d = Str
+    e = Str
+    i = Float
+
+
+class Baz(Bar):
+    f = Int
+    g = Int
+    h = Int
+
+
+enamldef FooEditor(ModelEditor):
+    EditGroup:
+        name = 'Ints'
+        IntEditor:
+            name = 'A'
+            value = model.a
+        IntEditor:
+            name = 'B'
+            background = 'lightskyblue'
+            value = model.b
+        IntEditor:
+            name = 'C'
+            foreground = 'red'
+            value = model.c
+
+
+enamldef BarEditor(FooEditor):
+    EditGroup:
+        name = 'Strings'
+        StringEditor:
+            name = 'D'
+            value = model.d
+        StringEditor:
+            name = 'E'
+            value = model.e
+            background = 'goldenrod'
+        FloatEditor:
+            name = 'I'
+            value = model.i
+
+
+enamldef BazEditor(BarEditor):
+    EditGroup:
+        name = 'Ints'
+        IntEditor:
+            name = 'F'
+            value = model.f
+        IntEditor:
+            name = 'G'
+            value = model.g
+        IntEditor:
+            name = 'H'
+            value = model.h
+
+
+def loader(model):
+    if isinstance(model, Baz):
+        cls = BazEditor
+    elif isinstance(model, Bar):
+        cls = BarEditor
+    elif isinstance(model, Foo):
+        cls = FooEditor
+    else:
+        return None
+    return cls(model=model)
+
+
+MODELS = [
+    Foo(a=1, b=2, c=3),
+    Bar(a=1, b=2, c=3, d='one', e='two'),
+    Baz(a=1, b=2, c=3, d='one', e='two', f=4, g=5),
+    Foo(a=6, b=7, c=8),
+    Bar(a=6, b=7, c=8, d='three', e='four'),
+    Baz(a=6, b=7, c=8, d='three', e='four', f=9, g=10),
+    Foo(a=11, b=12, c=13),
+    Bar(a=11, b=12, c=13, d='five', e='six'),
+    Baz(a=11, b=12, c=13, d='five', e='six', f=14, g=15)
+]
+
+
+enamldef CustomView(ItemsView):
+    Looper:
+        iterable = range(20)
+        Group:
+            name = 'Ints'
+            Item:
+                name = 'A'
+            Item:
+                name = 'B'
+        Group:
+            name = 'Strings'
+            Item:
+                name = 'D'
+            Item:
+                name = 'I'
+        Group:
+            background = 'gray'
+            name = 'Ints'
+            Item:
+                name = 'F'
+            Item:
+                name = 'G'
+            Item:
+                name = 'C'
+        Group:
+            name = 'Strings'
+            Item:
+                name = 'E'
+
+
+enamldef Main(Window):
+    Container:
+        CustomView:
+            models = MODELS * 100
+            editor_loader = loader
+

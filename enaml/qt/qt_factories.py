@@ -97,6 +97,11 @@ def image_view_factory():
     return QtImageView
 
 
+def items_view_factory():
+    from .qt_items_view import QtItemsView
+    return QtItemsView
+
+
 def label_factory():
     from .qt_label import QtLabel
     return QtLabel
@@ -260,6 +265,7 @@ def register_default():
     register('Html', html_factory)
     register('Image', image_factory)
     register('ImageView', image_view_factory)
+    register('ItemsView', items_view_factory)
     register('Label', label_factory)
     register('ListControl', list_control_factory)
     register('ListItem', list_item_factory)
