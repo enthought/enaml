@@ -24,7 +24,7 @@ class Baz(Bar):
 
 
 enamldef FooEditor(ModelEditor):
-    EditGroup:
+    EditorGroup:
         name = 'Ints'
         IntEditor:
             name = 'A'
@@ -36,6 +36,7 @@ enamldef FooEditor(ModelEditor):
         IntEditor:
             name = 'C'
             foreground = 'red'
+            font = 'bold 12px arial'
             value = model.c
 
 
@@ -94,33 +95,31 @@ MODELS = [
 
 
 enamldef CustomView(ItemsView):
-    Looper:
-        iterable = range(20)
-        Group:
-            name = 'Ints'
-            Item:
-                name = 'A'
-            Item:
-                name = 'B'
-        Group:
-            name = 'Strings'
-            Item:
-                name = 'D'
-            Item:
-                name = 'I'
-        Group:
-            background = 'gray'
-            name = 'Ints'
-            Item:
-                name = 'F'
-            Item:
-                name = 'G'
-            Item:
-                name = 'C'
-        Group:
-            name = 'Strings'
-            Item:
-                name = 'E'
+    HeaderGroup:
+        name = 'Ints'
+        HeaderItem:
+            name = 'A'
+        HeaderItem:
+            name = 'B'
+    HeaderGroup:
+        name = 'Strings'
+        HeaderItem:
+            name = 'D'
+        HeaderItem:
+            name = 'I'
+    HeaderGroup:
+        background = 'gray'
+        name = 'Ints'
+        HeaderItem:
+            name = 'F'
+        HeaderItem:
+            name = 'G'
+        HeaderItem:
+            name = 'C'
+    HeaderGroup:
+        name = 'Strings'
+        HeaderItem:
+            name = 'E'
 
 
 enamldef Main(Window):
