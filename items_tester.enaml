@@ -1,14 +1,25 @@
+
+
+
 from traits.api import HasTraits, Int, Str, Float
-from enaml.widgets.items_view import ItemsView, Group, Item
-from enaml.widgets.model_editor import ModelEditor, EditGroup, StringEditor, IntEditor, FloatEditor
-from enaml.widgets.api import Window, Container
+
 from enaml.core.api import Looper
+from enaml.modelview.api import (
+    ModelEditor, EditGroup, StringEdit, IntEdit, FloatEdit, HeaderGroup,
+    HeaderItem, ItemFlag, CheckState
+)
+from enaml.widgets.api import Window, Container, ItemView, Notebook, Page
 
 
 class Foo(HasTraits):
+    id = Int
     a = Int
     b = Int
     c = Int
+
+    def editor(self):
+        editor = FooEditor(model=self)
+        return editor
 
 
 class Bar(Foo):
@@ -16,115 +27,143 @@ class Bar(Foo):
     e = Str
     i = Float
 
+    def editor(self):
+        editor = BarEditor(model=self)
+        return editor
+
 
 class Baz(Bar):
     f = Int
     g = Int
     h = Int
 
+    def editor(self):
+        editor = BazEditor(model=self)
+        return editor
+
 
 enamldef FooEditor(ModelEditor):
-    EditorGroup:
+    EditGroup:
         name = 'Ints'
-        IntEditor:
+        background = 'steelblue'
+        IntEdit:
+            background = 'indianred'
+            name = 'Identifier'
+            data = model.id
+            flags = ItemFlag.ITEM_IS_ENABLED
+        IntEdit:
             name = 'A'
-            value = model.a
-        IntEditor:
+            data = model.a
+        IntEdit:
             name = 'B'
             background = 'lightskyblue'
-            value = model.b
-        IntEditor:
+            data = model.b
+        IntEdit:
             name = 'C'
             foreground = 'red'
-            font = 'bold 12px arial'
-            value = model.c
+            font = 'bold 12pt arial'
+            data = model.c
 
 
 enamldef BarEditor(FooEditor):
     EditGroup:
         name = 'Strings'
-        StringEditor:
+        StringEdit:
             name = 'D'
-            value = model.d
-        StringEditor:
+            data = model.d
+        StringEdit:
             name = 'E'
-            value = model.e
+            data = model.e
             background = 'goldenrod'
-        FloatEditor:
+        FloatEdit:
             name = 'I'
-            value = model.i
+            data = model.i
 
 
 enamldef BazEditor(BarEditor):
     EditGroup:
         name = 'Ints'
-        IntEditor:
+        IntEdit:
             name = 'F'
-            value = model.f
-        IntEditor:
+            data = model.f
+        IntEdit:
             name = 'G'
-            value = model.g
-        IntEditor:
+            data = model.g
+        IntEdit:
             name = 'H'
-            value = model.h
+            data = model.h
 
 
 def loader(model):
-    if isinstance(model, Baz):
-        cls = BazEditor
-    elif isinstance(model, Bar):
-        cls = BarEditor
-    elif isinstance(model, Foo):
-        cls = FooEditor
+    return model.editor()
+
+
+MODELS = []
+for i in range(100):
+    if i % 5:
+        cls = Baz(id=i, a=11, b=12, c=13, d='five', e='six', f=14, g=15)
+    elif i % 3:
+        cls = Bar(id=i, a=6, b=7, c=8, d='three', e='four')
     else:
-        return None
-    return cls(model=model)
+        cls = Foo(id=i, a=1, b=2, c=3)
+    MODELS.append(cls)
 
 
-MODELS = [
-    Foo(a=1, b=2, c=3),
-    Bar(a=1, b=2, c=3, d='one', e='two'),
-    Baz(a=1, b=2, c=3, d='one', e='two', f=4, g=5),
-    Foo(a=6, b=7, c=8),
-    Bar(a=6, b=7, c=8, d='three', e='four'),
-    Baz(a=6, b=7, c=8, d='three', e='four', f=9, g=10),
-    Foo(a=11, b=12, c=13),
-    Bar(a=11, b=12, c=13, d='five', e='six'),
-    Baz(a=11, b=12, c=13, d='five', e='six', f=14, g=15)
-]
-
-
-enamldef CustomView(ItemsView):
-    HeaderGroup:
-        name = 'Ints'
-        HeaderItem:
-            name = 'A'
-        HeaderItem:
-            name = 'B'
-    HeaderGroup:
-        name = 'Strings'
-        HeaderItem:
-            name = 'D'
-        HeaderItem:
-            name = 'I'
-    HeaderGroup:
-        background = 'gray'
-        name = 'Ints'
-        HeaderItem:
-            name = 'F'
-        HeaderItem:
-            name = 'G'
-        HeaderItem:
-            name = 'C'
-    HeaderGroup:
-        name = 'Strings'
-        HeaderItem:
-            name = 'E'
+enamldef CustomView(ItemView):
+    Looper:
+        iterable = range(5)
+        HeaderGroup:
+            background = 'green'
+            foreground = '#eeeeee'
+            name = 'Ints'
+            HeaderItem: hdr:
+                name = 'Identifier'
+                check_state = CheckState.CHECKED
+                flags = ItemFlag.ITEM_IS_ENABLED | ItemFlag.ITEM_IS_USER_CHECKABLE
+                check_state :: print 'check state changed', check_state
+            HeaderItem:
+                name = 'A'
+            HeaderItem:
+                name = 'B'
+        HeaderGroup:
+            name = 'Strings'
+            HeaderItem:
+                name = 'D'
+                check_state = CheckState.CHECKED
+                flags << (ItemFlag.ITEM_IS_ENABLED | ItemFlag.ITEM_IS_USER_CHECKABLE) if hdr.check_state else ItemFlag.ITEM_IS_USER_CHECKABLE
+            HeaderItem:
+                name = 'I'
+        HeaderGroup:
+            background = 'gray'
+            name = 'Ints'
+            font = '800 14pt "Source Code Pro"'
+            HeaderItem:
+                name = 'F'
+                text = 'Foo bar baz'
+            HeaderItem:
+                name = 'G'
+            HeaderItem:
+                name = 'C'
+            HeaderItem:
+                name = 'H'
+        HeaderGroup:
+            name = 'Strings'
+            HeaderItem:
+                name = 'E'
+                text = 'End'
 
 
 enamldef Main(Window):
     Container:
-        CustomView:
-            models = MODELS * 100
-            editor_loader = loader
+        Notebook:
+            Looper:
+                iterable = range(5)
+                Page:
+                    title = 'Page %d' % loop_index
+                    Container:
+                        padding = 0
+                        CustomView:
+                            models = MODELS
+                            editor_loader = loader
+
 

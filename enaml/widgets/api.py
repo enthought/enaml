@@ -26,6 +26,7 @@ from .form import Form
 from .group_box import GroupBox
 from .html import Html
 from .image_view import ImageView
+from .item_view import ItemView
 from .label import Label
 from .list_control import ListControl
 from .list_item import ListItem
