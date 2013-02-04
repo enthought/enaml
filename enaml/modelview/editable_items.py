@@ -2,12 +2,13 @@
 # Copyright (c) 2013, Enthought, Inc.
 # All rights reserved.
 #------------------------------------------------------------------------------
-from datetime import date, time, datetime
+import datetime
 
 from traits.api import Str, Unicode, Int, Long, Float, Instance
 
 from .enums import ItemFlag, AlignmentFlag
 from .item import Item
+from .utils import SlotDataProperty
 
 
 class EditableItem(Item):
@@ -15,10 +16,13 @@ class EditableItem(Item):
 
     """
     #: By default, the item is enabled, selectable, and editable.
-    flags = (
-        ItemFlag.ITEM_IS_ENABLED |
-        ItemFlag.ITEM_IS_SELECTABLE |
-        ItemFlag.ITEM_IS_EDITABLE
+    flags = SlotDataProperty(
+        'flags', Int,
+        default=(
+            ItemFlag.ITEM_IS_ENABLED |
+            ItemFlag.ITEM_IS_SELECTABLE |
+            ItemFlag.ITEM_IS_EDITABLE
+        )
     )
 
 
@@ -27,7 +31,10 @@ class LeftAlignedEdit(EditableItem):
 
     """
     #: By default, the data is left aligned.
-    text_alignment = AlignmentFlag.ALIGN_LEFT | AlignmentFlag.ALIGN_V_CENTER
+    text_alignment = SlotDataProperty(
+        'text_alignment', Int,
+        default=AlignmentFlag.ALIGN_LEFT | AlignmentFlag.ALIGN_V_CENTER
+    )
 
 
 class RightAlignedEdit(EditableItem):
@@ -35,7 +42,10 @@ class RightAlignedEdit(EditableItem):
 
     """
     #: By default, the data is right aligned.
-    text_alignment = AlignmentFlag.ALIGN_RIGHT | AlignmentFlag.ALIGN_V_CENTER
+    text_alignment = SlotDataProperty(
+        'text_alignment', Int,
+        default=AlignmentFlag.ALIGN_RIGHT | AlignmentFlag.ALIGN_V_CENTER
+    )
 
 
 class StringEdit(LeftAlignedEdit):
@@ -43,7 +53,7 @@ class StringEdit(LeftAlignedEdit):
 
     """
     #: The plain string data of the editor.
-    data = Str
+    data = SlotDataProperty('data', Str)
 
 
 class UnicodeEdit(LeftAlignedEdit):
@@ -51,7 +61,7 @@ class UnicodeEdit(LeftAlignedEdit):
 
     """
     #: The unicode string data of the editor.
-    data = Unicode
+    data = SlotDataProperty('data', Unicode)
 
 
 class IntEdit(RightAlignedEdit):
@@ -59,7 +69,7 @@ class IntEdit(RightAlignedEdit):
 
     """
     #: The integer data of the editor.
-    data = Int
+    data = SlotDataProperty('data', Int)
 
 
 class LongEdit(RightAlignedEdit):
@@ -67,7 +77,7 @@ class LongEdit(RightAlignedEdit):
 
     """
     #: The long integer data of the editor.
-    data = Long
+    data = SlotDataProperty('data', Long)
 
 
 class FloatEdit(RightAlignedEdit):
@@ -75,7 +85,7 @@ class FloatEdit(RightAlignedEdit):
 
     """
     #: The float data of the editor.
-    data = Float
+    data = SlotDataProperty('data', Float)
 
 
 class DateEdit(RightAlignedEdit):
@@ -83,7 +93,7 @@ class DateEdit(RightAlignedEdit):
 
     """
     #: The date data of the editor.
-    data = Instance(date, factory=date.today)
+    data = SlotDataProperty('data', Instance(datetime.date))
 
 
 class TimeEdit(RightAlignedEdit):
@@ -91,7 +101,7 @@ class TimeEdit(RightAlignedEdit):
 
     """
     #: The time data of the editor.
-    data = Instance(time, factory=lambda: datetime.now().time())
+    data = SlotDataProperty('data', Instance(datetime.time))
 
 
 class DateTimeEdit(RightAlignedEdit):
@@ -99,5 +109,5 @@ class DateTimeEdit(RightAlignedEdit):
 
     """
     #: The datetime data of the editor.
-    data = Instance(datetime, factory=datetime.now)
+    data = SlotDataProperty('data', Instance(datetime.datetime))
 

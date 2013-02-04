@@ -100,7 +100,7 @@ def loader(model):
 
 
 MODELS = []
-for i in range(1000):
+for i in range(2000):
     if i % 5:
         cls = Baz(id=i, a=11, b=12, c=13, d='five', e='six', f=14, g=15)
     elif i % 3:
@@ -113,6 +113,7 @@ for i in range(1000):
 enamldef CustomModel(StandardItemModel):
     attr the_color = 'green'
     attr the_font = 'bold 16pt arial'
+    attr the_header = h2
     HeaderGroup:
         background << the_color
         foreground = '#eeeeee'
@@ -141,7 +142,7 @@ enamldef CustomModel(StandardItemModel):
         font = '800 14pt "Source Code Pro"'
         HeaderItem:
             name = 'F'
-            text = 'Foo bar baz'
+            data = 'Foo bar baz'
         HeaderItem:
             name = 'G'
         HeaderItem:
@@ -150,26 +151,12 @@ enamldef CustomModel(StandardItemModel):
             name = 'H'
     HeaderGroup:
         name = 'Strings'
-        HeaderItem:
+        HeaderItem: h2:
             name = 'E'
-            text = 'End'
+            data = 'End'
 
-from enaml.application import timed_call
-import random
-
-def time_loop():
-    for model in MODELS:
-        model.b = random.randint(0, 99)
-    timed_call(1000, time_loop)
 
 from enaml.widgets.api import ComboBox, Field, PushButton
-
-def foo():
-    import objgraph
-    import gc
-    gc.collect()
-    print
-    objgraph.show_growth()
 
 
 enamldef Main(Window):
@@ -184,10 +171,13 @@ enamldef Main(Window):
             text := m.the_color
         Field:
             text := m.the_font
+        Field:
+            text := m.the_header.data
         PushButton:
-            clicked :: foo()
+            clicked ::
+                import pprint
+                pprint.pprint(m._item_model._items[12].__dict__)
         ItemView:
-            activated :: time_loop()
             CustomModel: m:
                 header_location = 'left'
                 models = MODELS

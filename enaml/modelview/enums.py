@@ -2,41 +2,13 @@
 # Copyright (c) 2013, Enthought, Inc.
 # All rights reserved.
 #------------------------------------------------------------------------------
-class ItemDataRole(object):
-    """ The enum values for the item data roles.
-
-    These enum values are equivalent to the Qt::ItemDataRole values.
-
-    """
-    DISPLAY_ROLE = 0
-
-    DECORATION_ROLE = 1
-
-    EDIT_ROLE = 2
-
-    TOOL_TIP_ROLE = 3
-
-    STATUS_TIP_ROLE = 4
-
-    FONT_ROLE = 6
-
-    TEXT_ALIGNMENT_ROLE = 7
-
-    BACKGROUND_ROLE = 8
-
-    FOREGROUND_ROLE = 9
-
-    CHECK_STATE_ROLE = 10
-
-    SIZE_HINT_ROLE = 13
-
-    EDIT_WIDGET_ROLE = 33   # > Qt::UserRole
-
-
 class ItemFlag(object):
-    """ The enum values for item flags.
+    """ The available flags for an item in an item model.
 
-    These enum values are equivalent to the Qt::ItemFlag values.
+    These values can be OR'd together to create the composite flags for
+    a particular item in the model.
+
+    These enum values are equivalent to the Qt::ItemFlag enum values.
 
     """
     NO_ITEM_FLAGS = 0x0
@@ -57,9 +29,9 @@ class ItemFlag(object):
 
 
 class CheckState(object):
-    """ The enum values for item check state.
+    """ The available values for item's check state.
 
-    These enum values are equivalent to the Qt::CheckState values.
+    These enum values are equivalent to the Qt::CheckState enum values.
 
     """
     UNCHECKED = 0
@@ -70,7 +42,10 @@ class CheckState(object):
 
 
 class AlignmentFlag(object):
-    """ The enum values for alignment.
+    """ The available values for text alignment.
+
+    These values can be OR'd together to create the final alignment for
+    a particular item in the model.
 
     These enum values are equivalent to the Qt::AlignmentFlag values.
 

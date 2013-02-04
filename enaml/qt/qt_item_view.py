@@ -2,8 +2,6 @@
 # Copyright (c) 2013, Enthought, Inc.
 # All rights reserved.
 #------------------------------------------------------------------------------
-from enaml.modelview.enums import ItemDataRole
-
 from .qt.QtCore import Qt, QAbstractTableModel
 from .qt.QtGui import QTableView
 from .qt_control import QtControl
@@ -14,17 +12,17 @@ from .qt_widget import q_parse_color
 class QItemModelWrapper(QAbstractTableModel):
 
     role_handlers = {
-        Qt.DisplayRole: (ItemDataRole.DISPLAY_ROLE, '_item_data'),
-        Qt.DecorationRole: (ItemDataRole.DECORATION_ROLE, '_item_decoration'),
-        Qt.EditRole: (ItemDataRole.EDIT_ROLE, '_item_data'),
-        Qt.ToolTipRole: (ItemDataRole.TOOL_TIP_ROLE, '_item_data'),
-        Qt.StatusTipRole: (ItemDataRole.STATUS_TIP_ROLE, '_item_data'),
-        Qt.FontRole: (ItemDataRole.FONT_ROLE, '_item_font'),
-        Qt.TextAlignmentRole: (ItemDataRole.TEXT_ALIGNMENT_ROLE, '_item_text_alignment'),
-        Qt.BackgroundRole: (ItemDataRole.BACKGROUND_ROLE, '_item_color'),
-        Qt.ForegroundRole: (ItemDataRole.FOREGROUND_ROLE, '_item_color'),
-        Qt.CheckStateRole: (ItemDataRole.CHECK_STATE_ROLE, '_item_check_state'),
-        Qt.SizeHintRole: (ItemDataRole.SIZE_HINT_ROLE, '_item_size_hint'),
+        Qt.DisplayRole: '_item_display_role',
+        Qt.DecorationRole: '_item_decoration_role',
+        Qt.EditRole: '_item_edit_role',
+        Qt.ToolTipRole: '_item_tool_tip_role',
+        Qt.StatusTipRole: '_item_status_tip_role',
+        Qt.FontRole: '_item_font_role',
+        Qt.TextAlignmentRole: '_item_text_alignment_role',
+        Qt.BackgroundRole: '_item_background_role',
+        Qt.ForegroundRole: '_item_foreground_role',
+        Qt.CheckStateRole: '_item_check_state_role',
+        Qt.SizeHintRole: '_item_size_hint_role',
     }
 
     def __init__(self, model):
@@ -32,10 +30,10 @@ class QItemModelWrapper(QAbstractTableModel):
         self._model = model
         self._colors = {}
         self._fonts = QtFontCache()
-        model.item_changed.connect(self._on_item_changed)
+        model.data_changed.connect(self._on_data_changed)
         model.model_changed.connect(self._on_model_changed)
 
-    def _on_item_changed(self, row, column):
+    def _on_data_changed(self, row, column):
         index = self.index(row, column)
         self.dataChanged.emit(index, index)
 
@@ -46,11 +44,6 @@ class QItemModelWrapper(QAbstractTableModel):
     #--------------------------------------------------------------------------
     # Abstract API Implementation
     #--------------------------------------------------------------------------
-    def flags(self, index):
-        row = index.row()
-        column = index.column()
-        return Qt.ItemFlags(self._model.item_flags(row, column))
-
     def rowCount(self, parent):
         if parent.isValid():
             return 0
@@ -61,42 +54,50 @@ class QItemModelWrapper(QAbstractTableModel):
             return 0
         return self._model.column_count()
 
+    def flags(self, index):
+        return Qt.ItemFlags(self._model.flags(index.row(), index.column()))
+
     def data(self, index, role):
-        enaml_role, handler = self.role_handlers[role]
-        return getattr(self, handler)(index.row(), index.column(), enaml_role)
+        handler = self.role_handlers[role]
+        return getattr(self, handler)(index.row(), index.column())
 
     def setData(self, index, value, role):
         row = index.row()
         column = index.column()
         if role == Qt.EditRole:
-            enaml_role = ItemDataRole.EDIT_ROLE
-            return self._model.set_item_data(row, column, value, enaml_role)
+            return self._model.set_data(row, column, value)
         if role == Qt.CheckStateRole:
-            enaml_role = ItemDataRole.CHECK_STATE_ROLE
-            return self._model.set_item_data(row, column, value, enaml_role)
+            return self._model.set_check_state(row, column, value)
         return False
 
     #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
-    def _item_data(self, row, column, role):
-        return self._model.item_data(row, column, role)
+    def _item_display_role(self, row, column):
+        return self._model.data(row, column)
 
-    def _item_decoration(self, row, column, role):
+    def _item_decoration_role(self, row, column):
         return None
 
-    def _item_font(self, row, column, role):
-        font = self._model.item_data(row, column, role)
+    def _item_edit_role(self, row, column):
+        return self._model.edit_data(row, column)
+
+    def _item_tool_tip_role(self, row, column):
+        return self._model.tool_tip(row, column)
+
+    def _item_status_tip_role(self, row, column):
+        return self._model.status_tip(row, column)
+
+    def _item_font_role(self, row, column):
+        font = self._model.font(row, column)
         if font:
             return self._fonts[font]
 
-    def _item_text_alignment(self, row, column, role):
-        alignment = self._model.item_data(row, column, role)
-        if alignment is not None:
-            return Qt.Alignment(alignment)
+    def _item_text_alignment_role(self, row, column):
+        return Qt.Alignment(self._model.text_alignment(row, column))
 
-    def _item_color(self, row, column, role):
-        color = self._model.item_data(row, column, role)
+    def _item_background_role(self, row, column):
+        color = self._model.background(row, column)
         if color:
             colors = self._colors
             if color in colors:
@@ -105,12 +106,22 @@ class QItemModelWrapper(QAbstractTableModel):
                 qcolor = colors[color] = q_parse_color(color)
             return qcolor
 
-    def _item_check_state(self, row, column, role):
-        state = self._model.item_data(row, column, role)
+    def _item_foreground_role(self, row, column):
+        color = self._model.foreground(row, column)
+        if color:
+            colors = self._colors
+            if color in colors:
+                qcolor = colors[color]
+            else:
+                qcolor = colors[color] = q_parse_color(color)
+            return qcolor
+
+    def _item_check_state_role(self, row, column):
+        state = self._model.check_state(row, column)
         if state is not None:
             return Qt.CheckState(state)
 
-    def _item_size_hint(self, row, column, role):
+    def _item_size_hint_role(self, row, column, role):
         return None
 
 
@@ -122,7 +133,7 @@ class QtItemView(QtControl):
         widget = QTableView(parent)
         widget.horizontalHeader().setVisible(False)
         widget.verticalHeader().setVisible(False)
-        #widget.setShowGrid(False)
+        widget.setShowGrid(False)
         #widget.viewport().setAttribute(Qt.WA_StaticContents, True)
         #widget.setHorizontalScrollMode(widget.ScrollPerPixel)
         return widget

@@ -20,3 +20,19 @@ class ItemModelProvider(Declarative):
         """
         raise NotImplementedError
 
+
+class TableModelProvider(Declarative):
+    """ A base class for creating declarative table model providers.
+
+    """
+    def table_model(self):
+        """ Get the table model associated with this provider.
+
+        Returns
+        -------
+        result : AbstractTableModel
+            A concrete implementation of AbstractTableModel.
+
+        """
+        raise NotImplementedError
+
