@@ -2,8 +2,6 @@
 #  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from types import FunctionType
-
 from traits.api import (
     Any, Property, Disallow, ReadOnly, CTrait, Instance, Uninitialized,
 )
@@ -251,17 +249,7 @@ def setup_bindings(instance, bindings, identifiers, f_globals):
             lineno = binding['lineno']
             block = binding['block']
             raise OperatorLookupError(opname, filename, lineno, block)
-        code = binding['code']
-        # If the code is a tuple, it represents a delegation
-        # expression which is a combination of subscription
-        # and update functions.
-        if isinstance(code, tuple):
-            sub_code, upd_code = code
-            func = FunctionType(sub_code, f_globals)
-            func._update = FunctionType(upd_code, f_globals)
-        else:
-            func = FunctionType(code, f_globals)
-        operator(instance, binding['name'], func, identifiers)
+        operator(instance, binding['name'], binding['func'], identifiers)
 
 
 #------------------------------------------------------------------------------

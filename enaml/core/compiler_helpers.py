@@ -2,8 +2,47 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from types import FunctionType
+
 from .declarative import Declarative
 from .enaml_def import EnamlDef
+
+
+def _setup_binding_funcs(description, f_globals):
+    """ A helper function which creates the functions for the bindings.
+
+    This function is used to create the binding functions once, instead
+    of several times for each instance on which the binding is used.
+    This function will recursively operation on the entired description
+    tree.
+
+    Parameters
+    ----------
+    description : dict
+        The description dictionary created by the Enaml compiler.
+
+    f_globals : dict
+        The dictionary of globals created by the Enaml compiler.
+
+    """
+    bindings = description['bindings']
+    if len(bindings) > 0:
+        for binding in bindings:
+            code = binding['code']
+            # If the code is a tuple, it represents a delegation
+            # expression which is a combination of subscription
+            # and update functions.
+            if isinstance(code, tuple):
+                sub_code, upd_code = code
+                func = FunctionType(sub_code, f_globals)
+                func._update = FunctionType(upd_code, f_globals)
+            else:
+                func = FunctionType(code, f_globals)
+            binding['func'] = func
+    children = description['children']
+    if len(children) > 0:
+        for child in children:
+            _setup_binding_funcs(child, f_globals)
 
 
 def _make_enamldef_helper_(name, base, description, f_globals):
@@ -26,9 +65,9 @@ def _make_enamldef_helper_(name, base, description, f_globals):
         of Declarative.
 
     description : dict
-        The description dictionay by the Enaml compiler. This dict will
-        be used during instantiation to populate new instances with
-        children and bound expressions.
+        The description dictionary created by the Enaml compiler. This
+        dict will be used during instantiation to populate new instances
+        with children and bound expressions.
 
     f_globals : dict
         The dictionary of globals for objects created by this class.
@@ -42,6 +81,7 @@ def _make_enamldef_helper_(name, base, description, f_globals):
     if not isinstance(base, type) or not issubclass(base, Declarative):
         msg = "can't derive enamldef from '%s'"
         raise TypeError(msg % base)
+    _setup_binding_funcs(description, f_globals)
     dct = {
         '__module__': f_globals.get('__name__', ''),
         '__doc__': description.get('__doc__', ''),
