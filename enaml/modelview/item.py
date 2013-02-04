@@ -66,3 +66,8 @@ class Item(Declarative):
     #: provided, the toolkit will choose an appropriate default.
     edit_widget = Instance(EditWidget)
 
+    #: A private attribute which can be used by item models to store
+    #: the index at which this item is held. This can be useful for
+    #: inverse mapping for change notifications. Its use is optional.
+    _index = Any
+

@@ -32,6 +32,16 @@ class QItemModelWrapper(QAbstractTableModel):
         self._model = model
         self._colors = {}
         self._fonts = QtFontCache()
+        model.item_changed.connect(self._on_item_changed)
+        model.model_changed.connect(self._on_model_changed)
+
+    def _on_item_changed(self, row, column):
+        index = self.index(row, column)
+        self.dataChanged.emit(index, index)
+
+    def _on_model_changed(self):
+        self.beginResetModel()
+        self.endResetModel()
 
     #--------------------------------------------------------------------------
     # Abstract API Implementation

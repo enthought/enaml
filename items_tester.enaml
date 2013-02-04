@@ -6,9 +6,9 @@ from traits.api import HasTraits, Int, Str, Float
 from enaml.core.api import Looper
 from enaml.modelview.api import (
     ModelEditor, EditGroup, StringEdit, IntEdit, FloatEdit, HeaderGroup,
-    HeaderItem, ItemFlag, CheckState
+    HeaderItem, ItemFlag, CheckState, StandardItemModel, ItemView
 )
-from enaml.widgets.api import Window, Container, ItemView, Notebook, Page
+from enaml.widgets.api import Window, Container, Notebook, Page, SpinBox
 
 
 class Foo(HasTraits):
@@ -49,20 +49,20 @@ enamldef FooEditor(ModelEditor):
         IntEdit:
             background = 'indianred'
             name = 'Identifier'
-            data = model.id
+            data << model.id
             flags = ItemFlag.ITEM_IS_ENABLED
         IntEdit:
             name = 'A'
-            data = model.a
+            data := model.a
         IntEdit:
             name = 'B'
             background = 'lightskyblue'
-            data = model.b
+            data << model.b
         IntEdit:
             name = 'C'
             foreground = 'red'
             font = 'bold 12pt arial'
-            data = model.c
+            data << model.c
 
 
 enamldef BarEditor(FooEditor):
@@ -70,14 +70,14 @@ enamldef BarEditor(FooEditor):
         name = 'Strings'
         StringEdit:
             name = 'D'
-            data = model.d
+            data << model.d
         StringEdit:
             name = 'E'
-            data = model.e
+            data << model.e
             background = 'goldenrod'
         FloatEdit:
             name = 'I'
-            data = model.i
+            data << model.i
 
 
 enamldef BazEditor(BarEditor):
@@ -85,13 +85,14 @@ enamldef BazEditor(BarEditor):
         name = 'Ints'
         IntEdit:
             name = 'F'
-            data = model.f
+            data << model.f
+            font = 'bold italic 24pt times'
         IntEdit:
             name = 'G'
-            data = model.g
+            data << model.g
         IntEdit:
             name = 'H'
-            data = model.h
+            data << model.h
 
 
 def loader(model):
@@ -99,7 +100,7 @@ def loader(model):
 
 
 MODELS = []
-for i in range(100):
+for i in range(1000):
     if i % 5:
         cls = Baz(id=i, a=11, b=12, c=13, d='five', e='six', f=14, g=15)
     elif i % 3:
@@ -109,61 +110,87 @@ for i in range(100):
     MODELS.append(cls)
 
 
-enamldef CustomView(ItemView):
-    Looper:
-        iterable = range(5)
-        HeaderGroup:
-            background = 'green'
-            foreground = '#eeeeee'
-            name = 'Ints'
-            HeaderItem: hdr:
-                name = 'Identifier'
-                check_state = CheckState.CHECKED
-                flags = ItemFlag.ITEM_IS_ENABLED | ItemFlag.ITEM_IS_USER_CHECKABLE
-                check_state :: print 'check state changed', check_state
-            HeaderItem:
-                name = 'A'
-            HeaderItem:
-                name = 'B'
-        HeaderGroup:
-            name = 'Strings'
-            HeaderItem:
-                name = 'D'
-                check_state = CheckState.CHECKED
-                flags << (ItemFlag.ITEM_IS_ENABLED | ItemFlag.ITEM_IS_USER_CHECKABLE) if hdr.check_state else ItemFlag.ITEM_IS_USER_CHECKABLE
-            HeaderItem:
-                name = 'I'
-        HeaderGroup:
-            background = 'gray'
-            name = 'Ints'
-            font = '800 14pt "Source Code Pro"'
-            HeaderItem:
-                name = 'F'
-                text = 'Foo bar baz'
-            HeaderItem:
-                name = 'G'
-            HeaderItem:
-                name = 'C'
-            HeaderItem:
-                name = 'H'
-        HeaderGroup:
-            name = 'Strings'
-            HeaderItem:
-                name = 'E'
-                text = 'End'
+enamldef CustomModel(StandardItemModel):
+    attr the_color = 'green'
+    attr the_font = 'bold 16pt arial'
+    HeaderGroup:
+        background << the_color
+        foreground = '#eeeeee'
+        font << the_font
+        name = 'Ints'
+        HeaderItem: hdr:
+            name = 'Identifier'
+            check_state = CheckState.CHECKED
+            flags = ItemFlag.ITEM_IS_ENABLED | ItemFlag.ITEM_IS_USER_CHECKABLE
+            check_state :: print 'check state changed', check_state
+        HeaderItem:
+            name = 'A'
+        HeaderItem:
+            name = 'B'
+    HeaderGroup:
+        name = 'Strings'
+        HeaderItem:
+            name = 'D'
+            check_state = CheckState.CHECKED
+            flags << (ItemFlag.ITEM_IS_ENABLED | ItemFlag.ITEM_IS_USER_CHECKABLE) if hdr.check_state else ItemFlag.ITEM_IS_USER_CHECKABLE
+        HeaderItem:
+            name = 'I'
+    HeaderGroup:
+        background = 'gray'
+        name = 'Ints'
+        font = '800 14pt "Source Code Pro"'
+        HeaderItem:
+            name = 'F'
+            text = 'Foo bar baz'
+        HeaderItem:
+            name = 'G'
+        HeaderItem:
+            name = 'C'
+        HeaderItem:
+            name = 'H'
+    HeaderGroup:
+        name = 'Strings'
+        HeaderItem:
+            name = 'E'
+            text = 'End'
+
+from enaml.application import timed_call
+import random
+
+def time_loop():
+    for model in MODELS:
+        model.b = random.randint(0, 99)
+    timed_call(1000, time_loop)
+
+from enaml.widgets.api import ComboBox, Field, PushButton
+
+def foo():
+    import objgraph
+    import gc
+    gc.collect()
+    print
+    objgraph.show_growth()
 
 
 enamldef Main(Window):
     Container:
-        Notebook:
-            Looper:
-                iterable = range(5)
-                Page:
-                    title = 'Page %d' % loop_index
-                    Container:
-                        padding = 0
-                        CustomView:
-                            models = MODELS
-                            editor_loader = loader
+        SpinBox:
+            value := MODELS[0].a
+        ComboBox:
+            items = ['top', 'left', 'right', 'bottom']
+            index = 1
+            selected_item >> m.header_location
+        Field:
+            text := m.the_color
+        Field:
+            text := m.the_font
+        PushButton:
+            clicked :: foo()
+        ItemView:
+            activated :: time_loop()
+            CustomModel: m:
+                header_location = 'left'
+                models = MODELS
+                editor_loader = loader
 
 

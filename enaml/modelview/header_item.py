@@ -2,7 +2,7 @@
 # Copyright (c) 2013, Enthought, Inc.
 # All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Int, Unicode, Property
+from traits.api import Unicode, Property
 
 from .enums import ItemFlag
 from .item import Item
@@ -22,5 +22,5 @@ class HeaderItem(Item):
     )
 
     #: By default, a header item is enabled.
-    flags = Int(ItemFlag.ITEM_IS_ENABLED)
+    flags = ItemFlag.ITEM_IS_ENABLED
 

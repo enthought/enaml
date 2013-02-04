@@ -4,12 +4,43 @@
 #------------------------------------------------------------------------------
 from abc import ABCMeta, abstractmethod
 
+from enaml.signaling import Signal
+
 
 class AbstractItemModel(object):
     """ An abstract base class for creating item based models.
 
     """
     __metaclass__ = ABCMeta
+
+    #: A signal which should be emitted when an item changes. The
+    #: payload is the row and column index of the item that changed.
+    item_changed = Signal()
+
+    #: A signal which should be emitted when the entire model changes
+    #: structure. Sometimes, this can be simpler and more efficient
+    #: than the other notification signals. This signal has no payload.
+    model_changed = Signal()
+
+    #: A signal which should be emitted when rows are inserted. The
+    #: payload should be the index of the insert and the number of
+    #: rows inserted.
+    rows_inserted = Signal()
+
+    #: A signal which should be emitted when rows are removed. The
+    #: payload should be the index of the removal and the number of
+    #: rows removed.
+    rows_removed = Signal()
+
+    #: A signal which should be emitted when columns are inserted. The
+    #: payload should be the index of the insert and the number of
+    #: columns inserted.
+    columns_inserted = Signal()
+
+    #: A signal which should be emitted when columns are removed. The
+    #: payload should be the index of the removal and the number of
+    #: columns removed.
+    columns_removed = Signal()
 
     @abstractmethod
     def row_count(self):
@@ -106,6 +137,23 @@ class AbstractItemModel(object):
         return False
 
 
+class NullItemModel(AbstractItemModel):
+    """ A null implementation of AbstractItemModel.
+
+    """
+    def row_count(self):
+        return 0
+
+    def column_count(self):
+        return 0
+
+    def item_flags(self, row, column):
+        return 0
+
+    def item_data(self, row, column):
+        return None
+
+
 class AbstractTableModel(AbstractItemModel):
     """ A abstract class for defining item based table models.
 
@@ -153,4 +201,27 @@ class AbstractTableModel(AbstractItemModel):
 
         """
         raise NotImplementedError
+
+
+class NullTableModel(AbstractTableModel):
+    """ A null implementation of AbstractTableModel.
+
+    """
+    def row_count(self):
+        return 0
+
+    def column_count(self):
+        return 0
+
+    def item_flags(self, row, column):
+        return 0
+
+    def item_data(self, row, column):
+        return None
+
+    def row_header_data(self, index):
+        return None
+
+    def column_header_data(self, index):
+        return None
 
