@@ -6,12 +6,13 @@ from collections import defaultdict, deque, namedtuple
 import logging
 import re
 
-from traits.api import (
-    HasStrictTraits, Disallow, Property, Str, Enum, ReadOnly, Any,
-)
+from traits.api import HasStrictTraits, Disallow, Property, Str, Enum, Instance
 
 from enaml.utils import make_dispatcher, id_generator
 
+from .object_property import (
+    BaseObjectData, ObjectProperty, ReadOnlyObjectProperty
+)
 from .trait_types import EnamlEvent
 
 
@@ -75,7 +76,7 @@ class ChildrenEventContext(object):
         count = counters[parent]
         counters[parent] = count + 1
         if count == 0 and parent is not None:
-            self._old = parent._children
+            self._old = parent.children
 
     def __exit__(self, exc_type, exc_value, traceback):
         """ Exit the children event context.
@@ -93,10 +94,19 @@ class ChildrenEventContext(object):
             del counters[parent]
             if exc_type is None and parent is not None:
                 old = self._old
-                new = parent._children
+                new = parent.children
                 if old != new:
                     evt = ChildrenEvent(old, new)
                     parent.children_event(evt)
+
+
+class ObjectData(BaseObjectData):
+    """ The object data for the Object class.
+
+    """
+    __slots__ = (
+        'name', 'object_id', 'state', 'parent', 'children', 'session'
+    )
 
 
 class Object(HasStrictTraits):
@@ -112,53 +122,37 @@ class Object(HasStrictTraits):
     #: in the tree (see . the 'find' method. Note that there is no
     #: guarantee of uniqueness for an object `name`. It is left to the
     #: developer to choose an appropriate name.
-    name = Str
+    name = ObjectProperty(Str, default='')
 
     #: A read-only property which returns the object's parent. This
     #: will be an instance Object or None if there is no parent. A
     #: strong reference is kept to the parent object.
-    parent = Property(fget=lambda self: self._parent)
+    parent = ReadOnlyObjectProperty()
 
     #: A read-only property which returns the objects children. This
     #: will be an iterable of Object instances. A strong reference is
     #: kept to all child objects.
-    children = Property(fget=lambda self: self._children)
-
-    #: An event fired when an the oject has been initialized. It is
-    #: emitted once during an object's lifetime, when the object is
-    #: initialized by a Session.
-    initialized = EnamlEvent
-
-    #: An event fired when an object has been activated. It is emitted
-    #: once during an object's lifetime, when the object is activated
-    #: by a Session.
-    activated = EnamlEvent
-
-    #: An event fired when an object is being destroyed. This event
-    #: is fired once during the object lifetime, just before the
-    #: object is removed from the tree structure.
-    destroyed = EnamlEvent
+    children = ReadOnlyObjectProperty(default=())
 
     #: A read-only property which returns the object's session. This
     #: will be an instance of Session or None if there is no session.
     #: A strong reference is kept to the session object. This value
     #: should not be manipulated by user code.
-    session = Property(fget=lambda self: self._session)
+    session = ReadOnlyObjectProperty()
 
     #: A read-only value which returns the object's identifier. This
     #: will be computed the first time it is requested. The default
     #: value is guaranteed to be unique for the current process. The
     #: initial value may be supplied by user code if more control is
     #: required, with proper care that the value is a unique string.
-    object_id = ReadOnly
-    def _object_id_default(self):
-        return object_id_generator.next()
+    object_id = ReadOnlyObjectProperty(factory=object_id_generator.next)
 
     #: The current state of the object in terms of its lifetime within
     #: a session. This value should not be manipulated by user code.
-    state = Enum(
-        'inactive', 'initializing', 'initialized', 'activating', 'active',
-        'destroying', 'destroyed',
+    state = ObjectProperty(
+        Enum('inactive', 'initializing', 'initialized', 'activating', 'active',
+             'destroying', 'destroyed'),
+        default='inactive',
     )
 
     #: A read-only property which is True if the object is inactive.
@@ -182,11 +176,24 @@ class Object(HasStrictTraits):
     #: A read-only property which is True if the object is destroyed.
     is_destroyed = Property(fget=lambda self: self.state == 'destroyed')
 
-    #: Private storage traits. These should *never* be manipulated by
-    #: user code. For performance reasons, these are not type-checked.
-    _parent = Any       # Object or None
-    _children = Any     # tuple of Object
-    _session = Any      # Session or None
+    #: An event fired when an the oject has been initialized. It is
+    #: emitted once during an object's lifetime, when the object is
+    #: initialized by a Session.
+    initialized = EnamlEvent
+
+    #: An event fired when an object has been activated. It is emitted
+    #: once during an object's lifetime, when the object is activated
+    #: by a Session.
+    activated = EnamlEvent
+
+    #: An event fired when an object is being destroyed. This event
+    #: is fired once during the object lifetime, just before the
+    #: object is removed from the tree structure.
+    destroyed = EnamlEvent
+
+    #: Private storage for the object data. Subclasses should reimplement
+    #: this as needed to extend the object's efficient storage.
+    _object_data = Instance(ObjectData, ())
 
     def __init__(self, parent=None, **kwargs):
         """ Initialize an Object.
@@ -203,8 +210,6 @@ class Object(HasStrictTraits):
 
         """
         super(Object, self).__init__()
-        self._parent = None
-        self._children = ()
         if parent is not None:
             self.set_parent(parent)
         if kwargs:
@@ -264,9 +269,9 @@ class Object(HasStrictTraits):
         """
         self.state = 'activating'
         self.pre_activate(session)
-        self._session = session
+        self._object_data.session = session
         session.register(self)
-        for child in self._children:
+        for child in self.children:
             child.activate(session)
         self.state = 'active'
         self.post_activate(session)
@@ -311,25 +316,24 @@ class Object(HasStrictTraits):
         # Only send the destroy message if the object's parent is not
         # being destroyed. This reduces the number of messages since
         # the automatic destruction of children is assumed.
-        parent = self._parent
+        parent = self.parent
         if parent is None or not parent.is_destroying:
             self.batch_action('destroy', {})
         self.state = 'destroying'
         self.pre_destroy()
-        if self._children:
-            for child in self._children:
+        children = self.children
+        if len(children) > 0:
+            for child in children:
                 child.destroy()
-            self._children = ()
         if parent is not None:
-            if parent.is_destroying:
-                self._parent = None
-            else:
+            if not parent.is_destroying:
                 self.set_parent(None)
-        session = self._session
+        session = self.session
         if session is not None:
             session.unregister(self)
         self.state = 'destroyed'
         self.post_destroy()
+        self._object_data = None
 
     def pre_destroy(self):
         """ Called during the destruction pass before any children are
@@ -375,23 +379,25 @@ class Object(HasStrictTraits):
         the object as needed, if it is reparented dynamically at runtime.
 
         """
-        old_parent = self._parent
+        old_parent = self.parent
         if parent is old_parent:
             return
         if parent is self:
             raise ValueError('cannot use `self` as Object parent')
         if parent is not None and not isinstance(parent, Object):
             raise TypeError('parent must be an Object or None')
-        self._parent = parent
+        self._object_data.parent = parent
         self.parent_event(ParentEvent(old_parent, parent))
         if old_parent is not None:
-            old_kids = old_parent._children
+            old_kids = old_parent.children
             idx = old_kids.index(self)
+            new_kids = old_kids[:idx] + old_kids[idx + 1:]
             with old_parent.children_event_context():
-                old_parent._children = old_kids[:idx] + old_kids[idx + 1:]
+                old_parent._object_data.children = new_kids
         if parent is not None:
+            new_kids = parent.children + (self,)
             with parent.children_event_context():
-                parent._children += (self,)
+                parent._object_data.children = new_kids
 
     def insert_children(self, before, insert):
         """ Insert children into this object at the given location.
@@ -428,7 +434,7 @@ class Object(HasStrictTraits):
 
         new = []
         added = False
-        for child in self._children:
+        for child in self.children:
             if child in insert_set:
                 continue
             if child is before:
@@ -439,19 +445,19 @@ class Object(HasStrictTraits):
             new.extend(insert_tup)
 
         for child in insert_tup:
-            old_parent = child._parent
+            old_parent = child.parent
             if old_parent is not self:
-                child._parent = self
+                child._object_data.parent = self
                 child.parent_event(ParentEvent(old_parent, self))
                 if old_parent is not None:
-                    old_kids = old_parent._children
+                    old_kids = old_parent.children
                     idx = old_kids.index(child)
                     old_kids = old_kids[:idx] + old_kids[idx + 1:]
                     with old_parent.children_event_context():
-                        old_parent._children = old_kids
+                        old_parent._object_data.children = old_kids
 
         with self.children_event_context():
-            self._children = tuple(new)
+            self._object_data.children = tuple(new)
 
     def parent_event(self, event):
         """ Handle a `ParentEvent` posted to this object.
@@ -528,7 +534,7 @@ class Object(HasStrictTraits):
 
         """
         if self.is_active:
-            self._session.send(self.object_id, action, content)
+            self.session.send(self.object_id, action, content)
 
     def batch_action(self, action, content):
         """ Batch an action to be sent to the client at a later time.
@@ -547,7 +553,7 @@ class Object(HasStrictTraits):
 
         """
         if self.is_active:
-            self._session.batch(self.object_id, action, content)
+            self.session.batch(self.object_id, action, content)
 
     def batch_action_task(self, action, task):
         """ Similar to `batch_action` but takes a callable task.
@@ -567,7 +573,7 @@ class Object(HasStrictTraits):
 
         """
         if self.is_active:
-            self._session.batch_task(self.object_id, action, task)
+            self.session.batch_task(self.object_id, action, task)
 
     def receive_action(self, action, content):
         """ Receive an action from the client of this object.
@@ -603,8 +609,8 @@ class Object(HasStrictTraits):
 
         """
         obj = self
-        while obj._parent is not None:
-            obj = obj._parent
+        while obj.parent is not None:
+            obj = obj.parent
         return obj
 
     def traverse(self, depth_first=False):
@@ -628,7 +634,7 @@ class Object(HasStrictTraits):
         while stack:
             obj = stack_pop()
             yield obj
-            stack_extend(obj._children)
+            stack_extend(obj.children)
 
     def traverse_ancestors(self, root=None):
         """ Yield all of the objects in the tree, from this object up.
@@ -639,10 +645,10 @@ class Object(HasStrictTraits):
             The object at which to stop traversal. Defaults to None.
 
         """
-        parent = self._parent
+        parent = self.parent
         while parent is not root and parent is not None:
             yield parent
-            parent = parent._parent
+            parent = parent.parent
 
     def find(self, name, regex=False):
         """ Find the first object in the subtree with the given name.
