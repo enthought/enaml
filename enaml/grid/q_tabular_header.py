@@ -575,12 +575,13 @@ class QTabularHeader(QWidget):
             fm = self.fontMetrics()
             try:
                 next_data = data.next
+                if self._elide_mode != Qt.ElideNone:
+                    elide_mode = self._elide_mode
+                    nd = next_data
+                    next_data = lambda: font_metrics.elidedText(nd(), elide_mode, width-4)
                 for row_height in row_heights:
                     cell_rect.setRect(0, y_run, width, row_height)
-                    text = next_data()
-                    if self._elide_mode != Qt.ElideNone:
-                        text = font_metrics.elidedText(text, self._elide_mode, width - 4)
-                    painter.drawText(cell_rect, Qt.AlignCenter, text)
+                    painter.drawText(cell_rect, Qt.AlignCenter, next_data())
                     y_run += row_height
             except StopIteration: # ran out of data early
                 pass
