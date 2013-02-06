@@ -343,8 +343,11 @@ class MultiLevelHeader(QTabularHeader):
             The number of visible sections in the header.
 
         """
-        i = 0 if not self.is_horizontal else 1
-        return self.engine.shape[i]
+        if self.is_horizontal:
+            count = self._model.column_count()
+        else:
+            count = self._model.row_count()
+        return count
 
     def length(self):
         """ Get the total visible length of the header.
@@ -370,8 +373,14 @@ class MultiLevelHeader(QTabularHeader):
             vertical headers, this will be the header width.
 
         """
-        size = self.sectionSizeFromContents(0)
-        return size.width() if not self.is_horizontal else size.height()
+        if self.count():
+            if self.is_horizontal:
+                size = max(*(self.sectionSizeFromContents(i).height() for i in range(self.count())))
+            else:
+                size = max(*(self.sectionSizeFromContents(i).width() for i in range(self.count())))
+        else:
+            size = 0
+        return size
 
     def sectionSize(self, visual_index):
         """ Get the size for a given visual section.
@@ -504,8 +513,6 @@ class MultiLevelHeader(QTabularHeader):
         """
         # XXX section moving and hiding not yet supported.
         return visual_index
-
-    # XXX Done above
 
     def paintEvent(self, event):
         super(MultiLevelHeader, self).paintEvent(event)
