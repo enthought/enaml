@@ -4,12 +4,17 @@
 #------------------------------------------------------------------------------
 from abc import ABCMeta, abstractmethod
 
+from enaml.signaling import Signal
 
 class TabularModel(object):
     """ An abstract base class for supplying data to a tabular view.
 
     """
     __metaclass__ = ABCMeta
+
+    dataChanged = Signal()
+    verticalHeaderChanged = Signal()
+    horizontalHeaderChanged = Signal()
 
     @abstractmethod
     def row_count(self):

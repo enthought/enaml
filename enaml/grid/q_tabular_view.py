@@ -90,8 +90,7 @@ class QTabularView(QAbstractScrollArea):
         viewport.setAttribute(Qt.WA_StaticContents, True)
         viewport.setAutoFillBackground(True)
         viewport.setFocusPolicy(Qt.ClickFocus)
-        self._updateViewportMargins()
-        self._updateGeometries()
+        self._update()
         self.setMouseTracking(True)
         # Attribute that controls whether drawing damaged regions is enabled.
         # If this is True paintUpdatedRegion will be called with each damaged
@@ -125,11 +124,19 @@ class QTabularView(QAbstractScrollArea):
             The model to be viewed by the widget.
 
         """
+        # unhook previous model
+        if self._model:
+            #self._model.dataChanged.connect(self._update)
+            self._model.horizontalHeaderChanged.disconnect(self._update)
+            self._model.verticalHeaderChanged.disconnect(self._update)
         assert isinstance(model, TabularModel)
         self._model = model
         self._v_header.setModel(model)
         self._h_header.setModel(model)
-        self._updateGeometries()
+        self._update()
+
+        self._model.horizontalHeaderChanged.connect(self._update)
+        self._model.verticalHeaderChanged.connect(self._update)
 
     def rowHeader(self):
         """ Get the row header in use by the widget.
@@ -155,7 +162,7 @@ class QTabularView(QAbstractScrollArea):
         header.setParent(self)
         self._v_header = header
         self._v_header.setModel(self._model)
-        self._updateGeometries()
+        self._update()
 
     def columnHeader(self):
         """ Get the column header in use by the widget.
@@ -181,7 +188,7 @@ class QTabularView(QAbstractScrollArea):
         header.setParent(self)
         self._h_header = header
         self._h_header.setModel(self._model)
-        self._updateGeometries()
+        self._update()
 
 
     def horizontalScrollPolicy(self):
@@ -336,6 +343,13 @@ class QTabularView(QAbstractScrollArea):
     #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
+    def _update(self):
+        """ Update both the headers and geometry
+
+        """
+        self._updateViewportMargins()
+        self._updateGeometries()
+
     def _updateViewportMargins(self):
         """ Update the margins for the viewport.
 
