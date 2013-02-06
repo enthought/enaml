@@ -8,7 +8,7 @@ from __future__ import absolute_import
 import os
 
 import numpy as np
-from enaml.qt.qt.QtCore import Qt, QObject, QModelIndex, Signal, QSize, QRect, QMimeData
+from enaml.qt.qt.QtCore import Qt, QObject, QModelIndex, Signal, QSize, QRect, QLine
 from enaml.qt.qt.QtGui import (
         QColor, QBrush, QStyleOptionHeader, QStyle,
         QMenu, QAction, QApplication, QCursor, QRegion, QPixmap, QIcon,
@@ -514,8 +514,141 @@ class MultiLevelHeader(QTabularHeader):
         # XXX section moving and hiding not yet supported.
         return visual_index
 
-    def paintEvent(self, event):
-        super(MultiLevelHeader, self).paintEvent(event)
+    def paintHorizontal(self, painter, event):
+        """ The default horizontal header paint method.
+
+        This paint method will render the header as a single row of
+        header sections. Subclasses which need to perform custom
+        painting may reimplement this method.
+
+        Parameters
+        ----------
+        painter : QPainter
+            The painter to use for drawing the header.
+
+        event : QPaintEvent
+            The paint event passed to the `paintEvent` method.
+
+        """
+        # The cell rect is updated during iteration. Only a single rect
+        # object is allocated for the entire paint event.
+        cell_rect = QRect()
+
+        # The grid line is updated during iteration. Only a single line
+        # object is allocated for the entire paint event.
+        grid_line = QLine()
+
+        # Prefetch common data for faster access.
+        height = self.height()
+
+        for rect in event.region().rects():
+
+            # Compute the index bounds of the dirty rect.
+            x1 = rect.x()
+            x2 = x1 + rect.width()
+            first_visual_col = self.visualIndexAt(x1 + self._offset)
+            last_visual_col = self.visualIndexAt(x2 + self._offset)
+
+            # If the first is out of bounds, there is nothing to draw.
+            if first_visual_col == -1:
+                continue
+
+            # Set the clip rect to avoid overdrawing onto other parts
+            # of the region. This is crucial to elimination overdrawing
+            # of antialiased fonts when scrolling one pixel at a time.
+            painter.setClipRect(rect)
+
+            # If the last is out bounds, clip to the last valid index.
+            if last_visual_col == -1:
+                last_visual_col = self.count() - 1
+
+            # Compute the column indices, data, and paint start position.
+            col_widths = []
+            col_indices = []
+            for idx in xrange(first_visual_col, last_visual_col + 1):
+                col_widths.append(self.sectionSize(idx))
+                col_indices.append(self.logicalIndex(idx))
+            start_x = self.sectionPosition(first_visual_col) - self._offset
+
+            # Draw the text for each header section.
+            x_run = start_x
+            col = first_visual_col
+            try:
+                for col_width in col_widths:
+                    cell_rect.setRect(x_run, 0, col_width, height)
+                    self.paintSection(painter, cell_rect, col)
+                    x_run += col_width
+                    col += 1
+            except StopIteration: # ran out of data early
+                pass
+
+    def paintVertical(self, painter, event):
+        """ The default vertical header paint method.
+
+        This paint method will render the header as a single row of
+        header sections. Subclasses which need to perform custom
+        painting may reimplement this method.
+
+        Parameters
+        ----------
+        painter : QPainter
+            The painter to use for drawing the header.
+
+        event : QPaintEvent
+            The paint event passed to the `paintEvent` method.
+
+        """
+        # The cell rect is updated during iteration. Only a single rect
+        # object is allocated for the entire paint event.
+        cell_rect = QRect()
+
+        # The grid line is updated during iteration. Only a single line
+        # object is allocated for the entire paint event.
+        grid_line = QLine()
+
+        # Prefetch common data for faster access.
+        width = self.width()
+
+        for rect in event.region().rects():
+
+            # Compute the index bounds of the dirty rect.
+            y1 = rect.y()
+            y2 = y1 + rect.height()
+            first_visual_row = self.visualIndexAt(y1 + self._offset)
+            last_visual_row = self.visualIndexAt(y2 + self._offset)
+
+            # If the first is out of bounds, there is nothing to draw.
+            if first_visual_row == -1:
+                continue
+
+            # Set the clip rect to avoid overdrawing onto other parts
+            # of the region. This is crucial to elimination overdrawing
+            # of antialiased fonts when scrolling one pixel at a time.
+            painter.setClipRect(rect)
+
+            # If the last is out bounds, clip to the last valid index.
+            if last_visual_row == -1:
+                last_visual_row = self.count() - 1
+
+            # Compute the column indices, data, and paint start position.
+            row_heights = []
+            row_indices = []
+            for idx in xrange(first_visual_row, last_visual_row + 1):
+                row_heights.append(self.sectionSize(idx))
+                row_indices.append(self.logicalIndex(idx))
+            start_y = self.sectionPosition(first_visual_row) - self._offset
+
+            # Draw the text for each header section.
+            y_run = start_y
+            try:
+                row = first_visual_row
+                for row_height in row_heights:
+                    cell_rect.setRect(0, y_run, width, row_height)
+                    self.paintSection(painter, cell_rect, row)
+                    y_run += row_height
+                    row += 1
+            except StopIteration: # ran out of data early
+                pass
 
     def paintSection(self, painter, rect, logical_index):
         """ Paint a header section.
@@ -534,7 +667,6 @@ class MultiLevelHeader(QTabularHeader):
                 else:
                     line = self._paint_vertical_cell(*args)
             return
-        super(MultiLevelHeader, self).paintSection(painter, rect, logical_index)
 
     def _paint_horizontal_cell(self, node, leaf, painter, rect, logical_index, opt, top):
         """ Paint a cell in a horizontal header.
@@ -577,12 +709,12 @@ class MultiLevelHeader(QTabularHeader):
         self._set_foreground_brush(opt, node)
         self._set_background_brush(opt, node)
         text = node.text
-        elide_mode = self.textElideMode()
-        if elide_mode != Qt.ElideNone:
-            decoration_size = style.sizeFromContents(style.CT_HeaderSection,
-                opt, QSize(), self)
-            text = opt.fontMetrics.elidedText(text, elide_mode,
-                opt.rect.width() - decoration_size.width())
+        #elide_mode = self.textElideMode()
+        #if elide_mode != Qt.ElideNone:
+        #    decoration_size = style.sizeFromContents(style.CT_HeaderSection,
+        #        opt, QSize(), self)
+        #    text = opt.fontMetrics.elidedText(text, elide_mode,
+        #        opt.rect.width() - decoration_size.width())
         opt.text = text
         painter.save()
         old_brush_origin = painter.brushOrigin()
