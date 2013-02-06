@@ -159,23 +159,12 @@ class PivotModel(TabularModel):
         self.dataChanged.emit()
         self.horizontalHeaderChanged.emit()
 
-    # XXX None of the rest works as yet
-
-    def data1(self, index, role):
-        if role == Qt.DisplayRole:
-            x = self.engine.data(index.row(), index.column())
-            return self.engine.format_value(x)
-        elif role == Qt.BackgroundRole and self.engine.shade_depth:
-            depth = self.engine.fold_depth(index.row(), index.column())
-            return self.depth_color_table[depth]
-        elif role == Qt.ToolTipRole:
-            agg_column, agg_func, row_path, col_path = self.engine.get_path_to_cell(
-                index.row(), index.column())
-            return u'{0} - {1}\n{2}'.format(agg_column, agg_func,
-                '\n'.join('{0}: {1}'.format(col, val) for col, val in row_path+col_path))
-        elif role == Qt.TextAlignmentRole:
-            return Qt.AlignRight
-        return None
+    def cell_styles(self, rows, columns, data):
+        if self.engine.shade_depth:
+            return (self.depth_color_table[self.engine.fold_depth(row, column)]
+                        for row in rows for column in columns)
+        else:
+            return None
 
     def _make_depth_color_table(self):
         """ Make a color table for showing the aggregation depth by
@@ -189,18 +178,15 @@ class PivotModel(TabularModel):
             [0.61960784313700001, 0.79215686274499997, 0.88235294117600005],
             [0.419607843137, 0.68235294117599998, 0.83921568627499998],
             [0.25882352941199999, 0.57254901960799998, 0.77647058823500004],
-            #[0.12941176470599999, 0.44313725490200001, 0.70980392156899996],
-            #[0.031372549019600002, 0.31764705882400002, 0.61176470588200005],
-            #[0.031372549019600002, 0.188235294118, 0.419607843137],
-        ]).transpose()
+        ]).transpose() * 255
         x = np.linspace(0.0, 1.0, self.engine.max_depth + 1)
         xp = np.linspace(0.0, 1.0, len(base_red))
         red = np.interp(x, xp, base_red)
         green = np.interp(x, xp, base_green)
         blue = np.interp(x, xp, base_blue)
-        self.depth_color_table = [
-            QBrush(QColor.fromRgbF(red[i], green[i], blue[i]))
-            for i in range(len(red))]
+        self.depth_color_table = [{
+            'background': 'rgba(%d,%d,%d,1.0)'%(int(red[i]), int(green[i]), int(blue[i]))
+            } for i in range(len(red))]
 
 
 
@@ -782,8 +768,6 @@ class MultiLevelHeader(QTabularHeader):
         if not (aligned_rect & section_rect).isEmpty():
             style.drawItemText(painter, rect, opt.textAlignment, opt.palette,
                 (opt.state & style.State_Enabled), opt.text, opt.palette.ButtonText)
-
-    # XXX DONE
 
     def _current_cell_width(self, node):
         """ Get the current cell width.
