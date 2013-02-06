@@ -4,7 +4,7 @@
 ;; (python keywords will automatically be highlighted as well)
 (defvar enaml-font-lock-keywords
   `(;; highlight these as keywords
-    (,(regexp-opt '("id" "constraints") 'words)
+    (,(regexp-opt '("id" "constraints" "enamldef") 'words)
      1 font-lock-keyword-face)
     ;; highlight these as builtins
     (,(regexp-opt '("horizontal" "vertical" "hbox" "vbox"
@@ -12,7 +12,10 @@
      1 font-lock-builtin-face)
     ;; highlight these as types
     (,(regexp-opt '("attr" "event") 'words)
-     1 font-lock-type-face))
+     1 font-lock-type-face)
+    ;; enamldefs
+    (,(rx symbol-start "enamldef" (1+ space) (group (1+ (or word ?_))))
+     (1 font-lock-type-face)))
   "Additional font lock keywords for Enaml mode.")
 
 (define-derived-mode
