@@ -192,13 +192,16 @@ class BaseExpression(object):
     """ The base class of the standard Enaml expression classes.
 
     """
-    __slots__ = ('_func', '_f_locals')
+    __slots__ = ('_name', '_func', '_f_locals')
 
-    def __init__(self, func, f_locals):
+    def __init__(self, name, func, f_locals):
         """ Initialize a BaseExpression.
 
         Parameters
         ----------
+        name : str
+            The name to which this expression is bound.
+
         func : types.FunctionType
             A function created by the Enaml compiler with bytecode that
             has been patched to support the semantics required of the
@@ -208,8 +211,16 @@ class BaseExpression(object):
             The dictionary of local identifiers for the function.
 
         """
+        self._name = name
         self._func = func
         self._f_locals = f_locals
+
+    @property
+    def name(self):
+        """ A read-only property which returns the expression name.
+
+        """
+        return self._name
 
 
 #------------------------------------------------------------------------------
@@ -338,11 +349,11 @@ class SubscriptionExpression(BaseExpression):
     """
     __slots__ = ('_notifier')
 
-    def __init__(self, func, f_locals):
+    def __init__(self, name, func, f_locals):
         """ Initialize a SubscriptionExpression.
 
         """
-        super(SubscriptionExpression, self).__init__(func, f_locals)
+        super(SubscriptionExpression, self).__init__(name, func, f_locals)
         self._notifier = None
 
     #--------------------------------------------------------------------------
