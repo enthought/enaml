@@ -6,12 +6,12 @@ from abc import ABCMeta, abstractmethod
 
 from traits.api import Any, Int, Enum, Str, Unicode, Property, Either, Instance
 
-from enaml.core.declarative import Declarative
+from enaml.core.object import ObjectProperty
+from enaml.core.declarative import Declarative, DeclarativeProperty, DeclarativeData
 from enaml.core.trait_types import CoercingInstance
 from enaml.layout.geometry import Size
 
 from .enums import ItemFlag, CheckState, AlignmentFlag
-from .utils import SlotData, SlotDataProperty
 
 
 class ItemListener(object):
@@ -24,7 +24,7 @@ class ItemListener(object):
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def on_item_changed(self, item, name):
+    def _on_item_changed(self, item, name):
         """ Implement this method to receive change notification.
 
         Parameters
@@ -39,13 +39,16 @@ class ItemListener(object):
         raise NotImplementedError
 
 
-class ItemData(SlotData):
+class ItemData(DeclarativeData):
     """ A slot data object for storing item attribute.
 
     """
     __slots__ = (
-        'data', 'tool_tip', 'status_tip', 'background', 'foreground',
-        'font', 'icon_source', 'flags', 'text_alignment', 'check_state',
+        'data', 'tool_tip', 'status_tip', #'background', 'foreground',
+        #'font', 'icon_source',
+        'flags',
+        #'text_alignment',
+        'check_state',
         'size_hint', '_id'
     )
 
@@ -58,7 +61,7 @@ class ItemData(SlotData):
         """
         parent = item.parent
         if isinstance(parent, ItemListener):
-            parent.on_item_changed(item, name)
+            parent._on_item_changed(item, name)
 
 
 class Item(Declarative):
@@ -71,7 +74,7 @@ class Item(Declarative):
     # every little bit helps in those cases.
 
     #: The data held by the item. Subclasses may redefine this trait.
-    data = SlotDataProperty('data')
+    data = DeclarativeProperty()
 
     #: The data to use when editing the item. By default this is the
     #: same as `data`. Subclasses may redefine this trait.
@@ -82,56 +85,53 @@ class Item(Declarative):
     )
 
     #: The tool tip to use for the item.
-    tool_tip = SlotDataProperty('tool_tip', Unicode)
+    tool_tip = DeclarativeProperty(Unicode)
 
     #: The status tip to use for the item.
-    status_tip = SlotDataProperty('status_tip', Unicode)
+    status_tip = DeclarativeProperty(Unicode)
 
     #: The background color of the item. Supports CSS3 color strings.
-    background = SlotDataProperty('background', Str)
+    #background = SlotDataProperty('background', Str)
 
     #: The foreground color of the item. Supports CSS3 color strings.
-    foreground = SlotDataProperty('foreground', Str)
+    #foreground = SlotDataProperty('foreground', Str)
 
     #: The font of the item. Supports CSS3 shorthand font strings.
-    font = SlotDataProperty('font', Str)
+    #font = SlotDataProperty('font', Str)
 
     #: The source url for the icon to use for the item.
-    icon_source = SlotDataProperty('icon_source', Str)
+    icon_source = DeclarativeProperty(Str)
 
     #: The flags for the item. This should be an or'd combination of
     #: the ItemFlag enum values. By default, an item is enabled and
     #: selectable.
-    flags = SlotDataProperty(
-        'flags', Int,
-        default=ItemFlag.ITEM_IS_ENABLED | ItemFlag.ITEM_IS_SELECTABLE
+    flags = DeclarativeProperty(
+        Int, default=ItemFlag.ITEM_IS_ENABLED | ItemFlag.ITEM_IS_SELECTABLE
     )
 
     #: The alignment of text in the item. This should be an or'd
     #: combination of the AlignmentFlag enum values. By default, the
     #: text is centered vertically and horizontally.
-    text_alignment = SlotDataProperty(
-        'text_alignment', Int, default=AlignmentFlag.ALIGN_CENTER
-    )
+    #text_alignment = SlotDataProperty(
+    #    'text_alignment', Int, default=AlignmentFlag.ALIGN_CENTER
+    #)
 
     #: The check state of the item. This should be None, or one of the
     #: CheckState enum values. The default is None.
-    check_state = SlotDataProperty(
-        'check_state', Enum(None, CheckState.UNCHECKED, CheckState.CHECKED)
+    check_state = DeclarativeProperty(
+        Enum(None, CheckState.UNCHECKED, CheckState.CHECKED)
     )
 
     #: The size hint for the item. The default value indicates that the
     #: size hint should be automatically determined by the toolkit.
-    size_hint = SlotDataProperty(
-        'size_hint', Either(None, CoercingInstance(Size))
-    )
+    size_hint = DeclarativeProperty(Either(None, CoercingInstance(Size)))
 
     #: A private attribute which can be used by item models to store
     #: a custom identifier for the item. This should not be modified
     #: by user code.
-    _index = SlotDataProperty('_id', notify=False)
+    _index = ObjectProperty('_id', trait_notify=False, data_notify=False)
 
     #: The private storage for the ItemData instance for this item.
     #: This should not be manipulated by user code.
-    _slot_data = Instance(ItemData, ())
+    _object_data = Instance(ItemData, ())
 

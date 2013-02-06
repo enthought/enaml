@@ -1,4 +1,4 @@
-
+from string import letters
 
 
 from traits.api import HasTraits, Int, Str, Float
@@ -36,6 +36,9 @@ class Baz(Bar):
     f = Int
     g = Int
     h = Int
+    i = Int
+    j = Int
+    k = Int
 
     def editor(self):
         editor = BazEditor(model=self)
@@ -45,23 +48,24 @@ class Baz(Bar):
 enamldef FooEditor(ModelEditor):
     EditGroup:
         name = 'Ints'
-        background = 'steelblue'
+        #background = 'steelblue'
+        background << the_color
         IntEdit:
-            background = 'indianred'
-            name = 'Identifier'
+            #background = 'indianred'
+            name = 'Identifier' + foo.name
             data << model.id
             flags = ItemFlag.ITEM_IS_ENABLED
-        IntEdit:
+        IntEdit: foo:
             name = 'A'
             data := model.a
         IntEdit:
             name = 'B'
-            background = 'lightskyblue'
+            #background = 'lightskyblue'
             data << model.b
         IntEdit:
             name = 'C'
-            foreground = 'red'
-            font = 'bold 12pt arial'
+            #foreground = 'red'
+            #font = 'bold 12pt arial'
             data << model.c
 
 
@@ -74,7 +78,7 @@ enamldef BarEditor(FooEditor):
         StringEdit:
             name = 'E'
             data << model.e
-            background = 'goldenrod'
+            #background = 'goldenrod'
         FloatEdit:
             name = 'I'
             data << model.i
@@ -82,17 +86,12 @@ enamldef BarEditor(FooEditor):
 
 enamldef BazEditor(BarEditor):
     EditGroup:
-        name = 'Ints'
-        IntEdit:
-            name = 'F'
-            data << model.f
-            font = 'bold italic 24pt times'
-        IntEdit:
-            name = 'G'
-            data << model.g
-        IntEdit:
-            name = 'H'
-            data << model.h
+        name = 'Alphabets'
+        Looper:
+            iterable = letters
+            IntEdit:
+                name = loop_item
+                data = model.k
 
 
 def loader(model):
@@ -100,7 +99,7 @@ def loader(model):
 
 
 MODELS = []
-for i in range(2000):
+for i in range(100):
     if i % 5:
         cls = Baz(id=i, a=11, b=12, c=13, d='five', e='six', f=14, g=15)
     elif i % 3:
@@ -115,9 +114,9 @@ enamldef CustomModel(StandardItemModel):
     attr the_font = 'bold 16pt arial'
     attr the_header = h2
     HeaderGroup:
-        background << the_color
-        foreground = '#eeeeee'
-        font << the_font
+        #background << the_color
+        #foreground = '#eeeeee'
+        #font << the_font
         name = 'Ints'
         HeaderItem: hdr:
             name = 'Identifier'
@@ -137,9 +136,9 @@ enamldef CustomModel(StandardItemModel):
         HeaderItem:
             name = 'I'
     HeaderGroup:
-        background = 'gray'
+        #background = 'gray'
         name = 'Ints'
-        font = '800 14pt "Source Code Pro"'
+        #font = '800 14pt "Source Code Pro"'
         HeaderItem:
             name = 'F'
             data = 'Foo bar baz'
@@ -154,33 +153,44 @@ enamldef CustomModel(StandardItemModel):
         HeaderItem: h2:
             name = 'E'
             data = 'End'
+    HeaderGroup:
+        name = 'Alphabets'
+        #background = 'steelblue'
+        Looper:
+            iterable = letters
+            HeaderItem:
+                name = loop_item
 
 
 from enaml.widgets.api import ComboBox, Field, PushButton
 
 
 enamldef Main(Window):
+    initial_size = (600, 800)
     Container:
-        SpinBox:
-            value := MODELS[0].a
-        ComboBox:
-            items = ['top', 'left', 'right', 'bottom']
-            index = 1
-            selected_item >> m.header_location
-        Field:
-            text := m.the_color
-        Field:
-            text := m.the_font
-        Field:
-            text := m.the_header.data
-        PushButton:
-            clicked ::
-                import pprint
-                pprint.pprint(m._item_model._items[12].__dict__)
-        ItemView:
-            CustomModel: m:
-                header_location = 'left'
-                models = MODELS
-                editor_loader = loader
+        Notebook:
+            Looper:
+                iterable = range(10)
+                Page:
+                    title = 'Page %d' % loop_index
+                    Container:
+                        padding = 5
+                        SpinBox:
+                            value := MODELS[0].a
+                        Field:
+                            text := m.the_color
+                        Field:
+                            text := m.the_font
+                        Field:
+                            text := m.the_header.data
+                        ComboBox:
+                            items = ['top', 'left', 'right', 'bottom']
+                            index = items.index(m.header_location)
+                            selected_item >> m.header_location
+                        ItemView:
+                            CustomModel: m:
+                                #header_location = 'left'
+                                models = MODELS
+                                editor_loader = loader
 
 

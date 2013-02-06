@@ -239,7 +239,6 @@ def log_exceptions(func):
     return closure
 
 
-
 def make_dispatcher(prefix, logger=None):
     """ Create a function which will dispatch arguments to specially
     named handler methods on an object.
@@ -269,6 +268,32 @@ def make_dispatcher(prefix, logger=None):
             logger.warn(msg % (name, obj))
     dispatcher.__name__ = prefix + '_dispatcher'
     return dispatcher
+
+
+def debug_timer(func):
+    """ A decorator which prints to stdout the time to call a function.
+
+    """
+    import time
+    import sys
+    import functools
+    if sys.platform == 'win32':
+        clock = time.clock
+    else:
+        clock = time.time
+    @functools.wraps(func)
+    def timer(*args, **kwargs):
+        t1 = clock()
+        res = func(*args, **kwargs)
+        t2 = clock()
+        d = t2 - t1
+        if d > 0.001:
+            templ = "Timing - '%s': %.4f seconds"
+        else:
+            templ = "Timing - '%s': %.4e seconds"
+        print templ % (func.__name__, t2 - t1)
+        return res
+    return timer
 
 
 # Backwards comatibility import. WeakMethod was moved to its own module.

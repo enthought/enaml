@@ -121,7 +121,7 @@ class QItemModelWrapper(QAbstractTableModel):
         if state is not None:
             return Qt.CheckState(state)
 
-    def _item_size_hint_role(self, row, column, role):
+    def _item_size_hint_role(self, row, column):
         return None
 
 
@@ -131,16 +131,19 @@ class QtItemView(QtControl):
     """
     def create_widget(self, parent, tree):
         widget = QTableView(parent)
-        widget.horizontalHeader().setVisible(False)
-        widget.verticalHeader().setVisible(False)
+        #widget.horizontalHeader().setVisible(False)
+        widget.verticalHeader().setDefaultSectionSize(20)
+        #widget.verticalHeader().setVisible(False)
         widget.setShowGrid(False)
-        #widget.viewport().setAttribute(Qt.WA_StaticContents, True)
-        #widget.setHorizontalScrollMode(widget.ScrollPerPixel)
+        widget.viewport().setAttribute(Qt.WA_StaticContents, True)
+        widget.setHorizontalScrollMode(widget.ScrollPerPixel)
+        widget.setVerticalScrollMode(widget.ScrollPerPixel)
         return widget
 
     def create(self, tree):
         super(QtItemView, self).create(tree)
         self.set_item_model(tree['item_model'])
+        self.widget().resizeColumnsToContents()
 
     def set_item_model(self, model):
         self.widget().setModel(QItemModelWrapper(model))

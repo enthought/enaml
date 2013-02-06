@@ -122,19 +122,13 @@ class StandardItemModelImpl(AbstractItemModel):
     """ A concrete implementation of AbstractItemModel.
 
     A `StandardItemModelImpl` is designed to be used with the classes
-    `ModelEditor` and `HeaderGroup`. It uses these to create an `Item`
-    instance for each cell in the model. This model calss is reasonably
+    `ModelEditor` and `HeaderGroup`. It uses these to compute the `Item`
+    instances for the cells in the model. This model class is reasonably
     efficient for models with up to ~100k items.
 
     """
     def __init__(self):
-        """ Initialize an ItemModel.
-
-        Parameters
-        ----------
-        header_location : str
-            The location to place the headers relative to the data.
-            The default is 'top'. Allowable locations are
+        """ Initialize a StandardItemModelImpl.
 
         """
         self._row_count = 0
@@ -180,8 +174,8 @@ class StandardItemModelImpl(AbstractItemModel):
         Parameters
         ----------
         location : str
-            The location of the headers for the model. Must be one of
-            'left', 'right', 'top', or 'bottom'.
+            The location of the headers for the model. This must be one
+            of 'left', 'right', 'top', or 'bottom'.
 
         """
         if location not in _OFFSET_HANDLERS:
@@ -289,80 +283,71 @@ class StandardItemModelImpl(AbstractItemModel):
 
         # Compute the header items that will be used.
         header_items = []
-        target_groups = set()
+        target_group_names = set()
         for header_group in header_groups:
-            target_groups.add(header_group.name)
+            target_group_names.add(header_group.name)
             for header_item in header_group.header_items():
                 header_items.append(header_item)
 
-        # Compute the items available from each model. Each gets its
-        # own list of items appended to the `model_items` list.
-        model_items = []
+        # Compute a list of 2-tuples of (group_name, item_name)
+        # for the header to use when finding matching editor items
+        header_data = [(hdr.parent.name, hdr.name) for hdr in header_items]
+
+        # Create the list of items, starting with the headers.
+        items = self._items = list_class(header_items)
+
+        # Fill the items list with items from the models, using None
+        # when an item for a particular model is not available.
         for model_editor in model_editors:
             # There can be multiple EditGroups with the same name.
             # Pass over them and merge the items into a dict. The
-            # conflict resolution dictates that the last item with
-            # the given name wins.
+            # conflict resolution dictates that the last item in
+            # the group with a matching name wins.
             edit_group_items = defaultdict(dict)
             for edit_group in model_editor.edit_groups():
-                if edit_group.name in target_groups:
+                if edit_group.name in target_group_names:
                     edit_items = edit_group_items[edit_group.name]
                     for edit_item in edit_group.items():
                         edit_items[edit_item.name] = edit_item
 
-            # Pull out the items relevant for the headers. Fill in the
-            # missing items with None
-            these_items = []
-            for header_item in header_items:
-                group_name = header_item.parent.name
+            # Find the matching model items for the header data.
+            for group_name, item_name in header_data:
                 if group_name in edit_group_items:
                     group_items = edit_group_items[group_name]
-                    if header_item.name in group_items:
-                        these_items.append(group_items[header_item.name])
+                    if item_name in group_items:
+                        items.append(group_items[item_name])
                         continue
-                these_items.append(None)
-            model_items.append(these_items)
+                items.append(None)
 
-        # Assemble the final items list. It is assembled row-major with
-        # headers at the beginning. Offset functions determine how this
-        # is represented in the ui.
-        items = self._items = list_class()
-        items.extend(header_items)
-        for row in model_items:
-            items.extend(row)
-
-        # See the docstring of ItemChangeNotifier. This method of
-        # hooking up a notifier is much more memory efficient than
-        # using on_trait_change for each attribute of interest. The
-        # cost here is O(n) lists with 1 item each, vs O(n * m) lists
-        # with an independent notifier object in each. Each of these
-        # notifiers has an instance dict and a weakref.
+        # Initialize the indices of the items in the model. This allows
+        # efficient inverse mapping from an item to a cell index when
+        # emitting the data changed signal. If the item is ever moved
+        # in the list, its index (and those below it) become invalid.
+        # So, the index is always verified before use, and updated on
+        # the fly if needed. An item should not appear more than once
+        # in the model; the behavior is undefined.
         for index, item in enumerate(items):
             if item is not None:
-                if item._index is not None:
-                    # Item appears more than once in the model. This is
-                    # not formally supported. The behavior is undefined.
-                    continue
                 item._index = index
 
         # Choose the right offset function for the header location and
         # update the column and row count for that location.
         header_location = self._header_location
         if header_location == 'top':
-            self._row_count = len(model_items) + 1
+            self._row_count = len(model_editors) + 1
             self._column_count = len(header_items)
             self._offset = _top_offset
         elif header_location == 'bottom':
-            self._row_count = len(model_items) + 1
+            self._row_count = len(model_editors) + 1
             self._column_count = len(header_items)
             self._offset = _bottom_offset
         elif header_location == 'left':
             self._row_count = len(header_items)
-            self._column_count = len(model_items) + 1
+            self._column_count = len(model_editors) + 1
             self._offset = _left_offset
         elif header_location == 'right':
             self._row_count = len(header_items)
-            self._column_count = len(model_items) + 1
+            self._column_count = len(model_editors) + 1
             self._offset = _right_offset
         else:
             raise ValueError("Invalid header location '%s'" % header_location)
@@ -427,6 +412,7 @@ class StandardItemModelImpl(AbstractItemModel):
         See Also: `AbstractItemModel.icon_source`
 
         """
+        return
         offset = self._offset(self, row, column)
         item = self._items[offset]
         if item is not None:
@@ -460,6 +446,7 @@ class StandardItemModelImpl(AbstractItemModel):
         See Also: `AbstractItemModel.icon_source`
 
         """
+        return
         offset = self._offset(self, row, column)
         item = self._items[offset]
         if item is not None:
@@ -474,6 +461,7 @@ class StandardItemModelImpl(AbstractItemModel):
         See Also: `AbstractItemModel.icon_source`
 
         """
+        return
         offset = self._offset(self, row, column)
         item = self._items[offset]
         if item is not None:
@@ -488,6 +476,7 @@ class StandardItemModelImpl(AbstractItemModel):
         See Also: `AbstractItemModel.icon_source`
 
         """
+        return
         offset = self._offset(self, row, column)
         item = self._items[offset]
         if item is not None:
@@ -502,6 +491,7 @@ class StandardItemModelImpl(AbstractItemModel):
         See Also: `AbstractItemModel.icon_source`
 
         """
+        return AlignmentFlag.ALIGN_CENTER
         offset = self._offset(self, row, column)
         item = self._items[offset]
         if item is not None:
@@ -557,51 +547,95 @@ class StandardItemModelImpl(AbstractItemModel):
         return False
 
     #--------------------------------------------------------------------------
-    # Change Handlers
+    # Private API
     #--------------------------------------------------------------------------
-    def on_item_changed(self, item, name):
-        """ Handle the item changed notification.
+    def _on_header_group_changed(self, group, name):
+        """ A private method called by the StandardItemModel.
 
-        This method is called by the StandardItemModel instance which
-        created the model when one of the items indicates that it has
-        changed. This method will determine the (row, column) index of
-        the effected item and emit the `data_changed` signal so that
-        any attached UIs can update.
+        This method is called when the data on a header group changes.
+        It emits the `data_changed` signal for the invalid items.
+
+        Parameters
+        ----------
+        group : HeaderGroup
+            The header group with data that has changed.
+
+        name : str
+            The name of the data on the group that has changed.
 
         """
         if self.has_items():
-            index = item._index
-            if index is None:
-                return # Item was never added
-            if self._items[index] is not item:
-                index = self._items.index(item)
-                item._index = index
-            invert = _OFFSET_INVERSE_HANDLERS[self._header_location]
-            row, column = invert(self, index)
-            self.data_changed.emit(row, column)
-
-    def on_header_group_changed(self, group, name):
-        if self.has_items():
-            invert = _OFFSET_INVERSE_HANDLERS[self._header_location]
-            items = self._items
             for item in group.header_items():
-                index = item._index
-                if index is None:
-                    continue
-                if items[index] is not item:
-                    index = items.index(item)
-                    item._index = index
-                row, column = invert(self, index)
-                self.data_changed.emit(row, column)
+                self._notify_item_changed(item)
 
-    def on_header_item_changed(self, item, name):
-        self.on_item_changed(item, name)
+    def _on_header_item_changed(self, item, name):
+        """ A private method called by the StandardItemModel.
 
-    def on_edit_group_changed(self, group, name):
-        pass
+        This method is called when the data on a header item changes.
+        It emits the `data_changed` signal for the invalid item.
 
-    def on_edit_item_changed(self, item, name):
-        self.on_item_changed(item, name)
+        Parameters
+        ----------
+        item : HeaderItem
+            The header item with data that has changed.
+
+        name : str
+            The name of the data on the item that has changed.
+
+        """
+        if self.has_items():
+            self._notify_item_changed(item)
+
+    def _on_edit_group_changed(self, group, name):
+        """ A private method called by the StandardItemModel.
+
+        This method is called when the data on an edit group changes.
+        This is only called if the EditGroup has item children.
+
+        """
+        if self.has_items():
+            for item in group.items():
+                self._notify_item_changed(item)
+
+    def _on_edit_item_changed(self, item, name):
+        """ A private method called by the StandardItemModel.
+
+        This method is called when the data on a model item changes.
+        It emits the `data_changed` signal for the invalid item.
+
+        Parameters
+        ----------
+        item : Ttem
+            The model item with data that has changed.
+
+        name : str
+            The name of the data on the item that has changed.
+
+        """
+        if self.has_items():
+            self._notify_item_changed(item)
+
+    def _notify_item_changed(self, item):
+        """ Emit the `data_changed` signal for an item.
+
+        This method will inverse map the item to its location in the
+        model and emit the `data_changed` signal for that location.
+
+        Parameters
+        ----------
+        item : Item
+            The item that has changed.
+
+        """
+        index = item._index
+        if index is None:  # Item is not in the model
+            return
+        if self._items[index] is not item:
+            index = self._items.index(item)
+            item._index = index
+        invert = _OFFSET_INVERSE_HANDLERS[self._header_location]
+        row, column = invert(self, index)
+        self.data_changed.emit(row, column)
 
 
 #-----------------------------------------------------------------------------
@@ -649,11 +683,11 @@ class HeaderGroupData(SlotData):
     def notify(self, group, name):
         """ Handle the slot's change notification.
 
-        This handler will forward the notification to its parent.
+        This will forward the notification to the group's parent.
 
         """
         # group.parent is a StandardItemModel instance.
-        group.parent.on_header_group_changed(group, name)
+        group.parent._on_header_group_changed(group, name)
 
 
 class HeaderGroup(Declarative):
@@ -698,13 +732,19 @@ class HeaderGroup(Declarative):
             if isinstance(child, HeaderItem):
                 yield child
 
-    def on_item_changed(self, item, name):
-        """ Handle the data changed notification from a child item.
+    #--------------------------------------------------------------------------
+    # Private API
+    #--------------------------------------------------------------------------
+    def _on_item_changed(self, item, name):
+        """ Handle the item changed notification from a child item.
 
         """
-        self.parent.on_header_item_changed(item, name)
+        # self.parent is a StandardItemModel instance.
+        self.parent._on_header_item_changed(item, name)
 
 
+#: Register HeaderGroup as an ItemListener so its `_on_item_changed`
+#: method gets called by a child `Item` when the item data changes.
 ItemListener.register(HeaderGroup)
 
 
@@ -717,12 +757,14 @@ class EditGroupData(SlotData):
     def notify(self, group, name):
         """ Handle the slot's change notification.
 
-        This handler will forward the change to notifier installed on
-        the item.
+        This will forward the notification to the group's parent, but
+        only if the group has been built. Otherwise, it's data is of
+        no importance to the model.
 
         """
-        # group.parent is a ModelEditor instance.
-        group.parent.on_edit_group_changed(group, name)
+        if group._built:
+            # group.parent is a ModelEditor instance.
+            group.parent._on_edit_group_changed(group, name)
 
 
 class EditGroup(Templated):
@@ -776,12 +818,9 @@ class EditGroup(Templated):
             if isinstance(child, Item):
                 yield child
 
-    def on_item_changed(self, item, name):
-        """ Handle the data changed notification from a child item.
-
-        """
-        self.parent.on_edit_item_changed(item, name)
-
+    #--------------------------------------------------------------------------
+    # Private API
+    #--------------------------------------------------------------------------
     def _build_if_needed(self):
         """ Create and initialize the children if needed.
 
@@ -803,7 +842,16 @@ class EditGroup(Templated):
                         instance.populate(descr, scope, f_globals)
                     instance.initialize()
 
+    def _on_item_changed(self, item, name):
+        """ Handle the data changed notification from a child item.
 
+        """
+        #: self.parent is a ModelEditor instance.
+        self.parent._on_edit_item_changed(item, name)
+
+
+#: Register EditGroup as an ItemListener so its `_on_item_changed`
+#: method gets called by a child `Item` when the item data changes.
 ItemListener.register(EditGroup)
 
 
@@ -814,6 +862,11 @@ class ModelEditor(Declarative):
     editor is created for each object in the list of `models` given
     to a `StandardItemModel`. The editor's edit groups determine which
     items are available to edit and display the data in the model.
+
+    A `ModelEditor` is reparented to the `StandardItemModel` which
+    takes ownership of the editor after it is built. This allows a
+    model editor to access state defined on the standard item model
+    via dynamic scoping.
 
     """
     #: The model object to edit with this editor. Subclasses may
@@ -835,16 +888,21 @@ class ModelEditor(Declarative):
                 yield child
 
     #--------------------------------------------------------------------------
-    # Change Handlers
+    # Private API
     #--------------------------------------------------------------------------
-    def on_edit_group_changed(self, group, name):
-        """ Handle the change notification from an edit group child.
+    def _on_edit_group_changed(self, group, name):
+        """ Handle the change notification from a child edit group.
 
         """
-        self.parent.on_edit_group_changed(group, name)
+        # self.parent is a StandardItemModel instance.
+        self.parent._on_edit_group_changed(group, name)
 
-    def on_edit_item_changed(self, item, name):
-        self.parent.on_edit_item_changed(item, name)
+    def _on_edit_item_changed(self, item, name):
+        """ Handle the change notification from a child edit item.
+
+        """
+        # self.parent is a StandardItemMode instance.
+        self.parent._on_edit_item_changed(item, name)
 
 
 class StandardItemModel(ItemModelProvider):
@@ -854,7 +912,7 @@ class StandardItemModel(ItemModelProvider):
     of `StandardItemModelImpl`. User code should declare `HeaderGroup`
     children which define the view structure of model. The user models
     to be edited should be assigned to the `models` list along with
-    an `editor_loader` callable which will create an instance of
+    an `editor_loader` callable which should create an instance of
     `ModelEditor` for each model in the list.
 
     """
@@ -870,13 +928,8 @@ class StandardItemModel(ItemModelProvider):
     #: should *not* call the editor's `initialize` method.
     editor_loader = Callable
 
-    #: Private storage for the item model instance.
+    #: Private internal storage for the generated item model.
     _item_model = Instance(StandardItemModelImpl)
-
-    def _header_location_changed(self, location):
-        model = self._item_model
-        if model is not None and self.is_active:
-            model.set_header_location(location)
 
     def item_model(self):
         """ Create the editor item model for this factory.
@@ -937,9 +990,20 @@ class StandardItemModel(ItemModelProvider):
                 yield child
 
     #--------------------------------------------------------------------------
-    # Change Handlers
+    # Private API
     #--------------------------------------------------------------------------
-    def on_header_group_changed(self, group, name):
+    def _header_location_changed(self, location):
+        """ A change handler for the `header_location` attribute.
+
+        If the model is active, this will update the header location on
+        the internal model.
+
+        """
+        model = self._item_model
+        if model is not None and self.is_active:
+            model.set_header_location(location)
+
+    def _on_header_group_changed(self, group, name):
         """ A change notifier invoked by a child `HeaderGroup`.
 
         This method forwards the change on to the item model.
@@ -947,9 +1011,9 @@ class StandardItemModel(ItemModelProvider):
         """
         model = self._item_model
         if model is not None:
-            model.on_header_group_changed(group, name)
+            model._on_header_group_changed(group, name)
 
-    def on_header_item_changed(self, item, name):
+    def _on_header_item_changed(self, item, name):
         """ A change notifier invoked by a child `HeaderGroup`.
 
         The group forwards the change from a child header item. This
@@ -958,9 +1022,9 @@ class StandardItemModel(ItemModelProvider):
         """
         model = self._item_model
         if model is not None:
-            model.on_header_item_changed(item, name)
+            model._on_header_item_changed(item, name)
 
-    def on_edit_group_changed(self, group, name):
+    def _on_edit_group_changed(self, group, name):
         """ A change notifier invoked by a child `ModelEditor`.
 
         The model editor forwards the change from a child edit group.
@@ -969,9 +1033,9 @@ class StandardItemModel(ItemModelProvider):
         """
         model = self._item_model
         if model is not None:
-            model.on_edit_group_changed(group, name)
+            model._on_edit_group_changed(group, name)
 
-    def on_edit_item_changed(self, item, name):
+    def _on_edit_item_changed(self, item, name):
         """ A change notifier invoked by a child `ModelEditor`.
 
         The model editor forwards the change from a child edit group,
@@ -981,5 +1045,5 @@ class StandardItemModel(ItemModelProvider):
         """
         model = self._item_model
         if model is not None:
-            model.on_edit_item_changed(item, name)
+            model._on_edit_item_changed(item, name)
 
