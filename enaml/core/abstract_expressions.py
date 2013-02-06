@@ -2,7 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta, abstractmethod, abstractproperty
 
 
 class AbstractExpression(object):
@@ -26,6 +26,13 @@ class AbstractExpression(object):
         name : str
             The attribute name on `obj` for which this expression is
             providing the value.
+
+        """
+        raise NotImplementedError
+
+    @abstractproperty
+    def name(self):
+        """ A read-only property which returns the expression name.
 
         """
         raise NotImplementedError
@@ -57,6 +64,13 @@ class AbstractListener(object):
 
         new : object
             The new value of the attribute.
+
+        """
+        raise NotImplementedError
+
+    @abstractproperty
+    def name(self):
+        """ A read-only property which returns the listener name.
 
         """
         raise NotImplementedError
