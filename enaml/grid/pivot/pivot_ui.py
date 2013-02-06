@@ -70,9 +70,11 @@ class PivotModel(TabularModel):
     def column_count(self):
         return self.shape[1]
 
+    # This isn't used
     def column_header_data(self, columns):
         return []
 
+    # This isn't used
     def row_header_data(self, rows):
         return []
 
@@ -218,9 +220,11 @@ class MultiLevelHeader(QTabularHeader):
         if self.is_horizontal:
             self.header_model = self.engine.col_header
             self.engine.on_trait_change(self._update_header_model, 'col_header')
+            self.engine.on_trait_change(lambda: self.update(), 'col_header:update')
         else:
             self.header_model = self.engine.row_header
             self.engine.on_trait_change(self._update_header_model, 'row_header')
+            self.engine.on_trait_change(lambda: self.update(), 'row_header:update')
         super(MultiLevelHeader, self).__init__(orientation, parent)
 
         self.engine.on_trait_change(self._clear_cursor, 'update')
