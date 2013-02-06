@@ -2,10 +2,10 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import MetaHasTraits
+from .declarative import DeclarativeMeta
 
 
-class EnamlDef(MetaHasTraits):
+class EnamlDef(DeclarativeMeta):
     """ The type of an enamldef.
 
     This is a metaclass used to create types for the 'enamldef' keyword.
