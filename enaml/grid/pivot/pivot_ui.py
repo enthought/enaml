@@ -557,12 +557,12 @@ class MultiLevelHeader(QVariableSizeHeader):
         self._set_foreground_brush(opt, node)
         self._set_background_brush(opt, node)
         text = node.text
-        #elide_mode = self.textElideMode()
-        #if elide_mode != Qt.ElideNone:
-        #    decoration_size = style.sizeFromContents(style.CT_HeaderSection,
-        #        opt, QSize(), self)
-        #    text = opt.fontMetrics.elidedText(text, elide_mode,
-        #        opt.rect.width() - decoration_size.width())
+        elide_mode = self.textElideMode()
+        if elide_mode != Qt.ElideNone:
+            decoration_size = style.sizeFromContents(style.CT_HeaderSection,
+                opt, QSize(), self)
+            text = opt.fontMetrics.elidedText(text, elide_mode,
+                opt.rect.width() - decoration_size.width())
         opt.text = text
         painter.save()
         old_brush_origin = painter.brushOrigin()
