@@ -190,13 +190,7 @@ class QVariableSizeHeader(QTabularHeader):
             covered by the given length.
 
         """
-        if len(self._section_pos) == 1:
-            print 'Section positions not yet initialized'
-            return 1
-        for i in xrange(self._count):
-            if self._length - self._section_pos[self._count - i - 1] > length:
-                return i
-        return None
+        return self._count - bisect_right(self._section_pos, self._length - length)
 
     def visualIndexAt(self, position):
         """ Get the visual index which overlaps the position.
@@ -216,7 +210,7 @@ class QVariableSizeHeader(QTabularHeader):
 
         """
         idx = bisect_right(self._section_pos, position)
-        if idx < self._count:
+        if idx <= self._count:
             return idx - 1
         return -1
 
