@@ -31,6 +31,8 @@ class PivotSelector(QWidget):
         """
         super(PivotSelector, self).__init__(parent)
         self.setAttribute(Qt.WA_Hover)
+        self._hand_cursor = QCursor(Qt.OpenHandCursor)
+        self._drag_cursor = QCursor(Qt.SizeHorCursor)
 
     def selectors(self):
         """ Get the current selectors
@@ -110,7 +112,6 @@ class PivotSelector(QWidget):
 
             rect.moveLeft(rect.left()+width+margin)
 
-
     def sizeHint(self):
         """ A reimplemented virtual method.
 
@@ -130,12 +131,11 @@ class PivotSelector(QWidget):
     def event(self, event):
         if (event.type() == QEvent.HoverMove and
             not self._dragging_selector and self._dragging_name == -1):
-            if self.selectorRect().contains(event.pos()):
-                QApplication.setOverrideCursor(QCursor(Qt.SizeHorCursor))
+            if (self.selectorRect().contains(event.pos()) and
+                not self.cursor() == self._drag_cursor):
+                self.setCursor(self._drag_cursor)
             else:
-                QApplication.setOverrideCursor(QCursor(Qt.OpenHandCursor))
-        elif (event.type() == QEvent.HoverLeave):
-            QApplication.restoreOverrideCursor()
+                self.setCursor(QCursor(Qt.OpenHandCursor))
         return super(PivotSelector, self).event(event)
 
     def mousePressEvent(self, event):
