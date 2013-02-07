@@ -4,9 +4,11 @@ import numpy as np
 import pandas
 
 from enaml.qt.qt.QtCore import QRect
-from enaml.qt.qt.QtGui import QApplication
+from enaml.qt.qt.QtGui import (
+        QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel
+        )
 
-from enaml.grid.pivot import pandas_pivot, pivot_ui
+from enaml.grid.pivot import pandas_pivot, pivot_ui, pivot_selector
 
 np.random.seed(0)
 
@@ -65,7 +67,7 @@ def main():
 
     args = parser.parse_args()
     app = QApplication([])
-    frame = getdf(100) #args.nrows)
+    frame = getdf(args.nrows)
     print 'Generated data.'
     engine = pandas_pivot.PandasEngine.from_frame(frame, 
         #aggregates = [('Revenue', 'sum'), ('Price', 'geo_mean'), ('Quantity', sum)],
@@ -85,10 +87,31 @@ def main():
     )
 
     tv = pivot_ui.table_view(engine)
-    tv.setGeometry(QRect(200, 200, 800, 600))
     tv.setHorizontalScrollPolicy(tv.ScrollPerItem)
     tv.setVerticalScrollPolicy(tv.ScrollPerItem)
-    tv.show()
+
+    selector = pivot_selector.PivotSelector()
+    selector.setSelectors(engine.col_pivots)
+
+    def update_pivots(sel):
+        engine.set_pivots(row_pivots = engine.row_pivots,
+                          col_pivots = selector.selectors()[:sel+1])
+
+    selector.selectorLevelChanged.connect(update_pivots)
+
+    win = QWidget()
+    l = QHBoxLayout()
+    l.addWidget(QLabel('Column pivots:'))
+    l.addWidget(selector)
+    l.addStretch()
+    l.setContentsMargins(10,10,10,10)
+    layout = QVBoxLayout()
+    layout.addLayout(l)
+    layout.addWidget(tv)
+    layout.setContentsMargins(0,0,0,0)
+    win.setLayout(layout)
+    win.setGeometry(QRect(200, 200, 800, 600))
+    win.show()
     app.exec_()
 
 if __name__ == '__main__':
