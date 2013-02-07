@@ -126,17 +126,14 @@ class QTabularView(QAbstractScrollArea):
         """
         # unhook previous model
         if self._model:
-            #self._model.dataChanged.connect(self._update)
-            self._model.horizontalHeaderChanged.disconnect(self._update)
-            self._model.verticalHeaderChanged.disconnect(self._update)
+            self._model.dataChanged.disconnect(self._update)
         assert isinstance(model, TabularModel)
         self._model = model
         self._v_header.setModel(model)
         self._h_header.setModel(model)
         self._update()
 
-        self._model.horizontalHeaderChanged.connect(self._update)
-        self._model.verticalHeaderChanged.connect(self._update)
+        self._model.dataChanged.connect(self._update)
 
     def rowHeader(self):
         """ Get the row header in use by the widget.
@@ -349,6 +346,7 @@ class QTabularView(QAbstractScrollArea):
         """
         self._updateViewportMargins()
         self._updateGeometries()
+        self.update()
 
     def _updateViewportMargins(self):
         """ Update the margins for the viewport.
