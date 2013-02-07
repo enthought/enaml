@@ -29,7 +29,12 @@ enaml_extensions = Feature(
             'enaml.extensions.funchelper',
             ['enaml/extensions/funchelper.cpp'],
             language='c++',
-        )
+        ),
+        Extension(
+            'enaml.extensions.catom',
+            ['enaml/extensions/catom.cpp'],
+            language='c++',
+        ),
     ],
 )
 
