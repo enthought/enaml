@@ -438,8 +438,15 @@ class MultiLevelHeader(QTabularHeader):
             covered by the given length.
 
         """
-        # This is broken - assumes constant section size
-        return length / self.sectionSize(0)
+        # This is brain dead
+        span = 0
+        count = self.count()
+        for i in range(count):
+            span += self.sectionSize(i)
+            if length <= span:
+                return i
+        else:
+            return count
 
     def visualIndexAt(self, position):
         """ Get the visual index which overlaps the position.
@@ -459,7 +466,7 @@ class MultiLevelHeader(QTabularHeader):
 
         """
         # This is broken - assumes constant section size
-        idx = position / self.sectionSize(0)
+        idx = self.trailingSpan(position)
         if idx < self.count():
             return idx
         return -1
