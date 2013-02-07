@@ -577,7 +577,6 @@ class QTabularHeader(QWidget):
 
             # Draw the text for each header section.
             y_run = start_y
-            fm = self.fontMetrics()
             try:
                 next_data = data.next
                 if self._elide_mode == Qt.ElideNone:
