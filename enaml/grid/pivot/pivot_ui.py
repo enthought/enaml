@@ -632,16 +632,16 @@ class MultiLevelHeader(QVariableSizeHeader):
 
         Add up the section sizes corresponding to all of the leaves.
         """
-        return sum(self.sectionSize(i) for i in range(*self._get_span(node)))
+        start, end = self._get_span(node)
+        return self.sectionPosition(end) - self.sectionPosition(start)
 
     def _current_cell_left(self, node, leaf, left):
         """ Get the left side of the given cell.
         """
         leaf_section = self.header_model.leaves.index(leaf)
-        span = self._get_span(node)
-        for section in range(leaf_section-1, span[0]-1, -1):
-            left -= self.sectionSize(section)
-        return left
+        start = self._get_span(node)[0]
+        return (left -
+            (self.sectionPosition(leaf_section) - self.sectionPosition(start)))
 
     def _cell_size(self, text, opt):
         """ Return the size for the given cell.
