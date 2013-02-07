@@ -16,7 +16,7 @@ from enaml.qt.qt.QtGui import (
         )
 
 from ..q_tabular_view import QTabularView
-from ..q_tabular_header import QTabularHeader
+from ..q_variable_size_header import QVariableSizeHeader
 from ..tabular_model import TabularModel
 from .pandas_pivot import MarginNode, AggregationNode, format_aggregate
 
@@ -146,8 +146,8 @@ class PivotModel(TabularModel):
         #bottom_right = self.index(last, self.shape[1])
         #self.dataChanged.emit(top_left, bottom_right)
         #self.headerDataChanged.emit(Qt.Vertical, first, last)
-        self.dataChanged.emit()
         self.verticalHeaderChanged.emit()
+        self.dataChanged.emit()
 
     def _cols_data_changed(self, first, last):
         """ Signal that the data of the given columns have changed.
@@ -156,8 +156,8 @@ class PivotModel(TabularModel):
         #bottom_right = self.index(self.shape[0], last)
         #self.dataChanged.emit(top_left, bottom_right)
         #self.headerDataChanged.emit(Qt.Horizontal, first, last)
-        self.dataChanged.emit()
         self.horizontalHeaderChanged.emit()
+        self.dataChanged.emit()
 
     def cell_styles(self, rows, columns, data):
         if self.engine.shade_depth:
@@ -190,7 +190,7 @@ class PivotModel(TabularModel):
 
 
 
-class MultiLevelHeader(QTabularHeader):
+class MultiLevelHeader(QVariableSizeHeader):
     """ A hierarchical header for viewing dynamic pivot tables.
     """
 
@@ -201,17 +201,9 @@ class MultiLevelHeader(QTabularHeader):
     ensure_visible = Signal(int, name='ensure_visible')
 
     def __init__(self, engine, orientation, parent=None):
+        super(MultiLevelHeader, self).__init__(orientation, parent)
         self.engine = engine
         self.is_horizontal = (orientation == Qt.Horizontal)
-        if self.is_horizontal:
-            self.header_model = self.engine.col_header
-            self.engine.on_trait_change(self._update_header_model, 'col_header')
-            self.engine.on_trait_change(lambda: self.update(), 'col_header:update')
-        else:
-            self.header_model = self.engine.row_header
-            self.engine.on_trait_change(self._update_header_model, 'row_header')
-            self.engine.on_trait_change(lambda: self.update(), 'row_header:update')
-        super(MultiLevelHeader, self).__init__(orientation, parent)
 
         self.engine.on_trait_change(self._clear_cursor, 'update')
         self.cursor_waiting = False
@@ -220,6 +212,39 @@ class MultiLevelHeader(QTabularHeader):
         self.icon_position_cache = {}
         self.cell_rect_cache = {}
         self.cell_size_cache = {}
+
+    def setModel(self, model):
+        """ A reimplemented parent class method.
+
+        Parameters
+        ----------
+        model : TabularModel
+            The tabular model to use with the header.
+
+        """
+        super(MultiLevelHeader, self).setModel(model)
+        if self.is_horizontal:
+            model.horizontalHeaderChanged.connect(self._model_changed)
+        else:
+            model.verticalHeaderChanged.connect(self._model_changed)
+        if self._count: self._model_changed()
+
+    def _model_changed(self):
+        # Recalculate the visible section sizes
+        if self.is_horizontal:
+            count = self._model.column_count()
+            self.header_model = self.engine.col_header
+            section_sizes = map(self.sectionSizeFromContents, range(count))
+            self._count = count
+            self.setSectionSize([size.width() for size in section_sizes])
+            self.setHeaderSize(max(*(size.height() for size in section_sizes)))
+        else:
+            count = self._model.row_count()
+            self.header_model = self.engine.row_header
+            section_sizes = map(self.sectionSizeFromContents, range(count))
+            self._count = count
+            self.setSectionSize([size.height() for size in section_sizes])
+            self.setHeaderSize(max(*(size.width() for size in section_sizes)))
 
     def mousePressEvent(self, event):
         """ Override to handle clicks on the expand/collapse icons.
@@ -322,74 +347,6 @@ class MultiLevelHeader(QTabularHeader):
     #--------------------------------------------------------------------------
     # Abstract API implementation.
     #--------------------------------------------------------------------------
-    def count(self):
-        """ Get the number of visible sections in the header.
-
-        This count does not include hidden sections.
-
-        Returns
-        -------
-        result : int
-            The number of visible sections in the header.
-
-        """
-        if self.is_horizontal:
-            count = self._model.column_count()
-        else:
-            count = self._model.row_count()
-        return count
-
-    def length(self):
-        """ Get the total visible length of the header.
-
-        This length does not include hidden sections.
-
-        Returns
-        -------
-        result : int
-            The total visible length of the header.
-
-        """
-        return sum(self.sectionSize(i) for i in range(self.count()))
-
-    def headerSize(self):
-        """ Get the display size for the header.
-
-        Returns
-        -------
-        result : int
-            The size to use by QTabularView when displaying the header.
-            For horizontal headers, this will be the header height. For
-            vertical headers, this will be the header width.
-
-        """
-        if self.count():
-            if self.is_horizontal:
-                size = max(*(self.sectionSizeFromContents(i).height() for i in range(self.count())))
-            else:
-                size = max(*(self.sectionSizeFromContents(i).width() for i in range(self.count())))
-        else:
-            size = 0
-        return size
-
-    def sectionSize(self, visual_index):
-        """ Get the size for a given visual section.
-
-        Parameters
-        ----------
-        visual_index : int
-            The visual index of the section. This must be bounded by
-            zero and the header count.
-
-        Returns
-        -------
-        result : int
-            The size of the given section.
-
-        """
-        logical_index = self.logicalIndex(visual_index)
-        size = self.sectionSizeFromContents(logical_index)
-        return size.width() if self.is_horizontal else size.height()
 
     def sectionSizeFromContents(self, logical_index):
         leaf = self._get_leaf_node(logical_index)
@@ -404,112 +361,6 @@ class MultiLevelHeader(QTabularHeader):
             else:
                 size.setWidth(size.width() + self._cell_size(node.text, opt).width())
         return size
-
-    def sectionPosition(self, visual_index):
-        """ Get the pixel position for a given visual index.
-
-        Parameters
-        ----------
-        visual_index : int
-            The visual index of the section. This must be bounded by
-            zero and the header count.
-
-        Returns
-        -------
-        result : int
-            The position of the given section. It will not be adjusted
-            for the header offset.
-
-        """
-        return sum(self.sectionSize(i) for i in range(visual_index))
-
-    def trailingSpan(self, length):
-        """ Get the number of trailing items covered by a given length.
-
-        Parameters
-        ----------
-        length : int
-            The length of the given coverage request.
-
-        Returns
-        -------
-        result : int
-            The number of items at the end of the end of the header
-            covered by the given length.
-
-        """
-        # This is brain dead
-        span = 0
-        count = self.count()
-        for i in range(count):
-            span += self.sectionSize(i)
-            if length <= span:
-                return i
-        else:
-            return count
-
-    def visualIndexAt(self, position):
-        """ Get the visual index which overlaps the position.
-
-        Parameters
-        ----------
-        position : int
-            The visual pixel position to map to a visual index. This
-            must be bounded by zero and the header length.
-
-        Returns
-        -------
-        result : int
-            The visual index for the visual position. On success, this
-            will be greater than or equal to zero. On failure, -1 is
-            returned indicating the position is out of bounds.
-
-        """
-        # This is broken - assumes constant section size
-        idx = self.trailingSpan(position)
-        if idx < self.count():
-            return idx
-        return -1
-
-    def visualIndex(self, logical_index):
-        """ Get the visual index for a given logical index.
-
-        Parameters
-        ----------
-        logical_index : int
-            The logical model index to map to a header visual index.
-            This must be bounded by zero and the relevant model row
-            or column count.
-
-        Returns
-        -------
-        result : int
-            The visual index for the model index. On success, this will
-            be greater than or equal to zero. On failure, -1 is returned
-            indicating that logical index has no visual index; i.e that
-            logical index is hidden.
-
-        """
-        # XXX section moving and hiding not yet supported
-        return logical_index
-
-    def logicalIndex(self, visual_index):
-        """ Get the logical index for a given visual index.
-
-        Parameters
-        ----------
-        visual_index : int
-            The visual header index to map to a model logical index.
-            This must be bounded by zero and the header count.
-
-        Returns
-        -------
-        result : int
-            The logical model index for the visual header index.
-
-        """
-        # XXX section moving and hiding not yet supported.
-        return visual_index
 
     def paintHorizontal(self, painter, event):
         """ The default horizontal header paint method.
@@ -874,10 +725,9 @@ class MultiLevelHeader(QTabularHeader):
 #           r = QRect(0, pos, w, h-pos)
 #       viewport.update(r.normalized())
 
-    def _update_header_model(self, new):
-        self.header_model = new
-        self.update()
-
+    #def _update_header_model(self, new):
+    #    self.header_model = new
+    #    self._model_changed()
 
 
 def table_view(engine, highlight_sections=False, model_class=PivotModel,
