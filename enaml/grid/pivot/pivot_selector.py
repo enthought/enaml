@@ -152,7 +152,7 @@ class PivotSelector(QWidget):
     def mousePressEvent(self, event):
         if self.selectorRect().contains(event.pos()):
             self._dragging_selector = True
-        else:
+        elif False:
             # Check which box we clicked on
             x, r, l = event.pos().x(), 0, 0
             for i, width in enumerate(self._widths):
