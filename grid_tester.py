@@ -1,4 +1,5 @@
 
+from enaml.qt.qt.QtCore import Qt
 from enaml.qt.qt.QtGui import QApplication
 from enaml.grid.q_tabular_view import QTabularView
 from enaml.grid.tabular_model import TabularModel
@@ -106,6 +107,8 @@ if __name__ == '__main__':
     v = QTabularView()
     v.rowHeader().setHeaderSize(100)
     v.rowHeader().setSectionSize(30)
+    v.rowHeader().setTextElideMode(Qt.ElideRight)
+    v.columnHeader().setTextElideMode(Qt.ElideRight)
     v._updateViewportMargins() # XXX make this automatic
     #v.setVerticalLinesVisible(False)
     #v.setHorizontalLinesVisible(False)

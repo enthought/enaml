@@ -64,6 +64,7 @@ class QTabularHeader(QWidget):
         self._orientation = orientation
         self._model = NullModel()
         self._offset = 0
+        self._elide_mode = Qt.ElideNone
 
         # The default header background gradient. XXX make configurable.
         grad = QLinearGradient(QPointF(0, 0), QPointF(0, 1))
@@ -185,6 +186,37 @@ class QTabularHeader(QWidget):
         if index == -1:
             return index
         return self.logicalIndex(index)
+
+    def setTextElideMode(self, elide_mode):
+        """ Set the text elidation mode of the header
+
+        This method updates the offset and then performs a low-level
+        scroll so that only the damaged region is updated. Subclasses
+        which require more control may reimplement this method.
+
+        Parameters
+        ----------
+        elide_mode : Qt.TextElideMode
+            This property holds the position of the '...' in elided header
+            text. It is one of Qt.ElideLeft, Qt.ElideRight, Qt.ElideMiddle, or
+            Qt.ElideNone
+
+        """
+        self._elide_mode = elide_mode
+        self.update()
+
+    def textElideMode(self):
+        """ Get the text elide mode of the header
+
+        Returns
+        -------
+        result : Qt.TextElideMode
+            This property holds the position of the '...' in elided header
+            text. It is one of Qt.ElideLeft, Qt.ElideRight, Qt.ElideMiddle, or
+            Qt.ElideNone
+
+        """
+        return self._elide_mode
 
     #--------------------------------------------------------------------------
     # Abstract API
@@ -391,6 +423,7 @@ class QTabularHeader(QWidget):
 
         # Prefetch common data for faster access.
         height = self.height()
+        font_metrics = self.fontMetrics()
 
         for rect in event.region().rects():
 
@@ -430,12 +463,21 @@ class QTabularHeader(QWidget):
 
             # Draw the text for each header section.
             x_run = start_x
+
             try:
                 next_data = data.next
-                for col_width in col_widths:
-                    cell_rect.setRect(x_run, 0, col_width, height)
-                    painter.drawText(cell_rect, Qt.AlignCenter, next_data())
-                    x_run += col_width
+                if self._elide_mode == Qt.ElideNone:
+                    for col_width in col_widths:
+                        cell_rect.setRect(x_run, 0, col_width, height)
+                        painter.drawText(cell_rect, Qt.AlignCenter, next_data())
+                        x_run += col_width
+                else:
+                    elide_mode = self._elide_mode
+                    for col_width in col_widths:
+                        cell_rect.setRect(x_run, 0, col_width, height)
+                        text = font_metrics.elidedText(next_data(), elide_mode, col_width - 4)
+                        painter.drawText(cell_rect, Qt.AlignCenter, text)
+                        x_run += col_width
             except StopIteration: # ran out of data early
                 pass
 
@@ -493,6 +535,7 @@ class QTabularHeader(QWidget):
 
         # Prefetch common data for faster access.
         width = self.width()
+        font_metrics = self.fontMetrics()
 
         for rect in event.region().rects():
 
@@ -536,10 +579,18 @@ class QTabularHeader(QWidget):
             y_run = start_y
             try:
                 next_data = data.next
-                for row_height in row_heights:
-                    cell_rect.setRect(0, y_run, width, row_height)
-                    painter.drawText(cell_rect, Qt.AlignCenter, next_data())
-                    y_run += row_height
+                if self._elide_mode == Qt.ElideNone:
+                    for row_height in row_heights:
+                        cell_rect.setRect(0, y_run, width, row_height)
+                        painter.drawText(cell_rect, Qt.AlignCenter, next_data())
+                        y_run += row_height
+                else:
+                    elide_mode = self._elide_mode
+                    for row_height in row_heights:
+                        cell_rect.setRect(0, y_run, width, row_height)
+                        text = font_metrics.elidedText(next_data(), elide_mode, width-4)
+                        painter.drawText(cell_rect, Qt.AlignCenter, text)
+                        y_run += row_height
             except StopIteration: # ran out of data early
                 pass
 
