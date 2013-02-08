@@ -208,7 +208,7 @@ class Observable(Atom):
         """
         if isinstance(callback, MethodType) and autoremove:
             callback = _MethodWrapper(callback, self)
-        members = type(self)._atom_members
+        members = type(self).members
         if regex:
             rgx = re.compile(name)
             observer = _RegexObserver(rgx, callback)

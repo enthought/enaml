@@ -154,7 +154,7 @@ class CMember(object):
         # XXX notify on delete
 
 
-#: Use the faster C++ versions of CAtom and CMember if available
+#: Use the faster C++ versions if available
 try:
   from enaml.extensions.catom import CAtom, CMember, MAX_MEMBER_COUNT
 except ImportError:
@@ -198,9 +198,12 @@ class AtomMeta(type):
             t = 'A `CAtom` subclass can have at most %d members. '
             t += 'The `%s` class defines %d.'
             raise TypeError(t % (MAX_MEMBER_COUNT, name, index))
-        cls._atom_member_count = index
         cls._atom_members = members
         return cls
+
+    @property
+    def members(cls):
+        return cls._atom_members
 
 
 class Atom(CAtom):

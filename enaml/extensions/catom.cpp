@@ -16,7 +16,7 @@ using namespace PythonHelpers;
 extern "C" {
 
 
-static PyObject* _atom_member_count;
+static PyObject* _atom_members;
 static PyObject* _undefined_name;
 static PyObject* _notify;
 static PyObject* _default;
@@ -71,12 +71,14 @@ static PyObject*
 CAtom_new( PyTypeObject* type, PyObject* args, PyObject* kwargs )
 {
     Py_ssize_t count = 0;
-    PyObjectPtr py_count_ptr( PyObject_GetAttr(
-        reinterpret_cast<PyObject*>( type ), _atom_member_count
+    PyDictPtr members_ptr( PyObject_GetAttr(
+        reinterpret_cast<PyObject*>( type ), _atom_members
     ) );
-    if( !py_count_ptr )
+    if( !members_ptr )
         return 0;
-    count = PyInt_AsSsize_t( py_count_ptr.get() );
+    if( !members_ptr.check_exact() )
+        return py_expected_type_fail( members_ptr.get(), "dict" );
+    count = members_ptr.size();
     if( count < 0 )
     {
         if( PyErr_Occurred() )
@@ -551,8 +553,8 @@ initcatom( void )
     PyObject* mod = Py_InitModule( "catom", catom_methods );
     if( !mod )
         return;
-    _atom_member_count = PyString_FromString( "_atom_member_count" );
-    if( !_atom_member_count )
+    _atom_members = PyString_FromString( "_atom_members" );
+    if( !_atom_members )
         return;
     _undefined_name = PyString_FromString( "<undefined>" );
     if( !_undefined_name )

@@ -44,38 +44,21 @@ class Member(CMember):
         return self._default
 
 
-class TypedMember(CMember):
+class TypedMember(Member):
     """ A member class wich supports type checking validation.
 
     """
-    __slots__ = ('_kind', '_factory')
+    __slots__ = ('_kind',)
 
     def __init__(self, kind=None, default=None, factory=None):
-        """
-
-        """
+        super(TypedMember, self).__init__(default, factory)
         if kind is not None:
             assert isinstance(kind, type), "Kind must be a type"
             self._kind = kind
         else:
             self._kind = object
-        if factory is not None:
-            self._factory = factory
-        elif default is not None:
-            self._factory = lambda owner, name: default
-        else:
-            self._factory = lambda owner, name: None
-
-    def default(self, owner, name):
-        """
-
-        """
-        return self._factory(owner, name)
 
     def validate(self, owner, name, value):
-        """
-
-        """
         if not isinstance(value, self._kind):
             t = "Member '%s' requires object of type `%s`. "
             t += "Got object of type `%s` instead."
