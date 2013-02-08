@@ -18,6 +18,17 @@ else:
 null = object()
 
 
+def _get_notify_bit(atom, bit):
+    return bool(atom._notifybits & (1 << bit))
+
+
+def _set_notify_bit(atom, bit, enable):
+    if enable:
+        atom._notifybits |= (1 << bit)
+    else:
+        atom._notifybits &= ~(1 << bit)
+
+
 class CAtom(object):
     """ The base CAtom class.
 
@@ -28,7 +39,7 @@ class CAtom(object):
     __slots__ = ('_notifybits', '_c_atom_data')
 
     def __new__(cls, *args, **kwargs):
-        count = getattr(cls, "_atom_member_count")
+        count = len(cls.members)
         if count > MAX_MEMBER_COUNT:
             raise TypeError("too many members %d" % count)
         self = object.__new__(cls)
@@ -36,35 +47,14 @@ class CAtom(object):
         self._c_atom_data = [null] * count
         return self
 
-    def _get_notify_bit(self, bit):
-        return bool(self._notifybits & (1 << bit))
+    def is_notification_enabled(self):
+        return _get_notify_bit(self, ATOM_BIT)
 
-    def _set_notify_bit(self, bit, enable):
-        if enable:
-            self._notifybits |= (1 << bit)
-        else:
-            self._notifybits &= ~(1 << bit)
+    def set_notification_enabled(self, enable):
+        _set_notify_bit(self, ATOM_BIT, enable)
 
-    def _is_notify_enabled(self):
-        return self._get_notify_bit(ATOM_BIT)
-
-    def _set_notify_enabled(self, enable):
-        self._set_notify_bit(ATOM_BIT, enable)
-
-    def _is_member_notify_enabled(self, name):
-        member = getattr(type(self), name)
-        if not isinstance(member, CMember):
-            raise TypeError
-        return self._get_notify_bit(member._index)
-
-    def _set_member_notify_enabled(self, name, enable):
-        member = getattr(type(self), name)
-        if not isinstance(member, CMember):
-            raise TypeError
-        return self._set_notify_bit(member._index, enable)
-
-    def _notify(self, name, old, new):
-        """ Implement in a subclass to receive change notification.
+    def notify(self, name, old, new):
+        """ Reimplement in a subclass to receive change notification.
 
         """
         pass
@@ -73,6 +63,7 @@ class CAtom(object):
 MEMBER_HAS_DEFAULT = 1
 
 MEMBER_HAS_VALIDATE = 2
+
 
 class CMember(object):
     """ The base CMember class.
@@ -93,6 +84,14 @@ class CMember(object):
         if hasattr(self, 'validate'):
             self._flags |= MEMBER_HAS_VALIDATE
         return self
+
+    def is_notification_enabled(self, atom):
+        assert isinstance(atom, CAtom)
+        return _get_notify_bit(atom, self._index)
+
+    def set_notification_enabled(self, atom, enable):
+        assert isinstance(atom, CAtom)
+        _set_notify_bit(atom, self._index, enable)
 
     def __get__(self, owner, cls):
         if owner is None:
@@ -131,12 +130,11 @@ class CMember(object):
             attrname = self._name
             raise AttributeError(t % (typename, attrname))
         if self._flags & MEMBER_HAS_VALIDATE:
-            print 'here'
             value = self.validate(owner, self._name, value)
         old = data[index]
         data[index] = value
-        if owner._get_notify_bit(ATOM_BIT) and owner._get_notify_bit(index):
-            owner._notify(self._name, old, value)
+        if _get_notify_bit(owner, ATOM_BIT) and _get_notify_bit(owner, index):
+            owner.notify(self._name, old, value)
 
     def __delete__(self, owner):
         if not isinstance(owner, CAtom):
@@ -156,9 +154,11 @@ class CMember(object):
 
 #: Use the faster C++ versions if available
 try:
-  from enaml.extensions.catom import CAtom, CMember, MAX_MEMBER_COUNT
+    from enaml.extensions.catom import CAtom, CMember
+    print 'success'
 except ImportError:
-  pass
+    print ' bail'
+    pass
 
 
 class AtomMeta(type):
@@ -194,10 +194,10 @@ class AtomMeta(type):
                     value._index = index
                     index += 1
                 members[key] = value
-        if index > MAX_MEMBER_COUNT:
-            t = 'A `CAtom` subclass can have at most %d members. '
-            t += 'The `%s` class defines %d.'
-            raise TypeError(t % (MAX_MEMBER_COUNT, name, index))
+        #if index > MAX_MEMBER_COUNT:
+        #    t = 'A `CAtom` subclass can have at most %d members. '
+        #    t += 'The `%s` class defines %d.'
+        #    raise TypeError(t % (MAX_MEMBER_COUNT, name, index))
         cls._atom_members = members
         return cls
 
@@ -241,17 +241,20 @@ class Atom(CAtom):
 
         """
         if len(names) == 0:
-            old = self._is_notify_enabled()
-            self._set_notify_enabled(False)
+            old = self.is_notification_enabled()
+            self.set_notification_enabled(False)
         else:
+            members = type(self).members
             old = []
             for name in names:
-                old.append((name, self._is_member_notify_enabled(name)))
-                self._set_member_notify_enabled(name, False)
+                if name in members:
+                    member = members[name]
+                    old.append((member, member.is_notification_enabled(self)))
+                    member.set_notification_enabled(self, False)
         yield
         if len(names) == 0:
-            self._set_notify_enabled(old)
+            self.set_notification_enabled(old)
         else:
-            for name, enable in old:
-                self._set_member_notify_enabled(name, enable)
+            for member, enabled in old:
+                member.set_notification_enabled(self, enabled)
 

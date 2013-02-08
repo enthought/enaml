@@ -213,21 +213,21 @@ class Observable(Atom):
             rgx = re.compile(name)
             observer = _RegexObserver(rgx, callback)
             has_match = False
-            for key in members:
-                if rgx.match(key):
+            for name, member in members.iteritems():
+                if rgx.match(name):
                     has_match = True
-                    self._set_member_notify_enabled(key, True)
+                    member.set_notification_enabled(self, True)
             if not has_match:
                 return False
         else:
             if name not in members:
                 return False
             observer = _Observer(name, callback)
-            self._set_member_notify_enabled(name, True)
+            members[name].set_notification_enabled(self, True)
         observers = self._observers
         if observers is None:
             observers = self._observers = []
-            self._set_notify_enabled(True)
+            self.set_notification_enabled(True)
         insort(observers, observer)
         return True
 
@@ -258,14 +258,14 @@ class Observable(Atom):
     #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
-    def _notify(self, name, old, new):
+    def notify(self, name, old, new):
         """ Handle the atom member change notification.
 
         This handler will dispatch any observers observing changes on
         the given member.
 
         """
-        super(Observable, self)._notify(name, old, new)
+        super(Observable, self).notify(name, old, new)
         observers = self._observers
         if observers is not None and old != new:
             change = Change(self, name, old, new)
