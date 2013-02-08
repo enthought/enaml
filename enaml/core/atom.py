@@ -2,7 +2,19 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-#: A global sentinel representing null
+import sys
+from contextlib import contextmanager
+
+
+if sys.maxint > (1 << 32):
+    MAX_MEMBER_COUNT = 63
+    ATOM_BIT = 64
+else:
+    MAX_MEMBER_COUNT = 31
+    ATOM_BIT = 32
+
+
+#: A global sentinel representing C null
 null = object()
 
 
@@ -13,23 +25,54 @@ class CAtom(object):
     as a C++ extension. Prefer building Enaml with this extension.
 
     """
-    __slots__ = ('_c_atom_data',)
+    __slots__ = ('_notifybits', '_c_atom_data')
 
     def __new__(cls, *args, **kwargs):
         count = getattr(cls, "_atom_member_count")
+        if count > MAX_MEMBER_COUNT:
+            raise TypeError("too many members %d" % count)
         self = object.__new__(cls)
+        self._notifybits = 0L
         self._c_atom_data = [null] * count
         return self
 
-    def notify(self, name, old, new):
-        """ Implement in a subclass to receive change notification.
+    def _get_notify_bit(self, bit):
+        return bool(self._notifybits & (1 << bit))
 
-        This will be called for members with the `listenable` flag
-        set to True.
+    def _set_notify_bit(self, bit, enable):
+        if enable:
+            self._notifybits |= (1 << bit)
+        else:
+            self._notifybits &= ~(1 << bit)
+
+    def _is_notify_enabled(self):
+        return self._get_notify_bit(ATOM_BIT)
+
+    def _set_notify_enabled(self, enable):
+        self._set_notify_bit(ATOM_BIT, enable)
+
+    def _is_member_notify_enabled(self, name):
+        member = getattr(type(self), name)
+        if not isinstance(member, CMember):
+            raise TypeError
+        return self._get_notify_bit(member._index)
+
+    def _set_member_notify_enabled(self, name, enable):
+        member = getattr(type(self), name)
+        if not isinstance(member, CMember):
+            raise TypeError
+        return self._set_notify_bit(member._index, enable)
+
+    def _notify(self, name, old, new):
+        """ Implement in a subclass to receive change notification.
 
         """
         pass
 
+
+MEMBER_HAS_DEFAULT = 1
+
+MEMBER_HAS_VALIDATE = 2
 
 class CMember(object):
     """ The base CMember class.
@@ -38,16 +81,18 @@ class CMember(object):
     as a C++ extension. Prefer building Enaml with this extension.
 
     """
-    __slots__ = (
-        '_member_name', '_member_index', 'default_func', 'validate_func'
-    )
+    __slots__ = ('_name', '_index', '_flags')
 
-    def __init__(self):
-        self._member_name = "<undefined>"
-        self._member_index = 0
-        self.listenable = False
-        self.default_func = None
-        self.validate_func = None
+    def __new__(cls, *args, **kwargs):
+        self = object.__new__(cls)
+        self._name = "<undefined>"
+        self._index = 0
+        self._flags = 0
+        if hasattr(self, 'default'):
+            self._flags |= MEMBER_HAS_DEFAULT
+        if hasattr(self, 'validate'):
+            self._flags |= MEMBER_HAS_VALIDATE
+        return self
 
     def __get__(self, owner, cls):
         if owner is None:
@@ -56,19 +101,18 @@ class CMember(object):
             t = "Expect object of type `CAtom`. "
             t += "Got object of type `%s` instead."
             raise TypeError(t % type(owner).__name__)
-        index = self._member_index
+        index = self._index
         data = owner._c_atom_data
         if index >= len(data):
             t = "'%s' object has no attribute '%s'"
             typename = type(owner).__name__
-            attrname = self._member_name
+            attrname = self._name
             raise AttributeError(t % (typename, attrname))
         value = data[index]
         if value is not null:
             return value
-        default_func = self.default_func
-        if default_func is not None:
-            value = default_func(owner, self._member_name)
+        if self._flags & MEMBER_HAS_DEFAULT:
+            value = self.default(owner, self._name)
         else:
             value = None
         data[index] = value
@@ -79,39 +123,40 @@ class CMember(object):
             t = "Expect object of type `CAtom`. "
             t += "Got object of type `%s` instead."
             raise TypeError(t % type(owner).__name__)
-        index = self._member_index
+        index = self._index
         data = owner._c_atom_data
         if index >= len(data):
             t = "'%s' object has no attribute '%s'"
             typename = type(owner).__name__
-            attrname = self._member_name
+            attrname = self._name
             raise AttributeError(t % (typename, attrname))
-        validate_func = self.validate_func
-        if validate_func is not None:
-            value = validate_func(owner, self._member_name, value)
+        if self._flags & MEMBER_HAS_VALIDATE:
+            print 'here'
+            value = self.validate(owner, self._name, value)
         old = data[index]
         data[index] = value
-        if self.listenable:
-            owner.notify(self._member_name, old, value)
+        if owner._get_notify_bit(ATOM_BIT) and owner._get_notify_bit(index):
+            owner._notify(self._name, old, value)
 
     def __delete__(self, owner):
         if not isinstance(owner, CAtom):
             t = "Expect object of type `CAtom`. "
             t += "Got object of type `%s` instead."
             raise TypeError(t % type(owner).__name__)
-        index = self._member_index
+        index = self._index
         data = owner._c_atom_data
         if index >= len(data):
             t = "'%s' object has no attribute '%s'"
             typename = type(owner).__name__
-            attrname = self._member_name
+            attrname = self._name
             raise AttributeError(t % (typename, attrname))
         data[index] = null
+        # XXX notify on delete
 
 
 #: Use the faster C++ versions of CAtom and CMember if available
 try:
-  from enaml.extensions.catom import CAtom, CMember
+  from enaml.extensions.catom import CAtom, CMember, MAX_MEMBER_COUNT
 except ImportError:
   pass
 
@@ -133,22 +178,28 @@ class AtomMeta(type):
         if '__slots__' not in dct:
             dct['__slots__'] = ()
         cls = type.__new__(meta, name, bases, dct)
-        base_members = {}
+        members = {}
         for base in cls.__mro__[1:]:
             if base is not CAtom:
                 for key, value in base.__dict__.iteritems():
                     if isinstance(value, CMember):
-                        base_members[key] = value
-        index = len(base_members)
+                        members[key] = value
+        index = len(members)
         for key, value in dct.iteritems():
             if isinstance(value, CMember):
-                value._member_name = key
-                if key in base_members:
-                    value._member_index = base_members[key]._member_index
+                value._name = key
+                if key in members:
+                    value._index = members[key]._index
                 else:
-                    value._member_index = index
+                    value._index = index
                     index += 1
+                members[key] = value
+        if index > MAX_MEMBER_COUNT:
+            t = 'A `CAtom` subclass can have at most %d members. '
+            t += 'The `%s` class defines %d.'
+            raise TypeError(t % (MAX_MEMBER_COUNT, name, index))
         cls._atom_member_count = index
+        cls._atom_members = members
         return cls
 
 
@@ -158,9 +209,7 @@ class Atom(CAtom):
     Atom objects are special Python objects which never allocate an
     instance dictionary unless one is explicitly requested. Instead,
     the storage that is allocated for an atom is computed based on the
-    `Member` variables declared on the atom; there is no overage. It
-    is not possible to dynamically add attributes to an Atom object,
-    unless an instance dict is requested.
+    `Member` variables declared on the atom with no over allocation.
 
     These restrictions make atom objects slightly less flexible than
     normal Python objects, but they are ~10x more memory efficient for
@@ -170,138 +219,36 @@ class Atom(CAtom):
     """
     __metaclass__ = AtomMeta
 
-
-def _simple_type_checker(kind):
-    def validator(owner, name, value):
-        if not isinstance(value, kind):
-            t = "The `%s` member on a `%s` object must be an instance of "
-            t += "`%s`. Got object of type `%s` instead."
-            obj_name = type(owner).__name__
-            val_name = type(value).__name__
-            kind_name = kind.__name__
-            raise TypeError(t % (name, obj_name, kind_name, val_name))
-        return value
-    return validator
-
-
-class Member(CMember):
-    """ The base class for defining atom members.
-
-    A `Member` provides a storage slot for a piece of data on an `Atom`
-    object. The member is a descriptor which gets and sets the value in
-    the internal data array on the atom object. It also provides the
-
-    A `Member` descriptor can only be used with subclasses of `Atom`.
-
-    """
-    __slots__ = ()
-
-    def __init__(self, kind=None, default=None, factory=None, validate=None,
-                 listenable=False):
-        """ Initialize a Member.
+    @contextmanager
+    def suppress_notifications(self, *names):
+        """ Disable member notifications within a context.
 
         Parameters
         ----------
-        kind : type, optional
-            The type of value allowed to be assigned to this member. If
-            a value being assigned is not an instance of this type, a
-            TypeError will be raised. If neither a default value nor a
-            factory are given, the type will be called with no arguments
-            to create the default value for the member.
+        *names
+            The string names of the members to suppress. If not given,
+            all members are suppressed.
 
-        default : object, optional
-            The default value for the member. If this is provided, it
-            should be an immutable value since it will not be copied.
-
-        factory : callable, optional
-            A callable object which accepts two arguments, the object
-            and the member name, and creates the default value for the
-            member. This will override any given default value.
-
-        validate : callable, optional
-            A callable which can be provided to validate and convert
-            a value before it is assigned to a member. If this is
-            given, it will override the type checking of `kind`. It
-            must accept three arguments: the object, name, and value.
-
-        listenable : bool, optional
-            Whether or not the member is listenable. If True, the
-            `notify` method on the atom will be invoked when this
-            member changes. The default is False.
+        Returns
+        -------
+        result : contextmanager
+            A context manager which disables the relevant notifications
+            for the duration of the context. When the context exits,
+            the notification state is retored to its previous state.
 
         """
-        super(Member, self).__init__()
-        if kind is not None:
-            assert isinstance(kind, type)
-        if validate is not None:
-            self.validate_func = validate
-        elif kind is not None:
-            self.validate_func = _simple_type_checker(kind)
-        if factory is not None:
-            self.default_func = factory
-        elif default is not None:
-            self.default_func = lambda obj, name: default
-        elif kind is not None:
-            self.default_func = lambda obj, name: kind()
-        self.listenable = listenable
-
-
-class Bool(Member):
-
-    __slots__ = ()
-
-    def __init__(self, default, listenable=False):
-        if default is not None:
-            default = bool(default)
-        super(Bool, self).__init__(bool, default, listenable=listenable)
-
-
-class Int(Member):
-
-    __slots__ = ()
-
-    def __init__(self, default=None, listenable=False):
-        if default is not None:
-            default = int(default)
-        super(Int, self).__init__(int, default, listenable=listenable)
-
-
-class Long(Member):
-
-    __slots__ = ()
-
-    def __init__(self, default=None, listenable=False):
-        if default is not None:
-            default = long(default)
-        super(Long, self).__init__(long, default, listenable=listenable)
-
-
-class Float(Member):
-
-    __slots__ = ()
-
-    def __init__(self, default=None, listenable=False):
-        if default is not None:
-            default = float(default)
-        super(Float, self).__init__(float, default, listenable=listenable)
-
-
-class Str(Member):
-
-    __slots__ = ()
-
-    def __init__(self, default=None, listenable=False):
-        if default is not None:
-            default = str(default)
-        super(Str, self).__init__(str, default, listenable=listenable)
-
-
-class Unicode(Member):
-
-    __slots__ = ()
-
-    def __init__(self, default=None, listenable=False):
-        if default is not None:
-            default = unicode(default)
-        super(Unicode, self).__init__(unicode, default, listenable=listenable)
+        if len(names) == 0:
+            old = self._is_notify_enabled()
+            self._set_notify_enabled(False)
+        else:
+            old = []
+            for name in names:
+                old.append((name, self._is_member_notify_enabled(name)))
+                self._set_member_notify_enabled(name, False)
+        yield
+        if len(names) == 0:
+            self._set_notify_enabled(old)
+        else:
+            for name, enable in old:
+                self._set_member_notify_enabled(name, enable)
 

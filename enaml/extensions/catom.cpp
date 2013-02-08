@@ -6,6 +6,10 @@
 #include "pythonhelpers.h"
 
 
+#define MAX_MEMBER_COUNT ( sizeof( size_t ) * 8 - 1 )
+#define ATOM_BIT MAX_MEMBER_COUNT
+
+
 using namespace PythonHelpers;
 
 
@@ -15,10 +19,13 @@ extern "C" {
 static PyObject* _atom_member_count;
 static PyObject* _undefined_name;
 static PyObject* _notify;
+static PyObject* _default;
+static PyObject* _validate;
 
 
 typedef struct {
     PyObject_HEAD
+    size_t notifybits;
     Py_ssize_t count;
     PyObject** data;
 } CAtom;
@@ -26,7 +33,7 @@ typedef struct {
 
 typedef struct {
     PyObject_HEAD
-    int flags;
+    size_t flags;
     Py_ssize_t index;
     PyObject* name;
 } CMember;
@@ -35,9 +42,29 @@ typedef struct {
 enum CMemberFlag
 {
     MemberHasDefault = 0x1,
-    MemberHasValidate = 0x2,
-    MemberIsListenable = 0x4,
+    MemberHasValidate = 0x2
 };
+
+
+inline bool
+get_notify_bit( CAtom* atom, size_t bit )
+{
+    return atom->notifybits & ( 1 << bit );
+}
+
+
+inline void
+set_notify_bit( CAtom* atom, size_t bit, bool set )
+{
+    if( set )
+        atom->notifybits |= ( 1 << bit );
+    else
+        atom->notifybits &= ~( 1 << bit );
+}
+
+
+static int
+CMember_Check( PyObject* member );
 
 
 static PyObject*
@@ -56,15 +83,30 @@ CAtom_new( PyTypeObject* type, PyObject* args, PyObject* kwargs )
             return 0;
         count = 0;
     }
+    else if( count > static_cast<Py_ssize_t>( MAX_MEMBER_COUNT ) )
+    {
+        return py_type_fail( "too many members" );
+        PyErr_Format(
+            PyExc_TypeError,
+            "A `CAtom` can have at most %d members. "
+            "The `%s` class defines %d.",
+            MAX_MEMBER_COUNT, type->tp_name, count
+        );
+        return 0;
+    }
     PyObjectPtr self_ptr( PyType_GenericNew( type, args, kwargs ) );
     if( !self_ptr )
         return 0;
     CAtom* atom = reinterpret_cast<CAtom*>( self_ptr.get() );
-    atom->data = reinterpret_cast<PyObject**>( PyMem_MALLOC( sizeof( PyObject* ) * count ) );
-    if( !atom->data )
-        return PyErr_NoMemory();
-    memset( atom->data, 0, sizeof( PyObject* ) * count );
     atom->count = count;
+    if( count > 0 )
+    {
+        void* data = PyMem_MALLOC( sizeof( PyObject* ) * count );
+        if( !data )
+            return PyErr_NoMemory();
+        memset( data, 0, sizeof( PyObject* ) * count );
+        atom->data = reinterpret_cast<PyObject**>( data );
+    }
     return self_ptr.release();
 }
 
@@ -97,23 +139,118 @@ CAtom_dealloc( CAtom* self )
 {
     PyObject_GC_UnTrack( self );
     CAtom_clear( self );
-    PyMem_FREE( self->data );
+    if( self->data )
+        PyMem_FREE( self->data );
     self->ob_type->tp_free( reinterpret_cast<PyObject*>( self ) );
+}
+
+
+static PyObject*
+CAtom_is_notify_enabled( CAtom* self, PyObject* args )
+{
+    if( get_notify_bit( self, ATOM_BIT ) )
+        Py_RETURN_TRUE;
+    Py_RETURN_FALSE;
+}
+
+
+static PyObject*
+CAtom_set_notify_enabled( CAtom* self, PyObject* value )
+{
+    if( value == Py_True )
+    {
+        set_notify_bit( self, ATOM_BIT, true );
+        Py_RETURN_NONE;
+    }
+    if( value == Py_False )
+    {
+        set_notify_bit( self, ATOM_BIT, false );
+        Py_RETURN_NONE;
+    }
+    return py_expected_type_fail( value, "bool" );
+}
+
+
+static PyObject*
+CAtom_is_member_notify_enabled( CAtom* self, PyObject* args )
+{
+    PyObject* name;
+    if( !PyArg_ParseTuple( args, "S", &name ) )
+        return 0;
+    PyObjectPtr memberptr(
+        PyObject_GetAttr( reinterpret_cast<PyObject*>( self->ob_type ), name )
+    );
+    if( !memberptr )
+        return 0;
+    if( !CMember_Check( memberptr.get() ) )
+        return py_expected_type_fail( memberptr.get(), "CMember" );
+    CMember* member = reinterpret_cast<CMember*>( memberptr.get() );
+    if( get_notify_bit( self, member->index ) )
+        Py_RETURN_TRUE;
+    Py_RETURN_FALSE;
+}
+
+
+static PyObject*
+CAtom_set_member_notify_enabled( CAtom* self, PyObject* args )
+{
+    PyObject* name;
+    PyObject* setbit;
+    if( !PyArg_ParseTuple( args, "SO", &name, &setbit ) )
+        return 0;
+    PyObjectPtr memberptr(
+        PyObject_GetAttr( reinterpret_cast<PyObject*>( self->ob_type ), name )
+    );
+    if( !memberptr )
+        return 0;
+    if( !CMember_Check( memberptr.get() ) )
+        return py_expected_type_fail( memberptr.get(), "CMember" );
+    CMember* member = reinterpret_cast<CMember*>( memberptr.get() );
+    if( setbit == Py_True )
+        set_notify_bit( self, member->index, true );
+    else if( setbit == Py_False )
+        set_notify_bit( self, member->index, false );
+    else
+        return py_expected_type_fail( setbit, "bool" );
+    Py_RETURN_NONE;
 }
 
 
 static PyObject*
 CAtom_notify( CAtom* self, PyObject* args )
 {
-    // Implement in a subclass to do any necessary work.
+    // Reimplement in a subclass as needed.
     Py_RETURN_NONE;
+}
+
+
+static PyObject*
+CAtom_sizeof( CAtom* self, PyObject* args )
+{
+    Py_ssize_t size = self->ob_type->tp_basicsize;
+    size += sizeof( PyObject* ) * self->count;
+    return PyInt_FromSsize_t( size );
 }
 
 
 static PyMethodDef
 CAtom_methods[] = {
-    { "notify", ( PyCFunction )CAtom_notify, METH_VARARGS,
-      "Notify any listeners that a member value has changed" },
+    { "_is_notify_enabled",
+      ( PyCFunction )CAtom_is_notify_enabled, METH_NOARGS,
+      "Get whether notification is enabled for the atom." },
+    { "_set_notify_enabled",
+      ( PyCFunction )CAtom_set_notify_enabled, METH_O,
+      "Set whether notification is enabled for the atom." },
+    { "_is_member_notify_enabled",
+      ( PyCFunction )CAtom_is_member_notify_enabled, METH_VARARGS,
+      "Get whether notification for a named member is enabled." },
+    { "_set_member_notify_enabled",
+      ( PyCFunction )CAtom_set_member_notify_enabled, METH_VARARGS,
+      "Set whether notification for a named member is enabled." },
+    { "_notify", ( PyCFunction )CAtom_notify, METH_VARARGS,
+      "Called when a notifying member is changed. Reimplement as needed." },
+    { "__sizeof__", ( PyCFunction )CAtom_sizeof, METH_NOARGS,
+      "__sizeof__() -> size of object in memory, in bytes" },
     { 0 } // sentinel
 };
 
@@ -175,8 +312,16 @@ CMember_new( PyTypeObject* type, PyObject* args, PyObject* kwargs )
     PyObjectPtr self_ptr( PyType_GenericNew( type, args, kwargs ) );
     if( !self_ptr )
         return 0;
+    CMember* member = reinterpret_cast<CMember*>( self_ptr.get() );
     Py_INCREF( _undefined_name );
-    reinterpret_cast<CMember*>( self_ptr.get() )->name = _undefined_name;
+    member->name = _undefined_name;
+    // Check for `default` and `validate` methods. Don't do the check
+    // on the type, because a subclass which defines a slot but never
+    // fills it will still return True.
+    if( PyObject_HasAttr( self_ptr.get(), _default ) )
+        member->flags |= MemberHasDefault;
+    if( PyObject_HasAttr( self_ptr.get(), _validate ) )
+        member->flags |= MemberHasValidate;
     return self_ptr.release();
 }
 
@@ -209,9 +354,9 @@ CMember__get__( PyObject* self, PyObject* owner, PyObject* type )
         Py_INCREF( value );
         return value;
     }
-    if( member->default_func )
+    if( member->flags & MemberHasDefault )
     {
-        value = PyObject_CallFunctionObjArgs( member->default_func, owner, member->name, 0 );
+        value = PyObject_CallMethodObjArgs( self, _default, owner, member->name, 0 );
         if( !value )
             return 0;
     }
@@ -242,11 +387,11 @@ CMember__set__( PyObject* self, PyObject* owner, PyObject* value )
         return -1;
     }
     // `value` is currently null or a borrowed reference
-    if( value && member->validate_func )
+    if( value && ( member->flags & MemberHasValidate ) )
     {
-        value = PyObject_CallFunctionObjArgs( member->validate_func, owner, member->name, value, 0 );
+        value = PyObject_CallMethodObjArgs( self, _validate, owner, member->name, value, 0 );
         if( !value )
-            return 0;
+            return -1;
         // `value` is now an owned reference
     }
     else
@@ -257,7 +402,7 @@ CMember__set__( PyObject* self, PyObject* owner, PyObject* value )
     // swap before decrefing since that can have side effects
     PyObject* old = atom->data[ member->index ];
     atom->data[ member->index ] = value;
-    if( member->listenable )
+    if( get_notify_bit( atom, ATOM_BIT ) && get_notify_bit( atom, member->index ) )
     {
         PyObject* oldval = old == 0 ? Py_None : old;
         PyObject* newval = value == 0 ? Py_None : value;
@@ -324,107 +469,14 @@ CMember_set_index( CMember* self, PyObject* value, void* context )
 }
 
 
-static PyObject*
-CMember_get_default_func( CMember* self, void* context )
-{
-    if( !self->default_func )
-        Py_RETURN_NONE;
-    Py_INCREF( self->default_func );
-    return self->default_func;
-}
-
-
-static int
-CMember_set_default_func( CMember* self, PyObject* value, void* context )
-{
-    value = value == Py_None ? 0 : value;
-    if( value && !PyCallable_Check( value ) )
-    {
-        py_expected_type_fail( value, "callable" );
-        return -1;
-    }
-    PyObject* old = self->default_func;
-    self->default_func = value;
-    Py_XINCREF( value );
-    Py_XDECREF( old );
-    return 0;
-}
-
-
-static PyObject*
-CMember_get_validate_func( CMember* self, void* context )
-{
-    if( !self->validate_func )
-        Py_RETURN_NONE;
-    Py_INCREF( self->validate_func );
-    return self->validate_func;
-}
-
-
-static int
-CMember_set_validate_func( CMember* self, PyObject* value, void* context )
-{
-    value = value == Py_None ? 0 : value;
-    if( value && !PyCallable_Check( value ) )
-    {
-        py_expected_type_fail( value, "callable" );
-        return -1;
-    }
-    PyObject* old = self->validate_func;
-    self->validate_func = value;
-    Py_XINCREF( value );
-    Py_XDECREF( old );
-    return 0;
-}
-
-
-static PyObject*
-CMember_get_listenable( CMember* self, void* context )
-{
-    if( self->listenable )
-        Py_RETURN_TRUE;
-    Py_RETURN_FALSE;
-}
-
-
-static int
-CMember_set_listenable( CMember* self, PyObject* value, void* context )
-{
-    if( value == Py_True )
-        self->listenable = true;
-    else if( value == Py_False )
-        self->listenable = false;
-    else
-    {
-        py_expected_type_fail( value, "bool" );
-        return -1;
-    }
-    return 0;
-}
-
-
 static PyGetSetDef
 CMember_getset[] = {
-    { "_member_name",
-      ( getter )CMember_get_name,
-      ( setter )CMember_set_name,
+    { "_name",
+      ( getter )CMember_get_name, ( setter )CMember_set_name,
       "Get and set the name to which the member is bound. Use with extreme caution!" },
-    { "_member_index",
-      ( getter )CMember_get_index,
-      ( setter )CMember_set_index,
+    { "_index",
+      ( getter )CMember_get_index, ( setter )CMember_set_index,
       "Get and set the index to which the member is bound. Use with extreme caution!" },
-    { "default_func",
-      ( getter )CMember_get_default_func,
-      ( setter )CMember_set_default_func,
-      "Get and set the default function for the member. Must be callable or None." },
-    { "validate_func",
-      ( getter )CMember_get_validate_func,
-      ( setter )CMember_set_validate_func,
-      "Get and set the validate function for the member. Must be callable or None." },
-    { "listenable",
-      ( getter )CMember_get_listenable,
-      ( setter )CMember_set_listenable,
-      "Get and set whether the member is listenable. Must be a bool." },
     { 0 } // sentinel
 };
 
@@ -480,6 +532,13 @@ PyTypeObject CMember_Type = {
 };
 
 
+static int
+CMember_Check( PyObject* member )
+{
+    return PyObject_TypeCheck( member, &CMember_Type );
+}
+
+
 static PyMethodDef
 catom_methods[] = {
     { 0 } // Sentinel
@@ -498,8 +557,14 @@ initcatom( void )
     _undefined_name = PyString_FromString( "<undefined>" );
     if( !_undefined_name )
         return;
-    _notify = PyString_FromString( "notify" );
+    _notify = PyString_FromString( "_notify" );
     if( !_notify )
+        return;
+    _default = PyString_FromString( "default" );
+    if( !_default )
+        return;
+    _validate = PyString_FromString( "validate" );
+    if( !_validate )
         return;
     if( PyType_Ready( &CAtom_Type ) )
         return;
@@ -509,6 +574,7 @@ initcatom( void )
     Py_INCREF( &CMember_Type );
     PyModule_AddObject( mod, "CAtom", reinterpret_cast<PyObject*>( &CAtom_Type ) );
     PyModule_AddObject( mod, "CMember", reinterpret_cast<PyObject*>( &CMember_Type ) );
+    PyModule_AddObject( mod, "MAX_MEMBER_COUNT", PyLong_FromUnsignedLongLong( MAX_MEMBER_COUNT ) );
 }
 
 
