@@ -158,8 +158,10 @@ class PivotModel(TabularModel):
 
     def cell_styles(self, rows, columns, data):
         if self.engine.shade_depth:
-            return (self.depth_color_table[self.engine.fold_depth(row, column)]
-                        for row in rows for column in columns)
+            return ({
+                'background': self.depth_color_table[self.engine.fold_depth(row, column)],
+                'align': 'right',
+                } for row in rows for column in columns)
         else:
             return None
 
@@ -181,9 +183,9 @@ class PivotModel(TabularModel):
         red = np.interp(x, xp, base_red)
         green = np.interp(x, xp, base_green)
         blue = np.interp(x, xp, base_blue)
-        self.depth_color_table = [{
-            'background': 'rgba(%d,%d,%d,1.0)'%(int(red[i]), int(green[i]), int(blue[i]))
-            } for i in range(len(red))]
+        self.depth_color_table = [
+            'rgba(%d,%d,%d,1.0)'%(int(red[i]), int(green[i]), int(blue[i]))
+            for i in range(len(red))]
 
 
 
