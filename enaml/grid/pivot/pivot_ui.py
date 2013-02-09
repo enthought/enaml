@@ -161,6 +161,7 @@ class PivotModel(TabularModel):
             return ({
                 'background': self.depth_color_table[self.engine.fold_depth(row, column)],
                 'align': 'right',
+                'padding': (0,5,0,5),
                 } for row in rows for column in columns)
         else:
             return None
