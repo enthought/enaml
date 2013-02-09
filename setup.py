@@ -35,6 +35,11 @@ enaml_extensions = Feature(
             ['enaml/extensions/catom.cpp'],
             language='c++',
         ),
+        Extension(
+            'enaml.extensions.observerpool',
+            ['enaml/extensions/observerpool.cpp'],
+            language='c++',
+        ),
     ],
 )
 
