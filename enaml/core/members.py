@@ -31,6 +31,7 @@ class Member(CMember):
             any value given by `default`.
 
         """
+        self.has_default = True
         self._default = default
         self._factory = factory
 
@@ -52,6 +53,7 @@ class TypedMember(Member):
 
     def __init__(self, kind=None, default=None, factory=None):
         super(TypedMember, self).__init__(default, factory)
+        self.has_validate = True
         if kind is not None:
             assert isinstance(kind, type), "Kind must be a type"
             self._kind = kind
@@ -60,11 +62,12 @@ class TypedMember(Member):
 
     def validate(self, owner, name, value):
         if not isinstance(value, self._kind):
-            t = "Member '%s' requires object of type `%s`. "
-            t += "Got object of type `%s` instead."
+            t = "The '%s' member on the `%s` object requires a value of type "
+            t += "`%s`. Got value of type `%s` instead."
+            owner_type = type(owner).__name__
             kind_type = self._kind.__name__
-            val_type = type(value).__name__
-            raise TypeError(t % (name, kind_type, val_type))
+            value_type = type(value).__name__
+            raise TypeError(t % (name, owner_type, kind_type, value_type))
         return value
 
 
@@ -144,16 +147,12 @@ class List(TypedMember):
 
     __slots__ = ()
 
-    @staticmethod
-    def list_factory(owner, name):
-        return []
-
     def __init__(self, default=None):
         if default is None:
-            factory = self.list_factory
+            factory = list
         else:
             assert isinstance(default, list)
-            factory = lambda owner, name: default[:]
+            factory = lambda: default[:]
         super(List, self).__init__(list, factory=factory)
 
 
@@ -161,15 +160,11 @@ class Dict(TypedMember):
 
     __slots__ = ()
 
-    @staticmethod
-    def dict_factory(owner, name):
-        return {}
-
     def __init__(self, default=None):
         if default is None:
-            factory = self.dict_factory
+            factory = dict
         else:
             assert isinstance(default, dict)
-            factory = lambda owner, name: default.copy()
+            factory = lambda: default.copy()
         super(Dict, self).__init__(dict, factory=factory)
 
