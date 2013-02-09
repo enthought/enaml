@@ -79,12 +79,9 @@ class PivotModel(TabularModel):
         return []
 
     def data(self, rows, columns):
-        data = []
-        for row in rows:
-            for column in columns:
-                val = self.engine.data(row, column)
-                data.append(self.engine.format_value(val))
-        return data
+        return (self.engine.format_value(self.engine.data(row, col))
+                    for row in rows
+                    for col in columns)
 
     def _update_structure(self, new):
         """ Handle the structure changed event.
