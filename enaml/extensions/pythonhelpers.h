@@ -5,6 +5,7 @@
 #pragma once
 #include <Python.h>
 #include <structmember.h>
+#include <string>
 
 
 #ifndef Py_RETURN_NOTIMPLEMENTED
@@ -87,6 +88,21 @@ public:
     PyObject* get() const
     {
         return m_pyobj;
+    }
+
+    PyObject* newref() const
+    {
+        Py_XINCREF( m_pyobj );
+        return m_pyobj;
+    }
+
+    void set( PyObject* pyobj, bool takeref=false )
+    {
+        PyObject* old = m_pyobj;
+        m_pyobj = pyobj;
+        if( takeref )
+            Py_XINCREF( m_pyobj );
+        Py_XDECREF( old );
     }
 
     PyObject* release( bool giveref=false )
@@ -207,11 +223,25 @@ public:
         return *this;
     }
 
+    PyObjectPtr& operator=( PyObject* rhs )
+    {
+        PyObject* old = m_pyobj;
+        m_pyobj = rhs;
+        Py_XDECREF( old );
+        return *this;
+    }
+
 protected:
 
     PyObject* m_pyobj;
 
 };
+
+
+bool operator!=( const PyObjectPtr& lhs, const PyObjectPtr& rhs )
+{
+    return lhs.get() != rhs.get();
+}
 
 
 /*-----------------------------------------------------------------------------
@@ -359,6 +389,11 @@ public:
     Py_ssize_t size() const
     {
         return PyDict_Size( m_pyobj );
+    }
+
+    PyObjectPtr get_item( PyObject* key ) const
+    {
+        return PyObjectPtr( PyDict_GetItem( m_pyobj, key ), true );
     }
 
     PyObjectPtr get_item( PyObjectPtr& key ) const
