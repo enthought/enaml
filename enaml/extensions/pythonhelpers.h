@@ -131,9 +131,16 @@ public:
         return 0;
     }
 
-    int is_true() const
+    bool is_true( bool clear_err=true ) const
     {
-        return PyObject_IsTrue( m_pyobj );
+        int truth = PyObject_IsTrue( m_pyobj );
+        if( truth == 1 )
+            return true;
+        if( truth == 0 )
+            return false;
+        if( clear_err )
+            PyErr_Clear();
+        return false;
     }
 
     bool is_None() const

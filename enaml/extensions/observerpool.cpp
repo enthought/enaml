@@ -16,9 +16,74 @@ class ObserverPool
     class Topic
     {
 
+        struct ModifyTask
+        {
+            ModifyTask( Topic& topic, PyObjectPtr& observer ) :
+                m_topic( topic ), m_observer( observer ) {}
+            virtual ~ModifyTask() {}
+            virtual void run() = 0;
+            Topic& m_topic;
+            PyObjectPtr m_observer;
+        };
+
+        struct AddObserverTask : public ModifyTask
+        {
+            AddObserverTask( Topic& topic, PyObjectPtr& observer ) :
+                ModifyTask( topic, observer ) {}
+            void run() { m_topic.add_observer( m_observer ); }
+        };
+
+        struct RemoveObserverTask : public ModifyTask
+        {
+            RemoveObserverTask( Topic& topic, PyObjectPtr& observer ) :
+                ModifyTask( topic, observer ) {}
+            void run() { m_topic.remove_observer( m_observer ); }
+        };
+
+        class ModifyGuard
+        {
+
+        public:
+
+            ModifyGuard( Topic& topic ) : m_topic( topic )
+            {
+                if( !m_topic.m_modify_guard )
+                    m_topic.m_modify_guard = this;
+            }
+
+            ~ModifyGuard()
+            {
+                if( m_topic.m_modify_guard == this )
+                {
+                    m_topic.m_modify_guard = 0;
+                    std::vector<ModifyTask*>::iterator it;
+                    std::vector<ModifyTask*>::iterator end = m_tasks.end();
+                    for( it = m_tasks.begin(); it != end; ++it )
+                    {
+                        ( *it )->run();
+                        delete *it;
+                    }
+                }
+            }
+
+            void add_task( ModifyTask* task )
+            {
+                if( task )
+                    m_tasks.push_back( task );
+            }
+
+        private:
+
+            Topic& m_topic;
+            std::vector<ModifyTask*> m_tasks;
+
+        };
+
+        friend class ModifyGuard;
+
     public:
 
-        Topic( PyObjectPtr& topic ) : m_topic( topic ) {}
+        Topic( PyObjectPtr& topic ) : m_topic( topic ), m_modify_guard( 0 ) {}
 
         ~Topic() {}
 
@@ -31,6 +96,12 @@ class ObserverPool
         {
             if( !observer )
                 return;
+            if( m_modify_guard )
+            {
+                ModifyTask* task = new AddObserverTask( *this, observer );
+                m_modify_guard->add_task( task );
+                return;
+            }
             std::vector<PyObjectPtr>::iterator it;
             std::vector<PyObjectPtr>::iterator end = m_observers.end();
             for( it = m_observers.begin(); it != end; ++it )
@@ -45,6 +116,12 @@ class ObserverPool
         {
             if( !observer )
                 return;
+            if( m_modify_guard )
+            {
+                ModifyTask* task = new RemoveObserverTask( *this, observer );
+                m_modify_guard->add_task( task );
+                return;
+            }
             std::vector<PyObjectPtr>::iterator it;
             std::vector<PyObjectPtr>::iterator end = m_observers.end();
             for( it = m_observers.begin(); it != end; ++it )
@@ -61,12 +138,21 @@ class ObserverPool
         {
             if( !argument )
                 return 0;
+            ModifyGuard guard( *this );
             std::vector<PyObjectPtr>::iterator it;
             std::vector<PyObjectPtr>::iterator end = m_observers.end();
             for( it = m_observers.begin(); it != end; ++it )
             {
-                if( !it->operator()( argument ) )
-                    return -1;
+                if( it->is_true() )
+                {
+                    if( !it->operator()( argument ) )
+                        return -1;
+                }
+                else
+                {
+                    ModifyTask* task = new RemoveObserverTask( *this, *it );
+                    m_modify_guard->add_task( task );
+                }
             }
             return 0;
         }
@@ -91,6 +177,8 @@ class ObserverPool
 
         PyObjectPtr m_topic;
         std::vector<PyObjectPtr> m_observers;
+        ModifyGuard* m_modify_guard;
+
     };
 
 public:
