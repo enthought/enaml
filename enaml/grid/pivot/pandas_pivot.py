@@ -112,7 +112,7 @@ class Node(HasTraits):
     def tree_from_multiindex(cls, multiindex):
         """ Create a rooted tree from a properly sorted pandas MultiIndex.
         """
-        root = cls(expanded=True)
+        root = cls(text='', expanded=True)
         for path in multiindex:
             root.add_path(path)
         return root
@@ -208,6 +208,7 @@ class MarginNode(Node):
     text = Unicode('Total')
     path = PrototypedFrom('parent')
     depth = PrototypedFrom('parent')
+    margin = True
 
 
 class AggregationNode(Node):
@@ -545,8 +546,8 @@ class PandasEngine(HasTraits):
         if not self._do_reset_headers:
             return
 
-        row_root = Node(expanded=True)
-        col_root = Node(expanded=True)
+        row_root = Node(text='', expanded=True)
+        col_root = Node(text='', expanded=True)
         for aggregate in self.aggregates:
             tables = [self._get_pivot_table(aggregate, len(self.row_pivots),
                 len(self.col_pivots))]
