@@ -126,11 +126,12 @@ def parse_font(font):
             float(size[:-1])
         except ValueError:
             return None
-    elif token[-2:] in _units:
+    elif size[-2:] in _units:
         try:
             float(size[:-2])
         except ValueError:
             return None
+    # else, the size is one of the keywords in '_sizes'
 
     return Font(style, variant, weight, size, family)
 
