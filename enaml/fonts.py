@@ -126,7 +126,7 @@ def parse_font(font):
             float(size[:-1])
         except ValueError:
             return None
-    else:
+    elif token[-2:] in _units:
         try:
             float(size[:-2])
         except ValueError:
