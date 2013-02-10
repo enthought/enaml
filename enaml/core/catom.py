@@ -9,6 +9,9 @@ much slower than the extension, and production deployments should use
 Enaml with the compiled extension modules for the best performance.
 
 """
+from collections import namedtuple
+
+
 #: A global sentinel representing C null
 null = object()
 
@@ -23,8 +26,12 @@ MEMBER_HAS_DEFAULT = 0x01
 MEMBER_HAS_VALIDATE = 0x02
 
 
+#: A namedtuple which holds information about an atom member change.
+MemberChange = namedtuple('MemberChange', 'object name old new')
+
+
 def get_notify_bit(atom, bit):
-    return bool(atom._notifybits & (1 << bit))
+    return atom._notifybits & (1 << bit)
 
 
 def set_notify_bit(atom, bit, enable):
@@ -45,28 +52,38 @@ class CAtom(object):
 
     def __new__(cls, *args, **kwargs):
         self = object.__new__(cls)
-        count = len(cls.members)
+        count = len(cls._atom_members)
         self._notifybits = 0
         self._c_atom_data = [null] * count
         return self
+
+    def lookup_member(self, name):
+        """ Lookup a member on the object.
+
+        """
+        ob_type = type(self)
+        member = getattr(ob_type, name, None)
+        if not isinstance(member, CMember):
+            raise TypeError("object has no member '%s'" % member)
+        return member
 
     def notifications_enabled(self, name=None):
         """ Get whether notifications are enabled for the atom.
 
         """
         if name is None:
-            return get_notify_bit(self, ATOM_BIT)
-        member = self.members()[name]
-        return get_notify_bit(self, member._index + INDEX_OFFSET)
+            return bool(get_notify_bit(self, ATOM_BIT))
+        member = self.lookup_member(name)
+        return bool(get_notify_bit(self, member._index + INDEX_OFFSET))
 
-    def enabled_notifications(self, name=None):
+    def enable_notifications(self, name=None):
         """ Enable notifications for the atom.
 
         """
         if name is None:
             set_notify_bit(self, ATOM_BIT, True)
         else:
-            member = self.members()[name]
+            member = self.lookup_member(name)
             set_notify_bit(self, member._index + INDEX_OFFSET, True)
 
     def disable_notifications(self, name=None):
@@ -76,10 +93,10 @@ class CAtom(object):
         if name is None:
             set_notify_bit(self, ATOM_BIT, False)
         else:
-            member = self.members()[name]
+            member = self.lookup_member(name)
             set_notify_bit(self, member._index + INDEX_OFFSET, False)
 
-    def notify(self, name, old, new):
+    def notify(self, change):
         """ Reimplement in a subclass to receive change notification.
 
         """
@@ -176,7 +193,13 @@ class CMember(object):
         if get_notify_bit(owner, ATOM_BIT) and get_notify_bit(owner, bit):
             if old is null:
                 old = None
-            owner.notify(self._name, old, value)
+            try:
+                changed = old != value
+            except Exception:
+                changed = True
+            if changed:
+                change = MemberChange(owner, self._name, old, value)
+                owner.notify(change)
 
     def __delete__(self, owner):
         """ Delete the value of the member.
@@ -197,16 +220,14 @@ class CMember(object):
         data[index] = null
         bit = index + INDEX_OFFSET
         if get_notify_bit(owner, ATOM_BIT) and get_notify_bit(owner, bit):
-            if old is null:
-                old = None
-            owner.notify(self._name, old, None)
+            if old is not null:
+                change = MemberChange(owner, self._name, old, None)
+                owner.notify(change)
 
 
 #: Use the faster C++ versions if available
 try:
-    from enaml.extensions.catom import CAtom, CMember
-    print 'success'
+    from enaml.extensions.catom import CAtom, CMember, MemberChange
 except ImportError:
-    print ' bail'
     pass
 
