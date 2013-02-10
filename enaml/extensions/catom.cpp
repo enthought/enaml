@@ -51,10 +51,196 @@ typedef struct {
 } CMember;
 
 
+typedef struct {
+    PyObject_HEAD
+    PyObject* object;
+    PyObject* name;
+    PyObject* oldvalue;
+    PyObject* newvalue;
+} MemberChange;
+
+
 enum CMemberFlag
 {
     MemberHasDefault = 0x1,
     MemberHasValidate = 0x2
+};
+
+
+static void
+MemberChange_clear( MemberChange* self )
+{
+    Py_CLEAR( self->object );
+    Py_CLEAR( self->name );
+    Py_CLEAR( self->oldvalue );
+    Py_CLEAR( self->newvalue );
+}
+
+
+static int
+MemberChange_traverse( MemberChange* self, visitproc visit, void* arg )
+{
+    Py_VISIT( self->object );
+    Py_VISIT( self->name );
+    Py_VISIT( self->oldvalue );
+    Py_VISIT( self->newvalue );
+    return 0;
+}
+
+
+static void
+MemberChange_dealloc( MemberChange* self )
+{
+    PyObject_GC_UnTrack( self );
+    MemberChange_clear( self );
+    self->ob_type->tp_free( reinterpret_cast<PyObject*>( self ) );
+}
+
+
+static PyObject*
+MemberChange_get_object( MemberChange* self, void* context )
+{
+    if( !self->object )
+        Py_RETURN_NONE;
+    Py_INCREF( self->object );
+    return self->object;
+}
+
+
+static PyObject*
+MemberChange_get_name( MemberChange* self, void* context )
+{
+    if( !self->name )
+        Py_RETURN_NONE;
+    Py_INCREF( self->name );
+    return self->name;
+}
+
+
+static PyObject*
+MemberChange_get_oldvalue( MemberChange* self, void* context )
+{
+    if( !self->oldvalue )
+        Py_RETURN_NONE;
+    Py_INCREF( self->oldvalue );
+    return self->oldvalue;
+}
+
+
+static PyObject*
+MemberChange_get_newvalue( MemberChange* self, void* context )
+{
+    if( !self->newvalue )
+        Py_RETURN_NONE;
+    Py_INCREF( self->newvalue );
+    return self->newvalue;
+}
+
+
+static PyGetSetDef
+MemberChange_getset[] = {
+    { "object", ( getter )MemberChange_get_object, 0,
+      "Get atom object whose member has changed." },
+    { "name", ( getter )MemberChange_get_name, 0,
+      "Get the name of the member which changed on the atom object." },
+    { "old", ( getter )MemberChange_get_oldvalue, 0,
+      "Get the old value of the member." },
+    { "new", ( getter )MemberChange_get_newvalue, 0,
+      "Get the new value of the member." },
+    { 0 } // sentinel
+};
+
+
+static PyObject*
+MemberChange_repr( MemberChange* self )
+{
+    PyObjectPtr objectstr;
+    if( self->object )
+         objectstr = PyObject_Repr( self->object );
+    else
+         objectstr = PyObject_Repr( Py_None );
+    if( !objectstr )
+        return 0;
+    PyObjectPtr namestr;
+    if( self->name )
+        namestr = PyObject_Repr( self->name );
+    else
+        namestr = PyObject_Repr( Py_None );
+    if( !namestr )
+        return 0;
+    PyObjectPtr oldstr;
+    if( self->oldvalue )
+        oldstr = PyObject_Repr( self->oldvalue );
+    else
+        oldstr = PyObject_Repr( Py_None );
+    if( !oldstr )
+        return 0;
+    PyObjectPtr newstr;
+    if( self->newvalue )
+        newstr = PyObject_Repr( self->newvalue );
+    else
+        newstr = PyObject_Repr( Py_None );
+    if( !newstr )
+        return 0;
+    PyObject* res = PyString_FromFormat(
+        "MemberChange(object=%s, name=%s, old=%s, new=%s)",
+        PyString_AsString( objectstr.get() ),
+        PyString_AsString( namestr.get() ),
+        PyString_AsString( oldstr.get() ),
+        PyString_AsString( newstr.get() )
+    );
+    return res;
+}
+
+
+PyTypeObject MemberChange_Type = {
+    PyObject_HEAD_INIT( &PyType_Type )
+    0,                                      /* ob_size */
+    "catom.MemberChange",                   /* tp_name */
+    sizeof( MemberChange ),                 /* tp_basicsize */
+    0,                                      /* tp_itemsize */
+    (destructor)MemberChange_dealloc,       /* tp_dealloc */
+    (printfunc)0,                           /* tp_print */
+    (getattrfunc)0,                         /* tp_getattr */
+    (setattrfunc)0,                         /* tp_setattr */
+    (cmpfunc)0,                             /* tp_compare */
+    (reprfunc)MemberChange_repr,            /* tp_repr */
+    (PyNumberMethods*)0,                    /* tp_as_number */
+    (PySequenceMethods*)0,                  /* tp_as_sequence */
+    (PyMappingMethods*)0,                   /* tp_as_mapping */
+    (hashfunc)0,                            /* tp_hash */
+    (ternaryfunc)0,                         /* tp_call */
+    (reprfunc)0,                            /* tp_str */
+    (getattrofunc)0,                        /* tp_getattro */
+    (setattrofunc)0,                        /* tp_setattro */
+    (PyBufferProcs*)0,                      /* tp_as_buffer */
+    Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_GC,  /* tp_flags */
+    0,                                      /* Documentation string */
+    (traverseproc)MemberChange_traverse,    /* tp_traverse */
+    (inquiry)MemberChange_clear,            /* tp_clear */
+    (richcmpfunc)0,                         /* tp_richcompare */
+    0,                                      /* tp_weaklistoffset */
+    (getiterfunc)0,                         /* tp_iter */
+    (iternextfunc)0,                        /* tp_iternext */
+    (struct PyMethodDef*)0,                 /* tp_methods */
+    (struct PyMemberDef*)0,                 /* tp_members */
+    MemberChange_getset,                    /* tp_getset */
+    0,                                      /* tp_base */
+    0,                                      /* tp_dict */
+    (descrgetfunc)0,                        /* tp_descr_get */
+    (descrsetfunc)0,                        /* tp_descr_set */
+    0,                                      /* tp_dictoffset */
+    (initproc)0,                            /* tp_init */
+    (allocfunc)PyType_GenericAlloc,         /* tp_alloc */
+    (newfunc)PyType_GenericNew,             /* tp_new */
+    (freefunc)PyObject_GC_Del,              /* tp_free */
+    (inquiry)0,                             /* tp_is_gc */
+    0,                                      /* tp_bases */
+    0,                                      /* tp_mro */
+    0,                                      /* tp_cache */
+    0,                                      /* tp_subclasses */
+    0,                                      /* tp_weaklist */
+    (destructor)0                           /* tp_del */
 };
 
 
@@ -236,7 +422,7 @@ CAtom_disable_notifications( CAtom* self, PyObject* args )
 
 
 static PyObject*
-CAtom_notify( CAtom* self, PyObject* args )
+CAtom_notify( CAtom* self, PyObject* change )
 {
     // Reimplement in a subclass as needed.
     Py_RETURN_NONE;
@@ -271,7 +457,7 @@ CAtom_methods[] = {
     { "disable_notifications",
       ( PyCFunction )CAtom_disable_notifications, METH_VARARGS,
       "Disable notifications for the atom." },
-    { "notify", ( PyCFunction )CAtom_notify, METH_VARARGS,
+    { "notify", ( PyCFunction )CAtom_notify, METH_O,
       "Called when a notifying member is changed. Reimplement as needed." },
     { "__sizeof__", ( PyCFunction )CAtom_sizeof, METH_NOARGS,
       "__sizeof__() -> size of object in memory, in bytes" },
@@ -415,10 +601,20 @@ CMember__set__( PyObject* self, PyObject* owner, PyObject* value )
             oldptr.set( Py_None, true );
         if( !newptr )
             newptr.set( Py_None, true );
-        if( oldptr != newptr && !oldptr.richcompare( newptr, Py_EQ, true ) )
+        if( oldptr != newptr && !oldptr.richcompare( newptr, Py_EQ ) )
         {
-            PyObjectPtr result( PyObject_CallMethodObjArgs(
-                owner, _notify, member->name, oldptr.get(), newptr.get(), 0 )
+            PyObjectPtr changeptr( PyType_GenericNew( &MemberChange_Type, 0, 0 ) );
+            if( !changeptr )
+                return -1;
+            PyObjectPtr ownerptr( owner, true );
+            PyObjectPtr nameptr( member->name, true );
+            MemberChange* change = reinterpret_cast<MemberChange*>( changeptr.get() );
+            change->object = ownerptr.newref();
+            change->name = nameptr.newref();
+            change->oldvalue = oldptr.newref();
+            change->newvalue = newptr.newref();
+            PyObjectPtr result(
+                PyObject_CallMethodObjArgs( owner, _notify, changeptr.get(), 0 )
             );
             if( !result )
                 return -1;
@@ -635,12 +831,16 @@ initcatom( void )
     _validate = PyString_FromString( "validate" );
     if( !_validate )
         return;
+    if( PyType_Ready( &MemberChange_Type ) )
+        return;
     if( PyType_Ready( &CAtom_Type ) )
         return;
     if( PyType_Ready( &CMember_Type ) )
         return;
+    Py_INCREF( &MemberChange_Type );
     Py_INCREF( &CAtom_Type );
     Py_INCREF( &CMember_Type );
+    PyModule_AddObject( mod, "MemberChange", reinterpret_cast<PyObject*>( &MemberChange_Type ) );
     PyModule_AddObject( mod, "CAtom", reinterpret_cast<PyObject*>( &CAtom_Type ) );
     PyModule_AddObject( mod, "CMember", reinterpret_cast<PyObject*>( &CMember_Type ) );
 }
