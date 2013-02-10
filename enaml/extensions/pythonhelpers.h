@@ -131,6 +131,11 @@ public:
         return 0;
     }
 
+    int is_true() const
+    {
+        return PyObject_IsTrue( m_pyobj );
+    }
+
     bool is_None() const
     {
         return m_pyobj == Py_None;
@@ -157,7 +162,7 @@ public:
         return true;
     }
 
-    int richcompare( PyObjectPtr& other, int opid, bool clear_err=true )
+    bool richcompare( PyObjectPtr& other, int opid, bool clear_err=true )
     {
         int r = PyObject_RichCompareBool( m_pyobj, other.m_pyobj, opid );
         if( r == 1 )
@@ -244,6 +249,12 @@ bool operator!=( const PyObjectPtr& lhs, const PyObjectPtr& rhs )
 }
 
 
+bool operator==( const PyObjectPtr& lhs, const PyObjectPtr& rhs )
+{
+    return lhs.get() == rhs.get();
+}
+
+
 /*-----------------------------------------------------------------------------
 | Tuple Ptr
 |----------------------------------------------------------------------------*/
@@ -276,6 +287,14 @@ public:
     PyObjectPtr get_item( Py_ssize_t index ) const
     {
         return PyObjectPtr( PyTuple_GET_ITEM( m_pyobj, index ), true );
+    }
+
+    void set_item( Py_ssize_t index, PyObject* pyobj, bool takeref=false )
+    {
+        Py_XDECREF( PyTuple_GET_ITEM( m_pyobj, index ) );
+        PyTuple_SET_ITEM( m_pyobj, index, pyobj );
+        if( takeref )
+            Py_XINCREF( pyobj );
     }
 
     void set_item( Py_ssize_t index, PyObjectPtr& item )

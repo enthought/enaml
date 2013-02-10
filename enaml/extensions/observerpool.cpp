@@ -4,8 +4,176 @@
 |----------------------------------------------------------------------------*/
 #include "pythonhelpers.h"
 #include <iostream>
+#include <vector>
+
 
 using namespace PythonHelpers;
+
+
+class ObserverPool
+{
+
+    class Topic
+    {
+
+    public:
+
+        Topic( PyObjectPtr& topic ) : m_topic( topic ) {}
+
+        ~Topic() {}
+
+        bool match( PyObjectPtr topic )
+        {
+            return topic == m_topic;
+        }
+
+        void add_observer( PyObjectPtr& observer )
+        {
+            if( !observer )
+                return;
+            std::vector<PyObjectPtr>::iterator it;
+            std::vector<PyObjectPtr>::iterator end = m_observers.end();
+            for( it = m_observers.begin(); it != end; ++it )
+            {
+                if( *it == observer || it->richcompare( observer, Py_EQ ) )
+                    return;
+            }
+            m_observers.push_back( observer );
+        }
+
+        void remove_observer( PyObjectPtr& observer )
+        {
+            if( !observer )
+                return;
+            std::vector<PyObjectPtr>::iterator it;
+            std::vector<PyObjectPtr>::iterator end = m_observers.end();
+            for( it = m_observers.begin(); it != end; ++it )
+            {
+                if( *it == observer || it->richcompare( observer, Py_EQ ) )
+                {
+                    m_observers.erase( it );
+                    return;
+                }
+            }
+        }
+
+        int notify_observers( PyObjectPtr& argument )
+        {
+            if( !argument )
+                return 0;
+            std::vector<PyObjectPtr>::iterator it;
+            std::vector<PyObjectPtr>::iterator end = m_observers.end();
+            for( it = m_observers.begin(); it != end; ++it )
+            {
+                if( !it->operator()( argument ) )
+                    return -1;
+            }
+            return 0;
+        }
+
+        int py_traverse( visitproc visit, void* arg )
+        {
+            int vret = visit( m_topic.get(), arg );
+            if( vret )
+                return vret;
+            std::vector<PyObjectPtr>::iterator it;
+            std::vector<PyObjectPtr>::iterator end = m_observers.end();
+            for( it = m_observers.begin(); it != end; ++it )
+            {
+                vret = visit( it->get(), arg );
+                if( vret )
+                    return vret;
+            }
+            return 0;
+        }
+
+    private:
+
+        PyObjectPtr m_topic;
+        std::vector<PyObjectPtr> m_observers;
+    };
+
+public:
+
+    ObserverPool() {}
+
+    ~ObserverPool() {}
+
+    void add_observer( PyObjectPtr& topic, PyObjectPtr& observer )
+    {
+        if( !topic )
+            return;
+        std::vector<Topic>::iterator it;
+        std::vector<Topic>::iterator end = m_topics.end();
+        for( it = m_topics.begin(); it != end; ++it )
+        {
+            if( it->match( topic ) )
+            {
+                it->add_observer( observer );
+                return;
+            }
+        }
+        m_topics.push_back( Topic( topic ) );
+        m_topics.back().add_observer( observer );
+    }
+
+    void remove_observer( PyObjectPtr& topic, PyObjectPtr& observer )
+    {
+        if( !topic )
+            return;
+        std::vector<Topic>::iterator it;
+        std::vector<Topic>::iterator end = m_topics.end();
+        for( it = m_topics.begin(); it != end; ++it )
+        {
+            if( it->match( topic ) )
+            {
+                it->remove_observer( observer );
+                return;
+            }
+        }
+    }
+
+    int notify_observers( PyObjectPtr& topic, PyObjectPtr& argument )
+    {
+        if( !topic )
+            return 0;
+        std::vector<Topic>::iterator it;
+        std::vector<Topic>::iterator end = m_topics.end();
+        for( it = m_topics.begin(); it != end; ++it )
+        {
+            if( it->match( topic ) )
+                return it->notify_observers( argument );
+        }
+        return 0;
+    }
+
+    int py_traverse( visitproc visit, void* arg )
+    {
+        int vret;
+        std::vector<Topic>::iterator it;
+        std::vector<Topic>::iterator end = m_topics.end();
+        for( it = m_topics.begin(); it != end; ++it )
+        {
+            vret = it->py_traverse( visit, arg );
+            if( vret )
+                return vret;
+        }
+        return 0;
+    }
+
+    void py_clear()
+    {
+        m_topics.clear();
+    }
+
+
+private:
+
+    std::vector<Topic> m_topics;
+    ObserverPool(const ObserverPool& other);
+    ObserverPool& operator=(const ObserverPool&);
+
+};
 
 
 extern "C" {
@@ -13,210 +181,122 @@ extern "C" {
 
 typedef struct {
     PyObject_HEAD
-    PyObject* observers;
-} ObserverPool;
-
-
-static PyObject*
-ObserverPool_new( PyTypeObject* type, PyObject* args, PyObject* kwargs )
-{
-    PyObjectPtr mgrptr( PyType_GenericNew( type, args, kwargs ) );
-    if( !mgrptr )
-        return 0;
-    ObserverPool* mgr = reinterpret_cast<ObserverPool*>( mgrptr.get() );
-    mgr->observers = PyList_New( 0 );
-    if( !mgr->observers )
-        return 0;
-    return mgrptr.release();
-}
+    ObserverPool* pool;
+} PyObserverPool;
 
 
 static void
-ObserverPool_clear( ObserverPool* self )
+PyObserverPool_clear( PyObserverPool* self )
 {
-    Py_CLEAR( self->observers );
+    if( self->pool )
+        self->pool->py_clear();
 }
 
 
 static int
-ObserverPool_traverse( ObserverPool* self, visitproc visit, void* arg )
+PyObserverPool_traverse( PyObserverPool* self, visitproc visit, void* arg )
 {
-    Py_VISIT( self->observers );
+    if( self->pool )
+        return self->pool->py_traverse( visit, arg );
     return 0;
 }
 
 
 static void
-ObserverPool_dealloc( ObserverPool* self )
+PyObserverPool_dealloc( PyObserverPool* self )
 {
     PyObject_GC_UnTrack( self );
-    ObserverPool_clear( self );
+    PyObserverPool_clear( self );
+    delete self->pool;
     self->ob_type->tp_free( reinterpret_cast<PyObject*>( self ) );
 }
 
 
-// returns a *borrowed* reference to the pool list, or null. `name`
-// *must* be an exact string (no subclasses).
 static PyObject*
-find_pool( ObserverPool* self, PyObject* name, bool force_create=false )
+PyObserverPool_add_observer( PyObserverPool* self, PyObject* args )
 {
-    if( !PyString_CHECK_INTERNED( name ) )
-        PyString_InternInPlace( &name );
-    Py_ssize_t count = PyList_GET_SIZE( self->observers );
-    for( Py_ssize_t i = 0; i < count; i += 2 )
-    {
-        if( PyList_GET_ITEM( self->observers, i ) == name )
-            return PyList_GET_ITEM( self->observers, i + 1 );
-    }
-    if( force_create )
-    {
-        PyObject* pool = PyList_New( 0 );
-        if( !pool )
-            return 0;
-        if( PyList_Append( self->observers, name ) < 0 )
-            return 0;
-        if( PyList_Append( self->observers, pool ) < 0 )
-            return 0;
-        Py_DECREF( pool );
-        return pool;
-    }
-    return 0;
+    PyObject* topic;
+    PyObject* observer;
+    if( !PyArg_ParseTuple( args, "OO", &topic, &observer ) )
+        return 0;
+    if( !PyString_CheckExact( topic ) )
+        return py_expected_type_fail( topic, "str" );
+    if( !PyString_CHECK_INTERNED( topic ) )
+        PyString_InternInPlace( &topic );
+    PyObjectPtr topicptr( topic, true );
+    PyObjectPtr observerptr( observer, true );
+    if( !self->pool )
+        self->pool = new ObserverPool();
+    self->pool->add_observer( topicptr, observerptr );
+    Py_RETURN_NONE;
 }
 
 
 static PyObject*
-ObserverPool_add( ObserverPool* self, PyObject* args )
+PyObserverPool_remove_observer( PyObserverPool* self, PyObject* args )
 {
-    PyObject* name;
-    PyObject* callback;
-    if( !PyArg_ParseTuple( args, "OO", &name, &callback ) )
+    PyObject* topic;
+    PyObject* observer;
+    if( !PyArg_ParseTuple( args, "OO", &topic, &observer ) )
         return 0;
-    if( !PyString_CheckExact( name ) )
-        return py_expected_type_fail( name, "str" );
-    PyObject* pool = find_pool( self, name, true );
-    if( !pool )
-        return 0;
-    int contains = PySequence_Contains( pool, callback );
-    if( contains == -1 )
-        return 0;
-    if( contains == 1)
+    if( !PyString_CheckExact( topic ) )
+        return py_expected_type_fail( topic, "str" );
+    if( !self->pool )
         Py_RETURN_NONE;
-    if( PyList_Append( pool, callback ) < 0 )
-        return 0;
+    if( !PyString_CHECK_INTERNED( topic ) )
+        PyString_InternInPlace( &topic );
+    PyObjectPtr topicptr( topic, true );
+    PyObjectPtr observerptr( observer, true );
+    self->pool->remove_observer( topicptr, observerptr );
     Py_RETURN_NONE;
 }
 
 
 static PyObject*
-ObserverPool_remove( ObserverPool* self, PyObject* args )
+PyObserverPool_notify_observers( PyObserverPool* self, PyObject* args )
 {
-    PyObject* name;
-    PyObject* callback;
-    if( !PyArg_ParseTuple( args, "OO", &name, &callback ) )
+    PyObject* topic;
+    PyObject* argument;
+    if( !PyArg_ParseTuple( args, "OO", &topic, &argument ) )
         return 0;
-    if( !PyString_CheckExact( name ) )
-        return py_expected_type_fail( name, "str" );
-    PyObject* pool = find_pool( self, name );
-    if( pool )
+    if( !PyString_CheckExact( topic ) )
+        return py_expected_type_fail( topic, "str" );
+    if( !PyString_CHECK_INTERNED( topic ) )
+        PyString_InternInPlace( &topic );
+    if( self->pool )
     {
-        Py_ssize_t index = PySequence_Index( pool, callback );
-        if( index == -1 )
-            PyErr_Clear();
-        else if( PySequence_DelItem( pool, index ) < 0 )
+        PyObjectPtr topicptr( topic, true );
+        PyTuplePtr argsptr( PyTuple_New( 1 ) );
+        argsptr.set_item( 0, argument, true );
+        if( self->pool->notify_observers( topicptr, argsptr ) < 0 )
             return 0;
     }
     Py_RETURN_NONE;
-}
-
-
-/*
-This method will remove an observer during a dispatch cycle if it
-evaluates to boolean false. When a pool associated with a given name
-is empty, it is allowed to linger in case new observers are added at
-a later time. In the worst case scenario, there will be an empty list
-for every observable value on a object. This is unlikely to happen,
-and the downside of doing the cleanup can be worse. There are cases
-where observers may be rapidly added and removed from an object. If
-the observer is singular, performing the cleanup would cause rapid
-thrashing of the list and reduce performance. This can be revisted
-if situations arise where the current choice does not scale.
-*/
-static PyObject*
-ObserverPool_notify( ObserverPool* self, PyObject* args )
-{
-    PyObject* name;
-    PyObject* arg;
-    if( !PyArg_ParseTuple( args, "OO", &name, &arg ) )
-        return 0;
-    if( !PyString_CheckExact( name ) )
-        return py_expected_type_fail( name, "str" );
-    PyObject* pool = find_pool( self, name );
-    if( pool )
-    {
-        PyObject* callback;
-        PyObjectPtr result;
-        Py_ssize_t i = 0;
-        // Testing the size on each iteration guards against the slim
-        // chance that a notifier causes the method to be re-entered,
-        // which has the potential to delete an item ahead of the
-        // current code path.
-        while( i < PyList_GET_SIZE( pool ) )
-        {
-            callback = PyList_GET_ITEM( pool, i );
-            switch( PyObject_IsTrue( callback ) )
-            {
-                case 1:
-                    result = PyObject_CallFunctionObjArgs( callback, arg, 0 );
-                    if( !result )
-                        return 0;
-                    ++i;
-                    break;
-                case 0:
-                    if( PySequence_DelItem( pool, i ) < 0 )
-                        return 0;
-                    break;
-                case -1:
-                default:
-                    return 0;
-            }
-        }
-    }
-    Py_RETURN_NONE;
-}
-
-
-static PyObject*
-ObserverPool_observers( ObserverPool* self )
-{
-    Py_INCREF( self->observers );
-    return self->observers;
 }
 
 
 static PyMethodDef
-ObserverPool_methods[] = {
-    { "add",
-      ( PyCFunction )ObserverPool_add, METH_VARARGS,
-      "Add a callback to the pool for the given name." },
-    { "remove",
-      ( PyCFunction )ObserverPool_remove, METH_VARARGS,
-      "Remove a callback from the pool for the given name." },
-    { "notify",
-      ( PyCFunction )ObserverPool_notify, METH_VARARGS,
-      "Notify the callbacks for the given name." },
-    { "_observers",
-      ( PyCFunction )ObserverPool_observers, METH_NOARGS, "" },
+PyObserverPool_methods[] = {
+    { "add_observer",
+      ( PyCFunction )PyObserverPool_add_observer, METH_VARARGS,
+      "Add an observer to the pool for a given topic." },
+    { "remove_observer",
+      ( PyCFunction )PyObserverPool_remove_observer, METH_VARARGS,
+      "Remove an observer from the pool for a given topic." },
+    { "notify_observers",
+      ( PyCFunction )PyObserverPool_notify_observers, METH_VARARGS,
+      "Notify the observers for a given topic." },
     { 0 } // sentinel
 };
 
 
-PyTypeObject ObserverPool_Type = {
+PyTypeObject PyObserverPool_Type = {
     PyObject_HEAD_INIT( 0 )
     0,                                      /* ob_size */
     "observerpool.ObserverPool",            /* tp_name */
-    sizeof( ObserverPool ),                 /* tp_basicsize */
+    sizeof( PyObserverPool ),               /* tp_basicsize */
     0,                                      /* tp_itemsize */
-    (destructor)ObserverPool_dealloc,       /* tp_dealloc */
+    (destructor)PyObserverPool_dealloc,     /* tp_dealloc */
     (printfunc)0,                           /* tp_print */
     (getattrfunc)0,                         /* tp_getattr */
     (setattrfunc)0,                         /* tp_setattr */
@@ -231,15 +311,15 @@ PyTypeObject ObserverPool_Type = {
     (getattrofunc)0,                        /* tp_getattro */
     (setattrofunc)0,                        /* tp_setattro */
     (PyBufferProcs*)0,                      /* tp_as_buffer */
-    Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_HAVE_GC, /* tp_flags */
+    Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_GC,  /* tp_flags */
     0,                                      /* Documentation string */
-    (traverseproc)ObserverPool_traverse,    /* tp_traverse */
-    (inquiry)ObserverPool_clear,            /* tp_clear */
+    (traverseproc)PyObserverPool_traverse,  /* tp_traverse */
+    (inquiry)PyObserverPool_clear,          /* tp_clear */
     (richcmpfunc)0,                         /* tp_richcompare */
     0,                                      /* tp_weaklistoffset */
     (getiterfunc)0,                         /* tp_iter */
     (iternextfunc)0,                        /* tp_iternext */
-    (struct PyMethodDef*)ObserverPool_methods, /* tp_methods */
+    (struct PyMethodDef*)PyObserverPool_methods, /* tp_methods */
     (struct PyMemberDef*)0,                 /* tp_members */
     0,                                      /* tp_getset */
     0,                                      /* tp_base */
@@ -249,7 +329,7 @@ PyTypeObject ObserverPool_Type = {
     0,                                      /* tp_dictoffset */
     (initproc)0,                            /* tp_init */
     (allocfunc)PyType_GenericAlloc,         /* tp_alloc */
-    (newfunc)ObserverPool_new,              /* tp_new */
+    (newfunc)PyType_GenericNew,             /* tp_new */
     (freefunc)PyObject_GC_Del,              /* tp_free */
     (inquiry)0,                             /* tp_is_gc */
     0,                                      /* tp_bases */
@@ -273,10 +353,11 @@ initobserverpool( void )
     PyObject* mod = Py_InitModule( "observerpool", observerpool_methods );
     if( !mod )
         return;
-    if( PyType_Ready( &ObserverPool_Type ) )
+    if( PyType_Ready( &PyObserverPool_Type ) )
         return;
-    Py_INCREF( &ObserverPool_Type );
-    PyModule_AddObject( mod, "ObserverPool", reinterpret_cast<PyObject*>( &ObserverPool_Type ) );
+    PyObject* pytype = reinterpret_cast<PyObject*>( &PyObserverPool_Type );
+    Py_INCREF( pytype );
+    PyModule_AddObject( mod, "ObserverPool", pytype );
 }
 
 
