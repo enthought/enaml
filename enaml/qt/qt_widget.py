@@ -6,6 +6,7 @@ import sys
 
 from enaml.colors import parse_color
 
+from .qt_font_utils import QtGlobalFontCache
 from .qt.QtGui import QWidget, QWidgetItem, QColor, QApplication
 from .qt.QtCore import Qt, QSize
 from .qt_object import QtObject
@@ -265,7 +266,8 @@ class QtWidget(QtObject):
             The font for the widget as a CSS font string.
 
         """
-        pass
+
+        self.widget().setFont(QtGlobalFontCache[font])
 
     def set_show_focus_rect(self, show):
         """ Sets whether or not to show the focus rectangle around
