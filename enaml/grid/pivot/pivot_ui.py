@@ -687,8 +687,8 @@ class MultiLevelHeader(QVariableSizeHeader):
             opt.position = QStyleOptionHeader.OnlyOneSection
         elif visual == 0:
             opt.position = QStyleOptionHeader.Beginning
-        elif visual == count - 1:
-            opt.position = QStyleOptionHeader.End
+        #elif visual == count - 1:
+        #    opt.position = QStyleOptionHeader.End
         else:
             opt.position = QStyleOptionHeader.Middle
 
