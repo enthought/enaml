@@ -354,13 +354,20 @@ class MultiLevelHeader(QVariableSizeHeader):
         # FIXME: this reuses the same style option from the leaf for all of the
         # nodes. If the icon on the leaf is a different size or is absent, the
         # sizes will be wrong.
-        size = QSize(self._cell_size(leaf.text, opt))
+        #size = QSize(self._cell_size(leaf.text, opt))
+        is_margin = hasattr(leaf, 'margin')
+        if is_margin:
+            text = leaf.parent.text + ' ' + leaf.text
+        else:
+            text = leaf.text
+        size = QSize(self._cell_size(text, opt))
         for node in leaf.ancestors():
             opt = self._style_option(node, logical_index)
             if self.is_horizontal:
                 size.setHeight(size.height() + self._cell_size(node.text, opt).height())
             else:
-                size.setWidth(size.width() + self._cell_size(node.text, opt).width())
+                size.setWidth(size.width() + self._cell_size(' ', opt).width())
+                #size.setWidth(size.width() + self._cell_size(node.text, opt).width())
         return size
 
     def paintHorizontal(self, painter, event):
@@ -529,7 +536,7 @@ class MultiLevelHeader(QVariableSizeHeader):
         width = self._current_cell_width(node)
 
         opt.rect = QRect(left, top, width, height)
-        self._paint_cell(node, opt, painter, rect)
+        self._paint_cell(node, node.text, opt, painter, rect)
         return top + height
 
     def _paint_vertical_cell(self, node, leaf, painter, rect, logical_index, opt, left):
@@ -537,17 +544,25 @@ class MultiLevelHeader(QVariableSizeHeader):
         """
         # Make our own copy.
         opt = QStyleOptionHeader(opt)
-        width = self._cell_size(node.text, opt).width()
+        is_margin = hasattr(leaf, 'margin')
+        if node is leaf:
+            if is_margin:
+                text = leaf.parent.text + ' ' + leaf.text
+            else:
+                text = node.text
+        else:
+            text = '' #node.text
+        width = self._cell_size(text, opt).width()
         if node is leaf:
             width = rect.width() - left
         top = self._current_cell_left(node, leaf, rect.top())
         height = self._current_cell_width(node)
 
         opt.rect = QRect(left, top, width, height)
-        self._paint_cell(node, opt, painter, rect)
+        self._paint_cell(node, text, opt, painter, rect)
         return left + width
 
-    def _paint_cell(self, node, opt, painter, rect):
+    def _paint_cell(self, node, text, opt, painter, rect):
         """ Common cell-painting code.
         """
         self.cell_rect_cache[node] = QRect(opt.rect)
@@ -557,7 +572,7 @@ class MultiLevelHeader(QVariableSizeHeader):
         style = self.style()
         self._set_foreground_brush(opt, node)
         self._set_background_brush(opt, node)
-        text = node.text
+        #text = node.text
         elide_mode = self.textElideMode()
         if elide_mode != Qt.ElideNone:
             decoration_size = style.sizeFromContents(style.CT_HeaderSection,
