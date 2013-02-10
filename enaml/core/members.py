@@ -1,8 +1,8 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2012, Enthought, Inc.
+#  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .atom import CMember
+from .catom import CMember
 
 
 class Member(CMember):
@@ -45,22 +45,55 @@ class Member(CMember):
         return self._default
 
 
-class TypedMember(Member):
-    """ A member class wich supports type checking validation.
+class Typed(Member):
+    """ A member class wich supports type validation.
 
     """
     __slots__ = ('_kind',)
 
     def __init__(self, kind=None, default=None, factory=None):
-        super(TypedMember, self).__init__(default, factory)
+        """ Initialize a Typed member.
+
+        Parameters
+        ----------
+        kind : type, optional
+            The allowed type of values assigned to the member.
+
+        default : object, optional
+            The default value for the member.
+
+        factory : callable, optional
+            The default value factory for the member.
+
+        """
+        kind = kind or object
+        assert isinstance(kind, type), "Kind must be a type"
+        super(Typed, self).__init__(default, factory)
         self.has_validate = True
-        if kind is not None:
-            assert isinstance(kind, type), "Kind must be a type"
-            self._kind = kind
-        else:
-            self._kind = object
+        self._kind = kind
 
     def validate(self, owner, name, value):
+        """ Validate the value being assigned to the member.
+
+        If the value is not valid, a TypeError is raised.
+
+        Parameters
+        ----------
+        owner : Atom
+            The atom object which owns the value being modified.
+
+        name : str
+            The member name of the atom being modified.
+
+        value : object
+            The value being assigned to the member.
+
+        Returns
+        -------
+        result : object
+            The original value, provided it passes type validation.
+
+        """
         if not isinstance(value, self._kind):
             t = "The '%s' member on the `%s` object requires a value of type "
             t += "`%s`. Got value of type `%s` instead."
@@ -71,8 +104,10 @@ class TypedMember(Member):
         return value
 
 
-class Bool(TypedMember):
+class Bool(Typed):
+    """ A typed member of type `bool`.
 
+    """
     __slots__ = ()
 
     def __init__(self, default=False):
@@ -80,8 +115,10 @@ class Bool(TypedMember):
         super(Bool, self).__init__(bool, default)
 
 
-class Int(TypedMember):
+class Int(Typed):
+    """ A typed member of type `int`.
 
+    """
     __slots__ = ()
 
     def __init__(self, default=0):
@@ -89,8 +126,10 @@ class Int(TypedMember):
         super(Int, self).__init__(int, default)
 
 
-class Long(TypedMember):
+class Long(Typed):
+    """ A typed member of type `long`.
 
+    """
     __slots__ = ()
 
     def __init__(self, default=0L):
@@ -98,8 +137,10 @@ class Long(TypedMember):
         super(Long, self).__init__(long, default)
 
 
-class Float(TypedMember):
+class Float(Typed):
+    """ A typed member of type `float`.
 
+    """
     __slots__ = ()
 
     def __init__(self, default=0.0):
@@ -107,17 +148,10 @@ class Float(TypedMember):
         super(Float, self).__init__(float, default)
 
 
-class BaseString(TypedMember):
+class Str(Typed):
+    """ A typed member of type `str`.
 
-    __slots__ = ()
-
-    def __init__(self, default=''):
-        assert isinstance(default, basestring)
-        super(Str, self).__init__(basestring, default)
-
-
-class Str(TypedMember):
-
+    """
     __slots__ = ()
 
     def __init__(self, default=''):
@@ -125,8 +159,12 @@ class Str(TypedMember):
         super(Str, self).__init__(str, default)
 
 
-class Unicode(TypedMember):
+class Unicode(Typed):
+    """ A typed member of type `unicode`.
 
+    Regular strings will be promoted to unicode strings.
+
+    """
     __slots__ = ()
 
     def __init__(self, default=u''):
@@ -134,8 +172,10 @@ class Unicode(TypedMember):
         super(Unicode, self).__init__(unicode, default)
 
 
-class Tuple(TypedMember):
+class Tuple(Typed):
+    """ A typed member of type `tuple`.
 
+    """
     __slots__ = ()
 
     def __init__(self, default=()):
@@ -143,8 +183,10 @@ class Tuple(TypedMember):
         super(Tuple, self).__init__(tuple, default)
 
 
-class List(TypedMember):
+class List(Typed):
+    """ A typed member of type `list`.
 
+    """
     __slots__ = ()
 
     def __init__(self, default=None):
@@ -156,8 +198,10 @@ class List(TypedMember):
         super(List, self).__init__(list, factory=factory)
 
 
-class Dict(TypedMember):
+class Dict(Typed):
+    """ A typed member of type `dict`.
 
+    """
     __slots__ = ()
 
     def __init__(self, default=None):
