@@ -356,6 +356,7 @@ class MultiLevelHeader(QVariableSizeHeader):
         # sizes will be wrong.
         size = QSize(self._cell_size(leaf.text, opt))
         for node in leaf.ancestors():
+            opt = self._style_option(node, logical_index)
             if self.is_horizontal:
                 size.setHeight(size.height() + self._cell_size(node.text, opt).height())
             else:
@@ -599,20 +600,21 @@ class MultiLevelHeader(QVariableSizeHeader):
         rect = QRect(opt.rect)
 
         # Draw the icon.
-        pixmap_side = style.pixelMetric(QStyle.PM_SmallIconSize)
-        pixmap_size = QSize(pixmap_side, pixmap_side)
-        aligned_rect = style.alignedRect(Qt.LeftToRight,
-            opt.iconAlignment, pixmap_size, rect)
-        inter = aligned_rect & rect
-        if not (inter & section_rect).isEmpty():
-            pixmap = opt.icon.pixmap(pixmap_size, QIcon.Normal)
-            painter.drawPixmap(inter.x(), inter.y(), pixmap,
-                inter.x() - aligned_rect.x(), inter.y() - aligned_rect.y(),
-                inter.width(), inter.height())
-        rect.setLeft(rect.left() + pixmap_side)
-        # Store the rect of the drawn pixmap in the cache so it can be used
-        # for hit-testing.
-        self.icon_position_cache[node] = inter
+        if opt.icon:
+            pixmap_side = style.pixelMetric(QStyle.PM_SmallIconSize)
+            pixmap_size = QSize(pixmap_side, pixmap_side)
+            aligned_rect = style.alignedRect(Qt.LeftToRight,
+                opt.iconAlignment, pixmap_size, rect)
+            inter = aligned_rect & rect
+            if not (inter & section_rect).isEmpty():
+                pixmap = opt.icon.pixmap(pixmap_size, QIcon.Normal)
+                painter.drawPixmap(inter.x(), inter.y(), pixmap,
+                    inter.x() - aligned_rect.x(), inter.y() - aligned_rect.y(),
+                    inter.width(), inter.height())
+            rect.setLeft(rect.left() + pixmap_side)
+            # Store the rect of the drawn pixmap in the cache so it can be used
+            # for hit-testing.
+            self.icon_position_cache[node] = inter
 
         font = QFont(painter.font())
         if opt.state & style.State_On or isinstance(node, MarginNode):
@@ -675,10 +677,10 @@ class MultiLevelHeader(QVariableSizeHeader):
             opt.icon = self._get_icon('collapse')
         elif len(node.children) > 0:
             opt.icon = self._get_icon('expand')
-        else:
-            # FIXME: the rest of the sizing code depends on every cell having
-            # the same sized icon.
-            opt.icon = self._get_icon('transparent')
+        #else:
+        #    # FIXME: the rest of the sizing code depends on every cell having
+        #    # the same sized icon.
+        #    opt.icon = self._get_icon('transparent')
 
         # Determine if the section is visually at the beginning, the end, both, or neither.
         visual = self.visualIndex(section)
