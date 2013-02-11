@@ -51,7 +51,9 @@ class QImageView(QFrame):
         if pm_width == 0 or pm_height == 0:
             return
 
-        evt_rect = event.rect()
+        # Use the widget rect instead of the event rect so the image
+        # paints properly in a scroll area where it may be clipped.
+        evt_rect = self.rect()
         evt_x = evt_rect.x()
         evt_y = evt_rect.y()
         evt_width = evt_rect.width()
