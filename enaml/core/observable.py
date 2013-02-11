@@ -116,7 +116,7 @@ class Observable(Atom):
         matches = []
         if regex:
             rgx = re.compile(name)
-            for key in self.members():
+            for key in members:
                 if rgx.match(key):
                     matches.append(key)
         elif name in members:
