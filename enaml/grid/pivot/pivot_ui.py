@@ -534,9 +534,13 @@ class MultiLevelHeader(QVariableSizeHeader):
             height = rect.height() - top
         left = self._current_cell_left(node, leaf, rect.left())
         width = self._current_cell_width(node)
+        text = node.text
+        if left < 0:
+            left, width = 0, width+left
+            text = '...'+text
 
         opt.rect = QRect(left, top, width, height)
-        self._paint_cell(node, node.text, opt, painter, rect)
+        self._paint_cell(node, text, opt, painter, rect)
         return top + height
 
     def _paint_vertical_cell(self, node, leaf, painter, rect, logical_index, opt, left):
