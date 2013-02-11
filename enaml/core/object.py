@@ -6,13 +6,11 @@ from collections import defaultdict, deque, namedtuple
 import logging
 import re
 
-from traits.api import (
-    HasStrictTraits, Disallow, Property, Str, Enum, ReadOnly, Any,
-)
+from atom.api import Atom, Observable, Str, Member, ReadOnly, Enum
 
 from enaml.utils import make_dispatcher, id_generator
 
-from .trait_types import EnamlEvent
+#from .trait_types import EnamlEvent
 
 
 logger = logging.getLogger(__name__)
@@ -38,7 +36,7 @@ ParentEvent = namedtuple('ParentEvent', 'old new')
 object_id_generator = id_generator('o_')
 
 
-class ChildrenEventContext(object):
+class ChildrenEventContext(Atom):
     """ A context manager which will emit a child event on an Object.
 
     This context manager will automatically emit the child event on an
@@ -48,7 +46,13 @@ class ChildrenEventContext(object):
 
     """
     #: Class level storage for tracking nested context managers.
-    _counters = defaultdict(int)
+    counters = defaultdict(int)
+
+    #: A reference to owner of the children.
+    parent = Member()
+
+    #: The list of old children.
+    old_children = Member()
 
     def __init__(self, parent):
         """ Initialize a ChildrenEventContext.
@@ -61,7 +65,7 @@ class ChildrenEventContext(object):
             can be None.
 
         """
-        self._parent = parent
+        self.parent = parent
 
     def __enter__(self):
         """ Enter the children event context.
@@ -70,12 +74,12 @@ class ChildrenEventContext(object):
         use it to diff the state on context exit.
 
         """
-        parent = self._parent
-        counters = self._counters
+        parent = self.parent
+        counters = self.counters
         count = counters[parent]
         counters[parent] = count + 1
         if count == 0 and parent is not None:
-            self._old = parent._children
+            self.old_children = parent._children[:]
 
     def __exit__(self, exc_type, exc_value, traceback):
         """ Exit the children event context.
@@ -86,20 +90,20 @@ class ChildrenEventContext(object):
         the context is propagated.
 
         """
-        parent = self._parent
-        counters = self._counters
+        parent = self.parent
+        counters = self.counters
         counters[parent] -= 1
         if counters[parent] == 0:
             del counters[parent]
             if exc_type is None and parent is not None:
-                old = self._old
+                old = self.old_children
                 new = parent._children
                 if old != new:
                     evt = ChildrenEvent(old, new)
                     parent.children_event(evt)
 
 
-class Object(HasStrictTraits):
+class Object(Observable):
     """ The most base class of the Enaml object hierarchy.
 
     An Enaml Object provides supports parent-children relationships and
@@ -117,42 +121,40 @@ class Object(HasStrictTraits):
     #: A read-only property which returns the object's parent. This
     #: will be an instance Object or None if there is no parent. A
     #: strong reference is kept to the parent object.
-    parent = Property(fget=lambda self: self._parent)
+    parent = property(fget=lambda self: self._parent)
 
     #: A read-only property which returns the objects children. This
     #: will be an iterable of Object instances. A strong reference is
     #: kept to all child objects.
-    children = Property(fget=lambda self: self._children)
+    children = property(fget=lambda self: self._children)
 
-    #: An event fired when an the oject has been initialized. It is
+    #: An event fired when an the object has been initialized. It is
     #: emitted once during an object's lifetime, when the object is
     #: initialized by a Session.
-    initialized = EnamlEvent
+    #initialized = EnamlEvent
 
     #: An event fired when an object has been activated. It is emitted
     #: once during an object's lifetime, when the object is activated
     #: by a Session.
-    activated = EnamlEvent
+    #activated = EnamlEvent
 
     #: An event fired when an object is being destroyed. This event
     #: is fired once during the object lifetime, just before the
     #: object is removed from the tree structure.
-    destroyed = EnamlEvent
+    #destroyed = EnamlEvent
 
     #: A read-only property which returns the object's session. This
     #: will be an instance of Session or None if there is no session.
     #: A strong reference is kept to the session object. This value
     #: should not be manipulated by user code.
-    session = Property(fget=lambda self: self._session)
+    session = property(fget=lambda self: self._session)
 
     #: A read-only value which returns the object's identifier. This
     #: will be computed the first time it is requested. The default
     #: value is guaranteed to be unique for the current process. The
     #: initial value may be supplied by user code if more control is
     #: required, with proper care that the value is a unique string.
-    object_id = ReadOnly
-    def _object_id_default(self):
-        return object_id_generator.next()
+    object_id = ReadOnly(factory=object_id_generator.next)
 
     #: The current state of the object in terms of its lifetime within
     #: a session. This value should not be manipulated by user code.
@@ -162,31 +164,31 @@ class Object(HasStrictTraits):
     )
 
     #: A read-only property which is True if the object is inactive.
-    is_inactive = Property(fget=lambda self: self.state == 'inactive')
+    is_inactive = property(fget=lambda self: self.state == 'inactive')
 
     #: A read-only property which is True if the object is initializing.
-    is_initializing = Property(fget=lambda self: self.state == 'initializing')
+    is_initializing = property(fget=lambda self: self.state == 'initializing')
 
     #: A read-only property which is True if the object is initialized.
-    is_initialized = Property(fget=lambda self: self.state == 'initialized')
+    is_initialized = property(fget=lambda self: self.state == 'initialized')
 
     #: A read-only property which is True if the object is activating.
-    is_activating = Property(fget=lambda self: self.state == 'activating')
+    is_activating = property(fget=lambda self: self.state == 'activating')
 
     #: A read-only property which is True if the object is active.
-    is_active = Property(fget=lambda self: self.state == 'active')
+    is_active = property(fget=lambda self: self.state == 'active')
 
     #: A read-only property which is True if the object is destroying.
-    is_destroying = Property(fget=lambda self: self.state == 'destroying')
+    is_destroying = property(fget=lambda self: self.state == 'destroying')
 
     #: A read-only property which is True if the object is destroyed.
-    is_destroyed = Property(fget=lambda self: self.state == 'destroyed')
+    is_destroyed = property(fget=lambda self: self.state == 'destroyed')
 
     #: Private storage traits. These should *never* be manipulated by
     #: user code. For performance reasons, these are not type-checked.
-    _parent = Any       # Object or None
-    _children = Any     # tuple of Object
-    _session = Any      # Session or None
+    _parent = Member()
+    _children = Member(factory=list)
+    _session = Member()
 
     def __init__(self, parent=None, **kwargs):
         """ Initialize an Object.
@@ -203,12 +205,9 @@ class Object(HasStrictTraits):
 
         """
         super(Object, self).__init__()
-        self._parent = None
-        self._children = ()
         if parent is not None:
             self.set_parent(parent)
         if kwargs:
-            # `trait_set` is slow, don't use it here.
             for key, value in kwargs.iteritems():
                 setattr(self, key, value)
 
@@ -316,10 +315,10 @@ class Object(HasStrictTraits):
             self.batch_action('destroy', {})
         self.state = 'destroying'
         self.pre_destroy()
-        if self._children:
+        if len(self._children) > 0:
             for child in self._children:
                 child.destroy()
-            self._children = ()
+            del self._children
         if parent is not None:
             if parent.is_destroying:
                 self._parent = None
@@ -385,13 +384,11 @@ class Object(HasStrictTraits):
         self._parent = parent
         self.parent_event(ParentEvent(old_parent, parent))
         if old_parent is not None:
-            old_kids = old_parent._children
-            idx = old_kids.index(self)
             with old_parent.children_event_context():
-                old_parent._children = old_kids[:idx] + old_kids[idx + 1:]
+                old_parent._children.remove(self)
         if parent is not None:
             with parent.children_event_context():
-                parent._children += (self,)
+                parent._children.append(self)
 
     def insert_children(self, before, insert):
         """ Insert children into this object at the given location.
@@ -417,13 +414,13 @@ class Object(HasStrictTraits):
         the object as needed, if it is reparented dynamically at runtime.
 
         """
-        insert_tup = tuple(insert)
-        insert_set = set(insert_tup)
+        insert_list = list(insert)
+        insert_set = set(insert_list)
         if self in insert_set:
             raise ValueError('cannot use `self` as Object child')
-        if len(insert_tup) != len(insert_set):
+        if len(insert_list) != len(insert_set):
             raise ValueError('cannot insert duplicate children')
-        if not all(isinstance(child, Object) for child in insert_tup):
+        if not all(isinstance(child, Object) for child in insert_list):
             raise TypeError('children must be an Object instances')
 
         new = []
@@ -432,26 +429,23 @@ class Object(HasStrictTraits):
             if child in insert_set:
                 continue
             if child is before:
-                new.extend(insert_tup)
+                new.extend(insert_list)
                 added = True
             new.append(child)
         if not added:
-            new.extend(insert_tup)
+            new.extend(insert_list)
 
-        for child in insert_tup:
+        for child in insert_list:
             old_parent = child._parent
             if old_parent is not self:
                 child._parent = self
                 child.parent_event(ParentEvent(old_parent, self))
                 if old_parent is not None:
-                    old_kids = old_parent._children
-                    idx = old_kids.index(child)
-                    old_kids = old_kids[:idx] + old_kids[idx + 1:]
                     with old_parent.children_event_context():
-                        old_parent._children = old_kids
+                        old_parent._children.remove(child)
 
         with self.children_event_context():
-            self._children = tuple(new)
+            self._children = new
 
     def parent_event(self, event):
         """ Handle a `ParentEvent` posted to this object.
@@ -471,7 +465,7 @@ class Object(HasStrictTraits):
             The event for the parent change of this object.
 
         """
-        self.trait_property_changed('parent', event.old, event.new)
+        pass
 
     def children_event(self, event):
         """ Handle a `ChildrenEvent` posted to this object.
@@ -490,7 +484,7 @@ class Object(HasStrictTraits):
             The event for the children change of this object.
 
         """
-        self.trait_property_changed('children', event.old, event.new)
+        pass
 
     def children_event_context(self):
         """ Get a context manager for sending children events.
@@ -714,24 +708,4 @@ class Object(HasStrictTraits):
             if match(obj.name):
                 push(obj)
         return res
-
-    #--------------------------------------------------------------------------
-    # HasTraits Fixes
-    #--------------------------------------------------------------------------
-    #: The HasTraits class defines a class attribute 'set' which is a
-    #: deprecated alias for the 'trait_set' method. The problem is that
-    #: having that as an attribute interferes with the ability of Enaml
-    #: expressions to resolve the builtin 'set', since dynamic scoping
-    #: takes precedence over builtins. This resets those ill-effects.
-    set = Disallow
-
-    def add_notifier(self, name, notifier):
-        """ Add a notifier to a trait on the object.
-
-        This is different from `on_trait_change` in that it allows the
-        developer to provide the notifier object directly. This allows
-        the possibility of more efficient notifier patterns.
-
-        """
-        self._trait(name, 2)._notifiers(1).append(notifier)
 
