@@ -76,7 +76,8 @@ class Observable(Atom):
 
     """
     #: Private storage for the observer pool. The pool is created on the
-    #: fly
+    #: fly instead of as a default value so that it's not created in the
+    #: `notify` method.
     _observer_pool = Member()
 
     #--------------------------------------------------------------------------
