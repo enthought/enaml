@@ -7,6 +7,11 @@ import wx
 from .wx_control import WxControl
 
 
+# Create event for a delayed text changed
+wxEVT_TEXT_CHANGED = wx.NewEventType()
+EVT_TEXT_CHANGED = wx.PyEventBinder(wxEVT_TEXT_CHANGED, 1)
+
+
 class wxMultiLineEdit(wx.TextCtrl):
     """ A wx.TextCtrl subclass which is similar to a QMultiLineEdit in terms
     of features and behavior.
@@ -25,7 +30,7 @@ class wxMultiLineEdit(wx.TextCtrl):
         super(wxMultiLineEdit, self).__init__(*args, **kwargs)
         self._timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.OnTimerFired, self._timer)
-        self.Bind(wx.TEXT, self.OnTextEdited)
+        self.Bind(wx.EVT_TEXT, self.OnTextEdited)
 
     #--------------------------------------------------------------------------
     # Private API
@@ -45,7 +50,8 @@ class wxMultiLineEdit(wx.TextCtrl):
         """ Handles the wx.EVT_TIMER event for delayed text change event
 
         """
-        print "timer fired"
+        textEvent = wx.CommandEvent(wxEVT_TEXT_CHANGED, self.GetId())
+        self.GetEventHandler().ProcessEvent(textEvent)
 
     #--------------------------------------------------------------------------
     # Public API
@@ -90,7 +96,7 @@ class WxMultiLineEdit(WxControl):
             style |= wx.TE_READONLY
         else:
             style &= ~wx.TE_READONLY
-        return wxLineEdit(parent, style=style)
+        return wxMultiLineEdit(parent, style=style)
 
     def create(self, tree):
         """ Create and initialize the wx field control.
@@ -101,7 +107,7 @@ class WxMultiLineEdit(WxControl):
         self.set_submit_triggers(tree['submit_triggers'])
         widget = self.widget()
         widget.Bind(wx.EVT_KILL_FOCUS, self.on_lost_focus)
-        widget.Bind(wx.EVT_TEXT_CHANGED, self.on_text_changed)
+        widget.Bind(EVT_TEXT_CHANGED, self.on_text_changed)
 
     #--------------------------------------------------------------------------
     # Private API
