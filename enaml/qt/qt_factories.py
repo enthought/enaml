@@ -142,6 +142,11 @@ def mpl_canvas_factory():
     return QtMPLCanvas
 
 
+def multiline_edit_factory():
+    from .qt_multiline_edit import QtMultiLineEdit
+    return QtMultiLineEdit
+
+
 def notebook_factory():
     from .qt_notebook import QtNotebook
     return QtNotebook
@@ -269,6 +274,7 @@ def register_default():
     register('Menu', menu_factory)
     register('MenuBar', menu_bar_factory)
     register('MPLCanvas', mpl_canvas_factory)
+    register('MultiLineEdit', multiline_edit_factory)
     register('Notebook', notebook_factory)
     register('Page', page_factory)
     register('PushButton', push_button_factory)
