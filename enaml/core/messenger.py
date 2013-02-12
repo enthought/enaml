@@ -2,8 +2,9 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Instance, Uninitialized
+#from traits.api import Instance, Uninitialized
 
+from atom.api import Observable, Enum,
 from enaml.utils import LoopbackGuard
 
 from .declarative import Declarative
@@ -87,7 +88,265 @@ class ChildrenChangedTask(object):
         return content
 
 
-class Messenger(Declarative):
+class Messenger(Observable):
+    """ A mixin class for creating messaging enabled Enaml objects.
+
+    The `Messenger` class should be mixed in with a class derived from
+    `Object` in order to enable message passing between the server side
+    object and it's client side counterpart.
+
+    """
+    #: An event fired when an the object has been initialized. It is
+    #: emitted once during an object's lifetime, when the object is
+    #: initialized by a Session.
+    #initialized = EnamlEvent
+
+    #: An event fired when an object has been activated. It is emitted
+    #: once during an object's lifetime, when the object is activated
+    #: by a Session.
+    #activated = EnamlEvent
+
+    #: An event fired when an object is being destroyed. This event
+    #: is fired once during the object lifetime, just before the
+    #: object is removed from the tree structure.
+    #destroyed = EnamlEvent
+
+    #: A read-only property which returns the messengers's session.
+    session = property(lambda self: self._session)
+
+    #: The current lifetime state of the messenger within the session.
+    #: This value should not be manipulated by user code.
+    state = Enum(
+        'inactive', 'initializing', 'initialized', 'activating', 'active',
+        'destroying', 'destroyed'
+    )
+
+    #: A read-only property indicating if the messenger is inactive.
+    is_inactive = property(lambda self: self.state == 'inactive')
+
+    #: A read-only property indicating if the messenger is initializing.
+    is_initializing = property(lambda self: self.state == 'initializing')
+
+    #: A read-only property indicating if the messenger is initialized.
+    is_initialized = property(lambda self: self.state == 'initialized')
+
+    #: A read-only property indicating if the messenger is activating.
+    is_activating = property(lambda self: self.state == 'activating')
+
+    #: A read-only property indicating if the messenger is active.
+    is_active = property(lambda self: self.state == 'active')
+
+    #: A read-only property indicating if the messenger is destroying.
+    is_destroying = property(lambda self: self.state == 'destroying')
+
+    #: A read-only property indicating if the messenger is destroyed.
+    is_destroyed = property(lambda self: self.state == 'destroyed')
+
+    #: Private storage values. These should *never* be manipulated by
+    #: user code. For performance reasons, these are not type checked.
+    _session = Value()
+
+    def initialize(self):
+        """ Called by a Session to initialize the object tree.
+
+        This method is called by a Session object to allow the object
+        tree to perform initialization before the object is activated
+        for messaging.
+
+        """
+        self.state = 'initializing'
+        self.pre_initialize()
+        isinst = isinstance
+        target = Messenger
+        for child in self.children:
+            if isinst(child, target):
+                child.initialize()
+        self.state = 'initialized'
+        self.post_initialize()
+
+    def pre_initialize(self):
+        """ Called during the initialization pass before any children
+        are initialized.
+
+        The object `state` during this call will be 'initializing'.
+
+        """
+        pass
+
+    def post_initialize(self):
+        """ Called during the initialization pass after all children
+        have been initialized.
+
+        The object `state` during this call will be 'initialized'. The
+        default implementation of this method emits the `initialized`
+        event.
+
+        """
+        self.initialized()
+
+    def activate(self, session):
+        """ Called by a Session to activate the object tree.
+
+        This method is called by a Session object to activate the object
+        tree for messaging.
+
+        Parameters
+        ----------
+        session : Session
+            The session to use for messaging with this object tree.
+
+        """
+        self.state = 'activating'
+        self.pre_activate(session)
+        self._session = session
+        session.register(self)
+        isinst = isinstance
+        target = Messenger
+        for child in self._children:
+            if isinst(child, target):
+                child.activate(session)
+        self.state = 'active'
+        self.post_activate(session)
+
+    def pre_activate(self, session):
+        """ Called during the activation pass before any children are
+        activated.
+
+        The object `state` during this call will be 'activating'.
+
+        Parameters
+        ----------
+        session : Session
+            The session to use for messaging with this object tree.
+
+        """
+        pass
+
+    def post_activate(self, session):
+        """ Called during the activation pass after all children are
+        activated.
+
+        The object `state` during this call will be 'active'. The
+        default implementation emits the `activated` event.
+
+        Parameters
+        ----------
+        session : Session
+            The session to use for messaging with this object tree.
+
+        """
+        self.activated()
+
+    def destroy(self):
+        """ Destroy this object and all of its children recursively.
+
+        This will emit the `destroyed` event before any change to the
+        object tree is made. After this returns, the object should be
+        considered invalid and should no longer be used.
+
+        """
+        # Only send the destroy message if the object's parent is not
+        # being destroyed. This reduces the number of messages since
+        # the automatic destruction of children is assumed.
+        parent = self._parent
+        if parent is None or not parent.is_destroying:
+            self.batch_action('destroy', {})
+        self.state = 'destroying'
+        self.pre_destroy()
+        if len(self._children) > 0:
+            for child in self._children:
+                child.destroy()
+            del self._children
+        if parent is not None:
+            if parent.is_destroying:
+                self._parent = None
+            else:
+                self.set_parent(None)
+        session = self._session
+        if session is not None:
+            session.unregister(self)
+        self.state = 'destroyed'
+        self.post_destroy()
+    def send_action(self, action, content):
+        """ Send an action to the client of this object.
+
+        The action will only be sent if the current state of the object
+        is `active`. Subclasses may reimplement this method if more
+        control is needed.
+
+        Parameters
+        ----------
+        action : str
+            The name of the action which the client should perform.
+
+        content : dict
+            The content data for the action.
+
+        """
+        if self.is_active:
+            self._session.send(self.object_id, action, content)
+
+    def batch_action(self, action, content):
+        """ Batch an action to be sent to the client at a later time.
+
+        The action will only be batched if the current state of the
+        object is `active`. Subclasses may reimplement this method
+        if more control is needed.
+
+        Parameters
+        ----------
+        action : str
+            The name of the action which the client should perform.
+
+        content : dict
+            The content data for the action.
+
+        """
+        if self.is_active:
+            self._session.batch(self.object_id, action, content)
+
+    def batch_action_task(self, action, task):
+        """ Similar to `batch_action` but takes a callable task.
+
+        The task will only be batched if the current state of the
+        object is `active`. Subclasses may reimplement this method
+        if more control is needed.
+
+        Parameters
+        ----------
+        action : str
+            The name of the action which the client should perform.
+
+        task : callable
+            A callable which will be invoked at a later time. It must
+            return the content dictionary for the action.
+
+        """
+        if self.is_active:
+            self._session.batch_task(self.object_id, action, task)
+
+    def receive_action(self, action, content):
+        """ Receive an action from the client of this object.
+
+        The default implementation will dynamically dispatch the action
+        to specially named handlers if the current state of the object
+        is 'active'. Subclasses may reimplement this method if more
+        control is needed.
+
+        Parameters
+        ----------
+        action : str
+            The name of the action to perform.
+
+        content : dict
+            The content data for the action.
+
+        """
+        if self.is_active:
+            dispatch_action(self, action, content)
+
+
+class OldMessenger(Declarative):
     """ A base class for creating messaging enabled Enaml objects.
 
     This is a Declarative subclass which provides convenient APIs for
