@@ -127,6 +127,7 @@ class WxWindow(WxWidget):
         self.set_title(tree['title'])
         self.set_initial_size(tree['initial_size'])
         self.set_modality(tree['modality'])
+        self.set_sticky(tree['sticky'])
         self.widget().Bind(wx.EVT_CLOSE, self.on_close)
 
     def init_layout(self):
@@ -250,6 +251,12 @@ class WxWindow(WxWidget):
         """
         self.set_modality(content['modality'])
 
+    def on_action_set_sticky(self, content):
+        """ Handle the 'set_sticky' action from the Enaml widget.
+
+        """
+        self.set_sticky(content['sticky'])
+
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
@@ -309,6 +316,14 @@ class WxWindow(WxWidget):
             self.widget().MakeModal(False)
         else:
             self.widget().MakeModal(True)
+
+    def set_sticky(self, sticky):
+        flags = self.widget().GetWindowStyleFlag()
+        if sticky:
+            flags |= wx.STAY_ON_TOP
+        else:
+            flags &= ~wx.STAY_ON_TOP
+        self.widget().SetWindowStyleFlag(flags)
 
     def set_visible(self, visible):
         """ Set the visibility on the window.
