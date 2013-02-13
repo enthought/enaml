@@ -11,6 +11,7 @@ an optional bounding box and title.
 from enaml.layout.api import vbox, hbox, spacer, align
 from enaml.widgets.api import (
     Window, Container, GroupBox, Form, Label, Field, CheckBox, ComboBox,
+    MultiLineField, PushButton,
 )
 
 
@@ -20,7 +21,8 @@ enamldef Main(Window):
         constraints = [
             vbox(
                 grp_box,
-                hbox(spacer, title_check, flat_check, combo_box),
+                hbox(push, spacer, title_check, flat_check, combo_box),
+                multiline,
             ),
             align('v_center', title_check, flat_check, combo_box),
         ]
@@ -49,8 +51,14 @@ enamldef Main(Window):
             id: flat_check
             text = "Flat"
             checked := grp_box.flat
+        PushButton:
+            id: push
+            text = "Submit"
+            clicked :: print multiline.text
         ComboBox:
             id: combo_box
             index = 0
             items = ['left', 'center', 'right']
-
+        MultiLineField:
+            id: multiline
+            submit_triggers = ['lost_focus']
