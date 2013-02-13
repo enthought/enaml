@@ -33,6 +33,9 @@ class Window(Widget):
     #: value is 'non_modal'.
     modality = Enum('non_modal', 'application_modal', 'window_modal')
 
+    #: A boolean which indicates whether the window is sticky
+    sticky = Bool(False)
+
     #: If this value is set to True, the window will be destroyed on
     #: the completion of the `closed` event.
     destroy_on_close = Bool(True)
@@ -57,6 +60,7 @@ class Window(Widget):
         snap['title'] = self.title
         snap['initial_size'] = self.initial_size
         snap['modality'] = self.modality
+        snap['sticky'] = self.sticky
         snap['icon_source'] = self.icon_source
         return snap
 
@@ -66,7 +70,7 @@ class Window(Widget):
 
         """
         super(Window, self).bind()
-        self.publish_attributes('title', 'modality', 'icon_source')
+        self.publish_attributes('title', 'modality', 'sticky', 'icon_source')
 
     #--------------------------------------------------------------------------
     # Private API

@@ -211,6 +211,7 @@ class QtWindow(QtWidget):
         self.set_title(tree['title'])
         self.set_initial_size(tree['initial_size'])
         self.set_modality(tree['modality'])
+        self.set_sticky(tree['sticky'])
         self._icon_source = tree['icon_source']
         self.widget().closed.connect(self.on_closed)
 
@@ -330,6 +331,12 @@ class QtWindow(QtWidget):
         """
         self.set_modality(content['modality'])
 
+    def on_action_set_sticky(self, content):
+        """ Handle the 'set_sticky' action from the Enaml widget.
+
+        """
+        self.set_sticky(content['sticky'])
+
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
@@ -398,6 +405,27 @@ class QtWindow(QtWidget):
 
         """
         self.widget().setWindowModality(MODALITY[modality])
+
+    def set_sticky(self, sticky):
+        """ Set the 'sticky' flag on the window
+
+        """
+        flags = self.widget().windowFlags()
+        if sticky and not flags & Qt.WindowStaysOnTopHint:
+            flags |= Qt.WindowStaysOnTopHint
+            set_sticky = True
+        elif not sticky and flags & Qt.WindowStaysOnTopHint:
+            flags &= ~Qt.WindowStaysOnTopHint
+            set_sticky = True
+        else:
+            set_sticky = False
+
+        if set_sticky:
+            visible = self.widget().isVisible()
+            self.widget().setWindowFlags(flags)
+            # Qt re-parents the widget, so we need to call show on it
+            if visible:
+                self.widget().show()
 
     def set_visible(self, visible):
         """ Set the visibility on the window.
