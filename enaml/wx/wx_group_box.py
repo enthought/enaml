@@ -24,7 +24,7 @@ class wxGroupBox(wxContainer):
         Parameters
         ----------
         *args, **kwargs
-            The positional and keyword arguments to initialize a 
+            The positional and keyword arguments to initialize a
             wxContainer.
 
         """
@@ -37,7 +37,7 @@ class wxGroupBox(wxContainer):
         self._label_size = self._label.GetBestSize()
         self._title_alignment = wx.ALIGN_LEFT
         self._flat = False
-        # Set the panel to double buffered or suffer terrible 
+        # Set the panel to double buffered or suffer terrible
         # rendering artifacts
         self.SetDoubleBuffered(True)
 
@@ -45,7 +45,7 @@ class wxGroupBox(wxContainer):
     # Public API
     #--------------------------------------------------------------------------
     def GetAlignment(self):
-        """ Return the wx alignment flag for the current alignment 
+        """ Return the wx alignment flag for the current alignment
         of the group box title.
 
         """
@@ -58,7 +58,7 @@ class wxGroupBox(wxContainer):
         """
         self._title_alignment = alignment
         self._update_layout()
-        
+
     def GetFlat(self):
         """ Returns a boolean indicating whether the group box is using
         a flat style.
@@ -82,7 +82,7 @@ class wxGroupBox(wxContainer):
 
     def GetTitle(self):
         """ Return the current title text in the group box.
-        
+
         """
         # Undo the hack applied in SetTitle(...)
         title = self._title
@@ -144,7 +144,7 @@ class wxGroupBox(wxContainer):
     # Private API
     #--------------------------------------------------------------------------
     def _update_layout(self):
-        """ Synchronizes the drawing of the group box decorations with 
+        """ Synchronizes the drawing of the group box decorations with
         the panel.
 
         """
@@ -161,7 +161,7 @@ class wxGroupBox(wxContainer):
         """
         width, height = self.GetSizeTuple()
         self._border.SetSizeWH(width, height)
-    
+
     def _update_line_geometry(self):
         """ Updates the geometry of the line.
 
@@ -238,7 +238,7 @@ class WxGroupBox(WxContainer):
         self.set_title(content['title'])
         new_margins = widget.GetContentsMargins()
         if old_margins != new_margins:
-            self.refresh_contents_constraints()
+            self.contents_margins_updated()
 
     def on_action_set_title_align(self, content):
         """ Handle the 'set_title_align' action from the Enaml widget.
@@ -266,7 +266,7 @@ class WxGroupBox(WxContainer):
 
         """
         self.widget().SetFlat(flat)
-    
+
     def set_title_align(self, align):
         """ Updates the alignment of the title of the group box.
 
