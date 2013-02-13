@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2012, Enthought, Inc.
+#  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import wx
@@ -173,7 +173,8 @@ class WxMultiLineEdit(WxControl):
         """ Updates the text control with the given unicode text.
 
         """
-        self.widget().ChangeValue(text)
+        with self.loopback_guard('text'):
+            self.widget().ChangeValue(text)
 
     def set_submit_triggers(self, triggers):
         """ Set the submit triggers for the underlying widget.

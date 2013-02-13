@@ -1,37 +1,37 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2012, Enthought, Inc.
+#  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-
 from .qt.QtGui import QTextEdit
 from .qt.QtCore import Signal, QTimer
 from .qt_control import QtControl
 
 
-class QtFocusMultiLineEdit(QTextEdit):
+class QFocusMultiLineEdit(QTextEdit):
     """ A QLineEdit subclass which converts a lost focus event into
     a lost focus signal.
 
     """
     lostFocus = Signal()
+
     delayedTextChanged = Signal()
 
     def __init__(self, parent=None):
-        super(QtFocusMultiLineEdit, self).__init__(parent)
+        super(QFocusMultiLineEdit, self).__init__(parent)
 
         # Set up a collapsing timer to fire 200 milliseconds
         # after the text is changed
         self._changed_timer = timer = QTimer()
         timer.setInterval(200)
         timer.setSingleShot(True)
-        timer.timeout.connect(self.delayedTextChanged.emit)
+        timer.timeout.connect(self.delayedTextChanged)
 
         # Connect the timer to the text changed signal
         self.textChanged.connect(timer.start)
 
     def focusOutEvent(self, event):
         self.lostFocus.emit()
-        return super(QtFocusMultiLineEdit, self).focusOutEvent(event)
+        return super(QFocusMultiLineEdit, self).focusOutEvent(event)
 
 
 class QtMultiLineEdit(QtControl):
@@ -48,7 +48,7 @@ class QtMultiLineEdit(QtControl):
         """ Creates the underlying QLineEdit widget.
 
         """
-        return QtFocusMultiLineEdit(parent)
+        return QFocusMultiLineEdit(parent)
 
     def create(self, tree):
         """ Create and initialize the underlying widget.
@@ -67,11 +67,6 @@ class QtMultiLineEdit(QtControl):
     #--------------------------------------------------------------------------
     def _submit_text(self):
         """ Submit the given text as an update to the server widget.
-
-        Parameters
-        ----------
-        text : unicode
-            The unicode text to send to the server widget.
 
         """
         text = self.widget().toPlainText()
@@ -124,7 +119,8 @@ class QtMultiLineEdit(QtControl):
         """ Set the text in the underlying widget.
 
         """
-        self.widget().setText(text)
+        with self.loopback_guard('text'):
+            self.widget().setText(text)
 
     def set_submit_triggers(self, triggers):
         """ Set the submit triggers for the underlying widget.
