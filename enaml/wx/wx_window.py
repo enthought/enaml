@@ -318,6 +318,9 @@ class WxWindow(WxWidget):
             self.widget().MakeModal(True)
 
     def set_sticky(self, sticky):
+        """ Set the stickyness of the window.
+
+        """
         flags = self.widget().GetWindowStyleFlag()
         if sticky:
             flags |= wx.STAY_ON_TOP
