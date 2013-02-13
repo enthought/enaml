@@ -11,7 +11,7 @@ an optional bounding box and title.
 from enaml.layout.api import vbox, hbox, spacer, align
 from enaml.widgets.api import (
     Window, Container, GroupBox, Form, Label, Field, CheckBox, ComboBox,
-    MultiLineEdit,
+    MultiLineField,
 )
 
 
@@ -55,5 +55,5 @@ enamldef Main(Window):
             id: combo_box
             index = 0
             items = ['left', 'center', 'right']
-        MultiLineEdit:
+        MultiLineField:
             id: multiline

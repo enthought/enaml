@@ -102,9 +102,9 @@ def mpl_canvas_factory():
     return WxMPLCanvas
 
 
-def multiline_edit_factory():
-    from wx_multiline_edit import WxMultiLineEdit
-    return WxMultiLineEdit
+def multiline_field_factory():
+    from wx_multiline_field import WxMultiLineField
+    return WxMultiLineField
 
 
 def notebook_factory():
@@ -199,7 +199,7 @@ def register_default():
     register('Menu', menu_factory)
     register('MenuBar', menu_bar_factory)
     register('MPLCanvas', mpl_canvas_factory)
-    register('MultiLineEdit', multiline_edit_factory)
+    register('MultiLineField', multiline_field_factory)
     register('Notebook', notebook_factory)
     register('Page', page_factory)
     register('PushButton', push_button_factory)

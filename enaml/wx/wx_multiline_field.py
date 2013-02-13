@@ -12,13 +12,13 @@ wxEVT_TEXT_CHANGED = wx.NewEventType()
 EVT_TEXT_CHANGED = wx.PyEventBinder(wxEVT_TEXT_CHANGED, 1)
 
 
-class wxMultiLineEdit(wx.TextCtrl):
-    """ A wx.TextCtrl subclass which is similar to a QMultiLineEdit in terms
+class wxMultiLineField(wx.TextCtrl):
+    """ A wx.TextCtrl subclass which is similar to a QMultiLineField in terms
     of features and behavior.
 
     """
     def __init__(self, *args, **kwargs):
-        """ Initialize a wxMultiLineEdit.
+        """ Initialize a wxMultiLineField.
 
         Parameters
         ----------
@@ -27,7 +27,7 @@ class wxMultiLineEdit(wx.TextCtrl):
             wx.TextCtrl.
 
         """
-        super(wxMultiLineEdit, self).__init__(*args, **kwargs)
+        super(wxMultiLineField, self).__init__(*args, **kwargs)
         self._timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.OnTimerFired, self._timer)
         self.Bind(wx.EVT_TEXT, self.OnTextEdited)
@@ -61,7 +61,7 @@ class wxMultiLineEdit(wx.TextCtrl):
         pixels to the height. This makes Wx consistent with Qt.
 
         """
-        size = super(wxMultiLineEdit, self).GetBestSize()
+        size = super(wxMultiLineField, self).GetBestSize()
         return wx.Size(size.GetWidth() + 246, size.GetHeight() + 176)
 
     def ChangeValue(self, text):
@@ -70,11 +70,11 @@ class wxMultiLineEdit(wx.TextCtrl):
         to behave like Qt.
 
         """
-        super(wxMultiLineEdit, self).ChangeValue(text)
+        super(wxMultiLineField, self).ChangeValue(text)
         self.SetInsertionPoint(len(text))
 
 
-class WxMultiLineEdit(WxControl):
+class WxMultiLineField(WxControl):
     """ A Wx implementation of an Enaml Field.
 
     """
@@ -85,7 +85,7 @@ class WxMultiLineEdit(WxControl):
     # Setup Methods
     #--------------------------------------------------------------------------
     def create_widget(self, parent, tree):
-        """ Creates the underlying wxLineEdit.
+        """ Creates the underlying wxMultiLineField.
 
         """
         # We have to do a bit of initialization in the create method
@@ -96,13 +96,13 @@ class WxMultiLineEdit(WxControl):
             style |= wx.TE_READONLY
         else:
             style &= ~wx.TE_READONLY
-        return wxMultiLineEdit(parent, style=style)
+        return wxMultiLineField(parent, style=style)
 
     def create(self, tree):
         """ Create and initialize the wx field control.
 
         """
-        super(WxMultiLineEdit, self).create(tree)
+        super(WxMultiLineField, self).create(tree)
         self.set_text(tree['text'])
         self.set_submit_triggers(tree['submit_triggers'])
         widget = self.widget()

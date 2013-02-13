@@ -8,7 +8,7 @@ from .qt_control import QtControl
 
 
 class QFocusMultiLineEdit(QTextEdit):
-    """ A QLineEdit subclass which converts a lost focus event into
+    """ A QTextEdit subclass which converts a lost focus event into
     a lost focus signal.
 
     """
@@ -34,7 +34,7 @@ class QFocusMultiLineEdit(QTextEdit):
         return super(QFocusMultiLineEdit, self).focusOutEvent(event)
 
 
-class QtMultiLineEdit(QtControl):
+class QtMultiLineField(QtControl):
     """ A Qt4 implementation of an Enaml Field.
 
     """
@@ -45,7 +45,7 @@ class QtMultiLineEdit(QtControl):
     # Setup Methods
     #--------------------------------------------------------------------------
     def create_widget(self, parent, tree):
-        """ Creates the underlying QLineEdit widget.
+        """ Creates the underlying QFocusMultiLineEdit widget.
 
         """
         return QFocusMultiLineEdit(parent)
@@ -54,7 +54,7 @@ class QtMultiLineEdit(QtControl):
         """ Create and initialize the underlying widget.
 
         """
-        super(QtMultiLineEdit, self).create(tree)
+        super(QtMultiLineField, self).create(tree)
         self.set_text(tree['text'])
         self.set_submit_triggers(tree['submit_triggers'])
         self.set_read_only(tree['read_only'])

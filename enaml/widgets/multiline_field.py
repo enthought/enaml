@@ -9,7 +9,7 @@ from enaml.validation.validator import Validator
 from .control import Control
 
 
-class MultiLineEdit(Control):
+class MultiLineField(Control):
     """ A multi line editable text widget.
 
     """
@@ -39,7 +39,7 @@ class MultiLineEdit(Control):
         """ Returns the snapshot dict for the textedit
 
         """
-        snap = super(MultiLineEdit, self).snapshot()
+        snap = super(MultiLineField, self).snapshot()
         snap['text'] = self.text
         snap['submit_triggers'] = self.submit_triggers
         snap['read_only'] = self.read_only
@@ -50,7 +50,7 @@ class MultiLineEdit(Control):
         to bind any event handlers necessary.
 
         """
-        super(MultiLineEdit, self).bind()
+        super(MultiLineField, self).bind()
         attrs = (
             'text', 'read_only',
         )
