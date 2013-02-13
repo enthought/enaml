@@ -300,6 +300,18 @@ class QtWindow(QtWidget):
         """
         self.restore()
 
+    def on_action_send_to_front(self, content):
+        """ Handle the 'send_to_front' action from the Enaml widget.
+
+        """
+        self.send_to_front()
+
+    def on_action_send_to_back(self, content):
+        """ Handle the 'send_to_back' action from the Enaml widget.
+
+        """
+        self.send_to_back()
+
     def on_action_set_icon_source(self, content):
         """ Handle the 'set_icon_source' action from the Enaml widget.
 
@@ -344,6 +356,18 @@ class QtWindow(QtWidget):
 
         """
         self.widget().showNormal()
+
+    def send_to_front(self):
+        """ Move the window to the front of all the other application's windows.
+
+        """
+        self.widget().raise_()
+
+    def send_to_back(self):
+        """ Move the window to the back of all other other application's windows.
+
+        """
+        self.widget().lower()
 
     def set_icon_source(self, icon_source):
         """ Set the window icon source.

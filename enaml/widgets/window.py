@@ -126,3 +126,17 @@ class Window(Widget):
         """
         self.send_action('restore', {})
 
+    def send_to_front(self):
+        """ Send the 'send_to_front' action to the client widget.
+        This moves the window to the front of all the application's windows.
+
+        """
+        self.send_action('send_to_front', {})
+
+    def send_to_back(self):
+        """ Send the 'send_to_back' action to the client widget.
+        This moves the window to the back of all the application's windows.
+
+        """
+        self.send_action('send_to_back', {})
+
