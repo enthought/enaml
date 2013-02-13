@@ -11,7 +11,7 @@ an optional bounding box and title.
 from enaml.layout.api import vbox, hbox, spacer, align
 from enaml.widgets.api import (
     Window, Container, GroupBox, Form, Label, Field, CheckBox, ComboBox,
-    MultiLineField, PushButton,
+    MultilineField, PushButton,
 )
 
 
@@ -30,6 +30,7 @@ enamldef Main(Window):
             id: grp_box
             title << "Personal Details" if title_check.checked else ""
             title_align << combo_box.items[combo_box.index]
+            hug_height = 'strong'
             Form:
                 Label:
                     text = "First name:"
@@ -54,11 +55,13 @@ enamldef Main(Window):
         PushButton:
             id: push
             text = "Submit"
-            clicked :: print multiline.text
+            clicked ::
+                print 'Submit'
+                print multiline.text
         ComboBox:
             id: combo_box
             index = 0
             items = ['left', 'center', 'right']
-        MultiLineField:
+        MultilineField:
             id: multiline
-            submit_triggers = ['lost_focus']
+

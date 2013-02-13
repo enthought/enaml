@@ -3,22 +3,21 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import wx
+import wx.lib.newevent
 
 from .wx_control import WxControl
 
 
-# Create event for a delayed text changed
-wxEVT_TEXT_CHANGED = wx.NewEventType()
-EVT_TEXT_CHANGED = wx.PyEventBinder(wxEVT_TEXT_CHANGED, 1)
+#: The event used to signal a delayed text change.
+wxTextChangedEvent, EVT_TEXT_CHANGED = wx.lib.newevent.NewEvent()
 
 
-class wxMultiLineField(wx.TextCtrl):
-    """ A wx.TextCtrl subclass which is similar to a QMultiLineField in terms
-    of features and behavior.
+class wxMultilineField(wx.TextCtrl):
+    """ A text control which notifies on a collpasing timer.
 
     """
     def __init__(self, *args, **kwargs):
-        """ Initialize a wxMultiLineField.
+        """ Initialize a wxMultilineField.
 
         Parameters
         ----------
@@ -27,59 +26,59 @@ class wxMultiLineField(wx.TextCtrl):
             wx.TextCtrl.
 
         """
-        super(wxMultiLineField, self).__init__(*args, **kwargs)
+        super(wxMultilineField, self).__init__(*args, **kwargs)
         self._timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.OnTimerFired, self._timer)
         self.Bind(wx.EVT_TEXT, self.OnTextEdited)
 
     #--------------------------------------------------------------------------
-    # Private API
-    #--------------------------------------------------------------------------
-
-    #--------------------------------------------------------------------------
     # Event Handlers
     #--------------------------------------------------------------------------
     def OnTextEdited(self, event):
-        """ Start the collapsing timer when the text is edited
+        """ Restart the collapsing timer when the text is edited.
 
         """
         self._timer.Start(200, oneShot=True)
         event.Skip()
 
     def OnTimerFired(self, event):
-        """ Handles the wx.EVT_TIMER event for delayed text change event
+        """ Handles the wx.EVT_TIMER event for delayed text change.
 
         """
-        textEvent = wx.CommandEvent(wxEVT_TEXT_CHANGED, self.GetId())
-        self.GetEventHandler().ProcessEvent(textEvent)
+        event = wxTextChangedEvent()
+        event.SetEventObject(self)
+        self.GetEventHandler().ProcessEvent(event)
 
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
     def GetBestSize(self):
-        """ Overridden best size method to add 246 pixels in width and 176
-        pixels to the height. This makes Wx consistent with Qt.
+        """ A reimplemented best size method.
+
+        This adds 246 pixels in width and 176 pixels to the height to
+        make Wx consistent with Qt.
 
         """
-        size = super(wxMultiLineField, self).GetBestSize()
+        size = super(wxMultilineField, self).GetBestSize()
         return wx.Size(size.GetWidth() + 246, size.GetHeight() + 176)
 
     def ChangeValue(self, text):
-        """ Overridden method which moves the insertion point to the end
-        of the field when changing the text value. This causes the field
-        to behave like Qt.
+        """ An overridden parent class method.
+
+        This moves the insertion point to the end of the field when the
+        text value changes. This makes the field to behave like Qt.
 
         """
-        super(wxMultiLineField, self).ChangeValue(text)
-        self.SetInsertionPoint(len(text))
+        super(wxMultilineField, self).ChangeValue(text)
+        self.SetInsertionPointEnd()
 
 
-class WxMultiLineField(WxControl):
+class WxMultilineField(WxControl):
     """ A Wx implementation of an Enaml Field.
 
     """
-    #: The list of submit triggers for when to submit a text change.
-    _submit_triggers = []
+    #: Whether or not to auto synchronize the text on change.
+    _auto_sync_text = True
 
     #--------------------------------------------------------------------------
     # Setup Methods
@@ -88,61 +87,40 @@ class WxMultiLineField(WxControl):
         """ Creates the underlying wxMultiLineField.
 
         """
-        # We have to do a bit of initialization in the create method
-        # since wx requires the style of certain things to be set at
-        # the point of instantiation
-        style = wx.TE_MULTILINE
-        if tree['read_only']:
-            style |= wx.TE_READONLY
-        else:
-            style &= ~wx.TE_READONLY
-        return wxMultiLineField(parent, style=style)
+        style = wx.TE_MULTILINE | wx.TE_RICH
+        return wxMultilineField(parent, style=style)
 
     def create(self, tree):
         """ Create and initialize the wx field control.
 
         """
-        super(WxMultiLineField, self).create(tree)
+        super(WxMultilineField, self).create(tree)
+        self._auto_sync_text = tree['auto_sync_text']
         self.set_text(tree['text'])
-        self.set_submit_triggers(tree['submit_triggers'])
+        self.set_read_only(tree['read_only'])
         widget = self.widget()
-        widget.Bind(wx.EVT_KILL_FOCUS, self.on_lost_focus)
         widget.Bind(EVT_TEXT_CHANGED, self.on_text_changed)
 
     #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
-    def _submit_text(self):
-        """ Submit the given text as an update to the server widget.
-
-        Parameters
-        ----------
-        text : unicode
-            The unicode text to send to the server widget.
+    def _send_text_changed(self):
+        """ Send the current text as an update to the server widget.
 
         """
         text = self.widget().GetValue()
-        content = {'text': text}
-        self.send_action('submit_text', content)
+        self.send_action('text_changed', {'text': text})
 
     #--------------------------------------------------------------------------
     # Event Handling
     #--------------------------------------------------------------------------
-    def on_lost_focus(self, event):
-        """ The event handler for EVT_KILL_FOCUS event.
-
-        """
-        event.Skip()
-        if 'lost_focus' in self._submit_triggers:
-            self._submit_text()
-
     def on_text_changed(self, event):
         """ The event handler for EVT_TEXT_CHANGED event.
 
         """
         event.Skip()
-        if 'text_changed' in self._submit_triggers:
-            self._submit_text()
+        if self._auto_sync_text and 'text' not in self.loopback_guard:
+            self._send_text_changed()
 
     #--------------------------------------------------------------------------
     # Message Handling
@@ -153,18 +131,23 @@ class WxMultiLineField(WxControl):
         """
         self.set_text(content['text'])
 
-    def on_action_set_submit_triggers(self, content):
-        """ Handle the 'set_submit_triggers' action from the Enaml
-        widget.
+    def on_action_set_auto_sync_text(self, content):
+        """ Handle the 'set_auto_sync_text' action from the Enaml widget.
 
         """
-        self.set_submit_triggers(content['sumbit_triggers'])
+        self._auto_sync_text = content['auto_sync_text']
 
     def on_action_set_read_only(self, content):
         """ Handle the 'set_read_only' action from the Enaml widget.
 
         """
         self.set_read_only(content['read_only'])
+
+    def on_action_sync_text(self, content):
+        """ Handle the 'sync_text' action from the Enaml widget.
+
+        """
+        self._send_text_changed()
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -176,17 +159,9 @@ class WxMultiLineField(WxControl):
         with self.loopback_guard('text'):
             self.widget().ChangeValue(text)
 
-    def set_submit_triggers(self, triggers):
-        """ Set the submit triggers for the underlying widget.
-
-        """
-        self._submit_triggers = triggers
-
     def set_read_only(self, read_only):
         """ Sets the read only state of the widget.
 
         """
-        # Wx cannot change the read only state dynamically. It requires
-        # creating a brand-new control, so we just ignore the change.
-        pass
+        self.widget().SetEditable(not read_only)
 
