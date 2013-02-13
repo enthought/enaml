@@ -118,7 +118,6 @@ class WxMultilineField(WxControl):
         """ The event handler for EVT_TEXT_CHANGED event.
 
         """
-        event.Skip()
         if self._auto_sync_text and 'text' not in self.loopback_guard:
             self._send_text_changed()
 
