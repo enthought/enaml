@@ -24,23 +24,37 @@ done by calling the `add_window` method on the session, and passing it
 the newly constructed window instance.
 
 """
-from enaml.widgets.api import Window, Container, PushButton, Field
+from enaml.widgets.api import Window, Container, PushButton, Field, CheckBox
 
 
-enamldef ContentWindow(Window):
+enamldef ContentWindow(Window): content:
     Container:
-        Field: pass
-        Field: pass
+        CheckBox:
+            text = 'This window is always on top'
+            checked := content.always_on_top
         Field: pass
         PushButton:
+            text = 'Print object id'
             clicked :: print object_id
 
 
-enamldef Main(Window):
+enamldef Main(Window): main:
+    attr targetwin = None
     Container:
         PushButton:
             text = 'Open Child Window'
-            clicked :: ContentWindow(root_object(), title='Child Window')
+            clicked :: ContentWindow(main, title='Child Window')
+        PushButton:
+            text = 'Open Target Window'
+            enabled << not main.targetwin or not main.targetwin.visible
+            clicked ::
+                if not main.targetwin:
+                    main.targetwin = ContentWindow(title='Target')
+                session.add_window(main.targetwin)
+        PushButton:
+            text = "Move Target to Front"
+            enabled << bool(main.targetwin) and main.targetwin.visible
+            clicked :: main.targetwin.send_to_front()
         PushButton:
             text = 'Open Modal Child Window'
             clicked ::
