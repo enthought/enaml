@@ -211,6 +211,7 @@ class QtWindow(QtWidget):
         self.set_title(tree['title'])
         self.set_initial_size(tree['initial_size'])
         self.set_modality(tree['modality'])
+        self.set_always_on_top(tree['always_on_top'])
         self._icon_source = tree['icon_source']
         self.widget().closed.connect(self.on_closed)
 
@@ -300,6 +301,18 @@ class QtWindow(QtWidget):
         """
         self.restore()
 
+    def on_action_send_to_front(self, content):
+        """ Handle the 'send_to_front' action from the Enaml widget.
+
+        """
+        self.send_to_front()
+
+    def on_action_send_to_back(self, content):
+        """ Handle the 'send_to_back' action from the Enaml widget.
+
+        """
+        self.send_to_back()
+
     def on_action_set_icon_source(self, content):
         """ Handle the 'set_icon_source' action from the Enaml widget.
 
@@ -317,6 +330,12 @@ class QtWindow(QtWidget):
 
         """
         self.set_modality(content['modality'])
+
+    def on_action_set_always_on_top(self, content):
+        """ Handle the 'set_always_on_top' action from the Enaml widget.
+
+        """
+        self.set_always_on_top(content['always_on_top'])
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -344,6 +363,18 @@ class QtWindow(QtWidget):
 
         """
         self.widget().showNormal()
+
+    def send_to_front(self):
+        """ Move the window to the front of all other windows.
+
+        """
+        self.widget().raise_()
+
+    def send_to_back(self):
+        """ Move the window to the back of all other windows.
+
+        """
+        self.widget().lower()
 
     def set_icon_source(self, icon_source):
         """ Set the window icon source.
@@ -374,6 +405,22 @@ class QtWindow(QtWidget):
 
         """
         self.widget().setWindowModality(MODALITY[modality])
+
+    def set_always_on_top(self, always_on_top):
+        """ Set the 'always_on_top' flag on the window
+
+        """
+        widget = self.widget()
+        flags = widget.windowFlags()
+        if always_on_top:
+            flags |= Qt.WindowStaysOnTopHint
+        else:
+            flags &= ~Qt.WindowStaysOnTopHint
+        if flags != widget.windowFlags():
+            visible = widget.isVisible()
+            widget.setWindowFlags(flags)
+            if visible:  # http://qt-project.org/doc/qt-4.8/qwidget.html#windowFlags-prop
+                widget.show()
 
     def set_visible(self, visible):
         """ Set the visibility on the window.

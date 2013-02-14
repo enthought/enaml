@@ -127,6 +127,7 @@ class WxWindow(WxWidget):
         self.set_title(tree['title'])
         self.set_initial_size(tree['initial_size'])
         self.set_modality(tree['modality'])
+        self.set_always_on_top(tree['always_on_top'])
         self.widget().Bind(wx.EVT_CLOSE, self.on_close)
 
     def init_layout(self):
@@ -220,6 +221,18 @@ class WxWindow(WxWidget):
         """
         self.restore()
 
+    def on_action_send_to_front(self, content):
+        """ Handle the 'send_to_front' action from the Enaml widget.
+
+        """
+        self.send_to_front()
+
+    def on_action_send_to_back(self, content):
+        """ Handle the 'send_to_back' action from the Enaml widget.
+
+        """
+        self.send_to_back()
+
     def on_action_set_icon_source(self, content):
         """ Handle the 'set_icon_source' action from the Enaml widget.
 
@@ -237,6 +250,12 @@ class WxWindow(WxWidget):
 
         """
         self.set_modality(content['modality'])
+
+    def on_action_set_always_on_top(self, content):
+        """ Handle the 'set_always_on_top' action from the Enaml widget.
+
+        """
+        self.set_always_on_top(content['always_on_top'])
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -265,6 +284,18 @@ class WxWindow(WxWidget):
         """
         self.widget().Maximize(False)
 
+    def send_to_front(self):
+        """ Move the window to the front of all other windows.
+
+        """
+        self.widget().Raise()
+
+    def send_to_back(self):
+        """ Move the window to the back of all other windows.
+
+        """
+        self.widget().Lower()
+
     def set_title(self, title):
         """ Set the title of the window.
 
@@ -285,6 +316,18 @@ class WxWindow(WxWidget):
             self.widget().MakeModal(False)
         else:
             self.widget().MakeModal(True)
+
+    def set_always_on_top(self, always_on_top):
+        """ Set the stickyness of the window.
+
+        """
+        widget = self.widget()
+        flags = widget.GetWindowStyleFlag()
+        if always_on_top:
+            flags |= wx.STAY_ON_TOP
+        else:
+            flags &= ~wx.STAY_ON_TOP
+        widget.SetWindowStyleFlag(flags)
 
     def set_visible(self, visible):
         """ Set the visibility on the window.
