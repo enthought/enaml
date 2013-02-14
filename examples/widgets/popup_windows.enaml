@@ -27,30 +27,26 @@ the newly constructed window instance.
 from enaml.widgets.api import Window, Container, PushButton, Field, CheckBox
 
 
-enamldef ContentWindow(Window):
-    id: content
-    attr main
-    closed :: main.child = None
+enamldef ContentWindow(Window): content:
+    closed :: parent.child = None
     Container:
         CheckBox:
-            text = 'This window is sticky'
-            checked := content.sticky
+            text = 'This window is always on top'
+            checked := content.always_on_top
         Field: pass
         PushButton:
             text = 'Print object id'
             clicked :: print object_id
 
 
-enamldef Main(Window):
-    id: main
+enamldef Main(Window): main:
     attr child = None
     Container:
         PushButton:
             text = 'Open Child Window'
             enabled << child == None
             clicked ::
-                main.child = ContentWindow(title='Child Window', main=main)
-                session.add_window(child)
+                main.child = ContentWindow(root_object(), title='Child Window')
         PushButton:
             text = "Move Child to Front"
             enabled << child != None

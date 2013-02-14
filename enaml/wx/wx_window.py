@@ -127,7 +127,7 @@ class WxWindow(WxWidget):
         self.set_title(tree['title'])
         self.set_initial_size(tree['initial_size'])
         self.set_modality(tree['modality'])
-        self.set_sticky(tree['sticky'])
+        self.set_always_on_top(tree['always_on_top'])
         self.widget().Bind(wx.EVT_CLOSE, self.on_close)
 
     def init_layout(self):
@@ -251,11 +251,11 @@ class WxWindow(WxWidget):
         """
         self.set_modality(content['modality'])
 
-    def on_action_set_sticky(self, content):
-        """ Handle the 'set_sticky' action from the Enaml widget.
+    def on_action_set_always_on_top(self, content):
+        """ Handle the 'set_always_on_top' action from the Enaml widget.
 
         """
-        self.set_sticky(content['sticky'])
+        self.set_always_on_top(content['always_on_top'])
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -317,12 +317,12 @@ class WxWindow(WxWidget):
         else:
             self.widget().MakeModal(True)
 
-    def set_sticky(self, sticky):
+    def set_always_on_top(self, always_on_top):
         """ Set the stickyness of the window.
 
         """
         flags = self.widget().GetWindowStyleFlag()
-        if sticky:
+        if always_on_top:
             flags |= wx.STAY_ON_TOP
         else:
             flags &= ~wx.STAY_ON_TOP

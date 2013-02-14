@@ -211,7 +211,7 @@ class QtWindow(QtWidget):
         self.set_title(tree['title'])
         self.set_initial_size(tree['initial_size'])
         self.set_modality(tree['modality'])
-        self.set_sticky(tree['sticky'])
+        self.set_always_on_top(tree['always_on_top'])
         self._icon_source = tree['icon_source']
         self.widget().closed.connect(self.on_closed)
 
@@ -331,11 +331,11 @@ class QtWindow(QtWidget):
         """
         self.set_modality(content['modality'])
 
-    def on_action_set_sticky(self, content):
-        """ Handle the 'set_sticky' action from the Enaml widget.
+    def on_action_set_always_on_top(self, content):
+        """ Handle the 'set_always_on_top' action from the Enaml widget.
 
         """
-        self.set_sticky(content['sticky'])
+        self.set_always_on_top(content['always_on_top'])
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -406,24 +406,21 @@ class QtWindow(QtWidget):
         """
         self.widget().setWindowModality(MODALITY[modality])
 
-    def set_sticky(self, sticky):
-        """ Set the 'sticky' flag on the window
+    def set_always_on_top(self, always_on_top):
+        """ Set the 'always_on_top' flag on the window
 
         """
         flags = self.widget().windowFlags()
-        if sticky and not flags & Qt.WindowStaysOnTopHint:
+        if always_on_top:
             flags |= Qt.WindowStaysOnTopHint
-            set_sticky = True
-        elif not sticky and flags & Qt.WindowStaysOnTopHint:
-            flags &= ~Qt.WindowStaysOnTopHint
-            set_sticky = True
         else:
-            set_sticky = False
+            flags &= ~Qt.WindowStaysOnTopHint
 
-        if set_sticky:
+        if flags != self.widget().windowFlags():
             visible = self.widget().isVisible()
             self.widget().setWindowFlags(flags)
-            # Qt re-parents the widget, so we need to call show on it
+            # Qt re-parents the widget which hides it,
+            # so we need to call show on it
             if visible:
                 self.widget().show()
 
