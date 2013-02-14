@@ -61,15 +61,12 @@ class Object(Atom):
 
         **kwargs
             Additional keyword arguments to apply as attributes to the
-            object after the parent has been set.
+            object.
 
         """
-        super(Object, self).__init__()
+        super(Object, self).__init__(**kwargs)
         if parent is not None:
             self.set_parent(parent)
-        if kwargs:
-            for key, value in kwargs.iteritems():
-                setattr(self, key, value)
 
     #--------------------------------------------------------------------------
     # Public API

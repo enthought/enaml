@@ -184,8 +184,9 @@ class Nonlocals(object):
             via dynamic scoping.
 
         """
-        self._nls_obj = obj
-        self._nls_listener = listener
+        # avoid the call to the overidden __setattr__
+        self.__dict__['nls_obj'] = obj
+        self.__dict__['_nls_listener'] = listener
 
     def __repr__(self):
         """ A pretty representation of the NonlocalScope.
@@ -233,8 +234,8 @@ class Nonlocals(object):
         scope via setattr instead of setitem.
 
         """
-        if name in ('_nls_obj', '_nls_listener'):
-            super(Nonlocals, self).__setattr__(name, value)
+        if name == '_nls_obj' or name == '_nls_listener':
+            self.__dict__[name] = value
         else:
             try:
                 self.__setitem__(name, value)

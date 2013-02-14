@@ -30,6 +30,7 @@ identifiers : dict
     continue to be added to this dict as runtime execution continues.
 
 """
+from .declarative import DeclarativeProperty
 from .expressions import (
     SimpleExpression, NotificationExpression, SubscriptionExpression,
     UpdateExpression, DelegationExpression
@@ -45,8 +46,11 @@ def op_simple(obj, name, func, identifiers):
     invoked with `funchelper.call_func(...)`.
 
     """
-    expr = SimpleExpression(name, func, identifiers)
-    obj.bind_expression(expr)
+    member = obj.lookup_member(name)
+    if not isinstance(member, DeclarativeProperty):
+        raise TypeError
+    data = member.data_struct(obj)
+    data.expression = SimpleExpression(func, identifiers)
 
 
 def op_notify(obj, name, func, identifiers):
@@ -58,8 +62,13 @@ def op_notify(obj, name, func, identifiers):
     invoked with `funchelper.call_func(...)`.
 
     """
-    expr = NotificationExpression(name, func, identifiers)
-    obj.bind_listener(expr)
+    member = obj.lookup_member(name)
+    if not isinstance(member, DeclarativeProperty):
+        raise TypeError
+    data = member.data_struct(obj)
+    if data.listeners is None:
+        data.listeners = []
+    data.listeners.append(NotificationExpression(func, identifiers))
 
 
 def op_update(obj, name, func, identifiers):
@@ -72,8 +81,13 @@ def op_update(obj, name, func, identifiers):
     `funchelper.call_func(...)`.
 
     """
-    expr = UpdateExpression(name, func, identifiers)
-    obj.bind_listener(expr)
+    member = obj.lookup_member(name)
+    if not isinstance(member, DeclarativeProperty):
+        raise TypeError
+    data = member.data_struct(obj)
+    if data.listeners is None:
+        data.listeners = []
+    data.listeners.append(UpdateExpression(func, identifiers))
 
 
 def op_subscribe(obj, name, func, identifiers):
@@ -86,8 +100,11 @@ def op_subscribe(obj, name, func, identifiers):
     `funchelper.call_func(...)`.
 
     """
-    expr = SubscriptionExpression(name, func, identifiers)
-    obj.bind_expression(expr)
+    member = obj.lookup_member(name)
+    if not isinstance(member, DeclarativeProperty):
+        raise TypeError
+    data = member.data_struct(obj)
+    data.expression = SubscriptionExpression(func, identifiers)
 
 
 def op_delegate(obj, name, func, identifiers):
@@ -102,9 +119,15 @@ def op_delegate(obj, name, func, identifiers):
     and `op_update`.
 
     """
-    expr = DelegationExpression(name, func, identifiers)
-    obj.bind_expression(expr)
-    obj.bind_listener(expr)
+    member = obj.lookup_member(name)
+    if not isinstance(member, DeclarativeProperty):
+        raise TypeError
+    expr = DelegationExpression(func, identifiers)
+    data = member.data_struct(obj)
+    data.expression = expr
+    if data.listeners is None:
+        data.listeners = []
+    data.listeners.append(expr)
 
 
 OPERATORS = {

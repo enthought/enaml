@@ -20,6 +20,8 @@ class CodeTracer(object):
     method is ignored; exceptions are propagated.
 
     """
+    __slots__ = ()
+
     def load_attr(self, obj, attr):
         """ Called before the LOAD_ATTR opcode is executed.
 
@@ -106,6 +108,8 @@ class CodeInverter(object):
     must provide their own code in order to enable inversion.
 
     """
+    __slots__ = ()
+
     def fail(self):
         """ Called by handlers to raise an inversion exception.
 
