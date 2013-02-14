@@ -285,13 +285,13 @@ class WxWindow(WxWidget):
         self.widget().Maximize(False)
 
     def send_to_front(self):
-        """ Move the window to the front of all the other application's windows.
+        """ Move the window to the front of all other windows.
 
         """
         self.widget().Raise()
 
     def send_to_back(self):
-        """ Move the window to the back of all other other application's windows.
+        """ Move the window to the back of all other windows.
 
         """
         self.widget().Lower()
@@ -321,12 +321,13 @@ class WxWindow(WxWidget):
         """ Set the stickyness of the window.
 
         """
-        flags = self.widget().GetWindowStyleFlag()
+        widget = self.widget()
+        flags = widget.GetWindowStyleFlag()
         if always_on_top:
             flags |= wx.STAY_ON_TOP
         else:
             flags &= ~wx.STAY_ON_TOP
-        self.widget().SetWindowStyleFlag(flags)
+        widget.SetWindowStyleFlag(flags)
 
     def set_visible(self, visible):
         """ Set the visibility on the window.

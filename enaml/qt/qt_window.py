@@ -365,13 +365,13 @@ class QtWindow(QtWidget):
         self.widget().showNormal()
 
     def send_to_front(self):
-        """ Move the window to the front of all the other application's windows.
+        """ Move the window to the front of all other windows.
 
         """
         self.widget().raise_()
 
     def send_to_back(self):
-        """ Move the window to the back of all other other application's windows.
+        """ Move the window to the back of all other windows.
 
         """
         self.widget().lower()
@@ -410,19 +410,17 @@ class QtWindow(QtWidget):
         """ Set the 'always_on_top' flag on the window
 
         """
-        flags = self.widget().windowFlags()
+        widget = self.widget()
+        flags = widget.windowFlags()
         if always_on_top:
             flags |= Qt.WindowStaysOnTopHint
         else:
             flags &= ~Qt.WindowStaysOnTopHint
-
-        if flags != self.widget().windowFlags():
-            visible = self.widget().isVisible()
-            self.widget().setWindowFlags(flags)
-            # Qt re-parents the widget which hides it,
-            # so we need to call show on it
-            if visible:
-                self.widget().show()
+        if flags != widget.windowFlags():
+            visible = widget.isVisible()
+            widget.setWindowFlags(flags)
+            if visible:  # http://qt-project.org/doc/qt-4.8/qwidget.html#windowFlags-prop
+                widget.show()
 
     def set_visible(self, visible):
         """ Set the visibility on the window.

@@ -33,7 +33,7 @@ class Window(Widget):
     #: value is 'non_modal'.
     modality = Enum('non_modal', 'application_modal', 'window_modal')
 
-    #: A boolean which indicates whether the window is always on top
+    #: Whether or not the window remains on top of all others.
     always_on_top = Bool(False)
 
     #: If this value is set to True, the window will be destroyed on
@@ -70,7 +70,8 @@ class Window(Widget):
 
         """
         super(Window, self).bind()
-        self.publish_attributes('title', 'modality', 'always_on_top', 'icon_source')
+        attrs = ('title', 'modality', 'always_on_top', 'icon_source')
+        self.publish_attributes(*attrs)
 
     #--------------------------------------------------------------------------
     # Private API
@@ -132,14 +133,16 @@ class Window(Widget):
 
     def send_to_front(self):
         """ Send the 'send_to_front' action to the client widget.
-        This moves the window to the front of all the application's windows.
+
+        This moves the window to the front of all the toplevel windows.
 
         """
         self.send_action('send_to_front', {})
 
     def send_to_back(self):
         """ Send the 'send_to_back' action to the client widget.
-        This moves the window to the back of all the application's windows.
+
+        This moves the window to the back of all the toplevel windows.
 
         """
         self.send_action('send_to_back', {})
