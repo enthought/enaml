@@ -2,10 +2,10 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import MetaHasTraits
+from .declarative import DeclarativeMeta
 
 
-class EnamlDef(MetaHasTraits):
+class EnamlDef(DeclarativeMeta):
     """ The type of an enamldef.
 
     This is a metaclass used to create types for the 'enamldef' keyword.
@@ -57,15 +57,14 @@ class EnamlDef(MetaHasTraits):
         ob_type = type(self)
         if not issubclass(ob_type, cls):
             return self
-        ob_type.__init__(self, parent=parent)
+        ob_type.__init__(self, parent)
         descriptions = ob_type._descriptions
         if len(descriptions) > 0:
-            with self.children_event_context():
-                # Each description is an independent `enamldef` block
-                # which gets its own independent identifiers scope.
-                for description, f_globals in descriptions:
-                    identifiers = {}
-                    self.populate(description, identifiers, f_globals)
+            # Each description is an independent `enamldef` block
+            # which gets its own independent identifiers scope.
+            for description, f_globals in descriptions:
+                identifiers = {}
+                self.populate(description, identifiers, f_globals)
         if len(kwargs) > 0:
             for key, value in kwargs.iteritems():
                 setattr(self, key, value)

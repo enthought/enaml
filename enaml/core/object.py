@@ -3,108 +3,16 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from collections import deque
-import logging
 import re
 
-from atom.api import (
-    Atom, Observable, Str, Value, Constant, Enum, OwnerValue, ReadOnly,
-)
-
-from enaml.utils import make_dispatcher, id_generator
-
-logger = logging.getLogger(__name__)
+from atom.api import Atom, Str, Value, Enum, Signal
 
 
-#: The dispatch function for action dispatching.
-dispatch_action = make_dispatcher('on_action_', logger)
-
-
-#: The identifier generator for object instances.
-object_id_generator = id_generator('o_')
-
-
-class ParentEvent(Atom):
-    """ An object representing a change to an object's parent.
-
-    User code should not create these event objects directly.
-
-    """
-    #: The old parent of the object, or None.
-    old = ReadOnly()
-
-    #: The new parent of the object, or None.
-    new = ReadOnly()
-
-
-class ChildEvent(Atom):
-    """ An object representing a change to an object's children.
-
-    User code should not create these event objects directly.
-
-    """
-    #: The list of old children of the object.
-    old = ReadOnly()
-
-    #: The list new children of the object.
-    new = ReadOnly()
-
-
-class ChildContext(Atom):
-    """ A context manager which will emit a child event on an Object.
-
-    This context manager will automatically emit the child event on an
-    Object when the context is exited. This context manager can also be
-    safetly nested; only the top-level context for a given object will
-    emit the child event, effectively collapsing all transient state.
-
-    """
-    #: A reference to the owner of the children.
-    owner = Value()
-
-    #: A copy of the list of the owner's children.
-    children = Value()
-
-    #: A counter indicating the level of nesting of the context.
-    count = Value(0)
-
-    def __init__(self, owner):
-        """ Initialize a ChildrenEventContext.
-
-        Parameters
-        ----------
-        parent : Object or None
-            The Object on which to emit a child event on context exit.
-            To make it easier for reparenting operations, the parent
-            can be None.
-
-        """
-        self.owner = owner
-
-    def __enter__(self):
-        if self.owner is not None and self.count == 0:
-            self.children = self.owner._children[:]
-            self.count += 1
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        self.count -= 1
-        if self.count == 0:
-            owner = self.owner
-            del owner.child_context
-            if exc_type is None and owner is not None:
-                old = self.children
-                new = owner._children
-                if old != new:
-                    evt = ChildEvent.create(old=old, new=new)
-                    owner.child_event(evt)
-
-
-class Object(Observable):
+class Object(Atom):
     """ The most base class of the Enaml object hierarchy.
 
     An Enaml Object provides supports parent-children relationships and
-    provides facilities for initializing, navigating, searching, and
-    destroying the tree. It also contains methods for sending messages
-    between objects when the object is part of a session.
+    provides methods for navigating, searching, and destroying the tree.
 
     """
     #: An optional name to give to this object to assist in finding it
@@ -122,19 +30,6 @@ class Object(Observable):
     #: directly. Use the methods `set_parent` and `insert_children`.
     children = property(lambda self: self._children)
 
-    #: A context which can be entered before modifying the children in
-    #: order to collapse the children multiple children events.
-    child_context = OwnerValue(factory=ChildContext)
-
-    #: An event fired when an object is being destroyed. This event
-    #: is fired once during the object lifetime, just before the
-    #: object is removed from the tree structure.
-    #destroyed = EnamlEvent
-
-    #: A constant value which is the object's unique identifier. The
-    #: identifier is guaranteed to be unique for the current process.
-    object_id = Constant(factory=object_id_generator.next)
-
     #: The current lifetime state of the object. This should not be
     #: manipulated by user code.
     state = Enum('default', 'destroying', 'destroyed')
@@ -144,6 +39,11 @@ class Object(Observable):
 
     #: A read-only property which is True if the object is destroyed.
     is_destroyed = property(lambda self: self.state == 'destroyed')
+
+    #: An signal fired when an object is being destroyed. This signal is
+    #: fired once during the object lifetime, just before the object is
+    #: removed from the tree structure.
+    destroyed = Signal()
 
     #: Private storage values. These should *never* be manipulated by
     #: user code. For performance reasons, these are not type checked.
@@ -183,7 +83,7 @@ class Object(Observable):
 
         """
         self.state = 'destroying'
-        #self.destroyed()
+        self.destroyed()
         if len(self._children) > 0:
             for child in self._children:
                 child.destroy()
@@ -227,14 +127,13 @@ class Object(Observable):
         if parent is not None and not isinstance(parent, Object):
             raise TypeError('parent must be an Object or None')
         self._parent = parent
-        event = ParentEvent.create(old=old_parent, new=parent)
-        self.parent_event(event)
+        self.parent_changed(old_parent, parent)
         if old_parent is not None:
-            with old_parent.child_context:
-                old_parent._children.remove(self)
+            old_parent._children.remove(self)
+            old_parent.child_removed(self)
         if parent is not None:
-            with parent.child_context:
-                parent._children.append(self)
+            parent._children.append(self)
+            parent.child_added(self)
 
     def insert_children(self, before, insert):
         """ Insert children into this object at the given location.
@@ -273,6 +172,7 @@ class Object(Observable):
         added = False
         for child in self._children:
             if child in insert_set:
+                insert_set.remove(child)
                 continue
             if child is before:
                 new.extend(insert_list)
@@ -285,41 +185,55 @@ class Object(Observable):
             old_parent = child._parent
             if old_parent is not self:
                 child._parent = self
-                event = ParentEvent.create(old=old_parent, new=self)
-                child.parent_event(event)
+                child.parent_changed(old_parent, self)
                 if old_parent is not None:
-                    with old_parent.child_context:
-                        old_parent._children.remove(child)
+                    old_parent.child_removed(child)
 
-        with self.child_context:
-            self._children = new
+        self._children = new
+        child_added = self.child_added
+        for child in insert_set:
+            child_added(child)
 
-    def parent_event(self, event):
-        """ Handle a `ParentEvent` posted to this object.
+    def parent_changed(self, old, new):
+        """ A method invoked when the parent of the object changes.
 
-        This event handler is called when the parent on the object has
-        changed, but before the children of the new parent have been
-        updated. Sublasses may reimplement this method as required.
+        This method is called when the parent on the object has changed,
+        but before the children of the new parent have been updated.
+        Sublasses may reimplement this method as required.
 
         Parameters
         ----------
-        event : ParentEvent
-            The event for the parent change of this object.
+        old : Object or None
+            The old parent of the object.
+
+        new : Object or None
+            the new parent of the object.
 
         """
         pass
 
-    def child_event(self, event):
-        """ Handle a `ChildEvent` posted to this object.
+    def child_added(self, child):
+        """ A method invoked when a child is added to the object.
 
-        This event handler is called by the child context when the last
-        nested context is exited. Sublasses may reimplement this method
-        as required.
+        Sublasses may reimplement this method as required.
 
         Parameters
         ----------
-        event : ChildEvent
-            The event for the children change of this object.
+        child : Object
+            The child added to this object.
+
+        """
+        pass
+
+    def child_removed(self, child):
+        """ A method invoked when a child is removed from the object.
+
+        Sublasses may reimplement this method as required.
+
+        Parameters
+        ----------
+        child : Object
+            The child removed from the object.
 
         """
         pass

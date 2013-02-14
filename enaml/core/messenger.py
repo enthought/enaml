@@ -3,14 +3,18 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 #from traits.api import Instance, Uninitialized
-
-from atom.api import Observable, Enum,
+import logging
+from atom.api import Observable, Enum, Constant
 from enaml.utils import LoopbackGuard
 
 from .declarative import Declarative
 from .object import Object
+from enaml.utils import make_dispatcher, id_generator
+logger = logging.getLogger(__name__)
 
-
+from enaml.utils import id_generator
+#: The dispatch function for action dispatching.
+dispatch_action = make_dispatcher('on_action_', logger)
 class PublishAttributeNotifier(object):
     """ A lightweight trait change notifier used by Messenger.
 
@@ -110,7 +114,9 @@ class Messenger(Observable):
     #: is fired once during the object lifetime, just before the
     #: object is removed from the tree structure.
     #destroyed = EnamlEvent
-
+    #: A constant value which is the object's unique identifier. The
+    #: identifier is guaranteed to be unique for the current process.
+    object_id = Constant(factory=object_id_generator.next)
     #: A read-only property which returns the messengers's session.
     session = property(lambda self: self._session)
 

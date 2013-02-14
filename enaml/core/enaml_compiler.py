@@ -659,20 +659,20 @@ class EnamlCompiler(_NodeVisitor):
 
         # We now have a new Declarative subclass stored at 'name' to
         # which we need to add any user defined attributes and events.
-        code_ops.extend([
-            (LOAD_NAME, name),
-            (LOAD_ATTR, '_add_user_attribute'),
-        ])
+        #code_ops.extend([
+        #    (LOAD_NAME, name),
+        #    (LOAD_ATTR, '_add_user_attribute'),
+        #])
 
         # Dispatch to add any class-level info contained within the
         # declaration body. Visit nonstrict since not all child nodes
         # are valid at the class-level. The '_add_user_attribute'
         # class method is left on the top of the stack and popped
         # at the end of the visitors.
-        for child_node in node.body:
-            self.visit_nonstrict(child_node)
+        #for child_node in node.body:
+        #    self.visit_nonstrict(child_node)
 
-        code_ops.append((POP_TOP, None))
+        #code_ops.append((POP_TOP, None))
 
     def visit_AttributeDeclaration(self, node):
         """ Creates the bytecode ops for an attribute declaration.

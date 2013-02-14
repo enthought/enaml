@@ -45,8 +45,8 @@ def op_simple(obj, name, func, identifiers):
     invoked with `funchelper.call_func(...)`.
 
     """
-    expr = SimpleExpression(func, identifiers)
-    obj.bind_expression(name, expr)
+    expr = SimpleExpression(name, func, identifiers)
+    obj.bind_expression(expr)
 
 
 def op_notify(obj, name, func, identifiers):
@@ -58,8 +58,8 @@ def op_notify(obj, name, func, identifiers):
     invoked with `funchelper.call_func(...)`.
 
     """
-    expr = NotificationExpression(func, identifiers)
-    obj.bind_listener(name, expr)
+    expr = NotificationExpression(name, func, identifiers)
+    obj.bind_listener(expr)
 
 
 def op_update(obj, name, func, identifiers):
@@ -72,8 +72,8 @@ def op_update(obj, name, func, identifiers):
     `funchelper.call_func(...)`.
 
     """
-    expr = UpdateExpression(func, identifiers)
-    obj.bind_listener(name, expr)
+    expr = UpdateExpression(name, func, identifiers)
+    obj.bind_listener(expr)
 
 
 def op_subscribe(obj, name, func, identifiers):
@@ -86,8 +86,8 @@ def op_subscribe(obj, name, func, identifiers):
     `funchelper.call_func(...)`.
 
     """
-    expr = SubscriptionExpression(func, identifiers)
-    obj.bind_expression(name, expr)
+    expr = SubscriptionExpression(name, func, identifiers)
+    obj.bind_expression(expr)
 
 
 def op_delegate(obj, name, func, identifiers):
@@ -102,9 +102,9 @@ def op_delegate(obj, name, func, identifiers):
     and `op_update`.
 
     """
-    expr = DelegationExpression(func, identifiers)
-    obj.bind_expression(name, expr)
-    obj.bind_listener(name, expr)
+    expr = DelegationExpression(name, func, identifiers)
+    obj.bind_expression(expr)
+    obj.bind_listener(expr)
 
 
 OPERATORS = {
