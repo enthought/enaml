@@ -1,6 +1,17 @@
 Enaml Release Notes
 ===================
 
+0.6.8 - 02/14/2013
+------------------
+- Added ability to change the Z order of a window and a flag to make it stay on top. d6f618101f_
+- Added a multiline text entry widget. dde4bd3409_
+- Bugfix when ImageView is used in a ScrollArea. 67133d3fec_
+
+.. _d6f618101f: https://github.com/enthought/enaml/commit/d6f618101f281aec8fd124fc5d7faf51066ffc99
+.. _dde4bd3409: https://github.com/enthought/enaml/commit/dde4bd34097c59d982ebf5121e0a111b88c1a3f8
+.. _67133d3fec: https://github.com/enthought/enaml/commit/67133d3fec03c567dab38aa9123002cab4f6215b
+
+
 0.6.7 - 01/23/2013
 ------------------
 - Added a `root_object()` method on the `Object` class which returns the root of the object tree. d9b4830963_
