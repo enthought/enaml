@@ -38,7 +38,7 @@ class Looper(Templated):
     items = property(lambda self: self._items)
 
     #: Private storage for the `items` property.
-    _items = Tuple
+    _items = Tuple()
 
     #--------------------------------------------------------------------------
     # Lifetime API
@@ -67,7 +67,7 @@ class Looper(Templated):
                 for item in iteration:
                     if not item.is_destroyed:
                         item.destroy()
-        super(Looper, self).pre_destroy()
+        super(Looper, self).destroy()
         self.iterable = None
         self._items = ()
 
@@ -81,7 +81,7 @@ class Looper(Templated):
         items will be refreshed.
 
         """
-        if self.is_active:
+        if self.is_initialized:
             self._refresh_loop_items()
 
     def _refresh_loop_items(self):
