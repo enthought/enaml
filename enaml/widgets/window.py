@@ -2,12 +2,13 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Unicode, Enum, Property, Str, Bool, cached_property
+from atom.api import Unicode, Enum, Str, Bool, Signal, Coerced, observe
 
-from enaml.core.trait_types import EnamlEvent
+from enaml.core.declarative import d
+from enaml.layout.geometry import Size
 
 from .container import Container
-from .widget import Widget, SizeTuple
+from .widget import Widget
 
 
 class Window(Widget):
@@ -23,28 +24,38 @@ class Window(Widget):
 
     """
     #: The titlebar text.
-    title = Unicode
+    title = d(Unicode())
 
     #: The initial size of the window. A value of (-1, -1) indicates
     #: to let the client choose the initial size
-    initial_size = SizeTuple
+    initial_size = d(Coerced(Size, factory=lambda: Size(-1, -1)))
 
     #: An enum which indicates the modality of the window. The default
     #: value is 'non_modal'.
-    modality = Enum('non_modal', 'application_modal', 'window_modal')
+    modality = d(Enum('non_modal', 'application_modal', 'window_modal'))
 
     #: If this value is set to True, the window will be destroyed on
     #: the completion of the `closed` event.
-    destroy_on_close = Bool(True)
-
-    #: An event fired when the window is closed.
-    closed = EnamlEvent
-
-    #: Returns the central widget in use for the Window
-    central_widget = Property(depends_on='children')
+    destroy_on_close = d(Bool(True))
 
     #: The source url for the titlebar icon.
-    icon_source = Str
+    icon_source = d(Str())
+
+    #: An signal fired when the window is closed.
+    closed = Signal()
+
+    @property
+    def central_widget(self):
+        """ Get the central widget defined on the window.
+
+        The last `Container` child of the window is the central widget.
+
+        """
+        widget = None
+        for child in self.children:
+            if isinstance(child, Container):
+                widget = child
+        return widget
 
     #--------------------------------------------------------------------------
     # Initialization
@@ -60,36 +71,17 @@ class Window(Widget):
         snap['icon_source'] = self.icon_source
         return snap
 
-    def bind(self):
-        """ A method called after initialization which allows the widget
-        to bind any event handlers necessary.
+    #--------------------------------------------------------------------------
+    # Widget Updates
+    #--------------------------------------------------------------------------
+    @observe('title|modality|icon_source', regex=True)
+    def send_widget_change(self, change):
+        """ Send the changes for the widget.
 
         """
-        super(Window, self).bind()
-        self.publish_attributes('title', 'modality', 'icon_source')
+        # The superclass handler implementation is sufficient.
+        super(Window, self).send_widget_change(change)
 
-    #--------------------------------------------------------------------------
-    # Private API
-    #--------------------------------------------------------------------------
-    @cached_property
-    def _get_central_widget(self):
-        """ The getter for the 'central_widget' property.
-
-        Returns
-        -------
-        result : Container or None
-            The central widget for the Window, or None if not provieded.
-
-        """
-        widget = None
-        for child in self.children:
-            if isinstance(child, Container):
-                widget = child
-        return widget
-
-    #--------------------------------------------------------------------------
-    # Message Handling
-    #--------------------------------------------------------------------------
     def on_action_closed(self, content):
         """ Handle the 'closed' action from the client widget.
 
