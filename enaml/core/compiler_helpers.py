@@ -88,6 +88,6 @@ def _make_enamldef_helper_(name, base, description, f_globals):
         '__doc__': description.get('__doc__', ''),
     }
     decl_cls = EnamlDef(name, (base,), dct)
-    decl_cls.__enamldef_descriptions__ += ((description, f_globals),)
+    decl_cls.__declarative_descriptions__ += ((description, f_globals),)
     return decl_cls
 
