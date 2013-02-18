@@ -1,8 +1,8 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2012, Enthought, Inc.
+#  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from atom.api import Unicode, Enum, Str, Bool, Signal, Coerced, observe
+from atom.api import Unicode, Enum, Str, Bool, Event, Coerced, observe
 
 from enaml.core.declarative import d
 from enaml.layout.geometry import Size
@@ -41,8 +41,8 @@ class Window(Widget):
     #: The source url for the titlebar icon.
     icon_source = d(Str())
 
-    #: An signal fired when the window is closed.
-    closed = Signal()
+    #: An event fired when the window is closed.
+    closed = Event()
 
     @property
     def central_widget(self):
@@ -58,7 +58,7 @@ class Window(Widget):
         return widget
 
     #--------------------------------------------------------------------------
-    # Initialization
+    # Messenger API
     #--------------------------------------------------------------------------
     def snapshot(self):
         """ Return the snapshot for a Window.
@@ -71,17 +71,17 @@ class Window(Widget):
         snap['icon_source'] = self.icon_source
         return snap
 
-    #--------------------------------------------------------------------------
-    # Widget Updates
-    #--------------------------------------------------------------------------
-    @observe('title|modality|icon_source', regex=True)
-    def send_widget_change(self, change):
-        """ Send the changes for the widget.
+    @observe(r'^(title|modality|icon_source)$', regex=True)
+    def send_member_change(self, change):
+        """ An observer which sends state change to the client.
 
         """
         # The superclass handler implementation is sufficient.
-        super(Window, self).send_widget_change(change)
+        super(Window, self).send_member_change(change)
 
+    #--------------------------------------------------------------------------
+    # Message Handling
+    #--------------------------------------------------------------------------
     def on_action_closed(self, content):
         """ Handle the 'closed' action from the client widget.
 

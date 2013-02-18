@@ -1,10 +1,10 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2011, Enthought, Inc.
+#  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Unicode, Bool, Str, Property, cached_property
+from atom.api import Unicode, Bool, Str, Event, observe
 
-from enaml.core.trait_types import EnamlEvent
+from enaml.core.declarative import d
 
 from .container import Container
 from .widget import Widget
@@ -19,26 +19,34 @@ class Page(Widget):
 
     """
     #: The title to use for the page in the notebook.
-    title = Unicode
+    title = d(Unicode())
 
     #: The source url for the icon to use for the page.
-    icon_source = Str
+    icon_source = d(Str())
 
     #: Whether or not this individual page is closable. Note that the
     #: 'tabs_closable' flag on the parent Notebook must be set to True
     #: for this to have any effect.
-    closable = Bool(True)
-
-    #: A read only property which returns the page's page widget.
-    page_widget = Property(depends_on='children')
+    closable = d(Bool(True))
 
     #: An event fired when the user closes the page by clicking on
     #: the tab's close button. This event is fired by the parent
     #: Notebook when the tab is closed. This event has no payload.
-    closed = EnamlEvent
+    closed = Event()
+
+    @property
+    def page_widget(self):
+        """ A read only property which returns the page widget.
+
+        """
+        widget = None
+        for child in self.children:
+            if isinstance(child, Container):
+                widget = child
+        return widget
 
     #--------------------------------------------------------------------------
-    # Initialization
+    # Messenger API
     #--------------------------------------------------------------------------
     def snapshot(self):
         """ Return the snapshot for the control.
@@ -50,31 +58,13 @@ class Page(Widget):
         snap['icon_source'] = self.icon_source
         return snap
 
-    def bind(self):
-        """ Bind the change handlers for the control.
+    @observe(r'^(title|closable|icon_source)$', regex=True)
+    def send_member_change(self, change):
+        """ Send the member state change to the client.
 
         """
-        super(Page, self).bind()
-        self.publish_attributes('title', 'closable', 'icon_source')
-
-    #--------------------------------------------------------------------------
-    # Private API
-    #--------------------------------------------------------------------------
-    @cached_property
-    def _get_page_widget(self):
-        """ The getter for the 'page_widget' property.
-
-        Returns
-        -------
-        result : Container or None
-            The page widget for the Page, or None if not provided.
-
-        """
-        widget = None
-        for child in self.children:
-            if isinstance(child, Container):
-                widget = child
-        return widget
+        # The superclass implementation is suffient
+        super(Page, self).send_member_change(change)
 
     #--------------------------------------------------------------------------
     # Message Handling

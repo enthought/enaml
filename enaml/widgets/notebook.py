@@ -1,45 +1,53 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2012, Enthought, Inc.
+#  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Enum, Bool, Property, cached_property
+from atom.api import Enum, Bool, observe
 
-from .constraints_widget import ConstraintsWidget
+from enaml.core.declarative import d
+
+from .constraints_widget import ConstraintsWidget, PolicyEnum
 from .page import Page
 
 
 class Notebook(ConstraintsWidget):
     """ A component which displays its children as tabbed pages.
-    
+
     """
     #: The style of tabs to use in the notebook. Preferences style
     #: tabs are appropriate for configuration dialogs and the like.
     #: Document style tabs are appropriate for multi-page editing
     #: in code editors and the like.
-    tab_style = Enum('document', 'preferences')
+    tab_style = d(Enum('document', 'preferences'))
 
     #: The position of tabs in the notebook.
-    tab_position = Enum('top', 'bottom', 'left', 'right')
+    tab_position = d(Enum('top', 'bottom', 'left', 'right'))
 
     #: Whether or not the tabs in the notebook should be closable.
-    tabs_closable = Bool(True)
+    tabs_closable = d(Bool(True))
 
     #: Whether or not the tabs in the notebook should be movable.
-    tabs_movable = Bool(True)
-
-    #: A read only property which returns the notebook's Pages.
-    pages = Property(depends_on='children')
+    tabs_movable = d(Bool(True))
 
     #: How strongly a component hugs it's contents' width. A Notebook
     #: ignores its width hug by default, so it expands freely in width.
-    hug_width = 'ignore'
+    hug_width = d(PolicyEnum('ignore'))
 
     #: How strongly a component hugs it's contents' height. A Notebook
     #: ignores its height hug by default, so it expands freely in height.
-    hug_height = 'ignore'
+    hug_height = d(PolicyEnum('ignore'))
+
+    @property
+    def pages(self):
+        """ A read-only property which returns the notebook pages.
+
+        """
+        isinst = isinstance
+        pages = (child for child in self.children if isinst(child, Page))
+        return tuple(pages)
 
     #--------------------------------------------------------------------------
-    # Initialization
+    # Messenger API
     #--------------------------------------------------------------------------
     def snapshot(self):
         """ Returns the snapshot for the control.
@@ -52,31 +60,11 @@ class Notebook(ConstraintsWidget):
         snap['tabs_movable'] = self.tabs_movable
         return snap
 
-    def bind(self):
-        """ Bind the change handlers for the control.
+    @observe(r'^(tab_style|tab_position|tabs_closable|tabs_movable)$', regex=True)
+    def send_member_change(self):
+        """ Send the state change for the members.
 
         """
-        super(Notebook, self).bind()
-        attrs = (
-            'tab_style', 'tab_position', 'tabs_closable', 'tabs_movable',
-        )
-        self.publish_attributes(*attrs)
-
-    #--------------------------------------------------------------------------
-    # Private API
-    #--------------------------------------------------------------------------
-    @cached_property
-    def _get_pages(self):
-        """ The getter for the 'pages' property.
-
-        Returns
-        -------
-        result : tuple
-            The tuple of Page instances defined as children of this
-            Notebook.
-
-        """
-        isinst = isinstance
-        pages = (child for child in self.children if isinst(child, Page))
-        return tuple(pages)
+        # The superclass implementation is sufficient.
+        super(Notebook, self).send_member_change()
 

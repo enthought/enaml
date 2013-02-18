@@ -1,7 +1,9 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2011, Enthought, Inc.
+#  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from atom.api import Bool
+
 from .abstract_button import AbstractButton
 
 
@@ -9,9 +11,9 @@ class CheckBox(AbstractButton):
     """ An checkable button represented by a standard check box widget.
 
     Use a check box when it's necessary to toggle a boolean value
-    independent of any other widgets in a group. 
+    independent of any other widgets in a group.
 
-    When its necessary to allow the toggling of only one value in a 
+    When its necessary to allow the toggling of only one value in a
     group of values, use a group of RadioButtons or the RadioGroup
     control from the Enaml standard library.
 
@@ -20,5 +22,5 @@ class CheckBox(AbstractButton):
 
     """
     #: Check boxes are checkable by default.
-    checkable = True
+    checkable = Bool(True)
 

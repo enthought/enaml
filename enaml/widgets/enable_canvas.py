@@ -2,11 +2,22 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-# NOTE: There shall be no imports from enable in this module. Doing so
-# will create an import dependency on enable for the rest of Enaml!
-from traits.api import Instance
+from atom.api import ForwardInstance, observe
 
+from enaml.core.declarative import d
+
+from .constraints_widget import PolicyEnum
 from .control import Control
+
+
+def Component():
+    """ The Enable Component resolver.
+
+    This removes the import dependency on Enable.
+
+    """
+    from enaml.component import Component
+    return Component
 
 
 class EnableCanvas(Control):
@@ -14,14 +25,14 @@ class EnableCanvas(Control):
 
     """
     #: The enable.component.Component instance to draw.
-    component = Instance('enable.component.Component')
+    component = d(ForwardInstance(Component))
 
     #: An EnableCanvas expands freely in width and height by default.
-    hug_width = 'ignore'
-    hug_height = 'ignore'
+    hug_width = d(PolicyEnum('ignore'))
+    hug_height = d(PolicyEnum('ignore'))
 
     #--------------------------------------------------------------------------
-    # Initialization
+    # Messaging API
     #--------------------------------------------------------------------------
     def snapshot(self):
         """ Get the snapshot dict for the canvas.
@@ -31,10 +42,11 @@ class EnableCanvas(Control):
         snap['component'] = self.component
         return snap
 
-    def bind(self):
-        """ Bind the change handlers for the control.
+    @observe('component')
+    def send_member_change(self, change):
+        """ An observer which sends the state change to the client.
 
         """
-        super(EnableCanvas, self).bind()
-        self.publish_attributes('component')
+        # The superclass implementation is sufficient.
+        super(EnableCanvas, self).send_member_change(change)
 

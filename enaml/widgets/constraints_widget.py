@@ -2,25 +2,33 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Property, Enum, Instance, List
+from atom.api import Enum, Instance, List, Constant, Member, observe
+from atom.catom import VALIDATE_CONSTANT, USER_DEFAULT
 
 from enaml.application import Application, ScheduledTask
+from enaml.core.declarative import d
 from enaml.layout.ab_constrainable import ABConstrainable
-from enaml.layout.box_model import BoxModel
+from enaml.layout.constraint_variable import ConstraintVariable
 from enaml.layout.layout_helpers import expand_constraints
 
 from .widget import Widget
 
 
-#: A traits enum which defines the allowable constraints strengths.
+#: An atom enum which defines the allowable constraints strengths.
+#: Clones will be made by selecting a new default via 'select'.
 PolicyEnum = Enum('ignore', 'weak', 'medium', 'strong', 'required')
 
 
-def get_from_box_model(self, name):
-    """ Property getter for all attributes that come from the box model.
+class ConstraintMember(Member):
+    """ A custom Member class that generates a ConstraintVariable.
 
     """
-    return getattr(self._box_model, name)
+    def __init__(self):
+        self.default_kind = (USER_DEFAULT, None)
+        self.validate_kind = (VALIDATE_CONSTANT, None)
+
+    def default(self, owner, name):
+        return ConstraintVariable(name, owner.object_id)
 
 
 class ConstraintsWidget(Widget):
@@ -46,72 +54,79 @@ class ConstraintsWidget(Widget):
     """
     #: The list of user-specified constraints or constraint-generating
     #: objects for this component.
-    constraints = List
+    constraints = d(List())
 
-    #: A read-only symbolic object that represents the left boundary of
-    #: the component
-    left = Property(fget=get_from_box_model)
+    #: A constant symbolic object that represents the left boundary of
+    #: the widget.
+    left = ConstraintMember()
 
-    #: A read-only symbolic object that represents the top boundary of
-    #: the component
-    top = Property(fget=get_from_box_model)
+    #: A constant symbolic object that represents the top boundary of
+    #: the widget.
+    top = ConstraintMember()
 
-    #: A read-only symbolic object that represents the width of the
-    #: component
-    width = Property(fget=get_from_box_model)
+    #: A constant symbolic object that represents the width of the
+    #: widget.
+    width = ConstraintMember()
 
-    #: A read-only symbolic object that represents the height of the
-    #: component
-    height = Property(fget=get_from_box_model)
+    #: A constant symbolic object that represents the height of the
+    #: widget.
+    height = ConstraintMember()
 
-    #: A read-only symbolic object that represents the right boundary
-    #: of the component
-    right = Property(fget=get_from_box_model)
+    #: A constant symbolic object that represents the right boundary
+    #: of the component. This is computed as left + width.
+    right = Constant()
 
-    #: A read-only symbolic object that represents the bottom boundary
-    #: of the component
-    bottom = Property(fget=get_from_box_model)
+    def _default_right(self):
+        return self.left + self.width
 
-    #: A read-only symbolic object that represents the vertical center
-    #: of the component
-    v_center = Property(fget=get_from_box_model)
+    #: A constant symbolic object that represents the bottom boundary
+    #: of the component. This is computed as top + height.
+    bottom = Constant()
 
-    #: A read-only symbolic object that represents the horizontal
-    #: center of the component
-    h_center = Property(fget=get_from_box_model)
+    def _default_bottom(self):
+        return self.top + self.height
+
+    #: A constant symbolic object that represents the vertical center
+    #: of the width. This is computed as top + 0.5 * height.
+    v_center = Constant()
+
+    def _default_v_center(self):
+        return self.top + self.height / 2.0
+
+    #: A constant symbolic object that represents the horizontal center
+    #: of the widget. This is computed as left + 0.5 * width.
+    h_center = Constant()
+
+    def _default_h_center(self):
+        return self.left + self.width / 2.0
 
     #: How strongly a component hugs it's width hint. Valid strengths
     #: are 'weak', 'medium', 'strong', 'required' and 'ignore'. Default
     #: is 'strong'. This trait should be overridden on a per-control
     #: basis to specify a logical default for the given control.
-    hug_width = PolicyEnum('strong')
+    hug_width = d(PolicyEnum('strong'))
 
     #: How strongly a component hugs it's height hint. Valid strengths
     #: are 'weak', 'medium', 'strong', 'required' and 'ignore'. Default
     #: is 'strong'. This trait should be overridden on a per-control
     #: basis to specify a logical default for the given control.
-    hug_height = PolicyEnum('strong')
+    hug_height = d(PolicyEnum('strong'))
 
     #: How strongly a component resists clipping its contents. Valid
     #: strengths are 'weak', 'medium', 'strong', 'required' and 'ignore'.
     #: The default is 'strong' for width.
-    resist_width = PolicyEnum('strong')
+    resist_width = d(PolicyEnum('strong'))
 
     #: How strongly a component resists clipping its contents. Valid
     #: strengths are 'weak', 'medium', 'strong', 'required' and 'ignore'.
     #: The default is 'strong' for height.
-    resist_height = PolicyEnum('strong')
+    resist_height = d(PolicyEnum('strong'))
 
     #: The private application task used to collapse layout messages.
     _layout_task = Instance(ScheduledTask)
 
-    #: The private storage the box model instance for this component.
-    _box_model = Instance(BoxModel)
-    def __box_model_default(self):
-        return BoxModel(self.object_id)
-
     #--------------------------------------------------------------------------
-    # Initialization
+    # Messenger API
     #--------------------------------------------------------------------------
     def snapshot(self):
         """ Populates the initial attributes dict for the component.
@@ -133,43 +148,17 @@ class ConstraintsWidget(Widget):
         snap['layout'] = self._layout_info()
         return snap
 
-    def bind(self):
-        """ Binds the change handlers for the component.
+    #--------------------------------------------------------------------------
+    # Widget Updates
+    #--------------------------------------------------------------------------
+    @observe(r'^(constraints|hug_width|hug_height|resist_width|'
+             r'resist_height)$', regex=True)
+    def _layout_invalidated(self, change):
+        """ A member observer which will relayout the client widget.
 
         """
-        super(ConstraintsWidget, self).bind()
-        d = 'constraints, hug_width, hug_height, resist_width, resist_height'
-        self.on_trait_change(self._send_relayout, d)
+        self._send_relayout()
 
-    #--------------------------------------------------------------------------
-    # Public API
-    #--------------------------------------------------------------------------
-    def when(self, switch):
-        """ A method which returns `self` or None based on the truthness
-        of the argument.
-
-        This can be useful to easily turn off the effects of an object
-        in constraints-based layout.
-
-        Parameters
-        ----------
-        switch : bool
-            A boolean which indicates whether this instance or None
-            should be returned.
-
-        Returns
-        -------
-        result : self or None
-            If 'switch' is boolean True, self is returned. Otherwise,
-            None is returned.
-
-        """
-        if switch:
-            return self
-
-    #--------------------------------------------------------------------------
-    # Message Handling
-    #--------------------------------------------------------------------------
     def _send_relayout(self):
         """ Send the 'relayout' action to the client widget.
 
@@ -197,6 +186,32 @@ class ConstraintsWidget(Widget):
                 task = app.schedule(layout_task)
                 task.notify(notifier)
                 self._layout_task = task
+
+    #--------------------------------------------------------------------------
+    # Public API
+    #--------------------------------------------------------------------------
+    def when(self, switch):
+        """ A method which returns `self` or None based on the truthness
+        of the argument.
+
+        This can be useful to easily turn off the effects of an object
+        in constraints-based layout.
+
+        Parameters
+        ----------
+        switch : bool
+            A boolean which indicates whether this instance or None
+            should be returned.
+
+        Returns
+        -------
+        result : self or None
+            If 'switch' is boolean True, self is returned. Otherwise,
+            None is returned.
+
+        """
+        if switch:
+            return self
 
     #--------------------------------------------------------------------------
     # Constraints Generation

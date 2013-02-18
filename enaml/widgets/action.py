@@ -1,14 +1,14 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2012, Enthought, Inc.
+#  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Unicode, Bool, Str
+from atom.api import Unicode, Bool, Str, TypedEvent, observe
 
+from enaml.core.declarative import Declarative, d
 from enaml.core.messenger import Messenger
-from enaml.core.trait_types import EnamlEvent
 
 
-class Action(Messenger):
+class Action(Messenger, Declarative):
     """ A non visible widget used in a ToolBar or Menu.
 
     An Action represents an actionable item in a ToolBar or a Menu.
@@ -18,46 +18,46 @@ class Action(Messenger):
 
     """
     #: The text label associate with the action.
-    text = Unicode
+    text = d(Unicode())
 
     #: The tool tip text to use for this action. Typically displayed
     #: as a small label when the user hovers over the action.
-    tool_tip = Unicode
+    tool_tip = d(Unicode())
 
     #: The text that is displayed in the status bar when the user
     #: hovers over the action.
-    status_tip = Unicode
+    status_tip = d(Unicode())
 
     #: The source url for the icon to use for the Action.
-    icon_source = Str
+    icon_source = d(Str())
 
     #: Whether or not the action can be checked.
-    checkable = Bool(False)
+    checkable = d(Bool(False))
 
     #: Whether or not the action is checked. This value only has meaning
     #: if 'checkable' is set to True.
-    checked = Bool(False)
+    checked = d(Bool(False))
 
     #: Whether or not the item representing the action is enabled.
-    enabled = Bool(True)
+    enabled = d(Bool(True))
 
     #: Whether or not the item representing the action is visible.
-    visible = Bool(True)
+    visible = d(Bool(True))
 
     #: Whether or not the action should be treated as a separator. If
     #: this value is True, none of the other values have meaning.
-    separator = Bool(False)
+    separator = d(Bool(False))
 
     #: An event fired when the action is triggered by user interaction.
     #: They payload will be the current checked state.
-    triggered = EnamlEvent
+    triggered = TypedEvent(bool)
 
     #: An event fired when a checkable action changes its checked state.
     #: The payload will be the current checked state.
-    toggled = EnamlEvent
+    toggled = TypedEvent(bool)
 
     #--------------------------------------------------------------------------
-    # Initialization
+    # Messaging API
     #--------------------------------------------------------------------------
     def snapshot(self):
         """ Returns the snapshot dict for the Action.
@@ -75,16 +75,17 @@ class Action(Messenger):
         snap['separator'] = self.separator
         return snap
 
-    def bind(self):
-        """ Binds the change handlers for the Action.
+    #--------------------------------------------------------------------------
+    # Action Updates
+    #--------------------------------------------------------------------------
+    @observe(r'^(text|tool_tip|status_tip|icon_source|checkable|checked|'
+             r'enabled|visible|separator)$', regex=True)
+    def send_member_change(self, change):
+        """ An observer for the changes for the action sate.
 
         """
-        super(Action, self).bind()
-        attrs = (
-            'text', 'tool_tip', 'status_tip', 'icon_source', 'checkable',
-            'checked', 'enabled', 'visible', 'separator'
-        )
-        self.publish_attributes(*attrs)
+        # The superclass implementation is sufficient
+        super(Action, self).send_member_change(change)
 
     #--------------------------------------------------------------------------
     # Message Handling

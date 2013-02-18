@@ -1,15 +1,16 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2012, Enthought, Inc.
+#  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Bool, Property, cached_property
+from atom.api import Bool, observe
 
+from enaml.core.declarative import Declarative, d
 from enaml.core.messenger import Messenger
 
 from .action import Action
 
 
-class ActionGroup(Messenger):
+class ActionGroup(Messenger, Declarative):
     """ A non visible widget used to group actions.
 
     An action group can be used in a MenuBar or a ToolBar to group a
@@ -19,19 +20,25 @@ class ActionGroup(Messenger):
 
     """
     #: Whether or not the actions in this group are exclusive.
-    exclusive = Bool(True)
+    exclusive = d(Bool(True))
 
     #: Whether or not the actions in this group are enabled.
-    enabled = Bool(True)
+    enabled = d(Bool(True))
 
     #: Whether or not the actions in this group are visible.
-    visible = Bool(True)
+    visible = d(Bool(True))
 
-    #: A read only property which returns the actions for this group.
-    actions = Property(depends_on='children')
+    @property
+    def actions(self):
+        """ A read only property which returns the group's actions.
+
+        """
+        isinst = isinstance
+        items = (child for child in self.children if isinst(child, Action))
+        return tuple(items)
 
     #--------------------------------------------------------------------------
-    # Initialization
+    # Messenger API
     #--------------------------------------------------------------------------
     def snapshot(self):
         """ Returns the snapshot dict for the ActionGroup.
@@ -43,27 +50,11 @@ class ActionGroup(Messenger):
         snap['visible'] = self.visible
         return snap
 
-    def bind(self):
-        """ Binds the change handlers for the ActionGroup.
+    @observe(r'^(exclusive|enabled|visible)$', regex=True)
+    def send_member_change(self, change):
+        """ An observer which sends the state change for the group.
 
         """
-        super(ActionGroup, self).bind()
-        self.publish_attributes('exclusive', 'enabled', 'visible')
-
-    #--------------------------------------------------------------------------
-    # Private API
-    #--------------------------------------------------------------------------
-    @cached_property
-    def _get_actions(self):
-        """ The getter for the 'actions' property.
-
-        Returns
-        -------
-        result : tuple
-            The tuple of Actions defined as children of this ActionGroup.
-
-        """
-        isinst = isinstance
-        items = (child for child in self.children if isinst(child, Action))
-        return tuple(items)
+        # The superclass implementation is sufficient.
+        super(ActionGroup, self).send_member_change(change)
 
