@@ -3,6 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from traits.api import HasTraits, TraitListObject, TraitDictObject, Disallow
+from atom.api import Atom
 
 from .code_tracing import CodeTracer
 from .dynamic_scope import AbstractScopeListener
@@ -44,6 +45,11 @@ class StandardTracer(CodeTracer):
         if trait is not None and trait.trait_type is not Disallow:
             self.traced_items.add((obj, name))
 
+    def _trace_atom(self, obj, name):
+        member = obj.lookup_member(name)
+        if member is not None:
+            self.traced_items.add((obj, name))
+
     #--------------------------------------------------------------------------
     # AbstractScopeListener Interface
     #--------------------------------------------------------------------------
@@ -56,6 +62,8 @@ class StandardTracer(CodeTracer):
         """
         if isinstance(obj, HasTraits):
             self._trace_trait(obj, attr)
+        elif isinstance(obj, Atom):
+            self._trace_atom(obj, attr)
 
     #--------------------------------------------------------------------------
     # CodeTracer Interface
@@ -69,6 +77,8 @@ class StandardTracer(CodeTracer):
         """
         if isinstance(obj, HasTraits):
             self._trace_trait(obj, attr)
+        elif isinstance(obj, Atom):
+            self._trace_atom(obj, attr)
 
     def call_function(self, func, argtuple, argspec):
         """ Called before the CALL_FUNCTION opcode is executed.

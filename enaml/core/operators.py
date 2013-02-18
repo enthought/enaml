@@ -30,6 +30,8 @@ identifiers : dict
     continue to be added to this dict as runtime execution continues.
 
 """
+from atom.api import Atom, Event
+
 from .declarative import DeclarativeProperty, DeclarativeExpression
 from .dynamic_scope import DynamicScope, Nonlocals
 from .funchelper import call_func
@@ -158,7 +160,7 @@ class SubscriptionNotifier(object):
         self.name = name
         self.keyval = keyval
 
-    def notify(self):
+    def notify(self, change):
         """ Notify that the expression is invalid.
 
         """
@@ -210,7 +212,10 @@ class OpSubscribe(OperatorBase):
             self.notifier = notifier
             handler = notifier.notify
             for obj, attr in traced:
-                obj.on_trait_change(handler, attr)
+                if isinstance(obj, Atom):
+                    obj.observe(attr, handler)
+                else:
+                    obj.on_trait_change(handler, attr)
 
         return result
 
@@ -258,9 +263,9 @@ def op_notify(obj, name, func, identifiers):
 
     """
     member = obj.lookup_member(name)
-    if not isinstance(member, DeclarativeProperty):
-        msg = "Cannot bind expression. '%s' is not a declarative property "
-        msg += "on a '%s' object."
+    if not isinstance(member, (Event, DeclarativeProperty)):
+        msg = "Cannot bind expression. '%s' is not an event or a declarative "
+        msg += "property on a '%s' object."
         raise TypeError(msg % (name, type(obj).__name__))
     obj.observe(name, OpNotify(func, identifiers))
 
