@@ -32,13 +32,29 @@ class Object(Atom):
 
     #: The current lifetime state of the object. This should not be
     #: manipulated by user code.
-    state = Enum('default', 'destroying', 'destroyed')
+    state = Enum(
+        'default', 'initializing', 'initialized', 'destroying', 'destroyed'
+    )
+
+    #: A read-only property indictating the object is in default state.
+    is_default = property(lambda self: self.state == 'default')
+
+    #: A read-only property indicating if the object is initializing.
+    is_initializing = property(lambda self: self.state == 'initializing')
+
+    #: A read-only property indicating if the object is initialized.
+    is_initialized = property(lambda self: self.state == 'initialized')
 
     #: A read-only property which is True if the object is destroying.
     is_destroying = property(lambda self: self.state == 'destroying')
 
     #: A read-only property which is True if the object is destroyed.
     is_destroyed = property(lambda self: self.state == 'destroyed')
+
+    #: A signal fired when an the object has been initialized. It is
+    #: emitted once during an object's lifetime, when the object is
+    #: initialized by external code.
+    initialized = Signal()
 
     #: An signal fired when an object is being destroyed. This signal is
     #: fired once during the object lifetime, just before the object is
@@ -47,8 +63,8 @@ class Object(Atom):
 
     #: Private storage values. These should *never* be manipulated by
     #: user code. For performance reasons, these are not type checked.
-    _parent = Value()                   # Object or None
-    _children = Value(factory=list)     # list of Object
+    _parent = Value()                # Object or None
+    _children = Value(factory=list)  # list of Object
 
     def __init__(self, parent=None, **kwargs):
         """ Initialize an Object.
@@ -71,6 +87,27 @@ class Object(Atom):
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
+    def initialize(self):
+        """ Initialize this object all of its children recursively.
+
+        This is called to give the objects in the tree the opportunity
+        to initialize additional state which depends upon the object
+        tree being fully built. It is the responsibility of external
+        code to call this method at the appropriate time. This will
+        emit the `initialized` signal after all of the children have
+        been initialized.
+
+        """
+        # Initialization is performed by iterating over a copy of the
+        # children since a child may add new children to this object.
+        # At that point, the child which added the new children is
+        # repsonsible for initializing them.
+        self.state = 'initializing'
+        for child in self._children[:]:
+            child.initialize()
+        self.state = 'initialized'
+        self.initialized()
+
     def destroy(self):
         """ Destroy this object and all of its children recursively.
 
@@ -81,10 +118,9 @@ class Object(Atom):
         """
         self.state = 'destroying'
         self.destroyed()
-        if len(self._children) > 0:
-            for child in self._children:
-                child.destroy()
-            del self._children
+        for child in self._children:
+            child.destroy()
+        del self._children
         parent = self._parent
         if parent is not None:
             if parent.is_destroying:
