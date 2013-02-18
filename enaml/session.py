@@ -4,19 +4,17 @@
 #------------------------------------------------------------------------------
 import logging
 
-from traits.api import (
-    HasTraits, Instance, List, Str, ReadOnly, Enum, Property, on_trait_change
-)
+from atom.api import Atom, Instance, List, Int, ReadOnly, Enum, Signal, Str
 
 from enaml.widgets.window import Window
 
 from .application import deferred_call
 from .resource_manager import ResourceManager
-from .signaling import Signal
 from .socket_interface import ActionSocketInterface
 from .utils import make_dispatcher
 
 
+#: The logger for the session module.
 logger = logging.getLogger(__name__)
 
 
@@ -24,7 +22,7 @@ logger = logging.getLogger(__name__)
 dispatch_action = make_dispatcher('on_action_', logger)
 
 
-class DeferredBatch(object):
+class DeferredBatch(Atom):
     """ A class which aggregates batch items.
 
     Each time an item is added to this object, its tick count is
@@ -41,12 +39,11 @@ class DeferredBatch(object):
     #: and the owner of the batch should consume the messages.
     triggered = Signal()
 
-    def __init__(self):
-        """ Initialize a DeferredBatch.
+    #: The private list of items contained in the batch.
+    _items = List()
 
-        """
-        self._items = []
-        self._tick = 0
+    #: The private tick count of the batch.
+    _tick = Int()
 
     #--------------------------------------------------------------------------
     # Private API
@@ -99,52 +96,7 @@ class DeferredBatch(object):
         self._tick += 1
 
 
-class URLReply(object):
-    """ A reply object for sending a loaded resource to a client session.
-
-    """
-    def __init__(self, session, req_id, url):
-        """ Initialize a URLReply.
-
-        Parameters
-        ----------
-        session : Session
-            The session object for which the image is being loaded.
-
-        req_id : str
-            The identifier that was sent with the originating request.
-            This identifier will be included in the response.
-
-        url : str
-            The url that was sent with the originating request. This
-            url will be included in the response.
-
-        """
-        self._session = session
-        self._req_id = req_id
-        self._url = url
-
-    def __call__(self, resource):
-        """ Send the reply to the client session.
-
-        Parameters
-        ----------
-        resource : Resource
-            The loaded resource object, or None if the resource failed
-            to load.
-
-        """
-        reply = {'id': self._req_id, 'url': self._url}
-        if resource is None:
-            reply['status'] = 'fail'
-        else:
-            reply['status'] = 'ok'
-            reply['resource'] = resource.snapshot()
-        session = self._session
-        session.send(session.session_id, 'url_reply', reply)
-
-
-class Session(HasTraits):
+class Session(Atom):
     """ An object representing the session between a client and its
     Enaml objects.
 
@@ -154,14 +106,18 @@ class Session(HasTraits):
     explicitly provided by the developer.
 
     """
+    #: Session objects are weakrefable in order to observe windows.
+    __slots__ = '__weakref__'
+
     #: The string identifier for this session. This is provided by
     #: the application when the session is opened. The value should
     #: not be manipulated by user code.
-    session_id = ReadOnly
+    session_id = ReadOnly()
 
     #: The top level windows which are managed by this session. This
     #: should be populated by user code during the `on_open` method.
-    windows = List(Window)
+    # XXX enforce List(Window) typing
+    windows = List()
 
     #: The widget implementation groups which should be used by the
     #: widgets in this session. Widget groups are an advanced feature
@@ -169,10 +125,11 @@ class Session(HasTraits):
     #: implementations of Enaml widgets. All standard Enaml widgets are
     #: available in the 'default' group. This value will rarely need to
     #: be changed by the user.
-    widget_groups = List(Str, ['default'])
+    # XXX enforce List(Str) typing.
+    widget_groups = List(['default'])
 
     #: A resource manager used for loading resources for the session.
-    resource_manager = Instance(ResourceManager, ())
+    resource_manager = Instance(ResourceManager, args=())
 
     #: The socket used by this session for communication. This is
     #: provided by the Application when the session is activated.
@@ -183,40 +140,41 @@ class Session(HasTraits):
     #: by the application as it drives the session through its lifetime.
     #: This should not be manipulated directly by user code.
     state = Enum(
-        'inactive', 'opening', 'opened', 'activating', 'active', 'closing',
+        'default', 'opening', 'opened', 'activating', 'active', 'closing',
         'closed',
     )
 
     #: A read-only property which is True if the session is inactive.
-    is_inactive = Property(fget=lambda self: self.state == 'inactive')
+    is_default = property(lambda self: self.state == 'inactive')
 
     #: A read-only property which is True if the session is opening.
-    is_opening = Property(fget=lambda self: self.state == 'opening')
+    is_opening = property(fget=lambda self: self.state == 'opening')
 
     #: A read-only property which is True if the session is opened.
-    is_opened = Property(fget=lambda self: self.state == 'opened')
+    is_opened = property(fget=lambda self: self.state == 'opened')
 
     #: A read-only property which is True if the session is activating.
-    is_activating = Property(fget=lambda self: self.state == 'activating')
+    is_activating = property(fget=lambda self: self.state == 'activating')
 
     #: A read-only property which is True if the session is active.
-    is_active = Property(fget=lambda self: self.state == 'active')
+    is_active = property(fget=lambda self: self.state == 'active')
 
     #: A read-only property which is True if the session is closing.
-    is_closing = Property(fget=lambda self: self.state == 'closing')
+    is_closing = property(fget=lambda self: self.state == 'closing')
 
     #: A read-only property which is True if the session is closed.
-    is_closed = Property(fget=lambda self: self.state == 'closed')
+    is_closed = property(fget=lambda self: self.state == 'closed')
 
     #: A private dictionary of objects registered with this session.
     #: This value should not be manipulated by user code.
-    _registered_objects = Instance(dict, ())
+    _registered_objects = Instance(dict, args=())
 
     #: The private deferred message batch used for collapsing layout
     #: related messages into a single batch to send to the client
     #: session for more efficient handling.
     _batch = Instance(DeferredBatch)
-    def __batch_default(self):
+
+    def _default__batch(self):
         batch = DeferredBatch()
         batch.triggered.connect(self._on_batch_triggered)
         return batch
@@ -262,15 +220,16 @@ class Session(HasTraits):
         content = {'batch': batch}
         self.send(self.session_id, 'message_batch', content)
 
-    @on_trait_change('windows:destroyed')
-    def _on_window_destroyed(self, obj, name, old, new):
-        """ A trait handler for the `destroyed` event on the windows.
+    def _on_window_destroyed(self, change):
+        """ A private observer for the `destroyed` event on the windows.
 
         This handler will remove a destroyed window from the list of
         the session's windows.
 
         """
-        self.windows.remove(obj)
+        window = change.object
+        self.windows.remove(window)
+        window.unobserve('destroyed', self._on_window_destroyed)
 
     #--------------------------------------------------------------------------
     # Abstract API
@@ -317,8 +276,10 @@ class Session(HasTraits):
         self.session_id = session_id
         self.state = 'opening'
         self.on_open()
+        assert all(isinstance(w, Window) for w in self.windows)
         for window in self.windows:
             window.initialize()
+            window.observe('destroyed', self._on_window_destroyed)
         self.state = 'opened'
 
     def activate(self, socket):
@@ -380,6 +341,7 @@ class Session(HasTraits):
             normally have a parent, though this is not enforced.
 
         """
+        assert isinstance(window, Window)
         if window not in self.windows:
             self.windows.append(window)
             if self.is_active:
@@ -391,6 +353,7 @@ class Session(HasTraits):
                     content = {'window': window.snapshot()}
                     self.send(self.session_id, 'add_window', content)
                 window.activate(self)
+                window.observe('destroyed', self._on_window_destroyed)
 
     def snapshot(self):
         """ Get a snapshot of the windows of this session.
@@ -544,4 +507,36 @@ class Session(HasTraits):
         metadata = content['metadata']
         reply = URLReply(self, content['id'], url)
         self.resource_manager.load(url, metadata, reply)
+
+
+class URLReply(Atom):
+    """ A reply object for sending a loaded resource to a client session.
+
+    """
+    #: The session object for which the url is being requested.
+    session = Instance(Session)
+
+    #: The unique id which was sent with  the request.
+    request_id = Str()
+
+    #: The url that was sent with the original requested.
+    url = Str()
+
+    def __call__(self, resource):
+        """ Send the reply to the client session.
+
+        Parameters
+        ----------
+        resource : Resource
+            The loaded resource object, or None if the resource failed
+            to load.
+
+        """
+        reply = {'id': self.request_id, 'url': self.url}
+        if resource is None:
+            reply['status'] = 'fail'
+        else:
+            reply['status'] = 'ok'
+            reply['resource'] = resource.snapshot()
+        self.session.send(self.session.session_id, 'url_reply', reply)
 

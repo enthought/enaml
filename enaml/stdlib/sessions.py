@@ -11,6 +11,8 @@ handle common Session use cases.
 from collections import Iterable
 from functools import wraps
 
+from atom.api import Callable, Tuple, Dict
+
 from enaml.session import Session
 from enaml.session_factory import SessionFactory
 
@@ -20,20 +22,20 @@ class SimpleSession(Session):
     and keyword arguments and creates the associated view(s).
 
     """
-    def __init__(self, sess_callable, *args, **kwargs):
-        """ Initialize the session with the callable and arguments.
+    #: The callable to invoke to create the session windows.
+    session_callable = Callable(lambda *args, **kwargs: [])
 
-        """
-        super(SimpleSession, self).__init__()
-        self.sess_callable = sess_callable
-        self.args = args
-        self.kwargs = kwargs
+    #: The arguments to pass to the callable.
+    args = Tuple()
+
+    #: The keyword arguments to pass to the callable.
+    kwargs = Dict()
 
     def on_open(self):
         """ Create the view from the callable
 
         """
-        w = self.sess_callable(*self.args, **self.kwargs)
+        w = self.session_callable(*self.args, **self.kwargs)
         if isinstance(w, Iterable):
             self.windows.extend(w)
         else:
@@ -62,9 +64,8 @@ def simple_session(sess_name, sess_descr, sess_callable, *args, **kwargs):
         when the session is created.
 
     """
-    fact = SessionFactory(
-        sess_name, sess_descr, SimpleSession, sess_callable, *args, **kwargs
-    )
+    kwds = dict(session_callable=sess_callable, args=args, kwargs=kwargs)
+    fact = SessionFactory(sess_name, sess_descr, SimpleSession, **kwds)
     return fact
 
 
