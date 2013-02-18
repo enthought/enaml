@@ -1,12 +1,12 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2012, Enthought, Inc.
+#  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import logging
 
-from atom.api import Atom, Constant, Signal, Value
+from atom.api import Atom, Constant, Event, Value, Instance, null
 
-from enaml.utils import make_dispatcher, id_generator
+from enaml.utils import LoopbackGuard, make_dispatcher, id_generator
 
 from .object import Object
 
@@ -108,10 +108,14 @@ class Messenger(Atom):
     #: A read-only property indicating if the messenger is active.
     is_active = property(lambda self: self.state == 'active')
 
-    #: A signal fired when an object has been activated. It is emitted
+    #: An event fired when an object has been activated. It is emitted
     #: once during an object's lifetime, when the object is activated
     #: by a Session.
-    activated = Signal()
+    activated = Event()
+
+    #: A loopback guard which can be used to prevent a notification
+    #: cycle when setting attributes from within an action handler.
+    loopback_guard = Instance(LoopbackGuard, factory=LoopbackGuard)
 
     #: Private storage values. These should *never* be manipulated by
     #: user code. For performance reasons, these are not type checked.
@@ -289,6 +293,37 @@ class Messenger(Atom):
             if base is Object:
                 break
         return names
+
+    def send_member_change(self, change):
+        """ A member change handler which updates the client widget.
+
+        This handler is a convenience which can be used as an observer
+        for a member change. It will proxy the state change to the
+        client widget.
+
+        """
+        name = change.name
+        if change.old is not null and name not in self.loopback_guard:
+            self.send_action('set_' + name, {name: change.new})
+
+    def set_guarded(self, **attrs):
+        """ Set attribute values from within a loopback guard.
+
+        This is a convenience method provided for subclasses to set the
+        values of attributes from within a loopback guard. This prevents
+        the change from being proxied back to client and reduces the
+        chances of getting hung in a feedback loop.
+
+        Parameters
+        ----------
+        **attrs
+            The attributes to set on the widget from within a loopback
+            guard context.
+
+        """
+        with self.loopback_guard(*attrs):
+            for name, value in attrs.iteritems():
+                setattr(self, name, value)
 
     #--------------------------------------------------------------------------
     # Reimplementations
