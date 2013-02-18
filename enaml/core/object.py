@@ -5,7 +5,7 @@
 from collections import deque
 import re
 
-from atom.api import Atom, Str, Value, Enum, Signal
+from atom.api import Atom, Str, Value, Enum, Event
 
 
 class Object(Atom):
@@ -51,15 +51,15 @@ class Object(Atom):
     #: A read-only property which is True if the object is destroyed.
     is_destroyed = property(lambda self: self.state == 'destroyed')
 
-    #: A signal fired when an the object has been initialized. It is
+    #: An event fired when an the object has been initialized. It is
     #: emitted once during an object's lifetime, when the object is
     #: initialized by external code.
-    initialized = Signal()
+    initialized = Event()
 
-    #: An signal fired when an object is being destroyed. This signal is
+    #: An event fired when an object is being destroyed. This signal is
     #: fired once during the object lifetime, just before the object is
     #: removed from the tree structure.
-    destroyed = Signal()
+    destroyed = Event()
 
     #: Private storage values. These should *never* be manipulated by
     #: user code. For performance reasons, these are not type checked.
