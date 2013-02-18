@@ -2,9 +2,9 @@
 #  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta, abstractmethod, abstractproperty
 
-from atom.api import Member, ReadOnly, MemberChange, null
+from atom.api import Member, ReadOnly, UserMember, Value, Str, null
 
 from .dynamic_scope import DynamicAttributeError
 from .exceptions import DeclarativeNameError, OperatorLookupError
@@ -50,6 +50,13 @@ class DeclarativeExpression(object):
     """
     __metaclass__ = ABCMeta
 
+    @abstractproperty
+    def name(self):
+        """ Get the name to which the expression is bound.
+
+        """
+        raise NotImplementedError
+
     @abstractmethod
     def evaluate(self, owner):
         """ Evaluate and return the results of the expression.
@@ -63,40 +70,7 @@ class DeclarativeExpression(object):
         raise NotImplementedError
 
 
-class DeclarativeListener(object):
-    """ An interface definition for creating property listeners.
-
-    Then Enaml operators are responsible for assigning listeners to the
-    data struct of the relevant `DeclarativeProperty`.
-
-    """
-    __metaclass__ = ABCMeta
-
-    @abstractmethod
-    def property_changed(self, change):
-        """ Called when the member on the object has changed.
-
-        Parameters
-        ----------
-        change : MemberChange
-            The change object for the property.
-
-        """
-        raise NotImplementedError
-
-
-class DeclarativeDataStruct(object):
-    """ A struct for storing declarative data for a property.
-
-    This struct is used by `Declarative` and the Enaml operators to
-    manage the bound expressions and listeners. User code should not
-    directly interact with this class.
-
-    """
-    __slots__ = ('value', 'expression', 'listeners')
-
-
-class DeclarativeProperty(Member):
+class DeclarativeProperty(UserMember):
     """ An atom `Member` which enables data binding in Enaml.
 
     A declarative property is used to wrap another member on an Atom
@@ -115,112 +89,103 @@ class DeclarativeProperty(Member):
             handling. The default is a `Member` member.
 
         """
+        assert isinstance(member, Member), "member must be an atom 'Member'"
+        super(DeclarativeProperty, self).__init__()
         self.member = member
 
-    def data_struct(self, owner):
-        """ Get the data struct associated with the property.
+    def _set_member_name(self, name):
+        """ Assign the name to this member.
+
+        This method is called by the Atom metaclass when a class is
+        created. This makes sure the name of the internal member is
+        also updated.
+
+        """
+        super(DeclarativeProperty, self)._set_member_name(name)
+        self.member._set_member_name(name)
+
+    def _set_member_index(self, index):
+        """ Assign the index to this member.
+
+        This method is called by the Atom metaclass when a class is
+        created. This makes sure the index of the internal member is
+        also updated.
+
+        """
+        super(DeclarativeProperty, self)._set_member_index(index)
+        self.member._set_member_index(index)
+
+    def clone(self):
+        """ Create a clone of the declarative property.
+
+        """
+        clone = super(DeclarativeProperty, self).clone()
+        clone.member = self.member.clone()
+        return clone
+
+    def default(self, owner, name):
+        """ Compute the default value for the declarative property.
+
+        The default is retrieved first from a bound expression. If
+        that succeeds, the value is validated using the internal
+        member. Otherwise, the internal member provides the default.
+
+        """
+        value = owner.evaluate_expression(self.name)
+        if value is not null:
+            value = self.member.do_validate(owner, null, value)
+        else:
+            value = self.member.do_default(owner)
+        return value
+
+    def validate(self, owner, name, old, new):
+        """ Validate the declarative property value.
+
+        The validation is delegated to the internal member.
+
+        """
+        return self.member.do_validate(owner, old, new)
+
+
+#: Export DeclarativeProperty as something a bit easier to type
+d = DeclarativeProperty
+
+
+class ExpressionNotifier(object):
+    """ A simple notifier object used by Declarative.
+
+    DeclarativeExpression objects which are bound to a declarative will
+    use this notifier to notify the declarative when their expression
+    is invalid and should be recomputed.
+
+    """
+    __slots__ = 'owner'
+
+    def __init__(self, owner):
+        """ Initialize an ExpressionNotifier.
 
         Parameters
         ----------
         owner : Declarative
-            The declarative object which owns the data struct.
-
-        Returns
-        -------
-        result : DeclarativeDataStruct
-            The declarative data struct for the object.
+            The declarative object which owns this notifier.
 
         """
-        value = self.getfast(owner)
-        if isinstance(value, DeclarativeDataStruct):
-            return value
-        data = DeclarativeDataStruct()
-        data.value = value
-        data.expression = data.listeners = None
-        self.setfast(owner, data)
-        return data
-
-    def __get__(self, owner, cls):
-        """ Get the value for the declarative property.
-
-        """
-        if owner is None:
-            return self
-        name = self._name
-        member = self.member
-        data = value = self.getfast(owner)
-        if isinstance(data, DeclarativeDataStruct):
-            value = data.value
-            if value is null:
-                if data.expression is not null:
-                    value = data.expression.evaluate(owner)
-                    if member.has_validate:
-                        value = member.validate(owner, name, null, value)
-                    data.value = value
-                elif member.has_default:
-                    value = data.value = member.default(owner, name)
-        elif data is null and member.has_default:
-            value = member.default(owner, name)
-            self.setfast(owner, value)
-        return value
-
-    def __set__(self, owner, value):
-        """ Set the value for the declarative property.
-
-        """
-        name = self._name
-        member = self.member
-        old = self.getfast(owner)
-        if isinstance(old, DeclarativeDataStruct):
-            old_value = old.value
-            if old_value == value:
-                return
-            if member.has_validate:
-                value = member.validate(owner, name, old_value, value)
-            if old_value != value:
-                old.value = value
-                change = None
-                if old.listeners is not None:
-                    change = MemberChange(owner, name, old_value, value)
-                    for listener in old.listeners:
-                        listener.property_changed(change)
-                if owner.notifications_enabled(name):
-                    if change is None:
-                        change = MemberChange(owner, name, old_value, value)
-                    owner.notify(change)
-        else:
-            if old == value:
-                return
-            if member.has_validate:
-                value = member.validate(owner, name, old, value)
-            if old != value:
-                self.setfast(owner, value)
-                if owner.notifications_enabled(name):
-                    change = MemberChange(owner, name, old, value)
-                    owner.notify(change)
-
-
-#------------------------------------------------------------------------------
-# Declarative
-#------------------------------------------------------------------------------
-class ExpressionNotifier(object):
-    def __init__(self, owner):
+        # The strong internal reference cycle is deliberate. It will be
+        # cleared during the `destroy` method of the Declarative.
         self.owner = owner
+
     def __call__(self, name):
+        """ Notify the declarative owner that the expression is invalid.
+
+        Parameters
+        ----------
+        name : str
+            The name of the expression which is invalid.
+
+        """
         owner = self.owner
-        prop = owner.lookup_member(name)
-        data = prop.data_struct(owner)
-        if data.expression is not null:
-            value = data.expression.evaluate(owner)
-            prop.__set__(owner, value)
-
-
-class ExpressionNotifierFactory(Member):
-    __slots__ = ()
-    def __init__(self):
-        self.has_default = True
-    def default(self, owner, name):
-        return ExpressionNotifier(owner)
+        if owner is not None:
+            setattr(owner, name, owner.evaluate_expression(name))
 
 
 class Declarative(Object):
@@ -232,17 +197,24 @@ class Declarative(Object):
     visual representation; that functionality is added by subclasses.
 
     """
-    #: A readonly property which returns the current instance of the
-    #: component. This allows declarative Enaml expressions to access
-    #: 'self' according to Enaml's dynamic scoping rules.
-    self = property(lambda self: self)
+    #: Redefine the 'name' attribute on Object as a 'd' property.
+    name = d(Str())
 
     #: The operator context used to build out this instance. This is
-    #: assigned during object instantiation. It should not be edited
-    #: by user code.
+    #: assigned during object instantiation.
     operators = ReadOnly()
 
-    notifier = ExpressionNotifierFactory()
+    #: The list of value-providing bound expressions for the object.
+    #: The operators will append expressions to this list as-needed.
+    _expressions = Value(factory=list)
+
+    #: An object which is used by the operators to notify this object
+    #: when a bound expression has been invalidated. This should not
+    #: be manipulated by user code.
+    _expression_notifier = Value()
+
+    def _default__expression_notifier(self):
+        return ExpressionNotifier(self)
 
     def __init__(self, parent=None, **kwargs):
         """ Initialize a declarative component.
@@ -266,6 +238,15 @@ class Declarative(Object):
             for description, f_globals in descriptions:
                 identifiers = {}
                 self.populate(description, identifiers, f_globals)
+
+    def destroy(self):
+        """ An overridden destructor method for declarative cleanup.
+
+        """
+        del self._expressions
+        self._expression_notifier.owner = None  # break the ref cycle
+        del self._expression_notifier
+        super(Declarative, self).destroy()
 
     def populate(self, description, identifiers, f_globals):
         """ Populate this declarative instance from a description.
@@ -365,4 +346,28 @@ class Declarative(Object):
                 block = binding['block']
                 raise OperatorLookupError(opname, filename, lineno, block)
             operator(self, binding['name'], binding['func'], identifiers)
+
+    def evaluate_expression(self, name):
+        """ Evaluate an expression bound to this declarative object.
+
+        Parameters
+        ----------
+        name : str
+            The name of the declarative property to which the expression
+            is bound.
+
+        Returns
+        -------
+        result : object or null
+            The result of the evaluated expression, or null if there
+            is no expression bound for the given name.
+
+        """
+        # The operators will append all expressions to this list, so
+        # the list is iterated in reverse order to use the expression
+        # which was most recently bound.
+        for expression in reversed(self._expressions):
+            if expression.name == name:
+                return expression.evaluate(self)
+        return null
 
