@@ -216,6 +216,10 @@ class Declarative(Object):
     def _default__expression_notifier(self):
         return ExpressionNotifier(self)
 
+    #: Seed the class heirarchy with an empty descriptions tuple. The
+    #: enaml compiler machinery will populate this for each enamldef.
+    __declarative_descriptions__ = ()
+
     def __init__(self, parent=None, **kwargs):
         """ Initialize a declarative component.
 
@@ -231,7 +235,7 @@ class Declarative(Object):
         """
         self.operators = OperatorContext.active_context()
         super(Declarative, self).__init__(parent, **kwargs)
-        descriptions = self.__class__.__enamldef_descriptions__
+        descriptions = self.__class__.__declarative_descriptions__
         if len(descriptions) > 0:
             # Each description is an independent `enamldef` block
             # which gets its own independent identifiers scope.
