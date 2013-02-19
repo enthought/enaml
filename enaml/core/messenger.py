@@ -100,7 +100,7 @@ class Messenger(Atom):
     #: The current lifetime state of the messenger within the session.
     #: This redefines the Object state to add the needed values for the
     #: messenger. This value should not be manipulated by user code.
-    state = Object.state.add('activating', 'active')
+    state = Object.state.extend('activating', 'active')
 
     #: A read-only property indicating if the messenger is activating.
     is_activating = property(lambda self: self.state == 'activating')
