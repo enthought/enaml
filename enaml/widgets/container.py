@@ -1,17 +1,19 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2011, Enthought, Inc.
+#  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from atom.api import Bool, Constant, Coerced, observe
+from atom.api import (
+    Bool, Constant, Coerced, CachedProperty, List, observe, set_default
+)
 
 from enaml.core.declarative import d_properties
 from enaml.layout.geometry import Box
 from enaml.layout.layout_helpers import vbox
 
-from .constraints_widget import ConstraintsWidget, ConstraintMember, PolicyEnum
+from .constraints_widget import ConstraintsWidget, ConstraintMember
 
 
-@d_properties('share_layout', 'padding', 'hug_width', 'hug_height')
+@d_properties('share_layout', 'padding')
 class Container(ConstraintsWidget):
     """ A ConstraintsWidget subclass that provides functionality for
     laying out constrainable children according to their system of
@@ -90,18 +92,27 @@ class Container(ConstraintsWidget):
     #: margin than what is specified by the padding.
     padding = Coerced(Box, factory=lambda: Box(10, 10, 10, 10))
 
+    #: A cached property which returns the children defined on the
+    #: container which are instances of ConstraintsWidget.
+    widgets = CachedProperty(List())
+
     #: Containers freely exapnd in width and height. The size hint
     #: constraints for a Container are used when the container is
     #: not sharing its layout. In these cases, expansion of the
     #: container is typically desired.
-    hug_width = PolicyEnum('ignore')
-    hug_height = PolicyEnum('ignore')
+    hug_width = set_default('ignore')
+    hug_height = set_default('ignore')
 
-    @property
-    def widgets(self):
+    #--------------------------------------------------------------------------
+    # Property Handlers
+    #--------------------------------------------------------------------------
+    def _get_widgets(self):
+        """ The getter for the 'widgets' cached property
+
+        """
         isinst = isinstance
-        widgets = (c for c in self.children if isinst(c, ConstraintsWidget))
-        return tuple(widgets)
+        target = ConstraintsWidget
+        return [child for child in self.children if isinst(child, target)]
 
     #--------------------------------------------------------------------------
     # Widget Updates
@@ -125,6 +136,8 @@ class Container(ConstraintsWidget):
 
         """
         super(Container, self).child_added(child)
+        # XXX these can probably be collapsed
+        CachedProperty.reset(self, 'widgets')
         if self.is_active and not self.constraints:
             self._send_relayout()
 
@@ -136,6 +149,8 @@ class Container(ConstraintsWidget):
 
         """
         super(Container, self).child_removed(child)
+        # XXX these can probably be collapsed
+        CachedProperty.reset(self, 'widgets')
         if self.is_active and not self.constraints:
             self._send_relayout()
 

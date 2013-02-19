@@ -1,16 +1,17 @@
-
 #------------------------------------------------------------------------------
-# Copyright (c) 2012, Enthought, Inc.
+# Copyright (c) 2013, Enthought, Inc.
 # All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import List, Enum, Unicode, Bool,  Property, cached_property
+from atom.api import List, Enum, Unicode, Bool, Event, observe
 
-from enaml.core.trait_types import EnamlEvent
+from enaml.core.declarative import d_properties
 
 from .container import Container
 from .widget import Widget
 
 
+@d_properties('title', 'title_bar_visible', 'title_bar_orientation', 'movable',
+    'closable', 'floatable', 'floating', 'dock_area', 'allowed_dock_areas')
 class DockPane(Widget):
     """ A widget which can be docked in a MainWindow.
 
@@ -20,7 +21,7 @@ class DockPane(Widget):
 
     """
     #: The title to use in the title bar.
-    title = Unicode
+    title = Unicode()
 
     #: Whether or not the title bar is visible.
     title_bar_visible = Bool(True)
@@ -47,18 +48,26 @@ class DockPane(Widget):
     #: by the user. Note that this does not preclude the pane from
     #: being docked programmatically via the 'dock_area' attribute.
     allowed_dock_areas = List(
-        Enum('left', 'right', 'top', 'bottom', 'all'), value=['all'],
+        Enum('left', 'right', 'top', 'bottom', 'all'), ['all'],
     )
-
-    #: A read only property which returns the pane's dock widget.
-    dock_widget = Property(depends_on='children')
 
     #: An event fired when the user closes the pane by clicking on the
     #: dock pane's close button.
-    closed = EnamlEvent
+    closed = Event()
+
+    @property
+    def dock_widget(self):
+        """ A read only property which returns the dock widget.
+
+        """
+        widget = None
+        for child in self.children:
+            if isinstance(child, Container):
+                widget = child
+        return widget
 
     #--------------------------------------------------------------------------
-    # Initialization
+    # Messenger API
     #--------------------------------------------------------------------------
     def snapshot(self):
         """ Returns the snapshot dict for the DockPane.
@@ -76,33 +85,15 @@ class DockPane(Widget):
         snap['allowed_dock_areas'] = self.allowed_dock_areas
         return snap
 
-    def bind(self):
-        super(DockPane, self).bind()
-        attrs = (
-            'title', 'title_bar_visible', 'title_bar_orientation', 'closable',
-            'movable', 'floatable', 'floating', 'dock_area',
-            'allowed_dock_areas'
-        )
-        self.publish_attributes(*attrs)
-
-    #--------------------------------------------------------------------------
-    # Private API
-    #--------------------------------------------------------------------------
-    @cached_property
-    def _get_dock_widget(self):
-        """ The getter for the 'dock_widget' property.
-
-        Returns
-        -------
-        result : Container or None
-            The dock widget for the DockPane, or None if not provided.
+    @observe(r'^(title|title_bar_visible|title_bar_orientation|closable|'
+             r'movable|floatable|floating|dock_area|allowed_dock_areas)$',
+             regex=True)
+    def send_member_change(self, change):
+        """ An observer which sends state change to the client.
 
         """
-        widget = None
-        for child in self.children:
-            if isinstance(child, Container):
-                widget = child
-        return widget
+        # The superclass handler implementation is sufficient.
+        super(DockPane, self).send_member_change(change)
 
     #--------------------------------------------------------------------------
     # Message Handling

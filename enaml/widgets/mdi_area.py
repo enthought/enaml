@@ -1,8 +1,8 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2012, Enthought, Inc.
+#  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Property, cached_property
+from atom.api import set_default
 
 from .constraints_widget import ConstraintsWidget
 from .mdi_window import MdiWindow
@@ -17,32 +17,20 @@ class MdiArea(ConstraintsWidget):
     Children of an MdiArea should be defined as instances of MdiWindow.
 
     """
-    #: A read only property which returns the area's MdiWindows.
-    mdi_windows = Property(depends_on='children')
-
     #: An MdiArea expands freely in width and height by default.
-    hug_width = 'ignore'
-    hug_height = 'ignore'
-    
+    hug_width = set_default('ignore')
+    hug_height = set_default('ignore')
+
     #: An MdiArea resists clipping only weakly by default.
-    resist_width = 'weak'
-    resist_height = 'weak'
+    resist_width = set_default('weak')
+    resist_height = set_default('weak')
 
-    #--------------------------------------------------------------------------
-    # Private API
-    #--------------------------------------------------------------------------
-    @cached_property
-    def _get_mdi_windows(self):
-        """ The getter for the 'mdi_windows' property.
-
-        Returns
-        -------
-        result : tuple
-            The tuple of MdiWindow instances defined as children of this
-            MdiArea.
+    @property
+    def mdi_windows(self):
+        """ Return a list of the MdiWindow children.
 
         """
         isinst = isinstance
-        windows = (c for c in self.children if isinst(c, MdiWindow))
-        return tuple(windows)
+        target = MdiWindow
+        return [child for child in self.children if isinst(child, target)]
 

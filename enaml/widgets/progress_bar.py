@@ -1,51 +1,43 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2011, Enthought, Inc.
+#  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Int, Property, TraitError, on_trait_change
+from atom.api import CachedProperty, Int, observe, set_default
 
-from enaml.core.trait_types import Bounded
+from enaml.core.declarative import d_properties
 
 from .control import Control
 
 
+@d_properties('minimum', 'maximum', 'value')
 class ProgressBar(Control):
     """ A control which displays a value as a ticking progress bar.
 
     """
-    #: The minimum value that the progress bar can take. Extra checks
-    #: take place to make sure that the user does not programmatically
-    #: set :attr:`minimum` > :attr:`maximum`.
-    minimum = Property(Int, depends_on='_minimum')
+    #: The minimum progress value. If the minimum value is changed such
+    #: that it becomes greater than the current value or the maximum
+    #: value, then those values will be adjusted. The default is 0.
+    minimum = Int(0)
 
-    #: The internal minimum storage.
-    _minimum = Int(0)
+    #: The maximum progress value. If the maximum value is changed such
+    #: that it becomes smaller than the current value or the minimum
+    #: value, then those values will be adjusted. The default is 100.
+    maximum = Int(100)
 
-    #: The maximum value that the progress bar can take. Extra checks
-    #: take place to make sure that the user does not programmatically
-    #: set :attr:`minimum` > :attr:`maximum`.
-    maximum = Property(Int, depends_on='_maximum')
-
-    #: The internal maximum storage.
-    _maximum = Int(100)
-
-    #: The current value. Default is the minimum value. The value is
-    #: bounded between :attr:`minimum` and :attr:`maximum`. Changing
-    #: the boundary attributes might result in an update of :attr:`value`
-    #: to fit in the new range. Attempts to assign a value outside of
-    #: these bounds will result in a TraitError.
-    value = Bounded(0, low='minimum', high='maximum')
+    #: The position value of the Slider. The value will be clipped to
+    #: always fall between the minimum and maximum.
+    value = Int(0)
 
     #: The percentage completed, rounded to an integer. This is a
-    #: readonly property for convenient use by other Components.
-    percentage = Property(Int, depends_on=['_minimum', '_maximum', 'value'])
+    #: readonly value for convenient use by other Components.
+    percentage = CachedProperty(Int())
 
     #: How strongly a component hugs it's content. ProgressBars expand
     #: to fill the available horizontal space by default.
-    hug_width = 'ignore'
+    hug_width = set_default('ignore')
 
     #--------------------------------------------------------------------------
-    # Initialization
+    # Messenger API
     #--------------------------------------------------------------------------
     def snapshot(self):
         """ Returns the dict of creation attributes for the control.
@@ -57,55 +49,17 @@ class ProgressBar(Control):
         snap['value'] = self.value
         return snap
 
-    def bind(self):
-        """ A method called after initialization which allows the widget
-        to bind any event handlers necessary.
+    @observe(r'^(minimum|maximum|value)$', regex=True)
+    def send_member_change(self, change):
+        """ An observer which sends state change to the client.
 
         """
-        super(ProgressBar, self).bind()
-        self.publish_attributes('maximum', 'minimum', 'value')
+        # The superclass handler implementation is sufficient.
+        super(ProgressBar, self).send_member_change(change)
 
     #--------------------------------------------------------------------------
-    # Property Methods
+    # Property Handlers
     #--------------------------------------------------------------------------
-    def _get_minimum(self):
-        """ The property getter for the ProgressBar minimum.
-
-        """
-        return self._minimum
-
-    def _set_minimum(self, value):
-        """ The property setter for :attr:`minimum`. Addtional checks are
-        applied to make sure that :attr:`minimum` < :attr:`maximum`
-
-        """
-        if value > self.maximum:
-            msg = ('The minimum value of ProgressBar should be smaller than '
-                   'the current maximum value({0}), but a value of {1} was '
-                   'given')
-            msg = msg.format(self.maximum, value)
-            raise TraitError(msg)
-        self._minimum = value
-
-    def _get_maximum(self):
-        """ The property getter for the ProgressBar maximum.
-
-        """
-        return self._maximum
-
-    def _set_maximum(self, value):
-        """ The property setter for :attr:`maximum`. Addtional checks are
-        applied to make sure that :attr:`minimum` < :attr:`maximum`
-
-        """
-        if value < self.minimum:
-            msg = ('The maximum value of ProgressBar should be larger than '
-                   'the current minimum value({0}), but a value of {1} was '
-                   'given')
-            msg = msg.format(self.minimum, value)
-            raise TraitError(msg)
-        self._maximum = value
-
     def _get_percentage(self):
         """ The property getter for the ProgressBar percentage.
 
@@ -127,14 +81,47 @@ class ProgressBar(Control):
             res = min(res, 99)
         return res
 
-    #--------------------------------------------------------------------------
-    # Private API
-    #--------------------------------------------------------------------------
-    @on_trait_change('minimum, maximum')
-    def _adapt_value(self):
-        """ Adapt the value to the boundaries
+    @observe(r'^(minimum|maximum|value)$', regex=True)
+    def _reset_percentage(self, change):
+        """ Reset the percentage property when its dependencies change.
 
         """
-        if self.initialized:
-            self.value = min(max(self.value, self.minimum), self.maximum)
+        CachedProperty.reset(self, 'percentage')
+
+    #--------------------------------------------------------------------------
+    # Post Validation Handlers
+    #--------------------------------------------------------------------------
+    def _post_validate_minimum(self, old, new):
+        """ Post validate the minimum value for the progress bar.
+
+        If the new minimum is greater than the current value or maximum,
+        those values are adjusted up.
+
+        """
+        if new > self.maximum:
+            self.maximum = new
+        if new > self.value:
+            self.value = new
+        return new
+
+    def _post_validate_maximum(self, old, new):
+        """ Post validate the maximum value for the progress bar.
+
+        If the new maximum is less than the current value or the minimum,
+        those values are adjusted down.
+
+        """
+        if new < self.minimum:
+            self.minimum = new
+        if new < self.value:
+            self.value = new
+        return new
+
+    def _post_validate_value(self, old, new):
+        """ Post validate the value for the progress bar.
+
+        The value is clipped to minimum and maximum bounds.
+
+        """
+        return max(self.minimum, min(new, self.maximum))
 

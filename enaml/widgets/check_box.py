@@ -2,7 +2,7 @@
 #  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from atom.api import Bool
+from atom.api import set_default
 
 from .abstract_button import AbstractButton
 
@@ -22,5 +22,5 @@ class CheckBox(AbstractButton):
 
     """
     #: Check boxes are checkable by default.
-    checkable = Bool(True)
+    checkable = set_default(True)
 

@@ -1,16 +1,18 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2012, Enthought, Inc.
+#  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Enum, Range, Property, cached_property
+from atom.api import Enum, Range, Coerced, observe, set_default
 
-from enaml.core.trait_types import CoercingInstance
+from enaml.core.declarative import d_properties
 from enaml.layout.geometry import Box
 
 from .constraints_widget import ConstraintsWidget
 from .flow_item import FlowItem
 
 
+@d_properties('direction', 'align', 'horizontal_spacing', 'vertical_spacing',
+    'margins')
 class FlowArea(ConstraintsWidget):
     """ A widget which lays out its children in flowing manner, wrapping
     around at the end of the available space.
@@ -31,17 +33,23 @@ class FlowArea(ConstraintsWidget):
     vertical_spacing = Range(low=0, value=10)
 
     #: The margins to use around the outside of the flow area.
-    margins = CoercingInstance(Box, (10, 10, 10, 10))
-
-    #: A read only property which returns the area's flow items.
-    flow_items = Property(depends_on='children')
+    margins = Coerced(Box, factory=lambda: Box(10, 10, 10, 10))
 
     #: A FlowArea expands freely in width and height by default.
-    hug_width = 'ignore'
-    hug_height = 'ignore'
+    hug_width = set_default('ignore')
+    hug_height = set_default('ignore')
+
+    @property
+    def flow_items(self):
+        """ A read only property which returns the flow items.
+
+        """
+        isinst = isinstance
+        target = FlowItem
+        return [child for child in self.children if isinst(child, target)]
 
     #--------------------------------------------------------------------------
-    # Initialization
+    # Messenger API
     #--------------------------------------------------------------------------
     def snapshot(self):
         """ Returns the snapshot dict for the FlowArea.
@@ -55,31 +63,12 @@ class FlowArea(ConstraintsWidget):
         snap['margins'] = self.margins
         return snap
 
-    def bind(self):
-        """ Bind the change handler for the FlowItem.
+    @observe(r'^(direction|align|horizontal_spacing|vertical_spacing|'
+             r'margins)$', regex=True)
+    def send_member_change(self, change):
+        """ An observer which sends state change to the client.
 
         """
-        super(FlowArea, self).bind()
-        attrs = (
-            'direction', 'align', 'horizontal_spacing','vertical_spacing',
-            'margins',
-        )
-        self.publish_attributes(*attrs)
-
-    #--------------------------------------------------------------------------
-    # Private API
-    #--------------------------------------------------------------------------
-    @cached_property
-    def _get_flow_items(self):
-        """ The getter for the 'flow_items' property.
-
-        Returns
-        -------
-        result : tuple
-            The tuple of FlowItem children defined for this area.
-
-        """
-        isinst = isinstance
-        items = (c for c in self.children if isinst(c, FlowItem))
-        return tuple(items)
+        # The superclass handler implementation is sufficient.
+        super(FlowArea, self).send_member_change(change)
 

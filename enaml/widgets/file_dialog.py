@@ -1,21 +1,23 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2012, Enthought, Inc.
+#  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Enum, Bool, Callable, List, Unicode
+from atom.api import Enum, Bool, Callable, List, Unicode, Event
 
 from enaml.application import deferred_call
+from enaml.core.declarative import Declarative, d_properties
 from enaml.core.messenger import Messenger
-from enaml.core.trait_types import EnamlEvent
 
 
-class FileDialog(Messenger):
+@d_properties('title', 'mode', 'path', 'filters', 'selected_filter',
+    'native_dialog', 'callback', 'destroy_on_close')
+class FileDialog(Messenger, Declarative):
     """ A dialog widget that allows the user to open and save files and
     directories.
 
     """
     #: The title to use for the dialog.
-    title = Unicode
+    title = Unicode()
 
     #: The mode of the dialog.
     mode = Enum('open_file', 'open_files', 'save_file', 'directory')
@@ -24,20 +26,20 @@ class FileDialog(Messenger):
     #: the initial working directory and file, as appropriate, when the
     #: dialog is opened. It will aslo be updated when the dialog is
     #: closed and accepted.
-    path = Unicode
+    path = Unicode()
 
     #: The list of selected paths in the dialog. It will be updated
     #: when the dialog is closed and accepted. It is output only and
     #: is only applicable for the `open_files` mode.
-    paths = List(Unicode)
+    paths = List(Unicode())
 
     #: The string filters used to restrict the user's selections.
-    filters = List(Unicode)
+    filters = List(Unicode())
 
     #: The selected filter from the list of filters. This value will be
     #: used as the initial working filter when the dialog is opened. It
     #: will also be updated when the dialog is closed and accepted.
-    selected_filter = Unicode
+    selected_filter = Unicode()
 
     #: Whether to use a platform native dialog, when available.
     native_dialog = Bool(True)
@@ -51,11 +53,11 @@ class FileDialog(Messenger):
     #: closed. This is a convenience to make it easier to handle the
     #: non-blocking behavior of the dialog. The callback must accept
     #: a single argument, which will be the dialog instance.
-    callback = Callable
+    callback = Callable()
 
     #: An event fired when the dialog is closed. The dialog state will
     #: be updated before this event is fired.
-    closed = EnamlEvent
+    closed = Event()
 
     #: Whether to destroy the dialog widget on close. The default is
     #: True since dialogs are typically used in a transitory fashion.

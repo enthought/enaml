@@ -1,10 +1,9 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2012, Enthought, Inc.
+#  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Enum, Range, Property, cached_property
+from atom.api import Enum, Range, Coerced, observe
 
-from enaml.core.trait_types import CoercingInstance
 from enaml.layout.geometry import Size
 
 from .container import Container
@@ -23,7 +22,7 @@ class FlowItem(Widget):
     #: the size of the item in the layout, bounded to the computed min
     #: and max size. A size of (-1, -1) indicates to use the widget's
     #: size hint as the preferred size.
-    preferred_size = CoercingInstance(Size, (-1, -1))
+    preferred_size = Coerced(Size, factory=lambda: Size(-1, -1))
 
     #: The alignment of this item in the direction orthogonal to the
     #: layout flow.
@@ -41,11 +40,19 @@ class FlowItem(Widget):
     #: orthogonal to the layout flow.
     ortho_stretch = Range(low=0, value=0)
 
-    #: A read only property which returns the items's flow widget.
-    flow_widget = Property(depends_on='children')
+    @property
+    def flow_widget(self):
+        """ A read only property which returns the flow widget.
+
+        """
+        widget = None
+        for child in self.children:
+            if isinstance(child, Container):
+                widget = child
+        return widget
 
     #--------------------------------------------------------------------------
-    # Initialization
+    # Messenger API
     #--------------------------------------------------------------------------
     def snapshot(self):
         """ Returns the snapshot dict for the FlowItem.
@@ -58,30 +65,11 @@ class FlowItem(Widget):
         snap['ortho_stretch'] = self.ortho_stretch
         return snap
 
-    def bind(self):
-        """ Bind the change handler for the FlowItem.
+    @observe(r'^(preferred_size|align|stretch|ortho_stretch)$', regex=True)
+    def send_member_change(self, change):
+        """ An observer which sends state change to the client.
 
         """
-        super(FlowItem, self).bind()
-        attrs = ('preferred_size', 'align', 'stretch', 'ortho_stretch')
-        self.publish_attributes(*attrs)
-
-    #--------------------------------------------------------------------------
-    # Private API
-    #--------------------------------------------------------------------------
-    @cached_property
-    def _get_flow_widget(self):
-        """ The getter for the 'flow_widget' property.
-
-        Returns
-        -------
-        result : Container or None
-            The flow widget for the FlowItem, or None if not provided.
-
-        """
-        widget = None
-        for child in self.children:
-            if isinstance(child, Container):
-                widget = child
-        return widget
+        # The superclass handler implementation is sufficient.
+        super(FlowItem, self).send_member_change(change)
 

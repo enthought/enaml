@@ -2,17 +2,17 @@
 #  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from atom.api import Bool, Unicode, Str, Coerced, TypedEvent, observe
+from atom.api import (
+    Bool, Unicode, Str, Coerced, TypedEvent, observe, set_default
+)
 
 from enaml.core.declarative import d_properties
 from enaml.layout.geometry import Size
 
-from .constraints_widget import PolicyEnum
 from .control import Control
 
 
-@d_properties('text', 'icon_source', 'icon_size', 'checkable', 'checked',
-    'hug_width')
+@d_properties('text', 'icon_source', 'icon_size', 'checkable', 'checked')
 class AbstractButton(Control):
     """ A base class which provides functionality common for several
     button-like widgets.
@@ -44,7 +44,7 @@ class AbstractButton(Control):
 
     #: How strongly a component hugs it's contents' width. Buttons hug
     #: their contents' width weakly by default.
-    hug_width = PolicyEnum('weak')
+    hug_width = set_default('weak')
 
     #--------------------------------------------------------------------------
     # Messenger API

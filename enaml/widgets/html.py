@@ -1,8 +1,10 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2011, Enthought, Inc.
+#  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Str
+from atom.api import Str, observe, set_default
+
+from enaml.core.declarative import d_
 
 from .control import Control
 
@@ -12,18 +14,14 @@ class Html(Control):
 
     """
     #: The Html source code to be rendered.
-    source = Str
+    source = d_(Str())
 
-    #: How strongly a component hugs it's contents' width. Html widgets
-    #: ignore the width hug by default, so they expand freely in width.
-    hug_width = 'ignore'
-
-    #: How strongly a component hugs it's contents' height. Html widgets
-    #: ignore the height hug by default, so they expand freely in height.
-    hug_height = 'ignore'
+    #: An html control expands freely in height and width by default.
+    hug_width = set_default('ignore')
+    hug_height = set_default('ignore')
 
     #--------------------------------------------------------------------------
-    # Initialization
+    # Messenger API
     #--------------------------------------------------------------------------
     def snapshot(self):
         """ Return the dictionary of creation attributes for the control.
@@ -33,11 +31,11 @@ class Html(Control):
         snap['source'] = self.source
         return snap
 
-    def bind(self):
-        """ A method called after initialization which allows the widget
-        to bind any event handlers necessary.
+    @observe('source')
+    def send_member_change(self, change):
+        """ An observer which sends state change to the client.
 
         """
-        super(Html, self).bind()
-        self.publish_attributes('source')
+        # The superclass handler implementation is sufficient.
+        super(Html, self).send_member_change(change)
 

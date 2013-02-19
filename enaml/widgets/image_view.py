@@ -1,8 +1,10 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2011, Enthought, Inc.
+#  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Bool, Str
+from atom.api import Bool, Str, observe, set_default
+
+from enaml.declarative.api import d_
 
 from .control import Control
 
@@ -12,25 +14,25 @@ class ImageView(Control):
 
     """
     #: The source url of the image to load.
-    source = Str
+    source = d_(Str())
 
     #: Whether or not to scale the image with the size of the component.
-    scale_to_fit = Bool(False)
+    scale_to_fit = d_(Bool(False))
 
     #: Whether to allow upscaling of an image if scale_to_fit is True.
-    allow_upscaling = Bool(True)
+    allow_upscaling = d_(Bool(True))
 
     #: Whether or not to preserve the aspect ratio if scaling the image.
-    preserve_aspect_ratio = Bool(True)
+    preserve_aspect_ratio = d_(Bool(True))
 
     #: An image view hugs its width weakly by default.
-    hug_width = 'weak'
+    hug_width = set_default('weak')
 
     #: An image view hugs its height weakly by default.
-    hug_height = 'weak'
+    hug_height = set_default('weak')
 
     #--------------------------------------------------------------------------
-    # Initialization
+    # Messenger API
     #--------------------------------------------------------------------------
     def snapshot(self):
         """ Returns the dict of creation attribute for the control.
@@ -43,15 +45,12 @@ class ImageView(Control):
         snap['preserve_aspect_ratio'] = self.preserve_aspect_ratio
         return snap
 
-    def bind(self):
-        """ A method called after initialization which allows the widget
-        to bind any event handlers necessary.
+    @observe(r'^(source|scale_to_fit|allow_upscaling|preserve_aspect_ratio)$',
+             regex=True)
+    def send_member_change(self, change):
+        """ An observer which sends state change to the client.
 
         """
-        super(ImageView, self).bind()
-        attrs = (
-            'source', 'scale_to_fit', 'allow_upscaling',
-            'preserve_aspect_ratio',
-        )
-        self.publish_attributes(*attrs)
+        # The superclass handler implementation is sufficient.
+        super(ImageView, self).send_member_change(change)
 

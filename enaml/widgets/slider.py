@@ -114,9 +114,11 @@ class Slider(Control):
         """
         self.set_guarded(value=content['value'])
 
-    @observe('orientation')
-    def _update_hugs(self, change):
-        """ Update the hug properties if they are not explicitly set.
+    #--------------------------------------------------------------------------
+    # Observers
+    #--------------------------------------------------------------------------
+    def _observe_orientation(self, change):
+        """ Updates the hug properties if they are not explicitly set.
 
         """
         if not self._explicit_hug:

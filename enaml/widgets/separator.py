@@ -1,13 +1,14 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2012, Enthought, Inc.
+#  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Range, Enum, Either, Property
+from atom.api import Bool, Range, Enum, observe
 
-from .constraints_widget import PolicyEnum
+from enaml.core.declarative import d_properties
 from .control import Control
 
 
+@d_properties('orientation', 'line_style', 'line_width', 'midline_width')
 class Separator(Control):
     """ A widget which draws a horizontal or vertical separator line.
 
@@ -25,22 +26,13 @@ class Separator(Control):
     #: effect for the 'sunken' and 'raised' line styles.
     midline_width = Range(low=0, high=3, value=0)
 
-    #: Hug width is redefined as a property to be computed based on the
-    #: orientation of the separator unless overridden by the user.
-    hug_width = Property(PolicyEnum, depends_on=['_hug_width', 'orientation'])
-
-    #: Hug height is redefined as a property to be computed based on the
-    #: orientation of the separator unless overridden by the user.
-    hug_height = Property(PolicyEnum, depends_on=['_hug_height', 'orientation'])
-
-    #: An internal override trait for hug_width
-    _hug_width = Either(None, PolicyEnum, default=None)
-
-    #: An internal override trait for hug_height
-    _hug_height = Either(None, PolicyEnum, default=None)
+    #: A flag indicating whether the user has explicitly set the hug
+    #: property. If it is not explicitly set, the hug values will be
+    #: updated automatically when the orientation changes.
+    _explicit_hug = Bool(False)
 
     #--------------------------------------------------------------------------
-    # Initialization
+    # Messenger API
     #--------------------------------------------------------------------------
     def snapshot(self):
         """ Returns the snapshot dictionary for the Separator.
@@ -53,13 +45,49 @@ class Separator(Control):
         snap['midline_width'] = self.midline_width
         return snap
 
-    def bind(self):
-        """ Binds the change handlers for the Separator.
+    @observe(r'^(orientation|line_style|line_width|midline_width)$', regex=True)
+    def send_member_change(self, change):
+        """ An observer which sends state change to the client.
 
         """
-        super(Separator, self).bind()
-        attrs = ('orientation', 'line_style', 'line_width', 'midline_width')
-        self.publish_attributes(*attrs)
+        # The superclass handler implementation is sufficient.
+        super(Separator, self).send_member_change(change)
+
+    #--------------------------------------------------------------------------
+    # Observers
+    #--------------------------------------------------------------------------
+    def _observe_orientation(self, change):
+        """ Update the hug properties if they are not explicitly set.
+
+        """
+        if not self._explicit_hug:
+            self.hug_width = self._default_hug_width()
+            self.hug_height = self._default_hug_height()
+            # Reset to False to remove the effect of the above.
+            self._explicit_hug = False
+
+    #--------------------------------------------------------------------------
+    # Default Handlers
+    #--------------------------------------------------------------------------
+    def _default_hug_width(self):
+        """ Get the default hug width for the separator.
+
+        The default hug width is computed based on the orientation.
+
+        """
+        if self.orientation == 'horizontal':
+            return 'ignore'
+        return 'strong'
+
+    def _default_hug_height(self):
+        """ Get the default hug height for the separator.
+
+        The default hug height is computed based on the orientation.
+
+        """
+        if self.orientation == 'vertical':
+            return 'ignore'
+        return 'strong'
 
     #--------------------------------------------------------------------------
     # Property Methods

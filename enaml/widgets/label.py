@@ -2,30 +2,29 @@
 #  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from atom.api import Unicode, Enum, observe
+from atom.api import Unicode, Enum, observe, set_default
 
-from enaml.core.declarative import d
+from enaml.core.declarative import d_properties
 
-from .constraints_widget import PolicyEnum
 from .control import Control
 
 
+@d_properties('text', 'align', 'vertical_align')
 class Label(Control):
     """ A simple control for displaying read-only text.
 
     """
-    #: The text for the label.
-    text = d(Unicode())
+    #: The unicode text for the label.
+    text = Unicode()
 
     #: The horizontal alignment of the text in the widget area.
-    align = d(Enum('left', 'right', 'center', 'justify'))
+    align = Enum('left', 'right', 'center', 'justify')
 
     #: The vertical alignment of the text in the widget area.
-    vertical_align = d(Enum('center', 'top', 'bottom'))
+    vertical_align = Enum('center', 'top', 'bottom')
 
-    #: How strongly a component hugs it's content. Labels hug their
-    #: contents' width weakly by default.
-    hug_width = d(PolicyEnum('weak'))
+    #: Labels hug their width weakly by default.
+    hug_width = set_default('weak')
 
     #--------------------------------------------------------------------------
     # Messenger API

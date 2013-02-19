@@ -2,7 +2,7 @@
 #  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from atom.api import Bool, Str, observe
+from atom.api import Bool, Str, observe, set_default
 
 from enaml.core.declarative import d_properties
 
@@ -26,11 +26,8 @@ class DateSelector(BoundedDate):
     #: Whether to use a calendar popup for selecting the date.
     calendar_popup = Bool(False)
 
-    def _default_hug_width(self):
-        """ A DateSelector can expand freely in width by default.
-
-        """
-        return 'ignore'
+    #: A date selector expands freely in width by default.
+    hug_width = set_default('ignore')
 
     #--------------------------------------------------------------------------
     # Messenger API

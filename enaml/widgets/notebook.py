@@ -2,16 +2,15 @@
 #  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from atom.api import Enum, Bool, observe
+from atom.api import Enum, Bool, observe, set_default
 
 from enaml.core.declarative import d_properties
 
-from .constraints_widget import ConstraintsWidget, PolicyEnum
+from .constraints_widget import ConstraintsWidget
 from .page import Page
 
 
-@d_properties('tab_style', 'tab_position', 'tabs_closable', 'tabs_movable',
-    'hug_width', 'hug_height')
+@d_properties('tab_style', 'tab_position', 'tabs_closable', 'tabs_movable')
 class Notebook(ConstraintsWidget):
     """ A component which displays its children as tabbed pages.
 
@@ -31,13 +30,9 @@ class Notebook(ConstraintsWidget):
     #: Whether or not the tabs in the notebook should be movable.
     tabs_movable = Bool(True)
 
-    #: How strongly a component hugs it's contents' width. A Notebook
-    #: ignores its width hug by default, so it expands freely in width.
-    hug_width = PolicyEnum('ignore')
-
-    #: How strongly a component hugs it's contents' height. A Notebook
-    #: ignores its height hug by default, so it expands freely in height.
-    hug_height = PolicyEnum('ignore')
+    #: A notebook expands freely in height and width by default.
+    hug_width = set_default('ignore')
+    hug_height = set_default('ignore')
 
     @property
     def pages(self):

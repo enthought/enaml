@@ -1,12 +1,17 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2011, Enthought, Inc.
+#  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Bool, List, Int, Property, Unicode, cached_property
+from atom.api import (
+    Bool, List, Int, CachedProperty, Unicode, set_default, observe
+)
+
+from enaml.core.declarative import d_properties
 
 from .control import Control
 
 
+@d_properties('items', 'index', 'editable')
 class ComboBox(Control):
     """ A drop-down list from which one item can be selected at a time.
 
@@ -14,7 +19,7 @@ class ComboBox(Control):
 
     """
     #: The unicode strings to display in the combo box.
-    items = List(Unicode)
+    items = List(Unicode())
 
     #: The integer index of the currently selected item. If the given
     #: index falls outside of the range of items, the item will be
@@ -27,17 +32,16 @@ class ComboBox(Control):
     #: A readonly property that will return the currently selected
     #: item. If the index falls out of range, the selected item will
     #: be the empty string.
-    selected_item = Property(Unicode, depends_on=['index', 'items[]'])
+    selected_item = CachedProperty(Unicode())
 
-    #: How strongly a component hugs it's contents' width. ComboBoxes
-    #: hug width weakly, by default.
-    hug_width = 'weak'
+    #: A combo box hugs its width weakly by default.
+    hug_width = set_default('weak')
 
     #--------------------------------------------------------------------------
-    # Initialization
+    # Messenger API
     #--------------------------------------------------------------------------
     def snapshot(self):
-        """ Returns the dict of creation attributes for the combo box.
+        """ Get the snapshot dict for the control.
 
         """
         snap = super(ComboBox, self).snapshot()
@@ -46,21 +50,13 @@ class ComboBox(Control):
         snap['editable'] = self.editable
         return snap
 
-    def bind(self):
-        """ A method called after initialization which allows the widget
-        to bind any event handlers necessary.
+    @observe(r'^(index|items|editable)$', regex=True)
+    def send_member_change(self, change):
+        """ An observer which sends state change to the client.
 
         """
-        super(ComboBox, self).bind()
-        self.publish_attributes('index', 'editable')
-        self.on_trait_change(self._send_items, 'items, items_items')
-
-    def _send_items(self):
-        """ Send the 'set_items' action to the client widget.
-
-        """
-        content = {'items': self.items}
-        self.send_action('set_items', content)
+        # The superclass handler implementation is sufficient.
+        super(ComboBox, self).send_member_change(change)
 
     #--------------------------------------------------------------------------
     # Message Handling
@@ -74,9 +70,15 @@ class ComboBox(Control):
         self.set_guarded(index=index)
 
     #--------------------------------------------------------------------------
+    # Observers
+    #--------------------------------------------------------------------------
+    @observe(r'^(index|items)$', regex=True)
+    def _reset_selected_item(self, change):
+        CachedProperty.reset(self, 'selected_item')
+
+    #--------------------------------------------------------------------------
     # Property Handlers
     #--------------------------------------------------------------------------
-    @cached_property
     def _get_selected_item(self):
         """ The getter for the `selected_item` property.
 

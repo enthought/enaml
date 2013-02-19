@@ -1,14 +1,19 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2012, Enthought, Inc.
+#  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #
 # Special thanks to Steven Silvester for contributing this module!
 #------------------------------------------------------------------------------
-# NOTE: There shall be no imports from matplotlib in this module. Doing so
-# will create an import dependency on matplotlib for the rest of Enaml!
-from traits.api import Instance, Bool
+from atom.api import ForwardInstance, Bool, observe, set_default
+
+from enaml.core.declarative import d_
 
 from .control import Control
+
+
+def Figure():
+    from matplotlib.figure import Figure
+    return Figure
 
 
 class MPLCanvas(Control):
@@ -16,17 +21,17 @@ class MPLCanvas(Control):
 
     """
     #: The matplotlib figure to display in the widget.
-    figure = Instance('matplotlib.figure.Figure')
+    figure = d_(ForwardInstance(Figure))
 
     #: Whether or not the matplotlib figure toolbar is visible.
-    toolbar_visible = Bool(False)
+    toolbar_visible = d_(Bool(False))
 
     #: Matplotlib figures expand freely in height and width by default.
-    hug_width = 'ignore'
-    hug_height = 'ignore'
+    hug_width = set_default('ignore')
+    hug_height = set_default('ignore')
 
     #--------------------------------------------------------------------------
-    # Initialization
+    # Messenger API
     #--------------------------------------------------------------------------
     def snapshot(self):
         """ Get the snapshot dict for the MPLCanvas.
@@ -37,10 +42,11 @@ class MPLCanvas(Control):
         snap['toolbar_visible'] = self.toolbar_visible
         return snap
 
-    def bind(self):
-        """ Bind the change handlers for the MPLCanvas.
+    @observe(r'^(figure|toolbar_visible)$', regex=True)
+    def send_member_change(self, change):
+        """ An observer which sends state change to the client.
 
         """
-        super(MPLCanvas, self).bind()
-        self.publish_attributes('figure', 'toolbar_visible')
+        # The superclass handler implementation is sufficient.
+        super(MPLCanvas, self).send_member_change(change)
 

@@ -1,12 +1,11 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2012, Enthought, Inc.
+#  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from atom.api import ForwardInstance, observe
+from atom.api import ForwardInstance, observe, set_default
 
-from enaml.core.declarative import d
+from enaml.core.declarative import d_properties
 
-from .constraints_widget import PolicyEnum
 from .control import Control
 
 
@@ -16,20 +15,21 @@ def Component():
     This removes the import dependency on Enable.
 
     """
-    from enaml.component import Component
+    from enable.component import Component
     return Component
 
 
+@d_properties('component')
 class EnableCanvas(Control):
     """ A control which can be used to embded an Enable component.
 
     """
     #: The enable.component.Component instance to draw.
-    component = d(ForwardInstance(Component))
+    component = ForwardInstance(Component)
 
     #: An EnableCanvas expands freely in width and height by default.
-    hug_width = d(PolicyEnum('ignore'))
-    hug_height = d(PolicyEnum('ignore'))
+    hug_width = set_default('ignore')
+    hug_height = set_default('ignore')
 
     #--------------------------------------------------------------------------
     # Messaging API

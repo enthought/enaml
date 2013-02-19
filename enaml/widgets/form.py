@@ -1,12 +1,12 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2012, Enthought, Inc.
+#  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Instance, Str
+from atom.api import Enum, set_default
 
-from enaml.layout.constraint_variable import ConstraintVariable
 from enaml.layout.layout_helpers import align, hbox, vbox
 
+from .constraints_widget import ConstraintMember
 from .container import  Container
 
 
@@ -24,19 +24,16 @@ class Form(Container):
     """
     #: The ConstraintVariable giving the midline along which the labels
     #: and widgets are aligned.
-    midline = Instance(ConstraintVariable)
-    def _midline_default(self):
-        return ConstraintVariable('midline', self.object_id)
+    midline = ConstraintMember()
 
     #: The strength for the form layout constraints.
-    # FIXME: Use an Enum.
-    layout_strength = Str('strong')
+    layout_strength = Enum('strong', 'medium', 'weak')
 
     #: A form hugs its height strongly by default. Forms are typcially
     #: used to display vertical arrangements of widgets, with forms
     #: often being stacked on top of each other. For this case, hugging
     #: the height is desired.
-    hug_height = 'strong'
+    hug_height = set_default('strong')
 
     def _component_constraints(self):
         """ Supplies the constraints which layout the children in a

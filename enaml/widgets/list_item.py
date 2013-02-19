@@ -2,14 +2,14 @@
 #  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Bool, Enum, Str, Unicode
+from atom.api import Bool, Coerced, Event, Enum, Str, Unicode, observe
 
+from enaml.core.declarative import Declarative, d_
 from enaml.core.messenger import Messenger
-from enaml.core.trait_types import CoercingInstance, EnamlEvent
 from enaml.layout.geometry import Size
 
 
-class ListItem(Messenger):
+class ListItem(Messenger, Declarative):
     """ A non-widget used as an item in a `ListControl`
 
     A `ListItem` represents an item in a `ListControl`. It contains all
@@ -17,74 +17,74 @@ class ListItem(Messenger):
 
     """
     #: The text to display in the item.
-    text = Unicode
+    text = d_(Unicode())
 
     #: The tool tip to use for the item.
-    tool_tip = Unicode
+    tool_tip = d_(Unicode())
 
     #: The status tip to use for the item.
-    status_tip = Unicode
+    status_tip = d_(Unicode())
 
     #: The background color of the item. Supports CSS3 color strings.
-    background = Str
+    background = d_(Str())
 
     #: The foreground color of the item. Supports CSS3 color strings.
-    foreground = Str
+    foreground = d_(Str())
 
     #: The font used for the widget. Supports CSS3 shorthand font strings.
-    font = Str
+    font = d_(Str())
 
     #: The source url for the icon to use for the item.
-    icon_source = Str
+    icon_source = d_(Str())
 
     #: Whether or not the item can be checked by the user. This has no
     #: bearing on whether or not a checkbox is visible for the item.
     #: For controlling the visibility of the checkbox, see `checked`.
-    checkable = Bool(False)
+    checkable = d_(Bool(False))
 
     #: Whether or not the item is checked. A value of None indicates
     #: that no check box should be visible for the item.
-    checked = Enum(None, False, True)
+    checked = d_(Enum(None, False, True))
 
     #: Whether or not the item can be selected.
-    selectable = Bool(True)
+    selectable = d_(Bool(True))
 
     #: Whether or not the item is selected. This value only has meaning
     #: if 'selectable' is set to True.
-    selected = Bool(False)
+    selected = d_(Bool(False))
 
     #: Whether or not the item is editable.
-    editable = Bool(False)
+    editable = d_(Bool(False))
 
     #: Whether or not the item is enabled.
-    enabled = Bool(True)
+    enabled = d_(Bool(True))
 
     #: Whether or not the item is visible.
-    visible = Bool(True)
+    visible = d_(Bool(True))
 
     #: The horizontal alignment of the text in the item area.
-    text_align = Enum('left', 'right', 'center', 'justify')
+    text_align = d_(Enum('left', 'right', 'center', 'justify'))
 
     #: The vertical alignment of the text in the item area.
-    vertical_text_align = Enum('center', 'top', 'bottom')
+    vertical_text_align = d_(Enum('center', 'top', 'bottom'))
 
     #: The preferred size of the item.
-    preferred_size = CoercingInstance(Size, (-1, -1))
+    preferred_size = d_(Coerced(Size, factory=lambda: Size(-1, -1)))
 
     #: An event fired when the user clicks on the item. The payload
     #: will be the current checked state of the item.
-    clicked = EnamlEvent
+    clicked = Event()
 
     #: An event fired when the user double clicks on the item. The
     #: payload will be the current checked state of the item.
-    double_clicked = EnamlEvent
+    double_clicked = Event()
 
     #: An event fired when the user toggles a checkable item. The
     #: payload will be the current checked state of the item.
-    toggled = EnamlEvent
+    toggled = Event()
 
     #--------------------------------------------------------------------------
-    # Initialization
+    # Messenger API
     #--------------------------------------------------------------------------
     def snapshot(self):
         """ Returns the snapshot dictionary for the list item.
@@ -110,18 +110,16 @@ class ListItem(Messenger):
         snap['preferred_size'] = self.preferred_size
         return snap
 
-    def bind(self):
-        """ Bind the change handlers for the list item.
+    @observe(r'^(text|tool_tip|status_tip|background|foreground|font|checked|'
+             r'icon_source|checkable|selectable|selected|editable|enabled|'
+             r'visible|preferred_size|text_align|vertical_text_align)$',
+             regex=True)
+    def send_member_change(self, change):
+        """ An observer which sends state change to the client.
 
         """
-        super(ListItem, self).bind()
-        attrs = (
-            'text', 'tool_tip', 'status_tip', 'background', 'foreground',
-            'font', 'icon_source', 'checkable', 'checked', 'selectable',
-            'selected', 'editable', 'enabled', 'visible', 'preferred_size',
-            'text_align', 'vertical_text_align',
-        )
-        self.publish_attributes(*attrs)
+        # The superclass handler implementation is sufficient.
+        super(ListItem, self).send_member_change(change)
 
     #--------------------------------------------------------------------------
     # Message Handling
