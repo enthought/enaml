@@ -30,7 +30,7 @@ identifiers : dict
     continue to be added to this dict as runtime execution continues.
 
 """
-from atom.api import Atom, Event
+from atom.api import Atom, Member, Event
 
 from .declarative import DeclarativeProperty, DeclarativeExpression
 from .dynamic_scope import DynamicScope, Nonlocals
@@ -263,6 +263,7 @@ def op_notify(obj, name, func, identifiers):
 
     """
     member = obj.lookup_member(name)
+    # XXX we need to think more about this.
     if not isinstance(member, (Event, DeclarativeProperty)):
         msg = "Cannot bind expression. '%s' is not an event or a declarative "
         msg += "property on a '%s' object."

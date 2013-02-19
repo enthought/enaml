@@ -160,7 +160,7 @@ class DeclarativeProperty(Member):
 
 
 #: Export the DeclarativeProperty class as something easier to type.
-d = DeclarativeProperty
+d_ = d = DeclarativeProperty
 
 
 def d_properties(*names):
