@@ -9,9 +9,9 @@ of a `Slider` to transform the integer range of the slider into an
 alternative data space.
 
 """
-from traits.api import Any, Bool, Float, Range, on_trait_change
+from atom.api import Value, Bool, Float, Range
 
-from enaml.core.declarative import Declarative
+from enaml.core.declarative import Declarative, d_properties
 
 
 class SliderTransform(Declarative):
@@ -26,17 +26,19 @@ class SliderTransform(Declarative):
     made on the transform.
 
     """
+    __slots__ = '__weakref__'
+
     #: The data-space minimum for the transform. This may be redefined
     #: by a subclass to enforce stronger typing.
-    minimum = Any
+    minimum = Value()
 
     #: The data-space maximum for the transform. This may be redefined
     #: by a subclass to enforce stronger typing.
-    maximum = Any
+    maximum = Value()
 
     #: The data-space value for the transform. This may be redefined
     #: by a subclass to enforce stronger typing.
-    value = Any
+    value = Value()
 
     #: A boolean flag used to prevent loopback cycles.
     _guard = Bool(False)
@@ -44,14 +46,18 @@ class SliderTransform(Declarative):
     #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
-    def pre_initialize(self):
-        """ A pre-initialization handler.
+    def initialize(self):
+        """ An initialization handler.
 
         The parent slider values are initialized during the transform
         initialization pass.
 
         """
         self._apply_transform()
+        super(SliderTransform, self).initialize()
+        parent = self.parent
+        if parent is not None:
+            parent.observe('value', self._update_value)
 
     def _apply_transform(self, minimum=True, maximum=True, value=True):
         """ Apply the current transform to the parent slider.
@@ -80,37 +86,36 @@ class SliderTransform(Declarative):
             if value:
                 parent.value = self.get_value()
 
-    @on_trait_change('parent:value')
-    def _update_value(self, val):
+    def _update_value(self, change):
         """ Update the transformed value when slider changes.
 
         """
-        if self.is_active:
+        if self.is_initialized:
             self._guard = True
             try:
-                self.set_value(val)
+                self.set_value(change.new)
             finally:
                 self._guard = False
 
-    def _minimum_changed(self):
+    def _observe_minimum(self, change):
         """ Update the slider minimum on transform minimum change.
 
         """
-        if self.is_active:
+        if self.is_initialized:
             self._apply_transform(maximum=False, value=False)
 
-    def _maximum_changed(self):
+    def _observe_maximum(self, change):
         """ Update the slider maximum on transform maximum change.
 
         """
-        if self.is_active:
+        if self.is_initialized:
             self._apply_transform(minimum=False, value=False)
 
-    def _value_changed(self):
+    def _observe_value(self, change):
         """ Update the slider value on transform value change.
 
         """
-        if self.is_active and not self._guard:
+        if self.is_initialized and not self._guard:
             self._apply_transform(minimum=False, maximum=False)
 
     #--------------------------------------------------------------------------
@@ -161,17 +166,18 @@ class SliderTransform(Declarative):
         raise NotImplementedError
 
 
+@d_properties('minimum', 'maximum', 'value', 'precision')
 class FloatTransform(SliderTransform):
     """ A concreted SliderTransform for floating point values.
 
     """
-    #: A redeclared parent class trait which enforces float values.
+    #: A redeclared parent class member which enforces float values.
     minimum = Float(0.0)
 
-    #: A redeclared parent class trait which enforces float values.
+    #: A redeclared parent class member which enforces float values.
     maximum = Float(1.0)
 
-    #: A redeclared parent class trait which enforces float values.
+    #: A redeclared parent class member which enforces float values.
     value = Float(0.0)
 
     #: The number of stops to use between the minimum and maximum.

@@ -1,11 +1,11 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2012, Enthought, Inc.
+#  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import HasTraits
+from atom.api import Atom
 
 
-class Resource(HasTraits):
+class Resource(Atom):
     """ A base class to use for creating resource objects.
 
     """

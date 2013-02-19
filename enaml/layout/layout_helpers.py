@@ -6,9 +6,7 @@ from abc import ABCMeta, abstractmethod
 from collections import defaultdict
 from uuid import uuid4
 
-from traits.api import HasTraits, Range
-
-from enaml.core.trait_types import CoercingInstance
+from atom.api import Atom, Range, Coerced
 
 from .ab_constrainable import ABConstrainable
 from .box_model import BoxModel
@@ -19,7 +17,7 @@ from .geometry import Box
 #------------------------------------------------------------------------------
 # Default Spacing
 #------------------------------------------------------------------------------
-class DefaultSpacing(HasTraits):
+class DefaultSpacing(Atom):
     """ A class which encapsulates the default spacing parameters for
     the various layout helper objects.
 
@@ -31,7 +29,7 @@ class DefaultSpacing(HasTraits):
     ALIGNMENT = Range(low=0, value=0)
 
     #: The margins for box helpers
-    BOX_MARGINS = CoercingInstance(Box, default=Box(0, 0, 0, 0))
+    BOX_MARGINS = Coerced(Box, factory=lambda: Box(0, 0, 0, 0))
 
 
 # We only require a singleton of DefaultSpacing

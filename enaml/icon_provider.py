@@ -1,16 +1,16 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2012, Enthought, Inc.
+#  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from abc import ABCMeta, abstractmethod
 
-from traits.api import HasTraits, Enum, Instance, List
+from atom.api import Atom, Enum, Instance, List
 
 from .image_provider import Image
 from .resource import Resource
 
 
-class IconImage(HasTraits):
+class IconImage(Atom):
     """ An object representing an image in an icon.
 
     Instances of this class are used to populate the `images` list of

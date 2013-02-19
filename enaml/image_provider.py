@@ -1,10 +1,12 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2012, Enthought, Inc.
+#  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from abc import ABCMeta, abstractmethod
 
-from traits.api import Enum, Str, Tuple, Int
+from atom.api import Enum, Str, Coerced
+
+from enaml.layout.geometry import Size
 
 from .resource import Resource
 
@@ -36,11 +38,11 @@ class Image(Resource):
 
     #: The (width, height) size of the image. An invalid size indicates
     #: that the size of the image should be automatically inferred.
-    size = Tuple(Int(-1), Int(-1))
+    size = Coerced(Size, factory=lambda: Size(-1, -1))
 
     # XXX this needs to be augmented to support arrays.
     #: The bytestring holding the data for the image.
-    data = Str
+    data = Str()
 
     def snapshot(self):
         """ Get a snapshot dictionary for this image.

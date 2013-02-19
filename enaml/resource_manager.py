@@ -1,11 +1,11 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2012, Enthought, Inc.
+#  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import logging
 from urlparse import urlparse
 
-from traits.api import HasTraits, Dict, Str
+from atom.api import Atom, Dict, Str
 
 from .icon_provider import IconProvider
 from .image_provider import ImageProvider
@@ -14,7 +14,7 @@ from .image_provider import ImageProvider
 logger = logging.getLogger(__name__)
 
 
-class ResourceManager(HasTraits):
+class ResourceManager(Atom):
     """ A class which manages resource loading for a `Session`.
 
     A `ResourceManager` is used by a `Session` object to load resources
@@ -28,10 +28,10 @@ class ResourceManager(HasTraits):
     #: A dict mapping provider location to image provider object. When
     #: a resource `image://foo/bar/baz` is requested, the image provider
     #: provider `foo` is use to request path `/bar/baz`.
-    image_providers = Dict(Str, ImageProvider)
+    image_providers = Dict(Str(), ImageProvider)
 
     #: A dict of icon providers for the `icon://...` scheme.
-    icon_providers = Dict(Str, IconProvider)
+    icon_providers = Dict(Str(), IconProvider)
 
     def load(self, url, metadata, reply):
         """ Load a resource from the manager.
