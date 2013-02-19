@@ -2,12 +2,18 @@
 #  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Bool, Enum, Property, Int, Either, Range
+from atom.api import Bool, Enum, Int, Range, observe
 
-from .constraints_widget import PolicyEnum
+from enaml.core.declarative import d_properties
+
 from .control import Control
 
 
+TickPosition = Enum('no_ticks', 'left', 'right', 'top', 'bottom', 'both')
+
+
+@d_properties('minimum', 'maximum', 'value', 'single_step', 'page_step',
+    'tick_position', 'tick_interval', 'orientation', 'tracking')
 class Slider(Control):
     """ A simple slider widget that can be used to select from a range
     of integral values.
@@ -20,25 +26,16 @@ class Slider(Control):
     #: The minimum slider value. If the minimum value is changed such
     #: that it becomes greater than the current value or the maximum
     #: value, then those values will be adjusted. The default is 0.
-    minimum = Property(Int)
-
-    #: The internal minimum value storage.
-    _minimum = Int(0)
+    minimum = Int(0)
 
     #: The maximum slider value. If the maximum value is changed such
     #: that it becomes smaller than the current value or the minimum
     #: value, then those values will be adjusted. The default is 100.
-    maximum = Property(Int)
-
-    #: The internal maximum storage.
-    _maximum = Int(100)
+    maximum = Int(100)
 
     #: The position value of the Slider. The value will be clipped to
     #: always fall between the minimum and maximum.
-    value = Property(Int)
-
-    #: The internal value storage.
-    _value = Int(0)
+    value = Int(0)
 
     #: Defines the number of steps that the slider will move when the
     #: user presses the arrow keys. The default is 1. An upper limit
@@ -56,9 +53,7 @@ class Slider(Control):
     #: mark position and an incompatible tick position will be adapted
     #: according to the current orientation. The default tick position
     #: is 'bottom'.
-    tick_position = Enum(
-        'bottom', ('no_ticks', 'left', 'right', 'top', 'bottom', 'both'),
-    )
+    tick_position = TickPosition('bottom')
 
     #: The interval to place between slider tick marks in units of
     #: value (as opposed to pixels). The minimum value is 0, which
@@ -75,26 +70,16 @@ class Slider(Control):
     #: only updated when the slider is released. Defaults to True.
     tracking = Bool(True)
 
-    #: Hug width is redefined as a property to be computed based on the
-    #: orientation of the slider unless overridden by the user.
-    hug_width = Property(PolicyEnum, depends_on=['_hug_width', 'orientation'])
-
-    #: Hug height is redefined as a property to be computed based on the
-    #: orientation of the slider unless overridden by the user.
-    hug_height = Property(PolicyEnum, depends_on=['_hug_height', 'orientation'])
-
-    #: An internal override trait for hug_width
-    _hug_width = Either(None, PolicyEnum, default=None)
-
-    #: An internal override trait for hug_height
-    _hug_height = Either(None, PolicyEnum, default=None)
+    #: A flag indicating whether the user has explicitly set the hug
+    #: property. If it is not explicitly set, the hug values will be
+    #: updated automatically when the orientation changes.
+    _explicit_hug = Bool(False)
 
     #--------------------------------------------------------------------------
-    # Initialization
+    # Messenger API
     #--------------------------------------------------------------------------
     def snapshot(self):
-        """ Return a dictionary which contains all the state necessary to
-        initialize a client widget.
+        """ Get the snapshot dict for the slider.
 
         """
         snap = super(Slider, self).snapshot()
@@ -109,20 +94,17 @@ class Slider(Control):
         snap['tracking'] = self.tracking
         return snap
 
-    def bind(self):
-        """ A method called after initialization which allows the widget
-        to bind any event handlers necessary.
+    @observe(r'^(minimum|maximum|value|single_step|page_step|tick_position|'
+             r'tick_interval|orientation|tracking)$', regex=True)
+    def send_member_change(self, change):
+        """ An observer which sends state change to the client.
 
         """
-        super(Slider, self).bind()
-        attrs = (
-            'minimum', 'maximum', 'value', 'single_step', 'page_step',
-            'tick_position', 'tick_interval', 'orientation', 'tracking',
-        )
-        self.publish_attributes(*attrs)
+        # The superclass handler implementation is sufficient.
+        super(Slider, self).send_member_change(change)
 
     #--------------------------------------------------------------------------
-    # Message Handling
+    # Update Handlers
     #--------------------------------------------------------------------------
     def on_action_value_changed(self, content):
         """ Handle the 'value_changed' action from the client widget.
@@ -132,130 +114,92 @@ class Slider(Control):
         """
         self.set_guarded(value=content['value'])
 
+    @observe('orientation')
+    def _update_hugs(self, change):
+        """ Update the hug properties if they are not explicitly set.
+
+        """
+        if not self._explicit_hug:
+            self.hug_width = self._default_hug_width()
+            self.hug_height = self._default_hug_height()
+            # Reset to False to remove the effect of the above.
+            self._explicit_hug = False
+
     #--------------------------------------------------------------------------
-    # Property Methods
+    # Default Handlers
     #--------------------------------------------------------------------------
-    def _get_hug_width(self):
-        """ The property getter for 'hug_width'.
+    def _default_hug_width(self):
+        """ Get the default hug width for the slider.
 
-        Returns a computed hug value unless overridden by the user.
-
-        """
-        res = self._hug_width
-        if res is None:
-            if self.orientation == 'horizontal':
-                res = 'ignore'
-            else:
-                res = 'strong'
-        return res
-
-    def _get_hug_height(self):
-        """ The proper getter for 'hug_height'.
-
-        Returns a computed hug value unless overridden by the user.
+        The default hug width is computed based on the orientation.
 
         """
-        res = self._hug_height
-        if res is None:
-            if self.orientation == 'vertical':
-                res = 'ignore'
-            else:
-                res = 'strong'
-        return res
+        if self.orientation == 'horizontal':
+            return 'ignore'
+        return 'strong'
 
-    def _set_hug_width(self, value):
-        """ The property setter for 'hug_width'.
+    def _default_hug_height(self):
+        """ Get the default hug height for the slider.
 
-        Overrides the computed value.
+        The default hug height is computed based on the orientation.
 
         """
-        self._hug_width = value
+        if self.orientation == 'vertical':
+            return 'ignore'
+        return 'strong'
 
-    def _set_hug_height(self, value):
-        """ The property setter for 'hug_height'.
+    #--------------------------------------------------------------------------
+    # Post Validation Handlers
+    #--------------------------------------------------------------------------
+    def _post_validate_minimum(self, old, new):
+        """ Post validate the minimum value for the slider.
 
-        Overrides the computed value.
-
-        """
-        self._hug_height = value
-
-    def _get_minimum(self):
-        """ The property getter for the slider 'minimum'.
-
-        """
-        return self._minimum
-
-    def _set_minimum(self, minimum):
-        """ The property setter for the 'minimum' attribute.
+        If the new minimum is greater than the current value or maximum,
+        those values are adjusted up.
 
         """
-        # Manually fire the trait change notifications to avoid the
-        # need for property depends_on; this saves memory overhead.
-        # All data is accessed using the private attributes to avoid
-        # inadvertantly triggering the evaluation of a bound Enaml
-        # attribute, which could fool with the state by setting the
-        # value too soon.
-        old_max = self._maximum
-        if minimum > old_max:
-            self._maximum = minimum
-            self.trait_property_changed('maximum', old_max, minimum)
-        old_val = self._value
-        if minimum > old_val:
-            self._value = minimum
-            self.trait_property_changed('value', old_val, minimum)
-        old_min = self._minimum
-        if minimum != old_min:
-            self._minimum = minimum
-            self.trait_property_changed('minimum', old_min, minimum)
+        if new > self.maximum:
+            self.maximum = new
+        if new > self.value:
+            self.value = new
+        return new
 
-    def _get_maximum(self):
-        """ The property getter for the slider 'maximum'.
+    def _post_validate_maximum(self, old, new):
+        """ Post validate the maximum value for the slider.
+
+        If the new maximum is less than the current value or the minimum,
+        those values are adjusted down.
 
         """
-        return self._maximum
+        if new < self.minimum:
+            self.minimum = new
+        if new < self.value:
+            self.value = new
+        return new
 
-    def _set_maximum(self, maximum):
-        """ The property setter for the 'maximum' attribute.
+    def _post_validate_value(self, old, new):
+        """ Post validate the value for the slider.
 
-        """
-        # Manually fire the trait change notifications to avoid the
-        # need for property depends_on; this saves memory overhead.
-        # All data is accessed using the private attributes to avoid
-        # inadvertantly triggering the evaluation of a bound Enaml
-        # attribute, which could fool with the state by setting the
-        # value too soon.
-        old_min = self._minimum
-        if maximum < old_min:
-            self._minimum = maximum
-            self.trait_property_changed('minimum', old_min, maximum)
-        old_val = self._value
-        if maximum < old_val:
-            self._value = maximum
-            self.trait_property_changed('value', old_val, maximum)
-        old_max = self._maximum
-        if maximum != old_max:
-            self._maximum = maximum
-            self.trait_property_changed('maximum', old_max, maximum)
-
-    def _get_value(self):
-        """ The property getter for the slider 'value'.
+        The value is clipped to minimum and maximum bounds.
 
         """
-        return self._value
+        return max(self.minimum, min(new, self.maximum))
 
-    def _set_value(self, value):
-        """ The property setter for the 'value' attribute.
+    def _post_validate_hug_width(self, old, new):
+        """ Post validate the hug width for the slider.
+
+        This sets the explicit hug flag to True.
 
         """
-        # Manually fire the trait change notifications to avoid the
-        # need for property depends_on; this saves memory overhead.
-        # The minimum and maximum values are explicity accessed through
-        # their property so that any bound Enaml attributes can provide
-        # the proper default value. This ensures that the min and max
-        # are alway up-to-date before potentially clipping the value.
-        old_val = self._value
-        new_val = max(self.minimum, min(self.maximum, value))
-        if old_val != new_val:
-            self._value = new_val
-            self.trait_property_changed('value', old_val, new_val)
+        self._explicit_hug = True
+        return new
+
+    def _post_validate_hug_height(self, old, new):
+        """ Post validate the hug height for the slider.
+
+        This sets the explicit hug flag to True.
+
+        """
+        self._explicit_hug = True
+        return new
 

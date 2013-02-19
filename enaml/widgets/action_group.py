@@ -4,12 +4,13 @@
 #------------------------------------------------------------------------------
 from atom.api import Bool, observe
 
-from enaml.core.declarative import Declarative, d
+from enaml.core.declarative import Declarative, d_properties
 from enaml.core.messenger import Messenger
 
 from .action import Action
 
 
+@d_properties('exclusive', 'enabled', 'visible')
 class ActionGroup(Messenger, Declarative):
     """ A non visible widget used to group actions.
 
@@ -20,13 +21,13 @@ class ActionGroup(Messenger, Declarative):
 
     """
     #: Whether or not the actions in this group are exclusive.
-    exclusive = d(Bool(True))
+    exclusive = Bool(True)
 
     #: Whether or not the actions in this group are enabled.
-    enabled = d(Bool(True))
+    enabled = Bool(True)
 
     #: Whether or not the actions in this group are visible.
-    visible = d(Bool(True))
+    visible = Bool(True)
 
     @property
     def actions(self):

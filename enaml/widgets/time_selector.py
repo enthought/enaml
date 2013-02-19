@@ -1,12 +1,15 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2012, Enthought, Inc.
+#  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Str
+from atom.api import Str, observe
+
+from enaml.core.declarative import d_properties
 
 from .bounded_time import BoundedTime
 
 
+@d_properties('time_format')
 class TimeSelector(BoundedTime):
     """ A time widget that displays a Python datetime.time object using
     an appropriate toolkit specific control.
@@ -15,14 +18,16 @@ class TimeSelector(BoundedTime):
     #: A python time format string to format the time. If None is
     #: supplied (or is invalid) the system locale setting is used.
     #: This may not be supported by all backends.
-    time_format = Str
+    time_format = Str()
 
-    #: How strongly to hugs the content width. A TimeSelector ignores
-    #: the width hug by default, so it expands freely in width.
-    hug_width = 'ignore'
+    def _default_hug_width(self):
+        """ A TimeSelector is free to expand in width and height.
+
+        """
+        return 'ignore'
 
     #--------------------------------------------------------------------------
-    # Initialization
+    # Messenger API
     #--------------------------------------------------------------------------
     def snapshot(self):
         """ Return a dictionary which contains all the state necessary to
@@ -33,11 +38,11 @@ class TimeSelector(BoundedTime):
         snap['time_format'] = self.time_format
         return snap
 
-    def bind(self):
-        """ A method called after initialization which allows the widget
-        to bind any event handlers necessary.
+    @observe('time_format', regex=True)
+    def send_member_change(self, change):
+        """ An observer which sends state change to the client.
 
         """
-        super(TimeSelector, self).bind()
-        self.publish_attributes('time_format')
+        # The superclass implementation is sufficient.
+        super(TimeSelector, self).send_member_change(change)
 

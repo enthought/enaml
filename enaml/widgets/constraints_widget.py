@@ -6,7 +6,7 @@ from atom.api import Enum, Instance, List, Constant, Member, observe
 from atom.catom import VALIDATE_CONSTANT, USER_DEFAULT
 
 from enaml.application import Application, ScheduledTask
-from enaml.core.declarative import d
+from enaml.core.declarative import d_properties
 from enaml.layout.ab_constrainable import ABConstrainable
 from enaml.layout.constraint_variable import ConstraintVariable
 from enaml.layout.layout_helpers import expand_constraints
@@ -24,13 +24,15 @@ class ConstraintMember(Member):
 
     """
     def __init__(self):
-        self.default_kind = (USER_DEFAULT, None)
-        self.validate_kind = (VALIDATE_CONSTANT, None)
+        self.set_default_kind(USER_DEFAULT, None)
+        self.set_validate_kind(VALIDATE_CONSTANT, None)
 
     def default(self, owner, name):
         return ConstraintVariable(name, owner.object_id)
 
 
+@d_properties('constraints', 'hug_width', 'hug_height', 'resist_width',
+    'resist_height')
 class ConstraintsWidget(Widget):
     """ A Widget subclass which adds constraint information.
 
@@ -54,7 +56,7 @@ class ConstraintsWidget(Widget):
     """
     #: The list of user-specified constraints or constraint-generating
     #: objects for this component.
-    constraints = d(List())
+    constraints = List()
 
     #: A constant symbolic object that represents the left boundary of
     #: the widget.
@@ -104,23 +106,23 @@ class ConstraintsWidget(Widget):
     #: are 'weak', 'medium', 'strong', 'required' and 'ignore'. Default
     #: is 'strong'. This trait should be overridden on a per-control
     #: basis to specify a logical default for the given control.
-    hug_width = d(PolicyEnum('strong'))
+    hug_width = PolicyEnum('strong')
 
     #: How strongly a component hugs it's height hint. Valid strengths
     #: are 'weak', 'medium', 'strong', 'required' and 'ignore'. Default
     #: is 'strong'. This trait should be overridden on a per-control
     #: basis to specify a logical default for the given control.
-    hug_height = d(PolicyEnum('strong'))
+    hug_height = PolicyEnum('strong')
 
     #: How strongly a component resists clipping its contents. Valid
     #: strengths are 'weak', 'medium', 'strong', 'required' and 'ignore'.
     #: The default is 'strong' for width.
-    resist_width = d(PolicyEnum('strong'))
+    resist_width = PolicyEnum('strong')
 
     #: How strongly a component resists clipping its contents. Valid
     #: strengths are 'weak', 'medium', 'strong', 'required' and 'ignore'.
     #: The default is 'strong' for height.
-    resist_height = d(PolicyEnum('strong'))
+    resist_height = PolicyEnum('strong')
 
     #: The private application task used to collapse layout messages.
     _layout_task = Instance(ScheduledTask)
@@ -271,7 +273,7 @@ class ConstraintsWidget(Widget):
         """
         cns = self.constraints
         if not cns:
-            cns = self._default_constraints()
+            cns = self._get_default_constraints()
         return cns + self._component_constraints() + self._hard_constraints()
 
     def _hard_constraints(self):
@@ -304,7 +306,7 @@ class ConstraintsWidget(Widget):
         """
         return []
 
-    def _default_constraints(self):
+    def _get_default_constraints(self):
         """ Returns a list of constraints to include if the user has
         not specified their own in the 'constraints' list.
 

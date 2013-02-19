@@ -1,12 +1,15 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2011, Enthought, Inc.
+#  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Bool, Str
+from atom.api import Bool, Str, observe
+
+from enaml.core.declarative import d_properties
 
 from .bounded_datetime import BoundedDatetime
 
 
+@d_properties('datetime_format', 'calendar_popup')
 class DatetimeSelector(BoundedDatetime):
     """ A datetime widget that displays a Python datetime.datetime
     object using an appropriate toolkit specific control.
@@ -15,21 +18,22 @@ class DatetimeSelector(BoundedDatetime):
     #: A python date format string to format the datetime. If None is
     #: supplied (or is invalid) the system locale setting is used.
     #: This may not be supported by all backends.
-    datetime_format = Str
+    datetime_format = Str()
 
     #: Whether to use a calendar popup for selecting the date.
     calendar_popup = Bool(False)
 
-    #: How strongly to hugs the content width. A DatetimeSelector ignores
-    #: the width hug by default, so it expands freely in width.
-    hug_width = 'ignore'
+    def _default_hug_width(self):
+        """ A DatetimeSelector can expand freely in width by default.
+
+        """
+        return 'ignore'
 
     #--------------------------------------------------------------------------
-    # Initialization
+    # Messenger API
     #--------------------------------------------------------------------------
     def snapshot(self):
-        """ Return a dictionary which contains all the state necessary to
-        initialize a client widget.
+        """ Get the snapshot dictionary for the control.
 
         """
         snap = super(DatetimeSelector, self).snapshot()
@@ -37,11 +41,11 @@ class DatetimeSelector(BoundedDatetime):
         snap['calendar_popup'] = self.calendar_popup
         return snap
 
-    def bind(self):
-        """ A method called after initialization which allows the widget
-        to bind any event handlers necessary.
+    @observe(r'^(datetime_format|calendar_popup)$', regex=True)
+    def send_member_change(self, change):
+        """ An observer which sends state change to the client.
 
         """
-        super(DatetimeSelector, self).bind()
-        self.publish_attributes('datetime_format', 'calendar_popup')
+        # The superclass implementation is sufficient.
+        super(DatetimeSelector, self).send_member_change(change)
 

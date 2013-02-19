@@ -4,22 +4,23 @@
 #------------------------------------------------------------------------------
 from atom.api import Bool, Unicode, observe
 
-from enaml.core.declarative import d
+from enaml.core.declarative import d_properties
 
 from .action import Action
 from .action_group import ActionGroup
 from .widget import Widget
 
 
+@d_properties('title', 'context_menu')
 class Menu(Widget):
     """ A widget used as a menu in a MenuBar.
 
     """
     #: The title to use for the menu.
-    title = d(Unicode())
+    title = Unicode()
 
     #: Whether this menu should behave as a context menu for its parent.
-    context_menu = d(Bool(False))
+    context_menu = Bool(False)
 
     @property
     def items(self):

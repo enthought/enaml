@@ -4,33 +4,35 @@
 #------------------------------------------------------------------------------
 from atom.api import Bool, Unicode, Str, Coerced, TypedEvent, observe
 
-from enaml.core.declarative import d
+from enaml.core.declarative import d_properties
 from enaml.layout.geometry import Size
 
 from .constraints_widget import PolicyEnum
 from .control import Control
 
 
+@d_properties('text', 'icon_source', 'icon_size', 'checkable', 'checked',
+    'hug_width')
 class AbstractButton(Control):
     """ A base class which provides functionality common for several
     button-like widgets.
 
     """
     #: The text to use as the button's label.
-    text = d(Unicode())
+    text = Unicode()
 
     #: The source url for the icon to use for the button.
-    icon_source = d(Str())
+    icon_source = Str()
 
     #: The size to use for the icon. The default is an invalid size
     #: and indicates that an appropriate default should be used.
-    icon_size = d(Coerced(Size, factory=lambda: Size(-1, -1)))
+    icon_size = Coerced(Size, factory=lambda: Size(-1, -1))
 
     #: Whether or not the button is checkable. The default is False.
-    checkable = d(Bool(False))
+    checkable = Bool(False)
 
     #: Whether a checkable button is currently checked.
-    checked = d(Bool(False))
+    checked = Bool(False)
 
     #: Fired when the button is pressed then released. The payload will
     #: be the current checked state.
@@ -42,7 +44,7 @@ class AbstractButton(Control):
 
     #: How strongly a component hugs it's contents' width. Buttons hug
     #: their contents' width weakly by default.
-    hug_width = d(PolicyEnum('weak'))
+    hug_width = PolicyEnum('weak')
 
     #--------------------------------------------------------------------------
     # Messenger API

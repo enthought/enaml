@@ -1,17 +1,18 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2011, Enthought, Inc.
+#  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from datetime import date as py_date
+from datetime import date as pydate
 
+from atom.api import Typed, observe
 from dateutil.parser import parse as parse_iso_dt
-from traits.api import Date, Property, on_trait_change
 
-from enaml.core.trait_types import Bounded
+from enaml.core.declarative import d_properties
 
 from .control import Control
 
 
+@d_properties('minimum', 'maximum', 'date')
 class BoundedDate(Control):
     """ A base class for components which edit a Python datetime.date
     object bounded between minimum and maximum values.
@@ -19,30 +20,27 @@ class BoundedDate(Control):
     This class is not meant to be used directly.
 
     """
-    #: The minimum date available in the date edit. If not defined then
-    #: the default value is September 14, 1752.
-    minimum = Property(Date, depends_on ='_minimum')
+    #: The minimum date available in the date edit. If the minimum value
+    #: is changed such that it becomes greater than the current value or
+    #: the maximum value, then those values will be adjusted. The default
+    #: value is September 14, 1752.
+    minimum = Typed(pydate, args=(1752, 9, 14))
 
-    #: The internal minimum date storage
-    _minimum = Date(py_date(1752, 9, 14))
+    #: The maximum date available in the date edit. If the maximum value
+    #: is changed such that it becomes smaller than the current value or
+    #: the minimum value, then those values will be adjusted. The default
+    #: value is December 31, 7999.
+    maximum = Typed(pydate, args=(7999, 12, 31))
 
-    #: The maximum date available in the date edit. If not defined then
-    #: the default value is December 31, 7999.
-    maximum = Property(Date, depends_on ='_maximum')
-
-    #: The internal maximum date storage
-    _maximum = Date(py_date(7999, 12, 31))
-
-    #: The currently selected date. Default is the current date. The
-    #: value is bounded between :attr:`minimum` and :attr:`maximum`.
-    date = Bounded(Date(py_date.today()), low='minimum', high='maximum')
+    #: The date in the control. This will be clipped to the supplied
+    #: maximum and minimum values. The default is date.today().
+    date = Typed(pydate, factory=pydate.today)
 
     #--------------------------------------------------------------------------
-    # Initialization
+    # Messenger API
     #--------------------------------------------------------------------------
     def snapshot(self):
-        """ Return a dictionary which contains all the state necessary to
-        initialize a client widget.
+        """ Get the snapshot dictionary for the control.
 
         """
         snap = super(BoundedDate, self).snapshot()
@@ -51,93 +49,62 @@ class BoundedDate(Control):
         snap['date'] = self.date.isoformat()
         return snap
 
-    def bind(self):
-        """ A method called after initialization which allows the widget
-        to bind any event handlers necessary.
+    @observe(r'^(minimum|maximum|date)$', regex=True)
+    def send_date_change(self, change):
+        """ An observer which sends state change to the client.
 
         """
-        super(BoundedDate, self).bind()
-        otc = self.on_trait_change
-        otc(self._send_minimum, 'minimum')
-        otc(self._send_maximum, 'maximum')
-        otc(self._send_date, 'date')
+        name = change.name
+        if name not in self.loopback_guard:
+            content = {name: change.new.isoformat()}
+            self.send_action('set_' + name, content)
 
     #--------------------------------------------------------------------------
-    # Message Handling
+    # Widget Updates
     #--------------------------------------------------------------------------
     def on_action_date_changed(self, content):
         """ Handle the 'date_changed' action from the UI control.
 
         """
+        print 'datewidget', self
         date = parse_iso_dt(content['date']).date()
         self.set_guarded(date=date)
 
-    def _send_minimum(self):
-        """ Send the minimum date to the client widget.
-
-        """
-        content = {'minimum': self.minimum.isoformat()}
-        self.send_action('set_minimum', content)
-
-    def _send_maximum(self):
-        """ Send the maximum date to the client widget.
-
-        """
-        content = {'maximum': self.maximum.isoformat()}
-        self.send_action('set_maximum', content)
-
-    def _send_date(self):
-        """ Send the current date to the client widget.
-
-        """
-        if 'date' not in self.loopback_guard:
-            content = {'date': self.date.isoformat()}
-            self.send_action('set_date', content)
-
     #--------------------------------------------------------------------------
-    # Property methods
+    # Post Validation Handlers
     #--------------------------------------------------------------------------
-    def _get_minimum(self):
-        """ The property getter for the minimum date.
+    def _post_validate_minimum(self, old, new):
+        """ Post validate the minimum date.
+
+        If the new minimum is greater than the current value or the
+        maximum, those values are adjusted up.
 
         """
-        return self._minimum
+        if new > self.maximum:
+            self.maximum = new
+        if new > self.date:
+            self.date = new
+        return new
 
-    def _set_minimum(self, date):
-        """ The property setter for the minimum date.
+    def _post_validate_maximum(self, old, new):
+        """ Post validate the maximum date.
 
-        If the new minimum is greater than the current maximum, then the
-        maximum will be adjusted up.
-
-        """
-        if date > self._maximum:
-            self._maximum = date
-        self._minimum = date
-
-    def _get_maximum(self):
-        """ The property getter for the maximum date.
+        If the new maximum is less than the current value or the
+        minimum, those values are adjusted down.
 
         """
-        return self._maximum
+        if new < self.minimum:
+            self.minimum = new
+        if new < self.date:
+            self.date = new
+        return new
 
-    def _set_maximum(self, date):
-        """ The property setter for the maximum date.
+    def _post_validate_date(self, old, new):
+        """ Post validate the date for the control.
 
-        If the new maximum is less than the current minimum, then the
-        minimum will be ajusted down.
-
-        """
-        if date < self._minimum:
-            self._minimum = date
-        self._maximum = date
-
-    #--------------------------------------------------------------------------
-    # Private API
-    #--------------------------------------------------------------------------
-    @on_trait_change('minimum, maximum')
-    def _adapt_date(self):
-        """ Actively adapt the date to lie within the boundaries.
+        If it lies outside of minimum and maximum bounds, it will be
+        clipped to the bounds.
 
         """
-        self.date = min(max(self.date, self.minimum), self.maximum)
+        return max(self.minimum, min(new, self.maximum))
 

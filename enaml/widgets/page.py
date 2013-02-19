@@ -4,12 +4,13 @@
 #------------------------------------------------------------------------------
 from atom.api import Unicode, Bool, Str, Event, observe
 
-from enaml.core.declarative import d
+from enaml.core.declarative import d_properties
 
 from .container import Container
 from .widget import Widget
 
 
+@d_properties('title', 'icon_source', 'closable')
 class Page(Widget):
     """ A widget which can be used as a page in a Notebook control.
 
@@ -19,15 +20,15 @@ class Page(Widget):
 
     """
     #: The title to use for the page in the notebook.
-    title = d(Unicode())
+    title = Unicode()
 
     #: The source url for the icon to use for the page.
-    icon_source = d(Str())
+    icon_source = Str()
 
     #: Whether or not this individual page is closable. Note that the
     #: 'tabs_closable' flag on the parent Notebook must be set to True
     #: for this to have any effect.
-    closable = d(Bool(True))
+    closable = Bool(True)
 
     #: An event fired when the user closes the page by clicking on
     #: the tab's close button. This event is fired by the parent

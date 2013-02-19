@@ -85,7 +85,7 @@ class Form(Container):
 
         return constraints
 
-    def _default_constraints(self):
+    def _get_default_constraints(self):
         """ Overridden parent class method which returns an empty list.
 
         This disables the vbox constraints supplied by the superclass

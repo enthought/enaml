@@ -4,13 +4,14 @@
 #------------------------------------------------------------------------------
 from atom.api import Bool, Constant, Coerced, observe
 
-from enaml.core.declarative import d
+from enaml.core.declarative import d_properties
 from enaml.layout.geometry import Box
 from enaml.layout.layout_helpers import vbox
 
 from .constraints_widget import ConstraintsWidget, ConstraintMember, PolicyEnum
 
 
+@d_properties('share_layout', 'padding', 'hug_width', 'hug_height')
 class Container(ConstraintsWidget):
     """ A ConstraintsWidget subclass that provides functionality for
     laying out constrainable children according to their system of
@@ -36,7 +37,7 @@ class Container(ConstraintsWidget):
     #: but at the cost of not being able to share constraints
     #: across Container boundaries. This flag must be explicitly
     #: marked as True to enable sharing.
-    share_layout = d(Bool(False))
+    share_layout = Bool(False)
 
     #: A constant symbolic object that represents the internal left
     #: boundary of the content area of the container.
@@ -87,14 +88,14 @@ class Container(ConstraintsWidget):
     #: and the content box. The default padding is (10, 10, 10, 10).
     #: Certain subclasses, such as GroupBox, may provide additional
     #: margin than what is specified by the padding.
-    padding = d(Coerced(Box, factory=lambda: Box(10, 10, 10, 10)))
+    padding = Coerced(Box, factory=lambda: Box(10, 10, 10, 10))
 
     #: Containers freely exapnd in width and height. The size hint
     #: constraints for a Container are used when the container is
     #: not sharing its layout. In these cases, expansion of the
     #: container is typically desired.
-    hug_width = d(PolicyEnum('ignore'))
-    hug_height = d(PolicyEnum('ignore'))
+    hug_width = PolicyEnum('ignore')
+    hug_height = PolicyEnum('ignore')
 
     @property
     def widgets(self):
@@ -151,12 +152,12 @@ class Container(ConstraintsWidget):
         layout['padding'] = self.padding
         return layout
 
-    def _default_constraints(self):
+    def _get_default_constraints(self):
         """ Supplies a default vbox constraint to the constraints
         children of the container if other constraints are not given.
 
         """
-        cns = super(Container, self)._default_constraints()
+        cns = super(Container, self)._get_default_constraints()
         cns.append(vbox(*self.widgets))
         return cns
 
