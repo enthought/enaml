@@ -1,10 +1,10 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2012, Enthought, Inc.
+#  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import logging
 
-from atom.api import Atom, Instance, List, Int, ReadOnly, Enum, Signal, Str
+from atom.api import Atom, Instance, List, ReadOnly, Enum, Signal, Str, Value
 
 from enaml.widgets.window import Window
 
@@ -40,10 +40,10 @@ class DeferredBatch(Atom):
     triggered = Signal()
 
     #: The private list of items contained in the batch.
-    _items = List()
+    _items = Value(factory=list)
 
     #: The private tick count of the batch.
-    _tick = Int()
+    _tick = Value(0)
 
     #--------------------------------------------------------------------------
     # Private API
@@ -106,7 +106,8 @@ class Session(Atom):
     explicitly provided by the developer.
 
     """
-    #: Session objects are weakrefable in order to observe windows.
+    #: Session objects are weakrefable so that it's bound methods can
+    #: be used as observers where needed.
     __slots__ = '__weakref__'
 
     #: The string identifier for this session. This is provided by
@@ -116,8 +117,7 @@ class Session(Atom):
 
     #: The top level windows which are managed by this session. This
     #: should be populated by user code during the `on_open` method.
-    # XXX enforce List(Window) typing
-    windows = List()
+    windows = List(Window)
 
     #: The widget implementation groups which should be used by the
     #: widgets in this session. Widget groups are an advanced feature
@@ -125,8 +125,7 @@ class Session(Atom):
     #: implementations of Enaml widgets. All standard Enaml widgets are
     #: available in the 'default' group. This value will rarely need to
     #: be changed by the user.
-    # XXX enforce List(Str) typing.
-    widget_groups = List(['default'])
+    widget_groups = List(Str(), ['default'])
 
     #: A resource manager used for loading resources for the session.
     resource_manager = Instance(ResourceManager, args=())
@@ -167,12 +166,13 @@ class Session(Atom):
 
     #: A private dictionary of objects registered with this session.
     #: This value should not be manipulated by user code.
-    _registered_objects = Instance(dict, args=())
+    _registered_objects = Value(factory=dict)
 
     #: The private deferred message batch used for collapsing layout
     #: related messages into a single batch to send to the client
-    #: session for more efficient handling.
-    _batch = Instance(DeferredBatch)
+    #: session for more efficient handling. This value should not be
+    #: manipulated by user code.
+    _batch = Value()
 
     def _default__batch(self):
         batch = DeferredBatch()
