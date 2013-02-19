@@ -11,10 +11,10 @@ import struct
 import sys
 import types
 
+from enaml.utils import abstractclassmethod
+
 from .enaml_compiler import EnamlCompiler, COMPILER_VERSION
 from .parser import parse
-
-from ..utils import abstractclassmethod
 
 
 # The magic number as symbols for the current Python interpreter. These
@@ -24,7 +24,7 @@ try:
     MAGIC_TAG = 'enaml-py%s%s-cv%s' % (
         sys.version_info.major, sys.version_info.minor, COMPILER_VERSION,
     )
-except AttributeError: 
+except AttributeError:
     # Python 2.6 compatibility
     MAGIC_TAG = 'enaml-py%s%s-cv%s' % (
         sys.version_info[0], sys.version_info[1], COMPILER_VERSION,
@@ -45,12 +45,12 @@ def make_file_info(src_path):
     ----------
     src_path : string
         The full path to the .enaml file.
-    
+
     Returns
     -------
     result : FileInfo
         A properly populated EnamlFileInfo object.
-    
+
     """
     root, tail = os.path.split(src_path)
     fnroot, _ = os.path.splitext(tail)
@@ -64,14 +64,14 @@ def make_file_info(src_path):
 # Abstract Enaml Importer
 #------------------------------------------------------------------------------
 class AbstractEnamlImporter(object):
-    """ An abstract base class which defines the api required to 
+    """ An abstract base class which defines the api required to
     implement an Enaml importer.
 
     """
     __metaclass__ = ABCMeta
 
-    # Count the number of times an importer has been installed. 
-    # Only uninstall it when the count hits 0 again. This permits 
+    # Count the number of times an importer has been installed.
+    # Only uninstall it when the count hits 0 again. This permits
     # proper nesting of import contexts.
     _install_count = defaultdict(int)
 
@@ -83,7 +83,7 @@ class AbstractEnamlImporter(object):
         cls._install_count[cls] += 1
         if cls not in sys.meta_path:
             sys.meta_path.append(cls)
-    
+
     @classmethod
     def uninstall(cls):
         """ Removes this importer from sys.meta_path.
@@ -122,9 +122,9 @@ class AbstractEnamlImporter(object):
             mod = sys.modules[fullname] = types.ModuleType(fullname)
         mod.__loader__ = self
         mod.__file__ = path
-        # Even though the import hook is already installed, this is a 
+        # Even though the import hook is already installed, this is a
         # safety net to avoid potentially hard to find bugs if code has
-        # manually installed and removed a hook. The contract here is 
+        # manually installed and removed a hook. The contract here is
         # that the import hooks are always installed when executing the
         # module code of an Enaml file.
         with imports():
@@ -136,14 +136,14 @@ class AbstractEnamlImporter(object):
     #--------------------------------------------------------------------------
     @abstractclassmethod
     def locate_module(cls, fullname, path=None):
-        """ Searches for the given Enaml module and returns an instance 
+        """ Searches for the given Enaml module and returns an instance
         of AbstractEnamlImporter on success.
 
         Paramters
         ---------
         fullname : string
             The fully qualified name of the module.
-        
+
         path : string or None
             The subpackage __path__ for submodules and subpackages
             or None if a top-level module.
@@ -152,16 +152,16 @@ class AbstractEnamlImporter(object):
         -------
         result : Instance(AbstractEnamlImporter) or None
             If the Enaml module is located an instance of the importer
-            that will perform the rest of the operations is returned. 
+            that will perform the rest of the operations is returned.
             Otherwise, returns None.
-        
+
         """
         raise NotImplementedError
 
     @abstractmethod
     def get_code(self):
         """ Loads and returns the code object for the Enaml module and
-        the full path to the module for use as the __file__ attribute 
+        the full path to the module for use as the __file__ attribute
         of the module.
 
         Returns
@@ -190,14 +190,14 @@ class EnamlImporter(AbstractEnamlImporter):
     """
     @classmethod
     def locate_module(cls, fullname, path=None):
-        """ Searches for the given Enaml module and returns an instance 
+        """ Searches for the given Enaml module and returns an instance
         of this class on success.
 
         Paramters
         ---------
         fullname : string
             The fully qualified name of the module.
-        
+
         path : list or None
             The subpackage __path__ for submodules and subpackages
             or None if a top-level module.
@@ -206,9 +206,9 @@ class EnamlImporter(AbstractEnamlImporter):
         -------
         results : Instance(AbstractEnamlImporter) or None
             If the Enaml module is located an instance of the importer
-            that will perform the rest of the operations is returned. 
+            that will perform the rest of the operations is returned.
             Otherwise, returns None.
-        
+
         """
         # We're looking inside a package and 'path' the package path
         if path is not None:
@@ -216,7 +216,7 @@ class EnamlImporter(AbstractEnamlImporter):
             leaf = ''.join((modname, os.path.extsep, 'enaml'))
             for stem in path:
                 enaml_path = os.path.join(stem, leaf)
-                file_info = make_file_info(enaml_path)  
+                file_info = make_file_info(enaml_path)
                 if (os.path.exists(file_info.src_path) or
                     os.path.exists(file_info.cache_path)):
                     return cls(file_info)
@@ -224,17 +224,17 @@ class EnamlImporter(AbstractEnamlImporter):
         # We're trying a load a package
         elif '.' in fullname:
             return
-        
+
         # We're doing a direct import
         else:
             leaf = fullname + os.path.extsep + 'enaml'
             for stem in sys.path:
                 enaml_path = os.path.join(stem, leaf)
-                file_info = make_file_info(enaml_path) 
+                file_info = make_file_info(enaml_path)
                 if (os.path.exists(file_info.src_path) or
                     os.path.exists(file_info.cache_path)):
                     return cls(file_info)
-    
+
     def __init__(self, file_info):
         """ Initialize an importer object.
 
@@ -242,7 +242,7 @@ class EnamlImporter(AbstractEnamlImporter):
         ----------
         file_info : EnamlFileInfo
             An instance of EnamlFileInfo.
-        
+
         """
         self.file_info = file_info
 
@@ -253,7 +253,7 @@ class EnamlImporter(AbstractEnamlImporter):
         ----------
         file_info : EnamlFileInfo
             The file info object for the file.
-        
+
         Returns
         -------
         result : types.CodeType
@@ -266,21 +266,21 @@ class EnamlImporter(AbstractEnamlImporter):
         return code
 
     def _write_cache(self, code, ts, file_info):
-        """ Write the cached file for then given info, creating the 
-        cache directory if needed. This call will suppress any 
+        """ Write the cached file for then given info, creating the
+        cache directory if needed. This call will suppress any
         IOError or OSError exceptions.
-        
+
         Parameters
         ----------
         code : types.CodeType
             The code object to write to the cache.
-        
+
         ts : int
             The integer timestamp for the file.
-        
+
         file_info : EnamlFileInfo
             The file info object for the file.
-        
+
         """
         try:
             if not os.path.exists(file_info.cache_dir):
@@ -299,7 +299,7 @@ class EnamlImporter(AbstractEnamlImporter):
         ----------
         file_info : EnamlFileInfo
             The file info object for the file.
-        
+
         Returns
         -------
         result : (magic, timestamp)
@@ -313,7 +313,7 @@ class EnamlImporter(AbstractEnamlImporter):
 
     def get_code(self):
         """ Loads and returns the code object for the Enaml module and
-        the full path to the module for use as the __file__ attribute 
+        the full path to the module for use as the __file__ attribute
         of the module.
 
         Returns
@@ -326,7 +326,7 @@ class EnamlImporter(AbstractEnamlImporter):
         # If the .enaml file does not exists, just use the .enamlc file.
         # We can presume that the latter exists because it was already
         # checked by the loader. Should the situation ever arise that
-        # it was deleted between then and now, an IOError is more 
+        # it was deleted between then and now, an IOError is more
         # informative than an ImportError.
         file_info = self.file_info
         if not os.path.exists(file_info.src_path):
@@ -374,9 +374,9 @@ class imports(object):
 
     @classmethod
     def add_importer(cls, importer):
-        """ Add an importer to the list of importers for use with the 
+        """ Add an importer to the list of importers for use with the
         framework. It must be a subclass of AbstractEnamlImporter.
-        The most recently appended importer is used first. If the 
+        The most recently appended importer is used first. If the
         importer has already been added, this is a no-op. To move
         an importer up in precedence, remove it and add it again.
 
@@ -388,10 +388,10 @@ class imports(object):
         importers = cls.__importers
         if importer not in importers:
             importers.append(importer)
-    
+
     @classmethod
     def remove_importer(cls, importer):
-        """ Removes the importer from the list of active importers. 
+        """ Removes the importer from the list of active importers.
         If the importer is not in the list, this is a no-op.
 
         """
@@ -409,11 +409,11 @@ class imports(object):
         """ Installs the current importer upon entering the context.
 
         """
-        # Install the importers reversed so that the newest ones 
+        # Install the importers reversed so that the newest ones
         # get first crack at the import on sys.meta_path.
         for importer in reversed(self.importers):
             importer.install()
-    
+
     def __exit__(self, *args, **kwargs):
         """ Uninstalls the current importer when leaving the context.
 
