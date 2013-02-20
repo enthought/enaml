@@ -4,6 +4,7 @@
 #------------------------------------------------------------------------------
 from atom.api import Enum, set_default
 
+from enaml.core.declarative import d_
 from enaml.layout.layout_helpers import align, hbox, vbox
 
 from .constraints_widget import ConstraintMember
@@ -27,7 +28,7 @@ class Form(Container):
     midline = ConstraintMember()
 
     #: The strength for the form layout constraints.
-    layout_strength = Enum('strong', 'medium', 'weak')
+    layout_strength = d_(Enum('strong', 'medium', 'weak'))
 
     #: A form hugs its height strongly by default. Forms are typcially
     #: used to display vertical arrangements of widgets, with forms

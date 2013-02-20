@@ -7,12 +7,11 @@ from datetime import datetime as pydatetime
 from atom.api import Typed, observe
 from dateutil.parser import parse as parse_iso_dt
 
-from enaml.core.declarative import d_properties
+from enaml.core.declarative import d_
 
 from .control import Control
 
 
-@d_properties('minimum', 'maximum', 'datetime')
 class BoundedDatetime(Control):
     """ A base class for use with widgets that edit a Python
     datetime.datetime object bounded between minimum and maximum
@@ -21,16 +20,16 @@ class BoundedDatetime(Control):
     """
     #: The minimum datetime available in the datetime edit. If not
     #: defined then the default value is midnight September 14, 1752.
-    minimum = Typed(pydatetime, args=(1752, 9, 14, 0, 0, 0, 0))
+    minimum = d_(Typed(pydatetime, args=(1752, 9, 14, 0, 0, 0, 0)))
 
     #: The maximum datetime available in the datetime edit. If not
     #: defined then the default value is the second before midnight
     #: December 31, 7999.
-    maximum = Typed(pydatetime, args=(7999, 12, 31, 23, 59, 59, 999000))
+    maximum = d_(Typed(pydatetime, args=(7999, 12, 31, 23, 59, 59, 999000)))
 
     #: The currently selected date. Default is datetime.now(). The
     #: value is bounded between :attr:`minimum` and :attr:`maximum`.
-    datetime = Typed(pydatetime, factory=pydatetime.now)
+    datetime = d_(Typed(pydatetime, factory=pydatetime.now))
 
     #--------------------------------------------------------------------------
     # Messenger API

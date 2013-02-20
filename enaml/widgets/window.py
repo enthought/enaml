@@ -4,15 +4,13 @@
 #------------------------------------------------------------------------------
 from atom.api import Unicode, Enum, Str, Bool, Event, Coerced, observe
 
-from enaml.core.declarative import d_properties
+from enaml.core.declarative import d_
 from enaml.layout.geometry import Size
 
 from .container import Container
 from .widget import Widget
 
 
-@d_properties('title', 'initial_size', 'modality', 'destroy_on_close',
-    'icon_source')
 class Window(Widget):
     """ A top-level Window component.
 
@@ -26,22 +24,22 @@ class Window(Widget):
 
     """
     #: The titlebar text.
-    title = Unicode()
+    title = d_(Unicode())
 
     #: The initial size of the window. A value of (-1, -1) indicates
     #: to let the client choose the initial size
-    initial_size = Coerced(Size, factory=lambda: Size(-1, -1))
+    initial_size = d_(Coerced(Size, factory=lambda: Size(-1, -1)))
 
     #: An enum which indicates the modality of the window. The default
     #: value is 'non_modal'.
-    modality = Enum('non_modal', 'application_modal', 'window_modal')
+    modality = d_(Enum('non_modal', 'application_modal', 'window_modal'))
 
     #: If this value is set to True, the window will be destroyed on
     #: the completion of the `closed` event.
-    destroy_on_close = Bool(True)
+    destroy_on_close = d_(Bool(True))
 
     #: The source url for the titlebar icon.
-    icon_source = Str()
+    icon_source = d_(Str())
 
     #: An event fired when the window is closed.
     closed = Event()

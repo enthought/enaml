@@ -2,8 +2,6 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Property, cached_property
-
 from .container import Container
 from .widget import Widget
 
@@ -16,20 +14,9 @@ class StackItem(Widget):
     instance of Container.
 
     """
-    #: A read only property which returns the items's stack widget.
-    stack_widget = Property(depends_on='children')
-
-    #--------------------------------------------------------------------------
-    # Private API
-    #--------------------------------------------------------------------------
-    @cached_property
-    def _get_stack_widget(self):
-        """ The getter for the 'stack_widget' property.
-
-        Returns
-        -------
-        result : Container or None
-            The stack widget for the StackItem, or None if not provided.
+    @property
+    def stack_widget(self):
+        """ A read only property which returns the item's stack widget.
 
         """
         widget = None

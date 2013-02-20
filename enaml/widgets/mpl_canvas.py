@@ -11,6 +11,7 @@ from enaml.core.declarative import d_
 from .control import Control
 
 
+#: Delay the import of matplotlib until needed
 def Figure():
     from matplotlib.figure import Figure
     return Figure

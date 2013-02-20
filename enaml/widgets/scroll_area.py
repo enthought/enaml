@@ -1,16 +1,13 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2012, Enthought, Inc.
+#  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Enum, Property, Bool, cached_property
+from atom.api import Enum, Bool, observe, set_default
+
+from enaml.core.declarative import d_
 
 from .constraints_widget import ConstraintsWidget
 from .container import Container
-
-
-#: Enum trait describing the scrollbar policies that can be assigned to
-#: the horizontal and vertical scrollbars.
-ScrollbarPolicy = Enum('as_needed', 'always_on', 'always_off')
 
 
 class ScrollArea(ConstraintsWidget):
@@ -20,32 +17,35 @@ class ScrollArea(ConstraintsWidget):
 
     """
     #: The horizontal scrollbar policy.
-    horizontal_policy = ScrollbarPolicy
+    horizontal_policy = d_(Enum('as_needed', 'always_on', 'always_off'))
 
     #: The vertical scrollbar policy.
-    vertical_policy = ScrollbarPolicy
+    vertical_policy = d_(Enum('as_needed', 'always_on', 'always_off'))
 
     #: Whether to resize the scroll widget when possible to avoid the
     #: need for scrollbars or to make use of extra space.
-    widget_resizable = Bool(True)
+    widget_resizable = d_(Bool(True))
 
-    #: A read only property which returns the scrolled widget.
-    scroll_widget = Property(depends_on='children')
+    #: A scroll area is free to expand in width and height by default.
+    hug_width = set_default('ignore')
+    hug_height = set_default('ignore')
 
-    #: How strongly a component hugs it's contents' width. Scroll
-    #: areas do not hug their width and are free to expand.
-    hug_width = 'ignore'
+    @property
+    def scroll_widget(self):
+        """ A read only property which returns the scrolled widget.
 
-    #: How strongly a component hugs it's contents' height. Scroll
-    #: areas do not hug their height and are free to expand.
-    hug_height = 'ignore'
+        """
+        widget = None
+        for child in self.children:
+            if isinstance(child, Container):
+                widget = child
+        return widget
 
     #--------------------------------------------------------------------------
-    # Initialization
+    # Messenger API
     #--------------------------------------------------------------------------
     def snapshot(self):
-        """ Return a dictionary which contains all the state necessary to
-        initialize a client widget.
+        """ Get the snapshot dictionary for the control.
 
         """
         snap = super(ScrollArea, self).snapshot()
@@ -54,31 +54,11 @@ class ScrollArea(ConstraintsWidget):
         snap['widget_resizable'] = self.widget_resizable
         return snap
 
-    def bind(self):
-        """ Bind the change handlers for this widget.
+    @observe(r'^(horizontal_policy|vertical_policy|widget_resizable)$', regex=True)
+    def send_member_change(self, change):
+        """ An observer which sends state change to the client.
 
         """
-        super(ScrollArea, self).bind()
-        attrs = ('horizontal_policy', 'vertical_policy', 'widget_resizable')
-        self.publish_attributes(*attrs)
-
-    #--------------------------------------------------------------------------
-    # Private API
-    #--------------------------------------------------------------------------
-    @cached_property
-    def _get_scroll_widget(self):
-        """ The getter for the 'scroll_widget' property.
-
-        Returns
-        -------
-        result : Container or None
-            The scroll widget for the ScrollArea, or None if not
-            provided.
-
-        """
-        widget = None
-        for child in self.children:
-            if isinstance(child, Container):
-                widget = child
-        return widget
+        # The superclass handler implementation is sufficient.
+        super(ScrollArea, self).send_member_change(change)
 

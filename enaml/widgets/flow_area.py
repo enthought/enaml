@@ -4,36 +4,34 @@
 #------------------------------------------------------------------------------
 from atom.api import Enum, Range, Coerced, observe, set_default
 
-from enaml.core.declarative import d_properties
+from enaml.core.declarative import d_
 from enaml.layout.geometry import Box
 
 from .constraints_widget import ConstraintsWidget
 from .flow_item import FlowItem
 
 
-@d_properties('direction', 'align', 'horizontal_spacing', 'vertical_spacing',
-    'margins')
 class FlowArea(ConstraintsWidget):
     """ A widget which lays out its children in flowing manner, wrapping
     around at the end of the available space.
 
     """
     #: The flow direction of the layout.
-    direction = Enum(
+    direction = d_(Enum(
         'left_to_right', 'right_to_left', 'top_to_bottom', 'bottom_to_top'
-    )
+    ))
 
     #: The alignment of a line of items within the layout.
-    align = Enum('leading', 'trailing', 'center', 'justify')
+    align = d_(Enum('leading', 'trailing', 'center', 'justify'))
 
     #: The amount of horizontal space to place between items.
-    horizontal_spacing = Range(low=0, value=10)
+    horizontal_spacing = d_(Range(low=0, value=10))
 
     #: The amount of vertical space to place between items.
-    vertical_spacing = Range(low=0, value=10)
+    vertical_spacing = d_(Range(low=0, value=10))
 
     #: The margins to use around the outside of the flow area.
-    margins = Coerced(Box, factory=lambda: Box(10, 10, 10, 10))
+    margins = d_(Coerced(Box, factory=lambda: Box(10, 10, 10, 10)))
 
     #: A FlowArea expands freely in width and height by default.
     hug_width = set_default('ignore')

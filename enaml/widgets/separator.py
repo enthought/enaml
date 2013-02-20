@@ -4,27 +4,26 @@
 #------------------------------------------------------------------------------
 from atom.api import Bool, Range, Enum, observe
 
-from enaml.core.declarative import d_properties
+from enaml.core.declarative import d_
 from .control import Control
 
 
-@d_properties('orientation', 'line_style', 'line_width', 'midline_width')
 class Separator(Control):
     """ A widget which draws a horizontal or vertical separator line.
 
     """
     #: The orientation of the separator line.
-    orientation = Enum('horizontal', 'vertical')
+    orientation = d_(Enum('horizontal', 'vertical'))
 
     #: The line style for the separator.
-    line_style = Enum('sunken', 'raised', 'plain')
+    line_style = d_(Enum('sunken', 'raised', 'plain'))
 
     #: The thickness of the outer separator line.
-    line_width = Range(low=0, high=3, value=1)
+    line_width = d_(Range(low=0, high=3, value=1))
 
     #: The thickness of the inner separator line. This only has an
     #: effect for the 'sunken' and 'raised' line styles.
-    midline_width = Range(low=0, high=3, value=0)
+    midline_width = d_(Range(low=0, high=3, value=0))
 
     #: A flag indicating whether the user has explicitly set the hug
     #: property. If it is not explicitly set, the hug values will be

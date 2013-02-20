@@ -7,12 +7,11 @@ from datetime import datetime, time as pytime
 from atom.api import Typed, observe
 from dateutil.parser import parse as parse_iso_dt
 
-from enaml.core.declarative import d_properties
+from enaml.core.declarative import d_
 
 from .control import Control
 
 
-@d_properties('minimum', 'maximum', 'time')
 class BoundedTime(Control):
     """ A base class for use with widgets that edit a Python
     datetime.time object bounded between minimum and maximum
@@ -21,15 +20,15 @@ class BoundedTime(Control):
     """
     #: The minimum time available in the datetime edit. The default value
     #: is midnight.
-    minimum = Typed(pytime, args=(0, 0, 0))
+    minimum = d_(Typed(pytime, args=(0, 0, 0)))
 
     #: The maximum time available in the datetime edit. The default is
     #: one second before midnight.
-    maximum = Typed(pytime, args=(23, 59, 59, 999000))
+    maximum = d_(Typed(pytime, args=(23, 59, 59, 999000)))
 
     #: The currently selected time. Default is datetime.now().time().
     #: The value is clipped between :attr:`minimum` and :attr:`maximum`.
-    time = Typed(pytime, factory=lambda: datetime.now().time())
+    time = d_(Typed(pytime, factory=lambda: datetime.now().time()))
 
     #--------------------------------------------------------------------------
     # Messenger API

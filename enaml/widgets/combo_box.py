@@ -6,12 +6,11 @@ from atom.api import (
     Bool, List, Int, CachedProperty, Unicode, set_default, observe
 )
 
-from enaml.core.declarative import d_properties
+from enaml.core.declarative import d_
 
 from .control import Control
 
 
-@d_properties('items', 'index', 'editable')
 class ComboBox(Control):
     """ A drop-down list from which one item can be selected at a time.
 
@@ -19,15 +18,15 @@ class ComboBox(Control):
 
     """
     #: The unicode strings to display in the combo box.
-    items = List(Unicode())
+    items = d_(List(Unicode()))
 
     #: The integer index of the currently selected item. If the given
     #: index falls outside of the range of items, the item will be
     #: deselected.
-    index = Int(-1)
+    index = d_(Int(-1))
 
     #: Whether the text in the combo box can be edited by the user.
-    editable = Bool(False)
+    editable = d_(Bool(False))
 
     #: A readonly property that will return the currently selected
     #: item. If the index falls out of range, the selected item will

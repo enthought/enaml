@@ -4,14 +4,12 @@
 #------------------------------------------------------------------------------
 from atom.api import List, Enum, Unicode, Bool, Event, observe
 
-from enaml.core.declarative import d_properties
+from enaml.core.declarative import d_
 
 from .container import Container
 from .widget import Widget
 
 
-@d_properties('title', 'title_bar_visible', 'title_bar_orientation', 'movable',
-    'closable', 'floatable', 'floating', 'dock_area', 'allowed_dock_areas')
 class DockPane(Widget):
     """ A widget which can be docked in a MainWindow.
 
@@ -21,35 +19,35 @@ class DockPane(Widget):
 
     """
     #: The title to use in the title bar.
-    title = Unicode()
+    title = d_(Unicode())
 
     #: Whether or not the title bar is visible.
-    title_bar_visible = Bool(True)
+    title_bar_visible = d_(Bool(True))
 
     #: The orientation of the title bar.
-    title_bar_orientation = Enum('horizontal', 'vertical')
+    title_bar_orientation = d_(Enum('horizontal', 'vertical'))
 
     #: Whether or not the dock pane is closable via a close button.
-    closable = Bool(True)
+    closable = d_(Bool(True))
 
     #: Whether or not the dock pane is movable by the user.
-    movable = Bool(True)
+    movable = d_(Bool(True))
 
     #: Whether or not the dock can be floated as a separate window.
-    floatable = Bool(True)
+    floatable = d_(Bool(True))
 
     #: A boolean indicating whether or not the dock pane is floating.
-    floating = Bool(False)
+    floating = d_(Bool(False))
 
     #: The dock area in the MainWindow where the pane is docked.
-    dock_area = Enum('left', 'right', 'top', 'bottom')
+    dock_area = d_(Enum('left', 'right', 'top', 'bottom'))
 
     #: The dock areas in the MainWindow where the pane can be docked
     #: by the user. Note that this does not preclude the pane from
     #: being docked programmatically via the 'dock_area' attribute.
-    allowed_dock_areas = List(
+    allowed_dock_areas = d_(List(
         Enum('left', 'right', 'top', 'bottom', 'all'), ['all'],
-    )
+    ))
 
     #: An event fired when the user closes the pane by clicking on the
     #: dock pane's close button.

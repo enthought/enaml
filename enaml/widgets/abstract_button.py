@@ -6,33 +6,32 @@ from atom.api import (
     Bool, Unicode, Str, Coerced, TypedEvent, observe, set_default
 )
 
-from enaml.core.declarative import d_properties
+from enaml.core.declarative import d_
 from enaml.layout.geometry import Size
 
 from .control import Control
 
 
-@d_properties('text', 'icon_source', 'icon_size', 'checkable', 'checked')
 class AbstractButton(Control):
     """ A base class which provides functionality common for several
     button-like widgets.
 
     """
     #: The text to use as the button's label.
-    text = Unicode()
+    text = d_(Unicode())
 
     #: The source url for the icon to use for the button.
-    icon_source = Str()
+    icon_source = d_(Str())
 
     #: The size to use for the icon. The default is an invalid size
     #: and indicates that an appropriate default should be used.
-    icon_size = Coerced(Size, factory=lambda: Size(-1, -1))
+    icon_size = d_(Coerced(Size, factory=lambda: Size(-1, -1)))
 
     #: Whether or not the button is checkable. The default is False.
-    checkable = Bool(False)
+    checkable = d_(Bool(False))
 
     #: Whether a checkable button is currently checked.
-    checked = Bool(False)
+    checked = d_(Bool(False))
 
     #: Fired when the button is pressed then released. The payload will
     #: be the current checked state.

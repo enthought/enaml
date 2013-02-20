@@ -4,12 +4,11 @@
 #------------------------------------------------------------------------------
 from atom.api import Bool, Str, observe, set_default
 
-from enaml.core.declarative import d_properties
+from enaml.core.declarative import d_
 
 from .bounded_datetime import BoundedDatetime
 
 
-@d_properties('datetime_format', 'calendar_popup')
 class DatetimeSelector(BoundedDatetime):
     """ A datetime widget that displays a Python datetime.datetime
     object using an appropriate toolkit specific control.
@@ -18,10 +17,10 @@ class DatetimeSelector(BoundedDatetime):
     #: A python date format string to format the datetime. If None is
     #: supplied (or is invalid) the system locale setting is used.
     #: This may not be supported by all backends.
-    datetime_format = Str()
+    datetime_format = d_(Str())
 
     #: Whether to use a calendar popup for selecting the date.
-    calendar_popup = Bool(False)
+    calendar_popup = d_(Bool(False))
 
     #: A datetime selector expands freely in width by default
     hug_width = set_default('ignore')

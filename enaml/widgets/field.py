@@ -6,53 +6,51 @@ from atom.api import (
     Bool, Int, Unicode, Enum, List, Instance, observe, set_default
 )
 
-from enaml.core.declarative import d_properties
+from enaml.core.declarative import d_
 from enaml.validation.validator import Validator
 
 from .control import Control
 
 
-@d_properties('text', 'mask', 'validator', 'submit_triggers', 'placeholder',
-    'echo_mode', 'max_length', 'read_only')
 class Field(Control):
     """ A single line editable text widget.
 
     """
     #: The unicode text to display in the field.
-    text = Unicode()
+    text = d_(Unicode())
 
     #: The mask to use for text input.
     #: TODO - describe and implement this mask
-    mask = Unicode()
+    mask = d_(Unicode())
 
     #: The validator to use for this field. If the validator provides
     #: a client side validator, then text will only be submitted if it
     #: passes that validator.
-    validator = Instance(Validator)
+    validator = d_(Instance(Validator))
 
     #: The list of actions which should cause the client to submit its
     #: text to the server for validation and update. The currently
     #: supported values are 'lost_focus' and 'return_pressed'.
-    submit_triggers = List(
+    submit_triggers = d_(List(
         Enum('lost_focus', 'return_pressed'), ['lost_focus', 'return_pressed']
-    )
+    ))
 
     #: The grayed-out text to display if the field is empty and the
     #: widget doesn't have focus. Defaults to the empty string.
-    placeholder = Unicode()
+    placeholder = d_(Unicode())
 
     #: How to display the text in the field. Valid values are 'normal'
     #: which displays the text as normal, 'password' which displays the
     #: text with an obscured character, and 'silent' which displays no
     #: text at all but still allows input.
-    echo_mode = Enum('normal', 'password', 'silent')
+    echo_mode = d_(Enum('normal', 'password', 'silent'))
 
     #: The maximum length of the field in characters. The default value
     #: is Zero and indicates there is no maximum length.
-    max_length = Int(0)
+    max_length = d_(Int(0))
 
     #: Whether or not the field is read only. Defaults to False.
-    read_only = Bool(False)
+    read_only = d_(Bool(False))
 
     #: How strongly a component hugs it's contents' width. Fields ignore
     #: the width hug by default, so they expand freely in width.

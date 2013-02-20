@@ -4,12 +4,11 @@
 #------------------------------------------------------------------------------
 from atom.api import CachedProperty, Int, observe, set_default
 
-from enaml.core.declarative import d_properties
+from enaml.core.declarative import d_
 
 from .control import Control
 
 
-@d_properties('minimum', 'maximum', 'value')
 class ProgressBar(Control):
     """ A control which displays a value as a ticking progress bar.
 
@@ -17,16 +16,16 @@ class ProgressBar(Control):
     #: The minimum progress value. If the minimum value is changed such
     #: that it becomes greater than the current value or the maximum
     #: value, then those values will be adjusted. The default is 0.
-    minimum = Int(0)
+    minimum = d_(Int(0))
 
     #: The maximum progress value. If the maximum value is changed such
     #: that it becomes smaller than the current value or the minimum
     #: value, then those values will be adjusted. The default is 100.
-    maximum = Int(100)
+    maximum = d_(Int(10))
 
     #: The position value of the Slider. The value will be clipped to
     #: always fall between the minimum and maximum.
-    value = Int(0)
+    value = d_(Int(0))
 
     #: The percentage completed, rounded to an integer. This is a
     #: readonly value for convenient use by other Components.

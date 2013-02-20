@@ -1,12 +1,14 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2012, Enthought, Inc.
+#  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Bool, Enum, List, Property, Either, cached_property
+from atom.api import Bool, Enum, List, observe
+
+from enaml.core.declarative import d_
 
 from .action import Action
 from .action_group import ActionGroup
-from .constraints_widget import ConstraintsWidget, PolicyEnum
+from .constraints_widget import ConstraintsWidget
 
 
 class ToolBar(ConstraintsWidget):
@@ -21,55 +23,51 @@ class ToolBar(ConstraintsWidget):
     """
     #: Whether or not the tool bar is movable by the user. This value
     #: only has meaning if the tool bar is the child of a MainWindow.
-    movable = Bool(True)
+    movable = d_(Bool(True))
 
     #: Whether or not the tool bar can be floated as a separate window.
     #: This value only has meaning if the tool bar is the child of a
     #: MainWindow.
-    floatable = Bool(True)
+    floatable = d_(Bool(True))
 
     #: A boolean indicating whether or not the tool bar is floating.
     #: This value only has meaning if the tool bar is the child of a
     #: MainWindow.
-    floating = Bool(False)
+    floating = d_(Bool(False))
 
     #: The dock area in the MainWindow where the tool bar is docked.
     #: This value only has meaning if the tool bar is the child of a
     #: MainWindow.
-    dock_area = Enum('top', ('left', 'right', 'top', 'bottom'))
+    dock_area = d_(Enum('top', 'right', 'left', 'bottom'))
 
     #: The areas in the MainWindow where the tool bar can be docked
     #: by the user. This value only has meaning if the tool bar is the
     #: child of a MainWindow.
-    allowed_dock_areas = List(
-        Enum('left', 'right', 'top', 'bottom', 'all'), value=['all'],
-    )
+    allowed_dock_areas = d_(List(
+        Enum('top', 'right', 'left', 'bottom', 'all'), value=['all'],
+    ))
 
     #: The orientation of the toolbar. This only has meaning when the
     #: toolbar is not a child of a MainWindow and is used as part of
     #: a constraints based layout.
-    orientation = Enum('horizontal', 'vertical')
+    orientation = d_(Enum('horizontal', 'vertical'))
 
-    #: A read only property which returns the tool bar's items:
-    #: ActionGroup | Action
-    items = Property(depends_on='children')
+    #: A flag indicating whether the user has explicitly set the hug
+    #: property. If it is not explicitly set, the hug values will be
+    #: updated automatically when the orientation changes.
+    _explicit_hug = Bool(False)
 
-    #: Hug width is redefined as a property to be computed based on the
-    #: orientation of the tool bar unless overridden by the user.
-    hug_width = Property(PolicyEnum, depends_on=['_hug_width', 'orientation'])
+    @property
+    def items(self):
+        """ A read only property which returns the list of toolbar items.
 
-    #: Hug height is redefined as a property to be computed based on the
-    #: orientation of the slider unless overridden by the user.
-    hug_height = Property(PolicyEnum, depends_on=['_hug_height', 'orientation'])
-
-    #: An internal override trait for hug_width
-    _hug_width = Either(None, PolicyEnum, default=None)
-
-    #: An internal override trait for hug_height
-    _hug_height = Either(None, PolicyEnum, default=None)
+        """
+        isinst = isinstance
+        types = (Action, ActionGroup)
+        return [child for child in self.children if isinst(child, types)]
 
     #--------------------------------------------------------------------------
-    # Initialization
+    # Messenger API
     #--------------------------------------------------------------------------
     def snapshot(self):
         """ Returns the snapshot dict for the DockPane.
@@ -84,81 +82,14 @@ class ToolBar(ConstraintsWidget):
         snap['orientation'] = self.orientation
         return snap
 
-    def bind(self):
-        """ Bind the change handlers for the ToolBar.
+    @observe(r'^(movable|floatable|floating|dock_area|allowed_dock_areas|'
+             r'orientation)$', regex=True)
+    def send_member_change(self, change):
+        """ An observer which sends state change to the client.
 
         """
-        super(ToolBar, self).bind()
-        attrs = (
-            'movable', 'floatable', 'floating', 'dock_area',
-            'allowed_dock_areas', 'orientation',
-        )
-        self.publish_attributes(*attrs)
-
-    #--------------------------------------------------------------------------
-    # Private API
-    #--------------------------------------------------------------------------
-    @cached_property
-    def _get_items(self):
-        """ The getter for the 'items' property.
-
-        Returns
-        -------
-        result : tuple
-            The tuple of items for the ToolBar.
-
-        """
-        isinst = isinstance
-        types = (Action, ActionGroup)
-        items = (child for child in self.children if isinst(child, types))
-        return tuple(items)
-
-    #--------------------------------------------------------------------------
-    # Property Methods
-    #--------------------------------------------------------------------------
-    def _get_hug_width(self):
-        """ The property getter for 'hug_width'.
-
-        Returns a computed hug value unless overridden by the user.
-
-        """
-        res = self._hug_width
-        if res is None:
-            if self.orientation == 'horizontal':
-                res = 'ignore'
-            else:
-                res = 'strong'
-        return res
-
-    def _get_hug_height(self):
-        """ The proper getter for 'hug_height'.
-
-        Returns a computed hug value unless overridden by the user.
-
-        """
-        res = self._hug_height
-        if res is None:
-            if self.orientation == 'vertical':
-                res = 'ignore'
-            else:
-                res = 'strong'
-        return res
-
-    def _set_hug_width(self, value):
-        """ The property setter for 'hug_width'.
-
-        Overrides the computed value.
-
-        """
-        self._hug_width = value
-
-    def _set_hug_height(self, value):
-        """ The property setter for 'hug_height'.
-
-        Overrides the computed value.
-
-        """
-        self._hug_height = value
+        # The superclass handler implementation is sufficient.
+        super(ToolBar, self).send_member_change(change)
 
     #--------------------------------------------------------------------------
     # Message Handling
@@ -175,4 +106,61 @@ class ToolBar(ConstraintsWidget):
         """
         self.set_guarded(floating=False)
         self.set_guarded(dock_area=content['dock_area'])
+
+    #--------------------------------------------------------------------------
+    # Observers
+    #--------------------------------------------------------------------------
+    def _observe_orientation(self, change):
+        """ Updates the hug properties if they are not explicitly set.
+
+        """
+        if not self._explicit_hug:
+            self.hug_width = self._default_hug_width()
+            self.hug_height = self._default_hug_height()
+            # Reset to False to remove the effect of the above.
+            self._explicit_hug = False
+
+    #--------------------------------------------------------------------------
+    # Default Handlers
+    #--------------------------------------------------------------------------
+    def _default_hug_width(self):
+        """ Get the default hug width for the slider.
+
+        The default hug width is computed based on the orientation.
+
+        """
+        if self.orientation == 'horizontal':
+            return 'ignore'
+        return 'strong'
+
+    def _default_hug_height(self):
+        """ Get the default hug height for the slider.
+
+        The default hug height is computed based on the orientation.
+
+        """
+        if self.orientation == 'vertical':
+            return 'ignore'
+        return 'strong'
+
+    #--------------------------------------------------------------------------
+    # Post Validation Handlers
+    #--------------------------------------------------------------------------
+    def _post_validate_hug_width(self, old, new):
+        """ Post validate the hug width for the slider.
+
+        This sets the explicit hug flag to True.
+
+        """
+        self._explicit_hug = True
+        return new
+
+    def _post_validate_hug_height(self, old, new):
+        """ Post validate the hug height for the slider.
+
+        This sets the explicit hug flag to True.
+
+        """
+        self._explicit_hug = True
+        return new
 

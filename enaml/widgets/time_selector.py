@@ -2,14 +2,13 @@
 #  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from atom.api import Str, observe
+from atom.api import Str, observe, set_default
 
-from enaml.core.declarative import d_properties
+from enaml.core.declarative import d_
 
 from .bounded_time import BoundedTime
 
 
-@d_properties('time_format')
 class TimeSelector(BoundedTime):
     """ A time widget that displays a Python datetime.time object using
     an appropriate toolkit specific control.
@@ -18,13 +17,10 @@ class TimeSelector(BoundedTime):
     #: A python time format string to format the time. If None is
     #: supplied (or is invalid) the system locale setting is used.
     #: This may not be supported by all backends.
-    time_format = Str()
+    time_format = d_(Str())
 
-    def _default_hug_width(self):
-        """ A TimeSelector is free to expand in width and height.
-
-        """
-        return 'ignore'
+    #: A time selector is free to expand in width by default.
+    hug_width = set_default('ignore')
 
     #--------------------------------------------------------------------------
     # Messenger API

@@ -1,8 +1,10 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2012, Enthought, Inc.
+#  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Any, Bool, Range, Property, cached_property
+from atom.api import Bool, Range, Value, observe
+
+from enaml.core.declarative import d_
 
 from .container import Container
 from .widget import Widget
@@ -19,20 +21,28 @@ class SplitItem(Widget):
     #: The stretch factor for this item. The stretch factor determines
     #: how much an item is resized relative to its neighbors when the
     #: splitter space is allocated.
-    stretch = Range(low=0, value=1)
+    stretch = d_(Range(low=0, value=1))
 
     #: Whether or not the item can be collapsed to zero width by the
     #: user. This holds regardless of the minimum size of the item.
-    collapsible = Bool(True)
-
-    #: A read only property which returns the split widget.
-    split_widget = Property(depends_on='children')
+    collapsible = d_(Bool(True))
 
     #: This is a deprecated attribute. It should no longer be used.
-    preferred_size = Any
+    preferred_size = d_(Value())
+
+    @property
+    def split_widget(self):
+        """ A read only property that returns the split widget.
+
+        """
+        widget = None
+        for child in self.children:
+            if isinstance(child, Container):
+                widget = child
+        return widget
 
     #--------------------------------------------------------------------------
-    # Initialization
+    # Messenger API
     #--------------------------------------------------------------------------
     def snapshot(self):
         """ Return the dict of creation attributes for the control.
@@ -43,29 +53,11 @@ class SplitItem(Widget):
         snap['collapsible'] = self.collapsible
         return snap
 
-    def bind(self):
-        """ Bind the change handlers for the widget.
+    @observe(r'^(stretch|collapsible)$', regex=True)
+    def send_member_change(self, change):
+        """ An observer which sends state change to the client.
 
         """
-        super(SplitItem, self).bind()
-        self.publish_attributes('stretch', 'collapsible')
-
-    #--------------------------------------------------------------------------
-    # Private API
-    #--------------------------------------------------------------------------
-    @cached_property
-    def _get_split_widget(self):
-        """ The getter for the 'split_widget' property.
-
-        Returns
-        -------
-        result : Container or None
-            The split widget for the SplitItem, or None if not provided.
-
-        """
-        widget = None
-        for child in self.children:
-            if isinstance(child, Container):
-                widget = child
-        return widget
+        # The superclass handler implementation is sufficient.
+        super(SplitItem, self).send_member_change(change)
 

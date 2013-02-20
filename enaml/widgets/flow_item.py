@@ -4,6 +4,7 @@
 #------------------------------------------------------------------------------
 from atom.api import Enum, Range, Coerced, observe
 
+from enaml.core.declarative import d_
 from enaml.layout.geometry import Size
 
 from .container import Container
@@ -22,23 +23,23 @@ class FlowItem(Widget):
     #: the size of the item in the layout, bounded to the computed min
     #: and max size. A size of (-1, -1) indicates to use the widget's
     #: size hint as the preferred size.
-    preferred_size = Coerced(Size, factory=lambda: Size(-1, -1))
+    preferred_size = d_(Coerced(Size, factory=lambda: Size(-1, -1)))
 
     #: The alignment of this item in the direction orthogonal to the
     #: layout flow.
-    align = Enum('leading', 'trailing', 'center')
+    align = d_(Enum('leading', 'trailing', 'center'))
 
     #: The stretch factor for this item in the flow direction, relative
     #: to other items in the same line. The default is zero which means
     #: that the item will not expand in the direction orthogonal to the
     #: layout flow.
-    stretch = Range(low=0, value=0)
+    stretch = d_(Range(low=0, value=0))
 
     #: The stretch factor for this item in the orthogonal direction
     #: relative to other items in the layout. The default is zero
     #: which means that the item will not expand in the direction
     #: orthogonal to the layout flow.
-    ortho_stretch = Range(low=0, value=0)
+    ortho_stretch = d_(Range(low=0, value=0))
 
     @property
     def flow_widget(self):

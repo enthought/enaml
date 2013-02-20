@@ -1,8 +1,10 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2012, Enthought, Inc.
+#  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Dict, Int, Property, cached_property
+from atom.api import Dict, Int, observe, set_default
+
+from enaml.core.declarative import d_
 
 from .constraints_widget import ConstraintsWidget
 from .stack_item import StackItem
@@ -17,20 +19,30 @@ class Stack(ConstraintsWidget):
     #: does not provide a means to changing this index. That control
     #: must be supplied externally. If the given index falls outside of
     #: the range of stack items, no widget will be visible.
-    index = Int(0)
+    index = d_(Int(0))
 
     #: The transition to use when change between stack items.
     #: XXX Document the supported transitions.
-    transition = Dict
+    transition = d_(Dict())
 
-    #: A read only property which returns the stack's StackItems
-    stack_items = Property(depends_on='children')
+    #: A Stack expands freely in height and width by default
+    hug_width = set_default('ignore')
+    hug_height = set_default('ignore')
+
+    @property
+    def stack_items(self):
+        """ A read only property which returns the list of stack items.
+
+        """
+        isinst = isinstance
+        target = StackItem
+        return [child for child in self.children if isinst(child, target)]
 
     #--------------------------------------------------------------------------
-    # Initialization
+    # Messenger API
     #--------------------------------------------------------------------------
     def snapshot(self):
-        """ Returns the snapshot for the control.
+        """ Returns the snapshot dict for the control.
 
         """
         snap = super(Stack, self).snapshot()
@@ -38,12 +50,13 @@ class Stack(ConstraintsWidget):
         snap['transition'] = self.transition
         return snap
 
-    def bind(self):
-        """ Bind the change handlers for the control.
+    @observe(r'^(index|transition)$', regex=True)
+    def send_member_change(self, change):
+        """ An observer which sends state change to the client.
 
         """
-        super(Stack, self).bind()
-        self.publish_attributes('index', 'transition')
+        # The superclass handler implementation is sufficient.
+        super(Stack, self).send_member_change(change)
 
     #--------------------------------------------------------------------------
     # Message Handling
@@ -54,22 +67,4 @@ class Stack(ConstraintsWidget):
         """
         with self.loopback_guard('index'):
             self.index = content['index']
-
-    #--------------------------------------------------------------------------
-    # Private API
-    #--------------------------------------------------------------------------
-    @cached_property
-    def _get_stack_items(self):
-        """ The getter for the 'stack_items' property.
-
-        Returns
-        -------
-        result : tuple
-            The tuple of StackItem instances defined as children of
-            this Stack.
-
-        """
-        isinst = isinstance
-        items = (child for child in self.children if isinst(child, StackItem))
-        return tuple(items)
 

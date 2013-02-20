@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from atom.api import ForwardInstance, observe, set_default
 
-from enaml.core.declarative import d_properties
+from enaml.core.declarative import d_
 
 from .control import Control
 
@@ -19,13 +19,12 @@ def Component():
     return Component
 
 
-@d_properties('component')
 class EnableCanvas(Control):
     """ A control which can be used to embded an Enable component.
 
     """
     #: The enable.component.Component instance to draw.
-    component = ForwardInstance(Component)
+    component = d_(ForwardInstance(Component))
 
     #: An EnableCanvas expands freely in width and height by default.
     hug_width = set_default('ignore')

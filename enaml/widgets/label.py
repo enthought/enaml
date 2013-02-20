@@ -4,24 +4,23 @@
 #------------------------------------------------------------------------------
 from atom.api import Unicode, Enum, observe, set_default
 
-from enaml.core.declarative import d_properties
+from enaml.core.declarative import d_
 
 from .control import Control
 
 
-@d_properties('text', 'align', 'vertical_align')
 class Label(Control):
     """ A simple control for displaying read-only text.
 
     """
     #: The unicode text for the label.
-    text = Unicode()
+    text = d_(Unicode())
 
     #: The horizontal alignment of the text in the widget area.
-    align = Enum('left', 'right', 'center', 'justify')
+    align = d_(Enum('left', 'right', 'center', 'justify'))
 
     #: The vertical alignment of the text in the widget area.
-    vertical_align = Enum('center', 'top', 'bottom')
+    vertical_align = d_(Enum('center', 'top', 'bottom'))
 
     #: Labels hug their width weakly by default.
     hug_width = set_default('weak')

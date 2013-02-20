@@ -6,14 +6,13 @@ from atom.api import (
     Bool, Constant, Coerced, CachedProperty, List, observe, set_default
 )
 
-from enaml.core.declarative import d_properties
+from enaml.core.declarative import d_
 from enaml.layout.geometry import Box
 from enaml.layout.layout_helpers import vbox
 
 from .constraints_widget import ConstraintsWidget, ConstraintMember
 
 
-@d_properties('share_layout', 'padding')
 class Container(ConstraintsWidget):
     """ A ConstraintsWidget subclass that provides functionality for
     laying out constrainable children according to their system of
@@ -39,7 +38,7 @@ class Container(ConstraintsWidget):
     #: but at the cost of not being able to share constraints
     #: across Container boundaries. This flag must be explicitly
     #: marked as True to enable sharing.
-    share_layout = Bool(False)
+    share_layout = d_(Bool(False))
 
     #: A constant symbolic object that represents the internal left
     #: boundary of the content area of the container.
@@ -90,7 +89,7 @@ class Container(ConstraintsWidget):
     #: and the content box. The default padding is (10, 10, 10, 10).
     #: Certain subclasses, such as GroupBox, may provide additional
     #: margin than what is specified by the padding.
-    padding = Coerced(Box, factory=lambda: Box(10, 10, 10, 10))
+    padding = d_(Coerced(Box, factory=lambda: Box(10, 10, 10, 10)))
 
     #: A cached property which returns the children defined on the
     #: container which are instances of ConstraintsWidget.

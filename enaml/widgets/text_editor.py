@@ -1,8 +1,10 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2011, Enthought, Inc.
+#  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Unicode, Bool, Int
+from atom.api import Unicode, Bool, Int, observe, set_default
+
+from enaml.core.declarative import d_
 
 from .control import Control
 
@@ -12,31 +14,35 @@ class TextEditor(Control):
 
     """
     #: The text for the text editor
-    text = Unicode("")
+    text = d_(Unicode(""))
 
     #: The editing mode for the editor
-    mode = Unicode("ace/mode/text")
+    mode = d_(Unicode("ace/mode/text"))
 
     #: The theme for the editor
-    theme = Unicode("ace/theme/textmate")
+    theme = d_(Unicode("ace/theme/textmate"))
 
     #: Auto pairs parentheses, braces, etc
-    auto_pair = Bool(True)
+    auto_pair = d_(Bool(True))
 
     #: The editor's font size
-    font_size = Int(12)
+    font_size = d_(Int(12))
 
     #: Display the margin line
-    margin_line = Bool(True)
+    margin_line = d_(Bool(True))
 
     #: The column number for the margin line
-    margin_line_column = Int(80)
+    margin_line_column = d_(Int(80))
+
+    #: A text editor expands freely in height and width by default.
+    hug_width = set_default('ignore')
+    hug_height = set_default('ignore')
 
     #--------------------------------------------------------------------------
-    # Initialization
+    # Messenger API
     #--------------------------------------------------------------------------
     def snapshot(self):
-        """ Returns the dict of creation attributes for the control.
+        """ Get the snapshot dict for the control.
 
         """
         snap = super(TextEditor, self).snapshot()
@@ -49,12 +55,12 @@ class TextEditor(Control):
         snap['margin_line_column'] = self.margin_line_column
         return snap
 
-    def bind(self):
-        """ A method called after initialization which allows the widget
-        to bind any event handlers necessary.
+    @observe(r'^(text|mode|theme|auto_pair|font_size|margin_line|'
+             r'margin_line_column)$', regex=True)
+    def send_member_change(self, change):
+        """ An observe which sends the state change to the client.
 
         """
-        super(TextEditor, self).bind()
-        self.publish_attributes('text', 'mode', 'theme', 'auto_pair',
-            'font_size', 'margin_line', 'margin_line_column')
+        # The superclass implementation is sufficient.
+        super(TextEditor, self).send_member_change(change)
 
