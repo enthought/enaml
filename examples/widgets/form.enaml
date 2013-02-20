@@ -40,6 +40,10 @@ enamldef Main(Window):
                 constraints = [width == 25]
             Slider:
                 id: sldr
+        Label:
+            text = 'Phone number'
+        Field:
+            mask = '(999) 999-9999;_'
         Field:
             placeholder = 'Odd Number Child'
 

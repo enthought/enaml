@@ -16,8 +16,31 @@ class Field(Control):
     #: The unicode text to display in the field.
     text = Unicode
 
-    #: The mask to use for text input.
-    #: TODO - describe and implement this mask
+    #: The mask to use for text input. The mask supports the following
+    #: grammar:
+    #: A   ASCII alphabetic character required. A-Z, a-z.
+    #: a   ASCII alphabetic character permitted but not required.
+    #: N   ASCII alphanumeric character required. A-Z, a-z, 0-9.
+    #: n   ASCII alphanumeric character permitted but not required.
+    #: X   Any character required.
+    #: x   Any character permitted but not required.
+    #: 9   ASCII digit required. 0-9.
+    #: 0   ASCII digit permitted but not required.
+    #: D   ASCII digit required. 1-9.
+    #: d   ASCII digit permitted but not required (1-9).
+    #: #   ASCII digit or plus/minus sign permitted but not required.
+    #: H   Hexadecimal character required. A-F, a-f, 0-9.
+    #: h   Hexadecimal character permitted but not required.
+    #: B   Binary character required. 0-1.
+    #: b   Binary character permitted but not required.
+    #: >   All following alphabetic characters are uppercased.
+    #: <   All following alphabetic characters are lowercased.
+    #: !   Switch off case conversion.
+    #: \   Use \ to escape the special characters listed above to use them as separators.
+    #: 
+    #: The mask consists of a string of mask characters and separators, optionally
+    #: followed by a semicolon and the character used for blanks
+    # Eg: 9 digit phone number: (999) 999-9999;_ 
     mask = Unicode
 
     #: The validator to use for this field. If the validator provides
@@ -63,6 +86,7 @@ class Field(Control):
         snap = super(Field, self).snapshot()
         snap['text'] = self.text
         snap['validator'] = self._client_validator()
+        snap['mask'] = self.mask
         snap['submit_triggers'] = self.submit_triggers
         snap['placeholder'] = self.placeholder
         snap['echo_mode'] = self.echo_mode
@@ -77,7 +101,7 @@ class Field(Control):
         """
         super(Field, self).bind()
         attrs = (
-            'text', 'placeholder', 'echo_mode', 'max_length', 'read_only',
+            'text', 'mask', 'placeholder', 'echo_mode', 'max_length', 'read_only',
         )
         self.publish_attributes(*attrs)
         self.on_trait_change(self._send_validator, 'validator')

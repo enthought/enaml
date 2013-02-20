@@ -62,6 +62,7 @@ class QtField(QtControl):
         """
         super(QtField, self).create(tree)
         self.set_text(tree['text'])
+        self.set_mask(tree['mask'])
         self.set_validator(tree['validator'])
         self.set_submit_triggers(tree['submit_triggers'])
         self.set_placeholder(tree['placeholder'])
@@ -205,6 +206,12 @@ class QtField(QtControl):
         self.widget().setText(text)
         self._last_value = text
         self._clear_error_style()
+
+    def set_mask(self, mask):
+        """ Set the mask string used by the underlying widget.
+
+        """
+        self.widget().setInputMask(mask)
 
     def set_validator(self, validator):
         """ Set the validator for the underlying widget.
