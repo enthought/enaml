@@ -29,20 +29,6 @@ class QtStatusBar(QtWidget):
         super(QtStatusBar, self).create(tree)
         self.set_grip_enabled(tree['grip_enabled'])
 
-    def init_layout(self):
-        """ Initialize the layout for the underlying status bar control.
-
-        """
-        super(QtStatusBar, self).init_layout()
-        widget = self.widget()
-        for child in self.children():
-            if isinstance(child, QtPermanentStatusWidgets):
-                for subchild in child.children():
-                    widget.addPermanentWidget(subchild.widget())
-            if isinstance(child, QtTransientStatusWidgets):
-                for subchild in child.children():
-                    widget.addWidget(subchild.widget())
-
     #--------------------------------------------------------------------------
     # Child Events
     #--------------------------------------------------------------------------
@@ -58,13 +44,13 @@ class QtStatusBar(QtWidget):
         """ Handle the child added event for a QtStatusBar.
 
         """
+        widget = self.widget()
         if isinstance(child, QtPermanentStatusWidgets):
             for subchild in child.children():
                 widget.addPermanentWidget(subchild.widget())
         elif isinstance(child, QtTransientStatusWidget):
-            before = self.find_next_child(child)
-            self.widget().insertWidget(before, child.widget())
-
+            for subchild in child.children():
+                widget.insertWidget(child.widget())
 
     #--------------------------------------------------------------------------
     # Message Handling

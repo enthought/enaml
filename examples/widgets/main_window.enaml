@@ -24,7 +24,7 @@ from enaml.layout.api import vbox
 from enaml.widgets.api import (
     MainWindow, ToolBar, DockPane, MenuBar, Menu, Action, ActionGroup,
     StatusBar, PermanentStatusWidgets, TransientStatusWidgets,
-    Container, Html, PushButton
+    Container, Html, PushButton, Label
 )
 
 
@@ -91,12 +91,12 @@ enamldef MyMenuBar(MenuBar):
 
 enamldef MyStatusBar(StatusBar):
     grip_enabled = False
-    #PermanentStatusWidgets:
-    #    Label:
-    #        text = 'Permanent'
-    #TransientStatusWidgets:
-    #    Label:
-    #        text = 'Transient'
+    PermanentStatusWidgets:
+        Label:
+            text = 'Permanent'
+    TransientStatusWidgets:
+        Label:
+            text = 'Transient'
 
 
 enamldef MyToolBar(ToolBar):
