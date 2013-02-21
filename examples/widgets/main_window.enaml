@@ -23,6 +23,7 @@ Implementation Notes:
 from enaml.layout.api import vbox
 from enaml.widgets.api import (
     MainWindow, ToolBar, DockPane, MenuBar, Menu, Action, ActionGroup,
+    StatusBar, PermanentStatusWidgets, TransientStatusWidgets,
     Container, Html, PushButton
 )
 
@@ -88,6 +89,16 @@ enamldef MyMenuBar(MenuBar):
                 toggled :: print '%s toggled %s' % (text, 'on' if checked else 'off')
 
 
+enamldef MyStatusBar(StatusBar):
+    grip_enabled = False
+    #PermanentStatusWidgets:
+    #    Label:
+    #        text = 'Permanent'
+    #TransientStatusWidgets:
+    #    Label:
+    #        text = 'Transient'
+
+
 enamldef MyToolBar(ToolBar):
     Action:
         text = 'Button'
@@ -132,6 +143,8 @@ enamldef MyDockPane(DockPane):
 
 enamldef Main(MainWindow):
     MyMenuBar:
+        pass
+    MyStatusBar:
         pass
     MyToolBar:
         pass

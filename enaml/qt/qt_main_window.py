@@ -10,6 +10,7 @@ from .q_deferred_caller import deferredCall
 from .qt_container import QtContainer
 from .qt_dock_pane import QtDockPane
 from .qt_menu_bar import QtMenuBar
+from .qt_status_bar import QtStatusBar
 from .qt_tool_bar import QtToolBar
 from .qt_window import QtWindow
 
@@ -117,6 +118,7 @@ class QtMainWindow(QtWindow):
         components = self.components()
         main_window.setMenuBar(components['menu_bar'])
         main_window.setCentralWidget(components['central_widget'])
+        main_window.setStatusBar(components['status_bar'])
         for dpane in components['dock_panes']:
             main_window.addDockWidget(dpane.dockArea(), dpane)
         for tbar in components['tool_bars']:
@@ -154,6 +156,8 @@ class QtMainWindow(QtWindow):
                 d['tool_bars'].append(child.widget())
             elif isinstance(child, QtMenuBar):
                 d['menu_bar'] = child.widget()
+            elif isinstance(child, QtStatusBar):
+                d['status_bar'] = child.widget()
             elif isinstance(child, QtContainer):
                 d['central_widget'] = child.widget()
         return d
@@ -176,6 +180,9 @@ class QtMainWindow(QtWindow):
         elif isinstance(child, QtMenuBar):
             components = self.components()
             main_window.setMenuBar(components['menu_bar'])
+        elif isinstance(child, QtStatusBar):
+            components = self.components()
+            main_window.setStatusBar(components['status_bar'])
 
     def child_added(self, child):
         """ Handle the child added event for a QtMainWindow.
@@ -185,6 +192,9 @@ class QtMainWindow(QtWindow):
         if isinstance(child, QtMenuBar):
             components = self.components()
             main_window.setMenuBar(components['menu_bar'])
+        elif isinstance(child, QtStatusBar):
+            components = self.components()
+            main_window.setStatusBar(components['status_bar'])
         elif isinstance(child, QtContainer):
             components = self.components()
             main_window.setCentralWidget(components['central_widget'])

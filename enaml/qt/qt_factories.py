@@ -212,6 +212,21 @@ def stack_item_factory():
     return QtStackItem
 
 
+def status_bar_factory():
+    from .qt_status_bar import QtStatusBar
+    return QtStatusBar
+
+
+def permanent_status_widgets_factory():
+    from .qt_permanent_status_widgets import QtPermanentStatusWidgets
+    return QtPermanentStatusWidgets
+
+
+def transient_status_widgets_factory():
+    from .qt_transient_status_widgets import QtTransientStatusWidgets
+    return QtTransientStatusWidgets
+
+
 #def text_editor_factory():
 #    from .qt_text_editor import QtTextEditor
 #    return QtTextEditor
@@ -288,6 +303,9 @@ def register_default():
     register('Splitter', splitter_factory)
     register('Stack', stack_factory)
     register('StackItem', stack_item_factory)
+    register('StatusBar', status_bar_factory)
+    register('PermanentStatusWidgets', permanent_status_widgets_factory)
+    register('TransientStatusWidgets', transient_status_widgets_factory)
     register('TimeSelector', time_selector_factory)
     register('ToolBar', tool_bar_factory)
     register('TraitsItem', traits_item_factory)

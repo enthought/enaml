@@ -38,6 +38,7 @@ from .mpl_canvas import MPLCanvas
 from .multiline_field import MultilineField
 from .notebook import Notebook
 from .page import Page
+from .permanent_status_widgets import PermanentStatusWidgets
 from .progress_bar import ProgressBar
 from .push_button import PushButton
 from .radio_button import RadioButton
@@ -49,10 +50,12 @@ from .split_item import SplitItem
 from .splitter import Splitter
 from .stack import Stack
 from .stack_item import StackItem
+from .status_bar import StatusBar
 #from .text_editor import TextEditor
 from .time_selector import TimeSelector
 from .tool_bar import ToolBar
 from .traits_item import TraitsItem
+from .transient_status_widgets import TransientStatusWidgets
 from .web_view import WebView
 from .window import Window
 

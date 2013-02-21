@@ -7,6 +7,7 @@ from traits.api import Property, cached_property
 from .dock_pane import DockPane
 from .menu_bar import MenuBar
 from .tool_bar import ToolBar
+from .status_bar import StatusBar
 from .window import Window
 
 
@@ -31,7 +32,7 @@ class MainWindow(Window):
     dock_panes = Property(depends_on='children')
 
     #: A read only property which returns the window's StatusBar.
-    # status_bar = Property(depends_on='children')
+    status_bar = Property(depends_on='children')
 
     #--------------------------------------------------------------------------
     # Private API
@@ -82,4 +83,21 @@ class MainWindow(Window):
         isinst = isinstance
         panes = (child for child in self.children if isinst(child, DockPane))
         return tuple(panes)
+
+    @cached_property
+    def _get_status_bar(self):
+        """ The getter for the 'status_bar' property.
+
+        Returns
+        -------
+        result : StatusBar or None
+            The status bar for this main window, or None if one is not
+            defined.
+
+        """
+        status = None
+        for child in self.children:
+            if isinstance(child, StatusBar):
+                status = child
+        return status
 
