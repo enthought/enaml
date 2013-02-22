@@ -118,14 +118,15 @@ class QDualSlider(QSlider):
 
             for i, value in enumerate([self._low, self._high]):
                 opt.sliderPosition = value
-                hit = style.hitTestComplexControl(style.CC_Slider, opt, event.pos(), self)
-                if hit == style.SC_SliderHandle:
+                sr = style.subControlRect(style.CC_Slider, opt, style.SC_SliderHandle, self)
+                if sr.contains(event.pos()):
                     self._active_slider = i
-                    self._pressed_control = hit
+                    self._pressed_control = style.SC_SliderHandle
 
                     self.triggerAction(self.SliderMove)
                     self.setRepeatAction(self.SliderNoAction)
                     self.setSliderDown(True)
+                    self._click_offset = self._pick(event.pos() - sr.topLeft())
                     break
 
             if self._active_slider < 0:
@@ -144,9 +145,10 @@ class QDualSlider(QSlider):
         event.accept()
         opt = QStyleOptionSlider()
         self.initStyleOption(opt)
-        new_pos = self._pixelPosToRangeValue(self._pick(event.pos()), opt)
+        new_pos = self._pixelPosToRangeValue(self._pick(event.pos()) - self._click_offset, opt)
 
         if self._active_slider < 0:
+            new_pos = self._pixelPosToRangeValue(self._pick(event.pos()), opt)
             offset = new_pos - self._click_offset
             self._high += offset
             self._low += offset
@@ -158,6 +160,7 @@ class QDualSlider(QSlider):
                 diff = self.maximum() - self._high
                 self._low += diff
                 self._high += diff
+            self._click_offset = new_pos
         elif self._active_slider == 0:
             if new_pos >= self._high:
                 new_pos = self._high - 1
@@ -167,7 +170,6 @@ class QDualSlider(QSlider):
                 new_pos = self._low + 1
             self._high = new_pos
 
-        self._click_offset = new_pos
 
         self.update()
 
