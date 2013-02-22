@@ -35,6 +35,9 @@ class QDualSlider(QSlider):
         maximum and minimum, as is a normal slider, but instead of having a
         single slider value, there are 2 slider values.
 
+        Dragging on the slider track will cause both the low and high values to
+        move equally (ie the difference between them stays constant).
+
     """
 
     lowValueChanged = Signal(int)
@@ -42,6 +45,11 @@ class QDualSlider(QSlider):
     highValueChanged = Signal(int)
 
     def __init__(self, *args):
+        """ Configure some internal attributes needed to render the
+        dual slider interaction. Modeled using the private class from
+        QSlider
+
+        """
         super(QDualSlider, self).__init__(*args)
 
         self._low = self.minimum()
@@ -55,20 +63,35 @@ class QDualSlider(QSlider):
         self._active_slider = 0
 
     def lowValue(self):
+        """ Get the low value of the dual slider
+
+        """
         return self._low
 
     def setLowValue(self, low):
+        """ Set the low value of the dual slider
+
+        """
         self._low = low
         self.update()
 
     def highValue(self):
+        """ Get the high value of the dual slider
+
+        """
         return self._high
 
     def setHighValue(self, high):
+        """ Set the high value of the dual slider
+
+        """
         self._high = high
         self.update()
 
     def paintEvent(self, event):
+        """ Override the paint event to draw both slider handles
+
+        """
         # based on http://qt.gitorious.org/qt/qt/blobs/master/src/gui/widgets/qslider.cpp
 
         painter = QPainter(self)
@@ -99,6 +122,10 @@ class QDualSlider(QSlider):
             style.drawComplexControl(QStyle.CC_Slider, opt, painter, self)
 
     def mousePressEvent(self, event):
+        """ Mouse press event to process clicking on either handle or
+        the slider groove
+
+        """
         event.accept()
 
         style = self.style()
@@ -138,6 +165,10 @@ class QDualSlider(QSlider):
             event.ignore()
 
     def mouseMoveEvent(self, event):
+        """ Mouse move event to handle dragging either slider handle or the
+        slider groove
+
+        """
         if self._pressed_control != QStyle.SC_SliderHandle:
             event.ignore()
             return
@@ -179,6 +210,10 @@ class QDualSlider(QSlider):
             self.highValueChanged.emit(new_pos)
 
     def mouseReleaseEvent(self, event):
+        """ Change the render state of the handles when the mouse is released
+        if the user was dragging a handle
+
+        """
         if self._pressed_control == QStyle.SC_None:
             event.ignore()
             return
@@ -191,13 +226,19 @@ class QDualSlider(QSlider):
         self.update()
 
     def _pick(self, pt):
+        """ Return either the x or y value of the point depending on the
+        orientation of the slider
+
+        """
         if self.orientation() == Qt.Horizontal:
             return pt.x()
         else:
             return pt.y()
 
     def _pixelPosToRangeValue(self, pos, opt):
+        """ Map the pos argument to a value in the slider range
 
+        """
         style = self.style()
 
         gr = style.subControlRect(style.CC_Slider, opt, style.SC_SliderGroove, self)
