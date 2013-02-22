@@ -66,6 +66,16 @@ class StatusBar(Widget):
     def show_message(self, message, timeout=0):
         """ Send the 'show_message' action to the client widget.
 
+        Parameters
+        ----------
+            message : str
+                The message to show in the status bar
+
+            timeout : int
+                The number of milliseconds to show the message. Defaults
+                to 0, which will show the message until a new message is shown
+                or the clear_message message is sent
+
         """
         content = {'message': message, 'timeout': timeout}
         self.send_action('show_message', content)
