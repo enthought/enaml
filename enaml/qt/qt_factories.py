@@ -47,6 +47,11 @@ def dock_pane_factory():
     return QtDockPane
 
 
+def dual_slider_factory():
+    from .qt_dual_slider import QtDualSlider
+    return QtDualSlider
+
+
 def enable_canvas_factory():
     from .qt_enable_canvas import QtEnableCanvas
     return QtEnableCanvas
@@ -255,6 +260,7 @@ def register_default():
     register('DateSelector', date_selector_factory)
     register('DatetimeSelector', datetime_selector_factory)
     register('DockPane', dock_pane_factory)
+    register('DualSlider', dual_slider_factory)
     register('EnableCanvas', enable_canvas_factory)
     register('Field', field_factory)
     register('FileDialog', file_dialog_factory)
