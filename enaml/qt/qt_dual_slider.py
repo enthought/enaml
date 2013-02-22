@@ -88,7 +88,7 @@ class QDualSlider(QSlider):
             if self.tickPosition() != self.NoTicks:
                 opt.subControls |= QStyle.SC_SliderTickmarks
 
-            if self._pressed_control:
+            if self._pressed_control and self._active_slider == i:
                 opt.activeSubControls = self._pressed_control
                 opt.state |= QStyle.State_Sunken
             else:
@@ -175,6 +175,18 @@ class QDualSlider(QSlider):
             self.lowValueChanged.emit(new_pos)
         if self._active_slider != 0:
             self.highValueChanged.emit(new_pos)
+
+    def mouseReleaseEvent(self, event):
+        if self._pressed_control == QStyle.SC_None:
+            event.ignore()
+            return
+
+        event.accept()
+        if self._pressed_control == QStyle.SC_SliderHandle:
+            self.setSliderDown(False)
+        self._pressed_control = QStyle.SC_None
+        self.setRepeatAction(self.SliderNoAction)
+        self.update()
 
     def _pick(self, pt):
         if self.orientation() == Qt.Horizontal:
