@@ -208,6 +208,10 @@ class DualSlider(Control):
         if minimum > old_val:
             self._low_value = minimum
             self.trait_property_changed('low_value', old_val, minimum)
+        old_val = self._high_value
+        if minimum > old_val:
+            self._high_value = minimum
+            self.trait_property_changed('high_value', old_val, minimum)
         old_min = self._minimum
         if minimum != old_min:
             self._minimum = minimum
@@ -237,6 +241,10 @@ class DualSlider(Control):
         if maximum < old_val:
             self._high_value = maximum
             self.trait_property_changed('high_value', old_val, maximum)
+        old_val = self._low_value
+        if maximum < old_val:
+            self._low_value = maximum
+            self.trait_property_changed('low_value', old_val, maximum)
         old_max = self._maximum
         if maximum != old_max:
             self._maximum = maximum
