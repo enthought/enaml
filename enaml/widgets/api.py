@@ -18,6 +18,7 @@ from .date_selector import DateSelector
 from .datetime_selector import DatetimeSelector
 from .dock_pane import DockPane
 from .enable_canvas import EnableCanvas
+from .embed_widget import EmbedWidget
 from .field import Field
 from .file_dialog import FileDialog
 from .flow_area import FlowArea

@@ -52,6 +52,11 @@ def enable_canvas_factory():
     return QtEnableCanvas
 
 
+def embed_widget_factory():
+    from .qt_embed_widget import QtEmbedWidget
+    return QtEmbedWidget
+
+
 def field_factory():
     from .qt_field import QtField
     return QtField
@@ -256,6 +261,7 @@ def register_default():
     register('DatetimeSelector', datetime_selector_factory)
     register('DockPane', dock_pane_factory)
     register('EnableCanvas', enable_canvas_factory)
+    register('EmbedWidget', embed_widget_factory)
     register('Field', field_factory)
     register('FileDialog', file_dialog_factory)
     register('FlowArea', flow_area_factory)
