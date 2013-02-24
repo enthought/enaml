@@ -1,9 +1,8 @@
 
-from pyface.qt.QtCore import Qt, QRect, QSize, QPoint, QEvent, Signal
-from pyface.qt.QtGui import (
+from enaml.qt.qt.QtCore import Qt, QRect, QSize, QPoint, QEvent, Signal
+from enaml.qt.qt.QtGui import (
     QApplication, QCursor, QPainter, QWidget, QPen, QStyle
     )
-from pyface.util.guisupport import get_app_qt4, start_event_loop_qt4
 
 
 class PivotSelector(QWidget):
@@ -31,8 +30,14 @@ class PivotSelector(QWidget):
         """
         super(PivotSelector, self).__init__(parent)
         self.setAttribute(Qt.WA_Hover)
+
+        style = QApplication.style()
+        self._border = (style.pixelMetric(QStyle.PM_DefaultFrameWidth) + 2) * 2
+        self._margin = style.pixelMetric(QStyle.PM_ButtonMargin)
+
         self._hand_cursor = QCursor(Qt.OpenHandCursor)
         self._drag_cursor = QCursor(Qt.SizeHorCursor)
+        self._hover_selector = False
 
     def selectors(self):
         """ Get the current selectors
@@ -62,11 +67,9 @@ class PivotSelector(QWidget):
         # Cache the widths
         style = self.style()
         fm = self.fontMetrics()
-        border = (style.pixelMetric(QStyle.PM_DefaultFrameWidth) + 1)* 2
-        margin = style.pixelMetric(QStyle.PM_ButtonMargin)
         widths = []
         for sel in self._selectors:
-            widths.append(fm.width(sel)+border+margin)
+            widths.append(fm.width(sel)+self._border+self._margin)
         self._widths = widths
 
         self.update()
@@ -84,8 +87,7 @@ class PivotSelector(QWidget):
         fm = self.fontMetrics()
 
         style = self.style()
-        border = (style.pixelMetric(QStyle.PM_DefaultFrameWidth) + 1)* 2
-        margin = style.pixelMetric(QStyle.PM_ButtonMargin)
+        border, margin = self._border, self._margin
 
         rect = QRect()
         rect.setHeight(fm.height()+border)
@@ -96,19 +98,26 @@ class PivotSelector(QWidget):
             if i <= self._selected:
                 painter.setPen(Qt.black)
             else:
-                painter.setPen(Qt.gray)
+                painter.setPen(Qt.lightGray)
             painter.drawText(rect, Qt.AlignCenter, str(sel))
-            painter.setPen(Qt.gray)
+            painter.setPen(Qt.lightGray)
             painter.drawRect(rect)
 
             # Now draw the selector
             if i == self._selected:
-                painter.setPen(QPen(Qt.gray, 3.0, join=Qt.MiterJoin))
+                if self._hover_selector:
+                    color = Qt.black
+                else:
+                    color = Qt.gray
+                painter.setPen(QPen(color, 2.0, join=Qt.MiterJoin))
                 sh = self._selector_height
                 tr = rect.topRight() + QPoint(margin/2 + 1, -sh/2)
-                br = rect.bottomRight() + QPoint(margin/2 + 1, sh/2)
-                offset = QPoint(6, 0)
+                br = rect.bottomRight() + QPoint(margin/2 + 1, sh/2+2)
+                offset = QPoint(8, 0)
                 painter.drawPolyline([tr-offset, tr, br, br-offset])
+                if self._hover_selector:
+                    offset = QPoint(4, 0)
+                    painter.drawLine(tr-offset, br-offset)
 
             rect.moveLeft(rect.left()+width+margin)
 
@@ -123,8 +132,7 @@ class PivotSelector(QWidget):
         """
         style = self.style()
         fm = self.fontMetrics()
-        border = (style.pixelMetric(QStyle.PM_DefaultFrameWidth) + 1)* 2
-        margin = style.pixelMetric(QStyle.PM_ButtonMargin)
+        border, margin = self._border, self._margin
         height = fm.height() + border + self._selector_height
         return QSize(sum(self._widths)+border, height)
 
@@ -134,8 +142,11 @@ class PivotSelector(QWidget):
             if (self.selectorRect().contains(event.pos()) and
                 not self.cursor() == self._drag_cursor):
                 self.setCursor(self._drag_cursor)
+                self._hover_selector = True
             else:
                 self.setCursor(QCursor(Qt.OpenHandCursor))
+                self._hover_selector = False
+            self.update()
         return super(PivotSelector, self).event(event)
 
     def mousePressEvent(self, event):
@@ -188,17 +199,25 @@ class PivotSelector(QWidget):
         # calculate the rect of the selector
         style = self.style()
         fm = self.fontMetrics()
-        border = (style.pixelMetric(QStyle.PM_DefaultFrameWidth) + 1)* 2
-        margin = style.pixelMetric(QStyle.PM_ButtonMargin)
+        border, margin = self._border, self._margin
         height = fm.height() + border + self._selector_height
         return QRect(sum(self._widths[:self._selected+1]), 0, 4, height)
 
 def main():
-    app = get_app_qt4()
+    import sys
+    from enaml.qt.qt.QtGui import QVBoxLayout
+    app = QApplication.instance()
+    if not app:
+        app = QApplication(sys.argv)
     ps = PivotSelector()
     ps.setSelectors(["Industry", "Counterparty", "Trader"])
-    ps.show()
-    start_event_loop_qt4(app)
+    win = QWidget()
+    layout = QVBoxLayout()
+    layout.addWidget(ps)
+    win.setLayout(layout)
+    win.move(0, 0)
+    win.show()
+    app.exec_()
 
 
 if __name__ == '__main__':
