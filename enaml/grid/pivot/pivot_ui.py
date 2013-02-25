@@ -237,14 +237,14 @@ class MultiLevelHeader(QVariableSizeHeader):
             section_sizes = map(self.sectionSizeFromContents, range(count))
             self._count = count
             self.setSectionSize([size.width() for size in section_sizes])
-            self.setHeaderSize(max(*(size.height() for size in section_sizes)))
+            self.setHeaderSize(max(0, *(size.height() for size in section_sizes)))
         else:
             count = self._model.row_count()
             self.header_model = self.engine.row_header
             section_sizes = map(self.sectionSizeFromContents, range(count))
             self._count = count
             self.setSectionSize([size.height() for size in section_sizes])
-            self.setHeaderSize(max(*(size.width() for size in section_sizes)))
+            self.setHeaderSize(max(0, *(size.width() for size in section_sizes)))
 
     def mousePressEvent(self, event):
         """ Override to handle clicks on the expand/collapse icons.

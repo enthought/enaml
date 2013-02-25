@@ -557,18 +557,20 @@ class PandasEngine(HasTraits):
                 tables.append(self.buddy._get_pivot_table(aggregate,
                     len(self.row_pivots), len(self.col_pivots)))
             for pt in tables:
-                if isinstance(pt.index, pandas.MultiIndex):
-                    for path in pt.index:
-                        row_root.add_path(path)
-                else:
-                    for item in pt.index:
-                        row_root.add_path((item,))
-                if isinstance(pt.columns, pandas.MultiIndex):
-                    for path in pt.columns:
-                        col_root.add_path(path)
-                else:
-                    for item in pt.columns:
-                        col_root.add_path((item,))
+                if len(self.row_pivots):
+                    if isinstance(pt.index, pandas.MultiIndex):
+                        for path in pt.index:
+                            row_root.add_path(path)
+                    else:
+                        for item in pt.index:
+                            row_root.add_path((item,))
+                if len(self.col_pivots):
+                    if isinstance(pt.columns, pandas.MultiIndex):
+                        for path in pt.columns:
+                            col_root.add_path(path)
+                    else:
+                        for item in pt.columns:
+                            col_root.add_path((item,))
 
         if self.aggregates_on == 'cols':
             row_traits = dict()
