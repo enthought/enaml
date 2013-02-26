@@ -18,6 +18,9 @@ class TreemapView(QWidget):
         self._rect_cache = defaultdict(list)
         self._depth = 0
         self._model = NullModel()
+        font = self.font()
+        font.setPointSize(12)
+        self.setFont(font)
 
     #--------------------------------------------------------------------------
     # Public API
