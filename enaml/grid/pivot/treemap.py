@@ -64,29 +64,44 @@ class TreemapView(QWidget):
     def paintEvent(self, event):
         painter = QPainter(self)
 
-        cell = QColor(137, 207, 230)
+        cell = QColor(152, 186, 210)
         top_border = cell.lighter()
         bottom_border = cell.darker()
+        fm = self.fontMetrics()
+        leading = fm.lineSpacing()
 
         max_depth = self._depth
 
-        for index, rect in iter(self._rect_cache[max_depth]):
-            painter.fillRect(rect, cell)
+        for depth in range(max_depth, 0, -1):
+            for groups in self._rect_cache[depth]:
+                for i, (name, rect) in enumerate(groups): #self._rect_cache[depth]):
+                    if depth == max_depth:
+                        painter.fillRect(rect, cell)
 
-            top_border = cell.lighter()
-            bottom_border = cell.darker()
-            painter.setPen(bottom_border)
-            painter.drawPolyline([rect.bottomLeft(), rect.bottomRight(),
-                                  rect.topRight()])
-            painter.setPen(top_border)
-            painter.drawPolyline([rect.topRight(), rect.topLeft(),
-                                  rect.bottomLeft()])
+                        top_border = cell.lighter()
+                        bottom_border = cell.darker()
+                        painter.setPen(bottom_border)
+                        painter.drawPolyline([rect.bottomLeft(), rect.bottomRight(),
+                                              rect.topRight()])
+                        painter.setPen(top_border)
+                        painter.drawPolyline([rect.topRight(), rect.topLeft(),
+                                              rect.bottomLeft()])
 
-            painter.setPen(bottom_border)
-            painter.drawText(rect.adjusted(3,3,0,0), Qt.AlignLeft | Qt.AlignTop, index)
+                    else:
+                        painter.setPen(Qt.black)
+                        painter.drawRect(rect)
+
+                    if depth in (1, max_depth):
+                        rect = rect.adjusted(3,3,0,0)
+                        painter.setPen(bottom_border)
+                        if i == 0 and not depth == 1:
+                            rect.adjust(0,leading,0,0)
+                        elif depth == 1:
+                            painter.setPen(Qt.black)
+                        painter.drawText(rect, Qt.AlignLeft | Qt.AlignTop, str(name))
 
         painter.setPen(Qt.gray)
-        painter.drawRect(self.rect().adjusted(0,0,-1,-1))
+        #painter.drawRect(self.rect().adjusted(0,0,-1,-1))
 
     def _update(self):
         # Recompute layouts
@@ -111,7 +126,7 @@ class TreemapView(QWidget):
 
         rects = self._layout(pt, 0, len(pt) - 1, bounds)
 
-        self._rect_cache[depth].extend(zip(pt.index, rects))
+        self._rect_cache[depth].append(zip(pt.index, rects))
 
         if depth >= self._model.engine.max_depth:
             return
