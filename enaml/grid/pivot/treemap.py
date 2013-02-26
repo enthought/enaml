@@ -5,8 +5,6 @@ from enaml.qt.qt.QtGui import (
     QWidget, QPainter, QColor, QSizePolicy
     )
 
-from ..tabular_model import NullModel
-from .pivot_ui import PivotModel
 from .pandas_pivot import AggregationNode, MarginNode
 
 
@@ -17,7 +15,7 @@ class TreemapView(QWidget):
 
         self._rect_cache = defaultdict(list)
         self._depth = 0
-        self._model = NullModel()
+        self._engine = None
         self._big_font = font = self.font()
         font.setBold(True)
         self._small_font = font = self.font()
@@ -33,33 +31,29 @@ class TreemapView(QWidget):
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
-    def model(self):
-        """ Get the model being viewed by the widget
+    def engine(self):
+        """ Get the pivot engine used by the widget
 
         Returns
         -------
-        result : TabularModel
-            The tabular model being viewed by the widget
+        result : PivotEngine
+            The tabular engine being viewed by the widget
 
         """
-        return self._model
+        return self._engine
 
-    def setModel(self, model):
-        """ Set the model being viewed by the widget
+    def setEngine(self, engine):
+        """ Set the engine being viewed by the widget
 
         Parameters
         ----------
-        model : TabularModel
-            The model to be viewed by the widget
+        engine : TabularModel
+            The engine to be viewed by the widget
 
         """
-        assert isinstance(model, PivotModel)
-        if self._model:
-            self._model.dataChanged.disconnect(self._update)
-        self._model = model
-        self._depth = model.engine.max_depth
+        self._engine = engine
+        self._depth = engine.max_depth
         self._update()
-        self._model.dataChanged.connect(self._update)
 
     def setDepth(self, depth):
         self._depth = depth
@@ -78,12 +72,12 @@ class TreemapView(QWidget):
         fm = self.fontMetrics()
         leading = fm.lineSpacing()
 
-        max_depth = self._depth
+        render_depth = self._depth
 
-        for depth in range(max_depth, 0, -1):
+        for depth in range(render_depth, 0, -1):
             for groups in self._rect_cache[depth]:
                 for i, (name, rect, color) in enumerate(groups): #self._rect_cache[depth]):
-                    if depth == max_depth:
+                    if depth == render_depth:
                         cell = QColor(*(color*255))
                         painter.fillRect(rect, cell)
 
@@ -100,7 +94,7 @@ class TreemapView(QWidget):
                         painter.setPen(Qt.black)
                         painter.drawRect(rect)
 
-                    if (depth in (1, max_depth) and
+                    if (depth in (1, render_depth) and
                         (rect.width()*rect.height() > 300)):
                         rect = rect.adjusted(3,3,0,0)
                         painter.setPen(bottom_border)
@@ -123,15 +117,15 @@ class TreemapView(QWidget):
 
     def layout(self):
         rect = self.rect().adjusted(1,1,-1,-1)
-        aggregate = self._model.engine.aggregates
+        aggregate = self._engine.aggregates
         self._rect_cache = defaultdict(list)
         self.squarifyLayout(rect, aggregate)
 
     def squarifyLayout(self, bounds, aggregates, depth=1, index=tuple()):
         column, aggfunc = aggregates[0]
-        pt = self._model.engine._get_pivot_table(aggregates[0], depth, 0).sort(column, ascending=False)[column]
+        pt = self._engine._get_pivot_table(aggregates[0], depth, 0).sort(column, ascending=False)[column]
 
-        pt2 = self._model.engine._get_pivot_table(aggregates[1], depth, 0)[aggregates[1][0]]
+        pt2 = self._engine._get_pivot_table(aggregates[1], depth, 0)[aggregates[1][0]]
 
         if isinstance(pt.index, pandas.MultiIndex):
             # XXX WTF the multiindex isn't working properly
@@ -145,7 +139,7 @@ class TreemapView(QWidget):
 
         self._rect_cache[depth].append(zip(pt.index, rects, self._cm.map_screen(pt2.ix[pt.index])))
 
-        if depth >= self._model.engine.max_depth:
+        if depth >= self._engine.max_depth:
             return
 
         for idx, rect in zip(pt.index, rects):
@@ -210,15 +204,11 @@ class TreemapView(QWidget):
         return rects
 
 
-def treemap_view(engine, model_class=PivotModel, view_class=TreemapView,
-                 parent = None):
+def treemap_view(engine, view_class=TreemapView, parent = None):
     """ Return a TreemapView configured to display a pandas engine
     """
 
-    model = model_class(engine)
-
     view = view_class(parent)
-
-    view.setModel(model)
+    view.setEngine(engine)
     return view
 
