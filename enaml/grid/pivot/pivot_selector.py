@@ -1,7 +1,7 @@
 
 from enaml.qt.qt.QtCore import Qt, QRect, QSize, QPoint, QEvent, Signal
 from enaml.qt.qt.QtGui import (
-    QApplication, QCursor, QPainter, QWidget, QPen, QStyle
+    QApplication, QCursor, QPainter, QWidget, QPen, QStyle, QColor,
     )
 
 
@@ -92,6 +92,10 @@ class PivotSelector(QWidget):
         rect = QRect()
         rect.setHeight(fm.height()+border)
         rect.setTopLeft(QPoint(margin/2, self._selector_height))
+
+        hover_pen = QPen(Qt.black, 2, join=Qt.MiterJoin)
+        pen = QPen(Qt.gray, 2, join=Qt.MiterJoin)
+
         for i, sel in enumerate(self._selectors):
             width = fm.width(sel) + border
             rect.setWidth(width)
@@ -106,10 +110,9 @@ class PivotSelector(QWidget):
             # Now draw the selector
             if i == self._selected:
                 if self._hover_selector:
-                    color = Qt.black
+                    painter.setPen(hover_pen)
                 else:
-                    color = Qt.gray
-                painter.setPen(QPen(color, 2.0, join=Qt.MiterJoin))
+                    painter.setPen(pen)
                 sh = self._selector_height
                 tr = rect.topRight() + QPoint(margin/2 + 1, -sh/2)
                 br = rect.bottomRight() + QPoint(margin/2 + 1, sh/2+2)
@@ -118,6 +121,8 @@ class PivotSelector(QWidget):
                 if self._hover_selector:
                     offset = QPoint(4, 0)
                     painter.drawLine(tr-offset, br-offset)
+                    painter.setPen(QPen(QColor("#ADD8E6"), 2))
+                    painter.drawLine(tr-QPoint(2, -2), br-QPoint(2, 2))
 
             rect.moveLeft(rect.left()+width+margin)
 
@@ -147,6 +152,8 @@ class PivotSelector(QWidget):
                 self.setCursor(QCursor(Qt.OpenHandCursor))
                 self._hover_selector = False
             self.update()
+        if (event.type() == QEvent.HoverLeave):
+            self._hover_selector = False
         return super(PivotSelector, self).event(event)
 
     def mousePressEvent(self, event):
@@ -202,7 +209,7 @@ class PivotSelector(QWidget):
         fm = self.fontMetrics()
         border, margin = self._border, self._margin
         height = fm.height() + border + self._selector_height
-        return QRect(sum(self._widths[:self._selected+1]), 0, 4, height)
+        return QRect(sum(self._widths[:self._selected+1])-4, 0, 8, height)
 
 def main():
     import sys
