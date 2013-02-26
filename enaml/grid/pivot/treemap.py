@@ -198,9 +198,9 @@ class TreemapView(QWidget):
         accum[1:] = factors[:-1].cumsum()
 
         if width <= height:
-            rects = [QRect(x, y+round(height*(1-a-f)), width, round(height*f)) for f, a in zip(factors, accum)]
+            rects = [QRect(x, y+round(height*a), width, round(height*f)) for f, a in zip(factors, accum)]
         else:
-            rects = [QRect(x + round(width*(1-a-f)), y, round(width*f), height) for f, a in zip(factors, accum)]
+            rects = [QRect(x + round(width*a), y, round(width*f), height) for f, a in zip(factors, accum)]
 
         return rects
 
