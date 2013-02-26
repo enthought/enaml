@@ -18,9 +18,10 @@ class TreemapView(QWidget):
         self._rect_cache = defaultdict(list)
         self._depth = 0
         self._model = NullModel()
-        font = self.font()
-        font.setPointSize(12)
-        self.setFont(font)
+        self._big_font = font = self.font()
+        font.setBold(True)
+        self._small_font = font = self.font()
+        font.setPointSize(10)
 
         # XXX This is a hack
         from chaco.api import RdBu, DataRange1D
@@ -102,10 +103,13 @@ class TreemapView(QWidget):
                     if depth in (1, max_depth):
                         rect = rect.adjusted(3,3,0,0)
                         painter.setPen(bottom_border)
-                        if i == 0 and not depth == 1:
-                            rect.adjust(0,leading,0,0)
-                        elif depth == 1:
+                        if depth == 1:
                             painter.setPen(Qt.black)
+                            painter.setFont(self._big_font)
+                        else:
+                            painter.setFont(self._small_font)
+                            if i == 0:
+                                rect.adjust(0,leading,0,0)
                         painter.drawText(rect, Qt.AlignLeft | Qt.AlignTop, str(name))
 
         painter.setPen(Qt.gray)
