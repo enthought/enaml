@@ -99,12 +99,15 @@ class TreemapView(QWidget):
         self._rect_cache = defaultdict(list)
         self.squarifyLayout(rect, aggregate)
 
-    def squarifyLayout(self, bounds, aggregate, depth=1, index=None):
+    def squarifyLayout(self, bounds, aggregate, depth=1, index=tuple()):
         column, aggfunc = aggregate
         pt = self._model.engine._get_pivot_table(aggregate, depth, 0).sort(column, ascending=False)[column]
 
         if isinstance(pt.index, pandas.MultiIndex):
-            pt = pt.ix[index]
+            # XXX WTF the multiindex isn't working properly
+            # for a Series
+            for i in index:
+                pt = pt.ix[i]
 
         rects = self._layout(pt, 0, len(pt) - 1, bounds)
 
@@ -114,7 +117,7 @@ class TreemapView(QWidget):
             return
 
         for idx, rect in zip(pt.index, rects):
-            self.squarifyLayout(rect, aggregate, depth+1, idx)
+            self.squarifyLayout(rect, aggregate, depth+1, index+(idx,))
 
     def _layout(self, pt, start, end, bounds):
         if start > end: return []
