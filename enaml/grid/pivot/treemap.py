@@ -22,6 +22,13 @@ class TreemapView(QWidget):
         font.setPointSize(12)
         self.setFont(font)
 
+        # XXX This is a hack
+        from chaco.api import RdBu, DataRange1D
+
+        self._cm = cm = RdBu(range=DataRange1D())
+        cm.range.low = -0.1
+        cm.range.high = 0.1
+
     #--------------------------------------------------------------------------
     # Public API
     #--------------------------------------------------------------------------
@@ -65,8 +72,8 @@ class TreemapView(QWidget):
         painter = QPainter(self)
 
         cell = QColor(152, 186, 210)
-        top_border = cell.lighter()
-        bottom_border = cell.darker()
+        top_border = cell.lighter(110)
+        bottom_border = cell.darker(200)
         fm = self.fontMetrics()
         leading = fm.lineSpacing()
 
@@ -74,8 +81,9 @@ class TreemapView(QWidget):
 
         for depth in range(max_depth, 0, -1):
             for groups in self._rect_cache[depth]:
-                for i, (name, rect) in enumerate(groups): #self._rect_cache[depth]):
+                for i, (name, rect, color) in enumerate(groups): #self._rect_cache[depth]):
                     if depth == max_depth:
+                        cell = QColor(*(color*255))
                         painter.fillRect(rect, cell)
 
                         top_border = cell.lighter()
@@ -110,29 +118,32 @@ class TreemapView(QWidget):
 
     def layout(self):
         rect = self.rect().adjusted(1,1,-1,-1)
-        aggregate = self._model.engine.aggregates[0]
+        aggregate = self._model.engine.aggregates
         self._rect_cache = defaultdict(list)
         self.squarifyLayout(rect, aggregate)
 
-    def squarifyLayout(self, bounds, aggregate, depth=1, index=tuple()):
-        column, aggfunc = aggregate
-        pt = self._model.engine._get_pivot_table(aggregate, depth, 0).sort(column, ascending=False)[column]
+    def squarifyLayout(self, bounds, aggregates, depth=1, index=tuple()):
+        column, aggfunc = aggregates[0]
+        pt = self._model.engine._get_pivot_table(aggregates[0], depth, 0).sort(column, ascending=False)
+
+        pt2 = self._model.engine._get_pivot_table(aggregates[1], depth, 0)[aggregates[1][0]]
 
         if isinstance(pt.index, pandas.MultiIndex):
             # XXX WTF the multiindex isn't working properly
             # for a Series
             for i in index:
                 pt = pt.ix[i]
+                pt2 = pt2.ix[i]
 
         rects = self._layout(pt, 0, len(pt) - 1, bounds)
 
-        self._rect_cache[depth].append(zip(pt.index, rects))
+        self._rect_cache[depth].append(zip(pt.index, rects, self._cm.map_screen(pt2.ix[pt.index])))
 
         if depth >= self._model.engine.max_depth:
             return
 
         for idx, rect in zip(pt.index, rects):
-            self.squarifyLayout(rect, aggregate, depth+1, index+(idx,))
+            self.squarifyLayout(rect, aggregates, depth+1, index+(idx,))
 
     def _layout(self, pt, start, end, bounds):
         if start > end: return []
