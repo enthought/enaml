@@ -100,7 +100,8 @@ class TreemapView(QWidget):
                         painter.setPen(Qt.black)
                         painter.drawRect(rect)
 
-                    if depth in (1, max_depth):
+                    if (depth in (1, max_depth) and
+                        (rect.width()*rect.height() > 300)):
                         rect = rect.adjusted(3,3,0,0)
                         painter.setPen(bottom_border)
                         if depth == 1:
