@@ -124,7 +124,7 @@ class TreemapView(QWidget):
 
     def squarifyLayout(self, bounds, aggregates, depth=1, index=tuple()):
         column, aggfunc = aggregates[0]
-        pt = self._model.engine._get_pivot_table(aggregates[0], depth, 0).sort(column, ascending=False)
+        pt = self._model.engine._get_pivot_table(aggregates[0], depth, 0).sort(column, ascending=False)[column]
 
         pt2 = self._model.engine._get_pivot_table(aggregates[1], depth, 0)[aggregates[1][0]]
 
@@ -135,7 +135,8 @@ class TreemapView(QWidget):
                 pt = pt.ix[i]
                 pt2 = pt2.ix[i]
 
-        rects = self._layout(pt, 0, len(pt) - 1, bounds)
+        x, y, w, h = bounds.x(), bounds.y(), bounds.width(), bounds.height()
+        rects = self._layout(pt, x, y, w, h)
 
         self._rect_cache[depth].append(zip(pt.index, rects, self._cm.map_screen(pt2.ix[pt.index])))
 
@@ -145,22 +146,22 @@ class TreemapView(QWidget):
         for idx, rect in zip(pt.index, rects):
             self.squarifyLayout(rect, aggregates, depth+1, index+(idx,))
 
-    def _layout(self, pt, start, end, bounds):
-        if start > end: return []
+    def _layout(self, pt, x, y, w, h):
+        size = len(pt)
 
-        if (end - start < 2):
-            return self._slice_layout(pt, start, end, bounds)
+        if size == 0: return []
 
-        x, y, w, h = bounds.x(), bounds.y(), bounds.width(), bounds.height()
+        if (size < 2):
+            return self._slice_layout(pt, x, y, w, h)
 
-        total = pt[start:end+1].sum()
+        total = pt.sum()
 
-        mid = start
-        a = pt.irow(start) / total
+        mid = 0
+        a = pt.irow(0) / total
         b = a
 
         if (w < h):
-            while (mid <= end):
+            while (mid < size):
                 aspect = self.normAspect(h, w, a, b)
                 q = pt.irow(mid) / total
 
@@ -170,10 +171,10 @@ class TreemapView(QWidget):
                 mid += 1
                 b += q
 
-            rects = self._slice_layout(pt, start, mid, QRect(x, y, w, round(h*b)))
-            return rects + self._layout(pt, mid+1, end, QRect(x, y+round(h*b),w,round(h*(1-b))))
+            rects = self._slice_layout(pt[:mid+1], x, y, w, round(h*b))
+            return rects + self._layout(pt[mid+1:], x, y+round(h*b),w,round(h*(1-b)))
         else:
-            while (mid <= end):
+            while (mid < size):
                 aspect = self.normAspect(w,h,a,b)
                 q = pt.irow(mid) / total
 
@@ -183,37 +184,24 @@ class TreemapView(QWidget):
                 mid += 1
                 b += q
 
-            rects = self._slice_layout(pt, start, mid, QRect(x,y, round(w*b), h))
-            return rects + self._layout(pt, mid+1, end, QRect(x+round(w*b), y, round(w*(1-b)),h))
+            rects = self._slice_layout(pt[:mid+1], x, y, round(w*b), h)
+            return rects + self._layout(pt[mid+1:], x+round(w*b), y, round(w*(1-b)),h)
 
     def normAspect(self, big, small, a, b):
         x = (big * b) / (small * a / b)
         if x < 1: return 1/x
         else: return x
 
-    def _slice_layout(self, pt, start, end, bounds):
-        total = accumulator = 0
+    def _slice_layout(self, pt, x, y, width, height):
+        factors = pt / pt.sum()
+        accum = pandas.np.zeros(len(factors))
+        accum[1:] = factors[:-1].cumsum()
 
-        total = pt[start:end+1].sum()
+        if width <= height:
+            rects = [QRect(x, y+round(height*(1-a-f)), width, round(height*f)) for f, a in zip(factors, accum)]
+        else:
+            rects = [QRect(x + round(width*(1-a-f)), y, round(width*f), height) for f, a in zip(factors, accum)]
 
-        is_horiz = (bounds.width() > bounds.height())
-
-        rects = []
-        for i in range(start, end+1):
-            factor = pt.irow(i) / total
-            rect = QRect()
-            if not is_horiz:
-                rect.setX(bounds.x())
-                rect.setWidth(bounds.width())
-                rect.setY(bounds.y()+round(bounds.height()*(1-accumulator-factor)))
-                rect.setHeight(round(bounds.height()*factor))
-            else:
-                rect.setX(bounds.x()+round(bounds.width()*(1-accumulator-factor)))
-                rect.setWidth(round(bounds.width()*factor))
-                rect.setY(bounds.y())
-                rect.setHeight(bounds.height())
-            rects.append(rect)
-            accumulator += factor
         return rects
 
 
