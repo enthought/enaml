@@ -169,8 +169,9 @@ class PivotSelector(QWidget):
             x, edge = event.pos().x(), 0
             for i, width in enumerate(self._widths):
                 edge += width
-                if abs(x - edge) < 10:
+                if abs(x - edge) < width/2:
                     self._selected = i
+                    self.selectorLevelChanged.emit(self._selected)
                     self.update()
                     break
         elif self._dragging_name != -1:
@@ -188,7 +189,7 @@ class PivotSelector(QWidget):
     def mouseReleaseEvent(self, event):
         if self._dragging_selector:
             self._dragging_selector = False
-            self.selectorLevelChanged.emit(self._selected)
+            #self.selectorLevelChanged.emit(self._selected)
         elif self._dragging_name != -1:
             self._dragging_name = -1
             self.selectorOrderingChanged.emit(self._selectors)
