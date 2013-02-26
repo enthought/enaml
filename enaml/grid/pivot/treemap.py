@@ -145,13 +145,13 @@ class TreemapView(QWidget):
         total = pt[start:end+1].sum()
 
         mid = start
-        a = pt[start] / total
+        a = pt.irow(start) / total
         b = a
 
         if (w < h):
             while (mid <= end):
                 aspect = self.normAspect(h, w, a, b)
-                q = pt[mid] / total
+                q = pt.irow(mid) / total
 
                 if self.normAspect(h,w,a,b+q) > aspect:
                     break
@@ -164,7 +164,7 @@ class TreemapView(QWidget):
         else:
             while (mid <= end):
                 aspect = self.normAspect(w,h,a,b)
-                q = pt[mid] / total
+                q = pt.irow(mid) / total
 
                 if self.normAspect(w,h,a,b+q) > aspect:
                     break
@@ -189,7 +189,7 @@ class TreemapView(QWidget):
 
         rects = []
         for i in range(start, end+1):
-            factor = pt[i] / total
+            factor = pt.irow(i) / total
             rect = QRect()
             if not is_horiz:
                 rect.setX(bounds.x())
