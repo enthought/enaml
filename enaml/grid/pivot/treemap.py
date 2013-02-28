@@ -2,13 +2,20 @@ import pandas
 from collections import defaultdict
 from enaml.qt.qt.QtCore import Qt, QRect
 from enaml.qt.qt.QtGui import (
-    QWidget, QPainter, QColor, QSizePolicy
+    QWidget, QPainter, QColor, QSizePolicy, QFontMetrics
     )
 
 from .pandas_pivot import AggregationNode, MarginNode
 
 
 class TreemapView(QWidget):
+
+    #: Render the tree map in classic style
+    ClassicStyle = 0
+
+    #: Render the tree map in cluster style
+    ClusterStyle = 1
+
     def __init__(self, parent):
         super(TreemapView, self).__init__(parent)
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -16,10 +23,22 @@ class TreemapView(QWidget):
         self._rect_cache = defaultdict(list)
         self._depth = 0
         self._engine = None
-        self._big_font = font = self.font()
+
+        self._style = TreemapView.ClassicStyle
+
+        font = self.font()
+        font.setPointSize(8)
+        fm = QFontMetrics(font)
+        small_spacing = fm.lineSpacing()
+        self._line_heights = defaultdict(lambda: (font, small_spacing))
+
+        font = self.font()
+        font.setPointSize(11)
         font.setBold(True)
-        self._small_font = font = self.font()
-        font.setPointSize(10)
+        fm = QFontMetrics(font)
+        spacing = fm.lineSpacing()
+        self._line_heights[0] = (font, spacing)
+        self._line_heights[1] = (font, spacing)
 
         # XXX This is a hack
         from chaco.api import RdBu, DataRange1D
@@ -55,6 +74,22 @@ class TreemapView(QWidget):
         self._depth = engine.max_depth
         self._update()
 
+    def style(self):
+        """ Get the style of the treemap
+
+        """
+        return self._style
+
+    def setStyle(self, style):
+        """ Set the style of the treemap between classic and clustered
+        style
+
+        """
+        valid = (TreemapView.ClassicStyle, TreemapView.ClusterStyle)
+        assert style in valid
+        self._style = style
+        self._update()
+
     def setDepth(self, depth):
         self._depth = depth
         self.update()
@@ -69,20 +104,31 @@ class TreemapView(QWidget):
         cell = QColor(152, 186, 210)
         top_border = cell.lighter(110)
         bottom_border = cell.darker(200)
-        fm = self.fontMetrics()
-        leading = fm.lineSpacing()
 
         render_depth = self._depth
 
-        for depth in range(render_depth, 0, -1):
+        _, top_level_height = self._line_heights[0]
+
+        if self._style == TreemapView.ClassicStyle:
+            depths = range(render_depth, 0, -1)
+        else:
+            depths = range(0, render_depth+1)
+
+        for depth in depths:
+            font, spacing = self._line_heights[depth]
+            fm = QFontMetrics(font)
+            char_width = fm.averageCharWidth()*2
+
             for groups in self._rect_cache[depth]:
-                for i, (name, rect, color) in enumerate(groups): #self._rect_cache[depth]):
-                    if depth == render_depth:
+                for i, (name, rect, color) in enumerate(groups):
+                    if (self._style == TreemapView.ClusterStyle or
+                        depth == render_depth):
                         cell = QColor(*(color*255))
                         painter.fillRect(rect, cell)
 
-                        top_border = cell.lighter()
-                        bottom_border = cell.darker()
+                        top_border = cell.lighter(130)
+                        bottom_border = cell.darker(130)
+                        text_pen = cell.darker()
                         painter.setPen(bottom_border)
                         painter.drawPolyline([rect.bottomLeft(), rect.bottomRight(),
                                               rect.topRight()])
@@ -91,24 +137,24 @@ class TreemapView(QWidget):
                                               rect.bottomLeft()])
 
                     else:
-                        painter.setPen(Qt.black)
+                        text_pen = Qt.black
+                        painter.setPen(text_pen)
                         painter.drawRect(rect)
 
-                    if (depth in (1, render_depth) and
-                        (rect.width()*rect.height() > 300)):
-                        rect = rect.adjusted(3,3,0,0)
-                        painter.setPen(bottom_border)
+                    rect = rect.adjusted(3,2,-5,0)
+                    if (rect.width() > char_width and
+                        (self._style == TreemapView.ClusterStyle or
+                         depth in (1, render_depth))):
                         if depth == 1:
                             painter.setPen(Qt.black)
-                            painter.setFont(self._big_font)
+                            painter.setFont(font)
                         else:
-                            painter.setFont(self._small_font)
-                            if i == 0:
-                                rect.adjust(0,leading,0,0)
-                        painter.drawText(rect, Qt.AlignLeft | Qt.AlignTop, str(name))
-
-        painter.setPen(Qt.gray)
-        #painter.drawRect(self.rect().adjusted(0,0,-1,-1))
+                            painter.setPen(text_pen)
+                            painter.setFont(font)
+                            if i == 0 and self._style == TreemapView.ClassicStyle:
+                                rect.adjust(0, top_level_height, 0, 0)
+                        text = str(name)
+                        painter.drawText(rect, Qt.AlignLeft | Qt.AlignTop, text)
 
     def _update(self):
         # Recompute layouts
@@ -143,6 +189,10 @@ class TreemapView(QWidget):
             return
 
         for idx, rect in zip(pt.index, rects):
+            # Account for text
+            if self._style == TreemapView.ClusterStyle:
+                _, line_height = self._line_heights[depth]
+                rect = rect.adjusted(5, line_height+6, -5, -5)
             self.squarifyLayout(rect, aggregates, depth+1, index+(idx,))
 
     def _layout(self, pt, x, y, w, h):
