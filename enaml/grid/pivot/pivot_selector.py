@@ -2,6 +2,7 @@
 from enaml.qt.qt.QtCore import Qt, QRect, QSize, QPoint, QEvent, Signal
 from enaml.qt.qt.QtGui import (
     QApplication, QCursor, QPainter, QWidget, QPen, QStyle, QColor,
+    QSizePolicy,
     )
 
 
@@ -30,6 +31,7 @@ class PivotSelector(QWidget):
         """
         super(PivotSelector, self).__init__(parent)
         self.setAttribute(Qt.WA_Hover)
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
         style = QApplication.style()
         self._border = (style.pixelMetric(QStyle.PM_DefaultFrameWidth) + 2) * 2
