@@ -1,4 +1,5 @@
 import pandas
+import numpy as np
 from collections import defaultdict
 from enaml.qt.qt.QtCore import Qt, QRect
 from enaml.qt.qt.QtGui import (
@@ -242,14 +243,22 @@ class TreemapView(QWidget):
         else: return x
 
     def _slice_layout(self, pt, x, y, width, height):
-        factors = pt / pt.sum()
-        accum = pandas.np.zeros(len(factors))
-        accum[1:] = factors[:-1].cumsum()
+        factors = np.asarray(pt / pt.sum())
 
         if width <= height:
-            rects = [QRect(x, y+round(height*a), width, round(height*f)) for f, a in zip(factors, accum)]
+            heights = np.round(height*factors)
+            accum = y + np.zeros(len(factors))
+            accum[1:] += heights.cumsum()[:-1]
+            # Account for rounding errors
+            heights[-1] -= round(sum(heights - height*factors))
+            rects = [QRect(x, a, width, h) for a, h in zip(accum, heights)]
         else:
-            rects = [QRect(x + round(width*a), y, round(width*f), height) for f, a in zip(factors, accum)]
+            widths = np.round(width*factors)
+            accum = x + np.zeros(len(factors))
+            accum[1:] += widths.cumsum()[:-1]
+            # Account for rounding errors
+            widths[-1] -= round(sum(widths - width*factors))
+            rects = [QRect(a, y, w, height) for a, w in zip(accum, widths)]
 
         return rects
 
