@@ -182,7 +182,7 @@ class TreemapView(QWidget):
                 pt2 = pt2.ix[i]
 
         x, y, w, h = bounds.x(), bounds.y(), bounds.width(), bounds.height()
-        rects = self._layout(pt, x, y, w, h)
+        rects = self._layout(np.asarray(pt), x, y, w, h)
 
         self._rect_cache[depth].append(zip(pt.index, rects, self._cm.map_screen(pt2.ix[pt.index])))
 
@@ -198,52 +198,33 @@ class TreemapView(QWidget):
 
     def _layout(self, pt, x, y, w, h):
         size = len(pt)
-
-        if size == 0: return []
-
-        if (size < 2):
+        if size == 0:
+            return []
+        elif (size < 2):
             return self._slice_layout(pt, x, y, w, h)
 
-        total = pt.sum()
-
-        mid = 0
-        a = pt.irow(0) / total
-        b = a
+        factors = pt / pt.sum()
+        f_accum = factors.cumsum()
 
         if (w < h):
-            while (mid < size):
-                aspect = self.normAspect(h, w, a, b)
-                q = pt.irow(mid) / total
-
-                if self.normAspect(h,w,a,b+q) > aspect:
-                    break
-
-                mid += 1
-                b += q
+            aspects = (h * f_accum) / (w * factors / f_accum)
+            aspects[aspects < 1] = 1/aspects
+            mid = np.argmin(aspects)
+            b = f_accum[mid]
 
             rects = self._slice_layout(pt[:mid+1], x, y, w, round(h*b))
             return rects + self._layout(pt[mid+1:], x, y+round(h*b),w,round(h*(1-b)))
         else:
-            while (mid < size):
-                aspect = self.normAspect(w,h,a,b)
-                q = pt.irow(mid) / total
-
-                if self.normAspect(w,h,a,b+q) > aspect:
-                    break
-
-                mid += 1
-                b += q
+            aspects = (w * f_accum) / (h * factors / f_accum)
+            aspects[aspects < 1] = 1/aspects
+            mid = np.argmin(aspects)
+            b = f_accum[mid]
 
             rects = self._slice_layout(pt[:mid+1], x, y, round(w*b), h)
             return rects + self._layout(pt[mid+1:], x+round(w*b), y, round(w*(1-b)),h)
 
-    def normAspect(self, big, small, a, b):
-        x = (big * b) / (small * a / b)
-        if x < 1: return 1/x
-        else: return x
-
     def _slice_layout(self, pt, x, y, width, height):
-        factors = np.asarray(pt / pt.sum())
+        factors = pt / pt.sum()
 
         if width <= height:
             heights = np.round(height*factors)
