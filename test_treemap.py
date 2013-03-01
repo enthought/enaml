@@ -5,7 +5,8 @@ import pandas
 
 from enaml.qt.qt.QtCore import QRect
 from enaml.qt.qt.QtGui import (
-        QApplication, QWidget, QVBoxLayout, QHBoxLayout
+        QApplication, QWidget, QVBoxLayout, QHBoxLayout, QRadioButton,
+        QButtonGroup,
         )
 
 from enaml.grid.pivot import pandas_pivot, pivot_ui, pivot_selector, treemap
@@ -14,7 +15,7 @@ def main():
     app = QApplication([])
     frame = pandas.read_csv('StocksStatic.csv')
     engine = pandas_pivot.PandasEngine.from_frame(frame, 
-        aggregates = [('Mcap(USD)', 'sum'), ('1 Day Change % (USD)', 'mean')],
+        aggregates = [('Mcap(USD)', 'sum'), ('1 Week Change % (USD)', 'mean')],
         row_pivots = ['Industry', 'Supersector', 'Name'],
         col_pivots = [],
         row_margins = 'before',
@@ -35,11 +36,25 @@ def main():
     l = QHBoxLayout()
     l.addWidget(selector)
     l.addStretch()
+
+    def changeStyle(b_id):
+        tm.setStyle(group.checkedId())
+
+    group = QButtonGroup()
+    group.buttonClicked.connect(changeStyle)
+
+    classic = QRadioButton("Classic")
+    classic.setChecked(True)
+    cluster = QRadioButton("Cluster")
+    group.addButton(classic, 0)
+    group.addButton(cluster, 1)
+    l.addWidget(classic)
+    l.addWidget(cluster)
     layout = QVBoxLayout()
     layout.addLayout(l)
     layout.addWidget(tm)
     win.setLayout(layout)
-    win.setGeometry(QRect(200, 200, 800, 600))
+    win.setGeometry(QRect(400, 200, 870, 705))
     win.show()
     app.exec_()
 
