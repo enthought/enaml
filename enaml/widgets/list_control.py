@@ -2,7 +2,7 @@
 #  Copyright (c) 2013, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Bool, Enum, Range, Property, cached_property
+from traits.api import Bool, Enum, Range, Property, cached_property, Int
 
 from enaml.core.trait_types import CoercingInstance, EnamlEvent
 from enaml.layout.geometry import Size
@@ -74,6 +74,9 @@ class ListControl(Control):
     hug_width = 'weak'
     hug_height = 'weak'
 
+    #: The current row in the list. If there is no current item then is -1  
+    current_row = Int(-1)
+
     #: Events for changing selected row
     row_changed = EnamlEvent
 
@@ -114,11 +117,13 @@ class ListControl(Control):
     #--------------------------------------------------------------------------
     # Message Handling
     #--------------------------------------------------------------------------
-    def on_action_row_changed(self, newRow):
+    def on_action_row_changed(self, new_row):
         """ Handle the 'currentRowChanged' action from the client widget.
 
         """
-        self.row_changed(newRow)        
+        with self.loopback_guard('current_row'):
+            self.current_row = new_row
+        self.row_changed(new_row)        
 
     #--------------------------------------------------------------------------
     # Public API
