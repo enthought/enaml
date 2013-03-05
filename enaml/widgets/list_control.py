@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from traits.api import Bool, Enum, Range, Property, cached_property
 
-from enaml.core.trait_types import CoercingInstance
+from enaml.core.trait_types import CoercingInstance, EnamlEvent
 from enaml.layout.geometry import Size
 
 from .control import Control
@@ -74,6 +74,10 @@ class ListControl(Control):
     hug_width = 'weak'
     hug_height = 'weak'
 
+    #: Events for changing selected row
+    row_changed = EnamlEvent
+
+
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
@@ -106,6 +110,15 @@ class ListControl(Control):
             'batch_size',
         )
         self.publish_attributes(*attrs)
+
+    #--------------------------------------------------------------------------
+    # Message Handling
+    #--------------------------------------------------------------------------
+    def on_action_row_changed(self, newRow):
+        """ Handle the 'currentRowChanged' action from the client widget.
+
+        """
+        self.row_changed(newRow)        
 
     #--------------------------------------------------------------------------
     # Public API

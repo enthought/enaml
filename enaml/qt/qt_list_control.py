@@ -78,6 +78,7 @@ class QtListControl(QtControl):
         widget.itemChanged.connect(self.on_item_changed)
         widget.itemClicked.connect(self.on_item_clicked)
         widget.itemDoubleClicked.connect(self.on_item_double_clicked)
+        widget.currentRowChanged.connect(self.on_current_row_changed)
 
     #--------------------------------------------------------------------------
     # Child Events
@@ -135,6 +136,12 @@ class QtListControl(QtControl):
         owner = getattr(item, 'item_owner', None)
         if owner is not None:
             owner.on_double_clicked()
+
+    def on_current_row_changed(self, newRow):
+        """ The signal handler for the `currentRowChanged' signal.
+
+        """
+        self.send_action('row_changed', newRow)
 
     #--------------------------------------------------------------------------
     # Message Handlers
