@@ -3,9 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import enaml
-from enaml.application import Application
 from enaml.stdlib.sessions import simple_session
-from enaml.qt.qt_local_server import QtLocalServer
 
 
 if __name__ == '__main__':
@@ -18,11 +16,8 @@ if __name__ == '__main__':
         Main, message="Hello, world, from Python!"
     )
 
-    app = Application([sess_one, sess_two])
-
-    server = QtLocalServer(app)
-    client = server.local_client()
-    client.start_session('hello-world')
-    client.start_session('hello-world-python')
-    server.start()
-
+    from enaml.qt.qt_application import QtApplication
+    app = QtApplication([sess_one, sess_two])
+    app.start_session('hello-world')
+    app.start_session('hello-world-python')
+    app.start()
