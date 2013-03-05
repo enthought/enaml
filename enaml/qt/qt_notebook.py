@@ -281,6 +281,9 @@ class QtNotebook(QtConstraintsWidget):
         self.set_tab_position(tree['tab_position'])
         self.set_tabs_closable(tree['tabs_closable'])
         self.set_tabs_movable(tree['tabs_movable'])
+        self.set_current_index(tree['current_index'])
+        widget = self.widget()
+        widget.currentChanged.connect(self.on_current_index_changed)
 
     def init_layout(self):
         """ Handle the layout initialization for the notebook.
@@ -321,6 +324,14 @@ class QtNotebook(QtConstraintsWidget):
         """
         self.size_hint_updated()
 
+    def on_current_index_changed(self, index):
+        """ Handle the `currentChanged` signal from the QNotebook.
+
+        """
+        if 'current_index' not in self.loopback_guard:
+            content = {'current_index': index}
+            self.send_action('current_index_changed', content)
+
     #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
@@ -347,6 +358,12 @@ class QtNotebook(QtConstraintsWidget):
 
         """
         self.set_tabs_movable(content['tabs_movable'])
+
+    def on_action_set_current_index(self, content):
+        """ Handle the 'set_current_index action from the Enaml widget.
+
+        """
+        self.set_current_index(content['current_index'])
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -375,3 +392,9 @@ class QtNotebook(QtConstraintsWidget):
         """
         self.widget().setMovable(movable)
 
+    def set_current_index(self, index):
+        """ Set whether or not the tabs are movable.
+
+        """
+        with self.loopback_guard('current_index'):
+            self.widget().setCurrentIndex(index)

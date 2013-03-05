@@ -2,7 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Enum, Bool, Property, cached_property
+from traits.api import Enum, Bool, Property, cached_property, Int
 
 from .constraints_widget import ConstraintsWidget
 from .page import Page
@@ -10,7 +10,7 @@ from .page import Page
 
 class Notebook(ConstraintsWidget):
     """ A component which displays its children as tabbed pages.
-    
+
     """
     #: The style of tabs to use in the notebook. Preferences style
     #: tabs are appropriate for configuration dialogs and the like.
@@ -26,6 +26,9 @@ class Notebook(ConstraintsWidget):
 
     #: Whether or not the tabs in the notebook should be movable.
     tabs_movable = Bool(True)
+
+    #: The index of the currently selected Page
+    current_index = Int()
 
     #: A read only property which returns the notebook's Pages.
     pages = Property(depends_on='children')
@@ -50,6 +53,7 @@ class Notebook(ConstraintsWidget):
         snap['tab_position'] = self.tab_position
         snap['tabs_closable'] = self.tabs_closable
         snap['tabs_movable'] = self.tabs_movable
+        snap['current_index'] = self.current_index
         return snap
 
     def bind(self):
@@ -59,8 +63,20 @@ class Notebook(ConstraintsWidget):
         super(Notebook, self).bind()
         attrs = (
             'tab_style', 'tab_position', 'tabs_closable', 'tabs_movable',
+            'current_index'
         )
         self.publish_attributes(*attrs)
+
+    #--------------------------------------------------------------------------
+    # Message Handlers
+    #--------------------------------------------------------------------------
+    def on_action_current_index_changed(self, content):
+        """ Handle the 'current_index_changed' action from the UI widget.
+
+        The content will contain the current index.
+
+        """
+        self.current_index = content['current_index']
 
     #--------------------------------------------------------------------------
     # Private API
@@ -79,4 +95,3 @@ class Notebook(ConstraintsWidget):
         isinst = isinstance
         pages = (child for child in self.children if isinst(child, Page))
         return tuple(pages)
-
