@@ -2,7 +2,14 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from casuarius import Solver, medium
+import logging
+
+from casuarius import (
+    Solver, ExplainedCassowaryError, medium, _internal_required
+    )
+
+
+logger = logging.getLogger(__name__)
 
 
 class LayoutManager(object):
@@ -29,8 +36,9 @@ class LayoutManager(object):
             raise RuntimeError('Solver already initialized')
         solver = self._solver
         solver.autosolve = False
-        for cn in constraints:
-            solver.add_constraint(cn)
+
+        self._add_constraints_with_degradation(constraints)
+
         solver.autosolve = True
         self._initialized = True
 
@@ -53,8 +61,7 @@ class LayoutManager(object):
         solver.autosolve = False
         for cn in old_cns:
             solver.remove_constraint(cn)
-        for cn in new_cns:
-            solver.add_constraint(cn)
+        self._add_constraints_with_degradation(new_cns)
         solver.autosolve = True
 
     def layout(self, cb, width, height, size, strength=medium, weight=1.0):
@@ -194,4 +201,38 @@ class LayoutManager(object):
         if height_diff <= 1:
             max_height = -1
         return (max_width, max_height)
+
+    #--------------------------------------------------------------------------
+    # Private API
+    #--------------------------------------------------------------------------
+    def _add_constraints_with_degradation(self, constraints):
+        """ Add constraints to solver
+
+        If any set of the required constraints is unsatisfiable, the layout
+        will gracefully degrade. To allow the layout to proceed, one of the
+        unsatisfiable constraints will have its strength lowered from 'required'
+        to a value greater than any user specifiable value.
+
+        """
+
+        solver = self._solver
+        for cn in constraints:
+            try:
+                solver.add_constraint(cn)
+            except ExplainedCassowaryError, excp:
+                unsatisfied = excp.explains(constraints)
+
+                logger.error('Unable to simultaneously satisfy required constraints:')
+                for un_cn in unsatisfied:
+                    logger.error(str(un_cn))
+                logger.error('Will attempt to recover by degrading constraints')
+
+                for un_cn in set(unsatisfied) - set([cn]):
+                    solver.remove_constraint(un_cn)
+
+                # Pick one unsatisfied contraint and lower it's strength
+                unsatisfied[-1].strength = _internal_required
+
+                for un_cn in unsatisfied:
+                    solver.add_constraint(un_cn)
 
