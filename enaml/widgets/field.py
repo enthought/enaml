@@ -27,9 +27,11 @@ class Field(Control):
 
     #: The list of actions which should cause the client to submit its
     #: text to the server for validation and update. The currently
-    #: supported values are 'lost_focus' and 'return_pressed'.
+    #: supported values are 'lost_focus', 'return_pressed' and 
+    #: 'text_edited' .
     submit_triggers = List(
-        Enum('lost_focus', 'return_pressed'), ['lost_focus', 'return_pressed']
+        Enum('lost_focus', 'return_pressed', 'text_edited'), 
+            ['lost_focus', 'return_pressed', 'text_edited']
     )
 
     #: The grayed-out text to display if the field is empty and the
