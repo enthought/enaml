@@ -250,17 +250,12 @@ class WxField(WxControl):
             self._validate_and_submit()
 
     def on_text_edited(self, event):
-        # Temporary kludge until styles are fully implemented
+        """ The event handler for EVT_TEXT event.
+
+        """
         event.Skip()
-        widget = self.widget()
-        if self._validator(widget.GetValue()):
-            if self._is_error_state:
-                self._clear_error_style()
-                widget.SetToolTip(wx.ToolTip(''))
-        else:
-            if not self._is_error_state:
-                self._set_error_style()
-                widget.SetToolTip(wx.ToolTip(self._validator_message))
+        if 'text_edited' in self._submit_triggers:
+            self._validate_and_submit()
 
     #--------------------------------------------------------------------------
     # Message Handling

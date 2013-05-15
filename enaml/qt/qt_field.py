@@ -131,16 +131,10 @@ class QtField(QtControl):
             self._validate_and_submit()
 
     def on_text_edited(self):
-        # Temporary kludge until styles are fully implemented
-        widget = self.widget()
-        if self._validator(widget.text()):
-            if self._is_error_state:
-                self._clear_error_style()
-                widget.setToolTip('')
-        else:
-            if not self._is_error_state:
-                self._set_error_style()
-                widget.setToolTip(self._validator_message)
+        """ The signal handler for 'textEdited' signal.
+        """
+        if 'text_edited' in self._submit_triggers:
+            self._validate_and_submit()
 
     #--------------------------------------------------------------------------
     # Message Handlers
