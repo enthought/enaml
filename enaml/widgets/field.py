@@ -31,7 +31,7 @@ class Field(Control):
     #: 'text_edited' .
     submit_triggers = List(
         Enum('lost_focus', 'return_pressed', 'text_edited'), 
-            ['lost_focus', 'return_pressed', 'text_edited']
+            ['lost_focus', 'return_pressed']
     )
 
     #: The grayed-out text to display if the field is empty and the
