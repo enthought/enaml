@@ -46,6 +46,15 @@ class QtLabel(QtControl):
         self.set_vertical_align(tree['vertical_align'])
 
     #--------------------------------------------------------------------------
+    # Drag and drop
+    #--------------------------------------------------------------------------
+    def drag_data(self):
+        """ The data to be dragged
+
+        """
+        return self.widget().text()
+
+    #--------------------------------------------------------------------------
     # Message Handlers
     #--------------------------------------------------------------------------
     def on_action_set_text(self, content):

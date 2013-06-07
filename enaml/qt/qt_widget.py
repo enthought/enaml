@@ -6,8 +6,8 @@ import sys
 
 from enaml.colors import parse_color
 
-from .qt.QtGui import QWidget, QWidgetItem, QColor, QApplication
-from .qt.QtCore import Qt, QSize
+from .qt.QtGui import QWidget, QWidgetItem, QColor, QApplication, QPixmap, QDrag
+from .qt.QtCore import Qt, QSize, QMimeData, QByteArray
 from .qt_object import QtObject
 
 
@@ -74,6 +74,15 @@ class QtWidget(QtObject):
         self.set_show_focus_rect(tree['show_focus_rect'])
         self.set_tool_tip(tree['tool_tip'])
         self.set_status_tip(tree['status_tip'])
+        self.set_accept_drops(tree['accept_drops'])
+        self.set_accept_drags(tree['accept_drags'])
+        self.set_drag_type(tree['drag_type'])
+        self.set_drop_types(tree['drop_types'])
+
+        self.widget().mousePressEvent = self.mousePressEvent
+        self.widget().dragEnterEvent = self.dragEnterEvent
+        self.widget().dragLeaveEvent = self.dragLeaveEvent
+        self.widget().dropEvent = self.dropEvent
 
     #--------------------------------------------------------------------------
     # Public Api
@@ -155,6 +164,30 @@ class QtWidget(QtObject):
 
         """
         self.set_status_tip(content['status_tip'])
+
+    def on_action_set_accept_drops(self, content):
+        """ Handle the 'set_accept_drops' action from the Enaml widget.
+
+        """
+        self.set_accept_drops(content['accept_drops'])
+
+    def on_action_set_accept_drags(self, content):
+        """ Handle the 'set_accept_drags' action from the Enaml widget.
+
+        """
+        self.set_accept_drags(content['accept_drags'])
+
+    def on_action_set_drag_type(self, content):
+        """ Handle the 'set_drag_type' action from the Enaml widget.
+
+        """
+        self.set_drag_type(content['drag_type'])
+
+    def on_action_set_drop_types(self, content):
+        """ Handle the 'set_drop_types' action from the Enaml widget.
+
+        """
+        self.set_drop_types(content['drop_types'])
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -295,3 +328,95 @@ class QtWidget(QtObject):
         """
         self.widget().setStatusTip(status_tip)
 
+    def set_accept_drops(self, accept_drops):
+        """ Set whether or not the widget accepts drops
+
+        """
+        self.widget().setAcceptDrops(accept_drops)
+
+    def set_accept_drags(self, accept_drags):
+        """ Set whether or not the widget is draggable.
+
+        """
+        self.accept_drags = accept_drags
+
+    def set_drag_type(self, drag_type):
+        """ Set the mime-type being dragged
+
+        """
+        self.drag_type = drag_type
+
+    def set_drop_types(self, drop_types):
+        """ Set the mime-types that are allowed to be dropped on the widget.
+
+        """
+        self.drop_types = drop_types
+
+    #--------------------------------------------------------------------------
+    # Drag and drop
+    #--------------------------------------------------------------------------
+    def drag_repr(self):
+        """ An image representation of the widget. This method can be overridden
+        for custom representations.
+
+        """
+        return QPixmap.grabWidget(self.widget())
+
+    def drag_data(self):
+        """ The data to be dragged. This method should be overriden by any
+        subclasses.
+
+        """
+        raise NotImplementedError("The 'drag_data' method must be implemented.")
+
+    def hover_enter(self):
+        """ Fired when the dragged object enters the widget. This method can be
+        overriden for custom styling.
+
+        """
+        self.widget().setStyleSheet("QWidget{background-color:rgba(0,0,255,25);}")
+
+    def hover_exit(self):
+        """ Fired when the dragged object leaves the widget. This method can be
+        overriden for custom styling.
+
+        """
+        self.widget().setStyleSheet("QWidget{background-color:rgba(0,0,0,0);}")
+
+    def mousePressEvent(self, event):
+        """ Mouse clicked handler
+
+        """
+        if self.accept_drags:
+            if event.button() == Qt.LeftButton:
+                drag = QDrag(self.widget())
+                mime_data = QMimeData()
+                mime_data.setData(self.drag_type, QByteArray(self.drag_data()))
+                drag.setMimeData(mime_data)
+                drag.setPixmap(self.drag_repr())
+                drag.exec_(Qt.CopyAction)
+
+    def dragEnterEvent(self, event):
+        """ Fired when a dragged object is hovering over the widget
+
+        """
+        self.hover_enter()
+        for format in event.mimeData().formats():
+            if format in self.drop_types:
+                self.selected_type = format
+                event.acceptProposedAction()
+
+    def dragLeaveEvent(self, event):
+        """ Fire when an object is dragged off the widget
+
+        """
+        self.hover_exit()
+
+    def dropEvent(self, event):
+        """ Fired when an object is dropped on the widget
+
+        """
+        content = {'data': event.mimeData().data(self.selected_type)}
+        self.send_action('dropped', content)
+        event.acceptProposedAction()
+        self.hover_exit()

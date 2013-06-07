@@ -2,8 +2,9 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Bool, Str, Tuple, Range, Enum, Unicode
+from traits.api import Bool, Str, Tuple, Range, Enum, Unicode, List
 
+from enaml.core.trait_types import EnamlEvent
 from enaml.core.messenger import Messenger
 
 
@@ -51,6 +52,21 @@ class Widget(Messenger):
     #: The status tip to show when the user hovers over the widget.
     status_tip = Unicode
 
+    #: Whether or not the widget can be dropped on
+    accept_drops = Bool(False)
+
+    #: Whether or not the widget can be dragged
+    accept_drags = Bool(False)
+
+    #: The mime-type associated with the drag
+    drag_type = Str
+
+    #: The mime types that the widget allows to be dropped on itself
+    drop_types = List(Str)
+
+    #: Fired when something is dropped on the widget
+    dropped = EnamlEvent
+
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
@@ -66,6 +82,10 @@ class Widget(Messenger):
         snap['show_focus_rect'] = self.show_focus_rect
         snap['tool_tip'] = self.tool_tip
         snap['status_tip'] = self.status_tip
+        snap['accept_drops'] = self.accept_drops
+        snap['accept_drags'] = self.accept_drags
+        snap['drag_type'] = self.drag_type
+        snap['drop_types'] = self.drop_types
         return snap
 
     def bind(self):
@@ -76,7 +96,16 @@ class Widget(Messenger):
         attrs = (
             'enabled', 'visible', 'bgcolor', 'fgcolor', 'font',
             'minimum_size', 'maximum_size', 'show_focus_rect',
-            'tool_tip', 'status_tip',
+            'tool_tip', 'status_tip', 'accept_drops', 'accept_drags',
+            'drag_type', 'drop_types',
         )
         self.publish_attributes(*attrs)
 
+    #--------------------------------------------------------------------------
+    # Message Handling
+    #--------------------------------------------------------------------------
+    def on_action_dropped(self, content):
+        """ Handle the 'dropped' action from the client widget.
+
+        """
+        self.dropped(content['data'])
