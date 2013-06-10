@@ -398,14 +398,18 @@ class QtWidget(QtObject):
         overriden for custom styling.
 
         """
-        self.widget().setStyleSheet("QWidget{background-color:rgba(0,0,255,25);}")
+        palette = self.widget().palette()
+        palette.setColor(self.widget().backgroundRole(), QColor(0, 0, 255, 25))
+        self.widget().setPalette(palette)
 
     def hover_exit(self):
         """ Fired when the dragged object leaves the widget. This method can be
         overriden for custom styling.
 
         """
-        self.widget().setStyleSheet("QWidget{background-color:rgba(0,0,0,0);}")
+        palette = self.widget().palette()
+        palette.setColor(self.widget().backgroundRole(), QColor(0, 0, 0, 0))
+        self.widget().setPalette(palette)
 
     def mousePressEvent(self, event):
         """ Mouse pressed handler
@@ -415,7 +419,7 @@ class QtWidget(QtObject):
 
         content = {
             'pos': (event.pos().x(), event.pos().y()),
-            'button': BUTTON_MAPPING[event.button()],
+            'button': BUTTON_MAP[event.button()],
         }
         self.send_action('mouse_pressed', content)
         self.original_pos = event.pos()
@@ -428,7 +432,7 @@ class QtWidget(QtObject):
 
         content = {
             'pos': (event.pos().x(), event.pos().y()),
-            'button': BUTTON_MAPPING[event.button()],
+            'button': BUTTON_MAP[event.button()],
         }
         self.send_action('mouse_moved', content)
 
