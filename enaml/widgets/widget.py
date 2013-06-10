@@ -2,7 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Bool, Str, Tuple, Range, Enum, Unicode, List
+from traits.api import Bool, Str, Tuple, Range, Enum, Unicode, List, Any
 
 from enaml.core.trait_types import EnamlEvent
 from enaml.core.messenger import Messenger
@@ -61,11 +61,23 @@ class Widget(Messenger):
     #: The mime-type associated with the drag
     drag_type = Str
 
+    #: The data to be dragged
+    drag_data = Any
+
     #: The mime types that the widget allows to be dropped on itself
     drop_types = List(Str)
 
     #: Fired when something is dropped on the widget
     dropped = EnamlEvent
+
+    #: Fired when the mouse is pressed on a widget
+    mouse_pressed = EnamlEvent
+
+    #: Fired when the mouse is moved on a widget
+    mouse_moved = EnamlEvent
+
+    #: Fired when the mouse is released on a widget
+    mouse_released = EnamlEvent
 
     #--------------------------------------------------------------------------
     # Initialization
@@ -85,6 +97,7 @@ class Widget(Messenger):
         snap['accept_drops'] = self.accept_drops
         snap['accept_drags'] = self.accept_drags
         snap['drag_type'] = self.drag_type
+        snap['drag_data'] = self.drag_data
         snap['drop_types'] = self.drop_types
         return snap
 
@@ -97,7 +110,7 @@ class Widget(Messenger):
             'enabled', 'visible', 'bgcolor', 'fgcolor', 'font',
             'minimum_size', 'maximum_size', 'show_focus_rect',
             'tool_tip', 'status_tip', 'accept_drops', 'accept_drags',
-            'drag_type', 'drop_types',
+            'drag_type', 'drag_data', 'drop_types',
         )
         self.publish_attributes(*attrs)
 
@@ -109,3 +122,21 @@ class Widget(Messenger):
 
         """
         self.dropped(content['data'])
+
+    def on_action_mouse_pressed(self, content):
+        """ Handle the 'mouse_pressed' action from the client widget.
+
+        """
+        self.mouse_pressed(content)
+
+    def on_action_mouse_moved(self, content):
+        """ Handle the 'mouse_moved' action from the client widget.
+
+        """
+        self.mouse_moved(content)
+
+    def on_action_mouse_released(self, content):
+        """ Handle the 'mouse_released' action from the client widget.
+
+        """
+        self.mouse_released(content)
