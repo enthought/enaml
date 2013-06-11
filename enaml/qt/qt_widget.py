@@ -88,17 +88,8 @@ class QtWidget(QtObject):
         self.set_drag_data(tree['drag_data'])
         self.set_drop_types(tree['drop_types'])
 
-        # XXX: Hack - We cannot subclass QWidget here because it would not
-        # be inherited by all subclasses of QtWidget
-        self.widgetMousePressEvent = self.widget().mousePressEvent
         self.widget().mousePressEvent = self.mousePressEvent
-
-        self.widgetMouseReleaseEvent = self.widget().mouseReleaseEvent
-        self.widget().mouseReleaseEvent = self.mouseReleaseEvent
-
-        self.widgetMouseMoveEvent = self.widget().mouseMoveEvent
         self.widget().mouseMoveEvent = self.mouseMoveEvent
-
         self.widget().dragEnterEvent = self.dragEnterEvent
         self.widget().dragLeaveEvent = self.dragLeaveEvent
         self.widget().dropEvent = self.dropEvent
@@ -415,27 +406,12 @@ class QtWidget(QtObject):
         """ Mouse pressed handler
 
         """
-        self.widgetMousePressEvent(event)
-
-        content = {
-            'pos': (event.pos().x(), event.pos().y()),
-            'button': BUTTON_MAP[event.button()],
-        }
-        self.send_action('mouse_pressed', content)
         self.original_pos = event.pos()
 
     def mouseMoveEvent(self, event):
         """ Mouse moved handler
 
         """
-        self.widgetMouseMoveEvent(event)
-
-        content = {
-            'pos': (event.pos().x(), event.pos().y()),
-            'button': BUTTON_MAP[event.button()],
-        }
-        self.send_action('mouse_moved', content)
-
         if self.accept_drags:
             distance = (event.pos() - self.original_pos).manhattanLength()
             if distance > 20:
@@ -445,18 +421,6 @@ class QtWidget(QtObject):
                 drag.setMimeData(mime_data)
                 drag.setPixmap(self.drag_repr())
                 drag.exec_(Qt.CopyAction)
-
-    def mouseReleaseEvent(self, event):
-        """ Mouse released handler
-
-        """
-        self.widgetMouseReleaseEvent(event)
-
-        content = {
-            'pos': (event.pos().x(), event.pos().y()),
-            'button': BUTTON_MAP[event.button()],
-        }
-        self.send_action('mouse_released', content)
 
     def dragEnterEvent(self, event):
         """ Fired when a dragged object is hovering over the widget
@@ -478,7 +442,10 @@ class QtWidget(QtObject):
         """ Fired when an object is dropped on the widget
 
         """
-        content = {'data': event.mimeData().data(self.selected_type).data()}
+        content = {
+            'data': event.mimeData().data(self.selected_type).data(),
+            'pos': (event.pos().x(), event.pos().y()),
+        }
         self.send_action('dropped', content)
         event.acceptProposedAction()
         self.hover_exit()

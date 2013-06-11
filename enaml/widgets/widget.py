@@ -70,15 +70,6 @@ class Widget(Messenger):
     #: Fired when something is dropped on the widget
     dropped = EnamlEvent
 
-    #: Fired when the mouse is pressed on a widget
-    mouse_pressed = EnamlEvent
-
-    #: Fired when the mouse is moved on a widget
-    mouse_moved = EnamlEvent
-
-    #: Fired when the mouse is released on a widget
-    mouse_released = EnamlEvent
-
     #--------------------------------------------------------------------------
     # Initialization
     #--------------------------------------------------------------------------
@@ -121,22 +112,4 @@ class Widget(Messenger):
         """ Handle the 'dropped' action from the client widget.
 
         """
-        self.dropped(content['data'])
-
-    def on_action_mouse_pressed(self, content):
-        """ Handle the 'mouse_pressed' action from the client widget.
-
-        """
-        self.mouse_pressed(content)
-
-    def on_action_mouse_moved(self, content):
-        """ Handle the 'mouse_moved' action from the client widget.
-
-        """
-        self.mouse_moved(content)
-
-    def on_action_mouse_released(self, content):
-        """ Handle the 'mouse_released' action from the client widget.
-
-        """
-        self.mouse_released(content)
+        self.dropped(content)
