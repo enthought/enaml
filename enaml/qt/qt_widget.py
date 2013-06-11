@@ -88,8 +88,14 @@ class QtWidget(QtObject):
         self.set_drag_data(tree['drag_data'])
         self.set_drop_types(tree['drop_types'])
 
+        # XXX: Hack - We cannot subclass QWidget here because it would not
+        # be inherited by all subclasses of QtWidget
+        self.widgetMousePressEvent = self.widget().mousePressEvent
         self.widget().mousePressEvent = self.mousePressEvent
+
+        self.widgetMouseMoveEvent = self.widget().mouseMoveEvent
         self.widget().mouseMoveEvent = self.mouseMoveEvent
+
         self.widget().dragEnterEvent = self.dragEnterEvent
         self.widget().dragLeaveEvent = self.dragLeaveEvent
         self.widget().dropEvent = self.dropEvent
@@ -406,12 +412,14 @@ class QtWidget(QtObject):
         """ Mouse pressed handler
 
         """
+        self.widgetMousePressEvent(event)
         self.original_pos = event.pos()
 
     def mouseMoveEvent(self, event):
         """ Mouse moved handler
 
         """
+        self.widgetMouseMoveEvent(event)
         if self.accept_drags:
             distance = (event.pos() - self.original_pos).manhattanLength()
             if distance > 20:
