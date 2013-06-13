@@ -67,6 +67,9 @@ class Widget(Messenger):
     #: The mime types that the widget allows to be dropped on itself
     drop_types = List(Str)
 
+    #: Whether or not to highlight drop areas
+    highlight_drop = Bool
+
     #: Fired when something is dropped on the widget
     dropped = EnamlEvent
 
@@ -90,6 +93,7 @@ class Widget(Messenger):
         snap['drag_type'] = self.drag_type
         snap['drag_data'] = self.drag_data
         snap['drop_types'] = self.drop_types
+        snap['highlight_drop'] = self.highlight_drop
         return snap
 
     def bind(self):
@@ -101,7 +105,7 @@ class Widget(Messenger):
             'enabled', 'visible', 'bgcolor', 'fgcolor', 'font',
             'minimum_size', 'maximum_size', 'show_focus_rect',
             'tool_tip', 'status_tip', 'accept_drops', 'accept_drags',
-            'drag_type', 'drag_data', 'drop_types',
+            'drag_type', 'drag_data', 'drop_types', 'highlight_drop',
         )
         self.publish_attributes(*attrs)
 

@@ -87,6 +87,7 @@ class QtWidget(QtObject):
         self.set_drag_type(tree['drag_type'])
         self.set_drag_data(tree['drag_data'])
         self.set_drop_types(tree['drop_types'])
+        self.set_highlight_drop(tree['highlight_drop'])
 
         # XXX: Hack - We cannot subclass QWidget here because it would not
         # be inherited by all subclasses of QtWidget
@@ -210,6 +211,12 @@ class QtWidget(QtObject):
 
         """
         self.set_drop_types(content['drop_types'])
+
+    def on_action_set_highlight_drop(self, content):
+        """ Handle the 'set_highlight_drop' action from the Enaml widget.
+
+        """
+        self.set_highlight_drop(content['highlight_drop'])
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -380,6 +387,12 @@ class QtWidget(QtObject):
         """
         self.drop_types = drop_types
 
+    def set_highlight_drop(self, highlight_drop):
+        """ Set whether or not to highlight widgets when dropping
+
+        """
+        self.highlight_drop = highlight_drop
+
     #--------------------------------------------------------------------------
     # Drag and drop
     #--------------------------------------------------------------------------
@@ -434,7 +447,8 @@ class QtWidget(QtObject):
         """ Fired when a dragged object is hovering over the widget
 
         """
-        self.hover_enter()
+        if self.highlight_drop:
+            self.hover_enter()
         for format in event.mimeData().formats():
             if format in self.drop_types:
                 self.selected_type = format
@@ -444,7 +458,8 @@ class QtWidget(QtObject):
         """ Fire when an object is dragged off the widget
 
         """
-        self.hover_exit()
+        if self.highlight_drop:
+            self.hover_exit()
 
     def dropEvent(self, event):
         """ Fired when an object is dropped on the widget
