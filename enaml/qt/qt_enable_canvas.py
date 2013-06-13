@@ -67,10 +67,10 @@ class QtEnableCanvas(QtControl):
         widget = self.widget()
         component = self._component
         if component is not None:
-            self._window = EnableWindow(widget, component=component)
+            self._window = EnableWindow(widget, component=component,
+                                        bgcolor=component.bgcolor)
             enable_widget = self._window.control
         else:
             self._window = None
             enable_widget = None
         widget.layout().setWidget(enable_widget)
-
