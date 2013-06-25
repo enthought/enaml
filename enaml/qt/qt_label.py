@@ -67,6 +67,12 @@ class QtLabel(QtControl):
         """
         self.set_vertical_align(content['vertical_align'])
 
+    def on_action_set_open_external_links(self, content):
+        """ Handle the 'set_open_external_links' action from the Enaml widget.
+        """
+        open_ext_links = content.get('open_ext_links', True)
+        self.set_open_external_links(open_ext_links)
+
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
@@ -97,3 +103,10 @@ class QtLabel(QtControl):
         alignment |= VERTICAL_ALIGN_MAP[align]
         widget.setAlignment(alignment)
 
+    def set_open_external_links(self, open_ext_links):
+        """ Allow/disallow opening of external links in the underlying 
+        widget.
+
+        open_ext_links : bool : allow or don't allow
+        """
+        self.widget().setOpenExternalLinks(open_ext_links)
