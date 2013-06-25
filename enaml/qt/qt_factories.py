@@ -97,6 +97,11 @@ def image_view_factory():
     return QtImageView
 
 
+def ipython_prompt_factory():
+    from .qt_ipython_prompt import QtIPythonPrompt
+    return QtIPythonPrompt
+
+
 def label_factory():
     from .qt_label import QtLabel
     return QtLabel
@@ -265,6 +270,7 @@ def register_default():
     register('Html', html_factory)
     register('Image', image_factory)
     register('ImageView', image_view_factory)
+    register('IPythonPrompt', ipython_prompt_factory)
     register('Label', label_factory)
     register('ListControl', list_control_factory)
     register('ListItem', list_item_factory)
@@ -293,4 +299,3 @@ def register_default():
     register('TraitsItem', traits_item_factory)
     register('WebView', web_view_factory)
     register('Window', window_factory)
-
