@@ -6,6 +6,7 @@ from collections import deque
 
 from casuarius import weak
 from enaml.layout.layout_manager import LayoutManager
+from enaml.weakmethod import WeakMethod
 
 from .qt.QtCore import QSize, Signal
 from .qt.QtGui import QFrame
@@ -407,7 +408,7 @@ class QtContainer(QtConstraintsWidget):
         # Python code. It exists purely for the sake of efficiency,
         # justified with profiling.
         mgr_layout = manager.layout
-        layout = self.layout
+        layout = WeakMethod(self.layout)
         primitive = self.layout_box.primitive
         width_var = primitive('width')
         height_var = primitive('height')
