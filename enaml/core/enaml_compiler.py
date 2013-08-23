@@ -3,6 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import ast
+import sys
 import types
 
 from .byteplay import (
@@ -569,6 +570,12 @@ class EnamlCompiler(_NodeVisitor):
             The string filename of the module ast being compiled.
 
         """
+
+        # Protect against unicode filenames, which are incompatible
+        # with code objects created via types.CodeType
+        if isinstance(filename, unicode):
+            filename = filename.encode(sys.getfilesystemencoding())
+
         # Generate the startup code for the module
         module_ops = [(SetLineno, 1)]
         for start in STARTUP:
