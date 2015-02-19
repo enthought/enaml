@@ -1,6 +1,13 @@
-==============================
+**This repository is deprecated in favor of the more recent versions by enaml's primary author, at https://github.com/nucleic/enaml.**
+
+**To use those newer versions of enaml with Enthought Traits, see https://github.com/enthought/traits-enaml.**
+
+----
+
+----
+
 Enaml is not a Markup Language
-==============================
+
 **E**\naml is **N**\ot **A** **M**\arkup **L**\anguage. Enaml is a library for
 creating professional quality user interfaces with minimal effort. Enaml combines
 a domain specific declarative language with a constraints based layout system to
@@ -31,7 +38,7 @@ About the only thing not hookable is the Enaml language syntax itself.
 The enamldoc package provides a Sphinx extension for documenting Enaml objects.
 
 Prerequisites
--------------
+
 * Python >= 2.6 (not Python 3)
 * Traits
 * Casuarius (https://github.com/enthought/casuarius)
