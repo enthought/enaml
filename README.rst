@@ -1,3 +1,9 @@
+This package is no longer maintained, and no current projects should rely on it.
+If you encounter projects that still depend on enthought/enaml, please open issues
+against those projects.
+
+----
+
 **This repository is deprecated in favor of the more recent versions by enaml's primary author, at https://github.com/nucleic/enaml.**
 
 **To use those newer versions of enaml with Enthought Traits, see https://github.com/enthought/traits-enaml.**
